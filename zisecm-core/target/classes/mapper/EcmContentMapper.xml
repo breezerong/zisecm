@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmContentMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmContent">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
+    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="CONTENT_TYPE" jdbcType="INTEGER" property="contentType" />
+    <result column="MODIFIER" jdbcType="VARCHAR" property="modifier" />
+    <result column="MODIFIED_DATE" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="FORMAT_NAME" jdbcType="VARCHAR" property="formatName" />
+    <result column="CONTENT_SIZE" jdbcType="BIGINT" property="contentSize" />
+    <result column="DATA_TICKET" jdbcType="BIGINT" property="dataTicket" />
+    <result column="STORE_NAME" jdbcType="VARCHAR" property="storeName" />
+    <result column="FILE_PATH" jdbcType="VARCHAR" property="filePath" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NAME, PARENT_ID, CREATION_DATE, CREATOR, CONTENT_TYPE, MODIFIER, MODIFIED_DATE, 
+    FORMAT_NAME, CONTENT_SIZE,STORE_NAME,FILE_PATH,CONTENT_SIZE,DESCRIPTION,ORDER_INDEX,DATA_TICKET
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_content
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_content
+    where ${condition}
+  </select>
+  <select id="selectDataTicket" resultType="java.lang.Long">
+    select next_val('data_ticket')
+  </select>
+  <select id="getContents" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_content
+    where PARENT_ID = #{docId} and CONTENT_TYPE = #{contentType} order by ID
+  </select>
+  <select id="getAllContents" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_content
+    where PARENT_ID = #{docId,jdbcType=VARCHAR} order by ORDER_INDEX
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_content
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByDocument" parameterType="java.lang.String">
+    delete from ecm_content
+    where PARENT_ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmContent">
+    insert into ecm_content (ID,NAME, PARENT_ID, 
+      CREATION_DATE, CREATOR, CONTENT_TYPE, 
+      MODIFIER, MODIFIED_DATE, FORMAT_NAME, 
+      CONTENT_SIZE,STORE_NAME,FILE_PATH,DESCRIPTION,ORDER_INDEX,DATA_TICKET)
+    values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
+      #{creationDate,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{contentType,jdbcType=INTEGER}, 
+      #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{formatName,jdbcType=VARCHAR}, 
+      #{contentSize,jdbcType=BIGINT}, #{storeName,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{orderIndex,jdbcType=INTEGER},#{dataTicket,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmContent">
+    insert into ecm_content
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    <if test="id != null">
+        ID,
+      </if>
+     <if test="name != null">
+        NAME,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE,
+      </if>
+      <if test="creator != null">
+        CREATOR,
+      </if>
+      <if test="contentType != null">
+        CONTENT_TYPE,
+      </if>
+      <if test="modifier != null">
+        MODIFIER,
+      </if>
+      <if test="modifiedDate != null">
+        MODIFIED_DATE,
+      </if>
+      <if test="formatName != null">
+        FORMAT_NAME,
+      </if>
+      <if test="contentSize != null">
+        CONTENT_SIZE,
+      </if>
+      <if test="storeName != null">
+        STORE_NAME,
+      </if>
+      <if test="filePath != null">
+        FILE_PATH,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+       <if test="orderIndex != null">
+        ORDER_INDEX,
+      </if>
+      <if test="dataTicket != null">
+        DATA_TICKET,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+    <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+     <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="creationDate != null">
+        #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        #{contentType,jdbcType=INTEGER},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedDate != null">
+        #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="formatName != null">
+        #{formatName,jdbcType=VARCHAR},
+      </if>
+      <if test="contentSize != null">
+        #{contentSize,jdbcType=BIGINT},
+      </if>
+       <if test="storeName != null">
+        #{storeName,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null">
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+       <if test="orderIndex != null">
+        #{orderIndex,jdbcType=INTEGER},
+      </if>
+      <if test="dataTicket != null">
+        #{dataTicket,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmContent">
+    update ecm_content
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        CONTENT_TYPE = #{contentType,jdbcType=INTEGER},
+      </if>
+      <if test="modifier != null">
+        MODIFIER = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedDate != null">
+        MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="formatName != null">
+        FORMAT_NAME = #{formatName,jdbcType=VARCHAR},
+      </if>
+      <if test="contentSize != null">
+        CONTENT_SIZE = #{contentSize,jdbcType=BIGINT},
+      </if>
+      <if test="storeName != null">
+        STORE_NAME = #{storeName,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null">
+        FILE_PATH = #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        FILE_PATH = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      </if>
+      <if test="dataTicket != null">
+        DATA_TICKET = #{dataTicket,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmContent">
+    update ecm_content
+    set NAME = #{name,jdbcType=VARCHAR},
+      PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CONTENT_TYPE = #{contentType,jdbcType=INTEGER},
+      MODIFIER = #{modifier,jdbcType=VARCHAR},
+      MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+      FORMAT_NAME = #{formatName,jdbcType=VARCHAR},
+      CONTENT_SIZE = #{contentSize,jdbcType=BIGINT},
+      STORE_NAME = #{storeName,jdbcType=VARCHAR},
+      FILE_PATH = #{filePath,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      DATA_TICKET = #{dataTicket,jdbcType=BIGINT},
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

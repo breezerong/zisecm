@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmMenuMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmMenu">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="COMPONENT_ID" jdbcType="VARCHAR" property="componentId" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="ITEM_TYPE" jdbcType="CHAR" property="itemType" />
+    <result column="CALL_FUNCTION" jdbcType="VARCHAR" property="callFunction" />
+    <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NAME, DESCRIPTION, ROLE_NAME, PARENT_ID, COMPONENT_ID, ICON, ITEM_TYPE, CALL_FUNCTION, 
+    ORDER_INDEX
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_menu order by ID
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_menu
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_menu
+    where NAME = #{name,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_menu
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmMenu">
+    insert into ecm_menu (ID, NAME, DESCRIPTION, 
+      ROLE_NAME, PARENT_ID, COMPONENT_ID, 
+      ICON, ITEM_TYPE, CALL_FUNCTION, 
+      ORDER_INDEX)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{roleName,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{componentId,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{itemType,jdbcType=CHAR}, #{callFunction,jdbcType=VARCHAR}, 
+      #{orderIndex,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmMenu">
+    insert into ecm_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="roleName != null">
+        ROLE_NAME,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="componentId != null">
+        COMPONENT_ID,
+      </if>
+      <if test="icon != null">
+        ICON,
+      </if>
+      <if test="itemType != null">
+        ITEM_TYPE,
+      </if>
+      <if test="callFunction != null">
+        CALL_FUNCTION,
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="componentId != null">
+        #{componentId,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        #{itemType,jdbcType=CHAR},
+      </if>
+      <if test="callFunction != null">
+        #{callFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null">
+        #{orderIndex,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmMenu">
+    update ecm_menu
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="componentId != null">
+        COMPONENT_ID = #{componentId,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        ICON = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        ITEM_TYPE = #{itemType,jdbcType=CHAR},
+      </if>
+      <if test="callFunction != null">
+        CALL_FUNCTION = #{callFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmMenu">
+    update ecm_menu
+    set NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      COMPONENT_ID = #{componentId,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=CHAR},
+      CALL_FUNCTION = #{callFunction,jdbcType=VARCHAR},
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

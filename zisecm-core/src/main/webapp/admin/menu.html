@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>菜单配置</title>
+<link rel="stylesheet" href="../css/main.css" />
+<script type="text/javascript" src="../js/vue.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui@2.4.3/lib/theme-chalk/index.css">
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui@2.4.3/lib/index.js"></script>
+</head>
+<body>
+
+
+
+<div id="app">
+<el-row>
+	<el-col :span="6">
+	<div class="topbar">
+  		<el-input  v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
+	</div>
+	</el-col>
+	<el-col :span="6">
+  	<el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible = true"></el-button>
+  	</el-col>
+</el-row>
+
+<el-dialog title="添加" :visible.sync="dialogVisible">
+  <el-form :model="form">
+    <el-form-item label="名称" :label-width="formLabelWidth">
+      <el-input v-model="form.name" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="说明" :label-width="formLabelWidth">
+      <el-input v-model="form.description" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="角色" :label-width="formLabelWidth">
+      <el-input v-model="form.roleName" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="图标" :label-width="formLabelWidth">
+      <el-input v-model="form.icon" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="父Id" :label-width="formLabelWidth">
+      <el-input v-model="form.parentId" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="组件Id" :label-width="formLabelWidth">
+      <el-input v-model="form.componentId" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="调用函数" :label-width="formLabelWidth">
+      <el-input v-model="form.callFunction" auto-complete="off"></el-input>
+    </el-form-item>
+     <el-form-item label="排序" :label-width="formLabelWidth">
+      <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="additem(form)">确 定</el-button>
+  </div>
+</el-dialog>
+<table>
+            <tr>
+            	<td width="40px">ID</td>
+                <td width="160px">名称</td>
+                <td width="160px">说明</td>
+                <td width="120px">角色</td>
+                <td width="180px">图标</td>
+                <td width="80px">父ID</td>
+                <td width="80px">组件ID</td>
+                <td width="120px">调用函数</td>
+                <td width="80px">排序</td>
+                <td width="200px">操作</td>
+            </tr>
+            <tr v-for="item in dataList">
+            	<td>{{item.id}}</td>
+                <td>
+                <el-input  v-model="item.name"></el-input>
+				</td>
+                <td>
+                <el-input  v-model="item.description"></el-input>
+                </td>
+                <td>
+                <el-input  v-model="item.roleName"></el-input>
+                </td>
+                <td>
+                <el-input  v-model="item.icon"></el-input>
+                </td>
+                <td>
+                <el-input  v-model="item.parentId"></el-input>
+                </td>
+                <td>
+                <el-input  v-model="item.componentId"></el-input>
+                </td>
+                <td>
+                <el-input  v-model="item.callFunction"></el-input>
+                </td>
+                <td>
+                <el-input  v-model="item.orderIndex"></el-input>
+                </td>
+                <td>
+                	<el-button type="primary" @click="save(item)">保存</el-button>
+                	<el-button type="danger" @click="del(item)">删除</el-button>
+                </td>
+            </tr>
+        </table>
+</div>
+
+<script type="text/javascript">
+
+$.ajaxSetup({  
+    contentType : 'application/json'  
+});
+
+
+     new Vue({
+            el:'#app',
+            data:{
+                dataList:"",
+                dataListFull:"",
+                inputkey:"",
+                dialogVisible:false,
+                form: {
+                    name: '',
+                    description: '',
+                    value: ''
+                },
+                formLabelWidth: '120px'
+            },
+            created:function(){
+            	var url="/admin/getMenu";
+        	    var _self = this;
+        	    $.get(url, function (data) {
+        	        _self.dataListFull = data.list;
+        	    	_self.dataList = data.list;
+        	   });
+            },
+            methods:{
+            	refreshData:function()
+            	{
+            		var url="/admin/getMenu";
+            	    var _self = this;
+            	    $.get(url, function (data) {
+            	    	_self.dataListFull = data.list;
+            	    	_self.dataList = data.list;
+            	   });
+            	},
+				save:function(indata)
+				{
+					
+					$.ajax({
+							url: "/admin/updateMenu",
+							datatype:"json",
+							type:'post',
+							data:JSON.stringify(indata),
+							success:function(data){
+							   alert("保存成功!");
+							}
+					});  		
+				},
+				del:function(indata)
+				{
+					var _self = this;
+					$.ajax({
+						url: "/admin/deleteMenu",
+						datatype:"json",
+						type:'post',
+						data:JSON.stringify(indata),
+						success:function(data){
+						   alert("删除成功!");
+						   _self.refreshData();
+						}
+				});  
+				},
+				additem:function(indata)
+				{
+					var _self = this;
+					
+					$.ajax({
+						url: "/admin/newMenu",
+						datatype:"json",
+						type:'post',
+						data:JSON.stringify(indata),
+						success:function(data){
+							_self.dialogVisible=false;
+						  // alert("添加成功!");
+						   _self.refreshData();
+						   //var url="/admin/getMenu";
+		            	   
+		            	  //  $.get(url, function (data) {
+		            	        
+		            	    	//_self.dataList = data.list;
+		            	  // });
+						}
+					});  
+				},
+				search:function()
+				{
+					
+					var _self=this;
+                    var tab=_self.dataListFull;
+                    if(_self.inputkey!="")
+                    {                                     
+                    	_self.dataList=[];                     
+                       for(i in tab) 
+                       {
+                            if(tab[i].name.indexOf(_self.inputkey) >= 0) 
+                            {
+                            	_self.dataList.push(tab[i]);
+                            }
+                        }
+                    }
+                    else
+                        {
+                    	_self.dataList = _self.dataListFull;
+                        }
+                    
+				}
+            }
+                
+          });
+
+     //new Vue().$mount('#app');
+</script>
+</body>
+</html>

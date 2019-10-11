@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmAuditWorkitemMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmAuditWorkitem">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PERFORMER" jdbcType="VARCHAR" property="performer" />
+    <result column="START_DATE" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="COMPLETE_DATE" jdbcType="TIMESTAMP" property="completeDate" />
+    <result column="TASK_NAME" jdbcType="VARCHAR" property="taskName" />
+    <result column="WORKFLOW_ID" jdbcType="VARCHAR" property="workflowId" />
+    <result column="TASK_ID" jdbcType="VARCHAR" property="taskId" />
+    <result column="DOC_ID" jdbcType="VARCHAR" property="docId" />
+    <result column="FORM_ID" jdbcType="VARCHAR" property="formId" />
+    <result column="TASK_TYPE" jdbcType="INTEGER" property="taskType" />
+    <result column="RESULT" jdbcType="VARCHAR" property="result" />
+    <result column="MESSAGE" jdbcType="VARCHAR" property="message" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PERFORMER, START_DATE, COMPLETE_DATE, TASK_NAME, WORKFLOW_ID, TASK_ID, DOC_ID, 
+    FORM_ID, TASK_TYPE, RESULT, MESSAGE
+  </sql>
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_audit_workitem
+    where ${condition}
+  </select>
+  <select id="getCountByCondition" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select 
+    count(ID)
+    from ecm_audit_workitem
+    where ${condition}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_audit_workitem
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_audit_workitem
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
+    insert into ecm_audit_workitem (ID, PERFORMER, START_DATE, 
+      COMPLETE_DATE, TASK_NAME, WORKFLOW_ID, 
+      TASK_ID, DOC_ID, FORM_ID, 
+      TASK_TYPE, RESULT, MESSAGE
+      )
+    values (#{id,jdbcType=VARCHAR}, #{performer,jdbcType=VARCHAR}, #{startDate,jdbcType=TIMESTAMP}, 
+      #{completeDate,jdbcType=TIMESTAMP}, #{taskName,jdbcType=VARCHAR}, #{workflowId,jdbcType=VARCHAR}, 
+      #{taskId,jdbcType=VARCHAR}, #{docId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
+      #{taskType,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
+    insert into ecm_audit_workitem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="performer != null">
+        PERFORMER,
+      </if>
+      <if test="startDate != null">
+        START_DATE,
+      </if>
+      <if test="completeDate != null">
+        COMPLETE_DATE,
+      </if>
+      <if test="taskName != null">
+        TASK_NAME,
+      </if>
+      <if test="workflowId != null">
+        WORKFLOW_ID,
+      </if>
+      <if test="taskId != null">
+        TASK_ID,
+      </if>
+      <if test="docId != null">
+        DOC_ID,
+      </if>
+      <if test="formId != null">
+        FORM_ID,
+      </if>
+      <if test="taskType != null">
+        TASK_TYPE,
+      </if>
+      <if test="result != null">
+        RESULT,
+      </if>
+      <if test="message != null">
+        MESSAGE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="performer != null">
+        #{performer,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="completeDate != null">
+        #{completeDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskName != null">
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="workflowId != null">
+        #{workflowId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="docId != null">
+        #{docId,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null">
+        #{formId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        #{taskType,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null">
+        #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        #{message,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
+    update ecm_audit_workitem
+    <set>
+      <if test="performer != null">
+        PERFORMER = #{performer,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        START_DATE = #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="completeDate != null">
+        COMPLETE_DATE = #{completeDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskName != null">
+        TASK_NAME = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="workflowId != null">
+        WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null">
+        TASK_ID = #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="docId != null">
+        DOC_ID = #{docId,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null">
+        FORM_ID = #{formId,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null">
+        TASK_TYPE = #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="result != null">
+        RESULT = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        MESSAGE = #{message,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
+    update ecm_audit_workitem
+    set PERFORMER = #{performer,jdbcType=VARCHAR},
+      START_DATE = #{startDate,jdbcType=TIMESTAMP},
+      COMPLETE_DATE = #{completeDate,jdbcType=TIMESTAMP},
+      TASK_NAME = #{taskName,jdbcType=VARCHAR},
+      WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      TASK_ID = #{taskId,jdbcType=VARCHAR},
+      DOC_ID = #{docId,jdbcType=VARCHAR},
+      FORM_ID = #{formId,jdbcType=VARCHAR},
+      TASK_TYPE = #{taskType,jdbcType=INTEGER},
+      RESULT = #{result,jdbcType=VARCHAR},
+      MESSAGE = #{message,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

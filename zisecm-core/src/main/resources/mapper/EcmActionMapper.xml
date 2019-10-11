@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmActionMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmAction">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+    <result column="OBJECT_PERMISSION" jdbcType="VARCHAR" property="objectPermission" />
+    <result column="PARAMETER" jdbcType="VARCHAR" property="parameter" />
+    <result column="PARAMETER_DES" jdbcType="VARCHAR" property="parameterDes" />
+    <result column="CALL_FUNCTION" jdbcType="VARCHAR" property="callFunction" />
+    <result column="NEXT_COMPONENT" jdbcType="INTEGER" property="nextComponent" />
+    <result column="ACTION_TYPE" jdbcType="CHAR" property="actionType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NAME, DESCRIPTION, ROLE_NAME, OBJECT_PERMISSION, PARAMETER, PARAMETER_DES, CALL_FUNCTION, 
+    NEXT_COMPONENT, ACTION_TYPE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_action
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_action order by ID
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_action
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmAction">
+    insert into ecm_action (ID, NAME, DESCRIPTION, 
+      ROLE_NAME, OBJECT_PERMISSION, PARAMETER, 
+      PARAMETER_DES, CALL_FUNCTION, NEXT_COMPONENT, 
+      ACTION_TYPE)
+    values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{roleName,jdbcType=VARCHAR}, #{objectPermission,jdbcType=VARCHAR}, #{parameter,jdbcType=VARCHAR}, 
+      #{parameterDes,jdbcType=VARCHAR}, #{callFunction,jdbcType=VARCHAR}, #{nextComponent,jdbcType=INTEGER}, 
+      #{actionType,jdbcType=CHAR})
+
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmAction">
+    insert into ecm_action
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    <if test="id != null">
+        ID,
+      </if>
+     <if test="name != null">
+        NAME,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="roleName != null">
+        ROLE_NAME,
+      </if>
+      <if test="objectPermission != null">
+        OBJECT_PERMISSION,
+      </if>
+      <if test="parameter != null">
+        PARAMETER,
+      </if>
+      <if test="parameterDes != null">
+        PARAMETER_DES,
+      </if>
+      <if test="callFunction != null">
+        CALL_FUNCTION,
+      </if>
+      <if test="nextComponent != null">
+        NEXT_COMPONENT,
+      </if>
+      <if test="actionType != null">
+        ACTION_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="objectPermission != null">
+        #{objectPermission,jdbcType=VARCHAR},
+      </if>
+      <if test="parameter != null">
+        #{parameter,jdbcType=VARCHAR},
+      </if>
+      <if test="parameterDes != null">
+        #{parameterDes,jdbcType=VARCHAR},
+      </if>
+      <if test="callFunction != null">
+        #{callFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="nextComponent != null">
+        #{nextComponent,jdbcType=INTEGER},
+      </if>
+      <if test="actionType != null">
+        #{actionType,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmAction">
+    update ecm_action
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="roleName != null">
+        ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="objectPermission != null">
+        OBJECT_PERMISSION = #{objectPermission,jdbcType=VARCHAR},
+      </if>
+      <if test="parameter != null">
+        PARAMETER = #{parameter,jdbcType=VARCHAR},
+      </if>
+      <if test="parameterDes != null">
+        PARAMETER_DES = #{parameterDes,jdbcType=VARCHAR},
+      </if>
+      <if test="callFunction != null">
+        CALL_FUNCTION = #{callFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="nextComponent != null">
+        NEXT_COMPONENT = #{nextComponent,jdbcType=INTEGER},
+      </if>
+      <if test="actionType != null">
+        ACTION_TYPE = #{actionType,jdbcType=CHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmAction">
+    update ecm_action
+    set NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      OBJECT_PERMISSION = #{objectPermission,jdbcType=VARCHAR},
+      PARAMETER = #{parameter,jdbcType=VARCHAR},
+      PARAMETER_DES = #{parameterDes,jdbcType=VARCHAR},
+      CALL_FUNCTION = #{callFunction,jdbcType=VARCHAR},
+      NEXT_COMPONENT = #{nextComponent,jdbcType=INTEGER},
+      ACTION_TYPE = #{actionType,jdbcType=CHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

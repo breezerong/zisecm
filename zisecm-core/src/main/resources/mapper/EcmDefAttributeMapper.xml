@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmDefAttributeMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmDefAttribute">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="TYPE_ID" jdbcType="VARCHAR" property="typeId" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
+    <result column="MODIFIER" jdbcType="VARCHAR" property="modifier" />
+    <result column="MODIFIED_DATE" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="DATA_TYPE" jdbcType="INTEGER" property="dataType" />
+    <result column="LENGTH" jdbcType="INTEGER" property="length" />
+    <result column="DEFAULT_VALUE" jdbcType="VARCHAR" property="defaultValue" />
+    <result column="NOT_NULL" jdbcType="BIT" property="notNull" />
+    <result column="IS_HIDDEN" jdbcType="BIT" property="isHidden" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NAME, DESCRIPTION, TYPE_ID, STATUS, CREATOR, CREATION_DATE, MODIFIER, MODIFIED_DATE, 
+    DATA_TYPE, LENGTH, DEFAULT_VALUE, NOT_NULL, IS_HIDDEN
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_def_attribute order by NAME
+  </select>
+  <select id="selectByTypeId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_def_attribute
+    where TYPE_ID = #{typeId,jdbcType=VARCHAR} order by NAME
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_def_attribute
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_def_attribute
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByTypeId" parameterType="java.lang.String">
+    delete from ecm_def_attribute
+    where TYPE_ID = #{typeId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmDefAttribute">
+    insert into ecm_def_attribute (ID, NAME, DESCRIPTION, 
+      TYPE_ID, STATUS, CREATOR, 
+      CREATION_DATE, MODIFIER, MODIFIED_DATE, 
+      DATA_TYPE, LENGTH, DEFAULT_VALUE, 
+      NOT_NULL, IS_HIDDEN)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{typeId,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
+      #{creationDate,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, 
+      #{dataType,jdbcType=INTEGER}, #{length,jdbcType=INTEGER}, #{defaultValue,jdbcType=VARCHAR}, 
+      #{notNull,jdbcType=BIT}, #{isHidden,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDefAttribute">
+    insert into ecm_def_attribute
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="typeId != null">
+        TYPE_ID,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="creator != null">
+        CREATOR,
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE,
+      </if>
+      <if test="modifier != null">
+        MODIFIER,
+      </if>
+      <if test="modifiedDate != null">
+        MODIFIED_DATE,
+      </if>
+      <if test="dataType != null">
+        DATA_TYPE,
+      </if>
+      <if test="length != null">
+        LENGTH,
+      </if>
+      <if test="defaultValue != null">
+        DEFAULT_VALUE,
+      </if>
+      <if test="notNull != null">
+        NOT_NULL,
+      </if>
+      <if test="isHidden != null">
+        IS_HIDDEN,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null">
+        #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creationDate != null">
+        #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedDate != null">
+        #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataType != null">
+        #{dataType,jdbcType=INTEGER},
+      </if>
+      <if test="length != null">
+        #{length,jdbcType=INTEGER},
+      </if>
+      <if test="defaultValue != null">
+        #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="notNull != null">
+        #{notNull,jdbcType=BIT},
+      </if>
+      <if test="isHidden != null">
+        #{isHidden,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmDefAttribute">
+    update ecm_def_attribute
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null">
+        TYPE_ID = #{typeId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="creator != null">
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        MODIFIER = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedDate != null">
+        MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataType != null">
+        DATA_TYPE = #{dataType,jdbcType=INTEGER},
+      </if>
+      <if test="length != null">
+        LENGTH = #{length,jdbcType=INTEGER},
+      </if>
+      <if test="defaultValue != null">
+        DEFAULT_VALUE = #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="notNull != null">
+        NOT_NULL = #{notNull,jdbcType=BIT},
+      </if>
+      <if test="isHidden != null">
+        IS_HIDDEN = #{isHidden,jdbcType=BIT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmDefAttribute">
+    update ecm_def_attribute
+    set NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      TYPE_ID = #{typeId,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      MODIFIER = #{modifier,jdbcType=VARCHAR},
+      MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+      DATA_TYPE = #{dataType,jdbcType=INTEGER},
+      LENGTH = #{length,jdbcType=INTEGER},
+      DEFAULT_VALUE = #{defaultValue,jdbcType=VARCHAR},
+      NOT_NULL = #{notNull,jdbcType=BIT},
+      IS_HIDDEN = #{isHidden,jdbcType=BIT}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

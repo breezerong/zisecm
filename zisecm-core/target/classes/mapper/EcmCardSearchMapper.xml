@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmCardSearchMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmCardSearch">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="GRID_VIEW" jdbcType="VARCHAR" property="gridView" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="LANG_KEY" jdbcType="VARCHAR" property="langKey" />
+    <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
+    <result column="ENABLED" jdbcType="BIT" property="enabled" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NAME, DESCRIPTION, GRID_VIEW, LANG_KEY, ORDER_INDEX, ENABLED
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_card_search order by ORDER_INDEX
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_card_search
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_card_search
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmCardSearch">
+    insert into ecm_card_search (ID,NAME, DESCRIPTION, GRID_VIEW, LANG_KEY, ORDER_INDEX, ENABLED
+      )
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{gridView,jdbcType=VARCHAR}
+      ,#{langKey,jdbcType=VARCHAR}, #{orderIndex,jdbcType=INTEGER}, #{enabled,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmCardSearch">
+    insert into ecm_card_search
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="gridView != null">
+        GRID_VIEW,
+      </if>
+      <if test="langKey != null">
+        LANG_KEY,
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX,
+      </if>
+      <if test="enabled != null">
+        ENABLED,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+     <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="gridView != null">
+        #{gridView,jdbcType=VARCHAR},
+      </if>
+      <if test="langKey != null">
+        #{langKey,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null">
+        #{orderIndex,jdbcType=INTEGER},
+      </if>
+      <if test="enabled != null">
+        #{enabled,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmCardSearch">
+    update ecm_card_search
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+       <if test="description != null">
+        GRID_VIEW = #{gridView,jdbcType=VARCHAR},
+      </if>
+       <if test="langKey != null">
+        LANG_KEY = #{langKey,jdbcType=VARCHAR},
+      </if>
+       <if test="orderIndex != null">
+        ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      </if>
+       <if test="enabled != null">
+        ENABLED = #{enabled,jdbcType=BIT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmCardSearch">
+    update ecm_card_search
+    set NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      GRID_VIEW = #{gridView,jdbcType=VARCHAR},
+      LAGN_KEY = #{langKey,jdbcType=VARCHAR},
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      ENABLED = #{enabled,jdbcType=BIT}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,30 @@
+http://localhost:8080/form/queryEcmForm?name=%E5%BD%92%E6%A1%A3%E8%8C%83%E5%9B%B4&action=NEW
+http://localhost:8080/gridview/queryGridView?name=AttchGrid
+http://localhost:8080/tree/queryFolderTree?id=ClassificationFolderID
+http://localhost:8080/tree/queryDepartmentTree?id=DepartmentRootID
+http://localhost:8080/tree/queryCmigUsersByGid?id=64548&userName=
+http://localhost:8080/tree/queryCmigUsersByGName?groupName=%E6%A1%A3%E6%A1%88%E7%AE%A1%E7%90%86%E5%91%98&userName=
+http://localhost:8080/parameter/queryEcmParameter?name=PermissionRole
+http://localhost:8080/tree/queryClassFolderTree
+查询报文
+{
+	"orderBy": "OTCreateDate",
+	"pageNum": 2,
+	"pageSize": 100,
+	"orderRule":"ASC",
+	"searchMode":null,
+	"union":null,
+	"fieldItems": ["OTDataID", "OTFileName", "OTSubType"],
+	"condition": {
+		"OTName": "测试",
+		"OTParentID": "2006"
+	}
+}
+添加案卷
+{
+	"id":66788,
+	"attributes": {
+		"Attr_64206_18": "1111111111111111111111",
+		"Attr_64206_22": "5"
+	}
+}

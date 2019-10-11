@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+。menu
+{
+	 float: left;
+	 background-color: #cccccc;
+	 margin: 0 auto;
+     width: 80px;
+     height: 100%;
+}
+
+。workspace
+{
+	 background-color: #cccccc;
+	 margin: 0 auto;
+	 margin-left:80px;
+     width: 100%;
+     height: 100%;
+}
+.topbar
+{
+	width: 200px;
+	white-spacing:nowrap;
+}

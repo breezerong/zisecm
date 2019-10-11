@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmFormItemMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmFormItem">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="ATTR_NAME" jdbcType="VARCHAR" property="attrName" />
+    <result column="REQUIRED" jdbcType="BIT" property="required" />
+    <result column="VALIDATE_POLICY" jdbcType="VARCHAR" property="validatePolicy" />
+    <result column="READ_ONLY" jdbcType="BIT" property="readOnly" />
+    <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
+    <result column="WIDTH_TYPE" jdbcType="CHAR" property="widthType" />
+    <result column="LABEL" jdbcType="VARCHAR" property="label" />
+    <result column="SEARCHABLE" jdbcType="BIT" property="searchable" />
+    <result column="CONTROL_TYPE" jdbcType="VARCHAR" property="controlType" />
+    <result column="QUERY_NAME" jdbcType="VARCHAR" property="queryName" />
+    <result column="DEFAULT_VALUE" jdbcType="VARCHAR" property="defaultValue" />
+    <result column="IS_HIDE" jdbcType="BIT" property="isHide" />
+    <result column="VALUE_LIST" jdbcType="VARCHAR" property="valueList" />
+    <result column="IS_REPEAT" jdbcType="BIT" property="isRepeat" />
+    <result column="MIN_COUNT" jdbcType="INTEGER" property="minCount" />
+    <result column="MAX_COUNT" jdbcType="INTEGER" property="maxCount" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PARENT_ID, ATTR_NAME, REQUIRED, VALIDATE_POLICY, READ_ONLY, ORDER_INDEX, WIDTH_TYPE, 
+    LABEL, SEARCHABLE, CONTROL_TYPE, QUERY_NAME, DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_form_item order by ID
+  </select>
+  <select id="selectByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_form_item
+    where PARENT_ID = #{parentId,jdbcType=VARCHAR} order by ORDER_INDEX
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_form_item
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_form_item
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmFormItem">
+    insert into ecm_form_item (ID,PARENT_ID, ATTR_NAME, 
+      REQUIRED, VALIDATE_POLICY, READ_ONLY, 
+      ORDER_INDEX, WIDTH_TYPE, LABEL, 
+      SEARCHABLE, CONTROL_TYPE, QUERY_NAME, 
+      DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT)
+    values (#{id,jdbcType=VARCHAR},#{parentId,jdbcType=VARCHAR}, #{attrName,jdbcType=VARCHAR}, 
+      #{required,jdbcType=BIT}, #{validatePolicy,jdbcType=VARCHAR}, #{readOnly,jdbcType=BIT}, 
+      #{orderIndex,jdbcType=INTEGER}, #{widthType,jdbcType=CHAR}, #{label,jdbcType=VARCHAR}, 
+      #{searchable,jdbcType=BIT}, #{controlType,jdbcType=VARCHAR}, #{queryName,jdbcType=VARCHAR}, 
+      #{defaultValue,jdbcType=VARCHAR}, #{isHide,jdbcType=BIT},#{valueList,jdbcType=VARCHAR},
+      #{isRepeat,jdbcType=BIT},#{minCount,jdbcType=INTEGER},#{maxCount,jdbcType=INTEGER}
+      )
+    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS ID
+	</selectKey>
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmFormItem">
+    insert into ecm_form_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="attrName != null">
+        ATTR_NAME,
+      </if>
+      <if test="required != null">
+        REQUIRED,
+      </if>
+      <if test="validatePolicy != null">
+        VALIDATE_POLICY,
+      </if>
+      <if test="readOnly != null">
+        READ_ONLY,
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX,
+      </if>
+      <if test="widthType != null">
+        WIDTH_TYPE,
+      </if>
+      <if test="label != null">
+        LABEL,
+      </if>
+      <if test="searchable != null">
+        SEARCHABLE,
+      </if>
+      <if test="controlType != null">
+        CONTROL_TYPE,
+      </if>
+      <if test="queryName != null">
+        QUERY_NAME,
+      </if>
+      <if test="defaultValue != null">
+        DEFAULT_VALUE,
+      </if>
+      <if test="isHide != null">
+        IS_HIDE,
+      </if>
+      <if test="valueList != null">
+        VALUE_LIST,
+      </if>
+      <if test="isRepeat != null">
+        IS_REPEAT,
+      </if>
+      <if test="minCount != null">
+        MIN_COUNT,
+      </if>
+      <if test="maxCount != null">
+        MAX_COUNT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+     <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="attrName != null">
+        #{attrName,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null">
+        #{required,jdbcType=BIT},
+      </if>
+      <if test="validatePolicy != null">
+        #{validatePolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="readOnly != null">
+        #{readOnly,jdbcType=BIT},
+      </if>
+      <if test="orderIndex != null">
+        #{orderIndex,jdbcType=INTEGER},
+      </if>
+      <if test="widthType != null">
+        #{widthType,jdbcType=CHAR},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="searchable != null">
+        #{searchable,jdbcType=BIT},
+      </if>
+      <if test="controlType != null">
+        #{controlType,jdbcType=VARCHAR},
+      </if>
+      <if test="queryName != null">
+        #{queryName,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultValue != null">
+        #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="isHide != null">
+        #{isHide,jdbcType=BIT},
+      </if>
+      <if test="valueList != null">
+        #{valueList,jdbcType=VARCHAR},
+      </if>
+      <if test="isRepeat != null">
+        #{isRepeat,jdbcType=BIT},
+      </if>
+      <if test="minCount != null">
+        #{minCount,jdbcType=INTEGER},
+      </if>
+      <if test="maxCount != null">
+        #{maxCount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmFormItem">
+    update ecm_form_item
+    <set>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="attrName != null">
+        ATTR_NAME = #{attrName,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null">
+        REQUIRED = #{required,jdbcType=BIT},
+      </if>
+      <if test="validatePolicy != null">
+        VALIDATE_POLICY = #{validatePolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="readOnly != null">
+        READ_ONLY = #{readOnly,jdbcType=BIT},
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      </if>
+      <if test="widthType != null">
+        WIDTH_TYPE = #{widthType,jdbcType=CHAR},
+      </if>
+      <if test="label != null">
+        LABEL = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="searchable != null">
+        SEARCHABLE = #{searchable,jdbcType=BIT},
+      </if>
+      <if test="controlType != null">
+        CONTROL_TYPE = #{controlType,jdbcType=VARCHAR},
+      </if>
+      <if test="queryName != null">
+        QUERY_NAME = #{queryName,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultValue != null">
+        DEFAULT_VALUE = #{defaultValue,jdbcType=VARCHAR},
+      </if>
+      <if test="isHide != null">
+        REQUIRED = #{isHide,jdbcType=BIT},
+      </if>
+       <if test="defaultValue != null">
+        VALUE_LIST = #{valueList,jdbcType=VARCHAR},
+      </if>
+      <if test="isRepeat != null">
+        IS_REPEAT = #{isRepeat,jdbcType=BIT},
+      </if>
+      <if test="minCount != null">
+        MIN_COUNT = #{minCount,jdbcType=INTEGER},
+      </if>
+      <if test="maxCount != null">
+        MAX_COUNT = #{maxCount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmFormItem">
+    update ecm_form_item
+    set PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      ATTR_NAME = #{attrName,jdbcType=VARCHAR},
+      REQUIRED = #{required,jdbcType=BIT},
+      VALIDATE_POLICY = #{validatePolicy,jdbcType=VARCHAR},
+      READ_ONLY = #{readOnly,jdbcType=BIT},
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      WIDTH_TYPE = #{widthType,jdbcType=CHAR},
+      LABEL = #{label,jdbcType=VARCHAR},
+      SEARCHABLE = #{searchable,jdbcType=BIT},
+      CONTROL_TYPE = #{controlType,jdbcType=VARCHAR},
+      QUERY_NAME = #{queryName,jdbcType=VARCHAR},
+      DEFAULT_VALUE = #{defaultValue,jdbcType=VARCHAR},
+      IS_HIDE = #{isHide,jdbcType=BIT},
+      VALUE_LIST = #{valueList,jdbcType=VARCHAR},
+      IS_REPEAT = #{isRepeat,jdbcType=BIT},
+      MIN_COUNT = #{minCount,jdbcType=INTEGER},
+      MAX_COUNT = #{maxCount,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

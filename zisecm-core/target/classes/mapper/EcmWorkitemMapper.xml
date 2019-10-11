@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmWorkitemMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmWorkitem">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="ITEM_TYPE" jdbcType="INTEGER" property="itemType" />
+    <result column="PERFORMER" jdbcType="VARCHAR" property="performer" />
+    <result column="WORKFLOW_ID" jdbcType="VARCHAR" property="workflowId" />
+    <result column="ACTIVITY_ID" jdbcType="VARCHAR" property="activityId" />
+    <result column="PROCESS_ID" jdbcType="VARCHAR" property="processId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NAME, DESCRIPTION, ITEM_TYPE, PERFORMER, WORKFLOW_ID, ACTIVITY_ID, PROCESS_ID
+  </sql>
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_workitem
+    where ${condition}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_workitem
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_workitem
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmWorkitem">
+    insert into ecm_workitem (ID, NAME, DESCRIPTION, 
+      ITEM_TYPE, PERFORMER, WORKFLOW_ID, 
+      ACTIVITY_ID, PROCESS_ID)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{itemType,jdbcType=INTEGER}, #{performer,jdbcType=VARCHAR}, #{workflowId,jdbcType=VARCHAR}, 
+      #{activityId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmWorkitem">
+    insert into ecm_workitem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="itemType != null">
+        ITEM_TYPE,
+      </if>
+      <if test="performer != null">
+        PERFORMER,
+      </if>
+      <if test="workflowId != null">
+        WORKFLOW_ID,
+      </if>
+      <if test="activityId != null">
+        ACTIVITY_ID,
+      </if>
+      <if test="processId != null">
+        PROCESS_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        #{itemType,jdbcType=INTEGER},
+      </if>
+      <if test="performer != null">
+        #{performer,jdbcType=VARCHAR},
+      </if>
+      <if test="workflowId != null">
+        #{workflowId,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="processId != null">
+        #{processId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmWorkitem">
+    update ecm_workitem
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        ITEM_TYPE = #{itemType,jdbcType=INTEGER},
+      </if>
+      <if test="performer != null">
+        PERFORMER = #{performer,jdbcType=VARCHAR},
+      </if>
+      <if test="workflowId != null">
+        WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null">
+        ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      </if>
+      <if test="processId != null">
+        PROCESS_ID = #{processId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmWorkitem">
+    update ecm_workitem
+    set NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=INTEGER},
+      PERFORMER = #{performer,jdbcType=VARCHAR},
+      WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      ACTIVITY_ID = #{activityId,jdbcType=VARCHAR},
+      PROCESS_ID = #{processId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

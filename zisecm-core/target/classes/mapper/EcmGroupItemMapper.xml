@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmGroupItemMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmGroupItem">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="CHILD_ID" jdbcType="VARCHAR" property="childId" />
+     <result column="ITEM_TYPE" jdbcType="CHAR" property="itemType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PARENT_ID, CHILD_ID, ITEM_TYPE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_group_item
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectParent" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_group_item
+    where CHILD_ID = #{id,jdbcType=VARCHAR} and ITEM_TYPE='1'
+  </select>
+  <select id="executeSql" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_group_item
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmGroupItem">
+    insert into ecm_group_item (ID, PARENT_ID, CHILD_ID,ITEM_TYPE
+      )
+    values (#{id,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{childId,jdbcType=VARCHAR}
+    , #{itemType,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmGroupItem">
+    insert into ecm_group_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="childId != null">
+        CHILD_ID,
+      </if>
+      <if test="itemType != null">
+        ITEM_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+     <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="childId != null">
+        #{childId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        #{itemType,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmGroupItem">
+    update ecm_group_item
+    <set>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="childId != null">
+        CHILD_ID = #{childId,jdbcType=VARCHAR},
+      </if>
+       <if test="itemType != null">
+        ITEM_TYPE = #{itemType,jdbcType=CHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmGroupItem">
+    update ecm_group_item
+    set PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      CHILD_ID = #{childId,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=CHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

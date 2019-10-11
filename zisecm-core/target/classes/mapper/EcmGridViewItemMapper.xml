@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmGridViewItemMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmGridViewItem">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="LABEL" jdbcType="VARCHAR" property="label" />
+    <result column="WIDTH" jdbcType="VARCHAR" property="width" />
+    <result column="VISIBLE_TYPE" jdbcType="CHAR" property="visibleType" />
+    <result column="ATTR_NAME" jdbcType="VARCHAR" property="attrName" />
+    <result column="ALLOW_ORDERBY" jdbcType="BIT" property="allowOrderby" />
+    <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PARENT_ID, LABEL, WIDTH, VISIBLE_TYPE, ATTR_NAME, ALLOW_ORDERBY, ORDER_INDEX
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_gridview_item order by ID
+  </select>
+  <select id="selectByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_gridview_item
+    where PARENT_ID = #{parentId,jdbcType=VARCHAR} order by ORDER_INDEX
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_gridview_item
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_gridview_item
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmGridViewItem">
+    insert into ecm_gridview_item (ID, PARENT_ID, LABEL, 
+      WIDTH, VISIBLE_TYPE, ATTR_NAME, 
+      ALLOW_ORDERBY, ORDER_INDEX)
+    values (#{id,jdbcType=INTEGER},#{parentId,jdbcType=INTEGER}, #{label,jdbcType=VARCHAR}, 
+      #{width,jdbcType=VARCHAR}, #{visibleType,jdbcType=CHAR}, #{attrName,jdbcType=VARCHAR}, 
+      #{allowOrderby,jdbcType=BIT}, #{orderIndex,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmGridViewItem">
+    insert into ecm_gridview_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="parentId != null">
+        PARENT_ID,
+      </if>
+      <if test="label != null">
+        LABEL,
+      </if>
+      <if test="width != null">
+        WIDTH,
+      </if>
+      <if test="visibleType != null">
+        VISIBLE_TYPE,
+      </if>
+      <if test="attrName != null">
+        ATTR_NAME,
+      </if>
+      <if test="allowOrderby != null">
+        ALLOW_ORDERBY,
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="width != null">
+        #{width,jdbcType=VARCHAR},
+      </if>
+      <if test="visibleType != null">
+        #{visibleType,jdbcType=CHAR},
+      </if>
+      <if test="attrName != null">
+        #{attrName,jdbcType=VARCHAR},
+      </if>
+      <if test="allowOrderby != null">
+        #{allowOrderby,jdbcType=BIT},
+      </if>
+      <if test="orderIndex != null">
+        #{orderIndex,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmGridViewItem">
+    update ecm_gridview_item
+    <set>
+      <if test="parentId != null">
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null">
+        LABEL = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="width != null">
+        WIDTH = #{width,jdbcType=VARCHAR},
+      </if>
+      <if test="visibleType != null">
+        VISIBLE_TYPE = #{visibleType,jdbcType=CHAR},
+      </if>
+      <if test="attrName != null">
+        ATTR_NAME = #{attrName,jdbcType=VARCHAR},
+      </if>
+      <if test="allowOrderby != null">
+        ALLOW_ORDERBY = #{allowOrderby,jdbcType=BIT},
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmGridViewItem">
+    update ecm_gridview_item
+    set PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      LABEL = #{label,jdbcType=VARCHAR},
+      WIDTH = #{width,jdbcType=VARCHAR},
+      VISIBLE_TYPE = #{visibleType,jdbcType=CHAR},
+      ATTR_NAME = #{attrName,jdbcType=VARCHAR},
+      ALLOW_ORDERBY = #{allowOrderby,jdbcType=BIT},
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

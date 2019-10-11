@@ -1,0 +1,93 @@
+package com.ecm.portal.controller.admin;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmAction;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmCardSearch;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmComponent;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmDocType;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmForm;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmGridView;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmMenu;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmParam;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmStore;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmSuggestion;
+import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
+import com.ecm.core.dao.EcmActionMapper;
+import com.ecm.core.dao.EcmParameterMapper;
+import com.ecm.core.entity.EcmParameter;
+import com.ecm.core.search.ESClient;
+import com.ecm.portal.controller.ControllerAbstract;
+
+@Controller
+public class SystemManager extends ControllerAbstract{
+	
+	@Autowired
+	CacheManagerEcmAction cacheManagerEcmAction;
+	
+	@Autowired
+	CacheManagerEcmCardSearch cacheManagerEcmCardSearch;
+	
+	@Autowired
+	CacheManagerEcmComponent cacheManagerEcmComponent;
+	
+	@Autowired
+	CacheManagerEcmForm cacheManagerEcmForm;
+	
+	@Autowired
+	CacheManagerEcmGridView cacheManagerEcmGridView;
+	
+	@Autowired
+	CacheManagerEcmMenu cacheManagerEcmMenu;
+	
+	@Autowired
+	CacheManagerEcmParam cacheManagerEcmParam;
+	
+	@Autowired
+	CacheManagerLanguage cacheManagerLanguage;
+	
+	@Autowired
+	CacheManagerEcmStore cacheManagerEcmStore;
+	
+	@Autowired
+	CacheManagerEcmDocType cacheManagerEcmDocType;
+	
+	@Autowired
+	private CacheManagerEcmSuggestion cacheManagerEcmSuggestion;
+	
+	 @ResponseBody
+	 @RequestMapping("/admin/initAllCache")
+	 public   Map<String, Object>  initAllCache() {
+		 cacheManagerEcmAction.initAllCaches();
+		 
+		 cacheManagerEcmComponent.initAllCaches();
+		 cacheManagerEcmForm.initAllCaches();
+		 cacheManagerEcmGridView.initAllCaches();
+		 cacheManagerEcmMenu.initAllCaches();
+		 cacheManagerEcmParam.initAllCaches();
+		 cacheManagerLanguage.initAllCaches();
+		 cacheManagerEcmStore.initAllCaches();
+		 cacheManagerEcmDocType.initAllCaches();
+		 cacheManagerEcmCardSearch.initAllCaches();
+		 cacheManagerEcmSuggestion.initAllCaches();
+		 
+		 ESClient.getInstance().refreshCache();
+		 
+		 Map<String, Object>   mp = new HashMap<String, Object> ();
+		 mp.put("code", ActionContext.SUCESS);
+		 return mp;
+	 }
+}

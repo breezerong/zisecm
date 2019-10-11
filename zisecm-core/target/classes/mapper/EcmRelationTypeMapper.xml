@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmRelationTypeMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmRelationType">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="PARENT_TYPE" jdbcType="VARCHAR" property="parentType" />
+    <result column="CHILD_TYPE" jdbcType="VARCHAR" property="childType" />
+    <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
+    <result column="AUTO_COPY" jdbcType="BOOLEAN" property="autoCopy" />
+    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="MODIFIER" jdbcType="VARCHAR" property="modifier" />
+    <result column="MODIFIED_DATE" jdbcType="TIMESTAMP" property="modifiedDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, NAME, DESCRIPTION, PARENT_TYPE, CHILD_TYPE,AUTO_COPY, CREATION_DATE, CREATOR, MODIFIED_DATE, MODIFIER
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_relation_type
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_relation_type
+    where ${condition}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_relation_type
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmRelationType">
+    insert into ecm_relation_type (ID, NAME, DESCRIPTION, PARENT_TYPE, 
+      CHILD_TYPE,AUTO_COPY, CREATION_DATE, CREATOR, MODIFIED_DATE, MODIFIER
+      )
+    values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{parentType,jdbcType=VARCHAR}, 
+      #{childType,jdbcType=VARCHAR}, #{autoCopy,jdbcType=BOOLEAN},#{creationDate,jdbcType=TIMESTAMP}, 
+      #{creator,jdbcType=VARCHAR},#{modifiedDate,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}
+      )
+    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS ID
+	</selectKey>
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmRelationType">
+    insert into ecm_exrelation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="parentType != null">
+        PARENT_TYPE,
+      </if>
+      <if test="childType != null">
+        CHILD_TYPE,
+      </if>
+      <if test="autoCopy != null">
+        AUTO_COPY,
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE,
+      </if>
+      <if test="creator != null">
+        CREATOR,
+      </if>
+      <if test="modifiedDate != null">
+        MODIFIED_DATE,
+      </if>
+      <if test="modifier != null">
+        MODIFIER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+       <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="parentType != null">
+        #{parentType,jdbcType=VARCHAR},
+      </if>
+      <if test="childType != null">
+        #{childType,jdbcType=VARCHAR},
+      </if>
+      <if test="autoCopy != null">
+        #{autoCopy,jdbcType=BOOLEAN},
+      </if>
+      <if test="creationDate != null">
+        #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedDate != null">
+        #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmRelationType">
+    update ecm_exrelation
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+       <if test="description != null">
+        DESCRIPTION =  = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        PARENT_Type = #{parentType,jdbcType=VARCHAR},
+      </if>
+      <if test="childType != null">
+        CHILD_Type = #{childType,jdbcType=VARCHAR},
+      </if>
+      <if test="autoCopy != null">
+        AUTO_COPY = #{autoCopy,jdbcType=BOOLEAN},
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedDate != null">
+        MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        MODIFIER = #{modifier,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmRelationType">
+    update ecm_exrelation
+    set NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      PARENT_TYPE = #{parentType,jdbcType=VARCHAR},
+      CHILD_TYPE = #{childType,jdbcType=VARCHAR},
+      AUTO_COPY = #{autoCopy,jdbcType=VARCHAR},
+      CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      CREATOR = #{creator,jdbcType=VARCHAR}
+      MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+      MODIFIER = #{modifier,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
