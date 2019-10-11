@@ -1,5 +1,17 @@
 <template>
   <div>
+     <!-- 选字段对话框 -->
+    <el-dialog title="选择需要展示的字段" :visible.sync="columnsInfo.dialogFormVisible" width="40%" center top="15vh">
+      <el-checkbox :indeterminate="columnsInfo.isIndeterminate" v-model="columnsInfo.checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <div style="margin: 15px 0;"></div>
+      <el-checkbox-group v-model="showFields" @change="handleCheckedColsChange">
+        <el-checkbox v-for="item in gridList" :label="item.attrName" :key="item.attrName">{{item.label}}</el-checkbox>
+      </el-checkbox-group>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="columnsInfo.dialogFormVisible=false" size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
+      </div>
+    </el-dialog>
     <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
       <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
@@ -135,20 +147,7 @@
                       </div>
                       <el-table-column :label="$t('application.operation')" width="200">
                         <template slot="header" slot-scope="scope">
-                          <el-select
-                            v-model="showFields"
-                            multiple
-                            collapse-tags
-                            style="width: 150px;"
-                            placeholder="请选择">
-                            <div v-for="item in gridList">
-                            <el-option
-                              :key="item.attrName"
-                              :label="item.label"
-                              :value="item.attrName">
-                            </el-option>
-                            </div>
-                          </el-select>
+                         <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                         </template>
                         <template slot-scope="scope">
                           <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
@@ -179,16 +178,25 @@
 <script type="text/javascript">
 import ShowProperty from '@/components/dc/ShowProperty'
 import PDFViewer from '@/components/controls/PDFViewer'
+
 import 'url-search-params-polyfill'
 
 export default {
   name: "FolderClassification",
+  
   components: {
     ShowProperty: ShowProperty,
     PDFViewer: PDFViewer
   },
   data() {
     return {
+      columnsInfo:{
+        checkAll: true,
+        checkedCities:[],
+        temCol:[],
+        dialogFormVisible:false,
+        isIndeterminate:false
+      },
       imageFormat: 'jpg,jpeg,bmp,gif,png',
       baseServerUrl: this.baseURL,
       currentLanguage: "zh-cn",
@@ -207,6 +215,7 @@ export default {
       currentPage:1,
       dialogVisible: false,
       propertyVisible: false,
+      dialogFormVisible: false,
       selectedItems: [],
       tableHeight: window.innerHeight - 178,
       folderAction:"",
@@ -290,8 +299,7 @@ export default {
       let href = this.$router.resolve({
         name: 'docviewer',
         query: {
-          id: condition,
-          token: this.getToken()
+          id: condition
         }
       });
       console.log(href);
@@ -343,6 +351,7 @@ export default {
       var crtTime = new Date(value);
       return this.dateFtt("yyyy-MM-dd",crtTime);
     },
+  
     // 表格行选择
     selectChange(val) 
     {
@@ -492,6 +501,7 @@ export default {
       }
       _self.loadGridInfo(indata);
       _self.loadGridData(indata);
+      _self.loadPageInfo(indata);
     },
     // 新建文档
     newItem()
@@ -588,7 +598,7 @@ export default {
       _self.currentType = indata.FORMAT_NAME;
       // 拦截器会自动替换成目标url
       _self.imageArray[0] =  "/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      if(_self.currentType == "pdf"){
+      if(_self.currentType == "pdf1"){
          window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
       }else{
          _self.imageViewVisible =true;
@@ -753,6 +763,40 @@ export default {
     searchItem() {
      this.loadGridData(this.currentFolder);
      this. loadPageInfo(this.currentFolder);
+    },
+      //展示勾选弹框
+    dialogFormShow(){
+      this.columnsInfo.dialogFormVisible = true
+    },
+    //全选按钮
+    handleCheckAllChange(val) {
+      this.showFields=[]
+      if(val){
+        this.gridList.forEach(element => {
+          this.showFields.push(element.attrName)
+        });
+      }
+      this.columnsInfo.isIndeterminate = false;
+    },
+    //单个选中
+    handleCheckedColsChange(value) {
+      let checkedCount = value.length;
+      this.columnsInfo.checkAll = checkedCount === this.gridList.length;
+      this.columnsInfo.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.gridList.length;
+    },
+    confirmShow() {
+       let _self = this;
+       _self.gridList.forEach(element => {
+          element.visibleType = 2;
+        });
+       _self.showFields.forEach(element => {
+          let item = _self.getgriditem(element);
+          if (item) {
+            item.visibleType = 1;
+          }
+        });
+      this.columnsInfo.dialogFormVisible = false
     }
   }
 };

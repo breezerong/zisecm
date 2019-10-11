@@ -35,6 +35,7 @@
                       </div>
                     </el-select>
                   </div>
+                  <UserSelectInput v-else-if="item.rowdata[0].controlType=='UserSelect'" v-model="item.rowdata[0].defaultValue"></UserSelectInput>
                 </el-form-item>
               </el-col>
             </div>
@@ -68,6 +69,7 @@
                         </div>
                       </el-select>
                     </div>
+                    <UserSelectInput v-else-if="subitem.controlType=='UserSelect'" v-model="subitem.defaultValue" v-bind:inputValue="subitem.defaultValue"></UserSelectInput>
                   </el-form-item>
                 </el-col>
                </div>
@@ -102,6 +104,7 @@
                         </div>
                       </el-select>
                     </div>
+                    <UserSelectInput v-else-if="subitem.controlType=='UserSelect'" v-model="subitem.defaultValue"></UserSelectInput>
                   </el-form-item>
                 </el-col>
                </div>
@@ -136,6 +139,7 @@
                         </div>
                       </el-select>
                     </div>
+                    <UserSelectInput v-else-if="subitem.controlType=='UserSelect'" v-model="subitem.defaultValue"></UserSelectInput>
                   </el-form-item>
                 </el-col>
               </div>
@@ -159,9 +163,13 @@
 </template>
 
 <script type="text/javascript">
+import UserSelectInput from '@/components/controls/UserSelectInput'
 
 export default {
   name: "ShowProperty",
+  components: {
+    UserSelectInput:UserSelectInput
+  },
   data() {
     return {
       tableHeight: window.innerHeight - 98,
@@ -373,6 +381,7 @@ export default {
             var i;
             for (i in frmItems) {
               frmItems[i].defaultValue = tab[frmItems[i].attrName];
+              console.log(JSON.stringify(frmItems[i].attrName)+":"+frmItems[i].defaultValue);
             }
             _self.refreshData(frmItems);
           })

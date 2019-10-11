@@ -1,5 +1,5 @@
 <template>
-  <el-form size="mini" label-width="120px" @submit.native.prevent>
+  <el-form label-width="120px" @submit.native.prevent>
     <el-row>
       <template v-for="(item,itemIndex) in formColumnsList">
         <el-col :span="showCellValue" v-bind:key="itemIndex">
@@ -11,13 +11,12 @@
                 <el-select  :name="item.attrName"
                 v-else-if="item.controlType=='Select' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
                 v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" style="display:block;">
-                    <template v-for="(name,nameIndex) in item.validValues">
-                        <el-option  :label="name" :value="name" :key="nameIndex"></el-option>      
-                    </template>
+                      <div v-for="(name,nameIndex) in item.validValues">
+                        <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+                      </div>
                   </el-select>
-                
-                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput>                    
-              
+                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput>
+                <!-- <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput> -->
           </el-form-item>
         </el-col>
       </template>
@@ -111,26 +110,30 @@ export default {
           _self.formObj = response.data.data;
           console.log(_self.formObj);
           _self.showColumns = _self.formObj.columnCount;
-          _self.getFormItems(_self.formObj.id)
+          _self.getFormItems(_self.typeName);
         });
       }
     },
     /*
     获取表单字段信息，被getFormInfo调用
     */
-    getFormItems(id){
+    getFormItems(name){
       console.log("getFormItems");
       let _self = this;
-      console.log(id);
+      var m = new Map();
+      m.set('itemInfo',name);//ID 或类型
+      m.set('lang',_self.getLang());
+      
+      //console.log(name);
       _self.axios({
         headers: {
           "Content-Type": "application/json;charset=UTF-8"
         },
         method: "post",
-        data: id,
-        url: "/zisecm/admin/getFormItem"
+        data: JSON.stringify(m),
+        url: "/zisecm/dc/getFormItem"
       }).then(function(response){
-        console.log(response.data.data)
+        console.log(response.data.data);
         _self.formColumnsList = response.data.data;
       });
     }
@@ -169,6 +172,9 @@ ul {
 }
 li {
   display: inline-block;
+}
+li {
+  /* display: inline-block; */
   margin: 0 10px;
 }
 a {
