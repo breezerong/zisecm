@@ -1,0 +1,17 @@
+
+*.class
+zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+zisecm-core/target/classes/META-INF/spring-configuration-metadata.json
+zisecm-core/target/maven-archiver/pom.properties
+zisecm-core/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+zisecm-core/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+zisecm-core/target/zisecm-core-0.0.1-SNAPSHOT.jar
+zisecm-core/target/zisecm-core-0.0.1-SNAPSHOT.jar.original
+zisecm-ESIndexAgent/target/classes/META-INF/maven/com.zisyun/es-index-agent/pom.properties
+zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.properties
+zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+zisecm-ESIndexAgent/target/classes/META-INF/maven/com.zisyun/es-index-agent/pom.properties
+zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.properties
+zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+zisecm-ESIndexAgent/target/classes/META-INF/maven/com.zisyun/es-index-agent/pom.properties
+zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.properties

@@ -141,7 +141,7 @@ public class IndexService {
                     logger.error("冲突了\n" + e.getDetailedMessage());
                 }
                 logger.error("索引异常", e);
-            } catch (IOException e) {
+            } catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
