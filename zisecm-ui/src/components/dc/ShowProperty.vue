@@ -88,9 +88,9 @@ export default {
   },
   methods: {
     showCellValue(item){
-      console.log(item);
+      //console.log(item);
       var v = 24/ parseInt(item.widthType);
-      console.log(v);
+      //console.log(v);
       return v;
     },
     handleChange(file, fileList){
@@ -245,7 +245,7 @@ export default {
       let _self = this;
       if(_self.myItemId =='')
       {
-        _self.refreshData(indata);
+        _self.dataList = indata;
       }
       else
       {

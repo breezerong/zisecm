@@ -66,12 +66,12 @@
                 type="index"
                 width="60">
               </el-table-column>
-        <el-table-column label="类型名" width="180" >
+        <el-table-column label="类型名"  min-width="20%" >
            <template slot-scope="scope">
             <el-input  v-model="scope.row.typeName"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="说明" width="240">
+        <el-table-column label="说明"  min-width="30%">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.description"></el-input>
           </template>
