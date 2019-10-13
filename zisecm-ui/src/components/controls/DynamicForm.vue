@@ -2,7 +2,7 @@
   <el-form label-width="120px" @submit.native.prevent>
     <el-row>
       <template v-for="(item,itemIndex) in formColumnsList">
-        <el-col :span="showCellValue" v-bind:key="itemIndex">
+        <el-col :span="showCellValue(item)" v-bind:key="itemIndex">
           <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:'必填',trigger:'blur'}]">
                 <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue"></el-input>
                 <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue"></el-input>
@@ -15,7 +15,7 @@
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>
                   </el-select>
-                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput>
+                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue"></UserSelectInput>
                 <!-- <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput> -->
           </el-form-item>
         </el-col>
@@ -70,6 +70,12 @@ export default {
     }
   },
   methods:{
+    showCellValue(item){
+      console.log(item);
+      var v = 24/ parseInt(item.widthType);
+      console.log(v);
+      return v;
+    },
     /*
     文件选择事件响应，将选择文件信息赋给fileList
     */
@@ -84,12 +90,12 @@ export default {
       let formdata = new FormData();
       var data = {};
       _self.formColumnsList.forEach(function(item){
-        console.log(item);
+        //console.log(item);
         data[item.attrName]=item.defaultValue;
       });
       formdata.append("metaData",JSON.stringify(data));      
       _self.fileList.forEach(function (file) {
-        console.log(file.name);
+        //console.log(file.name);
         formdata.append("files", file.raw, file.name);
       });
       return formdata;
@@ -108,7 +114,7 @@ export default {
           url: url
         }).then(function(response){
           _self.formObj = response.data.data;
-          console.log(_self.formObj);
+          //console.log(_self.formObj);
           _self.showColumns = _self.formObj.columnCount;
           _self.getFormItems(_self.typeName);
         });
@@ -133,18 +139,14 @@ export default {
         data: JSON.stringify(m),
         url: "/zisecm/dc/getFormItem"
       }).then(function(response){
-        console.log(response.data.data);
+        //console.log(response.data.data);
         _self.formColumnsList = response.data.data;
       });
     }
   },
   computed:{
     /*通过created中获取的表单内容计算col的宽度*/
-    showCellValue:function(){
-      var v = 24/ this.showColumns;
-      console.log(v);
-      return v;
-    }
+    
   },
   mounted(){
     this.fileList=[];

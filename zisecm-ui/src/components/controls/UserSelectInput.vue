@@ -3,7 +3,7 @@
 	  <el-dialog :visible.sync="showChooseDialog" :append-to-body="true" width="40%"> 
             <el-input placeholder="输入搜索内容，点击回车进行搜索" @keyup.enter.native="on_filter" v-model="findValue"></el-input>				
             <el-table :data="userList" border height="350px" fit stripe style="width: 100%">
-              <el-table-column prop="name" label="登录名"></el-table-column>
+              <el-table-column prop="name" label="用户名"></el-table-column>
               <el-table-column prop="email" label="邮箱"></el-table-column>
               <el-table-column width="100" label="操作">
                 <template slot-scope="scope">

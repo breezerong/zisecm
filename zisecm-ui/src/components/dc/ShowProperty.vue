@@ -5,147 +5,27 @@
         <el-button :plain="true" type="primary" size="small" icon="edit" @click="loaddata()">刷新数据</el-button>
       </div>
       -->
-      <div v-for="item in dataList">
-        <el-row>
-            <div v-if="item.colcount === 1">
-              <el-col>
-                <el-form-item :label="item.rowdata[0].label" 
-                :rules="[{ required: item.rowdata[0].required, message: '必填', trigger: 'blur'}]">
-                  <div v-if="item.rowdata[0].controlType=='TextBox'">
-                    <el-input  style="width:42em" v-model="item.rowdata[0].defaultValue" :disabled="item.rowdata[0].readOnly"></el-input>
-                  </div>
-                  <div v-if="item.rowdata[0].controlType=='Integer'">
-                    <el-input  style="width:18em" type="number" v-model.number="item.rowdata[0].defaultValue" :disabled="item.rowdata[0].readOnly"></el-input>
-                  </div>
-                  <div v-if="item.rowdata[0].controlType=='Boolean'">
-                    <el-checkbox  style="width:5em;float:left" v-model="item.rowdata[0].defaultValue" :disabled="item.rowdata[0].readOnly"></el-checkbox>
-                  </div>
-                  <div v-else-if="item.rowdata[0].controlType=='TextArea'">
-                    <el-input style="width:42em" type="textarea"  v-model="item.rowdata[0].defaultValue" :disabled="item.rowdata[0].readOnly"></el-input>
-                  </div>
-                  <div v-else-if="item.rowdata[0].controlType=='Date'">
-                    <el-date-picker  style="width:18em" v-model="item.rowdata[0].defaultValue" type="date" placeholder="选择日期" :disabled="item.rowdata[0].readOnly">
-                    </el-date-picker>
-                  </div>
-                  <div v-else-if="item.rowdata[0].controlType=='Select' || item.rowdata[0].controlType=='Department'
-                  || item.rowdata[0].controlType=='SQLSelect'">
-                    <el-select  style="width:18em" v-model="item.rowdata[0].defaultValue" :disabled="item.rowdata[0].readOnly">
-                      <div v-for="name in item.rowdata[0].validValues">
-                        <el-option  :label="name" :value="name"></el-option>
+      <el-row>
+      <template v-for="(item,itemIndex) in dataList">
+        <el-col :span="showCellValue(item)" v-bind:key="itemIndex">
+          <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:'必填',trigger:'blur'}]">
+                <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue"></el-input>
+                <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue"></el-input>
+                <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue"></el-checkbox>
+                <el-date-picker v-else-if="item.controlType=='Date'" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;"></el-date-picker>
+                <el-select  :name="item.attrName"
+                v-else-if="item.controlType=='Select' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
+                v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" style="display:block;">
+                      <div v-for="(name,nameIndex) in item.validValues">
+                        <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>
-                    </el-select>
-                  </div>
-                  <UserSelectInput v-else-if="item.rowdata[0].controlType=='UserSelect'" v-model="item.rowdata[0].defaultValue"></UserSelectInput>
-                </el-form-item>
-              </el-col>
-            </div>
-            <div v-else-if="item.colcount === 2">
-               <div v-for="subitem in item.rowdata">
-                <el-col :span="12" style="align:left;">
-                  <el-form-item :label="subitem.label" 
-                  :rules="[{ required: subitem.required, message: '必填', trigger: 'blur'}]"
-                  >
-                    <div v-if="subitem.controlType === 'TextBox'">
-                      <el-input style="width:18em" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-if="subitem.controlType=='Integer'">
-                      <el-input style="width:18em" type="number" v-model.number="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-if="subitem.controlType=='Boolean'">
-                      <el-checkbox style="width:5em;float:left" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-checkbox>
-                    </div>
-                    <div v-else-if="subitem.controlType === 'TextArea'">
-                      <el-input style="width:18em" type="textarea" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-else-if="subitem.controlType ==='Date'">
-                      <el-date-picker style="width:18em" v-model="subitem.defaultValue" type="date" placeholder="选择日期" :disabled="subitem.readOnly">
-                      </el-date-picker>
-                    </div>
-                    <div v-else-if="subitem.controlType === 'Select'|| subitem.controlType=='Department'
-                      || subitem.controlType=='SQLSelect'">
-                      <el-select style="width:18em" v-model="subitem.defaultValue" :disabled="subitem.readOnly">
-                        <div v-for="name in subitem.validValues">
-                          <el-option :label="name" :value="name"></el-option>
-                        </div>
-                      </el-select>
-                    </div>
-                    <UserSelectInput v-else-if="subitem.controlType=='UserSelect'" v-model="subitem.defaultValue" v-bind:inputValue="subitem.defaultValue"></UserSelectInput>
-                  </el-form-item>
-                </el-col>
-               </div>
-              </div>
-              <div v-else-if="item.colcount === 3">
-               <div v-for="subitem in item.rowdata">
-                <el-col :span="8" style="align:left;">
-                  <el-form-item :label="subitem.label" 
-                  :rules="[{ required: subitem.required, message: '必填', trigger: 'blur'}]"
-                  >
-                    <div v-if="subitem.controlType === 'TextBox'">
-                      <el-input style="width:15em" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-if="subitem.controlType=='Integer'">
-                      <el-input style="width:15em" type="number" v-model.number="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-if="subitem.controlType=='Boolean'">
-                      <el-checkbox style="width:5em" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-checkbox>
-                    </div>
-                    <div v-else-if="subitem.controlType === 'TextArea'">
-                      <el-input style="width:15em" type="textarea" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-else-if="subitem.controlType ==='Date'">
-                      <el-date-picker style="width:15em" v-model="subitem.defaultValue" type="date" placeholder="选择日期" :disabled="subitem.readOnly">
-                      </el-date-picker>
-                    </div>
-                    <div v-else-if="subitem.controlType === 'Select'|| subitem.controlType=='Department'
-                      || subitem.controlType=='SQLSelect'">
-                      <el-select style="width:15em" v-model="subitem.defaultValue" :disabled="subitem.readOnly">
-                        <div v-for="name in subitem.validValues">
-                          <el-option :label="name" :value="name"></el-option>
-                        </div>
-                      </el-select>
-                    </div>
-                    <UserSelectInput v-else-if="subitem.controlType=='UserSelect'" v-model="subitem.defaultValue"></UserSelectInput>
-                  </el-form-item>
-                </el-col>
-               </div>
-              </div>
-              <div v-else-if="item.colcount === 4">
-               <div v-for="subitem in item.rowdata">
-                <el-col :span="8" style="align:left;">
-                  <el-form-item :label="subitem.label" 
-                  :rules="[{ required: subitem.required, message: '必填', trigger: 'blur'}]"
-                  >
-                    <div v-if="subitem.controlType === 'TextBox'">
-                      <el-input style="width:10em" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-if="subitem.controlType=='Integer'">
-                      <el-input style="width:10em" type="number" v-model.number="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-if="subitem.controlType=='Boolean'">
-                      <el-checkbox style="width:5em" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-checkbox>
-                    </div>
-                    <div v-else-if="subitem.controlType === 'TextArea'">
-                      <el-input style="width:10em" type="textarea" v-model="subitem.defaultValue" :disabled="subitem.readOnly"></el-input>
-                    </div>
-                    <div v-else-if="subitem.controlType ==='Date'">
-                      <el-date-picker style="width:10em" v-model="subitem.defaultValue" type="date" placeholder="选择日期" :disabled="subitem.readOnly">
-                      </el-date-picker>
-                    </div>
-                    <div v-else-if="subitem.controlType === 'Select'|| subitem.controlType=='Department'
-                      || subitem.controlType=='SQLSelect'">
-                      <el-select style="width:10em" v-model="subitem.defaultValue" :disabled="subitem.readOnly">
-                        <div v-for="name in subitem.validValues">
-                          <el-option :label="name" :value="name"></el-option>
-                        </div>
-                      </el-select>
-                    </div>
-                    <UserSelectInput v-else-if="subitem.controlType=='UserSelect'" v-model="subitem.defaultValue"></UserSelectInput>
-                  </el-form-item>
-                </el-col>
-              </div>
-            </div>
-        </el-row>
-      </div>
+                  </el-select>
+                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue"></UserSelectInput>
+                <!-- <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput> -->
+          </el-form-item>
+        </el-col>
+      </template>
+    </el-row>
       <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;">
         <el-upload
         :limit="1"
@@ -192,8 +72,6 @@ export default {
       },
       file:"",
       fileList:[],
-      formLabelWidth: "100px",
-      formLabelWidth2: "100px",
       myItemId: this.itemId,
       myTypeName: this.typeName,
       myFolderId: this.folderId
@@ -209,6 +87,12 @@ export default {
     folderId: {type:[String,Number],required:true}
   },
   methods: {
+    showCellValue(item){
+      console.log(item);
+      var v = 24/ parseInt(item.widthType);
+      console.log(v);
+      return v;
+    },
     handleChange(file, fileList){
       this.file = file;
         //console.log(file);
@@ -381,104 +265,14 @@ export default {
             var i;
             for (i in frmItems) {
               frmItems[i].defaultValue = tab[frmItems[i].attrName];
-              console.log(JSON.stringify(frmItems[i].attrName)+":"+frmItems[i].defaultValue);
+              //console.log(JSON.stringify(frmItems[i].attrName)+":"+frmItems[i].defaultValue);
             }
-            _self.refreshData(frmItems);
+            _self.dataList = frmItems;
           })
           .catch(function(error) {
             console.log(error);
         });
       }
-    },
-    refreshData(data) {
-      let tab = data;
-      let _self = this;
-      _self.dataList = [];
-      _self.dataAll = [];
-      var newrow = false;
-      var ci = 0;
-      var i;
-      let rowdata = [];
-     
-      for (i in tab) {
-        _self.dataAll.push(tab[i]);
-        // console.log('-----------------------------');
-        //console.log(JSON.stringify(tab[i]));
-        if(tab[i].isHide == false)
-        {
-          if (tab[i].widthType=='1')
-          {
-            //单行前面类型为：2，只有一个控件的需要增加空控件
-            if(ci==1)
-            {
-              let emptydata = {
-                attrName:"",
-                readOnly:false,
-                controlType:"",
-                label:"",
-                validValues:[],
-                orderIndex: 1,
-                defaultValue: ""
-              }
-              rowdata.push(emptydata);
-              let rowdatas = {
-                colcount: rowdata.length,
-                rowdata: rowdata
-              }
-              _self.dataList.push(rowdatas);
-              ci=0;
-              rowdata = [];
-            }
-            // console.log("i:"+i);
-            rowdata.push(tab[i]);
-            newrow = true;
-          }
-          else 
-          {
-            // console.log("i:"+i);
-            rowdata.push(tab[i]);
-            ci = ci+1;
-            if(ci==2)
-            {
-              ci = 0;
-              newrow = true;
-            }
-          }
-          
-          if(newrow)
-          {
-            let rowdatas = {
-              colcount: rowdata.length,
-              rowdata: rowdata
-            }
-            _self.dataList.push(rowdatas);
-            newrow = false;
-            rowdata = [];
-          }
-          
-        }
-        if((tab.length-1)==i) // 最后一行处理
-          {
-            if(ci==1)
-            {
-              let emptydata = {
-                attrName:"",
-                controlType:"",
-                label:"",
-                validValues:[],
-                orderIndex: 1,
-                defaultValue: ""
-              }
-              rowdata.push(emptydata);
-            }
-            let rowdatas = {
-              colcount: rowdata.length,
-              rowdata: rowdata
-            }
-            _self.dataList.push(rowdatas);
-          }
-      }
-      //console.log(JSON.stringify(_self.dataList));
     }
   }
 };

@@ -40,7 +40,7 @@
               </el-table-column>
               <el-table-column prop="C_PROJECT" label="项目" sortable min-width="20%" >
               </el-table-column>
-              <el-table-column prop="CREATION_DATE" label="创建时间" sortable :formatter="dateFormat" width="180">
+              <el-table-column prop="CREATION_DATE" label="创建时间" sortable :formatter="dateFormatter" width="180">
               </el-table-column>
               <el-table-column label="操作"  width="120">
                 <template slot-scope="scope">
@@ -141,16 +141,9 @@ export default {
       this.currentPage = val;
       this.refreshData();
     }, 
-    dateFormat(row, column) {
+    dateFormatter(row, column) {
         let datetime = row.CREATION_DATE;
-        if(datetime){
-          datetime = new Date(datetime);
-          let y = datetime.getFullYear() + '-';
-          let mon = datetime.getMonth()+1 + '-';
-          let d = datetime.getDate();
-          return y + mon + d + " "+datetime.getHours()+":"+datetime.getMinutes()+":"+datetime.getSeconds();
-        }
-        return ''
+        return this.datetimeFormat(datetime);
       },
       //删除
       deleteDrawing(){

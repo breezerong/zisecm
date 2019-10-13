@@ -64,11 +64,11 @@
               </el-table-column>
               <el-table-column prop="C_COMMENT" label="错误信息" min-width="20%" >
               </el-table-column>
-              <el-table-column prop="CREATION_DATE" label="创建时间" sortable :formatter="dateFormat" width="180">
+              <el-table-column prop="CREATION_DATE" label="创建时间" sortable :formatter="dateFormatter" width="180">
               </el-table-column>
               <el-table-column label="操作"  width="120">
                 <template slot-scope="scope">
-                  <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
+                  <el-button :plain="true" type="success" size="small" icon="save" @click="showItemContent(scope.row)">查看</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -144,7 +144,7 @@ export default {
       })
       .then(function(response) {
         _self.dataList = response.data.data;
-        console.log(JSON.stringify(_self.dataList));
+        //console.log(JSON.stringify(_self.dataList));
         _self.dataListFull = response.data.data;
         //加载分页信息
         _self.itemCount = response.data.pager.total;
@@ -197,6 +197,10 @@ export default {
         console.log(error);
       });
     },
+    dateFormatter(row, column) {
+        let datetime = row.CREATION_DATE;
+        return this.datetimeFormat(datetime);
+      },
     updateStatus(){//重签
       let _self = this;
       var obj={"STATUS":"已审批","list":""};
@@ -221,6 +225,19 @@ export default {
       .catch(function(error) {
         console.log(error);
       });
+    },
+    // 查看内容
+    showItemContent(indata){
+      let _self = this;
+      _self.imageArray = [];
+      _self.currentType = indata.FORMAT_NAME;
+      // 拦截器会自动替换成目标url
+      _self.imageArray[0] =  "/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
+      if(_self.currentType == "pdf"){
+         window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
+      }else{
+         _self.imageViewVisible =true;
+      }
     },
     //删除
       deleteDrawing(){
@@ -247,17 +264,6 @@ export default {
         console.log(error);
       });
     },
-    dateFormat(row, column) {
-        let datetime = row.CREATION_DATE;
-        if(datetime){
-          datetime = new Date(datetime);
-          let y = datetime.getFullYear() + '-';
-          let mon = datetime.getMonth()+1 + '-';
-          let d = datetime.getDate();
-          return y + mon + d + " "+datetime.getHours()+":"+datetime.getMinutes()+":"+datetime.getSeconds();
-        }
-        return ''
-      },
     search() {
       let _self = this;
       _self.dataList = _self.dataListFull.filter(function(item){

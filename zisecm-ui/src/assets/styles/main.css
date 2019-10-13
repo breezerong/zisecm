@@ -8,7 +8,14 @@ body {
   overflow: visible;
   vertical-align: middle;
 }
-
+a:-webkit-any-link {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: none;
+  text-decoration-line: none;
+  text-decoration-style: initial;
+  text-decoration-color: initial;
+}
 .navbar-top-inner {
   margin-bottom: 0;
   background: #36a9e1;

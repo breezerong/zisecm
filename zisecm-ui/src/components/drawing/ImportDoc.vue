@@ -8,6 +8,12 @@
         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="70%">
+      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" folderId="0" typeName="图纸"></ShowProperty>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
         <el-dialog title="导入" :visible.sync="dialogVisible" width="70%">
           <DynamicForm ref="formObj" typeName="图纸" isUpload></DynamicForm>
           <!-- <el-form size="mini" :label-width="formLabelWidth">
@@ -66,7 +72,10 @@
                   </td>
                   <td>
                     <el-button type="primary" icon="el-icon-upload" @click="openUploadPage()">导入</el-button>
+                    <el-button type="primary" icon="el-icon-s-check" @click="updateStatus()">提交签名</el-button>
+                    <!--
                     <el-button type="primary" icon="el-icon-s-check" @click="showWorkflow()">发起流程</el-button>
+                    -->
                     <el-button type="primary" icon="el-icon-delete" @click="deleteDrawing()">删除</el-button>
                   </td>
                   <td>
@@ -92,11 +101,12 @@
               </el-table-column>
               <el-table-column prop="C_PROJECT" label="项目名称" sortable min-width="20%" >
               </el-table-column>
-              <el-table-column prop="CREATION_DATE" label="创建时间" sortable :formatter="dateFormat" width="180">
+              <el-table-column prop="CREATION_DATE" label="创建时间" sortable :formatter="dateFormatter" width="180">
               </el-table-column>
-              <el-table-column label="操作"  width="120">
+              <el-table-column label="操作"  width="240">
                 <template slot-scope="scope">
-                  <el-button :plain="true" type="success" size="small" icon="save" @click="showItemContent(scope.row)" >查看</el-button> 
+                  <el-button type="primary" plain size="small" icon="el-icon-info" @click="showItemProperty(scope.row)">{{$t('application.viewProperty')}}</el-button>
+                  <el-button type="primary" plain size="small" icon="save" @click="showItemContent(scope.row)" >查看文件</el-button> 
                 </template>
               </el-table-column>
             </el-table>
@@ -118,6 +128,7 @@
 <script type="text/javascript">
 import WorkFlowDialog from '@/components/dc/WorkFlow'
 import DynamicForm from '@/components/controls/DynamicForm'
+import ShowProperty from '@/components/dc/ShowProperty'
 
 export default {
   name: "ImportDoc",
@@ -153,7 +164,8 @@ export default {
     };
   },components: {
     WorkFlowDialog: WorkFlowDialog,
-    DynamicForm : DynamicForm
+    DynamicForm : DynamicForm,
+    ShowProperty: ShowProperty
   },
    created(){ 
     let _self = this;
@@ -336,8 +348,34 @@ export default {
         console.log(error);
       });
     },
+    // 查看属性
+    showItemProperty(indata){
+      let _self = this;
+      _self.selectedItemId = indata.ID ;
+      _self.propertyVisible = true;
+      if(_self.$refs.ShowProperty){
+        _self.$refs.ShowProperty.myItemId = indata.ID ;
+        _self.$refs.ShowProperty.loadFormInfo();
+      }
+    },
+     // 保存文档
+    saveItem(){
+      this.$refs.ShowProperty.saveItem();
+    },
+    // 保存结果事件
+    onSaved(indata){
+      if(indata=='update')
+      {
+        this.$message(this.$t("message.saveSuccess"));
+      }
+      else
+      {
+        this.$message("新建成功!");
+      }
+      this.propertyVisible = false;
+      this.refreshData();
+    },
     // 查看内容
-
     showItemContent(indata){
       let _self = this;
       _self.imageArray = [];
@@ -350,16 +388,9 @@ export default {
          _self.imageViewVisible =true;
       }
     },
-    dateFormat(row, column) {
+    dateFormatter(row, column) {
         let datetime = row.CREATION_DATE;
-        if(datetime){
-          datetime = new Date(datetime);
-          let y = datetime.getFullYear() + '-';
-          let mon = datetime.getMonth()+1 + '-';
-          let d = datetime.getDate();
-          return y + mon + d + " "+datetime.getHours()+":"+datetime.getMinutes()+":"+datetime.getSeconds();
-        }
-        return ''
+        return this.datetimeFormat(datetime);
       },
     search() {
       let _self = this;
