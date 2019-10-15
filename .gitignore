@@ -19,3 +19,7 @@ zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
 zisecm-ESIndexAgent/target/classes/META-INF/maven/com.zisyun/es-index-agent/pom.properties
 zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.properties
 zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+zisecm-portal/target/classes/com/ecm/portal/controller/admin/CardSearchItemManager.class
+zisecm-portal/target/classes/com/ecm/portal/controller/admin/UserManager.class
+zisecm-portal/target/classes/com/ecm/portal/controller/DownloadController.class
+zisecm-portal/target/classes/com/ecm/portal/core/entity/ExEcmCardSearchItem.class
