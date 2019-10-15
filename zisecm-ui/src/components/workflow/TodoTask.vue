@@ -82,7 +82,7 @@
                 </el-table-column>
                 <el-table-column prop="sendUser" label="发送人" min-width="15%" sortable>
                 </el-table-column>
-                <el-table-column prop="sendDate" label="发送时间" :formatter="dateFormat" min-width="10%" sortable>
+                <el-table-column prop="sendDate" label="发送时间" :formatter="dateFormatter" min-width="10%" sortable>
                 </el-table-column>
                 <el-table-column label="操作"  width="80">
                   <template slot-scope="scope">
@@ -260,17 +260,10 @@ export default {
       _self.form.taskId = indata.id;
       _self.dialogVisible = true;
     },
-    dateFormat(row, column) {
-        let datetime = row.sendDate;
-        if(datetime){
-          datetime = new Date(datetime);
-          let y = datetime.getFullYear() + '-';
-          let mon = datetime.getMonth()+1 + '-';
-          let d = datetime.getDate();
-          return y + mon + d + " "+datetime.getHours()+":"+datetime.getMinutes()+":"+datetime.getSeconds();
-        }
-        return ''
-      },
+    dateFormatter(row, column) {
+      let datetime = row[column.property];
+      return this.datetimeFormat(datetime);
+    },
     search() {
       let _self = this;
       _self.dataList = _self.dataListFull.filter(function(item){

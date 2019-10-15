@@ -53,7 +53,6 @@ export default {
   data() {
     return {
       tableHeight: window.innerHeight - 98,
-      dataAll:[],
       currentLanguage: "zh-cn",
       dataList: {
         rowdata: {
@@ -109,7 +108,7 @@ export default {
       }
       var m = new Map();
       m.set('itemInfo',_self.myItemId+_self.myTypeName);//ID 或类型
-      m.set('lang',_self.currentLanguage);
+      m.set('lang',_self.getLang());
       console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
       _self.axios({
           headers: {
@@ -134,7 +133,7 @@ export default {
     validFormValue()
     {
       let _self = this;
-      let dataRows = _self.dataAll;
+      let dataRows = _self.dataList;
       var i;
       var ret = true;
       var msg = "";
@@ -158,7 +157,7 @@ export default {
         return;
       }
       var m = new Map();
-      let dataRows = _self.dataAll;
+      let dataRows = _self.dataList;
       var i;
       for (i in dataRows) {
         if(dataRows[i].attrName && dataRows[i].attrName !='')

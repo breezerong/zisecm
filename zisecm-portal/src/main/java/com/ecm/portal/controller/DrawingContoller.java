@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.Pager;
@@ -102,14 +103,15 @@ public class DrawingContoller extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String, Object> args =null;
 		String id = null;
-		if(metaData==null) {
-			args =new HashMap<String,Object>();
-		}else {
-			args = JSONUtils.stringObjectToMap(metaData);
-		}
+		
 		if(files!=null&&files.length>0) {
 			int i=0;
 			for (MultipartFile uploadFile : files) {
+				if(metaData==null) {
+					args =new HashMap<String,Object>();
+				}else {
+					args = JSONUtils.stringObjectToMap(metaData);
+				}
 				i++;
 				EcmContent en = null; 
 				if (uploadFile != null) {
@@ -123,15 +125,36 @@ public class DrawingContoller extends ControllerAbstract{
 //					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss") ; //使用了默认的格式创建了一个日期格式化对象。
 //					String time = dateFormat.format(date); //可以把日期转换转指定格式的字符串
 //					args.put("NAME", time+i);
+					// name : 01001zyz12-001@项目设计图纸1
 					String name="";
-					String oldName=uploadFile.getOriginalFilename();
-					if(oldName.lastIndexOf(".")>-1) {
-						name=oldName.substring(0,oldName.lastIndexOf("."));
+					if(args != null && args.get("NAME")!=null) {
+						name = args.get("NAME").toString();
+					}
+					if(name.trim().length()==0) {
+						String oldName=uploadFile.getOriginalFilename();
+						if(oldName.lastIndexOf(".")>-1) {
+							name=oldName.substring(0,oldName.lastIndexOf("."));
+						}
+						String[] strs = name.split("@");
+						if(strs.length>1) {
+							args.put("CODING", strs[0]);
+							if(strs[0].indexOf("-")>0) {
+								String[] temps = strs[0].split("-");
+								args.put("OBJECT_TYPE", temps[0]);
+								args.put("SUB_TYPE", temps[1]);
+							}
+							args.put("NAME", strs[1]);
+						}
+						else {
+							args.put("NAME", strs[0]);
+						}
 					}
 					
-					args.put("NAME", name);
 					args.put("FORMAT_NAME", en.getFormatName());
 					args.put("CONTENT_SIZE", en.getContentSize());
+					if(CacheManagerOper.getEcmParameters().get("DrawingFolder") != null) {
+						args.put("FOLDER_ID", CacheManagerOper.getEcmParameters().get("DrawingFolder").getValue());
+					}
 					args.put("STATUS", "新建");
 				}
 				EcmDocument doc = new EcmDocument();
@@ -239,7 +262,7 @@ public class DrawingContoller extends ControllerAbstract{
 			condition += " and ";
 		}
 		condition += " CREATOR='"+getSession().getCurrentUser().getUserName()+"' and STATUS='"+status+"'";
-		String orderBy = " CREATION_DATE DESC";
+		String orderBy = " CODING ASC";
 		return  documentService.getObjects(getToken(),gridviewName,null,pager,condition,orderBy);
 	}
 }

@@ -287,6 +287,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public EcmUser getObjectById(String token,String id) throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmUser en = ecmUserMapper.selectByPrimaryKey(id);
+		if(en == null) {
+			return null;
+		}
 		EcmUser user = (EcmUser)en;
 		IEcmSession session = getSession(token);
 		if(!session.getCurrentUser().getUserName().equals(user.getName())) {

@@ -347,8 +347,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 			}
 		}
-		fieldStr += "CREATION_DATE,CREATOR,VERSION_ID";
-		valueStr += DBUtils.getDBDateNow() + ",'"+getSession(token).getCurrentUser().getUserName()+"','"+id+"'";
+		String ownerName = args.get("OWNER_NAME")!=null && args.get("OWNER_NAME").toString().length()>0?args.get("OWNER_NAME").toString():getSession(token).getCurrentUser().getUserName();
+		fieldStr += "CREATION_DATE,CREATOR,VERSION_ID,OWNER_NAME";
+		valueStr += DBUtils.getDBDateNow() + ",'"+getSession(token).getCurrentUser().getUserName()+"','"+id+"','"+ownerName+"'";
 		//get acl name from folder when Acl Name is empty
 		if(StringUtils.isEmpty((String)args.get("ACL_NAME")))
 		{

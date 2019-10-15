@@ -49,7 +49,7 @@ public class UserController extends ControllerAbstract{
 
 	@ResponseBody
 	@RequestMapping(value = "/user/getUser", method = RequestMethod.POST)
-	public Map<String, Object> getUser(String id) {
+	public Map<String, Object> getUser(@RequestBody String id) {
 		id = id.replace("\"", "");
 		EcmUser en;
 		Map<String, Object> mp = new HashMap<String, Object>();
@@ -57,7 +57,7 @@ public class UserController extends ControllerAbstract{
 			en = userService.getObjectById(getToken(),id);
 			
 			mp.put("code", ActionContext.SUCESS);
-			mp.put("date", en);
+			mp.put("data", en);
 		} catch (Exception e) {
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
@@ -68,12 +68,12 @@ public class UserController extends ControllerAbstract{
 	
 	@ResponseBody
 	@RequestMapping(value = "/user/getUserByName", method = RequestMethod.POST)
-	public Map<String, Object> getUserByName(String userName) {
+	public Map<String, Object> getUserByName(@RequestBody String userName) {
 		userName = userName.replace("\"", "");
 		EcmUser en = userService.getObjectByName(getToken(),userName);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
-		mp.put("date", en);
+		mp.put("data", en);
 		return mp;
 	}
 	
@@ -182,7 +182,7 @@ public class UserController extends ControllerAbstract{
 				instream = uploadFile.getInputStream();
 				fileName = uploadFile.getOriginalFilename();
 			}
-			userService.updateSignImage(getToken(),id,instream,fileName);
+			userService.updateSignImage(getToken(),id.replace("\"", ""),instream,fileName);
 			if(instream!=null) {
 				instream.close();
 			}

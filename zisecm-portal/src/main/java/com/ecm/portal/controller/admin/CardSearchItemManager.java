@@ -24,7 +24,7 @@ import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmParameter;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.portal.controller.ControllerAbstract;
-import com.ecm.portal.core.entity.ExEcmCardSearchItem;
+import com.ecm.portal.entity.ExEcmCardSearchItem;
 import com.ecm.core.util.SysConfig;
 
 

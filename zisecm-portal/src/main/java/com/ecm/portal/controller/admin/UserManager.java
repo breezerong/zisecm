@@ -159,7 +159,7 @@ public class UserManager extends ControllerAbstract{
 		try {
 			en = userService.getObjectById(getToken(),id);
 			mp.put("code", ActionContext.SUCESS);
-			mp.put("date", en);
+			mp.put("data", en);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.FAILURE);
@@ -191,7 +191,7 @@ public class UserManager extends ControllerAbstract{
 			else{
 				id = request.getParameter("id");
 			}
-			EcmUser en = userService.getObjectById(getToken(),id);
+			EcmUser en = userService.getObjectById(getToken(),id.replace("\"", ""));
 			if(en.getSignImage()==null||en.getSignImage().length()<5) {
 				return;
 			}
