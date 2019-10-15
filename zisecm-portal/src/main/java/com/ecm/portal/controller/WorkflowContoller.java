@@ -28,6 +28,7 @@ import com.ecm.core.entity.EcmProcess;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.QueueItemService;
 
 @Controller
@@ -154,6 +155,10 @@ public class WorkflowContoller extends ControllerAbstract{
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
 			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
 		}
 		return mp;
 	}
@@ -168,12 +173,16 @@ public class WorkflowContoller extends ControllerAbstract{
 		String description = args.get("description").toString();
 		String formId =args.get("formId").toString();
 		String docIdStr= args.get("docId").toString();
+		//如果是纯数字没有引号处理
+		if(docIdStr.indexOf("\"")<0) {
+			docIdStr = docIdStr.replace("[", "[\"").replace("]", "\"]").replace(",", "\",\"");
+		}
 		List<String> docIds= JSONObject.parseArray(docIdStr, String.class);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		for(String id : docIds) {
 			
 			try {
-				wfs.startWorkflow(getToken(),processId, workflowName, description, id, formId);
+				wfs.startWorkflow(getToken(),processId, workflowName, description, id.trim(), formId.trim());
 				mp.put("code", ActionContext.SUCESS);
 			} catch (EcmException e) {
 				// TODO Auto-generated catch block

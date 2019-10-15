@@ -9,6 +9,7 @@ import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 
 public interface IDocumentService {
 	/**
@@ -86,8 +87,9 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws EcmException
 	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
 	 */
-	void grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException;;
+	void grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;;
 	/**
 	 * 根据文档对象添加角色权限
 	 * @param token
@@ -98,8 +100,9 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws EcmException
 	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
 	 */
-	void grantGroup(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException;
+	void grantGroup(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
 	 * 根据文档Id添加用户权限
 	 * @param token
@@ -110,9 +113,10 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws EcmException
 	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
 	 */
 	void grantUser(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
-			throws EcmException, AccessDeniedException;
+			throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
 	 * 根据文档对象添加用户权限
 	 * @param token
@@ -123,9 +127,10 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws EcmException
 	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
 	 */
 	void grantUser(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl)
-			throws EcmException, AccessDeniedException;
+			throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
 	 * 移除用户权限
 	 * @param token

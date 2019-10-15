@@ -33,6 +33,7 @@ import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
@@ -596,7 +597,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	}
 	
 	@Override
-	public void grantGroup(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantGroup(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmDocument doc = getObjectById(token, id);
 		grantGroup( token,  doc, targetName, permission, expireDate, newAcl);
 
@@ -604,7 +605,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void grantGroup(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantGroup(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		if(doc != null) {
 			
 			if(getPermit(token, doc.getId())<ObjectPermission.PEMISSION) {
@@ -634,7 +635,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	}
 	
 	@Override
-	public void grantUser(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantUser(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmDocument doc = getObjectById(token, id);
 		grantUser( token,  doc, targetName, permission, expireDate, newAcl);
 
@@ -642,7 +643,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void grantUser(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantUser(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		if(doc != null) {
 			if(getPermit(token, doc.getId())<ObjectPermission.PEMISSION) {
 				throw new EcmException("User "+getSession(token).getCurrentUser().getUserName()+" has no right to change permission:"+doc.getId());

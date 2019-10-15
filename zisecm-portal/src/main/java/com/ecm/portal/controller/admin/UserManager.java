@@ -29,6 +29,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.controller.ControllerAbstract;
 
@@ -153,10 +154,27 @@ public class UserManager extends ControllerAbstract{
 	@RequestMapping(value = "/admin/getUser", method = RequestMethod.POST)
 	public Map<String, Object> getUser(String id) {
 		id = id.replace("\"", "");
-		EcmUser en = userService.getObjectById(getToken(),id);
+		EcmUser en;
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", 1);
-		mp.put("date", en);
+		try {
+			en = userService.getObjectById(getToken(),id);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("date", en);
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
+		}
+		
+	
 		return mp;
 	}
 	
@@ -246,6 +264,10 @@ public class UserManager extends ControllerAbstract{
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
 			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
 		}
 		return mp;
 	}
@@ -272,6 +294,10 @@ public class UserManager extends ControllerAbstract{
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
 			mp.put("message", e.getMessage());
 		}
 		
@@ -361,6 +387,10 @@ public class UserManager extends ControllerAbstract{
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
 			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
 		}
 		return mp;
 	}
@@ -380,6 +410,10 @@ public class UserManager extends ControllerAbstract{
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
 			mp.put("message", e.getMessage());
 		}
 		return mp;
@@ -401,6 +435,10 @@ public class UserManager extends ControllerAbstract{
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
 			mp.put("message", e.getMessage());
 		}
 		return mp;

@@ -21,6 +21,7 @@ import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IAclService;
 
@@ -52,7 +53,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 
 
 	@Override
-	public List<EcmAcl> getAllObject(String token) throws EcmException, AccessDeniedException {
+	public List<EcmAcl> getAllObject(String token) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
 		return null;
@@ -75,7 +76,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	}
 
 	@Override
-	public EcmAcl getObjectById(String token, String id) throws EcmException, AccessDeniedException {
+	public EcmAcl getObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
 		return (EcmAcl) ecmAcl.selectByPrimaryKey(id);
@@ -92,7 +93,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	}
 
 	@Override
-	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+3,systemPermission);
 		EcmAcl ecmObj =(EcmAcl)obj;
@@ -103,7 +104,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+4,systemPermission);
 		
@@ -114,7 +115,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+2,systemPermission);
 		EcmAcl ecmObj =(EcmAcl)obj;

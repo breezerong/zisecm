@@ -45,6 +45,9 @@ import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.util.DBUtils;
+import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.IUserService;
 
 /**
@@ -215,7 +218,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	@Override
-	public List<EcmUser> updateUserDepartment(String token, String userId,String groupId,String deptName) throws EcmException, AccessDeniedException {
+	public List<EcmUser> updateUserDepartment(String token, String userId,String groupId,String deptName) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		String sql = "update ecm_user set GROUP_NAME='"+deptName+"',GROUP_ID='"+String.valueOf(groupId)+"',MODIFIER='"+getSession(token).getCurrentUser().getUserName()
 		+"',MODIFIED_DATE=CURRENT_TIMESTAMP where ID='"+userId+"'";
@@ -224,7 +227,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	@Override
-	public boolean moveUserDepartment(String token, EcmUser en) throws EcmException, AccessDeniedException {
+	public boolean moveUserDepartment(String token, EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		EcmUser oldEn = ecmUserMapper.selectByLoginName(en.getLoginName());
 		EcmGroup g = ecmGroupMapper.selectByPrimaryKey(oldEn.getGroupId());
@@ -242,7 +245,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	@Override
-	public boolean removeUserGroup(String token, EcmUser en) throws EcmException, AccessDeniedException {
+	public boolean removeUserGroup(String token, EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		EcmUser oldEn = ecmUserMapper.selectByLoginName(en.getLoginName());
 		EcmGroup g = ecmGroupMapper.selectByName(oldEn.getGroupName());
@@ -263,7 +266,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	@Override
-	public boolean removeUserRole(String token, String userId, String roleId) throws EcmException, AccessDeniedException {
+	public boolean removeUserRole(String token, String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		String sqlStr = "delete from ecm_group_item where parent_id='"+roleId + "' and child_id='"
 				+userId+"' and ITEM_TYPE='2'";
@@ -282,18 +285,28 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	@Override
-	public EcmUser getObjectById(String token,String id) {
-		return ecmUserMapper.selectByPrimaryKey(id);
+	public EcmUser getObjectById(String token,String id) throws EcmException, AccessDeniedException, NoPermissionException {
+		EcmUser en = ecmUserMapper.selectByPrimaryKey(id);
+		EcmUser user = (EcmUser)en;
+		IEcmSession session = getSession(token);
+		if(!session.getCurrentUser().getUserName().equals(user.getName())) {
+			super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
+		}
+		return en;
 	}
 	
 	@Override
-	public boolean updateObject(String token,Object en) throws EcmException, AccessDeniedException {
-		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
-		return ecmUserMapper.updateByPrimaryKeySelective((EcmUser)en)>0;
+	public boolean updateObject(String token,Object en) throws EcmException, AccessDeniedException, NoPermissionException {
+		EcmUser user = (EcmUser)en;
+		IEcmSession session = getSession(token);
+		if(!session.getCurrentUser().getUserName().equals(user.getName())) {
+			super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
+		}
+		return ecmUserMapper.updateByPrimaryKeySelective(user)>0;
 	}
 	
 	@Override
-	public boolean deleteObject(String token,Object en) throws EcmException, AccessDeniedException {
+	public boolean deleteObject(String token,Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.DELETE,systemPermission);
 		ecmUserMapper.deleteByPrimaryKey(((EcmUser)en).getId());
 		String sqlStr = "delete from ecm_group_item where child_id="+((EcmUser)en).getId();
@@ -301,7 +314,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		return true;
 	}
 	@Override
-	public String newObject(String token,Object en) throws EcmException, AccessDeniedException {
+	public String newObject(String token,Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		((EcmUser)en).createId();
 		ecmUserMapper.insert((EcmUser)en);
@@ -368,9 +381,12 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	
 	@Override
 	public boolean updateSignImage(String token,String id,InputStream instream,String fileName) throws EcmException, Exception{
-		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_CONTENT,systemPermission);
+		
 		if(instream!=null) {
 			EcmUser  user = getObjectById(token,id);
+			if(!getSession(token).getCurrentUser().getUserName().equals(user.getName())) {
+				super.hasPermission(token,serviceCode+ObjectPermission.WRITE_CONTENT,systemPermission);
+			}
 			if(user!=null) {
 				String fullPath =getFullPath(user,	fileName);
 				File file = new File(fullPath);   
@@ -523,5 +539,16 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		List<Map<String, Object>> list = ecmUserMapper.searchToMap(sql);
 		
 		return (long) list.get(0).get("objcount");
+	}
+
+	@Override
+	public EcmUser getObjectByName(String token, String userName) {
+		// TODO Auto-generated method stub
+		String condition = "NAME='"+DBUtils.getString(userName)+"'";
+		List<EcmUser> list = getObjects(token, condition);
+		if(list.size()>0) {
+			return list.get(0);
+		}
+		return null;
 	}
 }

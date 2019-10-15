@@ -11,6 +11,7 @@ import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 
 /**
  * @ClassName  IUserService   
@@ -38,21 +39,23 @@ public interface IUserService {
 
 	List<EcmUser> getGroupUsers(String token, long groupId);
 
-	List<EcmUser> updateUserDepartment(String token, String userId, String deptId, String deptName) throws EcmException, AccessDeniedException;
+	List<EcmUser> updateUserDepartment(String token, String userId, String deptId, String deptName) throws EcmException, AccessDeniedException, NoPermissionException;
 
-	boolean moveUserDepartment(String token,EcmUser en) throws EcmException, AccessDeniedException;
+	boolean moveUserDepartment(String token,EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException;
 
 	List<EcmUser> getRoleUsers(String token,Pager pager, String noGroup, String groupId,
 			String condition);
 
 	long getRoleUserCount(String token,boolean noRole, String groupId, String condition);
 
-	boolean removeUserGroup(String token,EcmUser en) throws EcmException, AccessDeniedException;
+	boolean removeUserGroup(String token,EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException;
 
-	boolean removeUserRole(String token,String userId, String roleId) throws EcmException, AccessDeniedException;
+	boolean removeUserRole(String token,String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException;
 
 	String newObject(String token,Object en, InputStream instream,String fileName) throws EcmException, Exception;
 
 	boolean updateSignImage(String token,String id, InputStream instream,String fileName) throws EcmException, Exception;
+
+	EcmUser getObjectByName(String token, String userName);
 
 }

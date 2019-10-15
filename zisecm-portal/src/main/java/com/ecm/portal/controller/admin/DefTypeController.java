@@ -18,6 +18,7 @@ import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AttributeService;
 import com.ecm.core.service.DefTypeService;
 import com.ecm.core.service.FormItemService;
@@ -62,6 +63,10 @@ public class DefTypeController extends ControllerAbstract{
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
 			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
 		}
 		return mp;
 	}
@@ -88,6 +93,10 @@ public class DefTypeController extends ControllerAbstract{
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
 			mp.put("message", e.getMessage());
 		}
 		return mp;
@@ -119,6 +128,10 @@ public class DefTypeController extends ControllerAbstract{
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
 			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
 		}
 		return mp;
 	}
@@ -149,6 +162,10 @@ public class DefTypeController extends ControllerAbstract{
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
 			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
 		}
 		
 		return mp;
@@ -176,6 +193,10 @@ public class DefTypeController extends ControllerAbstract{
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
 			mp.put("message", e.getMessage());
 		}
 		return mp;

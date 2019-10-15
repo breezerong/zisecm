@@ -16,6 +16,7 @@ import com.ecm.core.entity.EcmAction;
 import com.ecm.core.entity.EcmRelationType;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IRelationTypeService;
 
 /**
@@ -58,14 +59,14 @@ public class RelationTypeService extends EcmObjectService<EcmRelationType>  impl
 	/**
 	 * 类型名*表示所有
 	 */
-	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+3,systemPermission);
 		return ecmRelationTypeMapper.updateByPrimaryKey((com.ecm.core.entity.EcmRelationType) obj)>0;
 	}
 
 	@Override
-	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+4,systemPermission);
 		return ecmRelationTypeMapper.deleteByPrimaryKey(((com.ecm.core.entity.EcmRelationType)obj).getId())>0;
@@ -75,7 +76,7 @@ public class RelationTypeService extends EcmObjectService<EcmRelationType>  impl
 	/**
 	 * 类型名*表示所有
 	 */
-	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+2,systemPermission);
 		((com.ecm.core.entity.EcmRelationType)obj).createId();

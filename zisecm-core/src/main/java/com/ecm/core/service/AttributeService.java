@@ -16,6 +16,7 @@ import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmDefAttribute;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IAttributeService;
 
 
@@ -59,9 +60,10 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 	 * @return
 	 * @throws EcmException
 	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
 	 */
 	@Override
-	public boolean newAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException {
+	public boolean newAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token, serviceCode+1,systemPermission);
 		// ALTER TABLE zisecm.ecm_document ADD C_DOC_STATUS varchar(32) NULL COMMENT '文档状态';
 		//ALTER TABLE zisecm.ecm_document ADD IS_CURRENT TINYINT(1) DEFAULT 1 NULL COMMENT '是否当前版本';
@@ -113,7 +115,7 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 		return ecmAttribute.executeSQL(sql).size()>0;
 	}
 	@Override
-	public boolean updateAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException {
+	public boolean updateAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// ALTER TABLE zisecm.ecm_user MODIFY COLUMN `LDAP_CN` varchar(254) NULL COMMENT 'LDAP用户登录CN';
 		super.hasPermission(token, serviceCode+1,systemPermission);
 		String sql ="ALTER TABLE ecm_document MODIFY ";
@@ -154,7 +156,7 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 		return ecmAttribute.executeSQL(sql).size()>0;
 	}
 	@Override
-	public boolean deleteAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException {
+	public boolean deleteAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// ALTER TABLE zisecm.ecm_user DROP COLUMN `LDAP_NAME`;
 		
 		super.hasPermission(token, serviceCode+1,systemPermission);

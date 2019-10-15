@@ -6,6 +6,7 @@ import java.util.Map;
 import com.ecm.core.entity.EcmObject;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 /**
  * 对象服务基础接口
  * @author Haihong Rong
@@ -14,21 +15,21 @@ import com.ecm.core.exception.EcmException;
  */
 public interface IEcmObjectService<T>{
 	
-	List<T> getAllObject(String tocken) throws EcmException, AccessDeniedException;
+	List<T> getAllObject(String tocken) throws EcmException, AccessDeniedException, NoPermissionException;
 	
-	T getObjectById(String tocken, String id) throws EcmException, AccessDeniedException;
+	T getObjectById(String tocken, String id) throws EcmException, AccessDeniedException, NoPermissionException;
 	
 	long getServiceCode();
 	
-	boolean updateObject(String tocken, T obj) throws EcmException, AccessDeniedException;
+	boolean updateObject(String tocken, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
 	
-	boolean deleteObject(String tocken, T obj) throws EcmException, AccessDeniedException;
+	boolean deleteObject(String tocken, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
 
-	String newObject(String tocken, T obj) throws EcmException, AccessDeniedException;
+	String newObject(String tocken, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
 	
 	String getCode(String msg);
 	
-	boolean hasPermission(String tocken, int permissionId,int systemPermission) throws EcmException, AccessDeniedException;
+	boolean hasPermission(String tocken, int permissionId,int systemPermission) throws EcmException, AccessDeniedException, NoPermissionException;
 	
 	List<T> getObjects(String tocken, String condition) throws EcmException;
 	/**

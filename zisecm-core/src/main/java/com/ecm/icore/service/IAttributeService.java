@@ -6,6 +6,7 @@ import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmDefAttribute;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 /**
  * 属性服务接口
  * @author Haihong Rong
@@ -28,8 +29,9 @@ public interface IAttributeService extends IEcmObjectService{
 	 * @return
 	 * @throws EcmException
 	 * @throws AccessDeniedException
+	 * @throws NoPermissionException 
 	 */
-	boolean newAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException;
+	boolean newAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException;
 
 	/**
 	 * 删除文档属性
@@ -38,8 +40,9 @@ public interface IAttributeService extends IEcmObjectService{
 	 * @return
 	 * @throws EcmException
 	 * @throws AccessDeniedException
+	 * @throws NoPermissionException 
 	 */
-	boolean deleteAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException;
+	boolean deleteAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException;
 
 	/**
 	 * 更新文档属性
@@ -48,7 +51,8 @@ public interface IAttributeService extends IEcmObjectService{
 	 * @return
 	 * @throws EcmException
 	 * @throws AccessDeniedException
+	 * @throws NoPermissionException 
 	 */
-	boolean updateAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException;
+	boolean updateAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException;
 
 }

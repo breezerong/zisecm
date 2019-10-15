@@ -14,6 +14,7 @@ import com.ecm.core.dao.EcmDefAttributeMapper;
 import com.ecm.core.entity.EcmDefAttribute;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IDefAttributeService;
 
 
@@ -37,35 +38,35 @@ public class DefAttributeService extends EcmObjectService<EcmDefAttribute> imple
 
 	
 	@Override
-	public List<EcmDefAttribute> getAllObject(String token) throws EcmException, AccessDeniedException {
+	public List<EcmDefAttribute> getAllObject(String token) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
 		return (List<EcmDefAttribute>) ecmDefAttribute.selectByCondition(" 1=1 ");
 	}
 
 	@Override
-	public EcmDefAttribute getObjectById(String token, String id) throws EcmException, AccessDeniedException {
+	public EcmDefAttribute getObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
 		return (EcmDefAttribute) ecmDefAttribute.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public boolean updateObject(String token,Object obj) throws EcmException, AccessDeniedException {
+	public boolean updateObject(String token,Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+3,systemPermission);
 		return ecmDefAttribute.updateByPrimaryKey((EcmDefAttribute) obj)>0;
 	}
 
 	@Override
-	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+4,systemPermission);
 		return ecmDefAttribute.deleteByTypeId(((EcmDefAttribute)obj).getId())>0;
 	}
 
 	@Override
-	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+2,systemPermission);
 		((EcmDefAttribute)obj).createId();
