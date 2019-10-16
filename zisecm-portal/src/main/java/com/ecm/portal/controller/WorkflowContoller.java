@@ -83,6 +83,8 @@ public class WorkflowContoller extends ControllerAbstract{
 			e.printStackTrace();
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
 		}
 		return mp;
 	}
@@ -117,6 +119,9 @@ public class WorkflowContoller extends ControllerAbstract{
 			e.printStackTrace();
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
+		}
+		catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
 		}
 		return mp;
 	}
@@ -230,11 +235,10 @@ public class WorkflowContoller extends ControllerAbstract{
 			int count = service.getMyTodoCount(getToken());
 			mp.put("data", count);
 			mp.put("code", ActionContext.SUCESS);
-		} catch (Exception e) {
+		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			mp.put("code", ActionContext.FAILURE);
-			mp.put("message", e.getMessage());
+			//e.printStackTrace();
+			mp.put("code", ActionContext.TIME_OUT);
 		}
 		return mp;
 	}
@@ -321,11 +325,9 @@ public class WorkflowContoller extends ControllerAbstract{
 			int count = service.getMyAuditWorkitemCount(condition);
 			mp.put("data", count);
 			mp.put("code", ActionContext.SUCESS);
-		} catch (Exception e) {
+		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			mp.put("code", ActionContext.FAILURE);
-			mp.put("message", e.getMessage());
+			mp.put("code", ActionContext.TIME_OUT);
 		}
 		return mp;
 	}
@@ -359,11 +361,9 @@ public class WorkflowContoller extends ControllerAbstract{
 			}
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);
-		} catch (Exception e) {
+		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			mp.put("code", ActionContext.FAILURE);
-			mp.put("message", e.getMessage());
+			mp.put("code", ActionContext.TIME_OUT);
 		}
 		return mp;
 	}

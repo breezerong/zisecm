@@ -58,11 +58,16 @@ public class UserController extends ControllerAbstract{
 			
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", en);
-		} catch (Exception e) {
+		} catch (EcmException e) {
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
-		} 
-		
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
+		}
 		return mp;
 	}
 	
@@ -70,10 +75,14 @@ public class UserController extends ControllerAbstract{
 	@RequestMapping(value = "/user/getUserByName", method = RequestMethod.POST)
 	public Map<String, Object> getUserByName(@RequestBody String userName) {
 		userName = userName.replace("\"", "");
-		EcmUser en = userService.getObjectByName(getToken(),userName);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", en);
+		try {
+			EcmUser en = userService.getObjectByName(getToken(),userName);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", en);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 	
@@ -91,7 +100,7 @@ public class UserController extends ControllerAbstract{
 				id = request.getParameter("id");
 			}
 			EcmUser en = userService.getObjectById(getToken(),id);
-			if(en.getSignImage()==null||en.getSignImage().length()<5) {
+			if(en==null || en.getSignImage()==null||en.getSignImage().length()<5) {
 				return;
 			}
 			File f = new File(en.getSignImage());

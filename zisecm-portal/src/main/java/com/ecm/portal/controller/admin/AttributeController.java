@@ -55,6 +55,10 @@ public class AttributeController extends ControllerAbstract{
 			e.printStackTrace();
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
 		}
 		 return mp;
 	 }

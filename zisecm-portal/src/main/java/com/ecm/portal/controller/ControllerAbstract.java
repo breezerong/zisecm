@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.SessionManager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.UserService;
@@ -17,10 +18,15 @@ public abstract class ControllerAbstract {
 	/**
 	 * 获取Token
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
-	public String getToken() {
+	public String getToken() throws AccessDeniedException {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		return (String)request.getSession().getAttribute("ECMUserToken");
+		String token = (String)request.getSession().getAttribute("ECMUserToken");
+		if(token == null) {
+			throw new AccessDeniedException("Session is time out.");
+		}
+		return token;
 	}
 	/**
 	 * 获取Session

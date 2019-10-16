@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ecm.core.ActionContext;
 import com.ecm.core.dao.EcmGridViewItemMapper;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.GridViewItemService;
 import com.ecm.portal.controller.ControllerAbstract;
 
@@ -36,20 +38,25 @@ public class GridViewItemManager extends ControllerAbstract{
 	 @ResponseBody
 	 @RequestMapping(value="/admin/getGridViewItem", method = RequestMethod.POST)
 	 public   Map<String, Object>  getGridViewItem(@RequestBody String parentId) {
-		 parentId = parentId.replace("\"", "");
-		 List<EcmGridViewItem> list =null;
-		 //System.out.println(parentId);
-		 if(parentId!=null&&parentId.trim().length()>0&&!"0".equals(parentId)&&!"".equals(parentId))
-		 {
-			 list =ecmGridViewItem.getByParentId(getToken(),parentId);
+		 Map<String, Object> mp = new HashMap<String, Object>();
+		 try {
+			 parentId = parentId.replace("\"", "");
+			 List<EcmGridViewItem> list =null;
+			 //System.out.println(parentId);
+			 if(parentId!=null&&parentId.trim().length()>0&&!"0".equals(parentId)&&!"".equals(parentId))
+			 {
+				 list =ecmGridViewItem.getByParentId(getToken(),parentId);
+			 }
+			 else
+			 {
+				 list = ecmGridViewItem.getAllObject(getToken());
+			 }
+			 mp.put("code", ActionContext.SUCESS);
+			 mp.put("data", list);
+		 } 
+		 catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
 		 }
-		 else
-		 {
-			 list = ecmGridViewItem.getAllObject(getToken());
-		 }
-		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("code", true);
-		 mp.put("data", list);
 		 return mp;
 	 }
 	 /**
@@ -60,9 +67,14 @@ public class GridViewItemManager extends ControllerAbstract{
 	 @RequestMapping(value="/admin/updateGridViewItem", method = RequestMethod.POST)  
 	 @ResponseBody
 	 public  Map<String, Object>  updateGridViewItem(@RequestBody  EcmGridViewItem obj) {
-		 ecmGridViewItem.updateObject(getToken(),obj);
-		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 Map<String, Object> mp = new HashMap<String, Object>();
+		 try {
+			 ecmGridViewItem.updateObject(getToken(),obj);
+			 mp.put("code", ActionContext.SUCESS);
+		 }
+		 catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		 }
 		 return mp;
 	 }
 	 /**
@@ -73,9 +85,14 @@ public class GridViewItemManager extends ControllerAbstract{
 	 @RequestMapping(value="/admin/deleteGridViewItem", method = RequestMethod.POST)  
 	 @ResponseBody
 	 public  Map<String, Object>  deleteGridViewItem(@RequestBody  EcmGridViewItem obj) {
-		 ecmGridViewItem.deleteObject(getToken(),obj);
-		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 Map<String, Object> mp = new HashMap<String, Object>();
+		 try {
+			 ecmGridViewItem.deleteObject(getToken(),obj);
+			 mp.put("code", ActionContext.SUCESS);
+		 }
+		 catch (AccessDeniedException e) {
+				mp.put("code", ActionContext.TIME_OUT);
+		 }
 		 return mp;
 	 }
 	 
@@ -87,11 +104,16 @@ public class GridViewItemManager extends ControllerAbstract{
 	 @RequestMapping(value="/admin/newGridViewItem", method = RequestMethod.POST)  
 	 @ResponseBody
 	 public  Map<String, Object>  newGridViewItem(@RequestBody  EcmGridViewItem obj) {
-		 obj.createId();
-		 ecmGridViewItem.newObject(getToken(),obj);
-//		 System.out.println("id:"+id);
-		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 Map<String, Object> mp = new HashMap<String, Object>();
+		 try {
+			 obj.createId();
+			 ecmGridViewItem.newObject(getToken(),obj);
+	//		 System.out.println("id:"+id);
+			 mp.put("code", ActionContext.SUCESS);
+		 }
+		 catch (AccessDeniedException e) {
+				mp.put("code", ActionContext.TIME_OUT);
+		 }
 		 return mp;
 	 }
 

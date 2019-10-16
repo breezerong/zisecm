@@ -28,7 +28,7 @@ public class AuditContoller extends ControllerAbstract {
 		en.setUserName("admin");
 		en.createId();
 		en.setExcuteDate(new Date());
-		auidtService.newObject(getToken(),en);
+		//auidtService.newObject(getToken(),en);
 		return "OK";
 	}
 	

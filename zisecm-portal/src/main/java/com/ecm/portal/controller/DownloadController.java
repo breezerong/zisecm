@@ -42,6 +42,7 @@ public class DownloadController extends ControllerAbstract{
 	public String downLoadOne(HttpServletResponse response,String id) {
 		try {
 			EcmContent en = contentService.getPrimaryContent(getToken(),id);
+			//EcmDocument doc = documentService.getObjectById(getToken(), id);
 			InputStream iStream = contentService.getContentStream(getToken(),en);
 			// 清空response
 	        response.reset();
