@@ -192,7 +192,7 @@ export default {
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;
-        console.log(JSON.stringify(_self.dataList));
+        //console.log(JSON.stringify(_self.dataList));
         _self.loading = false;
       })
       .catch(function(error) {
@@ -216,6 +216,8 @@ export default {
         url: '/zisecm/admin/updateMenuItem'
       })
       .then(function(response) {
+        _self.dialogVisible = false;
+        _self.isEdit = false;
         _self.$message("保存成功!");
       })
       .catch(function(error) {
@@ -250,7 +252,8 @@ export default {
        let _self = this;
       if(_self.isEdit){
         _self.save(indata);
-        _self.isEdit = false;
+        
+        return;
       }
       _self.axios({
         headers: {

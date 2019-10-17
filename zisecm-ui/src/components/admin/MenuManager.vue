@@ -154,7 +154,10 @@ export default {
         url: '/zisecm/admin/updateMenu'
       })
       .then(function(response) {
+        _self.refreshData();
+        _self.dialogVisible = false;
         _self.$message("保存成功!");
+        
       })
       .catch(function(error) {
         console.log(error);
@@ -193,6 +196,7 @@ export default {
       .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();
+          _self.dialogVisible = false;
       })
       .catch(function(error) {
         console.log(error);
