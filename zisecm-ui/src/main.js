@@ -12,6 +12,7 @@ import i18n from './assets/locales'
 import ImageViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 import echarts from 'echarts'
+import Router from 'vue-router'
 
 // Vue.prototype.baseURL = 'http://WIN-AMOKGB2RO5G:8080'
 Vue.prototype.echarts = echarts
@@ -68,6 +69,11 @@ Vue.prototype.datetimeFormat = function(val){
     return y + mon + d + ' ' + hour + min + sec
   }
   return ""
+}
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
 }
 ImageViewer.setDefaults({
   Options: {

@@ -1,6 +1,6 @@
 {"application": {
-    "name":"非结构化数据管理平台",
-    "loginUserName":"用户",
+    "name":"文档管理系统",
+    "loginUserName":"登录名",
     "logout":"注销",
     "login":"登录",
     "userName":"用户名",
@@ -65,7 +65,28 @@
     "selectDate":"选择日期",
     "start":"开始",
     "end":"结束",
-    "conditionCannotEmpty":"查询条件不能为空"
+    "conditionCannotEmpty":"查询条件不能为空",
+    "updateSignImage": "更新签名图片",
+    "signImage":"签名图片",
+    "phone":"电话",
+    "email":"Email",
+    "description":"描述",
+    "loginType1":"系统密码",
+    "loginType2":"LDAP",
+    "loginType3":"接口",
+    "clientPermission":"客户端权限",
+    "clientPermission1":"查询",
+    "clientPermission2":"新建文档",
+    "clientPermission3":"执行流程",
+    "clientPermission4":"文件管理员",
+    "clientPermission9":"系统管理员",
+    "systemPermission":"系统管理员权限",
+    "systemPermission1":"参数配置",
+    "systemPermission2":"用户配置",
+    "systemPermission3":"流程配置",
+    "systemPermission4":"界面配置",
+    "systemPermission5":"系统配置",
+    "systemPermission9":"超级用户"
 },
 "menu": {
     "home":"首页",
@@ -82,7 +103,10 @@
     "fullTextSearch":"全文搜索",
     "cardSearch":"卡片搜索",
     "mySearch":"我的搜索",
-    "advSearch":"高级搜索"
+    "advSearch":"高级搜索",
+    "userCenter":"个人信息",
+    "userInfo":"基本信息",
+    "changePassword":"修改密码" 
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -99,7 +123,8 @@
     "pleaseInput":"请输入",
     "pleaseSelectFolder":"请选择文件夹！",
     "deleteInfo":"此操作将永久删除该对象, 是否继续?",
-    "cannotCreateRoot":"您不能新建根文件夹!"
+    "cannotCreateRoot":"您不能新建根文件夹!",
+    "signImageSize":"56X26, 100dpi, jpg"
 },
 "field": {
     "indexNumber":"序号",

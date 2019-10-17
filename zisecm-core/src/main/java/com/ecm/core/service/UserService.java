@@ -40,7 +40,7 @@ import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
-import com.ecm.core.entity.EcmMenu;
+import com.ecm.core.entity.EcmMenuItem;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;

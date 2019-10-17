@@ -53,6 +53,10 @@ import FullTextSearch from '@/components/search/FullTextSearch'
 import CardSearch from '@/components/search/CardSearch'
 import AdvSearch from '@/components/search/AdvSearch'
 import MySearch from '@/components/search/MySearch'
+import UserCenter from '@/components/UserCenter'
+import UserInfo from '@/components/user/UserInfo'
+import ChangePassword from '@/components/user/ChangePassword'
+import Main from '@/components/Main'
 
 Vue.use(Router)
 
@@ -80,6 +84,14 @@ const router = new Router({
       name: '文档查看',
       component: DocViewer
     },
+    {
+      meta: {
+        requireAuth: true
+      },
+      path: '/main',
+      name: '主界面',
+      component: Main,
+      children: [
     {
       meta: {
         requireAuth: true
@@ -340,6 +352,35 @@ const router = new Router({
           component: SystemReport
         }
       ]
+    }
+    ,
+    {
+      meta: {
+        requireAuth: true
+      },
+      path: '/usercenter',
+      name: '个人信息',
+      component: UserCenter,
+      children: [
+        {
+          meta: {
+            requireAuth: true,
+            permit: 1
+          },
+          path: '/user/userinfo',
+          name: '用户基本信息',
+          component: UserInfo
+        },
+        {
+          meta: {
+            requireAuth: true,
+            permit: 1
+          },
+          path: '/user/changepassword',
+          name: '修改密码',
+          component: ChangePassword
+        }
+      ]
     },
     {
       meta: {
@@ -590,6 +631,7 @@ const router = new Router({
       component: CustomClassification,
       name: '自定义分类'
     }
+  ]}
   ]
 })
 

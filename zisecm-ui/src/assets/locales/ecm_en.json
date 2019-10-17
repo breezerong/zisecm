@@ -65,7 +65,29 @@
     "selectDate":"Please select Date",
     "start":"Start",
     "end":"End",
-    "conditionCannotEmpty":"Condition cannot empty."
+    "conditionCannotEmpty":"Condition cannot empty.",
+    "updateHeadImage": "Update Head Image",
+    "updateSignImage": "Update Sign Image",
+    "signImage":"Sign Image",
+    "phone":"Phone",
+    "email":"Email",
+    "description":"Description",
+    "loginType1":"Password",
+    "loginType2":"LDAP",
+    "loginType3":"Interface",
+    "clientPermission":"Client Permission",
+    "clientPermission1":"Search",
+    "clientPermission2":"Create Document",
+    "clientPermission3":"Start Workflow",
+    "clientPermission4":"Document Admin",
+    "clientPermission9":"System Admin",
+    "systemPermission":"System Permission",
+    "systemPermission1":"Confige Parameter",
+    "systemPermission2":"Confige User",
+    "systemPermission3":"Confige Workflow",
+    "systemPermission4":"Confige UI",
+    "systemPermission5":"Confige System",
+    "systemPermission9":"Supper User"
 },
 "menu": {
     "home":"Home",
@@ -82,7 +104,10 @@
     "fullTextSearch":"Full Text Search",
     "cardSearch":"Card Search",
     "mySearch":"My Search",
-    "advSearch":"Advanced Search"
+    "advSearch":"Advanced Search",
+    "userCenter":"User Center",
+    "userInfo":"User Information",
+    "changePassword":"Change Password" 
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -99,8 +124,8 @@
     "pleaseInput":"Please Input ",
     "pleaseSelectFolder":"Please Select Folder",
     "deleteInfo":"You will delete this object, are you cuntinue?",
-    "cannotCreateRoot":"Cannot create root folder!"
-    
+    "cannotCreateRoot":"Cannot create root folder!",
+    "signImageSize":"56X26, 100dpi, jpg"
 },
 "field": {
     "indexNumber":"S/N",

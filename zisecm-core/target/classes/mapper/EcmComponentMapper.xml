@@ -18,6 +18,12 @@
     <include refid="Base_Column_List" />
     from ecm_component order by ID
   </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_component
+    where ${condition} order by NAME
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
