@@ -11,6 +11,7 @@ import ParameterManager from '@/components/admin/ParameterManager'
 import ComponentManager from '@/components/admin/ComponentManager'
 import ActionManager from '@/components/admin/ActionManager'
 import MenuManager from '@/components/admin/MenuManager'
+import MenuItemManager from '@/components/admin/MenuItemManager'
 import FormManager from '@/components/admin/FormManager'
 import FormItemManager from '@/components/admin/FormItemManager'
 import GridViewManager from '@/components/admin/GridViewManager'
@@ -469,6 +470,15 @@ const router = new Router({
           path: '/managercenter/menumanager',
           component: MenuManager,
           name: '菜单管理'
+        },
+        {
+          meta: {
+            requireAuth: true,
+            permit: 5
+          },
+          path: '/managercenter/menuitemmanager',
+          component: MenuItemManager,
+          name: '菜单项管理'
         },
         {
           meta: {

@@ -1,6 +1,8 @@
 package com.ecm.core.service;
 
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -83,8 +85,11 @@ public class MenuItemService extends EcmObjectService<EcmMenuItem> implements IM
 	@Override
 	public String newObject(String token,Object obj) {
 		// TODO Auto-generated method stub
-		((EcmMenuItem)obj).createId();
-		ecmMenuItemMapper.insert((EcmMenuItem)obj);
-		return ((EcmMenuItem)obj).getId();
+		EcmMenuItem en =(EcmMenuItem)obj;
+		if(StringUtils.isEmpty(en.getId())) {
+			en.createId();
+		}
+		ecmMenuItemMapper.insert(en);
+		return en.getId();
 	}
 }

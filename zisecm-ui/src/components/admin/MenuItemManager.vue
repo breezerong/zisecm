@@ -1,17 +1,65 @@
 <template>
   <div>
-           <el-dialog title="添加" :visible.sync="dialogVisible">
+    <el-dialog title="添加" :visible.sync="dialogVisible" width="560">
+      <el-row>
           <el-form :model="form">
+             <el-col :span="12">
             <el-form-item label="Id" :label-width="formLabelWidth" >
-              <el-input v-model="form.id" auto-complete="off"></el-input>
+              <el-input v-model="form.id" auto-complete="off" :disabled="isEdit"></el-input>
             </el-form-item>
-            <el-form-item label="名称" :label-width="formLabelWidth">
+            </el-col>
+            <el-col :span="12">
+            <el-form-item label="父Id" :label-width="formLabelWidth" >
+              <el-input v-model="form.parentId" auto-complete="off"></el-input>
+            </el-form-item>
+            </el-col>
+             <el-col :span="12">
+            <el-form-item label="名称" :label-width="formLabelWidth" >
               <el-input v-model="form.name" auto-complete="off"></el-input>
             </el-form-item>
+             </el-col>
+             <el-col :span="12">
+            <el-form-item label="图标" :label-width="formLabelWidth" >
+              <el-input v-model="form.icon" auto-complete="off"></el-input>
+            </el-form-item>
+             </el-col>
+             <el-col :span="12">
+            <el-form-item label="标签" :label-width="formLabelWidth" >
+              <el-input v-model="form.label" auto-complete="off"></el-input>
+            </el-form-item>
+             </el-col>
+             <el-col :span="12">
+            <el-form-item label="菜单名" :label-width="formLabelWidth" >
+              <el-input v-model="form.menuName" auto-complete="off"></el-input>
+            </el-form-item>
+             </el-col>
+             <el-col :span="12">
+            <el-form-item label="角色" :label-width="formLabelWidth" >
+              <el-input v-model="form.roleName" auto-complete="off"></el-input>
+            </el-form-item>
+             </el-col>
+             <el-col :span="12">
+            <el-form-item label="组件名称" :label-width="formLabelWidth" >
+              <el-input v-model="form.componentName" auto-complete="off"></el-input>
+            </el-form-item>
+             </el-col>
+             <el-col :span="12">
+            <el-form-item label="调用函数" :label-width="formLabelWidth" >
+              <el-input v-model="form.callFunction" auto-complete="off"></el-input>
+            </el-form-item>
+             </el-col>
+             <el-col :span="12">
+            <el-form-item label="排序" :label-width="formLabelWidth" >
+              <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+            </el-form-item>
+             </el-col>
+             <el-col :span="24">
             <el-form-item label="说明" :label-width="formLabelWidth">
               <el-input v-model="form.description" auto-complete="off"></el-input>
             </el-form-item>
+             </el-col>
           </el-form>
+      </el-row>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
             <el-button type="primary" @click="additem(form)">确 定</el-button>
@@ -20,7 +68,7 @@
         <table border="0" width="100%" >
           <tr>
             <td class="navbar">
-              /菜单管理
+              /系统管理/菜单项管理 : {{menuName}}
             </td>
           </tr>
           <tr>
@@ -31,7 +79,7 @@
                     <el-input  v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
                   </td>
                   <td>
-                    <el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible = true"></el-button>
+                    <el-button type="primary" icon="el-icon-edit" circle @click="newItem()"></el-button>
                   </td>
                 </tr>
               </table>
@@ -49,21 +97,44 @@
                 style="width: 100%">
         <el-table-column prop="id" label="Id" width="200" sortable>
         </el-table-column>
-        <el-table-column label="名称" width="160" >
+        <el-table-column label="父ID" width="200" >
+          <template slot-scope="scope">
+            <el-input  v-model="scope.row.parentId"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="名称" width="120" >
           <template slot-scope="scope">
             <el-input  v-model="scope.row.name"></el-input>
           </template>
         </el-table-column>
-        </el-table-column>
-        <el-table-column label="说明" minwidth="20%">
+         <el-table-column label="图标" width="120" >
           <template slot-scope="scope">
-            <el-input  v-model="scope.row.description"></el-input>
+            <el-input  v-model="scope.row.icon"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240">
+        <el-table-column label="角色" width="100">
           <template slot-scope="scope">
-            <router-link :to="{path:'/managercenter/menuitemmanager',query:{parentid:scope.row.id,name:scope.row.name}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link>
-            <el-button :plain="true" type="primary" size="small" icon="edit" @click="save(scope.row)">保存</el-button>
+            <el-input  v-model="scope.row.roleName"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="标签" width="150">
+          <template slot-scope="scope">
+            <el-input  v-model="scope.row.label"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="组件名" width="150">
+          <template slot-scope="scope">
+            <el-input  v-model="scope.row.componentName"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="排序" width="80">
+          <template slot-scope="scope">
+            <el-input  v-model="scope.row.orderIndex"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="160">
+          <template slot-scope="scope">
+            <el-button :plain="true" type="primary" size="small" icon="edit" @click="editItem(scope.row)">编辑</el-button>
             <el-button :plain="true" type="danger" size="small" icon="delete" @click="del(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -80,46 +151,31 @@
 // });
 
 export default {
-  name: "MenuManager",
+  name: "MenuItemManager",
   permit: 9,
   data() {
     return {
       dataList: [],
       dataListFull: [],
+      menuName: "",
       inputkey: "",
       loading: false,
       dialogVisible: false,
+      isEdit: false,
       tableHeight: window.innerHeight - 140,
       form: {
-        id: "",
         name: "",
         description: "",
+        menuName:"",
         value: ""
       },
       formLabelWidth: "120px"
     };
   },
    created(){ 
-     
-    let _self = this;
-    _self.loading = true;
-    _self.axios({
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      },
-      method: 'get',
-      url: '/zisecm/admin/getMenu'
-    })
-      .then(function(response) {
-        _self.dataListFull = response.data.data;
-        _self.dataList = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-
+     let _self = this;
+    _self.menuName = _self.$route.query.name; 
+    _self.refreshData();
     },
   methods: {
     refreshData() {
@@ -129,18 +185,24 @@ export default {
         headers: {
           "Content-Type": "application/json;charset=UTF-8"
         },
-        method: 'get',
-        url: '/zisecm/admin/getMenu'
+        method: 'post',
+        data: _self.menuName,
+        url: '/zisecm/admin/getMenuItem'
       })
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;
+        console.log(JSON.stringify(_self.dataList));
         _self.loading = false;
       })
       .catch(function(error) {
         console.log(error);
         _self.loading = false;
       });
+    },
+    newItem(){
+      this.form.menuName = this.menuName;
+      this.dialogVisible = true;
     },
     save(indata) {
       let _self = this;
@@ -151,7 +213,7 @@ export default {
         datatype: 'json',
         method: 'post',
         data: JSON.stringify(indata),
-        url: '/zisecm/admin/updateMenu'
+        url: '/zisecm/admin/updateMenuItem'
       })
       .then(function(response) {
         _self.$message("保存成功!");
@@ -159,6 +221,11 @@ export default {
       .catch(function(error) {
         console.log(error);
       });
+    },
+    editItem(indata){
+      this.isEdit = true;
+      this.form = indata;
+      this.dialogVisible = true;
     },
     del(indata) {
       let _self = this;
@@ -169,7 +236,7 @@ export default {
         datatype: 'json',
         method: 'post',
         data: JSON.stringify(indata),
-        url: '/zisecm/admin/deleteMenu'
+        url: '/zisecm/admin/deleteMenuItem'
       })
       .then(function(response) {
         _self.$message("删除成功!");
@@ -180,7 +247,11 @@ export default {
       });
     },
     additem(indata) {
-      let _self = this;
+       let _self = this;
+      if(_self.isEdit){
+        _self.save(indata);
+        _self.isEdit = false;
+      }
       _self.axios({
         headers: {
           "Content-Type": "application/json;charset=UTF-8"
@@ -188,7 +259,7 @@ export default {
         datatype: 'json',
         method: 'post',
         data: JSON.stringify(indata),
-        url: '/zisecm/admin/newMenu'
+        url: '/zisecm/admin/newMenuItem'
       })
       .then(function(response) {
           _self.dialogVisible = false;

@@ -12,7 +12,7 @@
     <result column="ITEM_TYPE" jdbcType="CHAR" property="itemType" />
     <result column="CALL_FUNCTION" jdbcType="VARCHAR" property="callFunction" />
     <result column="LANG_KEY" jdbcType="VARCHAR" property="langKey" />
-    <result column="MANE_NAME" jdbcType="VARCHAR" property="menuName" />
+    <result column="MENU_NAME" jdbcType="VARCHAR" property="menuName" />
     <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
   </resultMap>
   <sql id="Base_Column_List">

@@ -155,9 +155,12 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 	@Override
 	public String newObject(String token,Object obj) {
 		// TODO Auto-generated method stub
-		((EcmMenu)obj).createId();
-		ecmMenuMapper.insert((EcmMenu)obj);
-		return ((EcmMenu)obj).getId();
+		EcmMenu en = (EcmMenu)obj;
+		if(StringUtils.isEmpty(en.getId())) {
+			en.createId();
+		}
+		ecmMenuMapper.insert(en);
+		return en.getId();
 	}
 	@Override
 	public EcmMenu getObjectByName(String token, String name) {
