@@ -19,7 +19,7 @@
             </el-table>
 	  </el-dialog>
       <el-col :span="18">
-        <el-input type="text" placeholder="请输入内容" readonly="readonly" v-model="inputValue"></el-input>
+        <el-input type="text" placeholder="请选择用户" readonly="readonly" v-model="inputValue"></el-input>
         <input value="value1" type="hidden" />
       </el-col>
       <el-col :span="4">
