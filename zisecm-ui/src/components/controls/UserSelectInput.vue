@@ -6,12 +6,12 @@
       :close-on-click-modal="false"
       @open="refreshData"
       @close="closeDialog"
-      :title="isRepeat?'选择用户（多选）':'选择用户（单选）'"
+      :title="$t('application.selectUser')+'('+isRepeat?$t('application.multSelector'):$t('application.singleSelector')+')'"
       width="60%"
     >
       <div>
         <el-header>
-          <el-input placeholder="输入用户名，点击回车进行搜索" @keyup.enter.native="search" v-model="findValue"></el-input>
+          <el-input :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="search" v-model="findValue"></el-input>
         </el-header>
         <el-main>
           <el-row>
@@ -25,8 +25,8 @@
                 @selection-change="handleSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
-                <el-table-column prop="name" label="用户名" width="140"></el-table-column>
-                <el-table-column prop="email" label="邮箱"></el-table-column>
+                <el-table-column prop="name" :label="$t('application.userName')" width="140"></el-table-column>
+                <el-table-column prop="email" :label="$t('application.email')"></el-table-column>
               </el-table>
             </el-col>
             <el-col :span="2">
@@ -57,8 +57,8 @@
                 @selection-change="handleRightSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
-                <el-table-column prop="name" label="用户名" width="140"></el-table-column>
-                <el-table-column prop="email" label="邮箱"></el-table-column>
+                <el-table-column prop="name" :label="$t('application.userName')" width="140"></el-table-column>
+                <el-table-column prop="email" :label="$t('application.email')"></el-table-column>
               </el-table>
             </el-col>
           </el-row>
@@ -68,16 +68,16 @@
             style="height: 35px;width: 70px;float: right;"
             type="primary"
             @click="addToFather"
-          >确定</el-button>
+          >{{$t('application.ok')}}</el-button>
         </el-footer>
       </div>
     </el-dialog>
     <el-col :span="19">
-      <el-input type="text" placeholder="请选择用户" readonly="readonly" v-model="inputValue"></el-input>
+      <el-input type="text" :placeholder="$t('application.selectUser')" readonly="readonly" v-model="inputValue"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="4">
-      <el-button icon="el-icon-user-solid" @click="clickShowDialog">选择</el-button>
+      <el-button icon="el-icon-user-solid" @click="clickShowDialog">{{$t('application.select')}}</el-button>
     </el-col>
   </el-container>
 </template>

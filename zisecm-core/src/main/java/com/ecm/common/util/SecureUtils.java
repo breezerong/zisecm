@@ -1,6 +1,5 @@
 package com.ecm.common.util;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 
 import javax.crypto.*;
@@ -118,7 +117,7 @@ public class SecureUtils {
 				sb.append(Integer.toHexString(dst[i] & 0xf));
 			}
 		} finally {
-			IOUtils.closeQuietly(is);
+			is.close();
 		}
 
 		return sb.toString();

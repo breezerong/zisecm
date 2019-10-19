@@ -98,7 +98,13 @@
     "objectPermission8":"Delete",
     "objectPermission9":"Modify Permission",
     "targetType1":"User",
-    "targetType2":"Role"
+    "targetType2":"Role",
+    "newPassword":"New Password",
+    "confirmPassword":"Confirm Password",
+    "select":"Select",
+    "selectUser":"Select User",
+    "singleSelector":"Single Selection",
+    "multSelector":"Multiple selection"
 },
 "menu": {
     "home":"Home",
@@ -136,7 +142,9 @@
     "pleaseSelectFolder":"Please Select Folder",
     "deleteInfo":"You will delete this object, are you cuntinue?",
     "cannotCreateRoot":"Cannot create root folder!",
-    "signImageSize":"56X26, 100dpi, jpg"
+    "signImageSize":"56X26, 100dpi, jpg",
+    "differentPassword":"New password cannot be comfirmed.",
+    "cannotChangePassword":"User password cannot be changed."
 },
 "field": {
     "indexNumber":"S/N",

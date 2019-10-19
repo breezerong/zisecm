@@ -13,10 +13,10 @@
             <el-menu default-active="1" mode="horizontal">
               <template v-for="item in dataList.menuItems">
                 <template v-if="item.submenus && item.url==null">
-                  <el-submenu :index="item.orderIndex">
+                  <el-submenu :index="item.orderIndex+''">
                     <template slot="title">{{item.label}}</template>
                     <template v-for="sitem in item.submenus">
-                      <el-menu-item :index="sitem.orderIndex">
+                      <el-menu-item :index="sitem.orderIndex+''">
                         <i v-if="sitem.icon!=null" :class="sitem.icon"></i>
                         <router-link :to="sitem.url">{{sitem.label}}</router-link>
                       </el-menu-item>
@@ -24,7 +24,7 @@
                   </el-submenu>
                 </template>
                 <template v-else>
-                  <el-menu-item :index="item.orderIndex">
+                  <el-menu-item :index="item.orderIndex+''">
                     <router-link :to="item.url">{{item.label}}</router-link>
                   </el-menu-item>
                 </template>
@@ -99,7 +99,7 @@ export default {
         })
         .then(function(response) {
           _self.dataList = response.data.data;
-          console.log(JSON.stringify(_self.dataList));
+          //console.log(JSON.stringify(_self.dataList));
           _self.loading = false;
         })
         .catch(function(error) {

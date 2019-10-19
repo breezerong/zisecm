@@ -53,7 +53,7 @@
     "takeTime":"耗时：",
     "content":"文档内容",
     "propertyOnly":"只搜索属性",
-    "placeholderSearch":"请输入关键字",
+    "placeholderSearch":"请输入关键字, 按回车键搜索",
     "docTypeName": "文档类型",
     "selectAll": "全选",
     "scendSearch": "二次搜索",
@@ -69,7 +69,7 @@
     "updateSignImage": "更新签名图片",
     "signImage":"签名图片",
     "phone":"电话",
-    "email":"Email",
+    "email":"邮箱",
     "description":"描述",
     "loginType1":"系统密码",
     "loginType2":"LDAP",
@@ -97,7 +97,13 @@
     "objectPermission8":"删除",
     "objectPermission9":"设置权限",
     "targetType1":"用户",
-    "targetType2":"组"
+    "targetType2":"组",
+    "newPassword":"新密码",
+    "confirmPassword":"确认密码",
+    "select":"选择",
+    "selectUser":"请选择用户",
+    "singleSelector":"单选",
+    "multSelector":"多选"
 },
 "menu": {
     "home":"首页",
@@ -117,7 +123,7 @@
     "advSearch":"高级搜索",
     "userCenter":"个人信息",
     "userInfo":"基本信息",
-    "changePassword":"修改密码" 
+    "changePassword":"修改密码"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -135,7 +141,9 @@
     "pleaseSelectFolder":"请选择文件夹！",
     "deleteInfo":"此操作将永久删除该对象, 是否继续?",
     "cannotCreateRoot":"您不能新建根文件夹!",
-    "signImageSize":"56X26, 100dpi, jpg"
+    "signImageSize":"56X26, 100dpi, jpg",
+    "differentPassword":"新密码和确认密码不相同！",
+    "cannotChangePassword":"用户不能修改密码！"
 },
 "field": {
     "indexNumber":"序号",
