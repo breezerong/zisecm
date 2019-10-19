@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
+import com.ecm.common.util.SecureUtils;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.ServiceContext;
@@ -91,7 +92,12 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		{
 			throw new Exception("User :"+ecmUser.getLoginName()+" is not exists.");
 		}
-		if(!loginUser.getPassword().equals(ecmUser.getPassword()))
+		String password = loginUser.getPassword();
+		String loginPassword = ecmUser.getPassword();
+		if(password.length()>30) {
+			loginPassword = SecureUtils.shaEncode(loginPassword);
+		}
+		if(!password.equals(loginPassword))
 		{
 			throw new Exception("Password wrong.");
 		}
@@ -301,6 +307,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public boolean updateObject(String token,Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmUser user = (EcmUser)en;
+		if(user.getPassword().length()<30) {
+			user.setPassword(SecureUtils.shaEncode(user.getPassword()));
+		}
 		IEcmSession session = getSession(token);
 		if(!session.getCurrentUser().getUserName().equals(user.getName())) {
 			super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
@@ -319,6 +328,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public String newObject(String token,Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
+		((EcmUser)en).setPassword(SecureUtils.shaEncode(((EcmUser)en).getPassword()));
 		((EcmUser)en).createId();
 		ecmUserMapper.insert((EcmUser)en);
 		String userId = ((EcmUser)en).getId();
@@ -553,5 +563,25 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			return list.get(0);
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean updatePassword(String token,String userName, String password, String newPassword) throws EcmException, AccessDeniedException, NoPermissionException {
+		
+		EcmUser user = getObjectByName(token, userName);
+		if(user == null) {
+			return false;
+		}
+		String userPassword = user.getPassword();
+		if(userPassword.length()>30) {
+			password = SecureUtils.shaEncode(password);
+		}
+		if(!password.equals(userPassword))
+		{
+			throw new EcmException("Password wrong.");
+		}
+		String sql = "update ecm_user set PASSWORD='"+SecureUtils.shaEncode(newPassword)+"' where ID='"+user.getId()+"'";
+		List<Map<String, Object>> list =  ecmUserMapper.searchToMap(sql);
+		return list.size()>0;
 	}
 }

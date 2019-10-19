@@ -594,7 +594,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 			}
 		}
-		return 0;
+		return 1;
 	}
 	
 	@Override

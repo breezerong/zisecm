@@ -87,7 +87,18 @@
     "systemPermission3":"Confige Workflow",
     "systemPermission4":"Confige UI",
     "systemPermission5":"Confige System",
-    "systemPermission9":"Supper User"
+    "systemPermission9":"Supper User",
+    "objectPermission1":"None",
+    "objectPermission2":"Browse",
+    "objectPermission3":"Read",
+    "objectPermission4":"Download",
+    "objectPermission5":"Edit Property",
+    "objectPermission6":"Upgrade",
+    "objectPermission7":"Edit Content",
+    "objectPermission8":"Delete",
+    "objectPermission9":"Modify Permission",
+    "targetType1":"User",
+    "targetType2":"Role"
 },
 "menu": {
     "home":"Home",

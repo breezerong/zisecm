@@ -68,8 +68,10 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="5">
-          <img v-if="userData" :src="'/zisecm/user/getUserImage?id='+userData.id+'&token='+token+'&ticket='+ticket" >
+        <el-col :span="2">
+          <el-form-item :label="$t('application.signImage')">
+            <img v-if="userData" :src="'/zisecm/user/getUserImage?id='+userData.id+'&token='+token+'&ticket='+ticket" >
+          </el-form-item>
         </el-col>
       </el-row>
       <el-row>
@@ -109,8 +111,8 @@ export default {
     };
   },
   mounted(){ 
-     let _self = this;
-     _self.ticket = Math.floor(Math.random() * 1000);
+    let _self = this;
+    _self.ticket = Math.floor(Math.random() * 1000);
     _self.userName = sessionStorage.getItem('access-userName');
     _self.token = sessionStorage.getItem('access-token');
    // console.log(_self.userName);

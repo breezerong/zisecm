@@ -2,6 +2,7 @@ package com.ecm.core.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IAclService;
+import com.ecm.icore.service.IEcmSession;
 
 
 @Service
@@ -76,15 +78,17 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	}
 
 	@Override
-	public EcmAcl getObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException {
+	public EcmAcl getObjectById(String token, String id) throws  AccessDeniedException  {
 		// TODO Auto-generated method stub
-		super.hasPermission(token,serviceCode+1,systemPermission);
+		//super.hasPermission(token,serviceCode+1,systemPermission);
+		this.getSession(token);
 		return (EcmAcl) ecmAcl.selectByPrimaryKey(id);
 	}
 	
 	@Override
-	public EcmAcl getObjectByName(String token, String name) {
-		String sql = "select * from ecm_acl where name='"+name+"'";
+	public EcmAcl getObjectByName(String token, String name) throws AccessDeniedException {
+		this.getSession(token);
+		String sql = "select * from ecm_acl where name='"+DBUtils.getString(name)+"'";
 		List<EcmAcl> list = ecmAcl.searchToEntity(sql);
 		if(list.size()>0) {
 			return list.get(0);
@@ -93,7 +97,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	}
 
 	@Override
-	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
+	public boolean updateObject(String token, Object obj) throws  AccessDeniedException, NoPermissionException, EcmException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+3,systemPermission);
 		EcmAcl ecmObj =(EcmAcl)obj;
@@ -107,7 +111,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+4,systemPermission);
-		
+		getSession(token);
 		
 		ecmAclItem.deleteByParentId(((EcmAcl)obj).getId());
 		return ecmAcl.deleteByPrimaryKey(((EcmAcl)obj).getId())>0;
@@ -127,7 +131,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 		ecmAcl.insert(ecmObj);
 		// 添加everyone权限，读取内容
 		grant( token,  ecmObj.getId(), PermissionContext.EVERYONE, PermissionContext.USER_TARGET_TYPE,  ObjectPermission.READ, null);
-		// 添加owner权限，删除
+		// 添加owner权限，授权
 		grant( token,  ecmObj.getId(), PermissionContext.OWNER, PermissionContext.USER_TARGET_TYPE,  ObjectPermission.PEMISSION, null);
 		return ecmObj.getId();
 	}
@@ -247,6 +251,30 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	@Override
 	public List<EcmPermit> getPermits(String token,String id){
 		return ecmAclItem.selectByParentId(id);
+	}
+	
+	@Override
+	public int getPermission(String token, String aclName) throws AccessDeniedException {
+		IEcmSession session = getSession(token);
+		String currentUser = session.getCurrentUser().getUserName();
+		String userID = session.getCurrentUser().getUserId();
+		StringBuilder sb = new StringBuilder();
+		sb.append("select max(PERMISSION) from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
+		sb.append("b.NAME='").append(aclName);
+		sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and a.TARGET_NAME in('everyone'");
+		sb.append(",'").append(currentUser).append("'");
+		
+		sb.append(")");
+		sb.append(" union ");
+		sb.append("select PERMISSION from ecm_acl_item a, ecm_acl b, ecm_group c, ecm_group_user d where b.NAME='");
+		sb.append(aclName).append("'  and a.PARENT_ID = b.ID and a.TARGET_TYPE='2' and a.TARGET_NAME=c.NAME and c.ID=d.GROUP_ID and ");
+		sb.append("d.USER_ID='").append(userID).append("') as permittemp");
+		List<Map<String, Object>> list = ecmAcl.executeSQL(sb.toString());
+		
+		if(list.size()>0) {
+			return (int)list.get(0).get("PERMISSION");
+		}
+		return 1;
 	}
 
 }

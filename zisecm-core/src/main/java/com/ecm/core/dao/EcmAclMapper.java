@@ -2,6 +2,7 @@ package com.ecm.core.dao;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,6 @@ public interface EcmAclMapper {
     int updateByPrimaryKey(EcmAcl record);
     
     List<EcmAcl> searchToEntity(@Param(value="sqlStr") String sqlStr);
+
+	List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
 }

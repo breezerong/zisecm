@@ -86,7 +86,18 @@
     "systemPermission3":"流程配置",
     "systemPermission4":"界面配置",
     "systemPermission5":"系统配置",
-    "systemPermission9":"超级用户"
+    "systemPermission9":"超级用户",
+    "objectPermission1":"无权限",
+    "objectPermission2":"查看属性",
+    "objectPermission3":"查看内容",
+    "objectPermission4":"下载",
+    "objectPermission5":"编辑属性",
+    "objectPermission6":"升版",
+    "objectPermission7":"编辑内容",
+    "objectPermission8":"删除",
+    "objectPermission9":"设置权限",
+    "targetType1":"用户",
+    "targetType2":"组"
 },
 "menu": {
     "home":"首页",

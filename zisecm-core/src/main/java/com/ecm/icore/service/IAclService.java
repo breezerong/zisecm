@@ -95,6 +95,15 @@ public interface IAclService {
 	 * @param token
 	 * @param name Acl名称
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
-	EcmAcl getObjectByName(String token, String name);
+	EcmAcl getObjectByName(String token, String name) throws AccessDeniedException;
+	/**
+	 * 获取当前用户对ACL权限
+	 * @param token
+	 * @param aclName
+	 * @return
+	 * @throws AccessDeniedException
+	 */
+	int getPermission(String token, String aclName) throws AccessDeniedException;
 }
