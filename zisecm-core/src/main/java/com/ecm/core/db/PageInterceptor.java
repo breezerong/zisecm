@@ -6,9 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
- 
-import javax.xml.bind.PropertyException;
-import org.apache.commons.lang3.StringUtils;
+
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
@@ -107,7 +105,7 @@ public class PageInterceptor implements Interceptor {
  
 	private String getMysqlPageSql(Pager page, StringBuffer sqlBuffer) {
 		// 计算第一条记录的位置，Mysql中记录的位置是从0开始的。
-		int offset = page.getPageIndex() * page.getPageSize();
+		int offset = page.getPageIndex();
 		sqlBuffer.append(" limit ").append(offset).append(",").append(page.getPageSize());
 		return sqlBuffer.toString();
 	}
