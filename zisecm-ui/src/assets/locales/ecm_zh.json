@@ -103,7 +103,13 @@
     "select":"选择",
     "selectUser":"请选择用户",
     "singleSelector":"单选",
-    "multSelector":"多选"
+    "multSelector":"多选",
+    "selectRole":"请选择角色",
+    "group":"部门",
+    "role":"角色",
+    "all":"所有",
+    "pleaseSelect":"请选择",
+    "type":"类型"
 },
 "menu": {
     "home":"首页",
@@ -164,5 +170,8 @@
     "subType":"分类",
     "from":"发件人",
     "to":"收件人",
-    "format":"格式"
+    "format":"格式",
+    "type":"类型",
+    "permission":"权限",
+    "expireDate":"到期日期"
 }}

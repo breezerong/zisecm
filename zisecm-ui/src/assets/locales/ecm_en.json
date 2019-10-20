@@ -124,7 +124,13 @@
     "advSearch":"Advanced Search",
     "userCenter":"User Center",
     "userInfo":"User Information",
-    "changePassword":"Change Password" 
+    "changePassword":"Change Password",
+    "selectRole":"Select Role",
+    "pleaseSelect":"Please Select",
+    "group":"Department",
+    "role":"Role",
+    "all":"All",
+    "type":"Type"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -165,5 +171,8 @@
     "subType":"Sub Type",
     "from":"From",
     "to":"To",
-    "format":"Format"
+    "format":"Format",
+    "type":"Type",
+    "permission":"Permission",
+    "expireDate":"Expire Date"
 }}

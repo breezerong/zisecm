@@ -6,18 +6,33 @@
       :close-on-click-modal="false"
       @open="refreshData"
       @close="closeDialog"
-      :title="$t('application.selectUser')+'('+isRepeat?$t('application.multSelector'):$t('application.singleSelector')+')'"
+      :title="$t('application.selectRole')+'('+isRepeat?$t('application.multSelector'):$t('application.singleSelector')+')'"
       width="60%"
     >
       <div>
         <el-header>
-          <el-input :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="search" v-model="findValue"></el-input>
+          <el-row>
+             <el-col :span="2">
+              {{$t('application.type')}}
+            </el-col>
+            <el-col :span="2">
+              <el-select
+                v-model="groupType" :placeholder="$t('application.pleaseSelect')" style="display:block;">
+                <div v-for="(item,index) in groupTypes">
+                  <el-option :label="item.name" :value="item.value" :key="index"></el-option>
+                </div>
+              </el-select>
+            </el-col>
+            <el-col :span="20">
+              <el-input :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="search" v-model="findValue"></el-input>
+            </el-col>
+          </el-row>
         </el-header>
         <el-main>
           <el-row>
             <el-col :span="11">
               <el-table
-                height="250"
+                height="320"
                 :data="dataList"
                 stripe
                 border
@@ -25,9 +40,18 @@
                 @selection-change="handleSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
-                <el-table-column prop="name" :label="$t('application.userName')" width="140"></el-table-column>
-                <el-table-column prop="email" :label="$t('application.email')"></el-table-column>
+                <el-table-column prop="name" :label="$t('application.name')" width="160"></el-table-column>
+                <el-table-column prop="description" :label="$t('application.description')"></el-table-column>
               </el-table>
+              <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="itemCount">
+                  </el-pagination>
             </el-col>
             <el-col :span="2">
               <div style="text-align:center;padding-top: 40px;">
@@ -49,7 +73,7 @@
             </el-col>
             <el-col :span="11">
               <el-table
-                height="250"
+                height="320"
                 :data="rightList"
                 stripe
                 border
@@ -57,8 +81,8 @@
                 @selection-change="handleRightSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
-                <el-table-column prop="name" :label="$t('application.userName')" width="140"></el-table-column>
-                <el-table-column prop="email" :label="$t('application.email')"></el-table-column>
+                <el-table-column prop="name" :label="$t('application.name')" width="160"></el-table-column>
+                <el-table-column prop="description" :label="$t('application.description')"></el-table-column>
               </el-table>
             </el-col>
           </el-row>
@@ -67,17 +91,17 @@
           <el-button
             style="height: 35px;width: 70px;float: right;"
             type="primary"
-            @click="addToFather"
+            @click="addToParent"
           >{{$t('application.ok')}}</el-button>
         </el-footer>
       </div>
     </el-dialog>
     <el-col :span="19">
-      <el-input type="text" :placeholder="$t('application.selectUser')" readonly="readonly" v-model="inputValue"></el-input>
+      <el-input type="text" :placeholder="$t('application.selectRole')" readonly="readonly" v-model="inputValue"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="4">
-      <el-button icon="el-icon-user-solid" @click="clickShowDialog">{{$t('application.select')}}</el-button>
+      <el-button icon="el-icon-ecm-friend" @click="clickShowDialog">{{$t('application.select')}}</el-button>
     </el-col>
   </el-container>
 </template>
@@ -92,14 +116,37 @@ export default {
       tranList2: [],
       tranList: [],
       rightNameList: "",
-      rightListId: []
+      rightListId: [],
+      userNameArr:[],
+      pageSize: 20,
+      currentPage: 1,
+      itemCount: 0,
+      groupType:"2",
+      groupTypes:
+        [
+          {"name":this.$t('application.all'),
+          "value":""},
+          {"name":this.$t('application.group'),
+          "value":"1"},
+          {"name":this.$t('application.role'),
+          "value":"2"}
+        ]
     };
   },
   model: {
     prop: "value1",
     event: "change"
   },
-  mounted() {},
+  created() {
+    let _self = this;
+    var psize = localStorage.getItem("groupPageSize");
+    if (psize) {
+      _self.pageSize = parseInt(psize);
+    }
+  },
+  mounted() {
+    
+  },
   props: {
     //输入框默认显示值
     inputValue: {
@@ -115,26 +162,16 @@ export default {
       default: 50
     }
   },
-  // computed:{
-  // 	getSelectUsers(){
-  // 		var showValue = "";
-  // 		for(var i=0;i<this.inputValue.length;i++){
-  // 			if(showValue.length>0){
-  // 				showValue+=";"
-  // 			}
-  // 			showValue+=this.inputValue[i];
-  // 		}
-  // 		return showValue;
-  // 	}
-  // },
   methods: {
     refreshData() {
       var m = new Map();
-      m.set("noGroup", "");
-      m.set("condition", "name like '%" + this.findValue + "%'");
-      m.set("pageIndex", 0);
-      m.set("pageSize", 50);
-      let _self = this;
+       let _self = this;
+      m.set("groupType", this.groupType);
+      m.set("id", "");
+      m.set("condition", "name like '%" + this.findValue + "%' or description like '%" + this.findValue + "%'");
+      m.set("pageIndex", _self.currentPage-1);
+      m.set("pageSize", _self.pageSize);
+     
       _self
         .axios({
           headers: {
@@ -142,10 +179,11 @@ export default {
           },
           method: "post",
           data: m,
-          url: "/zisecm/admin/getUsers"
+          url: "/zisecm/group/getGroups"
         })
         .then(function(response) {
           _self.dataList = response.data.data;
+          _self.itemCount = response.data.pager.total;
           if(_self.inputValue ){
             var userNameArr = _self.inputValue.split(";");
             for (var i = 0; i < userNameArr.length; i++) {
@@ -158,14 +196,21 @@ export default {
               });
             }
           }
-          
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    clickShowDialog() {
-      this.visible = true;
+    // 分页 页数改变
+    handleSizeChange(val) {
+      this.pageSize = val;
+      localStorage.setItem("groupPageSize", val);
+      this.search();
+    },
+    // 分页 当前页改变
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.search();
     },
     search() {
       let _self = this;
@@ -173,10 +218,11 @@ export default {
         _self.rightListId[i] = _self.rightList[i].id;
       }
       var m = new Map();
-      m.set("noGroup", "");
-      m.set("condition", "name like '%" + this.findValue + "%'");
-      m.set("pageIndex", 0);
-      m.set("pageSize", 50);
+      m.set("groupType", this.groupType);
+      m.set("id", "");
+      m.set("condition", "name like '%" + this.findValue + "%' or description like '%" + this.findValue + "%'");
+      m.set("pageIndex", _self.currentPage-1);
+      m.set("pageSize", _self.pageSize);
       _self
         .axios({
           headers: {
@@ -184,10 +230,12 @@ export default {
           },
           method: "post",
           data: m,
-          url: "/zisecm/admin/getUsers"
+          url: "/zisecm/group/getGroups"
         })
         .then(function(response) {
           _self.dataList = response.data.data;
+          _self.itemCount = response.data.pager.total;
+          _self.to
           for (var i = 0; i < _self.rightListId.length; i++) {
             var item = _self.rightListId[i];
             _self.dataList.forEach(function(val, index, arr) {
@@ -201,7 +249,10 @@ export default {
           console.log(error);
         });
     },
-    addToFather() {
+    clickShowDialog() {
+      this.visible = true;
+    },
+    addToParent() {
       let _self = this;
       _self.rightList.forEach(function(val, index, arr) {
         _self.rightNameList += val.name + ";";

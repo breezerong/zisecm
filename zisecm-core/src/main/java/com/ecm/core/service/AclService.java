@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 				sql += " where name = '"+name+"'";
 			}
 		}
-		List<EcmAcl> list = ecmAcl.searchToEntity(sql);
+		List<EcmAcl> list = ecmAcl.searchToEntity(sql, pager);
 		return list;
 	}
 
@@ -219,15 +220,15 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	}
 	
 	@Override
-	public EcmAcl copy(String token, String id) throws AccessDeniedException {
+	public EcmAcl copy(String token, String id, String newName, String description) throws AccessDeniedException {
 		EcmAcl acl = ecmAcl.selectByPrimaryKey(id);
-		return copy(token, acl);
+		return copy(token, acl, newName, description);
 	}
 	
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public EcmAcl copy(String token, EcmAcl acl) throws AccessDeniedException {
+	public EcmAcl copy(String token, EcmAcl acl, String newName, String description) throws AccessDeniedException {
 		String newId=null;
 		if(acl!=null) {
 			String oldId = acl.getId();
@@ -237,7 +238,12 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 			acl.setCreationDate(new Date());
 			acl.setModifier(getSession(token).getCurrentUser().getUserName());
 			acl.setModifiedDate(new Date());
-			acl.setName("ecm_"+newId);
+			if(StringUtils.isEmpty(newName)||newName.equals(acl.getName())) {
+				acl.setName("ecm_"+newId);
+			}else {
+				acl.setName(newName);
+			}
+			acl.setDescription(description);
 			ecmAcl.insert(acl);
 			List<EcmPermit> list = ecmAclItem.selectByParentId(oldId);
 			for(EcmPermit item: list) {

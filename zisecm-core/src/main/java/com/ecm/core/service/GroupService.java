@@ -98,7 +98,10 @@ public class GroupService implements IGroupService {
 	@Override
 	public List<EcmGroup> getGroups(String token,String parentId, String type, Pager pager, String condition) {
 		String sql = "select ID, NAME, DESCRIPTION, CODING, CREATION_DATE, CREATOR, MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID from ecm_group where 1=1 ";
-		sql += " and GROUP_TYPE='"+type+"'";
+		if(!StringUtils.isEmpty(type))
+		{
+			sql += " and GROUP_TYPE='"+type+"'";
+		}
 		if(!StringUtils.isEmpty(parentId))
 		{
 			sql += " and PARENT_ID='"+parentId+"'";
@@ -108,7 +111,7 @@ public class GroupService implements IGroupService {
 			sql += " and ("+condition+")";
 		}
 		
-		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql, pager);
 		return list;
 	}
 	
