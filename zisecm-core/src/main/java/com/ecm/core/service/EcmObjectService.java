@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ecm.core.ActionContext;
+import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.dao.EcmAuditGeneralMapper;
 import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.exception.AccessDeniedException;
@@ -72,6 +73,10 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
 		IEcmSession session = getSession(token);
 		if(session==null) {
 			throw new EcmException(serviceCode,systemPermission,"session is null.");
+		}
+		//超级用户不判断权限
+		if(session.getCurrentUser().getSystemPermission()>= SystemPermission.SUPER_USER) {
+			return true;
 		}
 		if(systemPermission>0) {
 			if(session.getCurrentUser().getSystemPermission()<systemPermission) {

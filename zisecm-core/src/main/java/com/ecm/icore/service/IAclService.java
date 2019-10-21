@@ -25,18 +25,22 @@ public interface IAclService {
 	 * 根据ID复制ACL
 	 * @param token
 	 * @param id
+	 * @param newName 新ACL 名称
+	 * @param description 描述
 	 * @return
 	 * @throws AccessDeniedException 
 	 */
-	EcmAcl copy(String token, String id) throws AccessDeniedException;
+	EcmAcl copy(String token, String id, String newName, String description) throws AccessDeniedException;
 	/**
 	 * 根据ACL对象复制ACL
 	 * @param token
 	 * @param acl
+	 * @param newName 新ACL 名称
+	 * @param description 描述
 	 * @return
 	 * @throws AccessDeniedException 
 	 */
-	EcmAcl copy(String token, EcmAcl acl) throws AccessDeniedException;
+	EcmAcl copy(String token, EcmAcl acl, String newName, String description) throws AccessDeniedException;
 	/**
 	 * 移除用户权限
 	 * @param token
@@ -95,6 +99,15 @@ public interface IAclService {
 	 * @param token
 	 * @param name Acl名称
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
-	EcmAcl getObjectByName(String token, String name);
+	EcmAcl getObjectByName(String token, String name) throws AccessDeniedException;
+	/**
+	 * 获取当前用户对ACL权限
+	 * @param token
+	 * @param aclName
+	 * @return
+	 * @throws AccessDeniedException
+	 */
+	int getPermission(String token, String aclName) throws AccessDeniedException;
 }

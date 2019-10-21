@@ -17,7 +17,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 
 @SpringBootApplication
-@ComponentScan({"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.services.pdfsign","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*"})
+@ComponentScan({"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*"})
 @MapperScan("com.ecm.core.dao")
 @EnableTransactionManagement//(proxyTargetClass = true)
 public class ZisECMApplication extends SpringBootServletInitializer {

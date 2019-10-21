@@ -50,7 +50,7 @@ public class DBUtils {
 	 
 	public static String getString(String dataStr) {
 		if(dataStr==null||dataStr.trim().length()==0) {
-			return dataStr;
+			return "";
 		}
 		if ("mysql".equalsIgnoreCase(databaseType)) {
 			return dataStr.replace("'", getSingleQuotationMark());

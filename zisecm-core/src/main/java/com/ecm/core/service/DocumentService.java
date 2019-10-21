@@ -594,7 +594,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 			}
 		}
-		return 0;
+		return 1;
 	}
 	
 	@Override
@@ -616,7 +616,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if(!StringUtils.isEmpty(aclName)) {
 				EcmAcl acl = aclService.getObjectByName(token, aclName);
 				if(newAcl) {
-					acl = aclService.copy(token, acl);
+					acl = aclService.copy(token, acl, null,doc.getId());
 					updateAclName(token, doc.getId(), acl.getName());
 				}
 				aclName = acl.getName();
@@ -654,7 +654,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				EcmAcl acl = aclService.getObjectByName(token, aclName);
 				if(acl!=null) {
 					if(newAcl) {
-						acl = aclService.copy(token, acl);
+						acl = aclService.copy(token, acl, null,doc.getId());
 						updateAclName(token, doc.getId(), acl.getName());
 					}
 					aclService.grantUser(token, acl.getId(), targetName, permission, expireDate);
@@ -702,7 +702,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			EcmAcl acl = aclService.getObjectByName(token, aclName);
 			if(acl!=null) {
 				if(newAcl) {
-					acl = aclService.copy(token, acl);
+					acl = aclService.copy(token, acl, null, doc.getId());
 					updateAclName(token, doc.getId(), acl.getName());
 					aclName = acl.getName();
 				}
@@ -732,7 +732,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			EcmAcl acl = aclService.getObjectByName(token, aclName);
 			if(acl!=null) {
 				if(newAcl) {
-					acl = aclService.copy(token, acl);
+					acl = aclService.copy(token, acl, null, doc.getId());
 					updateAclName(token, doc.getId(), acl.getName());
 					aclName = acl.getName();
 				}

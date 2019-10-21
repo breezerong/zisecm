@@ -58,4 +58,7 @@ public interface IUserService {
 
 	EcmUser getObjectByName(String token, String userName);
 
+	boolean updatePassword(String token, String userName, String password, String newPassword)
+			throws EcmException, AccessDeniedException, NoPermissionException;
+
 }

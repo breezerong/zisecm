@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.cache.manager.ICacheManager;
-import com.ecm.core.dao.EcmMenuMapper;
 import com.ecm.core.entity.EcmMenu;
+import com.ecm.core.service.MenuService;
 /**
  * @ClassName  CacheManagerEcmMenu   
  * @Description TODO(事件配置初始化 缓存类)   
@@ -19,16 +19,15 @@ import com.ecm.core.entity.EcmMenu;
 @Component
 public class CacheManagerEcmMenu implements ICacheManager<EcmMenu>{
 	@Autowired
-	private EcmMenuMapper ecmMenuMapper;
+	private MenuService menuService;
 	
 	
 	
 	@Override
 	public void initAllCaches() {
-		CacheManagerOper.getEcmMenuList().clear();
-		List<EcmMenu> objList = ecmMenuMapper.selectAll();
+		CacheManagerOper.getEcmMenus().clear();
+		List<EcmMenu> objList = menuService.getMenuWithChild(null);
 		if(objList != null) {
-			CacheManagerOper.getEcmMenuList().addAll(objList); //带顺序的集合
 			for(EcmMenu obj:objList) {
 				CacheManagerOper.getEcmMenus().put(obj.getName(), obj);
 			}
@@ -39,8 +38,8 @@ public class CacheManagerEcmMenu implements ICacheManager<EcmMenu>{
 
 	@Override
 	public EcmMenu refreshCache(String key) {
-		EcmMenu em = CacheManagerOper.getEcmMenus().remove(key);
-		EcmMenu obj = ecmMenuMapper.selectByPrimaryKey(em.getId());
+		CacheManagerOper.getEcmMenus().remove(key);
+		EcmMenu obj = menuService.getObjectByName(null, key);
 		if(obj != null) {
 			CacheManagerOper.getEcmMenus().put(key, obj);
 			return obj;

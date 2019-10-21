@@ -1,11 +1,11 @@
 package com.ecm.common.util;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 
 import javax.crypto.*;
 import javax.crypto.spec.DESKeySpec;
 import java.io.*;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -117,7 +117,7 @@ public class SecureUtils {
 				sb.append(Integer.toHexString(dst[i] & 0xf));
 			}
 		} finally {
-			IOUtils.closeQuietly(is);
+			is.close();
 		}
 
 		return sb.toString();
@@ -128,5 +128,37 @@ public class SecureUtils {
 	 */
 	public static String generatePassword(int lenght) {
 		return RandomStringUtils.randomAlphanumeric(lenght);
+	}
+	/**
+	 * MD5加密字符串
+	 * @param str
+	 * @return
+	 */
+	public static String md5Encode(String str) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(str.getBytes());
+			return new BigInteger(1,md.digest()).toString(32);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return str;
+	}
+	/**
+	 * SHA加密字符串
+	 * @param str
+	 * @return
+	 */
+	public static String shaEncode(String str) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA");
+			md.update(str.getBytes());
+			return new BigInteger(1, md.digest()).toString(32);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return str;
 	}
 }

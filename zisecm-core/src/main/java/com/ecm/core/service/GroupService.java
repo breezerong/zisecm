@@ -24,6 +24,7 @@ import com.ecm.core.entity.EcmGroupItem;
 import com.ecm.core.entity.EcmGroupUser;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IGroupService;
 
 /**
@@ -97,7 +98,10 @@ public class GroupService implements IGroupService {
 	@Override
 	public List<EcmGroup> getGroups(String token,String parentId, String type, Pager pager, String condition) {
 		String sql = "select ID, NAME, DESCRIPTION, CODING, CREATION_DATE, CREATOR, MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID from ecm_group where 1=1 ";
-		sql += " and GROUP_TYPE='"+type+"'";
+		if(!StringUtils.isEmpty(type))
+		{
+			sql += " and GROUP_TYPE='"+type+"'";
+		}
 		if(!StringUtils.isEmpty(parentId))
 		{
 			sql += " and PARENT_ID='"+parentId+"'";
@@ -107,7 +111,7 @@ public class GroupService implements IGroupService {
 			sql += " and ("+condition+")";
 		}
 		
-		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql, pager);
 		return list;
 	}
 	
@@ -120,6 +124,26 @@ public class GroupService implements IGroupService {
 			sql += " and PARENT_ID='"+parentId+"'";
 		}
 		sql += " order by NAME";
+		
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
+		return list;
+	}
+	
+	@Override
+	public List<EcmGroup> getUserGroupsById(String token,String userId) {
+		
+		String sql = "select a.* from ecm_group a, ecm_group_user b "
+				+ " where a.ID = b.GROUP_ID and b.USER_ID='"+DBUtils.getString(userId)+"'";
+		
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
+		return list;
+	}
+	
+	@Override
+	public List<EcmGroup> getUserGroupsByName(String token,String userName) {
+		
+		String sql = "select a.* from ecm_group a, ecm_group_user b, ecm_user c where "
+				+ " a.ID = b.GROUP_ID and b.USER_ID=c.ID and c.NAME='"+DBUtils.getString(userName)+"'";
 		
 		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
 		return list;

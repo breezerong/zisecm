@@ -21,8 +21,7 @@
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>
                   </el-select>
-                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue"></UserSelectInput>
-                <UsersSelector v-else-if="item.controlType=='UsersSelector'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue"></UsersSelector>
+                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue" v-bind:isRepeat="item.isRepeat"></UserSelectInput>
                 <!-- <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput> -->
           </el-form-item>
         </el-col>

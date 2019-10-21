@@ -32,6 +32,7 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.entity.UserInfoEntity;
 
 /**
  * 用户控制器
@@ -204,5 +205,30 @@ public class UserController extends ControllerAbstract{
 		}
 		return mp;
 	}
-
+	
+	@RequestMapping(value = "/user/updatePassword", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updatePassword(@RequestBody UserInfoEntity userInfo) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			userService.updatePassword(getToken(),userInfo.getName(), userInfo.getPassword(), userInfo.getNewPassword());
+			mp.put("code", ActionContext.SUCESS);
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
+	
 }
+
