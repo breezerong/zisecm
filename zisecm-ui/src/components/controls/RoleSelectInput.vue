@@ -165,13 +165,13 @@ export default {
   methods: {
     refreshData() {
       var m = new Map();
-       let _self = this;
+      let _self = this;
       m.set("groupType", this.groupType);
       m.set("id", "");
       m.set("condition", "name like '%" + this.findValue + "%' or description like '%" + this.findValue + "%'");
       m.set("pageIndex", _self.currentPage-1);
       m.set("pageSize", _self.pageSize);
-     
+      console.log(_self.isRepeat);
       _self
         .axios({
           headers: {

@@ -1,5 +1,54 @@
 <template>
   <div>
+    <el-dialog :title="$t('application.objectPermission9')" 
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :visible.sync="dialogVisible">
+      <el-form :model="form">
+        <el-row>
+            <el-col v-if="!isEdit" :span="24">
+              <el-form-item :label="$t('field.type')" :label-width="formLabelWidth">
+                <el-select :disabled="isEdit"
+                  v-model="form.targetType" :placeholder="$t('application.pleaseSelect')" style="display:block;">
+                  <div v-for="(item,index) in typeData">
+                    <el-option :label="item.name" :value="item.value" :key="index"></el-option>
+                  </div>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item :label="$t('field.name')" :label-width="formLabelWidth">
+                <div v-if="isEdit">
+                  {{form.targetName}}
+                </div>
+                <div v-else>
+                  <UserSelectInput v-if="form.targetType==1" v-model="form.targetName" v-bind:inputValue="form.targetName" :isRepeat="repeat"></UserSelectInput>
+                  <RoleSelectInput v-else-if="form.targetType==2" v-model="form.targetName" v-bind:inputValue="form.targetName" :isRepeat="repeat"></RoleSelectInput>
+                </div>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item :label="$t('field.permission')" :label-width="formLabelWidth">
+                <el-select
+                  v-model="form.permission" :placeholder="$t('application.pleaseSelect')" style="display:block;">
+                  <div v-for="(item,index) in permissionData">
+                    <el-option :label="item.name" :value="item.value" :key="index"></el-option>
+                  </div>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item :label="$t('field.expireDate')" :label-width="formLabelWidth">
+                <el-date-picker v-model="form.expireDate" type="date" :placeholder="$t('application.selectDate')" style="display:block;"></el-date-picker>
+              </el-form-item>
+            </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
+        <el-button type="primary" @click="saveItem(form)">{{$t('application.ok')}}</el-button>
+      </div>
+    </el-dialog>
     <el-row>
       <el-col :span="6">
         <el-input
@@ -70,7 +119,45 @@ export default {
       inputKey:"",
       permitList:[],
       permitListFull:[],
-      loading: false
+      loading: false,
+      dialogVisible: false,
+      isEdit: false,
+      repeat: true,
+      form:{
+        id:"",
+        targetName: "",
+        expireDate: null,
+        targetType: 1,
+        permission: 1,
+        parentId:""
+      },
+      typeData: [
+          {"name":this.$t('application.user'),
+          "value":1},
+          {"name":this.$t('application.role'),
+          "value":2}
+      ],
+      permissionData: [
+          {"name":this.$t('application.objectPermission1'),
+          "value":1},
+          {"name":this.$t('application.objectPermission2'),
+          "value":2},
+          {"name":this.$t('application.objectPermission3'),
+          "value":3},
+          {"name":this.$t('application.objectPermission4'),
+          "value":4},
+          {"name":this.$t('application.objectPermission5'),
+          "value":5},
+          {"name":this.$t('application.objectPermission6'),
+          "value":6},
+          {"name":this.$t('application.objectPermission7'),
+          "value":7},
+          {"name":this.$t('application.objectPermission8'),
+          "value":8},
+          {"name":this.$t('application.objectPermission9'),
+          "value":9}
+      ],
+      formLabelWidth: "120px"
     }
   },
   components: {
@@ -122,6 +209,62 @@ export default {
         _self.aclData = response.data.data;
         _self.refreshData();
 
+      });
+    },
+    showItem(inData){
+      this.isEdit = true;
+      this.form = inData;
+      this.dialogVisible = true;
+    },
+    newItem(){
+      this.isEdit = false;
+      this.form = {
+        id:"",
+        parentId: this.aclData.id,
+        targetName: "",
+        expireDate: null,
+        targetType: 1,
+        permission: 1
+      }
+      this.dialogVisible = true;
+    },
+    saveItem(inData){
+      let _self = this;
+      //console.log(name);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: "post",
+        data: inData,
+        url: "/zisecm/acl/grantPermit"
+      }).then(function(response){
+        if(response.data.code == 1){
+          _self.dialogVisible = false;
+          _self.refreshData();
+          _self.$message(_self.$t('message.newSuccess'));
+        }else{
+          _self.$message.error(_self.$t('message.newFailured'));
+        }
+      });
+    },
+    delItem(inData){
+      let _self = this;
+      //console.log(name);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: "post",
+        data: inData,
+        url: "/zisecm/acl/revokePermit"
+      }).then(function(response){
+        if(response.data.code == 1){
+          _self.refreshData();
+          _self.$message(_self.$t('message.deleteSuccess'));
+        }else{
+          _self.$message.error(_self.$t('message.deleteFailured'));
+        }
       });
     },
     /*

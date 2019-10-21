@@ -54,7 +54,7 @@
         <el-input
           v-model="inputKey"
           placeholder="请输入关键字"
-          @change="searchform"
+          @change="refreshData"
           prefix-icon="el-icon-search"
         ></el-input>
       </el-col>
@@ -189,7 +189,11 @@ export default {
     refreshData() {
       let _self = this;
       var m = new Map();
-      m.set("name", this.inputKey);
+      if(this.inputKey.length>0){
+        m.set("name", "%"+this.inputKey+"%");
+      }else{
+        m.set("name", this.inputKey);
+      }
       m.set("pageIndex", _self.currentPage-1);
       m.set("pageSize", _self.pageSize);
       _self.loading = true;

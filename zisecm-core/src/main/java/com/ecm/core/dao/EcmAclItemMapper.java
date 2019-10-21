@@ -3,6 +3,7 @@ package com.ecm.core.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmPermit;
@@ -22,7 +23,7 @@ public interface EcmAclItemMapper {
 
 	EcmPermit selectByPrimaryKey(String id);
 	
-	EcmPermit selectByGrantName(String parentId, String grantName,int targetType);
+	EcmPermit selectByGrantName(@Param("parentId")String parentId, @Param("targetName")String targetName,@Param("targetType")int targetType);
 
 	int updateByPrimaryKeySelective(EcmPermit record);
 
