@@ -15,7 +15,6 @@ import com.ecm.core.dao.EcmCardSearchItemMapper;
 import com.ecm.core.dao.EcmCardSearchMapper;
 import com.ecm.core.entity.EcmCardSearch;
 import com.ecm.core.entity.EcmCardSearchItem;
-import com.ecm.core.entity.EcmForm;
 import com.ecm.portal.controller.ControllerAbstract;
 
 /**

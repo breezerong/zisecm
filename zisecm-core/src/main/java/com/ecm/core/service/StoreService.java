@@ -1,14 +1,12 @@
 package com.ecm.core.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.ServiceContext;
-import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmStoreMapper;
 import com.ecm.core.entity.EcmStore;
 import com.ecm.icore.service.IStoreService;

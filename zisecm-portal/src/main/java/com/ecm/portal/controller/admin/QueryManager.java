@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
-import com.ecm.core.dao.EcmQueryMapper;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.QueryService;

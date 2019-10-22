@@ -1,22 +1,17 @@
 package com.ecm.portal.controller.admin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
-import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.dao.EcmActionMapper;
-import com.ecm.core.dao.EcmParameterMapper;
 import com.ecm.core.entity.EcmParameter;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.ParameterService;

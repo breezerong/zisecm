@@ -13,20 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
-import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.entity.ChartBean;
 import com.ecm.core.entity.EcmCardSearch;
-import com.ecm.core.entity.EcmCardSearchItem;
 import com.ecm.core.entity.EcmFormItem;
-import com.ecm.core.entity.EcmGridView;
-import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.CardSearchService;
-import com.ecm.core.service.ReportService;
 import com.ecm.core.service.SearchService;
 /**
  * 查询服务

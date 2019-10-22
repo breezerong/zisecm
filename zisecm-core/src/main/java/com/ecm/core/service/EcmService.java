@@ -3,7 +3,6 @@ package com.ecm.core.service;
 import com.ecm.core.cache.manager.SessionManager;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.exception.EcmException;
 import com.ecm.icore.service.IEcmSession;
 
 public abstract class EcmService {

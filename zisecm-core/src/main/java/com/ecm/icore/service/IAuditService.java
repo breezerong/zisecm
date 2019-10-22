@@ -1,10 +1,5 @@
 package com.ecm.icore.service;
 
-import java.util.Date;
-import java.util.List;
-
-
-import com.ecm.core.entity.EcmAuditGeneral;
 /**
  * 日志服务接口
  * @author Haihong Rong

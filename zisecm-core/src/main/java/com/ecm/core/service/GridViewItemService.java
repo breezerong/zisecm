@@ -1,19 +1,13 @@
 package com.ecm.core.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.dao.EcmFormMapper;
 import com.ecm.core.dao.EcmGridViewItemMapper;
-import com.ecm.core.entity.EcmAction;
-import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmGridViewItem;
-import com.ecm.icore.service.IFormService;
 import com.ecm.icore.service.IGridViewItemService;
 
 /**

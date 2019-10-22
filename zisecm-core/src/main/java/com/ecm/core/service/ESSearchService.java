@@ -40,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.ecm.core.entity.AggregationEntity;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.Pager;
-import com.ecm.core.entity.AggregationEntity;
 import com.ecm.core.search.ESClient;
 import com.ecm.icore.service.ISearchService;
 

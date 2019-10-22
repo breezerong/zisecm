@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ecm.core.bpm.ProcessEngine;
 import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.service.AuditService;
-import com.ecm.icore.bpm.IProcessEngine;
 
 @Controller
 public class AuditContoller extends ControllerAbstract {

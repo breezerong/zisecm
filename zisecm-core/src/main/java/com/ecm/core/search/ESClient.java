@@ -6,7 +6,6 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
 

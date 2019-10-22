@@ -17,8 +17,6 @@ import com.ecm.core.dao.EcmFolderMapper;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
-import com.ecm.core.service.UserService;
-import com.ecm.portal.controller.ControllerAbstract;
 
 /**
  * 文件夹控制器

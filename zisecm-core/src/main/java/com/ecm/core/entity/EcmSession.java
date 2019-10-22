@@ -1,6 +1,5 @@
 package com.ecm.core.entity;
 
-import com.ecm.core.entity.LoginUser;
 import com.ecm.icore.service.IEcmSession;
 
 public class EcmSession implements IEcmSession{

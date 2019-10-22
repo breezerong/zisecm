@@ -59,7 +59,7 @@ import com.ecm.portal.util.ExcelUtil;
  *
  */
 @Controller
-public class DrawingContoller extends ControllerAbstract{
+public class BulkUploadContoller extends ControllerAbstract{
 
 	private String gridviewName="DrawingGrid";
 	

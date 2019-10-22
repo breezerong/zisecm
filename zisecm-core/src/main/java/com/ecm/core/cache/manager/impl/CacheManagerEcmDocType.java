@@ -8,11 +8,7 @@ import org.springframework.stereotype.Component;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.cache.manager.ICacheManager;
 import com.ecm.core.dao.EcmAttributeMapper;
-import com.ecm.core.dao.EcmComponentMapper;
-import com.ecm.core.dao.EcmStoreMapper;
 import com.ecm.core.entity.EcmAttribute;
-import com.ecm.core.entity.EcmComponent;
-import com.ecm.core.entity.EcmStore;
 /**
  * @ClassName  CacheManagerEcmStore   
  * @Description TODO(配置初始化 缓存类)   
