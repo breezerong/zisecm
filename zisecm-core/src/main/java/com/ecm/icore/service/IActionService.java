@@ -1,9 +1,5 @@
 package com.ecm.icore.service;
 
-import java.util.List;
-
-import com.ecm.core.entity.EcmAction;
-
 /**
  * 活动事件服务接口
  * @author Haihong Rong

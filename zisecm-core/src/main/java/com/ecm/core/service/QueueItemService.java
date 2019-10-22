@@ -8,10 +8,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.dao.EcmQueueItemMapper;
-import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.service.EcmObjectService;
 import com.ecm.icore.bpm.IQueueItemService;
 /**
  * 消息队列服务

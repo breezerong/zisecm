@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ecm.core.DocumentContext;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
-import com.ecm.core.dao.EcmProcessMapper;
 import com.ecm.core.dao.EcmWorkflowMapper;
 import com.ecm.core.entity.EcmActivity;
 import com.ecm.core.entity.EcmAuditWorkflow;
@@ -18,7 +16,6 @@ import com.ecm.core.entity.EcmProcess;
 import com.ecm.core.entity.EcmWorkflow;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
-import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmObjectService;
 import com.ecm.icore.bpm.IWorkflowService;
 @Component

@@ -1,11 +1,7 @@
 package com.ecm.core.service;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.soap.SOAPException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ecm.common.util.EcmStringUtils;
-import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmGroupItemMapper;
 import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
