@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
-import com.ecm.core.dao.EcmActionMapper;
 import com.ecm.core.entity.EcmAction;
 import com.ecm.core.service.ActionService;
 import com.ecm.portal.controller.ControllerAbstract;

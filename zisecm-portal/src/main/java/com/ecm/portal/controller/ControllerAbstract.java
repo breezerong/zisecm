@@ -2,15 +2,12 @@ package com.ecm.portal.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.SessionManager;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.service.UserService;
 import com.ecm.icore.service.IEcmSession;
 
 @Controller

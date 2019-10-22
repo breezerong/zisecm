@@ -1,11 +1,9 @@
 package com.ecm.portal.util;
 
-import java.util.Collection;  
-import java.util.LinkedList;  
-import java.util.List;  
-import java.util.Map;
-
-import org.apache.commons.math3.util.MathUtils;  
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;  
 
 /**  
  * 集合(List,Map,Set)辅助类。  

@@ -2,11 +2,13 @@ package com.ecm.portal.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.ChartBean;
 import com.ecm.core.service.ReportService;

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmAcl;
-import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
