@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecm.core.entity.EcmParameter;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.icore.service.IParameterService;
 
 /**
@@ -28,7 +29,13 @@ public class EcmParameterController extends ControllerAbstract{
 	
 	@RequestMapping("/queryEcmParameter")
 	public EcmParameter queryEcmParameter(@RequestParam("name") String name) {
-		logger.info("queryEcmParameter params name: {}", name);;
-		return ecmParameterService.queryEcmParameter(getToken(),name);
+		logger.info("queryEcmParameter params name: {}", name);
+		try {
+			return ecmParameterService.queryEcmParameter(getToken(),name);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

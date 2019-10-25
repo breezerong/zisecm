@@ -12,16 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
-import com.ecm.core.dao.EcmFormItemMapper;
-import com.ecm.core.entity.EcmDefType;
-import com.ecm.core.entity.EcmForm;
-import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmStore;
-import com.ecm.core.exception.EcmException;
-import com.ecm.core.service.AttributeService;
-import com.ecm.core.service.DefTypeService;
-import com.ecm.core.service.FormItemService;
-import com.ecm.core.service.FormService;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.StoreService;
 import com.ecm.portal.controller.ControllerAbstract;
 
@@ -51,9 +43,13 @@ public class StoreController extends ControllerAbstract{
 	public Map<String, Object> getStore() {
 		List<EcmStore> list;
 		Map<String, Object> mp = new HashMap<String, Object>();
-		list = storeService.getAllObject(getToken());
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", list);
+		try {
+			list = storeService.getAllObject(getToken());
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 

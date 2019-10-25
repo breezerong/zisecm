@@ -3,9 +3,9 @@ package com.ecm.core.db;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
- 
-import org.apache.commons.lang3.StringUtils;
+
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 

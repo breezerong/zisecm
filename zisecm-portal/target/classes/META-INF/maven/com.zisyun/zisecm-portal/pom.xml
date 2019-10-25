@@ -62,7 +62,21 @@
 		    <artifactId>fastjson</artifactId>
 		    <version>1.2.61</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>7.3.2</version><!--$NO-MVN-MAN-VER$ -->
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-client</artifactId>
+			<version>7.3.2</version><!--$NO-MVN-MAN-VER$ -->
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+			<version>7.3.2</version><!--$NO-MVN-MAN-VER$ -->
+		</dependency>
     </dependencies>
 
     <properties>

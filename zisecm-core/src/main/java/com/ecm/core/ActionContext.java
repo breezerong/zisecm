@@ -22,6 +22,10 @@ public class ActionContext {
 	 */
 	public static final int BUSINESS_ERROR = 3;
 	/**
+	 * 没有权限
+	 */
+	public static final int NO_PERMSSION = 9;
+	/**
 	 * session超时
 	 */
 	public static final int TIME_OUT = 1001;

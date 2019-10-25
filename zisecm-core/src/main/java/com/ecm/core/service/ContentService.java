@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ import com.ecm.icore.service.IContentService;
 @Scope("prototype")
 public class ContentService extends EcmObjectService<EcmContent> implements IContentService {
 
+	private static final Logger logger = LoggerFactory.getLogger(ContentService.class);
+			
 	@Autowired
 	private EcmContentMapper contentMapper;
 
@@ -56,6 +60,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			}
 			en.setDataTicket(contentMapper.selectDataTicket());
 			String fullPath = getFullPath(en);
+			logger.info("Full path:{}",fullPath);
 			File file = new File(fullPath);   
 			long len = 0;
 			BufferedOutputStream fis = new BufferedOutputStream(new FileOutputStream(file));
@@ -78,6 +83,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			en.setModifiedDate(en.getCreationDate());
 			en.setModifier(en.getCreator());
 			contentMapper.insert(en);
+			logger.info("Insert content:{}",en.getId());
 			return en.getId();
 		}catch(Exception ex) {
 			new EcmException(ex.getMessage());

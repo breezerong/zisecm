@@ -26,9 +26,9 @@
                 </el-table-column>
                 <el-table-column prop="performer" label="用户" width="120" >
                 </el-table-column>
-                <el-table-column prop="startDate" label="开始时间" sortable :formatter="dateFormat"  width="160">
+                <el-table-column prop="startDate" label="开始时间" sortable :formatter="dateFormatter"  width="160">
                 </el-table-column>
-                <el-table-column prop="completeDate" label="完成时间" sortable :formatter="dateFormat2"  width="160">
+                <el-table-column prop="completeDate" label="完成时间" sortable :formatter="dateFormatter"  width="160">
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果" width="100">
                 </el-table-column>
@@ -71,9 +71,9 @@
                 </el-table-column>
                 <el-table-column prop="taskName" label="名称"  min-width="30%" sortable>
                 </el-table-column>
-                <el-table-column prop="startDate" label="开始时间" :formatter="dateFormat" min-width="10%" sortable>
+                <el-table-column prop="startDate" label="开始时间" :formatter="dateFormatter" min-width="10%" sortable>
                 </el-table-column>
-                <el-table-column prop="completeDate" label="完成时间" :formatter="dateFormat2"   min-width="10%" sortable>
+                <el-table-column prop="completeDate" label="完成时间" :formatter="dateFormatter"   min-width="10%" sortable>
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果"  min-width="10%">
                 </el-table-column>
@@ -134,6 +134,10 @@ export default {
     _self.refreshData();
   },
   methods: {
+    dateFormatter(row, column) {
+      let datetime = row[column.property];
+      return this.datetimeFormat(datetime);
+    },
     refreshData() {
       let _self = this;
       _self.loading = true;
@@ -200,28 +204,6 @@ export default {
           _self.loading = false;
         });
     },
-    dateFormat(row, column) {
-        let datetime = row.startDate;
-        if(datetime){
-          datetime = new Date(datetime);
-          let y = datetime.getFullYear() + '-';
-          let mon = datetime.getMonth()+1 + '-';
-          let d = datetime.getDate();
-          return y + mon + d + " "+datetime.getHours()+":"+datetime.getMinutes()+":"+datetime.getSeconds();
-        }
-        return ''
-      },
-      dateFormat2(row, column) {
-        let datetime = row.completeDate;
-        if(datetime){
-          datetime = new Date(datetime);
-          let y = datetime.getFullYear() + '-';
-          let mon = datetime.getMonth()+1 + '-';
-          let d = datetime.getDate();
-          return y + mon + d + " "+datetime.getHours()+":"+datetime.getMinutes()+":"+datetime.getSeconds();
-        }
-        return ''
-      },
     showitem(indata) {
       let _self = this;
       _self

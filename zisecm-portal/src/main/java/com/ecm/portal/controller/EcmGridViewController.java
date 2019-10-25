@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecm.core.entity.EcmGridView;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.icore.service.IGridViewService;
 
 /**
@@ -28,6 +29,12 @@ public class EcmGridViewController extends ControllerAbstract{
 	@RequestMapping("/queryGridView")
 	public EcmGridView queryGridView(@RequestParam("name") String gridName) {
 		logger.info("queryGridView params name: {}",gridName);
-		return ecmGridViewService.queryGridView(getToken(),gridName);
+		try {
+			return ecmGridViewService.queryGridView(getToken(),gridName);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

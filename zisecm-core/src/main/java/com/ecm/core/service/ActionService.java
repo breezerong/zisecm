@@ -14,6 +14,7 @@ import com.ecm.core.dao.EcmActionMapper;
 import com.ecm.core.entity.EcmAction;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 
 
 @Service
@@ -36,35 +37,35 @@ public class ActionService extends EcmObjectService<EcmAction> {
 
 
 	@Override
-	public List<EcmAction> getAllObject(String token) throws EcmException, AccessDeniedException {
+	public List<EcmAction> getAllObject(String token) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
 		return (List<EcmAction>) ecmAction.selectAll();
 	}
 
 	@Override
-	public EcmAction getObjectById(String token, String id) throws EcmException, AccessDeniedException {
+	public EcmAction getObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+1,systemPermission);
 		return (EcmAction) ecmAction.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+3,systemPermission);
 		return ecmAction.updateByPrimaryKey((com.ecm.core.entity.EcmAction) obj)>0;
 	}
 
 	@Override
-	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+4,systemPermission);
 		return ecmAction.deleteByPrimaryKey(((com.ecm.core.entity.EcmAction)obj).getId())>0;
 	}
 
 	@Override
-	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token, serviceCode+2,systemPermission);
 		((EcmAction)obj).createId();

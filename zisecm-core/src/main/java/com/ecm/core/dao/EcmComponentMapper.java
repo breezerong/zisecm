@@ -3,6 +3,7 @@ package com.ecm.core.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmComponent;
@@ -10,6 +11,8 @@ import com.ecm.core.entity.EcmComponent;
 @Mapper
 public interface EcmComponentMapper {
 
+	List<EcmComponent> selectByCondition(@Param(value="condition")String condition);
+	
     List<EcmComponent> selectAll();
 
     int deleteByPrimaryKey(String id);

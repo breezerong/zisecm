@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmGridView;
-import com.ecm.core.entity.EcmRelationType;
 @Component
 @Mapper
 public interface EcmGridViewMapper {

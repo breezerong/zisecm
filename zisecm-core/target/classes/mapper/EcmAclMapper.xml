@@ -14,6 +14,12 @@
   <sql id="Base_Column_List">
     ID, NAME, DESCRIPTION, CREATION_DATE, CREATOR, TYPE_NAME, MODIFIER, MODIFIED_DATE
   </sql>
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  <select id="searchToEntity" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	${sqlStr}
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

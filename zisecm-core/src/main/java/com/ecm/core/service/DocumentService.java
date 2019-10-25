@@ -33,6 +33,7 @@ import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
@@ -346,8 +347,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 			}
 		}
-		fieldStr += "CREATION_DATE,CREATOR,VERSION_ID";
-		valueStr += DBUtils.getDBDateNow() + ",'"+getSession(token).getCurrentUser().getUserName()+"','"+id+"'";
+		String ownerName = args.get("OWNER_NAME")!=null && args.get("OWNER_NAME").toString().length()>0?args.get("OWNER_NAME").toString():getSession(token).getCurrentUser().getUserName();
+		fieldStr += "CREATION_DATE,CREATOR,VERSION_ID,OWNER_NAME";
+		valueStr += DBUtils.getDBDateNow() + ",'"+getSession(token).getCurrentUser().getUserName()+"','"+id+"','"+ownerName+"'";
 		//get acl name from folder when Acl Name is empty
 		if(StringUtils.isEmpty((String)args.get("ACL_NAME")))
 		{
@@ -596,11 +598,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 			}
 		}
-		return 0;
+		return 1;
 	}
 	
 	@Override
-	public void grantGroup(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantGroup(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmDocument doc = getObjectById(token, id);
 		grantGroup( token,  doc, targetName, permission, expireDate, newAcl);
 
@@ -608,7 +610,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void grantGroup(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantGroup(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		if(doc != null) {
 			
 			if(getPermit(token, doc.getId())<ObjectPermission.PEMISSION) {
@@ -618,7 +620,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if(!StringUtils.isEmpty(aclName)) {
 				EcmAcl acl = aclService.getObjectByName(token, aclName);
 				if(newAcl) {
-					acl = aclService.copy(token, acl);
+					acl = aclService.copy(token, acl, null,doc.getId());
 					updateAclName(token, doc.getId(), acl.getName());
 				}
 				aclName = acl.getName();
@@ -638,7 +640,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	}
 	
 	@Override
-	public void grantUser(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantUser(String token, String id,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmDocument doc = getObjectById(token, id);
 		grantUser( token,  doc, targetName, permission, expireDate, newAcl);
 
@@ -646,7 +648,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void grantUser(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException {
+	public void grantUser(String token, EcmDocument doc,String targetName,int permission,Date expireDate,boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		if(doc != null) {
 			if(getPermit(token, doc.getId())<ObjectPermission.PEMISSION) {
 				throw new EcmException("User "+getSession(token).getCurrentUser().getUserName()+" has no right to change permission:"+doc.getId());
@@ -656,7 +658,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				EcmAcl acl = aclService.getObjectByName(token, aclName);
 				if(acl!=null) {
 					if(newAcl) {
-						acl = aclService.copy(token, acl);
+						acl = aclService.copy(token, acl, null,doc.getId());
 						updateAclName(token, doc.getId(), acl.getName());
 					}
 					aclService.grantUser(token, acl.getId(), targetName, permission, expireDate);
@@ -704,7 +706,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			EcmAcl acl = aclService.getObjectByName(token, aclName);
 			if(acl!=null) {
 				if(newAcl) {
-					acl = aclService.copy(token, acl);
+					acl = aclService.copy(token, acl, null, doc.getId());
 					updateAclName(token, doc.getId(), acl.getName());
 					aclName = acl.getName();
 				}
@@ -734,7 +736,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			EcmAcl acl = aclService.getObjectByName(token, aclName);
 			if(acl!=null) {
 				if(newAcl) {
-					acl = aclService.copy(token, acl);
+					acl = aclService.copy(token, acl, null, doc.getId());
 					updateAclName(token, doc.getId(), acl.getName());
 					aclName = acl.getName();
 				}

@@ -64,7 +64,7 @@
                     <el-input  v-model="scope.row.description"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="值" width="320">
+                <el-table-column label="值" min-width="30%">
                   <template slot-scope="scope">
                     <el-input  v-model="scope.row.value"></el-input>
                   </template>

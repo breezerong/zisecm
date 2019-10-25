@@ -1,7 +1,6 @@
 package com.ecm.icore.service;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 import com.ecm.core.entity.EcmContent;

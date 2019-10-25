@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ecm.core.dao.EcmFormItemMapper;
+import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.FormItemService;
 import com.ecm.core.service.FormService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -45,10 +46,14 @@ public class FromManager extends ControllerAbstract{
 	@ResponseBody
 	@RequestMapping("/admin/getForm")
 	public Map<String, Object> getForm() {
-		List<EcmForm> list = formService.getAllObject(getToken());
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("success", true);
-		mp.put("data", list);
+		try {
+			List<EcmForm> list = formService.getAllObject(getToken());
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 
@@ -57,8 +62,12 @@ public class FromManager extends ControllerAbstract{
 	@RequestMapping("/admin/getFormObj/{typeName}/{actionName}")
 	public Map<String,Object> getFormObj(@PathVariable("typeName") String typeName,@PathVariable("actionName") String actionName){
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("success", true);
-		mp.put("data", this.getECMForm(typeName, actionName));
+		try {
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", this.getECMForm(typeName, actionName));
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 	/**
@@ -69,17 +78,21 @@ public class FromManager extends ControllerAbstract{
 	@ResponseBody
 	@RequestMapping("/admin/getDefaultForm")
 	public Map<String, Object> getDefaultForm() {
-		List<EcmForm> list = formService.getAllObject(getToken());
-		for(int i=list.size()-1;i>=0;i--)
-		{
-			if(!"1".equals(list.get(i).getIsDefault()))
-			{
-				list.remove(list.get(i));
-			}
-		}
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("success", true);
-		mp.put("data", list);
+		try {
+			List<EcmForm> list = formService.getAllObject(getToken());
+			for(int i=list.size()-1;i>=0;i--)
+			{
+				if(!"1".equals(list.get(i).getIsDefault()))
+				{
+					list.remove(list.get(i));
+				}
+			}
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 
@@ -93,9 +106,13 @@ public class FromManager extends ControllerAbstract{
 	@RequestMapping(value = "/admin/updateForm", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updateForm(@RequestBody EcmForm obj) {
-		formService.updateObject(getToken(),obj);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("success", true);
+		try {
+			formService.updateObject(getToken(),obj);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 
@@ -109,28 +126,30 @@ public class FromManager extends ControllerAbstract{
 	@RequestMapping(value = "/admin/copyForm", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> copyForm(@RequestBody EcmForm obj) {
-
-		String name = obj.getTypeName() + " Copy";
-		String action = obj.getAction();
-		String fromId = obj.getId();
-		obj.createId();
-		obj.setTypeName(name);
-		formService.newObject(getToken(),obj);
-
-		obj = getECMForm(name, action);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		if (obj != null) {
-			List<EcmFormItem> items = formItemService.getFormItems(getToken(),fromId);
-			for (EcmFormItem en : items) {
-				en.createId();
-				en.setParentId(obj.getId());
-				formItemService.newObject(getToken(),en);
+		try {
+			String name = obj.getTypeName() + " Copy";
+			String action = obj.getAction();
+			String fromId = obj.getId();
+			obj.createId();
+			obj.setTypeName(name);
+			formService.newObject(getToken(),obj);
+	
+			obj = getECMForm(name, action);
+			if (obj != null) {
+				List<EcmFormItem> items = formItemService.getFormItems(getToken(),fromId);
+				for (EcmFormItem en : items) {
+					en.createId();
+					en.setParentId(obj.getId());
+					formItemService.newObject(getToken(),en);
+				}
+				mp.put("code", ActionContext.SUCESS);
+			} else {
+				mp.put("code", ActionContext.FAILURE);
 			}
-			mp.put("success", true);
-		} else {
-			mp.put("success", false);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
 		}
-
 		return mp;
 	}
 
@@ -144,14 +163,17 @@ public class FromManager extends ControllerAbstract{
 	@RequestMapping(value = "/admin/deleteForm", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> deleteForm(@RequestBody EcmForm obj) {
-
-		List<EcmFormItem> items = formItemService.getFormItems(getToken(),obj.getId());
-		for (EcmFormItem en : items) {
-			formItemService.deleteObject(getToken(),en);
-		}
-		formService.deleteObject(getToken(),obj);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("success", true);
+		try {
+			List<EcmFormItem> items = formItemService.getFormItems(getToken(),obj.getId());
+			for (EcmFormItem en : items) {
+				formItemService.deleteObject(getToken(),en);
+			}
+			formService.deleteObject(getToken(),obj);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 
@@ -166,10 +188,16 @@ public class FromManager extends ControllerAbstract{
 	@ResponseBody
 	public Map<String, Object> newForm(@RequestBody EcmForm obj) {
 		obj.createId();
-		formService.newObject(getToken(),obj);
-		//System.out.println("id:" + id);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("success", true);
+		try {
+			formService.newObject(getToken(),obj);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		//System.out.println("id:" + id);
+		
+		
 		return mp;
 	}
 
@@ -179,8 +207,9 @@ public class FromManager extends ControllerAbstract{
 	 * @param name
 	 * @param action
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
-	private EcmForm getECMForm(String name, String action) {
+	private EcmForm getECMForm(String name, String action) throws AccessDeniedException {
 		List<EcmForm> list = formService.getAllObject(getToken());
 		for (EcmForm frm : list) {
 			if (frm.getTypeName().equals(name) && frm.getAction().equals(action))

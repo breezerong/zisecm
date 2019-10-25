@@ -88,7 +88,7 @@ export default {
   },
   mounted() {
     let _self = this;
-    var psize = localStorage.getItem("docPageSize");
+    var psize = localStorage.getItem("userPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);
     }
@@ -120,9 +120,9 @@ export default {
           url: urlStr
         })
         .then(function(response) {
-          _self.dataList = response.data.datalist;
-          _self.dataListFull = response.data.datalist;
-          _self.loadPageInfo();
+          _self.dataList = response.data.data;
+          _self.itemCount = response.data.pager.total;
+          //console.log(JSON.stringify(_self.dataList));
           _self.loading = false;
         })
         .catch(function(error) {
@@ -142,60 +142,13 @@ export default {
       this.currentPage = val;
       this.refreshData();
     },
-    // 加载页数 暂时未处理查询条件
-    loadPageInfo() {
-      let _self = this;
-      var m = new Map();
-      m.set("noGroup",_self.noGroup);
-      m.set("groupId",_self.groupId);
-      m.set("condition", _self.inputkey);
-      let urlStr = "/zisecm/admin/getUserCount";
-      if(_self.groupId&&_self.groupId!="")
-      {
-        urlStr = "/zisecm/admin/getRoleUserCount";
-      }
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: urlStr
-        })
-        .then(function(response) {
-          _self.itemCount = response.data.itemCount;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
     selectitem(indata) {
       let _self = this;
       _self.$emit('onuserselected',indata);
       
     },
     search() {
-      let _self = this;
-      let tab = _self.dataListFull;
-      _self.dataList = [];
-      var i;
-      if (_self.inputkey != "") {
-        for (i in tab) {
-          if (_self.inputkey != "") {
-            if (
-              tab[i].name.indexOf(_self.inputkey) >= 0 ||
-              tab[i].loginName.indexOf(_self.inputkey) >= 0
-            ) {
-              _self.dataList.push(tab[i]);
-            }
-          }
-        }
-      } else {
-        _self.dataList = _self.dataListFull;
-      }
+      this.refreshData();
     }
   }
 };

@@ -1,20 +1,14 @@
 package com.ecm.core.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmFormItemMapper;
-import com.ecm.core.dao.EcmFormMapper;
-import com.ecm.core.entity.EcmAction;
-import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.icore.service.IFormItemService;
-import com.ecm.icore.service.IFormService;
 
 /**
  * @ClassName  EcmFormServiceImpl   

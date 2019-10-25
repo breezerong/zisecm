@@ -17,6 +17,7 @@ import com.ecm.core.entity.EcmDefAttribute;
 import com.ecm.core.entity.EcmDefType;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IDefTypeService;
 
 
@@ -43,14 +44,14 @@ public class DefTypeService extends EcmObjectService<EcmDefType> implements IDef
 
 
 	@Override
-	public List<EcmDefType> getAllObject(String token) throws EcmException, AccessDeniedException {
+	public List<EcmDefType> getAllObject(String token) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
 		return (List<EcmDefType>) ecmDefType.selectAll();
 	}
 
 	@Override
-	public EcmDefType getObjectById(String token, String id) throws EcmException, AccessDeniedException {
+	public EcmDefType getObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
 		return (EcmDefType) ecmDefType.selectByPrimaryKey(id);
@@ -69,7 +70,7 @@ public class DefTypeService extends EcmObjectService<EcmDefType> implements IDef
 	}
 
 	@Override
-	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+3,systemPermission);
 		return ecmDefType.updateByPrimaryKey((EcmDefType) obj)>0;
@@ -77,7 +78,7 @@ public class DefTypeService extends EcmObjectService<EcmDefType> implements IDef
 
 	@Override
 	@Transactional
-	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+4,systemPermission);
 		ecmDefAttribute.deleteByTypeId(((EcmDefType)obj).getId());
@@ -85,7 +86,7 @@ public class DefTypeService extends EcmObjectService<EcmDefType> implements IDef
 	}
 
 	@Override
-	public String newObject(String token,Object obj) throws EcmException, AccessDeniedException {
+	public String newObject(String token,Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+2,systemPermission);
 		((EcmDefType)obj).createId();
@@ -95,7 +96,7 @@ public class DefTypeService extends EcmObjectService<EcmDefType> implements IDef
 
 	@Override
 	@Transactional
-	public boolean copy(String token, EcmDefType obj) throws EcmException, AccessDeniedException {
+	public boolean copy(String token, EcmDefType obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token, serviceCode+5,systemPermission);
 		String sourceId = obj.getId();
 		String name=obj.getName()+" Copy";

@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ScriptUtils;
-import com.ecm.core.DocumentContext;
 import com.ecm.core.EcmContext;
-import com.ecm.core.dao.EcmActivityMapper;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.dao.EcmQueueItemMapper;
@@ -126,7 +124,7 @@ public class WorkitemService extends EcmObjectService<EcmWorkitem> implements IW
 			}
 		}
 		//更新日志
-		cond = " WORKFLOW_ID="+queueItem.getRouterId()+" and TASK_ID="+queueItem.getId();
+		cond = " WORKFLOW_ID='"+queueItem.getRouterId()+"' and TASK_ID='"+queueItem.getId()+"'";
 		List<EcmAuditWorkitem> list=  ecmAuditWorkitemMapper.selectByCondition(cond);
 		EcmAuditWorkitem audit =null;
 		if(list.size()>0) {

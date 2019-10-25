@@ -13,19 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
-import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.entity.ChartBean;
 import com.ecm.core.entity.EcmCardSearch;
-import com.ecm.core.entity.EcmCardSearchItem;
 import com.ecm.core.entity.EcmFormItem;
-import com.ecm.core.entity.EcmGridView;
-import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.CardSearchService;
-import com.ecm.core.service.ReportService;
 import com.ecm.core.service.SearchService;
 /**
  * 查询服务
@@ -118,56 +112,76 @@ public class SearchController extends ControllerAbstract{
 	@ResponseBody
 	@RequestMapping(value = "/search/getSuggestion", method = RequestMethod.POST)
 	public Map<String, Object> getSuggestion(@RequestBody String keyword) {
-		List<String> list = searchService.getSuggestion(getToken(),keyword);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", list);
+		try {
+			List<String> list = searchService.getSuggestion(getToken(),keyword);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/search/getCardSearchs", method = RequestMethod.POST)
 	public Map<String, Object> getCardSearchs(@RequestBody String lang) {
-		List<EcmCardSearch> list = cardSearchService.getEnabledCards(getToken(), lang.replace("\"", ""), false,false);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", list);
+		try {
+			List<EcmCardSearch> list = cardSearchService.getEnabledCards(getToken(), lang.replace("\"", ""), false,false);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/search/getCardSearch", method = RequestMethod.POST)
 	public Map<String, Object> getCardSearch(@RequestBody String argStr) {
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		String id = args.get("id").toString();
-		String lang = args.get("lang").toString();
-		EcmCardSearch en = cardSearchService.getCard(getToken(), id, lang, false);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", en);
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String id = args.get("id").toString();
+			String lang = args.get("lang").toString();
+			EcmCardSearch en = cardSearchService.getCard(getToken(), id, lang, false);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", en);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/search/getCardSearchAll", method = RequestMethod.POST)
 	public Map<String, Object> getCardSearchAll(@RequestBody String lang) {
-		List<EcmCardSearch> list = cardSearchService.getEnabledCards(getToken(), lang.replace("\"", ""), false,true);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", list);
+		try {
+			List<EcmCardSearch> list = cardSearchService.getEnabledCards(getToken(), lang.replace("\"", ""), false,true);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/search/getCardSearchItem", method = RequestMethod.POST)
 	public Map<String, Object> getCardSearchItem(@RequestBody String argStr) {
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		String id = args.get("id").toString();
-		String lang = args.get("lang").toString();
-		List<EcmFormItem> list = cardSearchService.getFormItems(getToken(), lang, id);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", list);
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String id = args.get("id").toString();
+			String lang = args.get("lang").toString();
+			List<EcmFormItem> list = cardSearchService.getFormItems(getToken(), lang, id);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 }

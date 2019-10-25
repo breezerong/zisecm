@@ -1,17 +1,11 @@
 package com.ecm.core.cache.manager.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.cache.manager.ICacheManager;
-import com.ecm.core.dao.EcmComponentMapper;
-import com.ecm.core.dao.EcmStoreMapper;
 import com.ecm.core.dao.EcmSuggestionMapper;
-import com.ecm.core.entity.EcmComponent;
-import com.ecm.core.entity.EcmStore;
 import com.ecm.core.entity.EcmSuggestion;
 /**
  * @ClassName  CacheManagerEcmStore   

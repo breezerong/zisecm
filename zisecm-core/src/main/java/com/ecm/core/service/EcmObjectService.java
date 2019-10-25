@@ -9,11 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ecm.core.ActionContext;
+import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.dao.EcmAuditGeneralMapper;
 import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.AuditUtils;
 import com.ecm.icore.service.IEcmObjectService;
 import com.ecm.icore.service.IEcmSession;
@@ -40,68 +42,72 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
 	}
 	
 	@Override
-	public List<T> getAllObject(String token) throws EcmException, AccessDeniedException {
+	public List<T> getAllObject(String token) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T getObjectById(String token, String id) throws EcmException, AccessDeniedException{
+	public T getObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException{
+	public boolean updateObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException{
 		// TODO Auto-generated method stub
 		return hasPermission(token,1,0);
 	}
 
 	@Override
-	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException{
+	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException{
 		// TODO Auto-generated method stub
 		return hasPermission(token,1,0);
 	}
 
 	@Override
-	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException {
+	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean hasPermission(String token, int permissionId,int systemPermission) throws EcmException, AccessDeniedException {
+	public boolean hasPermission(String token, int permissionId,int systemPermission) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		IEcmSession session = getSession(token);
 		if(session==null) {
 			throw new EcmException(serviceCode,systemPermission,"session is null.");
 		}
+		//超级用户不判断权限
+		if(session.getCurrentUser().getSystemPermission()>= SystemPermission.SUPER_USER) {
+			return true;
+		}
 		if(systemPermission>0) {
 			if(session.getCurrentUser().getSystemPermission()<systemPermission) {
-				throw new EcmException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no system permission.");
+				throw new NoPermissionException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no system permission.");
 			}
 		}
 		//查询权限
 		if(permissionId==serviceCode+1) {
 			if(session.getCurrentUser().getClientPermission()<1) {
-				throw new EcmException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no read permission.");
+				throw new NoPermissionException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no read permission.");
 			}
 		}
 		//有新建权限就有修改和删除权限，对象权限通过权限控制列表实现
 		if(permissionId==serviceCode+2) {
 			if(session.getCurrentUser().getClientPermission()<2) {
-				throw new EcmException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no create permission.");
+				throw new NoPermissionException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no create permission.");
 			}
 		}
 		if(permissionId==serviceCode+3) {
 			if(session.getCurrentUser().getClientPermission()<2) {
-				throw new EcmException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no update permission.");
+				throw new NoPermissionException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no update permission.");
 			}
 		}
 		if(permissionId==serviceCode+4) {
 			if(session.getCurrentUser().getClientPermission()<2) {
-				throw new EcmException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no delete permission.");
+				throw new NoPermissionException(serviceCode,systemPermission,session.getCurrentUser().getUserName()+" has no delete permission.");
 			}
 		}
 		return true;

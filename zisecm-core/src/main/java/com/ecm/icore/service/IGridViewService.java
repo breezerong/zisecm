@@ -4,7 +4,6 @@
 package com.ecm.icore.service;
 
 import com.ecm.core.entity.EcmGridView;
-import com.ecm.core.exception.EcmException;
 
 /**
  * @ClassName  EcmGridViewService   

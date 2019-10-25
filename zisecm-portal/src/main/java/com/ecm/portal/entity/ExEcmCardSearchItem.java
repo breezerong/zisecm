@@ -1,4 +1,4 @@
-package com.ecm.portal.core.entity;
+package com.ecm.portal.entity;
 
 import java.util.List;
 

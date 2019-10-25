@@ -1,6 +1,7 @@
 package com.ecm.portal;
 
 import javax.sql.DataSource;
+
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -13,11 +14,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import com.alibaba.druid.pool.DruidDataSource;
 
 
 @SpringBootApplication
-@ComponentScan({"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.services.pdfsign","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*"})
+@ComponentScan({"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*"})
 @MapperScan("com.ecm.core.dao")
 @EnableTransactionManagement//(proxyTargetClass = true)
 public class ZisECMApplication extends SpringBootServletInitializer {

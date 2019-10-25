@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmGroup;
+import com.ecm.core.entity.Pager;
 @Component
 @Mapper
 public interface EcmGroupMapper {
@@ -26,6 +27,8 @@ public interface EcmGroupMapper {
     int updateByPrimaryKey(EcmGroup record);
     
     List<EcmGroup> selectByParentId(String id);
+    
+    List<EcmGroup> searchToEntity(@Param(value="sqlStr") String sqlStr, Pager pager);
     
     List<EcmGroup> searchToEntity(@Param(value="sqlStr") String sqlStr);
     

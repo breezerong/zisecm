@@ -6,9 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmQueryMapper;
-import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.icore.service.IQueryService;
 /**

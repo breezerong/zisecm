@@ -3,6 +3,7 @@ package com.ecm.icore.service;
 import com.ecm.core.entity.EcmDefType;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 /**
  * 业务类型定义接口
  * @author Haihong Rong
@@ -16,8 +17,9 @@ public interface IDefTypeService {
 	 * @return
 	 * @throws EcmException
 	 * @throws AccessDeniedException
+	 * @throws NoPermissionException 
 	 */
-	boolean copy(String token, EcmDefType obj) throws EcmException, AccessDeniedException;
+	boolean copy(String token, EcmDefType obj) throws EcmException, AccessDeniedException, NoPermissionException;
 
 	/**
 	 * 获取类型定义

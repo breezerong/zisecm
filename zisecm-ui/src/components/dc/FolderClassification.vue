@@ -12,7 +12,7 @@
         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="70%"ru>
       <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
@@ -59,7 +59,7 @@
             <td>
               <table border="0" width="100%" class="topbar">
                 <tr>
-                  <td align="left" width="160px">
+                  <td align="left" width="180px">
                     <el-tooltip  class="item" effect="dark" :content="$t('application.newFolder')" placement="top">
                       <el-button type="primary" icon="el-icon-circle-plus" circle @click="onNewFolder()"></el-button>
                     </el-tooltip>

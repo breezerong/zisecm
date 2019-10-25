@@ -1,7 +1,7 @@
 <template>
     <el-container>
       <el-container>
-        <el-aside width="180px">
+        <el-aside width="200px">
           <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航-->
           <el-menu default-active="101" class="el-menu-vertical-ecm"  :open="100">
@@ -91,7 +91,11 @@
                       <span slot="title"><router-link to="/managercenter/usermanager">用户管理</router-link></span>
                     </el-menu-item>
                   </el-submenu>
-                  <el-menu-item index="103">
+                   <el-menu-item index="103">
+                    <i class="el-icon-lock"></i>
+                    <span slot="title"><router-link to="/managercenter/aclmanager">ACL管理</router-link></span>
+                  </el-menu-item>
+                  <el-menu-item index="104">
                     <i class="el-icon-refresh"></i>
                     <span slot="title"><router-link to="/managercenter/systemmanager">缓存管理</router-link></span>
                   </el-menu-item>
@@ -138,7 +142,6 @@ export default {
     checkLogin()
     {
       var user = sessionStorage.getItem('access-user');
-      console.log(user);
       if(user)
       {
         this.clientPermission = Number(sessionStorage.getItem('access-clientPermission'));

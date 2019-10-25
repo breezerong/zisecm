@@ -26,16 +26,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.service.ContentService;
+import com.ecm.core.service.DocumentService;
+import com.ecm.portal.entity.DownloadFile;
 
 @Controller
 public class DownloadController extends ControllerAbstract{
 	@Autowired
 	private ContentService contentService;
 	
+	@Autowired
+	private DocumentService documentService;
+	
 	public String downLoadOne(HttpServletResponse response,String id) {
 		try {
 			EcmContent en = contentService.getPrimaryContent(getToken(),id);
+			//EcmDocument doc = documentService.getObjectById(getToken(), id);
 			InputStream iStream = contentService.getContentStream(getToken(),en);
 			// 清空response
 	        response.reset();
@@ -74,17 +81,36 @@ public class DownloadController extends ControllerAbstract{
 			return downLoadOne(response,id);
 		}
 		
-		List<File> files = new ArrayList<File>();
+		List<DownloadFile> files = new ArrayList<DownloadFile>();
+		String objType = null;
 		for(int i=0;i<ids.size();i++) {
 //			Map<String,Object> id=JSON.parseObject(ids.get(i));
 			String id=ids.get(i);
 			EcmContent en = contentService.getPrimaryContent(getToken(),id);
+			EcmDocument doc = documentService.getObjectById(getToken(), id);
+			
+			String fileName = doc.getAttributes().get("SUB_TYPE")!=null && doc.getAttributes().get("SUB_TYPE").toString().length()>0?
+					doc.getAttributes().get("SUB_TYPE").toString():doc.getCoding();
+			if(objType == null) {
+				objType = doc.getAttributes().get("OBJECT_TYPE")!=null?doc.getAttributes().get("OBJECT_TYPE").toString()
+						:doc.getCoding().split("-")[0];
+			}
+			if(fileName.toLowerCase().indexOf("fm")>-1) {
+				fileName = "00@封面."+doc.getFormatName();
+			}else if(fileName.toLowerCase().indexOf("ml")>-1) {
+				fileName = "00@目录."+doc.getFormatName();
+			}else {
+				fileName += "@" + doc.getName()+"."+doc.getFormatName();
+			}
 			String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 			File f = new File(fullPath+en.getFilePath());
-			files.add(f);
+			DownloadFile df = new DownloadFile();
+			df.setDownFile(f);
+			df.setFileName(fileName);
+			files.add(df);
 		}
 		
-		downLoadFiles(files, response);
+		downLoadFiles(objType, files, response);
 
 		return "成功";
 	}
@@ -95,18 +121,23 @@ public class DownloadController extends ControllerAbstract{
 		}
 	}
 		
-	public static HttpServletResponse downLoadFiles(List<File> files, HttpServletResponse response) throws Exception {
-
+	public static HttpServletResponse downLoadFiles(String objType, List<DownloadFile> files, HttpServletResponse response) throws Exception {
+		String zipFilename = null;
 		try {
 			// List<File> 作为参数传进来，就是把多个文件的路径放到一个list里面
 			// 创建一个临时压缩文件
 
 			// 临时文件可以放在CDEF盘中，但不建议这么做，因为需要先设置磁盘的访问权限，最好是放在服务器上，方法最后有删除临时文件的步骤
-			Date date = new Date(); //获取当前的系统时间。
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss") ; //使用了默认的格式创建了一个日期格式化对象。
-			String time = dateFormat.format(date); //可以把日期转换转指定格式的字符串
+			
 			isChartPathExist("c:/download");
-			String zipFilename = "c:/download/"+time+".zip";
+			if(objType==null||objType.length()==0) {
+				Date date = new Date(); //获取当前的系统时间。
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss") ; //使用了默认的格式创建了一个日期格式化对象。
+				String time = dateFormat.format(date); //可以把日期转换转指定格式的字符串
+				zipFilename = "c:/download/"+time+".zip";
+			}else {
+				zipFilename = "c:/download/"+objType+".zip";
+			}
 			File file = new File(zipFilename);
 			file.createNewFile();
 			if (!file.exists()) {
@@ -124,6 +155,12 @@ public class DownloadController extends ControllerAbstract{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		finally {
+			if(zipFilename != null) {
+				File f = new File(zipFilename);
+				f.deleteOnExit();
+			}
+		}
 		return response;
 	}
 
@@ -133,10 +170,10 @@ public class DownloadController extends ControllerAbstract{
 	 * @param List<File>;
 	 * @param org.apache.tools.zip.ZipOutputStream
 	 */
-	public static void zipFile(List files, ZipOutputStream outputStream) {
+	public static void zipFile(List<DownloadFile> files, ZipOutputStream outputStream) {
 		int size = files.size();
 		for (int i = 0; i < size; i++) {
-			File file = (File) files.get(i);
+			DownloadFile file =  files.get(i);
 			zipFile(file, outputStream);
 		}
 	}
@@ -147,13 +184,13 @@ public class DownloadController extends ControllerAbstract{
 	 * @param File
 	 * @param org.apache.tools.zip.ZipOutputStream
 	 */
-	public static void zipFile(File inputFile, ZipOutputStream ouputStream) {
+	public static void zipFile(DownloadFile inputFile, ZipOutputStream ouputStream) {
 		try {
-			if (inputFile.exists()) {
-				if (inputFile.isFile()) {
-					FileInputStream IN = new FileInputStream(inputFile);
+			if (inputFile.getDownFile().exists()) {
+				if (inputFile.getDownFile().isFile()) {
+					FileInputStream IN = new FileInputStream(inputFile.getDownFile());
 					BufferedInputStream bins = new BufferedInputStream(IN, 512);
-					ZipEntry entry = new ZipEntry(inputFile.getName());
+					ZipEntry entry = new ZipEntry(inputFile.getFileName());
 					ouputStream.putNextEntry(entry);
 					// 向压缩文件中输出数据
 					int nNumber;
@@ -164,15 +201,6 @@ public class DownloadController extends ControllerAbstract{
 					// 关闭创建的流对象
 					bins.close();
 					IN.close();
-				} else {
-					try {
-						File[] files = inputFile.listFiles();
-						for (int i = 0; i < files.length; i++) {
-							zipFile(files[i], ouputStream);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 				}
 			}
 		} catch (Exception e) {

@@ -77,7 +77,7 @@ export default {
       let _self = this;
       var tocomp = _self.$route.query.redirect;
       if(!tocomp){
-        tocomp = "/";
+        tocomp = "/main";
       }
       _self.$refs.AccountFrom.validate((valid) => {
         if (valid) {

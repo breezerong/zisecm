@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,12 +34,10 @@ import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.ContentService;
-import com.ecm.core.service.DefTypeService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.RelationService;
-import com.ecm.core.service.StoreService;
-import com.ecm.core.service.UserService;
 
 /**
  * @ClassName EcmDcController
@@ -69,44 +66,56 @@ public class EcmDcController extends ControllerAbstract{
 	@RequestMapping(value = "/dc/getDocumentCount", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getDocumentCount(@RequestBody String argStr) {
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		long count = documentService.getObjectCount(getToken(),
-				args.get("gridName").toString(), args.get("folderId").toString(),
-				args.get("condition").toString());
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("itemCount", count);
-		mp.put("code", ActionContext.SUCESS);
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			
+			long count = documentService.getObjectCount(getToken(),
+					args.get("gridName").toString(), args.get("folderId").toString(),
+					args.get("condition").toString());
+			mp.put("itemCount", count);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 
 	@RequestMapping(value = "/dc/getDocuments", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getDocuments(@RequestBody String argStr) {
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		int pageSize = Integer.parseInt(args.get("pageSize").toString());
-		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
-		Pager pager = new Pager();
-		pager.setPageIndex(pageIndex);
-		pager.setPageSize(pageSize);
-		List<Map<String, Object>> list = documentService.getObjects(getToken(),
-				args.get("gridName").toString(), args.get("folderId").toString(),
-				pager,
-				args.get("condition").toString(), args.get("orderBy").toString());
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("data", list);
-		mp.put("pager", pager);
-		mp.put("code", ActionContext.SUCESS);
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			List<Map<String, Object>> list = documentService.getObjects(getToken(),
+					args.get("gridName").toString(), args.get("folderId").toString(),
+					pager,
+					args.get("condition").toString(), args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 
 	@RequestMapping(value = "/dc/getDocument", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getDocument(@RequestBody String id) {
-
-		Map<String, Object> data = documentService.getObjectMapById(getToken(),id);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("data", data);
-		mp.put("code", ActionContext.SUCESS);
+		try {
+			Map<String, Object> data = documentService.getObjectMapById(getToken(),id);
+			mp.put("data", data);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 	}
 	
@@ -246,8 +255,13 @@ public class EcmDcController extends ControllerAbstract{
 	public Map<String, Object> getOptions(){
 		String condition=" TYPE_NAME='项目' and STATUS='启用'  ";
 		Map<String, Object> mp = new HashMap<String, Object>();
-		List<Map<String, Object>> list=documentService.getObjectMap(getToken(),condition);
-		mp.put("data", list);
+		try {
+			List<Map<String, Object>> list=documentService.getObjectMap(getToken(),condition);
+			mp.put("data", list);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
 		return mp;
 		
 	}

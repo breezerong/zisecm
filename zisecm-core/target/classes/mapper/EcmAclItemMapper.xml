@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ecm.core.dao.EcmPermitMapper">
+<mapper namespace="com.ecm.core.dao.EcmAclItemMapper">
   <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmPermit">
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="TARGET_NAME" jdbcType="VARCHAR" property="targetName" />
-    <result column="TARGET_TYPE" jdbcType="INTEGER" property="permission" />
+    <result column="TARGET_TYPE" jdbcType="INTEGER" property="targetType" />
     <result column="PERMISSION" jdbcType="INTEGER" property="permission" />
     <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
     <result column="expire_date" jdbcType="TIMESTAMP" property="expireDate" />

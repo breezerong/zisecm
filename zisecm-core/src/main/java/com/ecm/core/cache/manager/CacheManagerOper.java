@@ -3,7 +3,6 @@
  */
 package com.ecm.core.cache.manager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +17,9 @@ import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmMenu;
 import com.ecm.core.entity.EcmParameter;
-import com.ecm.core.entity.EcmSession;
 import com.ecm.core.entity.EcmStore;
 import com.ecm.core.entity.EcmSuggestion;
 import com.ecm.core.entity.EcmSystemEvent;
-import com.ecm.core.entity.EcmUser;
 
 /**
  * @ClassName  CacheManagerOper   
@@ -47,8 +44,7 @@ public class CacheManagerOper {
 		
 	//菜单配置缓存对象
 	private static final Map<String,EcmMenu> ECM_MENU = new HashMap<String,EcmMenu>();
-	//菜单配置缓存对象已排序
-	private static final List<EcmMenu> ECM_MENU_LIST = new ArrayList<EcmMenu>();
+	
 	//卡片搜索缓存对象
 	private static final Map<String,EcmCardSearch> ECM_CARD_SEARCH = new HashMap<String,EcmCardSearch>();
 	//组件配置缓存对象
@@ -139,19 +135,6 @@ public class CacheManagerOper {
 		return ECM_MENU;
 	}
 
-	/**
-	 * 
-	 * @Title getEcmMenus 
-	 * @Description TODO(菜单配置缓存对象)   
-	 * @return Map<String,EcmMenu>          
-	 * @author Haihong Rong
-	 * @date 2018年6月27日 下午5:07:54 
-	 * @modify Haihong Rong 2018年6月27日 下午5:07:54
-	 */
-	public static List<EcmMenu> getEcmMenuList() {
-		return ECM_MENU_LIST;
-	}
-	
 	/**
 	 * @Title getEcmCardSearchs   
 	 * @Description TODO(获取卡片搜索缓存对象)   

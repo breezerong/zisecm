@@ -66,8 +66,8 @@
             enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
         </table>
         --> 
-        <table schema="${jdbc_user}" tableName="ecm_suggestion"
-            domainObjectName="EcmSuggestion" enableCountByExample="false"
+        <table schema="${jdbc_user}" tableName="ecm_menu"
+            domainObjectName="EcmMenu" enableCountByExample="false"
             enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
         </table>
     </context>

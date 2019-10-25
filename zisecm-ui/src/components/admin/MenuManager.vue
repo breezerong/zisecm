@@ -2,29 +2,14 @@
   <div>
            <el-dialog title="添加" :visible.sync="dialogVisible">
           <el-form :model="form">
-            <el-form-item label="父Id" :label-width="formLabelWidth">
-              <el-input v-model="form.parentId" auto-complete="off"></el-input>
+            <el-form-item label="Id" :label-width="formLabelWidth" >
+              <el-input v-model="form.id" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="名称" :label-width="formLabelWidth">
               <el-input v-model="form.name" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="图标" :label-width="formLabelWidth">
-              <el-input v-model="form.icon" auto-complete="off"></el-input>
-            </el-form-item>
             <el-form-item label="说明" :label-width="formLabelWidth">
               <el-input v-model="form.description" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="角色" :label-width="formLabelWidth">
-              <el-input v-model="form.roleName" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="组件Id" :label-width="formLabelWidth">
-              <el-input v-model="form.componentId" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="调用函数" :label-width="formLabelWidth">
-              <el-input v-model="form.callFunction" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="排序" :label-width="formLabelWidth">
-              <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -64,45 +49,21 @@
                 style="width: 100%">
         <el-table-column prop="id" label="Id" width="200" sortable>
         </el-table-column>
-        <el-table-column label="父ID" width="200" >
-          <template slot-scope="scope">
-            <el-input  v-model="scope.row.parentId"></el-input>
-          </template>
-        </el-table-column>
         <el-table-column label="名称" width="160" >
           <template slot-scope="scope">
             <el-input  v-model="scope.row.name"></el-input>
           </template>
         </el-table-column>
-         <el-table-column label="图标" width="160" >
-          <template slot-scope="scope">
-            <el-input  v-model="scope.row.icon"></el-input>
-          </template>
         </el-table-column>
         <el-table-column label="说明" minwidth="20%">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.description"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="角色" width="120">
+        <el-table-column label="操作" width="240">
           <template slot-scope="scope">
-            <el-input  v-model="scope.row.roleName"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="组件Id" width="200">
-          <template slot-scope="scope">
-            <el-input  v-model="scope.row.componentId"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="排序" width="60">
-          <template slot-scope="scope">
-            <el-input  v-model="scope.row.orderIndex"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="160">
-          <template slot-scope="scope">
+            <router-link :to="{path:'/managercenter/menuitemmanager',query:{parentid:scope.row.id,name:scope.row.name}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link>
             <el-button :plain="true" type="primary" size="small" icon="edit" @click="save(scope.row)">保存</el-button>
-            <el-button :plain="true" type="primary" size="small" icon="edit" @click="save(scope.row)">编辑</el-button>
             <el-button :plain="true" type="danger" size="small" icon="delete" @click="del(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -130,6 +91,7 @@ export default {
       dialogVisible: false,
       tableHeight: window.innerHeight - 140,
       form: {
+        id: "",
         name: "",
         description: "",
         value: ""
@@ -192,7 +154,10 @@ export default {
         url: '/zisecm/admin/updateMenu'
       })
       .then(function(response) {
+        _self.refreshData();
+        _self.dialogVisible = false;
         _self.$message("保存成功!");
+        
       })
       .catch(function(error) {
         console.log(error);
@@ -231,6 +196,7 @@ export default {
       .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();
+          _self.dialogVisible = false;
       })
       .catch(function(error) {
         console.log(error);

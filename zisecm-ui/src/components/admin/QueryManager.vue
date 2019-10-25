@@ -70,7 +70,7 @@
             <el-input  v-model="scope.row.valueColumn"></el-input>
           </template>
         </el-table-column> 
-        <el-table-column label="SQL" width="320">
+        <el-table-column label="SQL"  min-width="30%">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.sqlString" :rows="2"></el-input>
           </template>

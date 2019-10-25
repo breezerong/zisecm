@@ -1,10 +1,5 @@
 package com.ecm.icore.service;
 
-import java.util.List;
-
-import com.ecm.core.entity.EcmAction;
-import com.ecm.core.entity.EcmAttribute;
-import com.ecm.core.entity.EcmCardSearch;
 /**
  * 卡片搜索服务
  * @author Haihong Rong

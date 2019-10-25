@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
 import com.ecm.core.entity.ChartBean;
 
@@ -40,7 +39,7 @@ public class ReportService {
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
-			bean.getxAxisData().add(vals.get("C_PROJECT").toString());
+			bean.getxAxisData().add(vals.get("C_PROJECT")==null?"":vals.get("C_PROJECT").toString());
 			bean.getyAxisData().add(Long.parseLong(vals.get("mycount").toString()));
 		}
 		return bean;

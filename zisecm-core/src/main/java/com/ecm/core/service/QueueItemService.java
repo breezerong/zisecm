@@ -8,10 +8,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.dao.EcmQueueItemMapper;
-import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.service.EcmObjectService;
 import com.ecm.icore.bpm.IQueueItemService;
 /**
  * 消息队列服务
@@ -31,7 +29,7 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 	}
 	@Override
 	public List<EcmQueueItem> getTodoObjects(String token,String userName){
-		String cond = " NAME='"+userName+"' and STATUS<3 and WORKITEM_ID>0 order by SEND_DATE DESC";
+		String cond = " NAME='"+userName+"' and STATUS<3 and EVENT_NAME='ecm_start_workitem' order by SEND_DATE DESC";
 		return getObjects(token, cond);
 	}
 	
@@ -42,7 +40,7 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 	}
 	@Override
 	public List<EcmQueueItem> getMyTodoObjects(String token,int pageSize,int startIndex,String condition) throws AccessDeniedException{
-		String cond = " NAME='"+getSession(token).getCurrentUser().getUserName()+"' and STATUS<3  and WORKITEM_ID>0 ";
+		String cond = " NAME='"+getSession(token).getCurrentUser().getUserName()+"' and STATUS<3  and EVENT_NAME='ecm_start_workitem' ";
 		if(condition!=null&&condition.trim().length()>0) {
 			cond += " and ("+condition+")";
 		}
@@ -52,7 +50,7 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 	}
 	@Override
 	public int getMyTodoCount(String token,String condition) throws AccessDeniedException{
-		String cond = " NAME='"+getSession(token).getCurrentUser().getUserName()+"' and STATUS<3  and WORKITEM_ID>0 ";
+		String cond = " NAME='"+getSession(token).getCurrentUser().getUserName()+"' and STATUS<3  and EVENT_NAME='ecm_start_workitem' ";
 		if(condition!=null&&condition.trim().length()>0) {
 			cond += " and ("+condition+")";
 		}
@@ -61,7 +59,7 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 	
 	@Override
 	public int getMyTodoCount(String token) throws AccessDeniedException{
-		String cond = " NAME='"+getSession(token).getCurrentUser().getUserName()+"' and STATUS<3  and WORKITEM_ID>0";
+		String cond = " NAME='"+getSession(token).getCurrentUser().getUserName()+"' and STATUS<3  and EVENT_NAME='ecm_start_workitem'";
 		return ecmQueueItemMapper.getCountByCondition(cond);
 	}
 	

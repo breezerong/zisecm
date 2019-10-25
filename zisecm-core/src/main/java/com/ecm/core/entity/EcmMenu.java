@@ -1,5 +1,8 @@
 package com.ecm.core.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EcmMenu extends EcmSysObject{
 
     /**
@@ -7,99 +10,51 @@ public class EcmMenu extends EcmSysObject{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String roleName;
+	private String label;
 
-    private String parentId;
-
-    private String componentId;
-
-    private String icon;
-
-    private String itemType;
-
-    private String callFunction;
-
-    private Integer orderIndex;
+    private String langKey;
     
-    private boolean hasPermission;
+    private List<EcmMenuItem> menuItems;
 
-    public boolean isHasPermission() {
-		return hasPermission;
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label == null ? null : label.trim();
+    }
+
+    public String getLangKey() {
+        return langKey;
+    }
+
+    public void setLangKey(String langKey) {
+        this.langKey = langKey == null ? null : langKey.trim();
+    }
+
+	public List<EcmMenuItem> getMenuItems() {
+		return menuItems;
 	}
 
-	public void setHasPermission(boolean hasPermission) {
-		this.hasPermission = hasPermission;
+	public void setMenuItems(List<EcmMenuItem> menuItems) {
+		this.menuItems = menuItems;
 	}
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName == null ? null : roleName.trim();
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon == null ? null : icon.trim();
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(String itemType) {
-        this.itemType = itemType == null ? null : itemType.trim();
-    }
-
-    public String getCallFunction() {
-        return callFunction;
-    }
-
-    public void setCallFunction(String callFunction) {
-        this.callFunction = callFunction == null ? null : callFunction.trim();
-    }
-
-    public Integer getOrderIndex() {
-        return orderIndex;
-    }
-
-    public void setOrderIndex(Integer orderIndex) {
-        this.orderIndex = orderIndex;
-    }
-    
-    public EcmMenu clone() {
-    	EcmMenu obj =new EcmMenu();
-    	obj.setCallFunction(callFunction);
-    	obj.setDescription(getDescription());
-    	obj.setHasPermission(hasPermission);
-    	obj.setId("");
-    	obj.setName(getName());
-    	obj.setIcon(icon);
-    	obj.setItemType(itemType);
-    	obj.setOrderIndex(orderIndex);
-    	obj.setParentId(parentId);
-    	obj.setComponentId(componentId);
-    	obj.setRoleName(roleName);
-    	return obj;
-    }
+	
+	public EcmMenu clone(String lang) {
+		EcmMenu m = new EcmMenu();
+		m.setId(getId());
+		m.setName(getName());
+		m.setDescription(getDescription());
+		m.setLangKey(langKey);
+		m.setLabel(label);
+		if(menuItems != null) {
+			List<EcmMenuItem> items = new ArrayList<EcmMenuItem>();
+    		for(EcmMenuItem item:menuItems) {
+    			items.add(item.clone(lang));
+    		}
+    		m.setMenuItems(items);
+		}
+		return m;
+	}
 }

@@ -296,7 +296,7 @@ export default {
       let _self = this;
       var m = new Map();
       m.set("groupType", 2);
-      m.set("id","0");
+      m.set("id","");
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);

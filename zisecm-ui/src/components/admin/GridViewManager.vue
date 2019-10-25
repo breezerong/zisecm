@@ -65,12 +65,12 @@
             <el-input  v-model="scope.row.description"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="条件" width="240">
+        <el-table-column label="条件"  min-width="20%">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.condition"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="排序" width="240">
+        <el-table-column label="排序"  min-width="20%">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.orderBy"></el-input>
           </template>
