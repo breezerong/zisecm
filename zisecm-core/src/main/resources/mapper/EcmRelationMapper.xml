@@ -26,11 +26,11 @@
     where ${condition}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from ecm_exrelation
+    delete from ecm_relation
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmRelation">
-    insert into ecm_exrelation (ID, NAME, DESCRIPTION, PARENT_ID, 
+    insert into ecm_relation (ID, NAME, DESCRIPTION, PARENT_ID, 
       CHILD_ID, CREATION_DATE, CREATOR
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
@@ -38,7 +38,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmRelation">
-    insert into ecm_exrelation
+    insert into ecm_relation
     <trim prefix="(" suffix=")" suffixOverrides=",">
      <if test="id != null">
         ID,
@@ -87,7 +87,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmRelation">
-    update ecm_exrelation
+    update ecm_relation
     <set>
       <if test="name != null">
         NAME = #{name,jdbcType=VARCHAR},
@@ -111,7 +111,7 @@
     where ID = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmRelation">
-    update ecm_exrelation
+    update ecm_relation
     set NAME = #{name,jdbcType=VARCHAR},
       DESCRIPTION = #{description,jdbcType=VARCHAR},
       PARENT_ID = #{parentId,jdbcType=VARCHAR},

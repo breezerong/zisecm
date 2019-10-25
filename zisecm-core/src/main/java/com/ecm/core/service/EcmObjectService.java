@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ecm.core.ActionContext;
 import com.ecm.core.dao.EcmAuditGeneralMapper;
 import com.ecm.core.entity.EcmAuditGeneral;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.util.AuditUtils;
@@ -33,7 +34,11 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	public List<Map<String, Object>> getMapList(String token, String sql,Pager pager) throws EcmException{
+		return null;
+	}
+	
 	@Override
 	public List<T> getAllObject(String token) throws EcmException, AccessDeniedException {
 		// TODO Auto-generated method stub

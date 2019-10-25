@@ -52,7 +52,7 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 		// TODO Auto-generated method stub
 		((com.ecm.core.entity.EcmRelation)obj).createId();
 		ecmRelationMapper.insert((com.ecm.core.entity.EcmRelation)obj);
-		return ((com.ecm.core.entity.EcmRelationType)obj).getId();
+		return ((com.ecm.core.entity.EcmRelation)obj).getId();
 	}
 
 }
