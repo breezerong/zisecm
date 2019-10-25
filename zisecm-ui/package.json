@@ -18,6 +18,8 @@
     "echarts": "^4.2.1",
     "element-ui": "^2.11.1",
     "pdfjs-dist": "^2.0.943",
+	"qrcode": "^1.4.2",
+    "qrcodejs2": "0.0.2",
     "url-search-params-polyfill": "^5.0.0",
     "v-viewer": "^1.2.1",
     "vue": "^2.6.10",

@@ -59,6 +59,9 @@ import UserCenter from '@/components/UserCenter'
 import UserInfo from '@/components/user/UserInfo'
 import ChangePassword from '@/components/user/ChangePassword'
 import Main from '@/components/Main'
+import CreateRecord from '@/components/record/CreateRecord'
+import CreateArchive from '@/components/record/CreateArchive'
+
 import Test1 from '@/components/test/Test1'
 import Test2 from '@/components/test/Test2'
 
@@ -637,6 +640,22 @@ const router = new Router({
           component: FolderClassification,
           name: '文件夹分类'
         },
+		{
+			meta: {
+				requireAuth: true
+			  },
+			  path: '/record/createRecord',
+			  component: CreateRecord,
+			  name: '按件整理'
+		},
+		{
+		  meta: {
+			requireAuth: true
+		  },
+		  path: '/record/createArchive',
+		  component: CreateArchive,
+		  name: '按卷整理'
+		},
         {
           meta: {
             requireAuth: true
