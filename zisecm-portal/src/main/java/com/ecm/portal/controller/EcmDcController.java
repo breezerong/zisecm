@@ -438,6 +438,7 @@ public class EcmDcController extends ControllerAbstract{
 		return mp;
 	}
 	
+	
 	@RequestMapping(value = "/dc/getRelations", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getRelations(@RequestBody String id) {

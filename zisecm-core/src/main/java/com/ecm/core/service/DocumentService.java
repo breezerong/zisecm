@@ -48,7 +48,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	private String baseColumns = "ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
 		    +"MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT,"
-			+"IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT";
+			+"IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,TYPE_NAME";
 	private String systemColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
 		    +"MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
 			+"IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
@@ -535,6 +535,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	public List<Map<String, Object>> getMapList(String token, String sql) throws EcmException {
 		// TODO Auto-generated method stub
 		return ecmDocument.executeSQL(sql);
+	}
+	public List<Map<String, Object>> getMapList(String token, String sql,Pager pager) throws EcmException {
+		// TODO Auto-generated method stub
+		return ecmDocument.executeSQL(pager,sql);
 	}
 	
 	private EcmFormItem getFormItem(List<EcmFormItem> list,String attrName)
