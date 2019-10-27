@@ -15,7 +15,7 @@ public class FileUtils {
 		String ext = "null";
 		if(fileName.lastIndexOf(".")>0)
 		{
-			ext = fileName.substring(fileName.lastIndexOf(".")+1);
+			ext = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
 		}
 		return ext;
 	}

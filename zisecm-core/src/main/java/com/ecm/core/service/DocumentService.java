@@ -1,5 +1,6 @@
 package com.ecm.core.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -389,6 +390,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				content.setFilePath(primary.getFilePath());
 			}
 			contentService.updateObject(token, content);
+			doc.setFormatName(content.getFormatName());
+			doc.setContentSize(content.getContentSize());
 		}
 		this.updateObject(token, doc.getAttributes());
 		addFullIndexSearchQueue(token, doc.getId());
@@ -405,12 +408,15 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		//String typeName = args.get("TYPE_NAME").toString();
 		String sql = "update ecm_document set ";
 		boolean isFirst = true;
+		String filterColums = systemColumns.replace("FORMAT_NAME,CONTENT_SIZE,","");
+
 		for(Object key:args.keySet().toArray())
 		{
 			EcmAttribute en = CacheManagerOper.getEcmAttributes().get(key);
 			String attrName = key.toString();
 			// filter system columns
-			if(systemColumns.indexOf(","+attrName+",")>-1){
+			
+			if(filterColums.indexOf(","+attrName+",")>-1){
 				continue;
 			}
 			if(en==null)
@@ -433,8 +439,16 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 				else
 				{
-					String date = (String)args.get(key);
-					date= DBUtils.getDBDateString(date);
+					String date = "";
+					if(args.get(key) instanceof Timestamp)
+					{
+						date =DBUtils.getDBDateString(((Timestamp)args.get(key)));
+					}
+					else{
+						date = (String)args.get(key);
+						date= DBUtils.getDBDateString(date);
+					}
+					
 					if(date==null||date.length()<1)
 						continue;
 					sql += " "+ key.toString() + "= "+ date+" ";
