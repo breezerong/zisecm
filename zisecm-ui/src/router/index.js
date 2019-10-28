@@ -179,7 +179,23 @@ const router = new Router({
               name: '错误处理',
               component: ErrorDoc
             }
+            
           ]
+        },{
+          meta: {
+            requireAuth: true
+            },
+            path: '/record/createRecord',
+            component: CreateRecord,
+            name: '按件整理'
+        },
+        {
+          meta: {
+          requireAuth: true
+          },
+          path: '/record/createArchive',
+          component: CreateArchive,
+          name: '按卷整理'
         },
         {
           meta: {
@@ -640,22 +656,6 @@ const router = new Router({
           component: FolderClassification,
           name: '文件夹分类'
         },
-		{
-			meta: {
-				requireAuth: true
-			  },
-			  path: '/record/createRecord',
-			  component: CreateRecord,
-			  name: '按件整理'
-		},
-		{
-		  meta: {
-			requireAuth: true
-		  },
-		  path: '/record/createArchive',
-		  component: CreateArchive,
-		  name: '按卷整理'
-		},
         {
           meta: {
             requireAuth: true
