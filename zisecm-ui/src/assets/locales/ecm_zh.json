@@ -109,7 +109,12 @@
     "role":"角色",
     "all":"所有",
     "pleaseSelect":"请选择",
-    "type":"类型"
+    "type":"类型",
+    "sealVolume":"封卷",
+    "openPage":"开卷",
+    "PrintCover":"打印封面",
+    "PrintVolumes":"打印卷内目录",
+    "createDocument":"文件著录"
 },
 "menu": {
     "home":"首页",
