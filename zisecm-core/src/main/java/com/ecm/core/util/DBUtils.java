@@ -101,6 +101,27 @@ public class DBUtils {
 		return date;
 	}
 	
+	public static String getDBDateString(Date d) {
+		if(d==null) {
+			return null;
+		}
+		String date =null;
+		if ("mysql".equalsIgnoreCase(databaseType)) {
+			
+			date = "'"+DateUtils.sdfAll.format(d)+"'";
+		} 
+		else if ("oracle".equalsIgnoreCase(databaseType)) {
+			
+		} 
+		else if ("sqlserver".equalsIgnoreCase(databaseType)) {
+			
+		}
+		else if ("postgresql".equalsIgnoreCase(databaseType)) {
+			
+		}
+		return date;
+	}
+	
 	public static String getDBDateNow() {
 		if ("mysql".equalsIgnoreCase(databaseType)) {
 			return "CURRENT_TIMESTAMP";

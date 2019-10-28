@@ -103,7 +103,7 @@ public class EcmDocument extends EcmSysObject{
 	public void setLockOwner(String lockOwner) {
 		this.lockOwner = lockOwner;
 		if(attributes!=null) {
-			attributes.put("CLOCK_OWNER", this.lockOwner);
+			attributes.put("LOCK_OWNER", this.lockOwner);
 		}
 	}
 
@@ -114,7 +114,7 @@ public class EcmDocument extends EcmSysObject{
 	public void setLockDate(Date lockDate) {
 		this.lockDate = lockDate;
 		if(attributes!=null) {
-			attributes.put("CLOCK_DATE", this.lockDate);
+			attributes.put("LOCK_DATE", this.lockDate);
 		}
 	}
 
@@ -125,7 +125,7 @@ public class EcmDocument extends EcmSysObject{
 	public void setLockClient(String lockClient) {
 		this.lockClient = lockClient;
 		if(attributes!=null) {
-			attributes.put("CLOCK_CLIENT", this.lockClient);
+			attributes.put("LOCK_CLIENT", this.lockClient);
 		}
 	}
 
