@@ -385,8 +385,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	public boolean updateSignImage(String token,String id,InputStream instream,String fileName) throws EcmException, Exception{
 		
 		if(instream!=null) {
-			EcmUser  user = getObjectById(token,id);
-			if(!getSession(token).getCurrentUser().getUserName().equals(user.getName())) {
+			EcmUser  user = getObjectById(token,id.replace("\"", ""));
+			if(!getSession(token).getCurrentUser().getUserName().equals(user.getName())&&getSession(token).getCurrentUser().getClientPermission()<4) {
 				super.hasPermission(token,serviceCode+ObjectPermission.WRITE_CONTENT,systemPermission);
 			}
 			if(user!=null) {
@@ -405,6 +405,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 				{
 					fis.close();
 				}
+				user.setSignImage(fullPath);
 				ecmUserMapper.updateByPrimaryKey(user);
 			}
 		}
