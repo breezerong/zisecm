@@ -173,7 +173,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	public void copyContent(String token, String fromDocId,String toDocId) throws Exception {
 		List<EcmContent> list = getObjects(token, toDocId, 0);
 		if(list.size()>0) {
-			throw new Exception("Document already has content:"+toDocId); 
+			throw new EcmException("Document already has content:"+toDocId); 
 		}
 		list = getObjects(token, fromDocId, 0);
 		for(EcmContent conent:list) {

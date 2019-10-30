@@ -49,6 +49,7 @@ import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.portal.util.ExcelUtil;
@@ -160,10 +161,11 @@ public class DrawingContoller extends ControllerAbstract{
 	 * 删除图纸文件
 	 * @param metaData
 	 * @return
+	 * @throws NoPermissionException 
 	 */
 	@RequestMapping(value="/drawing/delDrawing",method=RequestMethod.POST)
 	@ResponseBody	
-	public Map<String,Object> delDrawing(@RequestBody String metaData){
+	public Map<String,Object> delDrawing(@RequestBody String metaData) throws NoPermissionException{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		List<String> ids= JSONObject.parseArray(metaData, String.class);
 		for(int i=0;i<ids.size();i++) {
