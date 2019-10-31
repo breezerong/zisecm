@@ -84,6 +84,11 @@ public class AuditContext {
 	 *高级搜索
 	 */
 	public static String ADV_SEARCH = "ecm_adv_search";
+	
+	/**
+	 *生命周期操作
+	 */
+	public static String LIFE_CYCLE = "ecm_life_cycle";
 	/**
 	 *取消签出
 	 */

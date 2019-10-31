@@ -70,63 +70,9 @@ public class BulkUploadContoller extends ControllerAbstract{
 	private ContentService contentService;
 
 	
-	/**
-	 * 获取新建图纸列表
-	 * @param argStr
-	 * @return
-	 */
-	@RequestMapping(value = "/drawing/getDrawing", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> getDrawing(@RequestBody String argStr) {
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			Map<String, Object> args =null;
-			if(argStr==null) {
-				args =new HashMap<String,Object>();
-			}else {
-				args = JSONUtils.stringToMap(argStr);
-			}
-			int pageSize = Integer.parseInt(args.get("pageSize").toString());
-			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
-			Pager pager = new Pager();
-			pager.setPageIndex(pageIndex);
-			pager.setPageSize(pageSize);
-			mp.put("data", getDocList(argStr, pager));
-			mp.put("pager", pager);
-			mp.put("code", ActionContext.SUCESS);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			mp.put("code", ActionContext.FAILURE);
-			mp.put("message", e.getMessage());
-		}
-		return mp;
-	}
 	
 	
-	/**
-	 * 获取新建图纸数目
-	 * @param argStr map字符串
-	 * @return
-	 */
-	@RequestMapping(value = "/drawing/getDrawingCount", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> getDrawingCount(@RequestBody String argStr) {
-		Map<String, Object> mp = new HashMap<String, Object>();
-
-			try {
-				mp.put("data", getDocCount(argStr));
-				mp.put("code", ActionContext.SUCESS);
-			} catch (AccessDeniedException e) {
-				// TODO Auto-generated catch block
-				mp.put("code", ActionContext.TIME_OUT);
-				mp.put("message", e.getMessage());
-			}
-
-		return mp;
-	}
-	
-	@RequestMapping(value="/drawing/uploadDrawing",method=RequestMethod.POST)
+	@RequestMapping(value="/batch/batchImport",method=RequestMethod.POST)
 	@ResponseBody	
 	public Map<String, Object> newDocument(String metaData, @RequestParam("files") MultipartFile[] files) throws Exception {
 		Map<String, Object> mp = new HashMap<String, Object>();
@@ -155,103 +101,6 @@ public class BulkUploadContoller extends ControllerAbstract{
 		
 		return mp;
 		
-	}
-	/**
-	 * 删除图纸文件
-	 * @param metaData
-	 * @return
-	 */
-	@RequestMapping(value="/drawing/delDrawing",method=RequestMethod.POST)
-	@ResponseBody	
-	public Map<String,Object> delDrawing(@RequestBody String metaData){
-		Map<String, Object> mp = new HashMap<String, Object>();
-		List<String> ids= JSONObject.parseArray(metaData, String.class);
-		for(int i=0;i<ids.size();i++) {
-//			Map<String,Object> id=JSON.parseObject(ids.get(i));
-			String id=ids.get(i);
-			try {
-				documentService.deleteObject(getToken(),id);
-			} catch (EcmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (AccessDeniedException e) {
-				// TODO Auto-generated catch block
-				mp.put("code", ActionContext.TIME_OUT);
-				mp.put("message", e.getMessage());
-			}
-		}
-		mp.put("code", ActionContext.SUCESS);
-		return mp;
-	}
-	/**
-	 * 更改为状态为已审批
-	 * @param metaData
-	 * @return
-	 */
-	@RequestMapping(value="/drawing/updateStatus",method=RequestMethod.POST)
-	@ResponseBody	
-	public Map<String, Object> updateStatus(@RequestBody String metaData){
-		
-		//已审批
-		Map<String, Object> mp = new HashMap<String, Object>();
-//		List<String> ids= JSONObject.parseArray(metaData, String.class);
-		 Map<String,Object> obj =  JSONObject.parseObject(metaData); 
-		 String status=(String)obj.get("STATUS");
-		 String strList=(String) obj.get("list");
-		 List<String> ids= JSONObject.parseArray(strList, String.class);
-		 try {
-			for(int i=0;i<ids.size();i++) {
-	//			Map<String,Object> id=JSON.parseObject(ids.get(i));
-				String id=ids.get(i);
-				
-					documentService.updateStatus(getToken(),id, status);
-				
-			}
-			mp.put("code", ActionContext.SUCESS);
-		 } catch (AccessDeniedException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				mp.put("code", ActionContext.TIME_OUT);
-				mp.put("message", e.getMessage());
-		 }
-		
-		return mp;
-	
-	}
-	
-	/**
-	 * 根据状态获取文档数目
-	 * @param argStr
-	 * @return
-	 * @throws AccessDeniedException 
-	 */
-	private long getDocCount(String argStr) throws AccessDeniedException  {
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		String condition = args.get("condition")==null?"":args.get("condition").toString();
-		String status = args.get("status").toString();
-		if(condition!=null&&condition.trim().length()>0) {
-			condition += " and ";
-		}
-		condition += " CREATOR='"+getSession().getCurrentUser().getUserName()+"' and STATUS='"+status+"'";
-		return documentService.getObjectCount(getToken(),gridviewName, "", condition);
-	}
-	/**
-	 * 根据状态获取图纸文档清单
-	 * @param argStr 请求Map
-	 * @return
-	 * @throws Exception 
-	 */
-	private List<Map<String, Object>> getDocList(String argStr,Pager pager) throws Exception{
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		
-		String condition = args.get("condition").toString();
-		String status = args.get("status").toString();
-		if(condition!=null&&condition.trim().length()>0) {
-			condition += " and ";
-		}
-		condition += " CREATOR='"+getSession().getCurrentUser().getUserName()+"' and STATUS='"+status+"'";
-		String orderBy = " CODING ASC";
-		return  documentService.getObjects(getToken(),gridviewName,null,pager,condition,orderBy);
 	}
 	
 	
