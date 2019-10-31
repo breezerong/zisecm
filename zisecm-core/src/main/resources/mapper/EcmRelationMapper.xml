@@ -16,7 +16,7 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ecm_exrelation
+    from ecm_relation
     where ID = #{id,jdbcType=VARCHAR}
   </select>
   <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
