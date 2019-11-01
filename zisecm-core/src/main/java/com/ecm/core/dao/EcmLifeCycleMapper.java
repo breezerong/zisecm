@@ -14,6 +14,8 @@ public interface EcmLifeCycleMapper {
 	public EcmLifeCycle selectAll();
 	public EcmLifeCycle selectByPrimaryKey(String id);
 	
+	public EcmLifeCycle selectByName(String name);
+	
 	public List<Map<String,String>> selectEcmLifeCycleBySql(@Param(value="sqlStr") String sqlStr);
 	
 	public int deleteByPrimaryKey(String id);

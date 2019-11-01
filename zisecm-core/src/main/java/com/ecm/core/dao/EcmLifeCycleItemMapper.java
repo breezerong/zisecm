@@ -41,6 +41,7 @@ public interface EcmLifeCycleItemMapper {
 	public String getPreviousImpleClassByName(String lifecycleName,String itemName);
 	public List<EcmLifeCycleItem> selectAll();
 	public EcmLifeCycleItem selectByPrimaryKey(String id);
+	
 	public List<EcmLifeCycleItem> selectByLifeCycleId(String lifecycleId);
 	
 	public List<Map<String,String>> selectEcmLifeCycleBySql(@Param(value="sqlStr") String sqlStr);

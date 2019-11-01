@@ -1,4 +1,4 @@
-package com.ecm.core.service.statusflow;
+package com.ecm.icore.service;
 
 public interface ILifeCycleEvent {
 	/**
