@@ -23,3 +23,17 @@ zisecm-portal/target/classes/com/ecm/portal/controller/admin/CardSearchItemManag
 zisecm-portal/target/classes/com/ecm/portal/controller/admin/UserManager.class
 zisecm-portal/target/classes/com/ecm/portal/controller/DownloadController.class
 zisecm-portal/target/classes/com/ecm/portal/core/entity/ExEcmCardSearchItem.class
+zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+zisecm-ESIndexAgent/target/classes/META-INF/maven/com.zisyun/es-index-agent/pom.properties
+zisecm-ESIndexAgent/target/classes/META-INF/maven/com.zisyun/es-index-agent/pom.properties
+zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+target
+target
+zisecm-core/target/classes/config/sysConfig.properties
+zisecm-core/target/classes/generatorConfig.xml
+zisecm-core/target/classes/templates/login.html
+zisecm-core/target/classes/templates/index.html
+zisecm-core/.sts4-cache/classpath-data.json
+zisecm-core/.factorypath
+zisecm-core/.classpath
+zisecm-core/.factorypath

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmLifeCycleMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmLifeCycle">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="c_name" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="c_description" />
+    <result column="STARTSTATUS" jdbcType="VARCHAR" property="c_startstatus" />
+    <result column="ENDSTATUS" jdbcType="VARCHAR" property="c_endstatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,c_name,c_description,c_startstatus,c_endstatus
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_lifecycle order by ID
+  </select>
+  
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_lifecycle
+    where ID = #{name,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_lifecycle
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+   <select id="selectEcmLifeCycleBySql" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_lifecycle
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmLifeCycle">
+    insert into ecm_lifecycle (id, c_name, c_description, c_startstatus, c_endstatus
+      )
+    values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{startStatus,jdbcType=VARCHAR}, #{endStatus,jdbcType=VARCHAR}
+      )
+    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS ID
+	</selectKey>
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmLifeCycle">
+    insert into ecm_lifecycle
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        c_name,
+      </if>
+      <if test="description != null">
+        c_description,
+      </if>
+      <if test="startstatus != null">
+        c_startstatus,
+      </if>
+      <if test="endstatus != null">
+        c_endstatus,
+      </if>
+      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="startstatus != null">
+        #{startStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="endstatus != null">
+        #{endStatus,jdbcType=VARCHAR},
+      </if>
+      
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmLifeCycle">
+    update ecm_lifecycle
+    <set>
+      <if test="name != null">
+        c_name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        c_description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="startStatus != null">
+        c_startstatus = #{startStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="endStatus != null">
+        c_endstatus = #{endStatus,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmLifeCycle">
+    update ecm_lifecycle
+    set c_name = #{name,jdbcType=VARCHAR},
+      c_description = #{description,jdbcType=VARCHAR},
+      c_startStatus = #{startStatus,jdbcType=VARCHAR},
+      c_endstatus = #{endStatus,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

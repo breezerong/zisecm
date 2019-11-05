@@ -61,6 +61,7 @@ import ChangePassword from '@/components/user/ChangePassword'
 import Main from '@/components/Main'
 import CreateRecord from '@/components/record/CreateRecord'
 import CreateArchive from '@/components/record/CreateArchive'
+import WorkflowStatus from '@/components/admin/WorkflowStatus'
 
 import Test1 from '@/components/test/Test1'
 import Test2 from '@/components/test/Test2'
@@ -438,6 +439,16 @@ const router = new Router({
               path: '/managercenter/parametermanager',
               component: ParameterManager,
               name: '参数管理'
+            },
+            {
+             
+              meta: {
+                requireAuth: true,
+                permit: 5
+              },
+              path: '/admin/workflowstatus',
+              component:  WorkflowStatus,
+              name: '状态流程'
             },
             {
               meta: {

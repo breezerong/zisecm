@@ -21,6 +21,8 @@ import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmDocumentMapper;
+import com.ecm.core.dao.EcmLifeCycleItemMapper;
+import com.ecm.core.dao.EcmLifeCycleMapper;
 import com.ecm.core.entity.EcmAcl;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmContent;
@@ -29,6 +31,7 @@ import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.entity.EcmLifeCycle;
 import com.ecm.core.entity.EcmParameter;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.entity.Pager;
@@ -38,6 +41,7 @@ import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
+import com.ecm.icore.service.ILifeCycleEvent;
 
 @Service
 @Scope("prototype")
@@ -65,6 +69,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 
 	@Autowired
 	private QueueItemService queueItemService;
+	@Autowired
+	private EcmLifeCycleItemMapper itemMapper;
+	@Autowired
+	private EcmLifeCycleMapper lifeCycleMapper;
+	@Autowired
+	private EcmLifeCycleItemMapper lifeCycleItemMapper;
 
 	@Override
 	public List<Map<String, Object>> getObjects(String token, String gridName, String folderId, Pager pager,
@@ -1090,7 +1100,15 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no update permission:" + id);
 		}
-
+		
+		EcmDocument docu= ecmDocument.selectByPrimaryKey(id);
+		EcmLifeCycle lifeCycle= lifeCycleMapper.selectByName(lifecycelName);
+		String startStatus= lifeCycle.getStartStatus();
+		String lifecycleName=lifeCycle.getName();
+		docu.setLifecycleName(lifecycleName);
+		docu.setLifecycleStatus(startStatus);
+		docu.setLifecycleDir(1);
+		ecmDocument.updateByPrimaryKeySelective(docu);
 		// 写日志
 		newAudit(token, null, AuditContext.LIFE_CYCLE, id, null, "attach");
 		return false;
@@ -1112,7 +1130,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no update permission:" + id);
 		}
-
+		EcmDocument docu= ecmDocument.selectByPrimaryKey(id);
+		docu.setLifecycleName("");
+		docu.setLifecycleStatus("");
+		docu.setLifecycleDir(1);
+		ecmDocument.updateByPrimaryKeySelective(docu);
+		
 		// 写日志
 		newAudit(token, null, AuditContext.LIFE_CYCLE, id, null, "detach");
 		return false;
@@ -1124,17 +1147,32 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @param token
 	 * @param id
 	 * @return
-	 * @throws AccessDeniedException
-	 * @throws NoPermissionException
+	 * @throws Exception 
 	 */
 	@Override
-	public boolean promote(String token, String id) throws NoPermissionException, AccessDeniedException {
+	@Transactional(rollbackFor = Exception.class)
+	public boolean promote(String token, String id) throws Exception {
 		// 必须有修改文件属性权限
 		if (getPermit(token, id) < ObjectPermission.WRITE_CONTENT) {
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no update permission:" + id);
 		}
-
+		EcmDocument doc= ecmDocument.selectByPrimaryKey(id);
+		String lifecycleName=doc.getLifecycleName();
+		String lifecycleStatus=doc.getLifecycleStatus();
+		if(executeEvent(lifecycleName,lifecycleStatus,"next")) {
+			String sql="select a.c_nextname from ecm_lifecycleitem a,ecm_lifecycle b where a.lifecycle_id"
+					+ "=b.id and a.c_name='"+lifecycleStatus+"' and b.c_name='"+lifecycleName+"'";
+			List<Map<String,String>> result= lifeCycleItemMapper.selectEcmLifeCycleBySql(sql);
+			String nextName= result.get(0).get("c_nextname");
+			doc.setLifecycleName(nextName);
+			doc.setLifecycleDir(2);
+			ecmDocument.updateByPrimaryKeySelective(doc);
+			return true;
+		}
+		
+		
+		
 		// 写日志
 		newAudit(token, null, AuditContext.LIFE_CYCLE, id, null, "promote");
 		return false;
@@ -1146,15 +1184,29 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @param token
 	 * @param id
 	 * @return
-	 * @throws AccessDeniedException
-	 * @throws NoPermissionException
+	 * @throws Exception 
 	 */
 	@Override
-	public boolean demote(String token, String id) throws NoPermissionException, AccessDeniedException {
+	@Transactional(rollbackFor = Exception.class)
+	public boolean demote(String token, String id) throws Exception {
 		// 必须有修改文件属性权限
 		if (getPermit(token, id) < ObjectPermission.WRITE_CONTENT) {
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no update permission:" + id);
+		}
+		
+		EcmDocument doc= ecmDocument.selectByPrimaryKey(id);
+		String lifecycleName=doc.getLifecycleName();
+		String lifecycleStatus=doc.getLifecycleStatus();
+		if(executeEvent(lifecycleName,lifecycleStatus,"previous")) {
+			String sql="select a.c_previousname from ecm_lifecycleitem a,ecm_lifecycle b where a.lifecycle_id"
+					+ "=b.id and a.c_name='"+lifecycleStatus+"' and b.c_name='"+lifecycleName+"'";
+			List<Map<String,String>> result= lifeCycleItemMapper.selectEcmLifeCycleBySql(sql);
+			String nextName= result.get(0).get("c_nextname");
+			doc.setLifecycleName(nextName);
+			doc.setLifecycleDir(0);
+			ecmDocument.updateByPrimaryKeySelective(doc);
+			return true;
 		}
 		
 		
@@ -1163,5 +1215,40 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		newAudit(token, null, AuditContext.LIFE_CYCLE, id, null, "demote");
 		return false;
 	}
-
+	
+	/**
+	 * 执行事件
+	 * @param lifecycleName
+	 * @param itemName
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean executeEvent(String lifecycleName, String itemName,String flag) throws Exception {
+		if(lifecycleName==null||itemName==null
+				||"".equals(lifecycleName)||"".equals(itemName)) {
+			throw new Exception("lifecycleName or lifecycleStatus is null");
+		}
+		if("next".equals(flag)) {
+			String eventName= itemMapper.getNextImpleClassByName(lifecycleName, itemName);
+			if(eventName==null||"".equals(eventName)) {
+				Class<?> claz=Class.forName(eventName);
+				ILifeCycleEvent event=(ILifeCycleEvent) claz.newInstance();
+				if(event.execute()) {
+					return true;
+				}
+			}
+		}else if("previous".equals(flag)) {
+			String eventName= itemMapper.getPreviousImpleClassByName(lifecycleName, itemName);
+			if(eventName==null||"".equals(eventName)) {
+				Class<?> claz=Class.forName(eventName);
+				ILifeCycleEvent event=(ILifeCycleEvent) claz.newInstance();
+				if(event.execute()) {
+					return true;
+				}
+			}
+		}
+		
+		
+		return false;
+	}
 }

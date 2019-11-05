@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmLifeCycleItemMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmLifeCycleItem">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="c_name" />
+    <result column="description" jdbcType="VARCHAR" property="c_description" />
+    <result column="previousName" jdbcType="VARCHAR" property="c_previousname" />
+    <result column="nextName" jdbcType="VARCHAR" property="c_nextname" />
+    <result column="previousEventName" jdbcType="VARCHAR" property="c_previouseventname" />
+    <result column="nextEventName" jdbcType="VARCHAR" property="c_nexteventname" />
+    <result column="lifecycleId" jdbcType="VARCHAR" property="lifecycle_id" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,c_name,c_description,c_previousname,c_nextname,c_previouseventname,c_nexteventname,lifecycle_id
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_lifecycleitem order by ID
+  </select>
+  
+  <select id="selectByLifeCycleId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_lifecycleitem 
+    where lifecycle_id = #{lifecycleId,jdbcType=VARCHAR} order by ID
+  </select>
+  <select id="getNextImpleClassByLfId" resultType="java.lang.String">
+    select c_nexteventname from ecm_lifecycleitem 
+    where lifecycle_id = #{lifecycleId,jdbcType=VARCHAR} 
+     and c_name=#{itemName,jdbcType=VARCHAR} order by ID
+  </select>
+  <select id="getPreviousImpleClassByLfId" resultType="java.lang.String">
+    select c_previouseventname from ecm_lifecycleitem 
+    where lifecycle_id = #{lifecycleId,jdbcType=VARCHAR} 
+     and c_name=#{itemName,jdbcType=VARCHAR} order by ID
+  </select>
+  <select id="getNextImpleClassByName" resultType="java.lang.String">
+    select a.c_nexteventname from ecm_lifecycleitem a,ecm_lifecycle b
+    where a.lifecycle_id =b.id and b.c_name= #{lifecycleName,jdbcType=VARCHAR} 
+     and a.c_name=#{itemName,jdbcType=VARCHAR} order by ID
+  </select>
+  <select id="getPreviousImpleClassByName" resultType="java.lang.String">
+    select a.c_previouseventname from ecm_lifecycleitem a,ecm_lifecycle b
+    where a.lifecycle_id =b.id and b.c_name= #{lifecycleName,jdbcType=VARCHAR} 
+     and a.c_name=#{itemName,jdbcType=VARCHAR} order by ID
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ecm_lifecycleitem
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectEcmLifeCycleItemBySql" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_lifecycleitem
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByLifeCycleId" parameterType="java.lang.String">
+    delete from ecm_lifecycleitem
+    where lifecycle_id = #{lifecycleId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmLifeCycleItem">
+    insert into ecm_lifecycleitem (id,c_name,c_description,c_previousname,c_nextname,
+    c_previouseventname,c_nexteventname,lifecycle_id
+      )
+    values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{previousName,jdbcType=VARCHAR}, #{nextName,jdbcType=VARCHAR}
+      , #{previousEventName,jdbcType=VARCHAR}, #{nextEventName,jdbcType=VARCHAR}
+      , #{lifecycleId,jdbcType=VARCHAR}
+      )
+    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+		SELECT LAST_INSERT_ID() AS ID
+	</selectKey>
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmLifeCycleItem">
+    insert into ecm_lifecycleitem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        c_name,
+      </if>
+      <if test="description != null">
+        c_description,
+      </if>
+      <if test="previousName != null">
+        c_previousname,
+      </if>
+      <if test="nextName != null">
+        c_nextname,
+      </if>
+      <if test="previousEventName != null">
+        c_previouseventname,
+      </if>
+      <if test="nextEventName != null">
+        c_nexteventname,
+      </if>
+      <if test="lifecycleId != null">
+        lifecycle_id,
+      </if>
+      
+      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="previousName != null">
+        #{previousName,jdbcType=VARCHAR},
+      </if>
+      <if test="nextName != null">
+        #{nextName,jdbcType=VARCHAR},
+      </if>
+      <if test="previousEventName != null">
+        #{previousEventName,jdbcType=VARCHAR},
+      </if>
+      <if test="nextEventName != null">
+        #{nextEventName,jdbcType=VARCHAR},
+      </if>
+      <if test="lifecycleId != null">
+        #{lifecycleId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmLifeCycleItem">
+    update ecm_lifecycleitem
+    <set>
+      <if test="name != null">
+        c_name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        c_description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="previousName != null">
+        c_previousname = #{previousName,jdbcType=VARCHAR},
+      </if>
+      <if test="nextName != null">
+        c_nextname = #{nextName,jdbcType=VARCHAR},
+      </if>
+      <if test="previousEventName != null">
+        c_previouseventname = #{previousEventName,jdbcType=VARCHAR},
+      </if>
+      <if test="nextEventName != null">
+        c_nexteventname = #{nextEventName,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmLifeCycleItem">
+    update ecm_lifecycleitem
+    set c_name = #{name,jdbcType=VARCHAR},
+      c_description = #{description,jdbcType=VARCHAR},
+      c_previousname = #{previousName,jdbcType=VARCHAR},
+      c_nextname = #{nextName,jdbcType=VARCHAR},
+      c_previouseventname = #{previousEventName,jdbcType=VARCHAR},
+      c_nexteventname = #{nextEventName,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
