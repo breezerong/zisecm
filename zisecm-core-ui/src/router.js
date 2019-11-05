@@ -95,6 +95,15 @@ var currentRouter = {
 				  path: '/managercenter/typemanager',
 				  component:  () => import( /* webpackChunkName: "typemanager" */ './views/admin/TypeManager.vue'),
 				  name: '业务类型管理'
+				},
+				{
+				  meta: {
+					requireAuth: true,
+					permit: 5
+				  },
+				  path: '/managercenter/usermanager',
+				  component:  () => import( /* webpackChunkName: "usermanager" */ './views/admin/UserManager.vue'),
+				  name: '业务类型管理'
 				}
 			]
 		}
