@@ -1,5 +1,16 @@
 <template>
   <div>
+    <el-dialog title="选择需要展示的字段" :visible.sync="columnsInfo.dialogFormVisible" width="40%" center top="15vh">
+      <el-checkbox :indeterminate="columnsInfo.isIndeterminate" v-model="columnsInfo.checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <div style="margin: 15px 0;"></div>
+      <el-checkbox-group v-model="showFields" @change="handleCheckedColsChange">
+        <el-checkbox v-for="item in gridList" :label="item.attrName" :key="item.attrName">{{item.label}}</el-checkbox>
+      </el-checkbox-group>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="columnsInfo.dialogFormVisible=false" size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
+      </div>
+    </el-dialog>
     <el-dialog :visible.sync="printsVisible">
       <PrintPage ref='printPage' v-bind:archiveId="this.archiveId"></PrintPage>
     </el-dialog>
@@ -45,8 +56,8 @@
           <tr>
             <td class="navbar">
               <el-breadcrumb>
-                <el-breadcrumb-item>{{$t('menu.dataCenter')}}</el-breadcrumb-item>
-                <el-breadcrumb-item>{{$t('menu.folderClassification')}}</el-breadcrumb-item>
+                <el-breadcrumb-item>档案管理</el-breadcrumb-item>
+                <el-breadcrumb-item>按卷整理</el-breadcrumb-item>
               </el-breadcrumb>
             </td>
           </tr>
@@ -150,20 +161,7 @@
                         </div>
                         <el-table-column :label="$t('application.operation')" width="200">
                           <template slot="header" slot-scope="scope">
-                            <el-select
-                              v-model="showFields"
-                              multiple
-                              collapse-tags
-                              style="width: 150px;"
-                              placeholder="请选择">
-                              <div v-for="item in gridList">
-                              <el-option
-                                :key="item.attrName"
-                                :label="item.label"
-                                :value="item.attrName">
-                              </el-option>
-                              </div>
-                            </el-select>
+                            <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                           </template>
                           <template slot-scope="scope">
                             <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
@@ -422,7 +420,7 @@ export default {
       selectedItems: [],
       selectedOutItems: [],
       selectedInnerItems:[],
-      tableHeight: window.innerHeight - 408,
+      tableHeight: window.innerHeight - 508,
       folderAction:"",
       folderDialogVisible: false,
       imageArray:[""],
@@ -430,6 +428,13 @@ export default {
       imageViewer: Object,
       currentType:"",
       orderBy:"",
+      columnsInfo:{
+        checkAll: true,
+        checkedCities:[],
+        temCol:[],
+        dialogFormVisible:false,
+        isIndeterminate:false
+      },
       folderForm: {
         id: 0,
         name: "",
@@ -492,7 +497,22 @@ export default {
   },
   methods: {
 
-
+    confirmShow() {
+       let _self = this;
+       _self.gridList.forEach(element => {
+          element.visibleType = 2;
+        });
+       _self.showFields.forEach(element => {
+          let item = _self.getgriditem(element);
+          if (item) {
+            item.visibleType = 1;
+          }
+        });
+      this.columnsInfo.dialogFormVisible = false
+    },
+    dialogFormShow(){
+      this.columnsInfo.dialogFormVisible = true
+    },
     showInnerFile(row){
       let _self = this;
       
@@ -586,28 +606,6 @@ export default {
     formatImage(indata){
       var url = './static/img/format/f_'+indata+'_16.gif';
       return url;
-    },
-    dateFtt(fmt, date)
-    {
-      var o = {   
-        "M+" : date.getMonth()+1,                 //月份   
-        "d+" : date.getDate(),                    //日   
-        "h+" : date.getHours(),                   //小时   
-        "m+" : date.getMinutes(),                 //分   
-        "s+" : date.getSeconds(),                 //秒   
-        "q+" : Math.floor((date.getMonth()+3)/3), //季度   
-        "S"  : date.getMilliseconds()             //毫秒   
-      };   
-      if(/(y+)/.test(fmt))   
-          fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
-      for(var k in o)   
-          if(new RegExp("("+ k +")").test(fmt))   
-              fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-      return fmt;   
-    },
-    dateFormat(value){
-      var crtTime = new Date(value);
-      return this.dateFtt("yyyy-MM-dd",crtTime);
     },
     // 表格行选择
     selectChange(val) 

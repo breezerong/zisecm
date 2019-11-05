@@ -4,7 +4,7 @@
       <div class="navbar-top">
         <div class="navbar-top-inner">
           <div class="container-top">
-            <img src="../assets/ecmlogo.png" border="0" />
+            <img src="../assets/logo.png" border="0" />
           </div>
           <div class="container-top">
             <span style="font-size: 18px;color: #fff;">{{$t('application.name')}}</span>

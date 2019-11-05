@@ -26,7 +26,19 @@ export function renderSlot (
     }
     nodes = scopedSlotFn(props) || fallback
   } else {
-    nodes = this.$slots[name] || fallback
+    const slotNodes = this.$slots[name]
+    // warn duplicate slot usage
+    if (slotNodes) {
+      if (process.env.NODE_ENV !== 'production' && slotNodes._rendered) {
+        warn(
+          `Duplicate presence of slot "${name}" found in the same render tree ` +
+          `- this will likely cause render errors.`,
+          this
+        )
+      }
+      slotNodes._rendered = true
+    }
+    nodes = slotNodes || fallback
   }
 
   const target = props && props.slot
