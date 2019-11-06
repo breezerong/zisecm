@@ -25,6 +25,16 @@ public class AuditContext {
 	 * 更新
 	 */
 	public static String UPDATE="ecm_update";
+	
+	/**
+	 * 查看
+	 */
+	public static String READ="ecm_read";
+	
+	/**
+	 * 下载
+	 */
+	public static String DOWNLOAD="ecm_download";
 	/**
 	 * 删除文件内容
 	 */

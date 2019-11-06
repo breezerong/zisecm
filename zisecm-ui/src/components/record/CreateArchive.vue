@@ -469,11 +469,7 @@ export default {
     }
   },
   created() {
-    this.freshFolder();
-  },
-  methods: {
-    freshFolder(){
-      let _self = this;
+    let _self = this;
     var psize = localStorage.getItem("docPageSize");
     if(psize)
     {
@@ -1199,8 +1195,7 @@ export default {
           if(response.data.code==1)
           {
             _self.$message(_self.$t("message.deleteSuccess"));
-            // _self.refreshFolderData();
-            _self.freshFolder();
+            _self.refreshFolderData();
           }
           else
           {
@@ -1214,7 +1209,6 @@ export default {
     // 新建文件夹事件
     onNewFolder()
     {
-      let _self=this;
       if(!this.currentFolder||!this.currentFolder.id)
       {
         this.$message(_self.$t("message.cannotCreateRoot"));
