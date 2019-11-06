@@ -21,7 +21,7 @@
     <result column="VERSION_ID" jdbcType="BIGINT" property="versionId" />
     <result column="LIFECYCLE_NAME" jdbcType="VARCHAR" property="lifecycleName" />
     <result column="LIFECYCLE_STATUS" jdbcType="VARCHAR" property="lifecycleStatus" />
-    <result column="LIFECYCLE_DIR" jdbcType="VARCHAR" property="lifecycleDir" />
+    <result column="LIFECYCLE_DIR" jdbcType="INTEGER" property="lifecycleDir" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, TITLE, FOLDER_ID, STATUS, CREATION_DATE, CREATOR, TYPE_NAME, MODIFIER, 
