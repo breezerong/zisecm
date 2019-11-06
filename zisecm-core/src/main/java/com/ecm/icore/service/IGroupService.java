@@ -26,6 +26,7 @@ public interface IGroupService {
 	boolean addRole(String token,String parentRoleId, String childRoleId) throws Exception;
 	boolean removeUserFromGroup(String token,String userId, String deptId) throws Exception;
 	EcmGroup getGroup(String token,String id);
+	EcmGroup getGroupByName(String token, String name);
 	boolean deleteGroup(String token,String id);
 	boolean updateGroup(String token,EcmGroup obj);
 	boolean newGroup(String token,EcmGroup obj);
