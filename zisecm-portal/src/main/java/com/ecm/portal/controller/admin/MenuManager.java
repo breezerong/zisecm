@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
-import com.ecm.core.dao.EcmMenuItemMapper;
-import com.ecm.core.dao.EcmMenuMapper;
 import com.ecm.core.entity.EcmMenu;
 import com.ecm.core.entity.EcmMenuItem;
 import com.ecm.core.exception.AccessDeniedException;

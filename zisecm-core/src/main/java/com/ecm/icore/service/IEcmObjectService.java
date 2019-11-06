@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ecm.core.entity.EcmObject;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
@@ -40,6 +41,15 @@ public interface IEcmObjectService<T>{
 	 * @throws EcmException
 	 */
 	List<Map<String, Object>> getMapList(String tocken, String sql) throws EcmException;
+	/**
+	 * 获取Map列表，带分页功能
+	 * @param token
+	 * @param sql
+	 * @param pager
+	 * @return
+	 * @throws EcmException
+	 */
+	public List<Map<String, Object>> getMapList(String token, String sql,Pager pager) throws EcmException;
 	/**
 	 * 根据条件获取map列表
 	 * @param condition

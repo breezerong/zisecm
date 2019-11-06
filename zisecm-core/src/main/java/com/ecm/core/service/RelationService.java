@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmRelationMapper;
 import com.ecm.core.entity.EcmRelation;
@@ -52,7 +53,7 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 		// TODO Auto-generated method stub
 		((com.ecm.core.entity.EcmRelation)obj).createId();
 		ecmRelationMapper.insert((com.ecm.core.entity.EcmRelation)obj);
-		return ((com.ecm.core.entity.EcmRelationType)obj).getId();
+		return ((com.ecm.core.entity.EcmRelation)obj).getId();
 	}
 
 }

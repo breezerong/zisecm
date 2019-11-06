@@ -104,7 +104,12 @@
     "select":"Select",
     "selectUser":"Select User",
     "singleSelector":"Single Selection",
-    "multSelector":"Multiple selection"
+    "multSelector":"Multiple selection",
+    "sealVolume":"Seal Volume",
+    "openPage":"Open Page",
+    "PrintCover":"Print the cover",
+    "PrintVolumes":"Print Volumes",
+    "createDocument":"Create Document"
 },
 "menu": {
     "home":"Home",

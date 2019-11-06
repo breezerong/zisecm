@@ -3,7 +3,6 @@ package com.ecm.core.service;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,15 +11,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.soap.SOAPException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.SecureUtils;
@@ -28,22 +24,15 @@ import com.ecm.core.PermissionContext;
 import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmGroupItemMapper;
 import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
 import com.ecm.core.dao.EcmUserMapper;
-import com.ecm.core.entity.Pager;
-import com.ecm.core.entity.EcmAction;
-import com.ecm.core.entity.EcmAuditGeneral;
-import com.ecm.core.entity.EcmComponent;
-import com.ecm.core.entity.EcmContent;
-import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
-import com.ecm.core.entity.EcmMenuItem;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
@@ -396,8 +385,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	public boolean updateSignImage(String token,String id,InputStream instream,String fileName) throws EcmException, Exception{
 		
 		if(instream!=null) {
-			EcmUser  user = getObjectById(token,id);
-			if(!getSession(token).getCurrentUser().getUserName().equals(user.getName())) {
+			EcmUser  user = getObjectById(token,id.replace("\"", ""));
+			if(!getSession(token).getCurrentUser().getUserName().equals(user.getName())&&getSession(token).getCurrentUser().getClientPermission()<4) {
 				super.hasPermission(token,serviceCode+ObjectPermission.WRITE_CONTENT,systemPermission);
 			}
 			if(user!=null) {
@@ -416,6 +405,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 				{
 					fis.close();
 				}
+				user.setSignImage(fullPath);
 				ecmUserMapper.updateByPrimaryKey(user);
 			}
 		}

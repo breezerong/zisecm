@@ -59,7 +59,7 @@
             <td>
               <table border="0" width="100%" class="topbar">
                 <tr>
-                  <td align="left" width="160px">
+                  <td align="left" width="180px">
                     <el-tooltip  class="item" effect="dark" :content="$t('application.newFolder')" placement="top">
                       <el-button type="primary" icon="el-icon-circle-plus" circle @click="onNewFolder()"></el-button>
                     </el-tooltip>

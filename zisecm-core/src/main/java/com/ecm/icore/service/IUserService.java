@@ -2,9 +2,6 @@ package com.ecm.icore.service;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
-
-import javax.xml.soap.SOAPException;
 
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;

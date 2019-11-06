@@ -21,14 +21,4 @@ export const validate = compiler => {
   }
 }
 
-export const onEmit = (compiler, name, hook) => {
-  if (compiler.hooks) {
-    // Webpack >= 4.0.0
-    compiler.hooks.emit.tapAsync(name, hook)
-  } else {
-    // Webpack < 4.0.0
-    compiler.plugin('emit', hook)
-  }
-}
-
 export { isJS, isCSS } from '../util'

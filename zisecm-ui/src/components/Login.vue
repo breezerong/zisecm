@@ -4,7 +4,7 @@
     <table border="0" width="100%">
       <tr>
         <td nowrap>
-          <img src="../assets/ecmlogo.png" border="0"><h3 class="title">{{$t('application.name')}}</h3>
+          <img src="../assets/logo.png" border="0"><h3 class="title">{{$t('application.name')}}</h3>
         </td>
       </tr>
       <tr>

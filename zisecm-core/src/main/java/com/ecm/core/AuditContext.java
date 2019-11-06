@@ -25,6 +25,16 @@ public class AuditContext {
 	 * 更新
 	 */
 	public static String UPDATE="ecm_update";
+	
+	/**
+	 * 查看
+	 */
+	public static String READ="ecm_read";
+	
+	/**
+	 * 下载
+	 */
+	public static String DOWNLOAD="ecm_download";
 	/**
 	 * 删除文件内容
 	 */
@@ -84,6 +94,11 @@ public class AuditContext {
 	 *高级搜索
 	 */
 	public static String ADV_SEARCH = "ecm_adv_search";
+	
+	/**
+	 *生命周期操作
+	 */
+	public static String LIFE_CYCLE = "ecm_life_cycle";
 	/**
 	 *取消签出
 	 */

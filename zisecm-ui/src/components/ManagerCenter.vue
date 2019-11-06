@@ -35,6 +35,22 @@
                     </el-menu-item>
                    </el-submenu>
                   </div>
+                  <!--流程-->
+                   <div v-if="systemPermission>=4">
+                  <el-submenu index="200">
+                    <template slot="title">
+                      <i class="el-icon-menu"></i>
+                      <span>状态流程</span>
+                    </template>
+                    <el-menu-item index="201">
+                      <i class="el-icon-caret-right"></i>
+                      <span slot="title"><router-link to="/admin/WorkflowStatus">状态流</router-link></span>
+                    </el-menu-item>
+                    
+                  </el-submenu>
+                  </div>
+
+                  <!--end流程-->
                   <div v-if="systemPermission>=4">
                   <el-submenu index="200">
                     <template slot="title">

@@ -1,4 +1,4 @@
-import { validate, isJS, onEmit } from './util'
+import { validate, isJS } from './util'
 
 export default class VueSSRServerPlugin {
   constructor (options = {}) {
@@ -10,7 +10,7 @@ export default class VueSSRServerPlugin {
   apply (compiler) {
     validate(compiler)
 
-    onEmit(compiler, 'vue-server-plugin', (compilation, cb) => {
+    compiler.plugin('emit', (compilation, cb) => {
       const stats = compilation.getStats().toJson()
       const entryName = Object.keys(stats.entrypoints)[0]
       const entryInfo = stats.entrypoints[entryName]
@@ -43,7 +43,7 @@ export default class VueSSRServerPlugin {
       }
 
       stats.assets.forEach(asset => {
-        if (isJS(asset.name)) {
+        if (asset.name.match(/\.js$/)) {
           bundle.files[asset.name] = compilation.assets[asset.name].source()
         } else if (asset.name.match(/\.js\.map$/)) {
           bundle.maps[asset.name.replace(/\.map$/, '')] = JSON.parse(compilation.assets[asset.name].source())

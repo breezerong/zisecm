@@ -1,6 +1,5 @@
 package com.ecm.core.entity;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,6 +93,53 @@ public class EcmDocument extends EcmSysObject{
      * 锁定客户端信息
      */
     private String lockClient;
+    /**
+     * 生命周期名称
+     */
+    private String lifecycleName;
+    public String getLifecycleName() {
+		return lifecycleName;
+	}
+
+	public void setLifecycleName(String lifecycleName) {
+		this.lifecycleName = lifecycleName;
+		if(attributes!=null) {
+			attributes.put("LIFECYCLE_NAME", this.lifecycleName);
+		}
+	}
+
+	public String getLifecycleStatus() {
+		return lifecycleStatus;
+	}
+
+	public void setLifecycleStatus(String lifecycleStatus) {
+		this.lifecycleStatus = lifecycleStatus;
+		if(attributes!=null) {
+			attributes.put("LIFECYCLE_STATUS", this.lifecycleStatus);
+		}
+	}
+
+	public int getLifecycleDir() {
+		return lifecycleDir;
+	}
+
+	public void setLifecycleDir(int lifecycleDir) {
+		this.lifecycleDir = lifecycleDir;
+		if(attributes!=null) {
+			attributes.put("LIFECYCLE_DIR", this.lifecycleDir);
+		}
+	}
+
+
+
+	/**
+     * 生命周期状态
+     */
+    private String lifecycleStatus;
+    /**
+     * 生命周期方向，0：回退,1：默认，2：前进
+     */
+    private int lifecycleDir=1;
     
     private Map<String, Object> attributes = new HashMap<String, Object>();
     
@@ -104,7 +150,7 @@ public class EcmDocument extends EcmSysObject{
 	public void setLockOwner(String lockOwner) {
 		this.lockOwner = lockOwner;
 		if(attributes!=null) {
-			attributes.put("CLOCK_OWNER", this.lockOwner);
+			attributes.put("LOCK_OWNER", this.lockOwner);
 		}
 	}
 
@@ -115,7 +161,7 @@ public class EcmDocument extends EcmSysObject{
 	public void setLockDate(Date lockDate) {
 		this.lockDate = lockDate;
 		if(attributes!=null) {
-			attributes.put("CLOCK_DATE", this.lockDate);
+			attributes.put("LOCK_DATE", this.lockDate);
 		}
 	}
 
@@ -126,7 +172,7 @@ public class EcmDocument extends EcmSysObject{
 	public void setLockClient(String lockClient) {
 		this.lockClient = lockClient;
 		if(attributes!=null) {
-			attributes.put("CLOCK_CLIENT", this.lockClient);
+			attributes.put("LOCK_CLIENT", this.lockClient);
 		}
 	}
 
@@ -419,6 +465,17 @@ public class EcmDocument extends EcmSysObject{
 	    }
 	    if(attributes.get("LOCK_CLIENT")!=null) {
 	    	this.setLockClient(getString(attributes.get("LOCK_CLIENT")));
+	    }
+	    if(attributes.get("LIFECYCLE_NAME")!=null) {
+	    	this.setLifecycleName(getString(attributes.get("LIFECYCLE_NAME")));
+	    }
+	    if(attributes.get("LIFECYCLE_STATUS")!=null) {
+	    	this.setLifecycleStatus(getString(attributes.get("LIFECYCLE_STATUS")));
+	    }
+	    if(attributes.get("LIFECYCLE_DIR")!=null) {
+	    	try {
+	    		this.setLifecycleDir(Integer.parseInt(getString(attributes.get("LIFECYCLE_DIR"))));
+	    	}catch(Exception ex){}
 	    }
 	}
 	

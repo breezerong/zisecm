@@ -19,11 +19,15 @@
     <result column="ATTACHMENT_COUNT" jdbcType="INTEGER" property="attachmentCount" />
     <result column="SYSTEM_VERSION" jdbcType="DOUBLE" property="systemVersion" />
     <result column="VERSION_ID" jdbcType="BIGINT" property="versionId" />
+    <result column="LIFECYCLE_NAME" jdbcType="VARCHAR" property="lifecycleName" />
+    <result column="LIFECYCLE_STATUS" jdbcType="VARCHAR" property="lifecycleStatus" />
+    <result column="LIFECYCLE_DIR" jdbcType="INTEGER" property="lifecycleDir" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, TITLE, FOLDER_ID, STATUS, CREATION_DATE, CREATOR, TYPE_NAME, MODIFIER, 
     MODIFIED_DATE, REVISION, ACL_NAME, FORMAT_NAME, 
-    CONTENT_SIZE, ATTACHMENT_COUNT,SYSTEM_VERSION,VERSION_ID
+    CONTENT_SIZE, ATTACHMENT_COUNT,SYSTEM_VERSION,VERSION_ID,
+    LIFECYCLE_NAME,LIFECYCLE_STATUS ,LIFECYCLE_DIR 
   </sql>
   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
 	${sqlStr}
@@ -44,7 +48,7 @@
       CREATOR, TYPE_NAME, MODIFIER, 
       MODIFIED_DATE, REVISION,  
        ACL_NAME, FORMAT_NAME, CONTENT_SIZE, ATTACHMENT_COUNT,
-       SYSTEM_VERSION,VERSION_ID
+       SYSTEM_VERSION,VERSION_ID,LIFECYCLE_NAME,LIFECYCLE_STATUS
       )
     values ( #{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
       #{folderId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
@@ -52,7 +56,8 @@
       #{modifiedDate,jdbcType=TIMESTAMP}, #{revision,jdbcType=VARCHAR},
       #{aclName,jdbcType=VARCHAR}, 
       #{formatName,jdbcType=VARCHAR}, #{contentSize,jdbcType=BIGINT}, #{attachmentCount,jdbcType=INTEGER},
-      #{systemVersion,jdbcType=DOUBLE}, #{versionId,jdbcType=BIGINT}
+      #{systemVersion,jdbcType=DOUBLE}, #{versionId,jdbcType=BIGINT},
+      #{lifecycleName,jdbcType=VARCHAR},#{lifecycleStatus,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDocument">
@@ -109,6 +114,15 @@
       <if test="versionId != null">
         VERSION_ID,
       </if>
+      <if test="lifecycleName != null">
+        LIFECYCLE_NAME,
+      </if>
+      <if test="lifecycleStatus != null">
+        LIFECYCLE_STATUS,
+      </if>
+      <if test="lifecycleDir != null">
+        LIFECYCLE_DIR,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -161,6 +175,15 @@
       </if>
       <if test="versionId != null">
         #{versionId,jdbcType=BIGINT},
+      </if>
+      <if test="lifecycleName != null">
+        #{lifecycleName,jdbcType=VARCHAR},
+      </if>
+      <if test="lifecycleStatus != null">
+        #{lifecycleStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="lifecycleDir != null">
+        #{lifecycleDir,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -215,6 +238,15 @@
       <if test="versionId != null">
         VERSION_ID = #{versionId,jdbcType=BIGINT},
       </if>
+      <if test="lifecycleName != null">
+        LIFECYCLE_NAME = #{lifecycleName,jdbcType=VARCHAR},
+      </if>
+      <if test="lifecycleStatus != null">
+        LIFECYCLE_STATUS = #{lifecycleStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="lifecycleDir != null">
+        LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INTEGER},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -235,7 +267,10 @@
       CONTENT_SIZE = #{contentSize,jdbcType=BIGINT},
       ATTACHMENT_COUNT = #{attachmentCount,jdbcType=INTEGER},
       SYSTEM_VERSION = #{systemVersion,jdbcType=DOUBLE},
-      VERSION_ID = #{versionID,jdbcType=BIGINT}
+      VERSION_ID = #{versionID,jdbcType=BIGINT},
+      LIFECYCLE_NAME = #{lifecycleName,jdbcType=VARCHAR},
+      LIFECYCLE_STATUS = #{lifecycleStatus,jdbcType=VARCHAR},
+      LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INTEGER}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -4,16 +4,18 @@ package com.ecm.portal.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmAcl;
-import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
@@ -184,50 +186,40 @@ public class AclContoller extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/acl/grantGroup", method = RequestMethod.POST)
-	public Map<String, Object> grantGroup(@RequestBody EcmPermit permit) {
+	@RequestMapping(value = "/acl/grantPermit", method = RequestMethod.POST)
+	public Map<String, Object> grantPermit(@RequestBody EcmPermit permit) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			aclService.grantGroup(getToken(), permit.getParentId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
-			mp.put("code", ActionContext.SUCESS);
+			if(StringUtils.isEmpty(permit.getTargetName())) {
+				mp.put("code", ActionContext.FAILURE);
+			}else {
+				String[] targetNames = permit.getTargetName().split(";");
+				for(String targetName: targetNames) {
+					if(permit.getTargetType()==1) {
+						aclService.grantUser(getToken(), permit.getParentId(), targetName, permit.getPermission(), permit.getExpireDate());
+					}else {
+						aclService.grantGroup(getToken(), permit.getParentId(), targetName, permit.getPermission(), permit.getExpireDate());
+					}
+				}
+				mp.put("code", ActionContext.SUCESS);
+			}
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
 		return mp;
 	}
+
 	
 	@ResponseBody
-	@RequestMapping(value = "/acl/grantUser", method = RequestMethod.POST)
-	public Map<String, Object> grantUser(@RequestBody EcmPermit permit) {
+	@RequestMapping(value = "/acl/revokePermit", method = RequestMethod.POST)
+	public Map<String, Object> revokePermit(@RequestBody EcmPermit permit) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			aclService.grantUser(getToken(), permit.getParentId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
-			mp.put("code", ActionContext.SUCESS);
-		} catch (AccessDeniedException e) {
-			mp.put("code", ActionContext.TIME_OUT);
-		}
-		return mp;
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/acl/revokeGroup", method = RequestMethod.POST)
-	public Map<String, Object> revokeGroup(@RequestBody EcmPermit permit) {
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			aclService.revokeGroup(getToken(), permit.getParentId(), permit.getTargetName());
-			mp.put("code", ActionContext.SUCESS);
-		} catch (AccessDeniedException e) {
-			mp.put("code", ActionContext.TIME_OUT);
-		}
-		return mp;
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/acl/revokeUser", method = RequestMethod.POST)
-	public Map<String, Object> revokeUser(@RequestBody EcmPermit permit) {
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			aclService.revokeUser(getToken(), permit.getParentId(), permit.getTargetName());
+			if(permit.getTargetType()==1) {
+				aclService.revokeUser(getToken(), permit.getParentId(), permit.getTargetName());
+			}else {
+				aclService.revokeGroup(getToken(), permit.getParentId(), permit.getTargetName());
+			}
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);

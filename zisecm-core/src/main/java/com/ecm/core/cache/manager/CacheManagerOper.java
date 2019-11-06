@@ -3,7 +3,6 @@
  */
 package com.ecm.core.cache.manager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +16,10 @@ import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmMenu;
-import com.ecm.core.entity.EcmMenuItem;
 import com.ecm.core.entity.EcmParameter;
-import com.ecm.core.entity.EcmSession;
 import com.ecm.core.entity.EcmStore;
 import com.ecm.core.entity.EcmSuggestion;
 import com.ecm.core.entity.EcmSystemEvent;
-import com.ecm.core.entity.EcmUser;
 
 /**
  * @ClassName  CacheManagerOper   

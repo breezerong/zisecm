@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ecm.core.ActionContext;
 import com.ecm.core.StaticVar;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.cache.manager.ICacheManager;

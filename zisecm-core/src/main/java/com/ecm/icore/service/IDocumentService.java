@@ -319,4 +319,9 @@ public interface IDocumentService {
 	 * @throws AccessDeniedException 
 	 */
 	void queue(String token, String id, String name, String eventName, String message) throws EcmException, AccessDeniedException;
+	boolean detachLifeCycle(String token, String id) throws NoPermissionException, AccessDeniedException;
+	boolean attachLifeCycle(String token, String id, String lifecycelName)
+			throws AccessDeniedException, NoPermissionException;
+	boolean promote(String token, String id) throws NoPermissionException, AccessDeniedException, Exception;
+	boolean demote(String token, String id) throws NoPermissionException, AccessDeniedException, Exception;
 }

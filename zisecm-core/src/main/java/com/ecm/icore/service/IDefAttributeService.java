@@ -2,9 +2,7 @@ package com.ecm.icore.service;
 
 import java.util.List;
 
-import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmDefAttribute;
-import com.ecm.core.exception.EcmException;
 
 /**
  * 业务类型属性服务接口

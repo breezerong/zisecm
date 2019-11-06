@@ -1,7 +1,6 @@
 package com.ecm.portal.controller.admin;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
-import com.ecm.core.dao.EcmAttributeMapper;
-import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmDefAttribute;
-import com.ecm.core.entity.EcmDefType;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
-import com.ecm.core.service.AttributeService;
 import com.ecm.core.service.DefAttributeService;
 import com.ecm.portal.controller.ControllerAbstract;
 

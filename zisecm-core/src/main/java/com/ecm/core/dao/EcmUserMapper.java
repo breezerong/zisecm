@@ -7,8 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
-import com.ecm.core.entity.Pager;
 import com.ecm.core.entity.EcmUser;
+import com.ecm.core.entity.Pager;
 @Component
 @Mapper
 public interface EcmUserMapper {

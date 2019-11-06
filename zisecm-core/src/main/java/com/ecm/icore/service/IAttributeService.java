@@ -3,7 +3,6 @@ package com.ecm.icore.service;
 import java.util.List;
 
 import com.ecm.core.entity.EcmAttribute;
-import com.ecm.core.entity.EcmDefAttribute;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;

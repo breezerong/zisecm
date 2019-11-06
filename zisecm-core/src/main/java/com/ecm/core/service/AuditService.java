@@ -1,14 +1,11 @@
 package com.ecm.core.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.ecm.common.util.EcmStringUtils;
-import com.ecm.core.ActionContext;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmAuditGeneralMapper;
 import com.ecm.core.entity.EcmAuditGeneral;

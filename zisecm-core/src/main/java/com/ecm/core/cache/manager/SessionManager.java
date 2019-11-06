@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import com.ecm.core.entity.EcmSession;
-import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.icore.service.IEcmSession;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

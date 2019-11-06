@@ -11,7 +11,6 @@ import com.ecm.core.DocumentContext;
 import com.ecm.core.entity.EcmWorkflow;
 import com.ecm.core.entity.EcmWorkitem;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.icore.bpm.IBPMServerEvent;
 
