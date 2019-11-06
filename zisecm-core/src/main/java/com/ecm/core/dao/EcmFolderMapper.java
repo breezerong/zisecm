@@ -26,6 +26,7 @@ public interface EcmFolderMapper {
     List<EcmFolder> selectByParentId(String parentId);
     
     //List<EcmFolder> selectByParentIdType(Integer id,String type);
+    List<EcmFolder> selectByCondition(@Param(value="condition")String condition);
     
     List<Map<String, Object>> searchToMap(@Param(value="sqlStr") String sqlStr);
 }

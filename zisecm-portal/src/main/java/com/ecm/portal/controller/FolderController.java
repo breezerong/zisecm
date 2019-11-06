@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmFolderMapper;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
 
@@ -30,8 +34,6 @@ public class FolderController  extends ControllerAbstract {
 	/**
 	 * 表单数据访问
 	 */
-	@Autowired
-	private EcmFolderMapper ecmFolder;
 	
 	@Autowired
 	private FolderService folderService;
@@ -50,9 +52,28 @@ public class FolderController  extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			String id = CacheManagerOper.getEcmParameters().get(param).getValue();
-			EcmFolder folder = ecmFolder.selectByPrimaryKey(id);
+			EcmFolder folder = folderService.getObjectById(getToken(), id);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", folder);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/folder/copyFolders", method = RequestMethod.POST)
+	public Map<String, Object> copyFolders(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String sourceId = args.get("sourceId").toString();
+			String targetId = args.get("targetId").toString();
+			folderService.copyFolders(getToken(), sourceId, targetId, false);
+			mp.put("code", ActionContext.SUCESS);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
@@ -66,11 +87,12 @@ public class FolderController  extends ControllerAbstract {
 	 * 获取所有表单
 	 * 
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
 	@ResponseBody
 	@RequestMapping(value="/admin/getFolder", method = RequestMethod.POST)
-	public Map<String, Object> getFolder(@RequestBody String parentId) {
-		List<EcmFolder> list = ecmFolder.selectByParentId(parentId); //Integer.parseInt(parentId));
+	public Map<String, Object> getFolder(@RequestBody String parentId) throws AccessDeniedException {
+		List<EcmFolder> list = folderService.getFoldersByParentId(getToken(), parentId); //Integer.parseInt(parentId));
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("data", list);
@@ -85,11 +107,12 @@ public class FolderController  extends ControllerAbstract {
 	 * @param obj
 	 *            表单实体
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
 	@RequestMapping(value = "/admin/updateFolder", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateFolder(@RequestBody EcmFolder obj) {
-		ecmFolder.updateByPrimaryKey(obj);
+	public Map<String, Object> updateFolder(@RequestBody EcmFolder obj) throws AccessDeniedException {
+		folderService.updateObject(getToken(),obj);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		return mp;
@@ -120,7 +143,7 @@ public class FolderController  extends ControllerAbstract {
 			msg="文件夹包含文件，请先删除文件。";
 		}
 		else {
-			ecmFolder.deleteByPrimaryKey(obj.getId());
+			folderService.deleteObject(getToken(),obj);
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", code);
@@ -134,12 +157,15 @@ public class FolderController  extends ControllerAbstract {
 	 * @param obj
 	 *            表单实体
 	 * @return
+	 * @throws NoPermissionException 
+	 * @throws AccessDeniedException 
+	 * @throws EcmException 
 	 */
 	@RequestMapping(value = "/admin/newFolder", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> newFolder(@RequestBody EcmFolder obj) {
-		obj.createId();
-		ecmFolder.insert(obj);
+	public Map<String, Object> newFolder(@RequestBody EcmFolder obj) throws EcmException, AccessDeniedException, NoPermissionException {
+		
+		folderService.newObject(getToken(),obj);
 		
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);

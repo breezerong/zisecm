@@ -14,7 +14,7 @@
                 <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue"></el-checkbox>
                 <el-date-picker v-else-if="item.controlType=='Date'" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;"></el-date-picker>
                 <el-select  :name="item.attrName"
-                v-else-if="item.controlType=='Select' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
+                v-else-if="item.controlType=='Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
                 v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" style="display:block;">
                       <div v-for="(name,nameIndex) in item.validValues">
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>

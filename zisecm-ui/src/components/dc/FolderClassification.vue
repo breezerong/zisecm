@@ -501,7 +501,7 @@ export default {
       }
       _self.loadGridInfo(indata);
       _self.loadGridData(indata);
-      _self.loadPageInfo(indata);
+      
     },
     // 新建文档
     newItem()
@@ -762,7 +762,7 @@ export default {
     //查询文档
     searchItem() {
      this.loadGridData(this.currentFolder);
-     this. loadPageInfo(this.currentFolder);
+    
     },
       //展示勾选弹框
     dialogFormShow(){
