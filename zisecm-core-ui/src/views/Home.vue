@@ -10,16 +10,9 @@
 		        <span style="font-size: 18px;color: #fff;">{{$t('application.name')}}</span>
 		      </div>
 		      <div class="container-top">
-		        <el-menu default-active="1" mode="horizontal">
-		          	<el-menu-item index="1"><router-link to="/home">{{$t('menu.home')}}</router-link></el-menu-item>
-		            <el-menu-item index="4" v-if="clientPermission>4"><router-link to="/datacenter/folder">{{$t('menu.dataCenter')}}</router-link></el-menu-item>
-		            <el-menu-item index="5"><router-link to="/reportcenter">{{$t('menu.reportCenter')}}</router-link></el-menu-item>
-		            <el-menu-item index="6" v-if="clientPermission>3"><router-link to="/drawingmanager">{{$t('menu.systemManager')}}</router-link></el-menu-item>
-		            <el-menu-item index="7" v-if="clientPermission>4"><router-link to="/managercenter">{{$t('menu.managerCenter')}}</router-link></el-menu-item>
-		            <el-menu-item index="8"><router-link to="/usercenter">{{$t('menu.userCenter')}}</router-link></el-menu-item>
-		            <el-menu-item index="9"><router-link to="/helpcenter">{{$t('menu.helpCenter')}}</router-link></el-menu-item>
-					<template v-for="item in topmenu">
-						 <el-menu-item v-bind:key="item.id" :index="item.id"><router-link :to="item.name">{{item.label}}</router-link></el-menu-item>
+		        <el-menu default-active="menui0001" mode="horizontal">		          
+					<template v-for="item in topmenuData">
+					<el-menu-item :index="item.id" v-bind:key="item.id"><router-link :to="item.path">{{item.name}}</router-link></el-menu-item>
 					</template>
 		        </el-menu>
 		      </div>
@@ -54,30 +47,23 @@ export default {
 			defaultColor: '#409EFF',
 			menuHeight: window.innerHeight - 70,
 			user: {},
-			topmenu:[]
+			topmenuData:[]
 		};
 	},
 	beforeCreate() {
 		var user = sessionStorage.getItem('access-user');
 		var userObj = JSON.parse(user);
 		this.user = userObj;
-		console.log(this.user);
 		if (!user) {
-			//this.$router.push({path: '/login'});
+			this.$router.push({path: '/login'});
 		}
 	},
-	
-	mounted() {
+	created(){
+		this.init();
+	},
+	mounted() {	   
 		let _self = this;
-		console.log("GET MESSAGE");
-		console.log(this.$store.state.workflow)
-		var url="/admin/getMenu";
-		axios.post(url).then(resp=>{
-			console.log("getMenu");
-			
-			_self.topmenu = resp.data.data;
-			console.log(_self.topmenu);
-		});
+	
 		var user = sessionStorage.getItem('access-user');
 		var userObj = JSON.parse(user);
 		this.user = userObj;
@@ -88,6 +74,25 @@ export default {
 		});
 	},
 	methods: {
+		init:async function(){
+			var _self = this;
+					
+			await axios.post("/memu/getMyMenu",{name:"TopMenu",lang:"top_menu"}).then(res => {
+				console.log("getMymenu");
+					_self.topmenuData = [];
+				var topmenuList = res.data.data.menuItems;
+				topmenuList.forEach(element => {
+					var pathObj = new Object();
+					pathObj.path = element.url;
+					var menu={
+							id:element.id,
+							path:pathObj,
+							name:element.label
+						}
+					_self.topmenuData.push(menu);
+				});
+			});
+		},
 		logout() {
 		  sessionStorage.removeItem('access-user');
 		  sessionStorage.removeItem('access-userName');
@@ -120,54 +125,5 @@ export default {
 </script>
 
 <style scoped>
-body > .el-container {
-	padding: 0px;
-	margin-top: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-}
-.container-top-right {
-	height: 40px;
-	padding-left: 10px;
-	padding-right: 10px;
-	white-space: nowrap;
-	float: right;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
 
-.el-header {
-	background-color: #36a9e1;
-	color: #333;
-	text-align: center;
-	padding: 0px;
-	margin-top: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-}
-
-.el-aside {
-	background-color: #d3dce6;
-	color: #333;
-	text-align: center;
-	padding: 0px;
-	margin-top: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-}
-
-.el-main {
-	background-color: #e9eef3;
-	color: #333;
-	text-align: center;
-	padding: 0px;
-	margin-top: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-}
 </style>
