@@ -11,9 +11,19 @@ public class EcmDefType extends EcmSysObject{
 	private Integer status;
 
     private String storeName;
+    
+    private String typeTag;
 
     
-    public Integer getStatus() {
+    public String getTypeTag() {
+		return typeTag;
+	}
+
+	public void setTypeTag(String typeTag) {
+		this.typeTag = typeTag;
+	}
+
+	public Integer getStatus() {
         return status;
     }
 

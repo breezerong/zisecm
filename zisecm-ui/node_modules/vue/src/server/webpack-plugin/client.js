@@ -1,6 +1,6 @@
 const hash = require('hash-sum')
 const uniq = require('lodash.uniq')
-import { isJS, isCSS, onEmit } from './util'
+import { isJS } from './util'
 
 export default class VueSSRClientPlugin {
   constructor (options = {}) {
@@ -10,7 +10,7 @@ export default class VueSSRClientPlugin {
   }
 
   apply (compiler) {
-    onEmit(compiler, 'vue-client-plugin', (compilation, cb) => {
+    compiler.plugin('emit', (compilation, cb) => {
       const stats = compilation.getStats().toJson()
 
       const allFiles = uniq(stats.assets
@@ -19,10 +19,10 @@ export default class VueSSRClientPlugin {
       const initialFiles = uniq(Object.keys(stats.entrypoints)
         .map(name => stats.entrypoints[name].assets)
         .reduce((assets, all) => all.concat(assets), [])
-        .filter((file) => isJS(file) || isCSS(file)))
+        .filter(isJS))
 
       const asyncFiles = allFiles
-        .filter((file) => isJS(file) || isCSS(file))
+        .filter(isJS)
         .filter(file => initialFiles.indexOf(file) < 0)
 
       const manifest = {
@@ -43,8 +43,7 @@ export default class VueSSRClientPlugin {
           if (!chunk || !chunk.files) {
             return
           }
-          const id = m.identifier.replace(/\s\w+$/, '') // remove appended hash
-          const files = manifest.modules[hash(id)] = chunk.files.map(fileToIndex)
+          const files = manifest.modules[hash(m.identifier)] = chunk.files.map(fileToIndex)
           // find all asset modules associated with the same chunk
           assetModules.forEach(m => {
             if (m.chunks.some(id => id === cid)) {
@@ -53,6 +52,12 @@ export default class VueSSRClientPlugin {
           })
         }
       })
+
+      // const debug = (file, obj) => {
+      //   require('fs').writeFileSync(__dirname + '/' + file, JSON.stringify(obj, null, 2))
+      // }
+      // debug('stats.json', stats)
+      // debug('client-manifest.json', manifest)
 
       const json = JSON.stringify(manifest, null, 2)
       compilation.assets[this.options.filename] = {

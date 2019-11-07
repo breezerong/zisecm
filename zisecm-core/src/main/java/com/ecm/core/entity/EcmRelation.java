@@ -11,8 +11,18 @@ public class EcmRelation extends EcmSysObject {
 	private String parentId;
 
     private String childId;
+    
+    private int orderIndex;
 
-    public String getParentId() {
+    public int getOrderIndex() {
+		return orderIndex;
+	}
+
+	public void setOrderIndex(int orderIndex) {
+		this.orderIndex = orderIndex;
+	}
+
+	public String getParentId() {
         return parentId;
     }
 

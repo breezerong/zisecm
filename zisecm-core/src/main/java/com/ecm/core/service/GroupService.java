@@ -166,6 +166,11 @@ public class GroupService implements IGroupService {
 	}
 	
 	@Override
+	public EcmGroup getGroupByName(String token,String name) {
+		return ecmGroupMapper.selectByName(name);
+	}
+	
+	@Override
 	@Transactional
 	public boolean addUserToGroup(String token,String userId,String groupId) throws Exception {
 		EcmGroup group = ecmGroupMapper.selectByPrimaryKey(groupId);

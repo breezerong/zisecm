@@ -11,9 +11,10 @@
     <result column="MODIFIER" jdbcType="VARCHAR" property="modifier" />
     <result column="MODIFIED_DATE" jdbcType="TIMESTAMP" property="modifiedDate" />
     <result column="STORE_NAME" jdbcType="VARCHAR" property="storeName" />
+    <result column="TYPE_TAG" jdbcType="VARCHAR" property="typeTag" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, NAME, DESCRIPTION, STATUS, CREATOR, CREATION_DATE, MODIFIER, MODIFIED_DATE, STORE_NAME
+    ID, NAME, DESCRIPTION, STATUS, CREATOR, CREATION_DATE, MODIFIER, MODIFIED_DATE, STORE_NAME,TYPE_TAG
   </sql>
    <select id="selectAll" resultMap="BaseResultMap">
     select 
@@ -39,11 +40,12 @@
   <insert id="insert" parameterType="com.ecm.core.entity.EcmDefType">
     insert into ecm_def_type (ID, NAME, DESCRIPTION, 
       STATUS, CREATOR, CREATION_DATE, 
-      MODIFIER, MODIFIED_DATE, STORE_NAME
+      MODIFIER, MODIFIED_DATE, STORE_NAME,TYPE_TAG
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
-      #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{storeName,jdbcType=VARCHAR}
+      #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{storeName,jdbcType=VARCHAR}, 
+      #{typeTag,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDefType">
@@ -76,6 +78,9 @@
       <if test="storeName != null">
         STORE_NAME,
       </if>
+      <if test="typeTag != null">
+        TYPE_TAG,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -104,6 +109,9 @@
       </if>
       <if test="storeName != null">
         #{storeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeTag != null">
+        #{typeTag,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -134,6 +142,9 @@
       <if test="storeName != null">
         STORE_NAME = #{storeName,jdbcType=VARCHAR},
       </if>
+       <if test="typeTag != null">
+        TYPE_TAG = #{typeTag,jdbcType=VARCHAR},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -146,7 +157,8 @@
       CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
       MODIFIER = #{modifier,jdbcType=VARCHAR},
       MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
-      STORE_NAME = #{storeName,jdbcType=VARCHAR}
+      STORE_NAME = #{storeName,jdbcType=VARCHAR},
+      TYPE_TAG = #{typeTag,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

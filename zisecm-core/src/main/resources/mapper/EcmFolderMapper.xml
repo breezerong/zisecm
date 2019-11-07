@@ -14,17 +14,29 @@
     <result column="MODIFIED_DATE" jdbcType="TIMESTAMP" property="modifiedDate" />
     <result column="GRID_VIEW" jdbcType="VARCHAR" property="gridView" />
     <result column="ACL_NAME" jdbcType="VARCHAR" property="aclName" />
+    <result column="CODING" jdbcType="VARCHAR" property="coding" />
+    <result column="FULL_CODING" jdbcType="VARCHAR" property="fullCoding" />
+    <result column="FOLDER_PATH" jdbcType="VARCHAR" property="folderPath" />
+    <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, DESCRIPTION, PARENT_ID, STATUS, CREATION_DATE, CREATOR, TYPE_NAME, MODIFIER, 
-    MODIFIED_DATE, GRID_VIEW, ACL_NAME
+    MODIFIED_DATE, GRID_VIEW, ACL_NAME,CODING,FULL_CODING,FOLDER_PATH,ORDER_INDEX
   </sql>
   <select id="selectByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from ecm_folder
-    where PARENT_ID = #{id,jdbcType=VARCHAR} order by NAME
+    where PARENT_ID = #{id,jdbcType=VARCHAR} order by ORDER_INDEX,NAME
   </select>
+  
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_folder
+    where ${condition} order by ORDER_INDEX,NAME
+  </select>
+  
   <select id="searchToMap" parameterType="java.lang.String" resultType="java.util.Map"> 
 	${sqlStr}
   </select>
@@ -52,12 +64,15 @@
     insert into ecm_folder (ID, NAME, DESCRIPTION, 
       PARENT_ID, STATUS, CREATION_DATE, 
       CREATOR, TYPE_NAME, MODIFIER, 
-      MODIFIED_DATE, GRID_VIEW, ACL_NAME
+      MODIFIED_DATE, GRID_VIEW, ACL_NAME,
+      CODING,FULL_CODING,FOLDER_PATH,ORDER_INDEX
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{parentId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{typeName,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, 
-      #{modifiedDate,jdbcType=TIMESTAMP}, #{gridView,jdbcType=VARCHAR}, #{aclName,jdbcType=VARCHAR}
+      #{modifiedDate,jdbcType=TIMESTAMP}, #{gridView,jdbcType=VARCHAR}, #{aclName,jdbcType=VARCHAR}, 
+      #{coding,jdbcType=VARCHAR},#{fullCoding,jdbcType=VARCHAR}, #{folderPath,jdbcType=VARCHAR}, 
+      #{orderIndex,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmFolder">
@@ -99,6 +114,18 @@
       <if test="aclName != null">
         ACL_NAME,
       </if>
+      <if test="coding != null">
+        CODING,
+      </if>
+      <if test="fullCoding != null">
+        FULL_CODING,
+      </if>
+      <if test="folderPath != null">
+        FOLDER_PATH,
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
     <if test="id != null">
@@ -136,6 +163,18 @@
       </if>
       <if test="aclName != null">
         #{aclName,jdbcType=VARCHAR},
+      </if>
+       <if test="coding != null">
+        #{coding,jdbcType=VARCHAR},
+      </if>
+       <if test="fullCoding != null">
+        #{fullCoding,jdbcType=VARCHAR},
+      </if>
+       <if test="folderPath != null">
+        #{folderPath,jdbcType=VARCHAR},
+      </if>
+       <if test="orderIndex != null">
+        #{orderIndex,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -175,6 +214,18 @@
       <if test="aclName != null">
         ACL_NAME = #{aclName,jdbcType=VARCHAR},
       </if>
+       <if test="coding != null">
+        CODING = #{coding,jdbcType=VARCHAR},
+      </if>
+       <if test="fullCoding != null">
+        FULL_CODING = #{fullCoding,jdbcType=VARCHAR},
+      </if>
+       <if test="folderPath != null">
+        FOLDER_PATH = #{folderPath,jdbcType=VARCHAR},
+      </if>
+       <if test="orderIndex != null">
+        ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -190,7 +241,11 @@
       MODIFIER = #{modifier,jdbcType=VARCHAR},
       MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
       GRID_VIEW = #{gridView,jdbcType=VARCHAR},
-      ACL_NAME = #{aclName,jdbcType=VARCHAR}
+      ACL_NAME = #{aclName,jdbcType=VARCHAR},
+      CODING = #{coding,jdbcType=VARCHAR},
+      FULL_CODING = #{fullCoding,jdbcType=VARCHAR},
+      FOLDER_PATH = #{folderPath,jdbcType=VARCHAR},
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

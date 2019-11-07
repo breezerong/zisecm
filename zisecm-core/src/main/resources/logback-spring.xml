@@ -5,7 +5,7 @@
 	<!-- test文件路径 -->
 	<property name="TEST_FILE_PATH" value="c:/tmp/test.log" />
 	<!-- pro文件路径 -->
-	<property name="PRO_FILE_PATH" value="/opt/test/log" />
+	<property name="PRO_FILE_PATH" value="c:/tmp/app.log" />
 
 	<!-- 开发环境 -->
 	<springProfile name="dev">
@@ -13,8 +13,8 @@
 			<encoder>
 				<pattern>${PATTERN}</pattern>
 			</encoder>
-		</appender>
-		<logger name="com.ecm.portal.cache" level="debug" />
+		</appender>		
+		<logger name="com.ecm.service.pdfsign" level="info" />
 		<root level="info">
 			<appender-ref ref="CONSOLE" />
 		</root>
@@ -44,26 +44,41 @@
 				<pattern>${PATTERN}</pattern>
 			</encoder>
 		</appender>
-		<logger name="com.ecm.portal.cache" level="debug" />
+		<logger name="com.ecm.service.pdfsign" level="debug" />
 		<root level="error">
 			<appender-ref ref="CONSOLE" />
 		</root>
 	</springProfile>
 
+		
 	<!-- 生产环境 -->
 	<springProfile name="prod">
-		<appender name="PROD_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- 每天产生一个文件 -->
+		<appender name="PROD-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<!-- 文件路径 -->
 			<file>${PRO_FILE_PATH}</file>
 			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-				<fileNamePattern>${PRO_FILE_PATH}/warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+				<!-- 文件名称 -->
+				<fileNamePattern>${PRO_FILE_PATH}/info.%d{yyyy-MM-dd}.log</fileNamePattern>
+				<!-- 文件最大保存历史数量 -->
 				<MaxHistory>100</MaxHistory>
 			</rollingPolicy>
-			<layout class="com.ecm.portal.cache">
+			<layout class="ch.qos.logback.classic.PatternLayout">
 				<pattern>${PATTERN}</pattern>
 			</layout>
 		</appender>
-		<root level="warn">
-			<appender-ref ref="PROD_FILE" />
+		<root level="info">
+			<appender-ref ref="PROD-FILE" />
+		</root>
+		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>${PATTERN}</pattern>
+			</encoder>
+		</appender>
+		<logger name="com.ecm.service.pdfsign" level="debug" />
+		<root level="info">
+			<appender-ref ref="CONSOLE" />
 		</root>
 	</springProfile>
+	
 </configuration>

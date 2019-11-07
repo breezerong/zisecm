@@ -28,6 +28,43 @@ public class EcmFolder  extends EcmSysObject{
 
     private String aclName;
     
+    public String getCoding() {
+		return coding;
+	}
+
+	public void setCoding(String coding) {
+		this.coding = coding;
+	}
+
+	public String getFullCoding() {
+		return fullCoding;
+	}
+
+	public void setFullCoding(String fullCoding) {
+		this.fullCoding = fullCoding;
+	}
+
+	public String getFolderPath() {
+		return folderPath;
+	}
+
+	public void setFolderPath(String folderPath) {
+		this.folderPath = folderPath;
+	}
+
+	public int getOrderIndex() {
+		return orderIndex;
+	}
+
+	public void setOrderIndex(int orderIndex) {
+		this.orderIndex = orderIndex;
+	}
+
+	private String coding;
+    private String fullCoding;
+    private String folderPath;
+    private int orderIndex;
+    
     public boolean isExtended() {
 		return extended;
 	}

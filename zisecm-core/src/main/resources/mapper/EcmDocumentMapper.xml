@@ -21,7 +21,7 @@
     <result column="VERSION_ID" jdbcType="BIGINT" property="versionId" />
     <result column="LIFECYCLE_NAME" jdbcType="VARCHAR" property="lifecycleName" />
     <result column="LIFECYCLE_STATUS" jdbcType="VARCHAR" property="lifecycleStatus" />
-    <result column="LIFECYCLE_DIR" jdbcType="VARCHAR" property="lifecycleDir" />
+    <result column="LIFECYCLE_DIR" jdbcType="INTEGER" property="lifecycleDir" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, TITLE, FOLDER_ID, STATUS, CREATION_DATE, CREATOR, TYPE_NAME, MODIFIER, 
@@ -183,7 +183,7 @@
         #{lifecycleStatus,jdbcType=VARCHAR},
       </if>
       <if test="lifecycleDir != null">
-        #{lifecycleDir,jdbcType=BIGINT},
+        #{lifecycleDir,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -245,7 +245,7 @@
         LIFECYCLE_STATUS = #{lifecycleStatus,jdbcType=VARCHAR},
       </if>
       <if test="lifecycleDir != null">
-        LIFECYCLE_DIR = #{lifecycleDir,jdbcType=BIGINT},
+        LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INTEGER},
       </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
@@ -270,7 +270,7 @@
       VERSION_ID = #{versionID,jdbcType=BIGINT},
       LIFECYCLE_NAME = #{lifecycleName,jdbcType=VARCHAR},
       LIFECYCLE_STATUS = #{lifecycleStatus,jdbcType=VARCHAR},
-      LIFECYCLE_DIR = #{lifecycleDir,jdbcType=BIGINT}
+      LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INTEGER}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

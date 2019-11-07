@@ -17,6 +17,9 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="标识" :label-width="formLabelWidth">
+              <el-input v-model="form.typeTag" auto-complete="off"></el-input>
+            </el-form-item>
             <el-form-item label="状态" :label-width="formLabelWidth">
               <el-input v-model="form.status" auto-complete="off"></el-input>
             </el-form-item>
@@ -74,6 +77,11 @@
             <el-input  v-model="scope.row.storeName"></el-input>
           </template>
         </el-table-column>
+        <el-table-column label="标识" width="240">
+          <template slot-scope="scope">
+            <el-input  v-model="scope.row.typeTag"></el-input>
+          </template>
+        </el-table-column>
         <el-table-column label="状态" width="240">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.status"></el-input>
@@ -114,6 +122,7 @@ export default {
         description: "",
         storeType: 0,
         storeClass:"",
+        typeTag:"",
         storePath:""
       },
       formLabelWidth: "120px"

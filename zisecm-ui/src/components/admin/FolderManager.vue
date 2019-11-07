@@ -1,5 +1,22 @@
 <template>
   <div>
+        <el-dialog title="复制" :visible.sync="copyDialogVisible">
+          <el-form :model="copyForm">
+            <el-form-item label="ID" :label-width="formLabelWidth">
+              {{copyForm.sourceId}}
+            </el-form-item>
+          
+            <el-col :span="24">
+            <el-form-item label="目标Id" :label-width="formLabelWidth">
+                <el-input v-model="copyForm.targetId" auto-complete="off"></el-input>
+            </el-form-item>
+            </el-col>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="copyDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="copyFolder(copyForm)">保存</el-button>
+          </div>
+        </el-dialog>
         <el-dialog title="添加" :visible.sync="dialogVisible">
           <el-form :model="form">
             <el-form-item label="ID" :label-width="formLabelWidth">
@@ -11,9 +28,12 @@
             <el-form-item label="说明" :label-width="formLabelWidth">
               <el-input v-model="form.description" auto-complete="off"></el-input>
             </el-form-item>
+            <el-col :span="24">
             <el-form-item label="父Id" :label-width="formLabelWidth">
                 <el-input v-model="form.parentId" auto-complete="off"></el-input>
             </el-form-item>
+            </el-col>
+            <el-col :span="12">
             <el-form-item label="类型名称" :label-width="formLabelWidth">
               <el-select v-model="form.typeName">
                 <el-option v-for="item in typeList"
@@ -23,12 +43,32 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            </el-col>
+            <el-col :span="12">
             <el-form-item label="视图" :label-width="formLabelWidth">
               <el-input v-model="form.gridView" auto-complete="off"></el-input>
             </el-form-item>
+            </el-col>
+            <el-col :span="12">
+             <el-form-item label="代码" :label-width="formLabelWidth">
+              <el-input v-model="form.coding" auto-complete="off"></el-input>
+            </el-form-item>
+            </el-col>
+            <el-col :span="12">
+             <el-form-item label="完整代码" :label-width="formLabelWidth">
+              <el-input v-model="form.fullCoding" auto-complete="off"></el-input>
+            </el-form-item>
+            </el-col>
+            <el-col :span="12">
             <el-form-item label="ACL" :label-width="formLabelWidth">
               <el-input v-model="form.aclName" auto-complete="off"></el-input>
             </el-form-item>
+            </el-col>
+            <el-col :span="12">
+            <el-form-item label="排序" :label-width="formLabelWidth">
+              <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+            </el-form-item>
+            </el-col>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
@@ -50,8 +90,9 @@
                     <el-input  v-model="inputkey" placeholder="请输入关键字" @change="searchFolder" prefix-icon="el-icon-search"></el-input>
                   </td>
                   <td>
-                    <el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible = true"></el-button>
-                    <el-button type="primary" icon="el-icon-delete" circle @click="delitem(currentData)"></el-button>
+                    <el-button type="primary"  icon="el-icon-edit"  @click="dialogVisible = true">查看</el-button>
+                    <el-button type="primary"  icon="el-icon-delete"  @click="delitem(currentData)">删除</el-button>
+                    <el-button type="primary"  icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
                   </td>
                 </tr>
               </table>
@@ -88,6 +129,7 @@ export default {
       dataListFull: "",
       inputkey: "",
       loading: false,
+      copyDialogVisible: false,
       dialogVisible: false,
       form: {
         id: 0,
@@ -97,6 +139,10 @@ export default {
         typeName: "Folder",
         gridView: "",
         aclName: ""
+      },
+      copyForm: {
+        sourceId:"",
+        targetId:""
       },
       formLabelWidth: "120px",
       defaultProps: {
@@ -145,6 +191,33 @@ export default {
       });
   },
   methods: {
+    showCopy(){
+      this.copyForm.sourceId = this.currentData.id;
+      this.copyDialogVisible = true;
+    },
+    copyFolder(inData){
+      let _self = this;
+      var m = new Map();
+      m.set("sourceId",inData.sourceId);
+      m.set("targetId",inData.targetId);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          datatype: "json",
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/zisecm/folder/copyFolders"
+        })
+        .then(function(response) {
+          _self.copyDialogVisible = false;
+          _self.refreshData();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     refreshData() {
     let _self = this;
     _self.loading = true;
@@ -172,13 +245,14 @@ export default {
     handleNodeClick(indata) {
       let _self = this;
       _self.currentData = indata;
-      _self.form.id = indata.id;
-      _self.form.name = indata.name;
-      _self.form.description = indata.description;
-      _self.form.parentId = indata.parentId;
-      _self.form.typeName = indata.typeName;
-      _self.form.gridView = indata.gridView;
-      _self.form.aclName = indata.aclName;
+      _self.form = indata;
+      // _self.form.id = indata.id;
+      // _self.form.name = indata.name;
+      // _self.form.description = indata.description;
+      // _self.form.parentId = indata.parentId;
+      // _self.form.typeName = indata.typeName;
+      // _self.form.gridView = indata.gridView;
+      // _self.form.aclName = indata.aclName;
      // console.log(JSON.stringify(indata));
       if(indata.extended == false)
       {
@@ -220,12 +294,12 @@ export default {
         .then(function(response) {
           _self.$message("保存成功!");
            _self.dialogVisible = false;
-          _self.currentData.name = indata.name;
-          _self.currentData.description = indata.description;
-          _self.currentData.parentId = indata.parentId;
-          _self.currentData.typeName = indata.typeName;
-          _self.currentData.gridView = indata.gridView;
-          _self.currentData.aclName = indata.aclName;
+          // _self.currentData.name = indata.name;
+          // _self.currentData.description = indata.description;
+          // _self.currentData.parentId = indata.parentId;
+          // _self.currentData.typeName = indata.typeName;
+          // _self.currentData.gridView = indata.gridView;
+          // _self.currentData.aclName = indata.aclName;
         })
         .catch(function(error) {
           console.log(error);
