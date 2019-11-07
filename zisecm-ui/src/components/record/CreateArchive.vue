@@ -99,174 +99,21 @@
                   </td>
                   <td>
                     <div>
-                        <el-table
-                        :height="tableHeight"
-                        :data="itemDataList"
-                        border
-                        v-loading="loading"
-                        @selection-change="selectChange"
-                        @sort-change="sortchange"
-                        @row-click="showInnerFile"
-                        style="width: 100%">
-                        <el-table-column type="selection" width="40" @selection-change="selectChange">
-                        </el-table-column>
-                        <el-table-column :label="$t('field.indexNumber')" width="60">
-                          <template slot-scope="scope">
-                            <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column width="40">
-                          <template slot-scope="scope">
-                            <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
-                          </template>
-                        </el-table-column>
-                        <div v-for="(citem,idx) in gridList">
-                          <div v-if="citem.visibleType==1">
-                            <div v-if="(citem.width+'').indexOf('%')>0">
-                                <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                            <div v-else>
-                              <el-table-column :label="citem.label" :width="citem.width" :prop="citem.attrName" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                          </div>
-                        </div>
-                        <el-table-column :label="$t('application.operation')" width="200">
-                          <template slot="header" slot-scope="scope">
-                            <el-select
-                              v-model="showFields"
-                              multiple
-                              collapse-tags
-                              style="width: 150px;"
-                              placeholder="请选择">
-                              <div v-for="item in gridList">
-                              <el-option
-                                :key="item.attrName"
-                                :label="item.label"
-                                :value="item.attrName">
-                              </el-option>
-                              </div>
-                            </el-select>
-                          </template>
-                          <template slot-scope="scope">
-                            <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                      <el-pagination
-                        background
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50, 100, 200]"
-                        :page-size="pageSize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="itemCount">
-                      </el-pagination>
+                      <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
+                      v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
+                      @pagechange="pageChange" v-bind:itemCount="itemCount"
+                      @rowclick="showInnerFile" @selectchange="selectChange"></DataGrid>
+
+                      
                     </div>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
-                      <el-table
-                        :height="tableHeight"
-                        :data="innerDataList"
-                        border
-                        v-loading="loading"
-                        @selection-change="selectInnerChange"
-                        @sort-change="sortchange"
-                        style="width: 100%">
-                        <el-table-column type="selection" width="40" @selection-change="selectInnerChange">
-                        </el-table-column>
-                        <el-table-column :label="$t('field.indexNumber')" width="60">
-                          <template slot-scope="scope">
-                            <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column width="40">
-                          <template slot-scope="scope">
-                            <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
-                          </template>
-                        </el-table-column>
-                        <div v-for="(citem,idx) in gridList">
-                          <div v-if="citem.visibleType==1">
-                            <div v-if="(citem.width+'').indexOf('%')>0">
-                                <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                            <div v-else>
-                              <el-table-column :label="citem.label" :width="citem.width" :prop="citem.attrName" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                          </div>
-                        </div>
-                        <el-table-column :label="$t('application.operation')" width="200">
-                          <template slot="header" slot-scope="scope">
-                            <el-select
-                              v-model="showFields"
-                              multiple
-                              collapse-tags
-                              style="width: 150px;"
-                              placeholder="请选择">
-                              <div v-for="item in gridList">
-                              <el-option
-                                :key="item.attrName"
-                                :label="item.label"
-                                :value="item.attrName">
-                              </el-option>
-                              </div>
-                            </el-select>
-                          </template>
-                          <template slot-scope="scope">
-                            <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                      <el-pagination
-                        background
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50, 100, 200]"
-                        :page-size="pageSize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="itemCount">
-                      </el-pagination>
+                      <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
+                      v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
+                       @pagesizechange="innerPageSizeChange"
+                      @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
+
+                      
                     </div>
                     <div class="middle">
                       <el-button  v-show="showButton" type="primary" plain size="small" title="移除案卷"  @click="removeFromArchive()">&gt;</el-button>
@@ -279,88 +126,13 @@
                       <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button>
                       <el-button type="primary" plain size="small"  @click="newItem()">{{$t('application.createDocument')}}</el-button>
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
-                      <el-table
-                        :height="tableHeight"
-                        :data="outerDataList"
-                        border
-                        v-loading="loading"
-                        @selection-change="selectOutChange"
-                        @sort-change="sortchange"
-                        style="width: 100%">
-                        <el-table-column type="selection" width="40" @selection-change="selectOutChange">
-                        </el-table-column>
-                        <el-table-column :label="$t('field.indexNumber')" width="60">
-                          <template slot-scope="scope">
-                            <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column width="40">
-                          <template slot-scope="scope">
-                            <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
-                          </template>
-                        </el-table-column>
-                        <div v-for="(citem,idx) in gridList">
-                          <div v-if="citem.visibleType==1">
-                            <div v-if="(citem.width+'').indexOf('%')>0">
-                                <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                            <div v-else>
-                              <el-table-column :label="citem.label" :width="citem.width" :prop="citem.attrName" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                          </div>
-                        </div>
-                        <el-table-column :label="$t('application.operation')" width="200">
-                          <template slot="header" slot-scope="scope">
-                            <el-select
-                              v-model="showFields"
-                              multiple
-                              collapse-tags
-                              style="width: 150px;"
-                              placeholder="请选择">
-                              <div v-for="item in gridList">
-                              <el-option
-                                :key="item.attrName"
-                                :label="item.label"
-                                :value="item.attrName">
-                              </el-option>
-                              </div>
-                            </el-select>
-                          </template>
-                          <template slot-scope="scope">
-                            <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                      <el-pagination
-                        background
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50, 100, 200]"
-                        :page-size="pageSize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="itemCount">
-                      </el-pagination>
+                      
+                      <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
+                      v-bind:columnList="outerGridList" v-bind:itemCount="outerCount"
+                       @pagesizechange="outerPageSizeChange"
+                      @pagechange="outerPageChange" @selectchange="selectOutChange"></DataGrid>
+                      
+                      
                     </div>
                   </td>
                 </tr>
@@ -373,6 +145,8 @@
 
 <script type="text/javascript">
 import ShowProperty from '@/components/dc/ShowProperty'
+import DataGrid from'@/components/common/DataGrid'
+import DataGridleft from'@/components/common/DataGrid'
 //import Prints from '@/components/record/Print'
 import PDFViewer from '@/components/controls/PDFViewer'
 import 'url-search-params-polyfill'
@@ -381,13 +155,7 @@ import PrintPage from '@/components/record/PrintPage'
 import PrintVolumes from '@/components/record/PrintVolumes'
 export default {
   name: "FolderClassification",
-  components: {
-    ShowProperty: ShowProperty,
-    PDFViewer: PDFViewer,
-    PrintPage:PrintPage,
-    PrintVolumes:PrintVolumes
-    //Prints:Prints
-  },
+  
   data() {
     return {
       imageFormat: 'jpg,jpeg,bmp,gif,png',
@@ -405,11 +173,17 @@ export default {
       outerDataList:[],
       outerDataListFull:[],
       gridList: [],
+      innerGridList:[],
+      outerGridList:[],
       currentFolder: [],
       dataListFull: "",
       inputkey: "",
       loading: false,
       dialogName:"",
+      outerCurrentPage:1,
+      outerPageSize:20,
+      innerCurrentPage:1,
+      innerPageSize:20,
       pageSize: 20,
       itemCount: 0,
       innerCount:0,
@@ -419,6 +193,7 @@ export default {
       dialogVisible: false,
       propertyVisible: false,
       showButton:true,
+      selectRow:[],
       selectedItems: [],
       selectedOutItems: [],
       selectedInnerItems:[],
@@ -497,30 +272,33 @@ export default {
 
     showInnerFile(row){
       let _self = this;
+      if(row!=null){
+        _self.selectRow=row;
+      }
       
       // var key =row.CODING;
       // if(key!=""){
       //   key = "coding = '"+key+"' "; //此处需要修改
       // }
       
-      if(row.C_LOCK_STATUS==='已封卷')
+      if(_self.selectRow.C_LOCK_STATUS==='已封卷')
       {
         _self.showButton=false;
       }else
       {
          _self.showButton=true;
       }
-      _self.loadGridInfo(_self.currentFolder);
+      _self.loadInnerGridInfo(_self.currentFolder);
       var m = new Map();
       m.set('gridName',_self.currentFolder.gridView);
       m.set('condition',"");
-      if(row)
+      if(_self.selectRow)
       {
-        _self.archiveId=row.ID;
+        _self.archiveId=_self.selectRow.ID;
       }
       m.set('id',_self.archiveId);
       m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
+      m.set('pageIndex', (_self.innerCurrentPage-1)*_self.innerPageSize);
       m.set('orderBy','');
       // console.log('pagesize:', _self.pageSize);
       _self
@@ -545,6 +323,7 @@ export default {
         _self.loading = false;
       });
     },
+    
     renderContent: function (h, {node, data, store}) {
       console.log(data);
       if(data.extended){
@@ -633,6 +412,31 @@ export default {
       console.log(column.column.order);//ascending, descending
       this.orderBy = column.column.property+ column.column.order=="ascending"?" ASC":" DESC";
     },
+    loadInnerGridInfo(indata){
+      let _self = this;
+      _self.loading = true;
+      var m = new Map();
+      m.set('gridName',indata.gridView);
+      m.set('lang',_self.currentLanguage);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/zisecm/dc/getGridViewInfo"
+      })
+        .then(function(response) {
+          
+          _self.innerGridList = response.data.data;
+          
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
     // 加载表格样式
     loadGridInfo(indata) 
     {
@@ -675,7 +479,7 @@ export default {
 
       if(_self.selectedInnerItems.length===0)
       {
-        alert('请选择一条或多条未组卷文件！');
+        alert('请选择一条或多条卷内文件！');
         return;
       }
       var m = new Map();
@@ -747,7 +551,7 @@ export default {
       .then(function(response) {
         _self.showInnerFile(null);
         _self.loadGridOutData(_self.currentFolder);
-        
+         
         //console.log(JSON.stringify(response.data.datalist));
         _self.loading = false;
       })
@@ -800,6 +604,87 @@ export default {
       localStorage.setItem("docPageSize",val);
       this.loadGridData(this.currentFolder);
       //console.log('handleSizeChange', val);
+    },
+    // 分页 当前页改变
+    outerPageChange(val)
+    {
+      this.outerCurrentPage = val;
+      this.loadGridOutData(this.currentFolder);
+      //console.log('handleCurrentChange', val);
+    },
+    outerPageSizeChange(val){
+      this.outerPageSize = val;
+      localStorage.setItem("docPageSize",val);
+      this.loadGridOutData(this.currentFolder);
+    },
+    // 分页 当前页改变
+    innerPageChange(val)
+    {
+      this.innerCurrentPage = val;
+      this.showInnerFilepageChange();
+      //console.log('handleCurrentChange', val);
+    },
+    innerPageSizeChange(val){
+      this.innerPageSize = val;
+      localStorage.setItem("docPageSize",val);
+      this.showInnerFilepageChange();
+    },
+    showInnerFilepageChange(){
+      let _self = this;
+      
+      if(_self.selectRow.C_LOCK_STATUS==='已封卷')
+      {
+        _self.showButton=false;
+      }else
+      {
+         _self.showButton=true;
+      }
+      _self.loadGridInfo(_self.currentFolder);
+      var m = new Map();
+      m.set('gridName',_self.currentFolder.gridView);
+      m.set('condition',"");
+      if(_self.selectRow)
+      {
+        _self.archiveId=_self.selectRow.ID;
+      }
+      m.set('id',_self.archiveId);
+      m.set('pageSize',_self.innerPageSize);
+      m.set('pageIndex', (_self.innerCurrentPage-1)*_self.innerPageSize);
+      m.set('orderBy','');
+      // console.log('pagesize:', _self.pageSize);
+      _self
+      .axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: "post",
+        data: JSON.stringify(m),
+        url: "/zisecm/dc/getDocuByRelationParentId"
+      })
+      .then(function(response) {
+        
+        _self.innerDataList = response.data.data;
+        _self.innerDataListFull = response.data.data;
+        _self.innerCount = response.data.pager.total;
+        //console.log(JSON.stringify(response.data.datalist));
+        _self.loading = false;
+      })
+      .catch(function(error) {
+        console.log(error);
+        _self.loading = false;
+      });
+    },
+    pageSizeChange(val){
+      this.pageSize = val;
+      localStorage.setItem("docPageSize",val);
+      this.loadGridData(this.currentFolder);
+    },
+    // 分页 当前页改变
+    pageChange(val) 
+    {
+      this.currentPage = val;
+      this.loadGridData(this.currentFolder);
+      //console.log('handleCurrentChange', val);
     },
     // 分页 当前页改变
     handleCurrentChange(val) 
@@ -862,7 +747,34 @@ export default {
       }
       _self.loadGridInfo(indata);
       _self.loadGridData(indata);
+      _self.loadOutGridInfo(indata);
       _self.loadGridOutData(indata);
+    },
+    // 加载表格样式
+    loadOutGridInfo(indata) 
+    {
+      let _self = this;
+      _self.loading = true;
+      var m = new Map();
+      m.set('gridName',indata.gridView);
+      m.set('lang',_self.currentLanguage);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/zisecm/dc/getGridViewInfo"
+      })
+        .then(function(response) {
+          
+          _self.outerGridList = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
     loadGridOutData(indata){
       let _self = this;
@@ -872,7 +784,7 @@ export default {
       m.set('condition',"TYPE_NAME='"+indata.description+"'");
       m.set('folderId',indata.id);
       m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
+      m.set('pageIndex', (_self.outerCurrentPage-1)*_self.outerPageSize);
       m.set('orderBy','');
       // console.log('pagesize:', _self.pageSize);
       _self
@@ -1315,6 +1227,15 @@ export default {
      this.loadGridData(this.currentFolder);
      this. loadPageInfo(this.currentFolder);
     }
+  },
+  components: {
+    ShowProperty: ShowProperty,
+    PDFViewer: PDFViewer,
+    PrintPage:PrintPage,
+    PrintVolumes:PrintVolumes,
+    DataGrid:DataGrid
+    
+    //Prints:Prints
   }
 };
 </script>

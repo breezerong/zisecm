@@ -183,7 +183,7 @@
         #{lifecycleStatus,jdbcType=VARCHAR},
       </if>
       <if test="lifecycleDir != null">
-        #{lifecycleDir,jdbcType=INT},
+        #{lifecycleDir,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -245,7 +245,7 @@
         LIFECYCLE_STATUS = #{lifecycleStatus,jdbcType=VARCHAR},
       </if>
       <if test="lifecycleDir != null">
-        LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INT},
+        LIFECYCLE_DIR = #{lifecycleDir,jdbcType=BIGINT},
       </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
@@ -270,7 +270,7 @@
       VERSION_ID = #{versionID,jdbcType=BIGINT},
       LIFECYCLE_NAME = #{lifecycleName,jdbcType=VARCHAR},
       LIFECYCLE_STATUS = #{lifecycleStatus,jdbcType=VARCHAR},
-      LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INT}
+      LIFECYCLE_DIR = #{lifecycleDir,jdbcType=BIGINT}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
