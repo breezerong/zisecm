@@ -113,9 +113,9 @@ export default {
 			if (lang != val) {
 				this.$i18n.local = val;
 				if (lang === 'zh-cn') {
-					locale.use(zhLocale);
+					this.locale.use(this.zhLocale);
 				} else {
-					locale.use(enLocale);
+					this.locale.use(this.enLocale);
 				}
 				localStorage.setItem('localeLanguage', val);
 				this.$router.go(0);
