@@ -179,7 +179,7 @@ const router = new Router({
 				requireAuth: true,
 				permit: 9
 			},
-			path: '/dc/viewdoc/:id',
+			path: '/viewdoc',
 			component: () => import( /* webpackChunkName: "managercenter" */ './views/dc/ViewDoc.vue'),
 			name: '查看文档'
 		},

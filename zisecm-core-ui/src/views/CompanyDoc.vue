@@ -30,7 +30,7 @@ export default {
                 path: 
             }) */
 
-            window.open(`#/dc/viewdoc/${id}`,"_blank")
+            window.open(`#/viewdoc?paraName=${id}`,"_blank")
         }
     }
 }
