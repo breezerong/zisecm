@@ -66,7 +66,7 @@ export default {
         if (valid) {
           _self.loading = true;
           axios
-            .post("/userLogin", JSON.stringify(_self.account))
+            .post("/zisecm/userLogin", JSON.stringify(_self.account))
             .then(function(response) {
               if (response.data.code == 1) {
                 sessionStorage.setItem("access-user",JSON.stringify(_self.account));

@@ -77,7 +77,7 @@ export default {
 		init:async function(){
 			var _self = this;
 					
-			await axios.post("/memu/getMyMenu",{name:"TopMenu",lang:"top_menu"}).then(res => {
+			await axios.post("/zisecm/memu/getMyMenu",{name:"TopMenu",lang:"top_menu"}).then(res => {
 				console.log("getMymenu");
 					_self.topmenuData = [];
 				var topmenuList = res.data.data.menuItems;

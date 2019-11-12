@@ -1,17 +1,29 @@
 <template>
-  <div>
-    <el-row>
-      <el-col :span="20" class="doccontent">
-          查看文档
-      </el-col>
-      <el-col :span="4" class="aside-rigth">
-          <el-button type="primary" plain @click="menuClick('文档属性')">文档属性</el-button><br/>
-          <el-button type="primary" plain @click="menuClick('关联文档')">关联文档</el-button><br/>
-          <el-button type="primary" plain @click="menuClick('文档版本')">文档版本</el-button><br/>
-          <el-button type="primary" plain @click="menuClick('格式副本')">格式副本</el-button><br/>
-          <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button>
-      </el-col>
-    </el-row>
+  <el-container>
+    <el-header>
+        {{doc.code}} &nbsp;&nbsp;&nbsp;&nbsp;{{doc.title}}
+    </el-header>
+    <el-main>
+      <el-row>
+        <el-col :span="20" class="doccontent">
+           
+        </el-col>
+        <el-col :span="4" class="aside-rigth">
+            <div style="padding-top:10px;">
+              <el-button size="mini">借阅</el-button>
+              <el-button size="mini">下载</el-button>
+            </div>
+            <br/>
+            <div>
+              <el-button type="primary" plain @click="menuClick('文档属性')">文档属性</el-button><br/>
+              <el-button type="primary" plain @click="menuClick('关联文档')">关联文档</el-button><br/>
+              <el-button type="primary" plain @click="menuClick('文档版本')">文档版本</el-button><br/>
+              <el-button type="primary" plain @click="menuClick('格式副本')">格式副本</el-button><br/>
+              <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button>
+            </div>
+        </el-col>
+      </el-row>
+    </el-main>
 
     <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
       <template v-if="dialog.title=='文档属性'">
@@ -34,7 +46,7 @@
         <el-button type="primary" @click="dialog.visible = false">确 定</el-button>
       </span>
     </el-dialog>
-  </div>
+  </el-container>
 </template>
 
 <script>
@@ -55,7 +67,12 @@ export default {
   },
   data(){
     return {
+      user:{},
       docId:"",
+      doc:{
+        code:"J-123354",
+        title:"查看文档"
+      },
       dialog:{
         title:"",
         visible:false
@@ -64,6 +81,16 @@ export default {
   },
   created(){
     this.docId = this.$route.params.id;
+    var user = sessionStorage.getItem("access-user");
+    this.user = JSON.parse(user);
+    console.log(this.user);
+    var token = sessionStorage.getItem("access-token");
+    console.log(user);
+    console.log(token);
+   
+    this.axios.post("/zisecm/user/getUserByName",JSON.stringify(this.user.username)).then(function(response){
+
+    });
   },
   methods:{
     menuClick(type){
@@ -100,5 +127,14 @@ export default {
 }
 .doccontent{
   min-height: 300px;
+  border-style:solid;
+	border-width:1px;
+  border-color: grey;
+}
+.el-header{
+  color: white;
+  text-align: left;
+  padding-top: 15px;
+  padding-left: 15px;
 }
 </style>

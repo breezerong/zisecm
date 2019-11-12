@@ -16,6 +16,9 @@ export default {
             articles:[
                 {
                     id:"1",name:"A"
+                },
+                {
+                    id:"2",name:"B"
                 }
             ]
         }
@@ -23,9 +26,11 @@ export default {
     methods:{
         getDescribe(id){
             console.log(id);
-            this.$router.push({
-                path: `/dc/viewdoc/${id}`
-            })
+           /*  this.$router.push({
+                path: 
+            }) */
+
+            window.open(`#/dc/viewdoc/${id}`,"_blank")
         }
     }
 }
