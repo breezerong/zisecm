@@ -112,6 +112,7 @@ export default {
     };
   },
   mounted(){
+    console.log(this.$route.name);
 	let _self = this;
 	_self.ticket = Math.floor(Math.random() * 1000);
 	_self.userName = sessionStorage.getItem('access-userName');

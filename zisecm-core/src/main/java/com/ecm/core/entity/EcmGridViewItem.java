@@ -85,6 +85,7 @@ public class EcmGridViewItem extends EcmObject{
     	item.setVisibleType(visibleType);
     	item.setWidth(width);
     	item.setParentId(parentId);
+    	item.setAllowOrderby(getAllowOrderby());
     	return item;
     }
 }

@@ -20,41 +20,55 @@ if (sessionStorage.getItem('token')) {
 }
 
 var currentRouter = {
-	routers: [{
+	routers: [
+		{
 			meta: {
-				requireAuth: true
+				requireAuth: true,
+				permit: 9
 			},
-			path: '/usercenter',
-			name: 'UserCenter',
-			component: () => import( /* webpackChunkName: "usercenter" */ './views/UserCenter.vue'),
-			children: [{
-					meta: {
-						requireAuth: true,
-						permit: 1
-					},
-					path: '/user/userinfo',
-					name: '用户基本信息',
-					component: () => import( /* webpackChunkName: "userinfo" */ './views/user/UserInfo.vue')
-				},
+			path: '/searchcenter',
+			component: () => import( /* webpackChunkName: "managercenter" */ './views/SearchCenter.vue'),
+			name: '搜索中心'
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 9
+			},
+			path: '/dc',
+			component: () => import( /* webpackChunkName: "managercenter" */ './views/CompanyDoc.vue'),
+			name: '公司文档',
+			children:[
 				{
 					meta: {
 						requireAuth: true,
-						permit: 1
+						permit: 9
 					},
-					path: '/user/changepassword',
-					name: '修改密码',
-					component: () => import( /* webpackChunkName: "changepassword" */ './views/user/ChangePassword.vue')
+					path: '/dc/viewdoc/:id',
+					component: () => import( /* webpackChunkName: "managercenter" */ './views/dc/ViewDoc.vue'),
+					name: '查看文档'
 				}
 			]
 		},
 		{
 			meta: {
-				requireAuth: true
+				requireAuth: true,
+				permit: 9
 			},
-			path: '/helpcenter',
-			name: 'Helpcenter',
-			component: () => import( /* webpackChunkName: "helpcenter" */ './views/HelpCenter.vue')
-		}, {
+			path: '/record',
+			component: () => import( /* webpackChunkName: "managercenter" */ './views/SearchCenter.vue'),
+			name: '档案管理'
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 9
+			},
+			path: '/report',
+			component: () => import( /* webpackChunkName: "managercenter" */ './views/SearchCenter.vue'),
+			name: '报表中心'
+		},
+		{
 			meta: {
 				requireAuth: true,
 				permit: 9
@@ -106,6 +120,40 @@ var currentRouter = {
 				  name: '业务类型管理'
 				}
 			]
+		},
+		{
+			meta: {
+				requireAuth: true
+			},
+			path: '/usercenter',
+			name: '个人信息',
+			component: () => import( /* webpackChunkName: "usercenter" */ './views/UserCenter.vue'),
+			children: [{
+					meta: {
+						requireAuth: true,
+						permit: 1
+					},
+					path: '/user/userinfo',
+					name: '用户基本信息',
+					component: () => import( /* webpackChunkName: "userinfo" */ './views/user/UserInfo.vue')
+				},
+				{
+					meta: {
+						requireAuth: true,
+						permit: 1
+					},
+					path: '/user/changepassword',
+					name: '修改密码',
+					component: () => import( /* webpackChunkName: "changepassword" */ './views/user/ChangePassword.vue')
+			}]
+		},
+		{
+			meta: {
+				requireAuth: true
+			},
+			path: '/helpcenter',
+			name: '帮助中心',
+			component: () => import( /* webpackChunkName: "helpcenter" */ './views/HelpCenter.vue')
 		}
 	]
 }
@@ -121,17 +169,18 @@ const router = new Router({
 				requireAuth: true
 			},
 			path: '/',
-			name: 'home',
-			component: () => import( /* webpackChunkName: "home" */ './views/Home.vue'),
+			name: 'home1',
+			component: () => import( /* webpackChunkName: "home1" */ './views/Home.vue'),
 			children: homeChildren
-		}, {
+		},
+		{
 			meta: {
 				requireAuth: true
 			},
 			path: '/home',
-			name: 'home',
-			component: () => import( /* webpackChunkName: "home" */ './views/Home.vue'),
-			children: homeChildren
+			name: 'home2',
+			component: () => import( /* webpackChunkName: "home2" */ './views/Home.vue')
+			
 		},
 		{
 			path: '/login',
