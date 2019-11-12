@@ -24,12 +24,13 @@
                         :style="{'width': tableWidth}">
                         <el-table-column type="selection" width="40">
                         </el-table-column>
-                        <el-table-column :label="$t('field.indexNumber')" width="60">
+                        <el-table-column :label="$t('field.indexNumber')"  key="#1" width="60">
                           <template slot-scope="scope">
                             <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column width="40">
+                        <el-table-column>1</el-table-column>
+                        <el-table-column width="40" v-if="isshowicon">
                           <template slot-scope="scope">
                             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
                           </template>
@@ -62,7 +63,7 @@
                             </div>
                           </div>
                         </div>
-                        <el-table-column :label="$t('application.operation')" width="200">
+                        <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="200">
                           
                           <template slot="header" slot-scope="scope">
                                 <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
@@ -108,6 +109,8 @@ export default {
     props:{
         itemDataList:[],
         columnList:[],
+        isshowicon:{type:Boolean,default:false},
+        isshowOption:{type:Boolean,default:false},
         tableHeight:{type:[String,Number],default:window.innerHeight - 408},
         tableWidth:{type:[String,Number],default:'100%'},
         itemCount:{type:[String,Number]}

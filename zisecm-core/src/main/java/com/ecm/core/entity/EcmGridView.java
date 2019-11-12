@@ -21,6 +21,7 @@ public class EcmGridView extends EcmSysObject{
     private String orderBy;
 
     public String getCondition() {
+    	
         return condition;
     }
 
