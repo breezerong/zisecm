@@ -73,7 +73,8 @@ export default {
       fileList:[],
       myItemId: this.itemId,
       myTypeName: this.typeName,
-      myFolderId: this.folderId
+      myFolderId: this.folderId,
+      parentDocId:''
     };
   },
   mounted() {
@@ -83,7 +84,8 @@ export default {
   props: {
     itemId: {type:[String,Number],required:true},
     typeName: {type:String,required:true},
-    folderId: {type:[String,Number],required:true}
+    folderId: {type:[String,Number],required:true},
+    folderPath:{type:String}
   },
   methods: {
     showCellValue(item){

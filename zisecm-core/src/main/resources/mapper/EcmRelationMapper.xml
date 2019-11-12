@@ -32,7 +32,7 @@
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmRelation">
     insert into ecm_relation (ID, NAME, DESCRIPTION, PARENT_ID, 
-      CHILD_ID, CREATION_DATE, CREATOR
+      CHILD_ID, CREATION_DATE, CREATOR,ORDER_INDEX
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
       #{childId,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{orderIndex,jdbcType=INTEGER}
@@ -94,6 +94,9 @@
       
     </trim>
   </insert>
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmRelation">
     update ecm_relation
     <set>
