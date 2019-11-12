@@ -4,7 +4,7 @@
 		  <div class="navbar-top" >
 		    <div class="navbar-top-inner">
 		      <div class="container-top">
-		        <img src="@/assets/ecmlogo.png" border="0">
+		        <img src="@/assets/logo.png" border="0">
 		      </div>
 		      <div class="container-top">
 		        <span style="font-size: 18px;color: #fff;">{{$t('application.name')}}</span>
@@ -24,7 +24,7 @@
 		          </el-select>
 		        </div>
 		        <div class="container-top-right">
-		          <img :src="'img/head128.jpg'" class="img-head">
+		          <img :src="'@/static/img/head128.jpg'" class="img-head">
 		          <span ><router-link to="/usercenter" style="color:#fff;">{{userName}} </router-link>&nbsp;</span>
 		          <i class="el-icon-switch-button" @click="logout" :title="$t('application.logout')"></i>
 		        </div>
@@ -68,7 +68,7 @@ export default {
 		var userObj = JSON.parse(user);
 		this.user = userObj;
 
-		this.currentLanguage = localStorage.getItem('localeLanguage') || 'zh-cn';
+		
 		this.$nextTick(function() {
 			setInterval(this.checklogin, 1000);
 		});
@@ -76,8 +76,8 @@ export default {
 	methods: {
 		init:async function(){
 			var _self = this;
-					
-			await axios.post("/memu/getMyMenu",{name:"TopMenu",lang:"top_menu"}).then(res => {
+			
+			await axios.post("/memu/getMyMenu",new Map([["name","TopMenu"],["lang",_self.getLang()]])).then(res => {
 				console.log("getMymenu");
 					_self.topmenuData = [];
 				var topmenuList = res.data.data.menuItems;

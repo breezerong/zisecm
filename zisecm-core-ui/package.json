@@ -1,7 +1,7 @@
 {
-  "name": "archiveui",
+  "name": "zisecmui",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "ECM project",
   "author": "lsyl",
   "private": true,
   "scripts": {

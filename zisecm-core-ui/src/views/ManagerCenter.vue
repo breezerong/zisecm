@@ -1,7 +1,7 @@
 <template>
     <el-container>
       <el-container>
-        <el-aside width="180px">
+        <el-aside width="200px">
           <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航-->
           <el-menu default-active="101" class="el-menu-vertical-ecm"  :open="100">
@@ -35,6 +35,22 @@
                     </el-menu-item>
                    </el-submenu>
                   </div>
+                  <!--流程-->
+                   <div v-if="systemPermission>=4">
+                  <el-submenu index="200">
+                    <template slot="title">
+                      <i class="el-icon-menu"></i>
+                      <span>状态流程</span>
+                    </template>
+                    <el-menu-item index="201">
+                      <i class="el-icon-caret-right"></i>
+                      <span slot="title"><router-link to="/admin/WorkflowStatus">状态流</router-link></span>
+                    </el-menu-item>
+                    
+                  </el-submenu>
+                  </div>
+
+                  <!--end流程-->
                   <div v-if="systemPermission>=4">
                   <el-submenu index="200">
                     <template slot="title">
@@ -91,7 +107,11 @@
                       <span slot="title"><router-link to="/managercenter/usermanager">用户管理</router-link></span>
                     </el-menu-item>
                   </el-submenu>
-                  <el-menu-item index="103">
+                   <el-menu-item index="103">
+                    <i class="el-icon-lock"></i>
+                    <span slot="title"><router-link to="/managercenter/aclmanager">ACL管理</router-link></span>
+                  </el-menu-item>
+                  <el-menu-item index="104">
                     <i class="el-icon-refresh"></i>
                     <span slot="title"><router-link to="/managercenter/systemmanager">缓存管理</router-link></span>
                   </el-menu-item>
@@ -138,13 +158,12 @@ export default {
     checkLogin()
     {
       var user = sessionStorage.getItem('access-user');
-      console.log(user);
       if(user)
       {
         this.clientPermission = Number(sessionStorage.getItem('access-clientPermission'));
         this.systemPermission = Number(sessionStorage.getItem('access-systemPermission'));
-        console.log("clientPermission:"+this.clientPermission);
-        console.log("systemPermission:"+this.systemPermission);
+        //console.log("clientPermission:"+this.clientPermission);
+        //console.log("systemPermission:"+this.systemPermission);
         this.username = JSON.parse(sessionStorage.getItem('access-user')).username;
       }
       else

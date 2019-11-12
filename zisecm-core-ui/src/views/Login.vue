@@ -1,7 +1,7 @@
 <template>
   <el-form ref="AccountFrom" :model="account" :rules="rules" class="login-container">
     <el-form-item>
-      <h2 class="title">{{$t("application.user")+$t("application.login")}}</h2>
+      <h2 class="title"><img src="../assets/logo.png" border="0">{{$t("application.user")+$t("application.login")}}</h2>
     </el-form-item>
     <el-form-item prop="username">
       <el-input type="text" v-model="account.username" auto-complete="off" :placeholder="$t('application.user')"></el-input>
