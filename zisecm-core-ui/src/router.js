@@ -35,19 +35,11 @@ var currentRouter = {
 				requireAuth: true,
 				permit: 9
 			},
-			path: '/dc',
+			path: '/companydoc',
 			component: () => import( /* webpackChunkName: "managercenter" */ './views/CompanyDoc.vue'),
 			name: '公司文档',
 			children:[
-				{
-					meta: {
-						requireAuth: true,
-						permit: 9
-					},
-					path: '/dc/viewdoc/:id',
-					component: () => import( /* webpackChunkName: "managercenter" */ './views/dc/ViewDoc.vue'),
-					name: '查看文档'
-				}
+				
 			]
 		},
 		{
@@ -181,6 +173,15 @@ const router = new Router({
 			name: 'home2',
 			component: () => import( /* webpackChunkName: "home2" */ './views/Home.vue')
 			
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 9
+			},
+			path: '/viewdoc',
+			component: () => import( /* webpackChunkName: "managercenter" */ './views/dc/ViewDoc.vue'),
+			name: '查看文档'
 		},
 		{
 			path: '/login',

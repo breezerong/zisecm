@@ -76,10 +76,10 @@ export default {
 	methods: {
 		init:async function(){
 			var _self = this;
-			
 			await axios.post("/memu/getMyMenu",new Map([["name","TopMenu"],["lang",_self.getLang()]])).then(res => {
 				console.log("getMymenu");
-					_self.topmenuData = [];
+				console.log(res);
+				_self.topmenuData = [];
 				var topmenuList = res.data.data.menuItems;
 				topmenuList.forEach(element => {
 					var pathObj = new Object();
@@ -112,9 +112,9 @@ export default {
 			if (lang != val) {
 				this.$i18n.local = val;
 				if (lang === 'zh-cn') {
-					locale.use(zhLocale);
+					this.locale.use(this.zhLocale);
 				} else {
-					locale.use(enLocale);
+					this.locale.use(this.enLocale);
 				}
 				localStorage.setItem('localeLanguage', val);
 				this.$router.go(0);

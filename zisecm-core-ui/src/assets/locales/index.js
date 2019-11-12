@@ -20,7 +20,9 @@ const i18n = new VueI18n({
   locale: window.localStorage.getItem(LOCALE_KEY) || DEFAULT_LANG,
   messages: locales
 })
-
+Vue.prototype.locale=locale
+Vue.prototype.enLocale=enLocale
+Vue.prototype.zhLocale=zhLocale
 export const setup = lang => {
   if (lang === undefined) {
     lang = window.localStorage.getItem(LOCALE_KEY)
