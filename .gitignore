@@ -37,4 +37,5 @@ zisecm-core/.sts4-cache/classpath-data.json
 zisecm-core/.factorypath
 zisecm-core/.classpath
 zisecm-core/.factorypath
-target
+zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties

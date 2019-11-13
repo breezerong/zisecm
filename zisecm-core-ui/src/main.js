@@ -10,8 +10,10 @@ import './assets/styles/main.css'
 
 Vue.config.productionTip = false
 Vue.prototype.getLang = function (){
-  return localStorage.getItem("localeLanguage") || "zh-cn"
+  let lang = localStorage.getItem("localeLanguage") || "zh-cn"
+  return lang == ''?'zh-cn':lang
 }
+
 
 new Vue({
   router,

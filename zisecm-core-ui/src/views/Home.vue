@@ -1,188 +1,125 @@
 <template>
-  <el-container>
-    <el-container>
-      <el-aside width="180px">
-        <div v-bind:style="{height: menuHeight +'px'}">
-          <!--左侧导航-->
-          <el-menu default-active="11" class="el-menu-vertical-ecm" :default-openeds="opens" style="background-color:#D3DCE6">
-            <el-submenu index="10">
-              <template slot="title">
-                <i class="el-icon-news"></i>
-                <span>任务中心</span>
-              </template>
-              <el-menu-item index="11">
-                <i class="el-icon-time"></i>
-                <span slot="title">
-                  <router-link to="/workflow/todotask">待办工作</router-link>
-                  <el-badge :value="todoCount" class="item"></el-badge>
-                </span>
-              </el-menu-item>
-              <el-menu-item index="12">
-                <i class="el-icon-ecm-roundcheck"></i>
-                <span slot="title">
-                  <router-link to="/workflow/donetask">已办工作</router-link>
-                </span>
-              </el-menu-item>
-              <el-menu-item index="13">
-                <i class="el-icon-ecm-round_transfer"></i>
-                <span slot="title">
-                  <router-link to="/workflow/myworkflow">我的流程</router-link>
-                </span>
-              </el-menu-item>
-            </el-submenu>
-            <el-submenu index="20" v-if="clientPermission>1">
-              <template slot="title">
-                <i class="el-icon-document"></i>
-                <span>图纸管理</span>
-              </template>
-              <el-menu-item index="21">
-                <i class="el-icon-upload2"></i>
-                <span slot="title">
-                  <router-link to="/drawing/importdoc">导入</router-link>
-                </span>
-              </el-menu-item>
-              <el-menu-item index="22">
-                <i class="el-icon-setting"></i>
-                <span slot="title">
-                  <router-link to="/drawing/processing">处理中</router-link>
-                </span>
-              </el-menu-item>
-              <el-menu-item index="23">
-                <i class="el-icon-download"></i>
-                  <span slot="title">
-                    <router-link to="/drawing/downloaddoc">导出</router-link>
-                    <el-badge :value="exportCount" class="item" type="primary"></el-badge>
-                  </span>
-              </el-menu-item>
-              <el-menu-item index="24">
-                <i class="el-icon-circle-check"></i>
-                <span slot="title">
-                  <router-link to="/drawing/donedoc">已完成</router-link>
-                </span>
-              </el-menu-item>
-              <el-menu-item index="25">
-                <i class="el-icon-error"></i>
-                  <span slot="title">
-                    <router-link to="/drawing/errordoc">错误</router-link>
-                    <el-badge :value="errorCount" class="item"></el-badge>
-                  </span>
-              </el-menu-item>
-            </el-submenu>
-          </el-menu>
-        </div>
-      </el-aside>
-      <el-main>
-        <transition name="fade" mode="out-in">
-          <router-view v-on:refreshCount="refreshCount" :key="$route.fullPath"></router-view>
-        </transition>
-      </el-main>
-    </el-container>
-  </el-container>
+	<el-container>
+		<el-header style="height:44px" v-show="userName != ''">
+		  <div class="navbar-top" >
+		    <div class="navbar-top-inner">
+		      <div class="container-top">
+		        <img src="@/assets/logo.png" border="0">
+		      </div>
+		      <div class="container-top">
+		        <span style="font-size: 18px;color: #fff;">{{$t('application.name')}}</span>
+		      </div>
+		      <div class="container-top">
+		        <el-menu default-active="menui0001" mode="horizontal">		          
+					<template v-for="item in topmenuData">
+					<el-menu-item :index="item.id" v-bind:key="item.id"><router-link :to="item.path">{{item.name}}</router-link></el-menu-item>
+					</template>
+		        </el-menu>
+		      </div>
+		
+		        <div v-if="clientPermission>4" class="container-top-right">
+		          <el-select v-model="currentLanguage" @change="languageChange" style="width:105px">
+		            <el-option label="简体中文" value="zh-cn" key="zh-cn"></el-option>
+		            <el-option label="English" value="en" key="en"></el-option>
+		          </el-select>
+		        </div>
+		        <div class="container-top-right">
+		          <img :src="'@/static/img/head128.jpg'" class="img-head">
+		          <span ><router-link to="/usercenter" style="color:#fff;">{{userName}} </router-link>&nbsp;</span>
+		          <i class="el-icon-switch-button" @click="logout" :title="$t('application.logout')"></i>
+		        </div>
+		    </div>
+		  </div>
+		</el-header>
+		<el-main>
+			<transition name="fade" mode="out-in"><router-view></router-view></transition>
+		</el-main>
+	</el-container>
 </template>
 <script>
 export default {
-  name: "Home",
-  data() {
-    return {
-      todoCount: 0,
-      exportCount: 0,
-      errorCount: 0,
-      opens: ["10", "20"],
-      username: "",
-      clientPermission: 0,
-      menuHeight: window.innerHeight - 64
-    };
-  },
-  created() {
-    let _self = this;
-    var user = sessionStorage.getItem("access-user");
-    if (user) {
-      _self.clientPermission = sessionStorage.getItem(
-        "access-clientPermission"
-      );
-    }
-    //_self.refreshCount();
-    //_self.$router.push({ path: "/workflow/todotask" });
-    //定时刷新数量
-    _self.$nextTick(function() {
-      setInterval(_self.refreshCount, 10000);
-    });
-  },
-  methods: {
-    // 刷新数量
-    refreshCount() {
-      this.refreshTodo();
-      this.refreshExport();
-      this.refreshError();
-    },
-    // 刷新待办数量
-    refreshTodo() {
-      let _self = this;
-      _self.loading = true;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "get",
-          url: "/zisecm/workflow/getMyAllTodoCount"
-        })
-        .then(function(response) {
-          _self.todoCount = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
-    // 刷新待导出文件数量
-    refreshExport() {
-      let _self = this;
-      var m = new Map();
-      m.set("status", "已签名");
-      m.set("condition", '');
-      _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/zisecm/drawing/getDrawingCount"
-        })
-        .then(function(response) {
-          _self.exportCount = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
-    // 刷新错误文件数量
-    refreshError() {
-      let _self = this;
-      var m = new Map();
-      m.set("status", "错误");
-      m.set("condition", '');
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/zisecm/drawing/getDrawingCount"
-      })
-      .then(function(response) {
-        _self.errorCount = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-    }
-  }
+	data() {
+		return {
+			currentLanguage: '',
+			userName: '',
+			clientPermission: 0,
+			defaultColor: '#409EFF',
+			menuHeight: window.innerHeight - 70,
+			user: {},
+			topmenuData:[]
+		};
+	},
+	beforeCreate() {
+		var user = sessionStorage.getItem('access-user');
+		var userObj = JSON.parse(user);
+		this.user = userObj;
+		if (!user) {
+			this.$router.push({path: '/login'});
+		}
+	},
+	created(){
+		this.init();
+	},
+	mounted() {	   
+		let _self = this;
+	
+		var user = sessionStorage.getItem('access-user');
+		var userObj = JSON.parse(user);
+		this.user = userObj;
+
+		
+		this.$nextTick(function() {
+			setInterval(this.checklogin, 1000);
+		});
+	},
+	methods: {
+		init:async function(){
+			var _self = this;
+			await axios.post("/memu/getMyMenu",new Map([["name","TopMenu"],["lang",_self.getLang()]])).then(res => {
+				console.log("getMymenu");
+				console.log(res);
+				_self.topmenuData = [];
+				var topmenuList = res.data.data.menuItems;
+				topmenuList.forEach(element => {
+					var pathObj = new Object();
+					pathObj.path = element.url;
+					var menu={
+							id:element.id,
+							path:pathObj,
+							name:element.label
+						}
+					_self.topmenuData.push(menu);
+				});
+			});
+		},
+		logout() {
+		  sessionStorage.removeItem('access-user');
+		  sessionStorage.removeItem('access-userName');
+		  this.$router.push({path: '/login'});
+		},
+		checklogin() {
+			var user = sessionStorage.getItem('access-userName');
+			if (user) {
+				this.userName = sessionStorage.getItem('access-userName');
+				this.clientPermission = sessionStorage.getItem('access-clientPermission');
+			} else {
+				this.userName = '';
+			}
+		},
+		languageChange(val) {
+			var lang = localStorage.getItem('localeLanguage') || 'zh-cn';
+			if (lang != val) {
+				this.$i18n.local = val;
+				if (lang === 'zh-cn') {
+					this.locale.use(this.zhLocale);
+				} else {
+					this.locale.use(this.enLocale);
+				}
+				localStorage.setItem('localeLanguage', val);
+				this.$router.go(0);
+			}
+		}
+	}
 };
 </script>
 

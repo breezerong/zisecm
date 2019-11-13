@@ -1,14 +1,8 @@
 <template>
-  <el-form ref="AccountFrom" :model="account" :rules="rules" label-position="left" label-width="0px"
-           class="login-container">
-    <table border="0" width="100%">
-      <tr>
-        <td nowrap>
-          <img src="../assets/logo.png" border="0"><h3 class="title">{{$t('application.name')}}</h3>
-        </td>
-      </tr>
-      <tr>
-        <td>
+  <el-form ref="AccountFrom" :model="account" :rules="rules" class="login-container">
+    <el-form-item>
+      <h2 class="title"><img src="../assets/logo.png" border="0">{{$t("application.user")+$t("application.login")}}</h2>
+    </el-form-item>
     <el-form-item prop="username">
       <el-input style="width:18em" type="text" v-model="account.username" auto-complete="off" :placeholder="$t('application.user')"></el-input>
     </el-form-item>
