@@ -23,6 +23,14 @@ var currentRouter = {
 	routers: [
 		{
 			meta: {
+				requireAuth: true
+			},
+			path: '/home',
+			component: () => import( /* webpackChunkName: "home" */ './views/Home.vue'),
+			name: '搜索中心'
+		},
+		{
+			meta: {
 				requireAuth: true,
 				permit: 9
 			},
@@ -161,18 +169,9 @@ const router = new Router({
 				requireAuth: true
 			},
 			path: '/',
-			name: 'home1',
-			component: () => import( /* webpackChunkName: "home1" */ './views/Home.vue'),
+			name: 'main',
+			component: () => import( /* webpackChunkName: "home1" */ './views/Main.vue'),
 			children: homeChildren
-		},
-		{
-			meta: {
-				requireAuth: true
-			},
-			path: '/home',
-			name: 'home2',
-			component: () => import( /* webpackChunkName: "home2" */ './views/Home.vue')
-			
 		},
 		{
 			meta: {

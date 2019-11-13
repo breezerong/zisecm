@@ -9,7 +9,11 @@
     "folder":" Folder ",
     "document":" Document ",
     "newFolder":"New Folder",
+    "newTransfer":"New Transfer",
+    "transfer":"Transfer",
     "newDocument":"New Doucment",
+    "newArchive":"New Archvie",
+    "newVolume":"New Volume",
     "view":" View ",
     "edit":" Edit ",
     "copy":" Copy ",
@@ -104,7 +108,12 @@
     "select":"Select",
     "selectUser":"Select User",
     "singleSelector":"Single Selection",
-    "multSelector":"Multiple selection"
+    "multSelector":"Multiple selection",
+    "sealVolume":"Seal Volume",
+    "openPage":"Open Page",
+    "PrintCover":"Print the cover",
+    "PrintVolumes":"Print Volumes",
+    "createDocument":"Create Document"
 },
 "menu": {
     "home":"Home",
@@ -124,7 +133,13 @@
     "advSearch":"Advanced Search",
     "userCenter":"User Center",
     "userInfo":"User Information",
-    "changePassword":"Change Password" 
+    "changePassword":"Change Password",
+    "selectRole":"Select Role",
+    "pleaseSelect":"Please Select",
+    "group":"Department",
+    "role":"Role",
+    "all":"All",
+    "type":"Type"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -140,6 +155,7 @@
     "loginFailured":"Login Failured",
     "pleaseInput":"Please Input ",
     "pleaseSelectFolder":"Please Select Folder",
+    "pleaseSelectTransfer":"Please Select Transfer",
     "deleteInfo":"You will delete this object, are you cuntinue?",
     "cannotCreateRoot":"Cannot create root folder!",
     "signImageSize":"56X26, 100dpi, jpg",
@@ -165,5 +181,8 @@
     "subType":"Sub Type",
     "from":"From",
     "to":"To",
-    "format":"Format"
+    "format":"Format",
+    "type":"Type",
+    "permission":"Permission",
+    "expireDate":"Expire Date"
 }}
