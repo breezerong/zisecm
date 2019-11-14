@@ -149,7 +149,7 @@ export default {
   margin-bottom: 5px;
 }
 .doccontent{
-  min-height: 300px;
+  min-height: 400px;
   border-style:solid;
 	border-width:1px;
   border-color: grey;

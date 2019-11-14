@@ -36,7 +36,6 @@
 		</el-main>
 	</el-container>
 </template>
-
 <script>
 export default {
 	data() {
@@ -124,6 +123,12 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style>
+body > .el-container {
+  padding: 0px;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+}
 </style>
