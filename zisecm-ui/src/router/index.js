@@ -194,7 +194,8 @@ const router = new Router({
           meta: {
           requireAuth: true
           },
-          path: '/record/createArchive',
+          // path: '/record/createArchive',
+          path:'/record/archivedelivery',
           component: CreateArchive,
           name: '按卷整理'
         },
@@ -682,8 +683,7 @@ const router = new Router({
           path: '/datacenter/custom',
           component: CustomClassification,
           name: '自定义分类'
-        }
-        ,
+        },
         {
           meta: {
             requireAuth: true

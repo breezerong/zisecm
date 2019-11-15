@@ -48,6 +48,10 @@ public class AuditContext {
 	 */
 	public static String DELETE="ecm_delete";
 	/**
+	 * 挂载主文件
+	 */
+	public static String MOUNT_FILE="ecm_mount_file";
+	/**
 	 * 添加格式副本
 	 */
 	public static String ADD_REDITION="ecm_add_redition";

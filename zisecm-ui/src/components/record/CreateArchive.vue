@@ -1,6 +1,28 @@
 <template>
   <div>
     
+    <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+          
+          <el-form size="mini" :label-width="formLabelWidth">
+            
+            <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+              <el-upload
+                :limit="100"
+                :file-list="fileList" 
+                action=""
+                :on-change="handleChange"
+                :auto-upload="false"
+                :multiple="false">
+                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+              </el-upload>
+            </div>
+          </el-form> 
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="importdialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="uploadData()">开始导入</el-button>
+          </div>
+        </el-dialog>
+
     <el-dialog :visible.sync="typeSelectVisible">
       <el-form>
           <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
@@ -153,10 +175,11 @@
                       <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button>
                       <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true">挂载文件</el-button>
                       
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
-                       @pagesizechange="innerPageSizeChange"
+                       @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
                       @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
 
                       
@@ -229,13 +252,16 @@ export default {
       innerCount:0,
       outerCount:0,
       selectedItemId: 0,
+      fileList:[],
       currentPage:1,
       dialogVisible: false,
       propertyVisible: false,
       showButton:true,
       typeSelectVisible:false,
       selectRow:[],
+      importdialogVisible:false,
       selectedItems: [],
+      selectedFileId:"",
       selectedOutItems: [],
       selectedInnerItems:[],
       childrenTypes:[],
@@ -376,6 +402,13 @@ export default {
     },
     dialogFormShow(){
       this.columnsInfo.dialogFormVisible = true
+    },
+    selectOneFile(row){
+      let _self = this;
+      if(_self.selectRow)
+      {
+        _self.selectedFileId=row.ID;
+      }
     },
     showInnerFile(row){
       let _self = this;
@@ -547,7 +580,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','TransferGrid');
+      m.set('gridName','DeliveryGrid');
       m.set('lang',_self.currentLanguage);
       _self.axios({
         headers: {
@@ -576,7 +609,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','TransferGrid');
+      m.set('gridName','DeliveryGrid');
       m.set('condition',"creator='@currentuser' and status='产生'");
       // m.set('folderId',indata.id);
       // m.set('status','产生')
@@ -1433,9 +1466,10 @@ export default {
               url: "/zisecm/dc/delDocumentAndRelation"
             })
             .then(function(response) {
+              _self.loadTransferGridData();
               _self.loadGridData(null);
               
-                _self.showInnerFile(null);
+              _self.showInnerFile(null);
               _self.$message(_self.$t("message.deleteSuccess"));
             })
             .catch(function(error) {
@@ -1471,6 +1505,45 @@ export default {
           //   message: '已取消删除'
           // });          
         });
+    }, 
+    handleChange(file, fileList){
+      this.fileList = fileList;
+    },
+    getFormData(){
+      let _self = this;
+      let formdata = new FormData();
+      var data = {};
+      data["ID"]=_self.selectedFileId;
+      formdata.append("metaData",JSON.stringify(data));
+      _self.fileList.forEach(function (file) {
+        //console.log(file.name);
+        formdata.append("uploadFile", file.raw, file.name);
+      });
+      return formdata;
+    },
+    //上传文件
+    uploadData(){
+      let _self = this;
+      let formdata = _self.getFormData();
+      console.log("UploadData getData");
+      console.log(formdata);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        datatype: 'json',
+        method: 'post',
+        data: formdata,
+        url: '/zisecm/dc/mountFile'
+      })
+      .then(function(response) {
+        _self.importdialogVisible = false;
+        // _self.refreshData();
+        _self.$message("导入成功!");
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
     },
     // 新建文件夹
     newFolder(indata) {

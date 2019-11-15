@@ -245,7 +245,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		return null;
 	}
-
+	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String newObject(String token, EcmDocument doc, EcmContent content) throws Exception {
@@ -815,10 +815,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new EcmException("Document is locked by :" + doc.getLockOwner());
 		}
 	}
-
+	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean addRendition(String token, String id, EcmContent content) throws NoPermissionException, AccessDeniedException, EcmException {
+	public boolean addRendition(String token, String id, EcmContent content) 
+			throws NoPermissionException, AccessDeniedException, EcmException {
 		if (getPermit(token, id) < ObjectPermission.WRITE_CONTENT) {
 			throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 					+ " has no add rendition permission:" + id);
@@ -1268,4 +1269,47 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		
 		return false;
 	}
+	/**
+	 * 挂载文件
+	 * @param token
+	 * @param doc
+	 * @param content
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean mountFile(String token, String docId, EcmContent content) throws Exception {
+		
+		if (getPermit(token, docId) < ObjectPermission.WRITE_CONTENT) {
+			throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
+					+ " has no add mount files permission:" + docId);
+		}
+		EcmContent primary = contentService.getPrimaryContent(token, docId);
+		EcmDocument doc = getObjectById(token, docId);
+		if(doc!=null&&content!=null) {
+			if (primary != null) {
+				primary.setName(content.getName());
+				primary.setInputStream(content.getInputStream());
+				contentService.updateObject(token, primary);
+			} else {
+				content.createId();
+				content.setParentId(docId);
+				if (StringUtils.isEmpty(content.getStoreName())) {
+				    content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
+				   }
+				
+				contentService.newObject(token, content);
+			}
+			updateModifyInfo(token, docId);
+			newAudit(token, null, AuditContext.MOUNT_FILE, docId, null, content.getName());
+			return true;
+			
+		}else {
+			return false;
+		}
+		
+		
+	}
+	
+	
 }

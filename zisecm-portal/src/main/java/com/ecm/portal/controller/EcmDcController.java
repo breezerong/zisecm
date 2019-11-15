@@ -327,7 +327,41 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		return mp;
 	}
-	
+	/**
+	 * 挂载文件
+	 * @param metaData
+	 * @param uploadFile
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/mountFile", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> mountFile(String metaData, MultipartFile uploadFile) {
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String id = args.get("ID").toString();
+			if (uploadFile != null) {
+				EcmContent en = new EcmContent();
+				en.setName(uploadFile.getOriginalFilename());
+				en.setContentSize(uploadFile.getSize());
+				en.setInputStream(uploadFile.getInputStream());
+				en.setContentType(1);
+				documentService.mountFile(getToken(), id, en);
+				mp.put("code", ActionContext.SUCESS);
+			}
+		}
+		catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	/**
+	 * 添加格式副本
+	 * @param metaData
+	 * @param uploadFile
+	 * @return
+	 */
 	@RequestMapping(value = "/dc/addRendition", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> addRendition(String metaData, MultipartFile uploadFile) {
@@ -350,7 +384,11 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		return mp;
 	}
-	
+	/**
+	 * 删除格式副本
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "/dc/removeRendition", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> addRendition(@RequestBody String id) {
