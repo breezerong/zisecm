@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,6 +78,25 @@ public class UserController extends ControllerAbstract{
 			EcmUser en = userService.getObjectByName(getToken(),userName);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", en);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/user/getUserInfo", method = RequestMethod.POST)
+	public Map<String, Object> getUserInfo(@RequestBody String loginName) {
+		loginName = loginName.replace("\"", "");
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			EcmUser en = userService.getObjectByName(getToken(),loginName);
+			List<String> rolsNames = new ArrayList<>();
+			Map<String, Object> infoMap = new HashMap<>();
+			infoMap.put("user", en);
+			infoMap.put("roles", rolsNames);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", infoMap);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}

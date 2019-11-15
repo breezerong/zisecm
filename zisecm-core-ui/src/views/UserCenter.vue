@@ -44,7 +44,20 @@ export default {
       menuHeight: window.innerHeight -64
     };
   },
-   mounted(){ 
+   mounted(){
+	   console.log(this.$route.name);
+	   var routes = {
+			children: this.$router.options.routes
+	   };
+	   console.log(routes);
+       var route = this.$route.matched;
+ 
+      for(var i=0; i<route.length-1; i++){
+		routes = routes.children.find((e) => (e.name == route[i].name));
+		
+      }
+     
+
     this.$router.push({ path: "/user/userinfo" });
     },
   methods: {

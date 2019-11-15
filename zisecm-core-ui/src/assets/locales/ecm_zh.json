@@ -1,5 +1,5 @@
 {"application": {
-    "name":"文档管理系统",
+    "name":"档案管理系统",
     "loginUserName":"登录名",
     "logout":"注销",
     "login":"登录",
@@ -9,7 +9,11 @@
     "folder":"文件夹",
     "document":"文档",
     "newFolder":"新建文件夹",
+    "newTransfer":"新建移交单",
+    "transfer":"移交单",
     "newDocument":"新建文档",
+    "newArchive":"新建案卷",
+    "newVolume":"新建卷册",
     "view":"查看",
     "edit":"编辑",
     "copy":"复制",
@@ -103,7 +107,18 @@
     "select":"选择",
     "selectUser":"请选择用户",
     "singleSelector":"单选",
-    "multSelector":"多选"
+    "multSelector":"多选",
+    "selectRole":"请选择角色",
+    "group":"部门",
+    "role":"角色",
+    "all":"所有",
+    "pleaseSelect":"请选择",
+    "type":"类型",
+    "sealVolume":"封卷",
+    "openPage":"开卷",
+    "PrintCover":"打印封面",
+    "PrintVolumes":"打印卷内目录",
+    "createDocument":"文件著录"
 },
 "menu": {
     "home":"首页",
@@ -139,6 +154,7 @@
     "loginFailured":"提示: 登录失败！",
     "pleaseInput":"请输入",
     "pleaseSelectFolder":"请选择文件夹！",
+    "pleaseSelectTransfer":"请选择移交单",
     "deleteInfo":"此操作将永久删除该对象, 是否继续?",
     "cannotCreateRoot":"您不能新建根文件夹!",
     "signImageSize":"56X26, 100dpi, jpg",
@@ -164,5 +180,8 @@
     "subType":"分类",
     "from":"发件人",
     "to":"收件人",
-    "format":"格式"
+    "format":"格式",
+    "type":"类型",
+    "permission":"权限",
+    "expireDate":"到期日期"
 }}

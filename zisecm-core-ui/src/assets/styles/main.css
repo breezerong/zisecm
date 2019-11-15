@@ -129,14 +129,45 @@ img {
     height: 32px;
     line-height: 32px;
     border: none;
-    /*border-bottom: 2px solid transparent;*/
-    color: #070707;
+    color: #ffffff;
+    background-color: #36a9e1;
 }
 .el-menu--horizontal {
     border: none;
     background-color: #36a9e1;
 }
-
+.el-header, .el-footer {
+    background-color: #36a9e1;
+    color: #333;
+    text-align: center;
+    padding: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+  }
+  
+  .el-aside {
+    background-color: #D3DCE6;
+    color: #333;
+    text-align: center;
+    padding: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+  }
+  
+  .el-main {
+    background-color: #E9EEF3;
+    color: #333;
+    text-align: center;
+    padding: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+  }
   .el-breadcrumb {
     font-size: 14px;
     line-height: 1;
@@ -150,30 +181,4 @@ img {
   .el-table__expanded-cell[class*=cell]{
     padding: 0px 0px;
     padding-left: 106px;
-}
-
-
-.ats-panel {
-	width: 100%;
-	height: 100%;
-	background-color: #36a9e1;
-	
-}
-.ats-panel .ats-panel-header {
-	border: 2px solid #dedede;
-	text-align: left;
-	padding: 5px;
-	color: white;
-	font-family: "微软雅黑";
-}
-.ats-panel .ats-panel-body {
-	min-height: 100px;
-	padding: 5px;
-}
-.ats-panel .ats-panel-footer{
-	border: 1px solid #dedede;
-	text-align: right;
-	padding-top: 5px;
-	padding-right: 10px;
-	padding-bottom: 5px;
 }

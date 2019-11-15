@@ -130,10 +130,11 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	@Override
 	public List<EcmFolder> getFoldersByParentPath(String token,String path){
 		EcmFolder folder = getObjectByPath(token,path);
+		List<EcmFolder> list = new ArrayList<EcmFolder>();
 		if(folder != null) {
-			ecmFolderMapper.selectByParentId(folder.getId());
+			list = ecmFolderMapper.selectByParentId(folder.getId());
 		}
-		return new ArrayList<EcmFolder>();
+		return list;
 	}
 	@Override
 	public boolean copyFolders(String token, String sourceId, String targetId,boolean includeSource) {
