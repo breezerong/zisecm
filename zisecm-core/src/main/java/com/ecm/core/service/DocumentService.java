@@ -1,5 +1,6 @@
 package com.ecm.core.service;
 
+import java.io.Console;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +43,7 @@ import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Service
 @Scope("prototype")
@@ -108,11 +110,32 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		} else {
 			sql += " " + gv.getOrderBy();
 		}
-
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
 		return list;
 	}
+	
+	
+	public List<Map<String, Object>> getObjectsByConditon(String token,String gridName,String folderId,Pager pager,String condition,String orderBy){
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
+		if (!StringUtils.isEmpty(folderId)) {
+			sql += " and folder_id='" + folderId + "'";
+		}
+		if (!EcmStringUtils.isEmpty(condition)) {
+			sql += " and (" + condition + ")";
+		}
+		if (!EcmStringUtils.isEmpty(orderBy)) {
+			sql += " order by " + orderBy;
+		} else {
+			sql += " order by ID desc";
+		}
+		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
+		// TODO Auto-generated method stub
+		return list;
+		
+	}
+	
 
 	@Override
 	public List<Map<String, Object>> getObjectMap(String token, String condition) {
@@ -245,7 +268,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		return null;
 	}
-
+	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String newObject(String token, EcmDocument doc, EcmContent content) throws Exception {
@@ -815,10 +838,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new EcmException("Document is locked by :" + doc.getLockOwner());
 		}
 	}
-
+	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean addRendition(String token, String id, EcmContent content) throws NoPermissionException, AccessDeniedException, EcmException {
+	public boolean addRendition(String token, String id, EcmContent content) 
+			throws NoPermissionException, AccessDeniedException, EcmException {
 		if (getPermit(token, id) < ObjectPermission.WRITE_CONTENT) {
 			throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 					+ " has no add rendition permission:" + id);
@@ -1268,4 +1292,47 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		
 		return false;
 	}
+	/**
+	 * 挂载文件
+	 * @param token
+	 * @param doc
+	 * @param content
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean mountFile(String token, String docId, EcmContent content) throws Exception {
+		
+		if (getPermit(token, docId) < ObjectPermission.WRITE_CONTENT) {
+			throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
+					+ " has no add mount files permission:" + docId);
+		}
+		EcmContent primary = contentService.getPrimaryContent(token, docId);
+		EcmDocument doc = getObjectById(token, docId);
+		if(doc!=null&&content!=null) {
+			if (primary != null) {
+				primary.setName(content.getName());
+				primary.setInputStream(content.getInputStream());
+				contentService.updateObject(token, primary);
+			} else {
+				content.createId();
+				content.setParentId(docId);
+				if (StringUtils.isEmpty(content.getStoreName())) {
+				    content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
+				   }
+				
+				contentService.newObject(token, content);
+			}
+			updateModifyInfo(token, docId);
+			newAudit(token, null, AuditContext.MOUNT_FILE, docId, null, content.getName());
+			return true;
+			
+		}else {
+			return false;
+		}
+		
+		
+	}
+	
+	
 }
