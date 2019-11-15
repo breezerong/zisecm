@@ -117,7 +117,7 @@ export default {
 	_self.ticket = Math.floor(Math.random() * 1000);
 	_self.userName = sessionStorage.getItem('access-userName');
 	_self.token = sessionStorage.getItem('access-token');
-	axios.post("/zisecm/user/getUserByName",JSON.stringify(_self.userName)).then(function(response){
+	axios.get("/user/getUserByName",JSON.stringify(_self.userName)).then(function(response){
 		console.log(response);
 		_self.userData = response.data.data;	   
 		_self.loading = false;
@@ -140,7 +140,7 @@ export default {
           formdata.append("uploadFile",_self.file.raw);
         }
 		
-		axios.post("/zisecm/user/updateSignImage",formdata).then(function(response){
+		axios.post("/user/updateSignImage",formdata).then(function(response){
 		   _self.sdialogVisible = false;
 		   _self.ticket = Math.floor(Math.random() * 1000);
 		   _self.$message(_self.$t('message.saveSuccess'));
@@ -152,7 +152,7 @@ export default {
     },
     saveUserInfo(){
       let _self = this;
-	  axios.post("/zisecm/user/updateUser",JSON.stringify(_self.userData)).then(function(response){
+	  axios.post("/user/updateUser",JSON.stringify(_self.userData)).then(function(response){
         if(response.data.code == 1){
           _self.$message(_self.$t('message.saveSuccess'));
         }else{

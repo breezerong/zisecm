@@ -88,13 +88,7 @@ export default {
      
     let _self = this;
     _self.loading = true;
-    _self.axios({
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      },
-      method: 'get',
-      url: '/zisecm/admin/getDefaultForm'
-    })
+    axios.get('/admin/getDefaultForm')
       .then(function(response) {
         _self.catList = response.data.data;
         _self.loading = false;
@@ -109,13 +103,7 @@ export default {
     refreshData() {
       let _self = this;
       _self.loading = true;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'get',
-        url: '/zisecm/admin/getDefaultForm'
-      })
+      axios.get('/admin/getDefaultForm')
       .then(function(response) {
         _self.catList = response.data.data;
         _self.loading = false;
@@ -129,15 +117,7 @@ export default {
       let _self = this;
       _self.loading2 = true;
       _self.currentType = indata.name;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/zisecm/admin/getFormItem'
-      })
+      axios.get('/admin/getFormItem',JSON.stringify(indata))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

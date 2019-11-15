@@ -111,39 +111,14 @@ export default {
     };
   },
  
-   created(){ 
-     
-    let _self = this;
-    _self.loading = true;
-    _self.axios({
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      },
-      method: 'get',
-      url: '/admin/getSysParameter'
-    })
-      .then(function(response) {
-        _self.dataListFull = response.data.data;
-        _self.dataList = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-
+   mounted(){ 
+     this.refreshData();
     },
   methods: {
     refreshData() {
       let _self = this;
       _self.loading = true;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'get',
-        url: '/zisecm/admin/getSysParameter'
-      })
+      axios.get('/admin/getSysParameter')
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;
@@ -159,15 +134,7 @@ export default {
     },
     save(indata) {
       let _self = this;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/zisecm/admin/updateSysParameter'
-      })
+      axios.post('/admin/updateSysParameter',JSON.stringify(indata))
       .then(function(response) {
         _self.openmsg("保存成功!");
       })
@@ -177,15 +144,7 @@ export default {
     },
     del(indata) {
       let _self = this;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/zisecm/admin/deleteSysParameter'
-      })
+      axios.post('/admin/deleteSysParameter',JSON.stringify(indata))
       .then(function(response) {
         _self.openmsg("删除成功!");
         _self.refreshData();
@@ -196,15 +155,7 @@ export default {
     },
     additem(indata) {
       let _self = this;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/zisecm/admin/newSysParameter'
-      })
+      axios.post('/admin/newSysParameter',JSON.stringify(indata))
       .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();
@@ -237,19 +188,11 @@ export default {
       }
     },
     search() {
-      let _self = this;
-      if (_self.inputkey != "") {
-        _self.dataList = [];
-        _self.dataListFull.forEach((value,index)=>{
-            if(value.name.indexOf(_self.inputkey)>=0||value.description.indexOf(_self.inputkey)>=0)
-            {
-              _self.dataList.push(value);
-            }
-          }
-        );
-      } else {
-       _self.dataList = _self.dataListFull;
-      }
+       let _self = this;
+      _self.dataList = _self.dataListFull.filter(function(item){
+          return item.name.match(_self.inputkey) || item.description.match(_self.inputkey);
+        }
+      );
     }
   }
 };

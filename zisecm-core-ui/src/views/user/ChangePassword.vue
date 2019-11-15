@@ -71,14 +71,7 @@ export default {
    mounted(){ 
     let _self = this;
     _self.userData.name = sessionStorage.getItem('access-userName');
-    _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(_self.userData.name),
-        url: "/zisecm/user/getUserByName"
-      }).then(function(response){
+    axios.get("/user/getUserByName",JSON.stringify(_self.userData.name)).then(function(response){
        // console.log(JSON.stringify(response.data.data));
         _self.loginType = response.data.data.loginType;
         
@@ -99,14 +92,8 @@ export default {
            });
          return;
       }
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(_self.userData),
-        url: "/zisecm/user/updatePassword"
-      }).then(function(response){
+      axios.post("/user/updatePassword",JSON.stringify(_self.userData))
+      .then(function(response){
         //console.log(JSON.stringify(response.data.data));
         //_self.userData = response.data.data;
         if(response.data.code == 1){

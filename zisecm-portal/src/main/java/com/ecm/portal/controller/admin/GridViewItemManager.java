@@ -35,7 +35,7 @@ public class GridViewItemManager extends ControllerAbstract{
 	 * @return
 	 */
 	 @ResponseBody
-	 @RequestMapping(value="/admin/getGridViewItem", method = RequestMethod.POST)
+	 @RequestMapping(value="/admin/getGridViewItem", method = RequestMethod.GET)
 	 public   Map<String, Object>  getGridViewItem(@RequestBody String parentId) {
 		 Map<String, Object> mp = new HashMap<String, Object>();
 		 try {

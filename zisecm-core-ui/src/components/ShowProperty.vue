@@ -118,7 +118,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),//_self.myItemId+_self.myTypeName,
-          url: "/zisecm/dc/getFormItem"
+          url: "/dc/getFormItem"
         })
         .then(function(response) {
 
@@ -198,7 +198,7 @@ export default {
           },
           method: "post",
           data: formdata,
-          url: "/zisecm/dc/newDocument"
+          url: "/dc/newDocument"
         })
         .then(function(response) {
           let code = response.data.code;
@@ -223,7 +223,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/zisecm/dc/saveDocument"
+          url: "/dc/saveDocument"
         })
         .then(function(response) {
           let code = response.data.code;
@@ -256,7 +256,7 @@ export default {
             },
             method: "post",
             data: _self.myItemId,
-            url: "/zisecm/dc/getDocument"
+            url: "/dc/getDocument"
           })
           .then(function(response) {
             let tab = response.data.data;

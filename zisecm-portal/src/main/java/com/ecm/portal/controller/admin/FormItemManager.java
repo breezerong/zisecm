@@ -35,7 +35,7 @@ public class FormItemManager extends ControllerAbstract{
 	 * @return
 	 */
 	 @ResponseBody
-	 @RequestMapping(value="/admin/getFormItem", method = RequestMethod.POST)
+	 @RequestMapping(value="/admin/getFormItem", method = RequestMethod.GET)
 	 public   Map<String, Object>  getFormItem(@RequestBody String parentId) {
 		 parentId = parentId.replace("\"", "");
 		 List<EcmFormItem> list =null;//

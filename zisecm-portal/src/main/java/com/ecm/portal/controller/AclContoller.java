@@ -35,7 +35,7 @@ public class AclContoller extends ControllerAbstract{
 
 	
 	@ResponseBody
-	@RequestMapping(value = "/acl/getAcls", method = RequestMethod.POST)
+	@RequestMapping(value = "/acl/getAcls", method = RequestMethod.GET)
 	public Map<String, Object> getAcls(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -55,7 +55,7 @@ public class AclContoller extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/acl/getAclById", method = RequestMethod.POST)
+	@RequestMapping(value = "/acl/getAclById", method = RequestMethod.GET)
 	public Map<String, Object> getAclById(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -69,7 +69,7 @@ public class AclContoller extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/acl/getAclByName", method = RequestMethod.POST)
+	@RequestMapping(value = "/acl/getAclByName", method = RequestMethod.GET)
 	public Map<String, Object> getAclByName(@RequestBody String name) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -84,7 +84,7 @@ public class AclContoller extends ControllerAbstract{
 	
 	
 	@ResponseBody
-	@RequestMapping(value = "/acl/getPermitsByName", method = RequestMethod.POST)
+	@RequestMapping(value = "/acl/getPermitsByName", method = RequestMethod.GET)
 	public Map<String, Object> getPermitsByName(@RequestBody String name) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -105,7 +105,7 @@ public class AclContoller extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/acl/getPermitsById", method = RequestMethod.POST)
+	@RequestMapping(value = "/acl/getPermitsById", method = RequestMethod.GET)
 	public Map<String, Object> getPermitsById(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {

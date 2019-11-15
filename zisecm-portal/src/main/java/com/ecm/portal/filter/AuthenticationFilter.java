@@ -82,10 +82,10 @@ public class AuthenticationFilter implements Filter {
                 resultInfo.setMsg("用户授权认证没有通过!客户端请求参数中无token信息");
             } else {
             	//暂时使用Session超时
-            	if(req.getSession().getAttribute("ECMUserToken")==null) {
-            		resultInfo.setCode(SysConfig.getUnauthorized());
-                    resultInfo.setMsg("token超时");
-            	}
+//            	if(req.getSession().getAttribute("ECMUserToken")==null) {
+//            		resultInfo.setCode(SysConfig.getUnauthorized());
+//                    resultInfo.setMsg("token超时");
+//            	}
                 if (SessionManager.getInstance().getSession(token) != null) {
                     resultInfo.setCode(SysConfig.getSucess());
                     resultInfo.setMsg("用户授权认证通过!");

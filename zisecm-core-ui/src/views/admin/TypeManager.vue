@@ -123,13 +123,7 @@ export default {
      
     let _self = this;
     _self.loading = true;
-    axios({
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      },
-      method: 'get',
-      url: '/admin/getType'
-    })
+    axios.get('/admin/getType')
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
@@ -140,13 +134,7 @@ export default {
         _self.loading = false;
       });
       _self.loading = true;
-      axios({
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      },
-      method: 'get',
-      url: '/admin/getStore'
-    })
+      axios.get('/admin/getStore')
       .then(function(response) {
         _self.storeList = response.data.data;
         _self.loading = false;
@@ -162,13 +150,7 @@ export default {
     refreshData() {
       let _self = this;
       _self.loading = true;
-      axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'get',
-        url: '/admin/getType'
-      })
+      axios.get('/admin/getType')
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
@@ -181,15 +163,7 @@ export default {
     },
     saveitem(indata) {
       let _self = this;
-      axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/admin/updateType'
-      })
+      axios.post('/admin/updateType',JSON.stringify(indata))
       .then(function(response) {
         _self.$message("保存成功!");
       })
@@ -199,15 +173,7 @@ export default {
     },
     delitem(indata) {
       let _self = this;
-      axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/admin/deleteType'
-      })
+      axios.post('/admin/deleteType',JSON.stringify(indata))
       .then(function(response) {
         _self.$message("删除成功!");
         _self.refreshData();
@@ -218,15 +184,7 @@ export default {
     },
     additem(indata) {
       let _self = this;
-      axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/admin/newType'
-      })
+      axios('/admin/newType',JSON.stringify(indata))
       .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();
@@ -240,15 +198,7 @@ export default {
     },
     copyitem(indata) {
       let _self = this;
-      axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: JSON.stringify(indata),
-        url: '/admin/copyType'
-      })
+      axios.post('/admin/copyType',JSON.stringify(indata))
       .then(function(response) {
           _self.$message("复制成功!");
           _self.dialogVisible = false;

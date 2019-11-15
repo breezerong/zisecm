@@ -82,7 +82,7 @@ export default {
             },
             method: 'post',
             data: JSON.stringify(_self.account),
-            url: '/zisecm/userLogin'
+            url: '/userLogin'
           })
           .then(function(response) {
             //console.log(response.data);

@@ -4,7 +4,7 @@
       <div class="navbar-top">
         <div class="navbar-top-inner">
           <div class="container-top">
-            <img src="../assets/logo.png" border="0" />
+            <img :src="'../static/img/logo.png'" border="0" />
           </div>
           <div class="container-top">
             <span style="font-size: 18px;color: #fff;">{{$t('application.name')}}</span>
@@ -38,7 +38,7 @@
             </el-select>
           </div>
           <div class="container-top-right">
-            <img :src="'/static/img/head128.jpg'" class="img-head" />
+            <img :src="'../static/img/head128.jpg'" class="img-head" />
             <span>
               <router-link to="/usercenter" style="color:#fff;">{{userName}}</router-link>&nbsp;
             </span>
@@ -94,7 +94,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/zisecm/memu/getMyMenu"
+          url: "/memu/getMyMenu"
         })
         .then(function(response) {
           console.log(response);

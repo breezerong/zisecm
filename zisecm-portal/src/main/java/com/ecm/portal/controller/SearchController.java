@@ -39,7 +39,7 @@ public class SearchController extends ControllerAbstract{
 	 * 关键字查询
 	 * @return
 	 */
-	@RequestMapping("/search/searchByKeyword")
+	@RequestMapping(value ="/search/searchByKeyword", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> searchByKeyword(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
@@ -81,7 +81,7 @@ public class SearchController extends ControllerAbstract{
 		return mp;
 	}
 	
-	@RequestMapping("/search/searchByCard")
+	@RequestMapping(value ="/search/searchByCard", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> searchByCard(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
@@ -110,7 +110,7 @@ public class SearchController extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/search/getSuggestion", method = RequestMethod.POST)
+	@RequestMapping(value = "/search/getSuggestion", method = RequestMethod.GET)
 	public Map<String, Object> getSuggestion(@RequestBody String keyword) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -124,7 +124,7 @@ public class SearchController extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/search/getCardSearchs", method = RequestMethod.POST)
+	@RequestMapping(value = "/search/getCardSearchs", method = RequestMethod.GET)
 	public Map<String, Object> getCardSearchs(@RequestBody String lang) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -138,7 +138,7 @@ public class SearchController extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/search/getCardSearch", method = RequestMethod.POST)
+	@RequestMapping(value = "/search/getCardSearch", method = RequestMethod.GET)
 	public Map<String, Object> getCardSearch(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -155,7 +155,7 @@ public class SearchController extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/search/getCardSearchAll", method = RequestMethod.POST)
+	@RequestMapping(value = "/search/getCardSearchAll", method = RequestMethod.GET)
 	public Map<String, Object> getCardSearchAll(@RequestBody String lang) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -169,7 +169,7 @@ public class SearchController extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/search/getCardSearchItem", method = RequestMethod.POST)
+	@RequestMapping(value = "/search/getCardSearchItem", method = RequestMethod.GET)
 	public Map<String, Object> getCardSearchItem(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
