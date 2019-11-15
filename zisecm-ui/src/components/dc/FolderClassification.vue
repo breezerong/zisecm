@@ -287,7 +287,7 @@ export default {
   },
   methods: {
     renderContent: function (h, {node, data, store}) {
-      console.log(data);
+      //console.log(data);
       if(data.extended){
         return (<span><i class='el-icon-folder-opened'></i><span style="padding-left: 4px;">{node.label}</span></span>);
       }else{
@@ -383,6 +383,7 @@ export default {
         .then(function(response) {
           _self.showFields = [];
           _self.gridList = response.data.data;
+          console.log(JSON.stringify(_self.gridList));
           _self.gridList.forEach(element => {
             if(element.visibleType==1){
               _self.showFields.push(element.attrName);
@@ -401,14 +402,14 @@ export default {
       let _self = this;
       var key =_self.inputkey;
       if(key!=""){
-        key = "coding like '%"+key+"%' or title like '%"+key+"%'"; 
+        key = "CODING like '%"+key+"%' or NAME like '%"+key+"%'"; 
       }
       var m = new Map();
       m.set('gridName',indata.gridView);
       m.set('folderId',indata.id);
       m.set('condition',key);
       m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
+      m.set('pageIndex', _self.currentPage-1);
       m.set('orderBy','');
       // console.log('pagesize:', _self.pageSize);
       _self
@@ -598,7 +599,7 @@ export default {
       _self.currentType = indata.FORMAT_NAME;
       // 拦截器会自动替换成目标url
       _self.imageArray[0] =  "/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      if(_self.currentType == "pdf1"){
+      if(_self.currentType == "pdf"){
          window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
       }else{
          _self.imageViewVisible =true;
@@ -666,10 +667,10 @@ export default {
     {
       if(!this.currentFolder||!this.currentFolder.id)
       {
-        this.$message(_self.$t("message.cannotCreateRoot"));
+        this.$message(this.$t("message.cannotCreateRoot"));
         return;
       }
-      this.folderAction = _self.$t("application.newFolder");
+      this.folderAction = this.$t("application.newFolder");
       this.folderForm ={
         id: null,
         name: "",

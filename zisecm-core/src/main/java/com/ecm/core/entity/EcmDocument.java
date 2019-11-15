@@ -19,7 +19,11 @@ public class EcmDocument extends EcmSysObject{
 	 * 文件夹ID
 	 */
     private String folderId;
-
+    /**
+     * 文件夹路径
+     */
+    private String folderPath;
+    
     /**
      * 状态
      */
@@ -117,6 +121,14 @@ public class EcmDocument extends EcmSysObject{
 		if(attributes!=null) {
 			attributes.put("LIFECYCLE_STATUS", this.lifecycleStatus);
 		}
+	}
+	
+	public String getFolderPath() {
+		return folderPath;
+	}
+
+	public void setFolderPath(String folderPath) {
+		this.folderPath = folderPath;
 	}
 
 	public int getLifecycleDir() {

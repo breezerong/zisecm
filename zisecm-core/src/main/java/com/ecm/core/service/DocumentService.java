@@ -81,9 +81,24 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Override
 	public List<Map<String, Object>> getObjects(String token, String gridName, String folderId, Pager pager,
 			String condition, String orderBy) {
+		String currentUser="";
+		try {
+			currentUser = getSession(token).getCurrentUser().getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(condition!=null&&condition.contains("@currentuser")) {
+    		
+			condition=condition.replaceAll("@currentuser", currentUser);
+    	}
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		String gvCondition=gv.getCondition();
+		if(gvCondition!=null&&gvCondition.contains("@currentuser")) {
+			gvCondition=gvCondition.replaceAll("@currentuser", currentUser);
+		}
 		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
-				+ gv.getCondition();
+				+ gvCondition;
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
 		}
@@ -93,7 +108,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
 		} else {
-			sql += " order by ID desc";
+			sql += " " + gv.getOrderBy();
 		}
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
@@ -319,7 +334,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		fieldStr += "ID,";
 		valueStr = "'" + id + "',";
 		for (Object key : args.keySet().toArray()) {
-			if (key.toString().equalsIgnoreCase("ID")) {
+			if (key.toString().equalsIgnoreCase("ID")
+					||key.toString().equalsIgnoreCase("transferId")
+					||key.toString().equalsIgnoreCase("folderPath")) {
 				continue;
 			}
 			if (args.get(key) == null) {

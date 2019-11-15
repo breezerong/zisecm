@@ -50,7 +50,7 @@
                 <el-form-item label="客户端权限" :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
                  
                     <el-select v-model="form.clientPermission" style="width:18em" :disabled="clientPermission<form.clientPermission">
-                      <div  v-for="item in clientOptions">
+                      <div v-for="item in clientOptions">
                         <div v-if="item.value<=clientPermission">
                           <el-option
                             :label="item.label"
@@ -133,7 +133,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="updatesignimage()">确 定</el-button>
+            <el-button type="primary" @click="updateSignImage()">确 定</el-button>
           </div>
         </el-dialog>
         <table border="0" width="100%" >
@@ -195,7 +195,7 @@
             </el-table-column>
             <el-table-column label="签名图片" width="150" :formatter="imageFormat">
               <template slot-scope="scope">
-                <img :src="'/zisecm/admin/getUserImage?id='+scope.row.id+'&token='+token" >
+                <img :src="'/admin/getUserImage?id='+scope.row.id+'&token='+token" >
               </template>
             </el-table-column>
             <el-table-column label="说明" min-width="15%">
@@ -325,15 +325,7 @@ export default {
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       // console.log('pagesize:', _self.pageSize);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/zisecm/admin/getUsers"
-        })
+      axios.post("/admin/getUsers",JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
@@ -349,15 +341,7 @@ export default {
     {
       let id = row.id;
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(id),
-          url: "/zisecm/admin/getUserImage"
-        })
+     axios.post("/admin/getUserImage",JSON.stringify(id))
         .then(function(response) {
           
           _self.loading = false;
@@ -387,16 +371,7 @@ export default {
     saveitem(indata) {
       let _self = this;
      
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/zisecm/admin/updateUser"
-        })
+      axios.post("/admin/updateUser",JSON.stringify(indata))
         .then(function(response) {
           _self.$message("保存成功!");
         })
@@ -416,16 +391,7 @@ export default {
         _self.$message("Admin不允许删除!");
         return;
       }
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/zisecm/admin/deleteUser"
-        })
+      axios.post("/admin/deleteUser",JSON.stringify(indata))
         .then(function(response) {
           if(response.data.code==0){
             _self.$message("删除失败!\r\n"+response.data.message);
@@ -484,17 +450,8 @@ export default {
           //console.log(_self.file);
           formdata.append("uploadFile",_self.file.raw);
         }
-        _self
-          .axios({
-            headers: {
-              'Content-Type': 'multipart/form-data'
-              //"Content-Type": "application/json;charset=UTF-8"
-            },
-            datatype: "json",
-            method: "post",
-            data: formdata,
-            url: "/zisecm/admin/newUser"
-          })
+        axios.headers.post['Content-Type'] = 'multipart/form-data';
+        axios.post("/admin/newUser",formdata)
           .then(function(response) {
             _self.dialogVisible = false;
             _self.refreshData();
@@ -505,7 +462,7 @@ export default {
           });
       }
     },
-    updatesignimage() {
+    updateSignImage() {
       let _self = this;
         let formdata = new FormData();
         formdata.append("id",JSON.stringify(_self.currentItem.id));
@@ -514,17 +471,8 @@ export default {
           //console.log(_self.file);
           formdata.append("uploadFile",_self.file.raw);
         }
-        _self
-          .axios({
-            headers: {
-              'Content-Type': 'multipart/form-data'
-              //"Content-Type": "application/json;charset=UTF-8"
-            },
-            datatype: "json",
-            method: "post",
-            data: formdata,
-            url: "/zisecm/admin/updateSignImage"
-          })
+        axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
+        axios.post("/admin/updateSignImage",formdata)
           .then(function(response) {
             _self.sdialogVisible = false;
             _self.$message("更新成功!");
@@ -533,6 +481,7 @@ export default {
           .catch(function(error) {
             console.log(error);
           });
+        axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
     },
     search() {
       let _self = this;
