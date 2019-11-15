@@ -114,7 +114,15 @@
     "openPage":"开卷",
     "PrintCover":"打印封面",
     "PrintVolumes":"打印卷内目录",
-    "createDocument":"文件著录"
+    "createDocument":"文件著录",
+    "restore":"恢复",
+    "export":"导出",
+    "completely":"彻底",
+    "borrow":"借阅",
+    "obtained":"下架",
+    "destroy":"销毁",
+    "show":"显示",
+    "fileBox":"卷盒"
 },
 "menu": {
     "home":"首页",
@@ -134,7 +142,10 @@
     "advSearch":"高级搜索",
     "userCenter":"个人信息",
     "userInfo":"基本信息",
-    "changePassword":"修改密码"
+    "changePassword":"修改密码",
+    "fileManage":"档案管理",
+    "recycleBin":"回收站",
+    "companyDoc":"公司文档"
 },
 "message": {
     "saveSuccess":"保存成功",
