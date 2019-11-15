@@ -62,6 +62,8 @@ import Main from '@/components/Main'
 import CreateRecord from '@/components/record/CreateRecord'
 import CreateArchive from '@/components/record/CreateArchive'
 import WorkflowStatus from '@/components/admin/WorkflowStatus'
+import RecycleBin from '@/views/dc/RecycleBin'
+import CompanyDoc from '@/views/dc/CompanyDoc'
 
 import Test1 from '@/components/test/Test1'
 import Test2 from '@/components/test/Test2'
@@ -688,19 +690,19 @@ const router = new Router({
           meta: {
             requireAuth: true
           },
-          path: '/test/test1',
-          component: Test1,
-          name: '测试1'
-        }
-        ,
+          path: '/dc/recyclebin',
+          component: RecycleBin,
+          name: '回收站'
+        },
         {
           meta: {
             requireAuth: true
           },
-          path: '/test/test2',
-          component: Test2,
-          name: '测试2'
+          path: '/dc/companydoc',
+          component: CompanyDoc,
+          name: '公司文档'
         }
+
       ]
     }
   ]
