@@ -117,7 +117,7 @@ export default {
       let _self = this;
       _self.loading2 = true;
       _self.currentType = indata.name;
-      axios.get('/admin/getFormItem',JSON.stringify(indata))
+      axios.post('/admin/getFormItem',JSON.stringify(indata))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

@@ -29,7 +29,8 @@
       <tr>
         <td class="navbar">
           <el-breadcrumb>
-            <el-breadcrumb-item>{{$t('menu.companyDoc')}}</el-breadcrumb-item>
+            <el-breadcrumb-item>{{$t('menu.fileManage')}}</el-breadcrumb-item>
+            <el-breadcrumb-item>{{$t('menu.recycleBin')}}</el-breadcrumb-item>
           </el-breadcrumb>
         </td>
       </tr>
@@ -52,6 +53,7 @@
                 v-model="inputkey"
                 :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
                 @change="searchItem"
+                @keyup.enter.native="searchItem"
                 prefix-icon="el-icon-search"
               ></el-input>
             </el-col>
@@ -59,24 +61,19 @@
               &nbsp;&nbsp;&nbsp;
               <el-button
                 type="primary"
-                icon="el-icon-document"
-                @click="borrowItem()"
-              >{{$t('application.borrow')}}</el-button>
+                icon="el-icon-refresh-right"
+                @click="restoreItem()"
+              >{{$t('application.restore')+$t('application.document')}}</el-button>
+              <el-button
+                type="primary"
+                icon="el-icon-delete"
+                @click="deleleItem()"
+              >{{$t('application.completely')+$t('application.delete')}}</el-button>
               <el-button
                 type="primary"
                 icon="el-icon-upload2"
-                @click="exportExcel()"
-              >{{$t('application.export')+'Excel'}}</el-button>
-              <el-button
-                type="primary"
-                icon="el-icon-bottom"
-                @click="obtainItem()"
-              >{{$t('application.obtained')}}</el-button>
-              <el-button
-                type="primary"
-                icon="el-icon-document-delete"
-                @click="destroyItem()"
-              >{{$t('application.destroy')}}</el-button>
+                @click="exportItem()"
+              >{{$t('application.export')+$t('application.document')}}</el-button>
               &nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
                 <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
@@ -134,11 +131,11 @@
                 </div>
               </div>
               <el-table-column align="left">
+                <template slot-scope="scope">
+                  <el-button type="primary" @click="showItemProperty(scope.row)">{{$t('application.view')}}</el-button>
+                </template>
                 <template slot="header" slot-scope="scope">
                   <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
-                </template>
-                <template  slot-scope="scope">
-                  <el-button type="primary" @click="showItemProperty(scope.row)">{{$t('application.view')}}</el-button>                  
                 </template>
               </el-table-column>
             </el-table>
@@ -162,10 +159,6 @@
 export default {
   data() {
     return {
-      currentuser:{
-        user:{},
-        roles:[]
-      },
       columnsInfo: {
         checkAll: true,
         dialogFormVisible: false,
@@ -175,13 +168,13 @@ export default {
       currentLanguage: "zh-cn",
       loading: false,
       currentFolder: [],
-      isFileAdmin:false,
       showFields: [],
       pageSize: 20,
       dataList: [],
       gridList: [],
       itemDataList: [],
       itemDataListFull: [],
+      isFileAdmin:false,
       showBox:false,
       orderBy: "",
       itemCount: 0,
@@ -197,8 +190,7 @@ export default {
   created() {
     var username = sessionStorage.getItem("access-userName")
     let _self = this
-     axios.post("/user/getGroupByUserName",username)
-     .then(function(response){
+     axios.post("/user/getGroupByUserName",username).then(function(response){
         var groupList = response.data.data
         groupList.forEach(function(val,index,arr){
              if (val.name == '档案管理员') {
@@ -208,6 +200,7 @@ export default {
     })
   },
   mounted() {
+    console.log("hh");
     let _self = this;
     var psize = localStorage.getItem("docPageSize");
     if (psize) {
@@ -308,7 +301,7 @@ export default {
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "MODIFIED_DATE desc");
-      axios.post("/dc/getExceptBoxDocuments",JSON.stringify(m))
+      axios.post("/dc/getDeletedDocuments",JSON.stringify(m))
         .then(function(response) {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
@@ -317,7 +310,7 @@ export default {
           _self.loading = false;
         });
     },
-    //获取包含卷盒在内的所有信息
+    //加载包括卷盒在内的所有信息
     loadAllGridData(indata){
       let _self = this;
       var key = _self.inputkey;
@@ -326,9 +319,9 @@ export default {
       m.set("folderId", indata.id);
       m.set("condition", key);
       m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize );
+      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "MODIFIED_DATE desc");
-      axios.post("/dc/getContainBoxDocuments",JSON.stringify(m))
+      axios.post("/dc/getDelContainBoxDocuments",JSON.stringify(m))
         .then(function(response) {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
@@ -391,7 +384,7 @@ export default {
       });
       return ret;
     },
-    //搜索
+    //查找方法
     searchItem() {
       let _self = this
       _self.loadGridInfo(_self.currentFolder);
@@ -401,19 +394,17 @@ export default {
         _self.loadGridData(_self.currentFolder)
       }
     },
-     //借阅
-    borrowItem() {},
-    //导出Excel
-    exportExcel() {},
-    //下架文档
-    obtainItem() {
+    //查看属性
+    showItemProperty() {},
+    //恢复文档
+    restoreItem() {
       let _self = this;
-      var obtainItemId = [];
+      var restoreItemId = [];
       if (this.selectedItemList.length > 0){
         for (var i = 0; i < this.selectedItemList.length; i++) {
-          obtainItemId.push(this.selectedItemList[i].ID);
+          restoreItemId.push(this.selectedItemList[i].ID);
         }
-        axios.post("/dc/obtainDocuments",JSON.stringify(obtainItemId)).then(function(response){
+        axios.post("/dc/restoreDocuments",JSON.stringify(restoreItemId)).then(function(response){
           if(response.data.code){
             if(_self.showBox){
               _self.loadAllGridData(_self.currentFolder)
@@ -422,14 +413,14 @@ export default {
             }
             _self.$message({
             showClose: true,
-            message: "删除成功",
+            message: "恢复成功",
             duration: 2000,
             type: 'success'
             });
           }else{
             _self.$message({
             showClose: true,
-            message: "删除失败",
+            message: "恢复失败",
             duration: 2000,
             type: 'warning'
             });
@@ -437,15 +428,15 @@ export default {
         })
       }
     },
-    //销毁文档
-    destroyItem() {
+    //彻底删除文档
+    deleleItem() {
       let _self = this;
       var deletItemId = [];
-      if (this.selectedItemList.length > 0){
+      if (this.selectedItemList.length > 0) {
         for (var i = 0; i < this.selectedItemList.length; i++) {
           deletItemId.push(this.selectedItemList[i].ID);
         }
-        axios("/dc/destroyDocuments",JSON.stringify(deletItemId)).then(function(response){
+        axios.post("/dc/delDocument",JSON.stringify(deletItemId)).then(function(response){
           if(response.data.code){
             if(_self.showBox){
               _self.loadAllGridData(_self.currentFolder)
@@ -467,10 +458,17 @@ export default {
             });
           }
         })
+      } else {
+        this.$message({
+          showClose: true,
+          message: "请勾选删除选项",
+          duration: 2000
+        });
       }
     },
-    //查看属性
-    showItemProperty() {},
+    //导出文档
+    exportItem() {},
+    //显示卷盒在内的删除文件
     showFileBox(){
       if(this.showBox){
         this.loadAllGridData(this.currentFolder)

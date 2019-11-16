@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +23,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ecm.core.ActionContext;
+import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.entity.UserInfoEntity;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 /**
  * 用户控制器
@@ -42,7 +44,9 @@ public class UserController extends ControllerAbstract{
 
 	@Autowired
 	private UserService userService;
-
+	
+	@Autowired
+	private GroupService groupService;
 	
 
 	@ResponseBody
@@ -78,25 +82,6 @@ public class UserController extends ControllerAbstract{
 			EcmUser en = userService.getObjectByName(getToken(),userName);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", en);
-		} catch (AccessDeniedException e) {
-			mp.put("code", ActionContext.TIME_OUT);
-		}
-		return mp;
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/user/getUserInfo", method = RequestMethod.POST)
-	public Map<String, Object> getUserInfo(@RequestBody String loginName) {
-		loginName = loginName.replace("\"", "");
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			EcmUser en = userService.getObjectByName(getToken(),loginName);
-			List<String> rolsNames = new ArrayList<>();
-			Map<String, Object> infoMap = new HashMap<>();
-			infoMap.put("user", en);
-			infoMap.put("roles", rolsNames);
-			mp.put("code", ActionContext.SUCESS);
-			mp.put("data", infoMap);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
@@ -242,6 +227,28 @@ public class UserController extends ControllerAbstract{
 			// TODO Auto-generated catch block
 			mp.put("code", ActionContext.NO_PERMSSION);
 			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
+	
+	//L 通过名字查找用户所有组角色
+	@RequestMapping(value = "/user/getGroupByUserName", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getGroupByUserName(@RequestBody String userName){
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			List<EcmGroup> list =null;
+			list = groupService.getUserGroupsByName(getToken(), userName);
+			if (list.size()>0) {
+					mp.put("data", list);
+					mp.put("code", ActionContext.SUCESS);
+			}else {
+					mp.put("data", list);
+					mp.put("code", ActionContext.SUCESS);
+			}
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return mp;
 	}

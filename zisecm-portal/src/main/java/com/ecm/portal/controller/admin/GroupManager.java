@@ -92,6 +92,21 @@ public class GroupManager extends ControllerAbstract {
 		}
 		return mp;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/admin/getGroupByName", method = RequestMethod.POST)
+	public Map<String, Object> getGroupByName(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			EcmGroup en = groupService.getGroupByName(getToken(), args.get("groupName").toString());
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", en);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
 
 	/**
 	 * 更新用户

@@ -39,3 +39,6 @@ zisecm-core/.classpath
 zisecm-core/.factorypath
 zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
 zisecm-core/target/classes/META-INF/maven/com.zisyun/zisecm-core/pom.properties
+zisecm-portal/src/main/java/com/ecm/portal/controller/EcmDcController.java
+zisecm-portal/src/main/java/com/ecm/portal/controller/FolderController.java
+zisecm-portal/src/main/java/com/ecm/portal/controller/UserController.java

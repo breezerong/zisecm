@@ -92,7 +92,7 @@ public class MenuManager extends ControllerAbstract {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/admin/getMenuItem", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/getMenuItem", method = RequestMethod.POST)
 	public Map<String, Object> getMenuItem(@RequestBody String name) {
 		List<EcmMenuItem> list;
 		Map<String, Object> mp = new HashMap<String, Object>();

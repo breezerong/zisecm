@@ -113,7 +113,15 @@
     "openPage":"Open Page",
     "PrintCover":"Print the cover",
     "PrintVolumes":"Print Volumes",
-    "createDocument":"Create Document"
+    "createDocument":"Create Document",
+    "restore":"Restore",
+    "export":"Export",
+    "completely":"Completely",
+    "borrow":"Borrow",
+    "obtained":"Obtained",
+    "destroy":"Destroy",
+    "show":"Show",
+    "fileBox":"FileBox"
 },
 "menu": {
     "home":"Home",
@@ -139,7 +147,11 @@
     "group":"Department",
     "role":"Role",
     "all":"All",
-    "type":"Type"
+    "type":"Type",
+    "fileManage":"FileManage",
+    "recycleBin":"RecycleBin",
+    "companyDoc":"CompanyDoc"
+
 },
 "message": {
     "saveSuccess":"Save Success",

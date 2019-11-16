@@ -161,7 +161,7 @@ export default {
     refreshData() {
       let _self = this;
       _self.loading = true;
-      axios.get("/admin/getMenuItem",_self.menuName)
+      axios.post("/admin/getMenuItem",_self.menuName)
         .then(function(response) {
           _self.dataListFull = response.data.data;
           _self.dataList = response.data.data;

@@ -25,5 +25,14 @@ export const dcRouter = [
 			path: '/dc/folder',
 			component: () => import('@/views/dc/FolderClassification.vue'),
 			name: '文件夹浏览'
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 1
+			},
+			path: '/dc/recyclebin',
+			component: () => import('@/views/dc/RecycleBin.vue'),
+			name: '回收站'
 		}
 	]

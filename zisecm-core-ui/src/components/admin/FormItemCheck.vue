@@ -74,7 +74,7 @@ export default {
         _self.$message("ParentID不能为空!");
         return;
       }
-      axios.get("/admin/getFormItem",_self.parentformid)
+      axios.post("/admin/getFormItem",_self.parentformid)
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.loading = false;

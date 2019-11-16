@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog title="选择属性" :visible.sync="categoryVisible" >
-      <CategoryManager ref="CategoryManager" @onselected="onselected" width="560" v-bind:categoryVisible="categoryVisible"></CategoryManager>
+      <CategoryManager ref="CategoryManager" @onselected="onselected" width="70%" v-bind:categoryVisible="categoryVisible"></CategoryManager>
       <div slot="footer" class="dialog-footer">
         <el-button @click="categoryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="表单校验" :visible.sync="checkVisible" >
-      <FormItemCheck ref="FormItemCheck" width="560" :parentformid="parentid"></FormItemCheck>
+    <el-dialog title="表单校验" :visible.sync="checkVisible" width="70%">
+      <FormItemCheck ref="FormItemCheck"  :parentformid="parentid"></FormItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">取 消</el-button>
       </div>
@@ -333,7 +333,7 @@ export default {
     } else {
       pid = "0";
     }
-    axios.get("/admin/getFormItem",pid)
+    axios.post("/admin/getFormItem",pid)
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;
@@ -358,7 +358,7 @@ export default {
       if (pid == "") {
         pid = "0";
       }
-      axios.get("/admin/getFormItem",pid)
+      axios.post("/admin/getFormItem",pid)
         .then(function(response) {
           _self.dataListFull = response.data.data;
           _self.dataList = response.data.data;

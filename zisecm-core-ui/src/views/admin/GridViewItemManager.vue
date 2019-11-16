@@ -220,7 +220,7 @@ export default {
       pid="0";
     }
     //alert(_self.parentid);
-    axios.get('/admin/getGridViewItem',pid)
+    axios.post('/admin/getGridViewItem',pid)
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;
@@ -248,7 +248,7 @@ export default {
       {
         pid ="0";
       }
-      axios.get('/admin/getGridViewItem',pid)
+      axios.post('/admin/getGridViewItem',pid)
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;

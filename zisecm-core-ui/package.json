@@ -13,6 +13,7 @@
     "axios": "^0.18.0",
     "echarts": "^4.4.0",
     "element-ui": "^2.4.5",
+    "qrcodejs2": "0.0.2",
     "url-search-params-polyfill": "^7.0.0",
     "vue": "^2.5.2",
     "vue-i18n": "^8.15.0",

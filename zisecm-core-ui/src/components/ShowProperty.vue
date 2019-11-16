@@ -112,14 +112,7 @@ export default {
       m.set('itemInfo',_self.myItemId+_self.myTypeName);//ID 或类型
       m.set('lang',_self.getLang());
       console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
-      _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),//_self.myItemId+_self.myTypeName,
-          url: "/dc/getFormItem"
-        })
+      axios.post("/dc/getFormItem",JSON.stringify(m))
         .then(function(response) {
 
           _self.bindData(response.data.data);
@@ -190,16 +183,9 @@ export default {
       // console.log(JSON.stringify(m));
       if(_self.myItemId=='')
       {
-        _self.axios({
-          headers: {
+        axios.post("/dc/newDocument",formdata,{
             'Content-Type': 'multipart/form-data'
-            // x-www-form-urlencoded'
-            //"Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: formdata,
-          url: "/dc/newDocument"
-        })
+          })
         .then(function(response) {
           let code = response.data.code;
           //console.log(JSON.stringify(response));
@@ -217,14 +203,7 @@ export default {
       }
       else
       {
-        _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/saveDocument"
-        })
+        axios.post("/dc/saveDocument",JSON.stringify(m))
         .then(function(response) {
           let code = response.data.code;
           //console.log(JSON.stringify(response));
@@ -250,14 +229,7 @@ export default {
       }
       else
       {
-        _self.axios({
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            },
-            method: "post",
-            data: _self.myItemId,
-            url: "/dc/getDocument"
-          })
+        axios.post("/dc/getDocument",_self.myItemId)
           .then(function(response) {
             let tab = response.data.data;
           

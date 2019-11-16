@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.druid.util.StringUtils;
+import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
@@ -104,7 +106,116 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		return mp;
 	}
+	
+	@RequestMapping(value = "/dc/getContainBoxDocuments", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getContainBoxDocuments(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
+			StringBuffer condition = new StringBuffer("("+gv.getCondition()+"or TYPE_NAME = '卷盒' )  and STATUS='利用'");
+			String newCondition = args.get("condition").toString();
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+			}
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
 
+	@RequestMapping(value = "/dc/getExceptBoxDocuments", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getObjectsExceptBox(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
+			StringBuffer condition = new StringBuffer("("+gv.getCondition()+" and TYPE_NAME<>'卷盒' )  and STATUS='利用'");
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			String newCondition = args.get("condition").toString();
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+			}
+			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/getDeletedDocuments", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getDeletedObjects(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
+			StringBuffer condition = new StringBuffer("("+gv.getCondition()+" and TYPE_NAME<>'卷盒' )  and STATUS='注销'  ");
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			String newCondition = args.get("condition").toString();
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+			}
+			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/getDelContainBoxDocuments", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getDelContainBoxetedObjects(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
+			StringBuffer condition = new StringBuffer("("+gv.getCondition()+" or TYPE_NAME = '卷盒' )  and STATUS='注销' ");
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			String newCondition = args.get("condition").toString();
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+			}
+			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	
 	@RequestMapping(value = "/dc/getDocument", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getDocument(@RequestBody String id) {
@@ -327,41 +438,7 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		return mp;
 	}
-	/**
-	 * 挂载文件
-	 * @param metaData
-	 * @param uploadFile
-	 * @return
-	 */
-	@RequestMapping(value = "/dc/mountFile", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> mountFile(String metaData, MultipartFile uploadFile) {
-		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			String id = args.get("ID").toString();
-			if (uploadFile != null) {
-				EcmContent en = new EcmContent();
-				en.setName(uploadFile.getOriginalFilename());
-				en.setContentSize(uploadFile.getSize());
-				en.setInputStream(uploadFile.getInputStream());
-				en.setContentType(1);
-				documentService.mountFile(getToken(), id, en);
-				mp.put("code", ActionContext.SUCESS);
-			}
-		}
-		catch(Exception ex) {
-			mp.put("code", ActionContext.FAILURE);
-			mp.put("message", ex.getMessage());
-		}
-		return mp;
-	}
-	/**
-	 * 添加格式副本
-	 * @param metaData
-	 * @param uploadFile
-	 * @return
-	 */
+	
 	@RequestMapping(value = "/dc/addRendition", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> addRendition(String metaData, MultipartFile uploadFile) {
@@ -384,11 +461,7 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		return mp;
 	}
-	/**
-	 * 删除格式副本
-	 * @param id
-	 * @return
-	 */
+	
 	@RequestMapping(value = "/dc/removeRendition", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> addRendition(@RequestBody String id) {
@@ -476,7 +549,6 @@ public class EcmDcController extends ControllerAbstract{
 		return mp;
 	}
 	
-	
 	@RequestMapping(value = "/dc/getRelations", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getRelations(@RequestBody String id) {
@@ -525,4 +597,162 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		return mp;
 	}
+	
+	@RequestMapping(value = "/dc/updatePrimaryContent", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updatePrimaryContent(String id,MultipartFile uploadFile) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			InputStream instream = null;
+			String fileName = null;
+			if(uploadFile!=null) {
+				instream = uploadFile.getInputStream();
+				fileName = uploadFile.getOriginalFilename();
+				EcmContent en = contentService.getPrimaryContent(getToken(), id);
+				EcmDocument doc =documentService.getObjectById(getToken(), id);
+				if(en== null) {
+					
+					en = new EcmContent();
+					en.createId();
+					en.setName(fileName);
+					en.setContentSize(uploadFile.getSize());
+					en.setFormatName(FileUtils.getExtention(fileName));
+					en.setInputStream(instream);
+					en.setParentId(id);
+					en.setContentType(1);
+					if(StringUtils.isEmpty(en.getStoreName())) {
+						en.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
+					}
+					doc.setFormatName(en.getFormatName());
+					doc.setContentSize(en.getContentSize());
+					contentService.newObject(getToken(), en);
+					documentService.updateObject(getToken(), doc, null);
+					if(instream!=null) {
+						instream.close();
+					}
+					mp.put("code", ActionContext.SUCESS);
+				}else {
+					en.setName(fileName);
+					en.setContentSize(uploadFile.getSize());
+					en.setFormatName(FileUtils.getExtention(fileName));
+					en.setInputStream(instream);
+//					contentService.updateObject(getToken(), en);
+					doc.setFormatName(en.getFormatName());
+					doc.setContentSize(en.getContentSize());
+					
+					documentService.updateObject(getToken(), doc, en);
+					if(instream!=null) {
+						instream.close();
+					}
+					mp.put("code", ActionContext.SUCESS);
+				}
+			}
+			{
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", "File is null.");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
+	
+	//销毁文件，更改文件状态为“注销”
+	@RequestMapping(value = "/dc/destroyDocuments", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> getDocumentByRelationParentId(@RequestBody String argStr) {
+	  List<String> list = JSONUtils.stringToArray(argStr);
+	  Map<String, Object> mp = new HashMap<String, Object>();
+	  try {
+		  for (String id : list) {
+			  EcmDocument ecmDocument = documentService.getObjectById(getToken(), id);
+			  if(ecmDocument.getTypeName().equals("卷盒")||ecmDocument.getTypeName().equals("图册")) {
+				  documentService.updateStatus(getToken(), id, "注销");
+				  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
+						     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+						     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
+				  List<Map<String, Object>>  childList = documentService.getMapList(getToken(), sql);
+				  for (Map<String, Object> child : childList) {
+					String childId = (String) child.get("CHILD_ID");
+					documentService.updateStatus(getToken(), childId, "注销");
+				}
+			  }else {
+				documentService.updateStatus(getToken(), id, "注销");
+			}
+		  }
+		  mp.put("code", ActionContext.SUCESS);
+	  }
+	  catch(Exception ex) {
+	   mp.put("code", ActionContext.FAILURE);
+	   mp.put("message", ex.getMessage());
+	  }
+	  return mp;
+	 }
+	
+	//下架文件，更改文件状态为“整编”
+		@RequestMapping(value = "/dc/obtainDocuments", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> obtainDocument(@RequestBody String argStr) {
+		  List<String> list = JSONUtils.stringToArray(argStr);
+		  Map<String, Object> mp = new HashMap<String, Object>();
+		  try {
+			  for (String id : list) {
+				  EcmDocument ecmDocument = documentService.getObjectById(getToken(), id);
+				  if(ecmDocument.getTypeName().equals("卷盒")||ecmDocument.getTypeName().equals("图册")) {
+					  documentService.updateStatus(getToken(), id, "整编");
+					  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
+							     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+							     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
+					  List<Map<String, Object>>  childList = documentService.getMapList(getToken(), sql);
+					  for (Map<String, Object> child : childList) {
+						String childId = (String) child.get("CHILD_ID");
+						documentService.updateStatus(getToken(), childId, "整编");
+					}
+				  }else {
+					documentService.updateStatus(getToken(), id, "整编");
+				}
+			  }
+			  mp.put("code", ActionContext.SUCESS);
+		  }
+		  catch(Exception ex) {
+		   mp.put("code", ActionContext.FAILURE);
+		   mp.put("message", ex.getMessage());
+		  }
+		  return mp;
+		 }
+		//在回收站恢复文档
+		@RequestMapping(value = "/dc/restoreDocuments", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> restoreDocument(@RequestBody String argStr) {
+		  List<String> list = JSONUtils.stringToArray(argStr);
+		  Map<String, Object> mp = new HashMap<String, Object>();
+		  try {
+			  for (String id : list) {
+				  EcmDocument ecmDocument = documentService.getObjectById(getToken(), id);
+				  if(ecmDocument.getTypeName().equals("卷盒")||ecmDocument.getTypeName().equals("图册")) {
+					  documentService.updateStatus(getToken(), id, "利用");
+					  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
+							     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+							     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
+					  List<Map<String, Object>>  childList = documentService.getMapList(getToken(), sql);
+					  for (Map<String, Object> child : childList) {
+						String childId = (String) child.get("CHILD_ID");
+						documentService.updateStatus(getToken(), childId, "利用");
+					}
+				  }else {
+					documentService.updateStatus(getToken(), id, "利用");
+				}
+			  }
+			  mp.put("code", ActionContext.SUCESS);
+		  }
+		  catch(Exception ex) {
+		   mp.put("code", ActionContext.FAILURE);
+		   mp.put("message", ex.getMessage());
+		  }
+		  return mp;
+		 }
 }

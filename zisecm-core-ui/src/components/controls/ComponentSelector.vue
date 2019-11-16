@@ -57,14 +57,7 @@ export default {
     //获取选人框体数据
     refreshData() {
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "get",
-          url: "/zisecm/admin/getComponent"
-        })
+      axios.get("/admin/getComponent")
         .then(function(response) {
           //console.log(response);
           _self.dataList = response.data.data;

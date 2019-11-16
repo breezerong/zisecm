@@ -12,7 +12,7 @@
         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="70%"ru>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="70%">
       <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
@@ -382,7 +382,7 @@ export default {
         .then(function(response) {
           _self.showFields = [];
           _self.gridList = response.data.data;
-          console.log(JSON.stringify(_self.gridList));
+          //console.log(JSON.stringify(_self.gridList));
           _self.gridList.forEach(element => {
             if(element.visibleType==1){
               _self.showFields.push(element.attrName);
