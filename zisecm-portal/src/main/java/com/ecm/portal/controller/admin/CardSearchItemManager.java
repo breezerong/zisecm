@@ -57,7 +57,7 @@ public class CardSearchItemManager extends ControllerAbstract{
 	 * @return
 	 */
 	 @ResponseBody
-	 @RequestMapping(value="/admin/getCardSearchItem", method = RequestMethod.GET)
+	 @RequestMapping(value="/admin/getCardSearchItem", method = RequestMethod.POST)
 	 public   Map<String, Object>  getCardSearchItem(@RequestBody String parentId) {
 		 List<EcmCardSearchItem> list0 =null;//
 		 if(parentId!=null&&parentId.trim().length()>0&&!"".equals(parentId)&&!"0".equals(parentId))

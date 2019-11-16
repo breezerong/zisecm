@@ -37,7 +37,7 @@ public class GroupManager extends ControllerAbstract {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/admin/getGroups", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/getGroups", method = RequestMethod.POST)
 	public Map<String, Object> getGroups(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -63,7 +63,7 @@ public class GroupManager extends ControllerAbstract {
 		return mp;
 	}
 
-	@RequestMapping(value = "/admin/getGroupCount", method = RequestMethod.GET) // PostMapping("/dc/getDocumentCount")
+	@RequestMapping(value = "/admin/getGroupCount", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getDocumentCount(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
@@ -80,7 +80,7 @@ public class GroupManager extends ControllerAbstract {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/admin/getGroup", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/getGroup", method = RequestMethod.POST)
 	public Map<String, Object> getGroup(String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {

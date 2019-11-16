@@ -14,7 +14,7 @@
                   </template>
                   <el-menu-item index="11">
                     <i class="el-icon-s-marketing"></i>
-                    <span slot="title"><router-link to="/reportcenter/systemreport">系统报表</router-link></span>
+                    <span slot="title"><router-link to="/report/systemreport">系统报表</router-link></span>
                   </el-menu-item>
                 </el-submenu>
               </el-menu>
@@ -49,7 +49,7 @@ export default {
     {
       _self.clientPermission = sessionStorage.getItem('access-clientPermission');
     }
-    _self.$router.push({path: "/reportcenter/drawingreport"});
+    _self.$router.push({path: "/report/systemreport"});
   },
   methods: {
   

@@ -217,7 +217,7 @@ export default {
       m.set("lang", _self.getLang());
       m.set("id", _self.cardId);
       //alert(_self.parentid);
-     axios.get("/search/getCardSearch",JSON.stringify(m))
+     axios.post("/search/getCardSearch",JSON.stringify(m))
         .then(function(response) {
           _self.currentCard = response.data.data;
           //console.log(JSON.stringify(_self.currentCard));
@@ -237,7 +237,7 @@ export default {
       m.set("lang", _self.getLang());
       m.set("id", _self.cardId);
       //alert(_self.parentid);
-      axios.get("/search/getCardSearchItem",JSON.stringify(m))
+      axios.post("/search/getCardSearchItem",JSON.stringify(m))
         .then(function(response) {
           let items = response.data.data;
           var i;
@@ -284,7 +284,7 @@ export default {
       var m = new Map();
       m.set("gridName", val);
       m.set("lang", _self.getLang());
-      axios.get("/dc/getGridViewInfo",JSON.stringify(m))
+      axios.post("/dc/getGridViewInfo",JSON.stringify(m))
         .then(function(response) {
           _self.gridList = response.data.data;
           _self.loading = false;
@@ -300,7 +300,7 @@ export default {
       var j=0;
       var conds=[];
       for(i=0;i<_self.formItemList.length;i++){
-        console.log("defaultValue:"+_self.formItemList[i].defaultValue);
+        //console.log("defaultValue:"+_self.formItemList[i].defaultValue);
         if(_self.formItemList[i].defaultValue != null && _self.formItemList[i].defaultValue !=""){
           conds[j] = _self.formItemList[i];
           j++;
@@ -328,7 +328,7 @@ export default {
       m.set("pageIndex", _self.currentPage - 1);
       m.set("gridName", _self.currentCard.gridView);
       m.set("typeName", _self.currentCard.name);
-      axios.get("/search/searchByCard",JSON.stringify(m))
+      axios.post("/search/searchByCard",JSON.stringify(m))
         .then(function(response) {
           _self.itemDataList = response.data.data;
           _self.itemCount = response.data.total;

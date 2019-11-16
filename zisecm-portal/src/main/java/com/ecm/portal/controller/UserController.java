@@ -46,7 +46,7 @@ public class UserController extends ControllerAbstract{
 	
 
 	@ResponseBody
-	@RequestMapping(value = "/user/getUser", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/getUser", method = RequestMethod.POST)
 	public Map<String, Object> getUser(@RequestBody String id) {
 		id = id.replace("\"", "");
 		EcmUser en;
@@ -70,7 +70,7 @@ public class UserController extends ControllerAbstract{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/user/getUserByName", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/getUserByName", method = RequestMethod.POST)
 	public Map<String, Object> getUserByName(@RequestBody String userName) {
 		userName = userName.replace("\"", "");
 		Map<String, Object> mp = new HashMap<String, Object>();

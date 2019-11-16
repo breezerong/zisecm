@@ -51,7 +51,7 @@ public class UserManager extends ControllerAbstract {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/admin/getUsers", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/getUsers", method = RequestMethod.POST)
 	public Map<String, Object> getUsers(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -80,7 +80,7 @@ public class UserManager extends ControllerAbstract {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/admin/getGroupUsers", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/getGroupUsers", method = RequestMethod.POST)
 	public Map<String, Object> getGroupUsers(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -117,7 +117,7 @@ public class UserManager extends ControllerAbstract {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/admin/getRoleUsers", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/getRoleUsers", method = RequestMethod.POST)
 	public Map<String, Object> getRoleUsers(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -158,7 +158,7 @@ public class UserManager extends ControllerAbstract {
 //	}
 
 	@ResponseBody
-	@RequestMapping(value = "/admin/getUser", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/getUser", method = RequestMethod.POST)
 	public Map<String, Object> getUser(String id) {
 		id = id.replace("\"", "");
 		EcmUser en;

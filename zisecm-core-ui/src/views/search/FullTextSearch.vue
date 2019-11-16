@@ -300,7 +300,7 @@ export default {
     querySearch(queryString, cb) {
       let _self = this;
       _self
-        axios.get("/search/getSuggestion",JSON.stringify(_self.inputkey))
+        axios.post("/search/getSuggestion",JSON.stringify(_self.inputkey))
         .then(function(response) {
           _self.keywords = response.data.data;
           if(_self.keywords){
@@ -359,7 +359,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      axios.get("/search/getCardSearchs",_self.getLang())
+      axios.post("/search/getCardSearchs",_self.getLang())
         .then(function(response) {
           _self.cards = response.data.data;
           var i=0;
@@ -380,7 +380,7 @@ export default {
       var m = new Map();
       m.set("gridName", "FullTextGrid");
       m.set("lang", _self.getLang());
-      axios.get("/dc/getGridViewInfo",JSON.stringify(m))
+      axios.post("/dc/getGridViewInfo",JSON.stringify(m))
         .then(function(response) {
           _self.gridList = response.data.data;
           _self.loading = false;
@@ -419,7 +419,7 @@ export default {
           m.set("terms", terms);
         }
       }
-      axios.get("/search/searchByKeyword",JSON.stringify(m))
+      axios.post("/search/searchByKeyword",JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data.list;
           _self.searchTime = response.data.data.searchTime;

@@ -26,7 +26,7 @@ export default {
     refreshCache() {
       let _self = this;
       _self.loading = true;
-      axios.get('/admin/initAllCache')
+      axios.post('/admin/initAllCache')
       .then(function(response) {
         _self.$message("刷新成功!");
         _self.loading = false;

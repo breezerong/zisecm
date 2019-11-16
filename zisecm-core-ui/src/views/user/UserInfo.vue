@@ -117,7 +117,7 @@ export default {
 	_self.ticket = Math.floor(Math.random() * 1000);
 	_self.userName = sessionStorage.getItem('access-userName');
 	_self.token = sessionStorage.getItem('access-token');
-	axios.get("/user/getUserByName",JSON.stringify(_self.userName)).then(function(response){
+	axios.post("/user/getUserByName",JSON.stringify(_self.userName)).then(function(response){
 		console.log(response);
 		_self.userData = response.data.data;	   
 		_self.loading = false;

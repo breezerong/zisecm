@@ -197,7 +197,7 @@ export default {
       m.set("pageIndex", _self.currentPage-1);
       m.set("pageSize", _self.pageSize);
       _self.loading = true;
-      axios.get("/acl/getAcls",JSON.stringify(m))
+      axios.post("/acl/getAcls",JSON.stringify(m))
         .then(function(response) {
           _self.dataListFull = response.data.data;
           _self.dataList = response.data.data;

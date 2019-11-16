@@ -431,22 +431,22 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			{
 				if(!EcmStringUtils.isEmpty(groupId))
 				{
-					sql += " and not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql += " and not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 				else
 				{
-					sql += " and not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and ITEM_TYPE=2)";
+					sql += " and not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and ITEM_TYPE=2)";
 				}
 			}
 			else
 			{
 				if(!EcmStringUtils.isEmpty(groupId))
 				{
-					sql +=" where not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql +=" where not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 				else
 				{
-					sql +=" where not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID  and ITEM_TYPE=2)";
+					sql +=" where not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID  and ITEM_TYPE=2)";
 				}
 			}
 		}
@@ -456,11 +456,11 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			{
 				if(sql.indexOf(" where ")>0)
 				{
-					sql += " and exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql += " and exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 				else
 				{
-					sql +=" where exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql +=" where exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 			}
 		}
@@ -483,22 +483,22 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			{
 				if(!EcmStringUtils.isEmpty(groupId))
 				{
-					sql += " and not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql += " and not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 				else
 				{
-					sql += " and not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and ITEM_TYPE=2)";
+					sql += " and not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and ITEM_TYPE=2)";
 				}
 			}
 			else
 			{
 				if(!EcmStringUtils.isEmpty(groupId))
 				{
-					sql +=" where not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql +=" where not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 				else
 				{
-					sql +=" where not exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID  and ITEM_TYPE=2)";
+					sql +=" where not exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID  and ITEM_TYPE=2)";
 				}
 			}
 		}
@@ -508,11 +508,11 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			{
 				if(sql.indexOf(" where ")>0)
 				{
-					sql += " and exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql += " and exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 				else
 				{
-					sql +=" where exists(select 1 from ECM_GROUP_ITEM b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
+					sql +=" where exists(select 1 from ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+groupId+"' and ITEM_TYPE=2)";
 				}
 			}
 		}

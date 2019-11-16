@@ -299,7 +299,7 @@ export default {
       formLabelWidth2: "100px"
     };
   },
-  created() {
+  mounted() {
     let _self = this;
     var psize = localStorage.getItem("userPageSize");
     if (psize) {
@@ -450,8 +450,7 @@ export default {
           //console.log(_self.file);
           formdata.append("uploadFile",_self.file.raw);
         }
-        axios.headers.post['Content-Type'] = 'multipart/form-data';
-        axios.post("/admin/newUser",formdata)
+        axios.post("/admin/newUser",formdata,{'Content-Type':'multipart/form-data'})
           .then(function(response) {
             _self.dialogVisible = false;
             _self.refreshData();
@@ -471,8 +470,8 @@ export default {
           //console.log(_self.file);
           formdata.append("uploadFile",_self.file.raw);
         }
-        axios.defaults.headers.post['Content-Type'] = 'multipart/form-data';
-        axios.post("/admin/updateSignImage",formdata)
+        
+        axios.post("/admin/updateSignImage",formdata,{'Content-Type':'multipart/form-data'})
           .then(function(response) {
             _self.sdialogVisible = false;
             _self.$message("更新成功!");
@@ -481,7 +480,6 @@ export default {
           .catch(function(error) {
             console.log(error);
           });
-        axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
     },
     search() {
       let _self = this;

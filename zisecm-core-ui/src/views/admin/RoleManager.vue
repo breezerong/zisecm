@@ -284,7 +284,7 @@ export default {
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", _self.currentPage - 1);
       // console.log('pagesize:', _self.pageSize);
-      axios.get("/admin/getGroups",JSON.stringify(m))
+      axios.post("/admin/getGroups",JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
@@ -323,7 +323,7 @@ export default {
       m.set("pageSize", _self.userPageSize);
       m.set("pageIndex", (_self.userCurrentPage - 1) * _self.userPageSize);
       //console.log('id:', _self.selectedItemId);
-      axios.get("/admin/getRoleUsers",JSON.stringify(m))
+      axios.post("/admin/getRoleUsers",JSON.stringify(m))
         .then(function(response) {
           _self.userList = response.data.data;
           _self.userListFull = response.data.data;

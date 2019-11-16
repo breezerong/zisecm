@@ -31,7 +31,7 @@ public class MenuContoller extends ControllerAbstract{
 	 * @param argStr
 	 * @return
 	 */
-	@RequestMapping(value = "/memu/getMyMenu", method = RequestMethod.GET)
+	@RequestMapping(value = "/memu/getMyMenu", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getMyMenu(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();

@@ -4,31 +4,15 @@
       <h2 class="title"><img src="../assets/logo.png" border="0">{{$t("application.user")+$t("application.login")}}</h2>
     </el-form-item>
     <el-form-item prop="username">
-      <el-input style="width:18em" type="text" v-model="account.username" auto-complete="off" :placeholder="$t('application.user')"></el-input>
+      <el-input  type="text" v-model="account.username" auto-complete="off" :placeholder="$t('application.user')"></el-input>
     </el-form-item>
-     </td>
-      </tr>
-      <tr>
-        <td>
-        <el-form-item prop="pwd">
-          <el-input style="width:18em" type="password" v-model="account.password" auto-complete="off" @change="handleLogin" :placeholder="$t('application.password')"></el-input>
-        </el-form-item>
-     </td>
-      </tr>
-      <tr>
-        <td>
-            <el-checkbox v-model="rememberInfo" checked class="remember">记住密码</el-checkbox>
-        </td>
-      </tr>
-      <tr>
-        <td>
- 
+    <el-form-item prop="pwd">
+          <el-input type="password" v-model="account.password" auto-complete="off" @change="handleLogin" :placeholder="$t('application.password')"></el-input>
+    </el-form-item>
+    <el-checkbox v-model="rememberInfo" checked class="remember">记住密码</el-checkbox>
     <el-form-item style="width:100%;">
       <el-button type="primary" style="width:100%;" @click.native.prevent="handleLogin" :loading="loading">{{$t('application.login')}}</el-button>
     </el-form-item>
-     </td>
-      </tr>
-    </table>
 
   </el-form>
 </template>
@@ -76,14 +60,7 @@ export default {
       _self.$refs.AccountFrom.validate((valid) => {
         if (valid) {
           _self.loading = true;
-          _self.axios({
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            },
-            method: 'post',
-            data: JSON.stringify(_self.account),
-            url: '/userLogin'
-          })
+          axios.post('/userLogin',JSON.stringify(_self.account))
           .then(function(response) {
             //console.log(response.data);
             if(response.data.code==1)
@@ -146,7 +123,7 @@ export default {
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ace), to(#00C1DE)); /*谷歌*/
     background: -webkit-linear-gradient(top, #ace, #00C1DE); /*Safari5.1 Chrome 10+*/
     background: -o-linear-gradient(top,#ace, #00C1DE); /*Opera 11.10+*/
-
+      }
     .title {
       margin: 0px auto 40px auto;
       text-align: center;
@@ -155,5 +132,5 @@ export default {
     .remember {
       margin: 0px 0px 35px 0px;
     }
-  }
+
 </style>

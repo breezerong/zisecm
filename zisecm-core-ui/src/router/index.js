@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import adminRouter from '@/router/admin.js'
-import recordRouter from '@/router/record.js'
-import searchRouter from '@/router/search.js'
-import dcRouter from '@/router/doccenter.js'
-import reportRouter from '@/router/report.js'
-import userRouter from '@/router/user.js'
+import {adminRouter} from '@/router/admin.js'
+import {recordRouter} from '@/router/record.js'
+import {searchRouter} from '@/router/search.js'
+import {dcRouter} from '@/router/doccenter.js'
+import {reportRouter} from '@/router/report.js'
+import {userRouter} from '@/router/user.js'
+import {workflowRouter} from '@/router/workflow.js'
 import store from '@/store'
 
 Vue.use(Router)
@@ -16,14 +17,7 @@ if (sessionStorage.getItem('token')) {
 
 var currentRouter = {
 	routers: [
-		{
-			meta: {
-				requireAuth: true
-			},
-			path: '/home',
-			component: () => import( /* webpackChunkName: "home" */ '@/views/Home.vue'),
-			name: '首页'
-		},
+		
 		
 		{
 			meta: {
@@ -45,22 +39,22 @@ const router = new Router({
 			name: 'main',
 			component: () => import( /* webpackChunkName: "home1" */ '@/views/Main.vue'),
 			children: [
+				{
+					meta: {
+						requireAuth: true
+					},
+					path: '/home',
+					component: () => import('@/views/Home.vue'),
+					name: '首页'
+				},
 				searchRouter,
-				dcRouter,
-				recordRouter,
+				...dcRouter,
+				...recordRouter,
+				workflowRouter,
 				reportRouter,
 				adminRouter,
 				userRouter
 			]
-		},
-		{
-			meta: {
-				requireAuth: true,
-				permit: 9
-			},
-			path: '/viewdoc',
-			component: () => import( /* webpackChunkName: "managercenter" */ '@/views/dc/ViewDoc.vue'),
-			name: '查看文档'
 		},
 		{
 			path: '/login',
@@ -74,7 +68,7 @@ router.beforeEach((to, from, next) => {
 	if (!user && to.path !== '/login') {
 		sessionStorage.removeItem('access-user')
 		sessionStorage.removeItem('access-token')
-		next('/login')
+		next({"name":'login'})
 	} else {
 		next()
 	}

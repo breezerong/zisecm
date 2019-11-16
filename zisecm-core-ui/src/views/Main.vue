@@ -73,7 +73,7 @@ export default {
   beforeCreate() {
     var user = sessionStorage.getItem("access-user");
     if (!user) {
-      this.$router.push({ path: "/login" });
+      this.$router.push({ name: "login" });
     }
   },
   mounted() {
@@ -81,23 +81,19 @@ export default {
     this.loadMenu();
     this.checklogin();
     this.$router.push({ path: "/home" });
+    this.$nextTick(function() {
+			setInterval(this.checklogin, 1000);
+		});
   },
   methods: {
-    loadMenu:function(){
+    loadMenu(){
       let _self = this;
       var m = new Map();
       m.set("name", "TopMenu");
       m.set("lang",_self.getLang());
-      _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/memu/getMyMenu"
-        })
+      axios.post("/memu/getMyMenu",JSON.stringify(m))
         .then(function(response) {
-          console.log(response);
+          //console.log(response);
           if(response.data.code==1){
             _self.dataList = response.data.data;
           }

@@ -41,7 +41,7 @@ _axios.interceptors.response.use(function(response) {
 	  sessionStorage.removeItem('access-user')
 	  sessionStorage.removeItem('access-userName')
 	  sessionStorage.removeItem('access-clientPermission')
-	  window.location.href = '/Login'
+	  window.location.href = '#/login'
 	} else {
 	  return response
 	}

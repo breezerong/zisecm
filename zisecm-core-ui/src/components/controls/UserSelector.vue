@@ -104,21 +104,13 @@ export default {
       m.set("groupId",_self.groupId);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      let urlStr = "/zisecm/admin/getUsers";
+      let urlStr = "/admin/getUsers";
       if(_self.groupId&&_self.groupId!="")
       {
-        urlStr = "/zisecm/admin/getRoleUsers";
+        urlStr = "/admin/getRoleUsers";
       }
       // console.log('pagesize:', _self.pageSize);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: urlStr
-        })
+      axios.post(urlStr,JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.itemCount = response.data.pager.total;

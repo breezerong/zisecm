@@ -354,7 +354,7 @@ export default {
       let _self = this;
       var m = new Map();
       m.set("deptId", _self.selectedItemId);
-      axios.get("/admin/getGroupUsers",JSON.stringify(m))
+      axios.post("/admin/getGroupUsers",JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
@@ -376,7 +376,7 @@ export default {
       if(indata.extended == false)
       {
         _self.loading = true;
-        axios.get("/admin/getGroups",JSON.stringify(m))
+        axios.post("/admin/getGroups",JSON.stringify(m))
         .then(function(response) {
           // _self.$message("获取子节点成功!");
           indata.children = response.data.data;
@@ -398,7 +398,7 @@ export default {
       var m = new Map();
       m.set("id", 0);
       m.set("groupType", 1);
-      axios.get("/admin/getGroups",JSON.stringify(m))
+      axios.post("/admin/getGroups",JSON.stringify(m))
         .then(function(response) {
           _self.deptList = response.data.data;
           //_self.handleNodeClick(_self.deptList[0]);

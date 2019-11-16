@@ -276,7 +276,7 @@
 
 <script type="text/javascript">
 import CategoryManager from "@/components/admin/CategoryManager";
-import QuerySelector from "@/components/controls/QuerySelector";
+import QuerySelector from "@/components/admin/QuerySelector";
 import FormItemCheck from "@/components/admin/FormItemCheck";
 
 export default {

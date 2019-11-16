@@ -31,12 +31,14 @@
                 <router-link to="/search/advsearch">{{$t('menu.advSearch')}}</router-link>
               </span>
             </el-menu-item>
+            <!--
             <el-menu-item index="4">
               <i class="el-icon-user"></i>
               <span slot="title">
                 <router-link to="/search/mysearch">{{$t('menu.mySearch')}}</router-link>
               </span>
             </el-menu-item>
+            -->
           </el-menu>
         </div>
       </el-aside>
@@ -78,7 +80,7 @@ export default {
       _self.loading = true;
       
       //alert(_self.parentid);
-      axios.get('/search/getCardSearchAll',_self.getLang())
+      axios.post('/search/getCardSearchAll',_self.getLang())
         .then(function(response) {
           _self.cardList = response.data.data;
           _self.loading = false;

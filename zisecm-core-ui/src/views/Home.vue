@@ -1,92 +1,94 @@
 <template>
-	<el-container>
-		
-	</el-container>
+  <el-container>
+    <el-container>
+      <el-aside width="180px">
+        <div v-bind:style="{height: menuHeight +'px'}">
+          <!--左侧导航-->
+          <el-menu default-active="11" class="el-menu-vertical-ecm" :default-openeds="opens" style="background-color:#D3DCE6">
+            <el-submenu index="10">
+              <template slot="title">
+                <i class="el-icon-news"></i>
+                <span>任务中心</span>
+              </template>
+              <el-menu-item index="11">
+                <i class="el-icon-time"></i>
+                <span slot="title">
+                  <router-link to="/workflow/todotask">待办工作</router-link>
+                  <el-badge :value="todoCount" class="item"></el-badge>
+                </span>
+              </el-menu-item>
+              <el-menu-item index="12">
+                <i class="el-icon-circle-check"></i>
+                <span slot="title">
+                  <router-link to="/workflow/donetask">已办工作</router-link>
+                </span>
+              </el-menu-item>
+              <el-menu-item index="13">
+                <i class="el-icon-help"></i>
+                <span slot="title">
+                  <router-link to="/workflow/myworkflow">我的流程</router-link>
+                </span>
+              </el-menu-item>
+            </el-submenu>
+          </el-menu>
+        </div>
+      </el-aside>
+      <el-main>
+        <transition name="fade" mode="out-in">
+          <router-view v-on:refreshCount="refreshCount" :key="$route.fullPath"></router-view>
+        </transition>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 <script>
 export default {
-	data() {
-		return {
-			currentLanguage: '',
-			userName: '',
-			clientPermission: 0,
-			defaultColor: '#409EFF',
-			menuHeight: window.innerHeight - 70,
-			user: {},
-			topmenuData:[]
-		};
-	},
-	beforeCreate() {
-		var user = sessionStorage.getItem('access-user');
-		var userObj = JSON.parse(user);
-		this.user = userObj;
-		if (!user) {
-			this.$router.push({path: '/login'});
-		}
-	},
-	created(){
-		this.init();
-	},
-	mounted() {	   
-		let _self = this;
-	
-		var user = sessionStorage.getItem('access-user');
-		var userObj = JSON.parse(user);
-		this.user = userObj;
-
-		
-		this.$nextTick(function() {
-			setInterval(this.checklogin, 1000);
-		});
-	},
-	methods: {
-		init:async function(){
-			var _self = this;
-			await axios.post("/memu/getMyMenu",new Map([["name","TopMenu"],["lang",_self.getLang()]])).then(res => {
-				console.log("getMymenu");
-				console.log(res);
-				_self.topmenuData = [];
-				var topmenuList = res.data.data.menuItems;
-				topmenuList.forEach(element => {
-					var pathObj = new Object();
-					pathObj.path = element.url;
-					var menu={
-							id:element.id,
-							path:pathObj,
-							name:element.label
-						}
-					_self.topmenuData.push(menu);
-				});
-			});
-		},
-		logout() {
-		  sessionStorage.removeItem('access-user');
-		  sessionStorage.removeItem('access-userName');
-		  this.$router.push({path: '/login'});
-		},
-		checklogin() {
-			var user = sessionStorage.getItem('access-userName');
-			if (user) {
-				this.userName = sessionStorage.getItem('access-userName');
-				this.clientPermission = sessionStorage.getItem('access-clientPermission');
-			} else {
-				this.userName = '';
-			}
-		},
-		languageChange(val) {
-			var lang = localStorage.getItem('localeLanguage') || 'zh-cn';
-			if (lang != val) {
-				this.$i18n.local = val;
-				if (lang === 'zh-cn') {
-					this.locale.use(this.zhLocale);
-				} else {
-					this.locale.use(this.enLocale);
-				}
-				localStorage.setItem('localeLanguage', val);
-				this.$router.go(0);
-			}
-		}
-	}
+  name: "Home",
+  data() {
+    return {
+      todoCount: 0,
+      exportCount: 0,
+      errorCount: 0,
+      opens: ["10", "20"],
+      username: "",
+      clientPermission: 0,
+      menuHeight: window.innerHeight - 64
+    };
+  },
+  created() {
+    let _self = this;
+    var user = sessionStorage.getItem("access-user");
+    if (user) {
+      _self.clientPermission = sessionStorage.getItem(
+        "access-clientPermission"
+      );
+    }
+    _self.refreshCount();
+    //定时刷新数量
+    _self.$nextTick(function() {
+      setInterval(_self.refreshCount, 10000);
+    });
+  },
+  methods: {
+    // 刷新数量
+    refreshCount() {
+      this.refreshTodo();
+    },
+    // 刷新待办数量
+    refreshTodo() {
+      let _self = this;
+      _self.loading = true;
+      axios.get("/workflow/getMyAllTodoCount")
+        .then(function(response) {
+          _self.todoCount = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+  }
 };
 </script>
 

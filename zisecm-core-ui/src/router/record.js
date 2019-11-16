@@ -1,7 +1,4 @@
-var recordRouter = {
-	routers: [
-	]
+export const recordRouter = {
+	
 }
 
-
-export default recordRouter;
