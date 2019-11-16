@@ -154,7 +154,7 @@ export default {
   created() {
     let _self = this;
     _self.loading = true;
-    axios.get("/admin/getFolder")
+    axios.post("/admin/getFolder",0)
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.loading = false;
@@ -165,7 +165,7 @@ export default {
       });
 
       _self.loading = true;
-      axios.get('/admin/getType')
+      axios.post('/admin/getType')
       .then(function(response) {
         _self.typeList = response.data.data;
         _self.loading = false;
@@ -198,7 +198,7 @@ export default {
     refreshData() {
     let _self = this;
     _self.loading = true;
-    axios.get("/admin/getFolder",0)
+    axios.post("/admin/getFolder",0)
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.loading = false;
@@ -226,7 +226,7 @@ export default {
       if(indata.extended == false)
       {
         _self.loading = true;
-        axios.get("/admin/getFolder",indata.id)
+        axios.post("/admin/getFolder",indata.id)
         .then(function(response) {
           // _self.$message("获取子节点成功!");
           indata.children = response.data.data;

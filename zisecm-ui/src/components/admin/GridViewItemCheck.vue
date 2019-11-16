@@ -88,7 +88,7 @@ export default {
       _self.loading = true;
       
       //alert(_self.parentid);
-      axios.get('/admin/getGridViewItem',_self.parentgridid)
+      axios.post('/admin/getGridViewItem',_self.parentgridid)
         .then(function(response) {
           _self.gridList = response.data.data;
           _self.loading = false;

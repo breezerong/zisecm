@@ -182,3 +182,7 @@ img {
     padding: 0px 0px;
     padding-left: 106px;
 }
+
+body .el-table th.gutter{
+  display: table-cell!important;
+}

@@ -1,6 +1,6 @@
 <template>
   <div>
-        <el-dialog :title="dialogtitle" :visible.sync="dialogVisible">
+        <el-dialog :title="dialogtitle" :visible.sync="dialogVisible" width="60%">
           <el-form :model="form" label-position="right" label-width="100px">
             <el-row >
               <el-col :span="12" >
@@ -20,7 +20,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="确认密码" :label-width="formLabelWidth" :rules="[{ required: (form.loginType>1) || (form.loginType==1 && form.password==form.passwordConfirm), message: '确认密码不匹配', trigger: 'blur'}]">
-                  <el-input v-model="form.passwordConfirm" auto-complete="off" :disabled="clientPermission<form.clientPermission"></el-input>
+                  <el-input  type="password" v-model="form.passwordConfirm" auto-complete="off" :disabled="clientPermission<form.clientPermission"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -34,7 +34,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12" >
-                <el-form-item label="登录类型" style="width:18em" :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
+                <el-form-item label="登录类型"  style="float:left;" :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
                   <el-select v-model="form.loginType" :disabled="clientPermission<form.clientPermission">
                     <div  v-for="item in loginOptions">
                       <el-option
@@ -47,9 +47,9 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="客户端权限" :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
+                <el-form-item label="客户端权限" style="float:left;" :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
                  
-                    <el-select v-model="form.clientPermission" style="width:18em" :disabled="clientPermission<form.clientPermission">
+                    <el-select v-model="form.clientPermission"  :disabled="clientPermission<form.clientPermission">
                       <div v-for="item in clientOptions">
                         <div v-if="item.value<=clientPermission">
                           <el-option
@@ -63,8 +63,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12" v-if="clientPermission>4">
-                <el-form-item label="系统权限"  :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
-                  <el-select style="width:18em"  v-model="form.systemPermission" :disabled="clientPermission<form.clientPermission">
+                <el-form-item label="系统权限" style="float:left;" :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
+                  <el-select  v-model="form.systemPermission" :disabled="clientPermission<form.clientPermission">
                     <div  v-for="item in sysOptions">
                      <el-option
                         :label="item.label"
@@ -76,7 +76,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12" >
-                <el-form-item label="是否启用" :label-width="formLabelWidth2">
+                <el-form-item label="是否启用" style="float:left;" :label-width="formLabelWidth">
                   <el-select v-model="form.isActived" :disabled="clientPermission<form.clientPermission">
                     <el-option label="否" :value="false"></el-option>
                     <el-option label="是" :value="true"></el-option>
@@ -84,7 +84,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="默认组" :label-width="formLabelWidth2">
+                <el-form-item label="默认组" :label-width="formLabelWidth">
                   <el-input :autosize="true" v-model="form.groupName" :disabled="clientPermission<form.clientPermission"></el-input>
                 </el-form-item>
               </el-col>
@@ -427,6 +427,7 @@ export default {
       this.dialogtitle = "编辑用户";
       this.isReadOnly = true;
       this.form = indata;
+      this.form.passwordConfirm = indata.password+'';
       //this.form.passwordConfirm = this.form.password+"";
       this.dialogVisible = true;
       this.fileList = [];
