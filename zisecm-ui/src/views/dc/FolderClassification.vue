@@ -266,14 +266,7 @@ export default {
     }
     _self.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     _self.loading = true;
-    _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: 0,
-        url: "/admin/getFolder"
-      })
+    axios.post("/admin/getFolder",0)
       .then(function(response) {
         _self.dataList = response.data.data;
         //console.log(JSON.stringify(_self.dataList));
@@ -371,14 +364,7 @@ export default {
       var m = new Map();
       m.set('gridName',indata.gridView);
       m.set('lang',_self.currentLanguage);
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'post',
-        data: JSON.stringify(m),
-        url: "/dc/getGridViewInfo"
-      })
+      axios.post("/dc/getGridViewInfo",JSON.stringify(m))
         .then(function(response) {
           _self.showFields = [];
           _self.gridList = response.data.data;
@@ -451,15 +437,7 @@ export default {
     refreshFolderData() {
       let _self = this;
       _self.loading = true;
-      _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: 0,
-        url: "/admin/getFolder"
-      })
+      axios.post("/admin/getFolder",0)
       .then(function(response) {
         _self.dataList = response.data.data;
         console.log(_self.dataList);
@@ -479,15 +457,7 @@ export default {
       if(indata.extended == false)
       {
         _self.loading = true;
-        _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: indata.id,
-          url: "/admin/getFolder"
-        })
+        axios.post("/admin/getFolder",indata.id)
         .then(function(response) {
           indata.children = response.data.data;
           //console.log(JSON.stringify(indata));
@@ -563,15 +533,7 @@ export default {
       for(i in tab){
         m.push(tab[i]["ID"]);
       }
-      console.log(JSON.stringify(m));
-      _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/delDocument"
-        })
+      axios.post("/dc/delDocument",JSON.stringify(m))
         .then(function(response) {
           _self.loadGridData(_self.currentFolder);
           _self.$message(_self.$t("message.deleteSuccess"));
@@ -597,7 +559,7 @@ export default {
       _self.imageArray = [];
       _self.currentType = indata.FORMAT_NAME;
       // 拦截器会自动替换成目标url
-      _self.imageArray[0] =  "/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
+      _self.imageArray[0] =  "/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
       if(_self.currentType == "pdf"){
          window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
       }else{
@@ -616,15 +578,7 @@ export default {
       }
       else
       {
-        _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/updateFolder"
-        })
+        axios.post("/admin/updateFolder",JSON.stringify(indata))
         .then(function(response) {
           _self.$message(_self.$t("message.saveSuccess"));
           _self.folderDialogVisible = false;
@@ -637,15 +591,7 @@ export default {
     // 删除文件夹
     delFolder() {
       let _self = this;
-      _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(_self.currentFolder),
-          url: "/admin/deleteFolder"
-        })
+      axios.post("/admin/deleteFolder",JSON.stringify(_self.currentFolder))
         .then(function(response) {
           if(response.data.code==1)
           {
@@ -717,16 +663,7 @@ export default {
     // 新建文件夹
     newFolder(indata) {
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/newFolder"
-        })
+      axios.post("/admin/newFolder",JSON.stringify(indata))
         .then(function(response) {
           _self.folderDialogVisible = false;
           _self.currentFolder.children = [];
@@ -740,16 +677,7 @@ export default {
     //复制文档
     copyItem(indata) {
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/copyFolder"
-        })
+      axios.post("/admin/copyFolder",JSON.stringify(indata))
         .then(function(response) {
           _self.$message(_self.$t("message.copySuccess"));
           _self.dialogVisible = false;
