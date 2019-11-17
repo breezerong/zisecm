@@ -12,6 +12,8 @@ public class EcmQuery extends EcmSysObject{
     private String valueColumn;
 
     private String sqlString;
+    
+    private String dependNames;
 
     public String getLabelColumn() {
         return labelColumn;
@@ -36,4 +38,12 @@ public class EcmQuery extends EcmSysObject{
     public void setSqlString(String sqlString) {
         this.sqlString = sqlString == null ? null : sqlString.trim();
     }
+
+	public String getDependNames() {
+		return dependNames;
+	}
+
+	public void setDependNames(String dependNames) {
+		this.dependNames = dependNames;
+	}
 }
