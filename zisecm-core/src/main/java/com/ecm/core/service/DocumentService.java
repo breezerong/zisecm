@@ -868,8 +868,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				content.createId();
 				content.setParentId(id);
 				if (StringUtils.isEmpty(content.getStoreName())) {
-					content.setStoreName(CacheManagerOper.getEcmStores().get(doc.getTypeName()).getName());
-				}
+				    content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
+				   }
+				
 				contentService.newObject(token, content);
 			}
 			updateModifyInfo(token, id);

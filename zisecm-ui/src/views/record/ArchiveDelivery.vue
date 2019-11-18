@@ -131,10 +131,10 @@
                     <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('图册',selectTransferRow)">{{$t('application.newVolume')}}</el-button>
                     <el-button type="primary" icon="el-icon-edit"  @click="typeSelectVisible=true">{{$t('application.newDocument')}}</el-button>
 
-                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
-                    <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
-                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button>
-                    <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button>
+                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')}}</el-button>
+                    <!-- <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
+                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button> -->
+                    <!-- <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button> -->
                     <el-button type="primary" icon="el-icon-printer" @click="printVolumesVisible = true">{{$t('application.PrintVolumes')}}</el-button>
                   
                   </td>
@@ -172,11 +172,13 @@
                     </div>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
-                      <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button>
+                      <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
                       <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
-                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
-                      <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.addReuseFile')"  @click="autoPaper()">{{$t('application.addReuseFile')}}</el-button>
                       
+                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button>
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
@@ -265,6 +267,7 @@ export default {
       selectedOutItems: [],
       selectedInnerItems:[],
       childrenTypes:[],
+      uploadUrl:"",
       selectedChildrenType:"",
       childrenTypeSelectVisible:false,
       tableHeight: window.innerHeight - 508,
@@ -1511,7 +1514,7 @@ export default {
         datatype: 'json',
         method: 'post',
         data: formdata,
-        url: '/dc/mountFile'
+        url: _self.uploadUrl
       })
       .then(function(response) {
         _self.importdialogVisible = false;
