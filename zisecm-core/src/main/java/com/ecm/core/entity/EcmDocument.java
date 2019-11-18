@@ -104,6 +104,13 @@ public class EcmDocument extends EcmSysObject{
     public String getLifecycleName() {
 		return lifecycleName;
 	}
+    
+    public void setName(String name) {
+		super.setName(name);
+		if(attributes!=null) {
+			attributes.put("NAME", name);
+		}
+	}
 
 	public void setLifecycleName(String lifecycleName) {
 		this.lifecycleName = lifecycleName;

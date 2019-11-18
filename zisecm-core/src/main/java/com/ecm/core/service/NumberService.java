@@ -67,10 +67,12 @@ public class NumberService extends EcmService {
 			}
 			if(!StringUtils.isEmpty(cond)) {
 				if(conditionExcute(values,cond)) {
-					createNumber(token, values, numPolicy,startIndex);
+					num = createNumber(token, values, numPolicy,startIndex);
+					break;
 				}
 			}else if(policyList.size()==1){
-				createNumber(token, values, numPolicy,startIndex);
+				num = createNumber(token, values, numPolicy,startIndex);
+				break;
 			}
 		}
 		return num;
@@ -139,11 +141,12 @@ public class NumberService extends EcmService {
 			EcmDocument doc = new EcmDocument();
 			doc.setTypeName("取号流水号");
 			doc.setName(prefix);
+			doc.setSubType(typeName);
 			doc.getAttributes().put("C_COUNT1", currentIndex);
 			doc.setFolderId(fld.getId());
 			documentService.newObject(token, doc, null);
 		}
-		String num = String.format("%d"+numberLen,currentIndex);
+		String num = String.format("%0"+numberLen+"d",currentIndex);
 		return prefix.replace(numberStr, num);
 	}
 	/**
