@@ -116,7 +116,7 @@ public class NumberService extends EcmService {
 				prefix += getCoding( val,queryName);
 			}
 			else if(str.startsWith("FUN_DesignPhase")) {
-				String subType = (String)values.get("SUB_TYPE");
+				String subType = (String)values.get("OBJECT_TYPE");
 				String phase = (String)values.get("C_PHASE");
 				prefix += getDesignPhase(token, subType, phase);
 			}
@@ -156,7 +156,7 @@ public class NumberService extends EcmService {
 	 * @return
 	 */
 	private String getCoding(String val,String queryName) {
-		String sql = "SELECT LABEL_COLUMN, VALUE_COLUMN, SQL_STRING, ID, DEPEND_NAMES" + 
+		String sql = "SELECT LABEL_COLUMN, VALUE_COLUMN, SQL_STRING, ID, DEPEND_NAMES " + 
 				"FROM ecm_query where NAME='"+queryName+"'";
 		List<Map<String, Object>> qList = ecmQuery.executeSQL(sql);
 		if(qList.size()>0) {
@@ -186,9 +186,9 @@ public class NumberService extends EcmService {
 		String path = "/系统配置/设计阶段/"+subType;
 		EcmFolder folder = folderService.getObjectByPath(token, path);
 		String condition = "FOLDER_ID='"+folder.getId()+"' and NAME='"+phase+"'";
-		List<EcmDocument> docList = documentService.getObjects(token, condition);
+		List<Map<String,Object>> docList = documentService.getObjectMap(token, condition);
 		if(docList.size()>0) {
-			return docList.get(0).getCoding();
+			return (String)docList.get(0).get("CODING");
 		}
 		return "";
 	}
