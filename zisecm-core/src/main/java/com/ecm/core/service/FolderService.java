@@ -42,6 +42,37 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	public String newObject(String token,Object obj) {
 		EcmFolder folder =(EcmFolder)obj;
 		folder.createId();
+		String parentId = folder.getParentId();
+		//设置继承字段
+		if(!StringUtils.isEmpty(parentId)&&!parentId.equals("0")){
+			EcmFolder parentFolder = null;
+			if(StringUtils.isEmpty(folder.getAclName())){
+				if(parentFolder==null) {
+					parentFolder = this.getObjectById(token, parentId);
+				
+				}
+				if(parentFolder !=null) {
+					folder.setAclName(parentFolder.getAclName());
+				}
+			}
+			if(StringUtils.isEmpty(folder.getGridView())){
+				if(parentFolder==null) {
+					parentFolder = this.getObjectById(token, parentId);
+				
+				}
+				if(parentFolder !=null) {
+					folder.setGridView(parentFolder.getGridView());
+				}
+			}
+			if(StringUtils.isEmpty(folder.getTypeName())){
+				if(parentFolder==null) {
+					parentFolder = this.getObjectById(token, parentId);
+				}
+				if(parentFolder !=null) {
+					folder.setTypeName(parentFolder.getTypeName());
+				}
+			}
+		}
 		folder.setFolderPath(getFullPath(token,folder,folder.getName()));
 		ecmFolderMapper.insert(folder);
 		return folder.getId();
@@ -97,7 +128,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	 * @param path
 	 * @return
 	 */
-	private String getFullPath(String token,EcmFolder folder,String path) {
+	public String getFullPath(String token,EcmFolder folder,String path) {
 		if(StringUtils.isEmpty(folder.getParentId())||folder.getParentId().equals("0")) {
 			return "/"+path;
 		}
@@ -142,7 +173,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 			EcmFolder folder = getObjectById( token,sourceId);
 			folder.createId();
 			folder.setParentId(targetId);
-			ecmFolderMapper.insert(folder);
+			this.newObject(token, folder);
 			copyChildFolders(token,sourceId, folder.getId());
 		}else {
 			copyChildFolders(token,sourceId, targetId);
@@ -156,7 +187,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 			String id = folder.getId();
 			folder.createId();
 			folder.setParentId(targetId);
-			ecmFolderMapper.insert(folder);
+			this.newObject(token, folder);
 			copyChildFolders(token, id,  folder.getId());
 		}
 	}

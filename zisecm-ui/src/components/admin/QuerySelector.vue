@@ -57,39 +57,14 @@ export default {
       loading: false
     };
   },
-   created(){ 
-     
-    let _self = this;
-    _self.loading = true;
-    _self.axios({
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      },
-      method: 'get',
-      url: '/zisecm/admin/getQuery'
-    })
-      .then(function(response) {
-        _self.dataListFull = response.data.data;
-        _self.dataList = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-
-    },
+   mounted(){ 
+    this.refreshData();
+  },
   methods: {
     refreshData() {
       let _self = this;
       _self.loading = true;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'get',
-        url: '/zisecm/admin/getQuery'
-      })
+      axios.get('/admin/getQuery')
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;

@@ -67,10 +67,12 @@ public class NumberService extends EcmService {
 			}
 			if(!StringUtils.isEmpty(cond)) {
 				if(conditionExcute(values,cond)) {
-					createNumber(token, values, numPolicy,startIndex);
+					num = createNumber(token, values, numPolicy,startIndex);
+					break;
 				}
 			}else if(policyList.size()==1){
-				createNumber(token, values, numPolicy,startIndex);
+				num = createNumber(token, values, numPolicy,startIndex);
+				break;
 			}
 		}
 		return num;
@@ -114,7 +116,7 @@ public class NumberService extends EcmService {
 				prefix += getCoding( val,queryName);
 			}
 			else if(str.startsWith("FUN_DesignPhase")) {
-				String subType = (String)values.get("SUB_TYPE");
+				String subType = (String)values.get("OBJECT_TYPE");
 				String phase = (String)values.get("C_PHASE");
 				prefix += getDesignPhase(token, subType, phase);
 			}
@@ -139,11 +141,12 @@ public class NumberService extends EcmService {
 			EcmDocument doc = new EcmDocument();
 			doc.setTypeName("取号流水号");
 			doc.setName(prefix);
+			doc.setSubType(typeName);
 			doc.getAttributes().put("C_COUNT1", currentIndex);
 			doc.setFolderId(fld.getId());
 			documentService.newObject(token, doc, null);
 		}
-		String num = String.format("%d"+numberLen,currentIndex);
+		String num = String.format("%0"+numberLen+"d",currentIndex);
 		return prefix.replace(numberStr, num);
 	}
 	/**
@@ -153,7 +156,7 @@ public class NumberService extends EcmService {
 	 * @return
 	 */
 	private String getCoding(String val,String queryName) {
-		String sql = "SELECT LABEL_COLUMN, VALUE_COLUMN, SQL_STRING, ID, DEPEND_NAMES" + 
+		String sql = "SELECT LABEL_COLUMN, VALUE_COLUMN, SQL_STRING, ID, DEPEND_NAMES " + 
 				"FROM ecm_query where NAME='"+queryName+"'";
 		List<Map<String, Object>> qList = ecmQuery.executeSQL(sql);
 		if(qList.size()>0) {
@@ -183,9 +186,9 @@ public class NumberService extends EcmService {
 		String path = "/系统配置/设计阶段/"+subType;
 		EcmFolder folder = folderService.getObjectByPath(token, path);
 		String condition = "FOLDER_ID='"+folder.getId()+"' and NAME='"+phase+"'";
-		List<EcmDocument> docList = documentService.getObjects(token, condition);
+		List<Map<String,Object>> docList = documentService.getObjectMap(token, condition);
 		if(docList.size()>0) {
-			return docList.get(0).getCoding();
+			return (String)docList.get(0).get("CODING");
 		}
 		return "";
 	}
