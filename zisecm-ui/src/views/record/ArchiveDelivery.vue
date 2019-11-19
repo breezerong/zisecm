@@ -1,6 +1,14 @@
 <template>
   <div>
     
+    <el-dialog title="添加复用文件" :visible.sync="reuseVisible" width="70%">
+      <AddReuse ref="addReuseModel"></AddReuse>
+      <div slot="footer" class="dialog-footer">
+            <el-button @click="reuseVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
+          </div>
+    </el-dialog>
+
     <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
           
           <el-form size="mini" :label-width="formLabelWidth">
@@ -131,10 +139,10 @@
                     <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('图册',selectTransferRow)">{{$t('application.newVolume')}}</el-button>
                     <el-button type="primary" icon="el-icon-edit"  @click="typeSelectVisible=true">{{$t('application.newDocument')}}</el-button>
 
-                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
-                    <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
-                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button>
-                    <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button>
+                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')}}</el-button>
+                    <!-- <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
+                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button> -->
+                    <!-- <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button> -->
                     <el-button type="primary" icon="el-icon-printer" @click="printVolumesVisible = true">{{$t('application.PrintVolumes')}}</el-button>
                   
                   </td>
@@ -172,11 +180,13 @@
                     </div>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
-                      <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button>
+                      <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
                       <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
-                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
-                      <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.addReuseFile')"  @click="reuseVisible=true">{{$t('application.addReuseFile')}}</el-button>
                       
+                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button>
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
@@ -205,6 +215,7 @@ import 'url-search-params-polyfill'
 
 import PrintPage from '@/views/record/PrintPage'
 import PrintVolumes from '@/views/record/PrintVolumes'
+import AddReuse from '@/views/record/AddReuse'
 export default {
   name: "ArchiveDelivery",
   
@@ -231,6 +242,7 @@ export default {
       transferDataListFull:[],
       selectedTypeName:[],
       transferCount:0,
+      reuseVisible:false,
       typeName:'卷盒',
       folderPath:'/表单/移交单',
       selectTransferRow:[],
@@ -265,6 +277,7 @@ export default {
       selectedOutItems: [],
       selectedInnerItems:[],
       childrenTypes:[],
+      uploadUrl:"",
       selectedChildrenType:"",
       childrenTypeSelectVisible:false,
       tableHeight: window.innerHeight - 508,
@@ -275,6 +288,7 @@ export default {
       imageViewer: Object,
       currentType:"",
       orderBy:"",
+      selectedReuses:[],
       columnsInfo:{
         checkAll: true,
         checkedCities:[],
@@ -345,6 +359,43 @@ export default {
     this.loadTransferGridData();
   },
   methods: {
+    addReuseToVolume(){
+      let _self=this;
+      _self.selectedReuses= _self.$refs.addReuseModel.selectedRow;
+
+      var params = new Map();
+      var m = [];
+      let tab = _self.selectedReuses;
+      
+      var i;
+      for(i in tab){
+        m.push(tab[i]["ID"]);
+      }
+      params.set("cids",m)
+      params.set("id",_self.archiveId);
+      console.log(JSON.stringify(m));
+      _self.axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(params),
+          url: "/dc/addReuseToVolume"
+        })
+        .then(function(response) {
+          _self.loadGridData(null);
+           
+            _self.showInnerFile(null);
+            _self.reuseVisible=false;
+          _self.$message(_self.$t("message.deleteSuccess"));
+        })
+        .catch(function(error) {
+          _self.$message(_self.$t("message.deleteFailured"));
+          console.log(error);
+      });
+      
+
+    },
 
     getTypeNames(keyName){
       let _self=this;
@@ -1511,7 +1562,7 @@ export default {
         datatype: 'json',
         method: 'post',
         data: formdata,
-        url: '/dc/mountFile'
+        url: _self.uploadUrl
       })
       .then(function(response) {
         _self.importdialogVisible = false;
@@ -1587,8 +1638,8 @@ export default {
     ShowProperty: ShowProperty,
     PrintPage:PrintPage,
     PrintVolumes:PrintVolumes,
-    DataGrid:DataGrid
-    
+    DataGrid:DataGrid,
+    AddReuse:AddReuse    
     //Prints:Prints
   }
 };

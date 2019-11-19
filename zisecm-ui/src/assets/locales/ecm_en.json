@@ -114,6 +114,7 @@
     "PrintCover":"Print the cover",
     "PrintVolumes":"Print Volumes",
     "createDocument":"Create Document",
+    "addReuseFile":"Add Reuse File",
     "restore":"Restore",
     "export":"Export",
     "completely":"Completely",

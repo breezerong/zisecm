@@ -406,7 +406,210 @@ public class EcmDocument extends EcmSysObject{
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
-
+	
+	public Object getAttributeValue(String key) {
+		Object result=null;
+		switch (key.toUpperCase()) {
+		case "ID":
+			result=this.getId();
+			break;
+		case "TITLE":
+			result=this.getTitle();
+			break;
+		case "NAME":
+			result=this.getName();
+			break;
+		case "REVISION":
+			result=this.getRevision();
+			break;
+		case "CODING":
+			result=this.getCoding();
+			break;
+		case "FOLDER_ID":
+			result=this.getFolderId();
+			break;
+		case "STATUS":
+			result=this.getStatus();
+			break;
+		case "TYPE_NAME":
+			result=this.getTypeName();
+			break;
+		case "FORMAT_NAME":
+			result=this.getFormatName();
+			break;
+		case "CONTENT_SIZE":
+			result=this.getContentSize();
+			break;
+		case "ATTACHMENT_COUNT":
+			result=this.getAttachmentCount();
+			break;
+		case "SUB_TYPE":
+			result=this.getSubType();
+			break;
+		case "OBJECT_TYPE":
+			result=this.getObjectType();
+			break;
+		case "OWNER_NAME":
+			result=this.getOwnerName();
+			break;
+		case "VERSION_ID":
+			result=this.getVersionId();
+			break;
+		case "SYSTEM_VERSION":
+			result=this.getSystemVersion();
+	    
+			break;
+		case "CREATION_DATE":
+			result=this.getCreationDate();
+			break;
+		case "MODIFIER":
+			result=this.getModifier();
+			break;
+		case "MODIFIED_DATE":
+			result=this.getModifiedDate();
+			break;
+		case "CREATOR":
+			result=this.getCreator();
+			break;
+		case "ACL_NAME":
+			result=this.getAclName();
+			break;
+		case "IS_HIDDEN":
+			result=this.isHidden();
+			break;
+		case "IS_CURRENT":
+			result=this.isCurrent();
+			break;
+		case "LOCK_OWNER":
+			result=this.getLockOwner();
+			break;
+		case "LOCK_DATE":
+			result=this.getLockDate();
+			break;
+		case "LOCK_CLIENT":
+			result=this.getLockClient();
+			break;
+		case "LIFECYCLE_NAME":
+			result=this.getLifecycleName();
+			break;
+		case "LIFECYCLE_STATUS":
+			result=this.getLifecycleStatus();
+			break;
+		case "LIFECYCLE_DIR":
+			result=this.getLifecycleDir();
+	    	
+			break;
+		default:
+			attributes.get(key.toUpperCase());
+			break;
+		}
+		return result;
+	}
+	
+	public void addAttribute(String key,Object value) {
+		
+		if(this.attributes==null) {
+			this.attributes=new HashMap<String, Object>();
+		}
+		
+		switch (key.toUpperCase()) {
+		case "ID":
+			this.setId(getString(value));
+			break;
+		case "TITLE":
+			this.setTitle(getString(value));
+			break;
+		case "NAME":
+			this.setName(getString(value));
+			break;
+		case "REVISION":
+			this.setRevision(getString(value));
+			break;
+		case "CODING":
+			this.setCoding(getString(value));
+			break;
+		case "FOLDER_ID":
+			this.setFolderId(getString(value));
+			break;
+		case "STATUS":
+			this.setStatus(getString(value));
+			break;
+		case "TYPE_NAME":
+			this.setTypeName(getString(value));
+			break;
+		case "FORMAT_NAME":
+			this.setFormatName(getString(value));
+			break;
+		case "CONTENT_SIZE":
+			this.setContentSize(value==null?0:Long.parseLong(getString(value)));
+			break;
+		case "ATTACHMENT_COUNT":
+			this.setAttachmentCount(value==null?0:Integer.parseInt(getString(value)));
+			break;
+		case "SUB_TYPE":
+			this.setSubType(getString(value));
+			break;
+		case "OBJECT_TYPE":
+			this.setObjectType(getString(value));
+			break;
+		case "OWNER_NAME":
+			this.setOwnerName(getString(value));
+			break;
+		case "VERSION_ID":
+			this.setVersionId(getString(value));
+			break;
+		case "SYSTEM_VERSION":
+			this.setSystemVersion(value==null?0:Double.parseDouble(getString(value)));
+	    
+			break;
+		case "CREATION_DATE":
+			this.setCreationDate((Date)value);
+			break;
+		case "MODIFIER":
+			this.setModifier(getString(value));
+			break;
+		case "MODIFIED_DATE":
+			this.setModifiedDate((Date)value);
+			break;
+		case "CREATOR":
+			this.setCreator(getString(value));
+			break;
+		case "ACL_NAME":
+			this.setAclName(getString(value));
+			break;
+		case "IS_HIDDEN":
+			this.setHidden(value==null?false:getString(value).equals("1"));
+			break;
+		case "IS_CURRENT":
+			this.setCurrent(value==null?true:value.toString().equals("1"));
+			break;
+		case "LOCK_OWNER":
+			this.setLockOwner(getString(value));
+			break;
+		case "LOCK_DATE":
+			this.setLockDate((Date)value);
+			break;
+		case "LOCK_CLIENT":
+			this.setLockClient(getString(value));
+			break;
+		case "LIFECYCLE_NAME":
+			this.setLifecycleName(getString(value));
+			break;
+		case "LIFECYCLE_STATUS":
+			this.setLifecycleStatus(getString(value));
+			break;
+		case "LIFECYCLE_DIR":
+			try {
+	    		this.setLifecycleDir(Integer.parseInt(getString(value)));
+	    	}catch(Exception ex){}
+			break;
+		default:
+			attributes.put(key.toUpperCase(), value);
+			break;
+		}
+		
+	}
+	
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 		this.setId(getString(attributes.get("ID")));
