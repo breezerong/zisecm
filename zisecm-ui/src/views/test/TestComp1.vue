@@ -1,5 +1,11 @@
 <template>
   <div>
+     <el-dialog title="批量导入文档" :visible.sync="importDialogVisible" width="60%" >
+        <ImportDocument ref="ImportDocument"  @onImported="onImported" width="100%" v-bind:deliveryId="deliveryId"></ImportDocument>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="importDialogVisible=false" size="medium">关闭</el-button>
+         </div>
+      </el-dialog>
     <el-form label-width="120px" @submit.native.prevent>
       <el-row>
          <el-col :span="8">
@@ -72,13 +78,64 @@
          </el-col>
       </el-row>
     </el-form>
+    <el-form label-width="120px" @submit.native.prevent>
+       <el-row>
+         <el-col :span="8">
+          批量导入
+         </el-col>
+      </el-row>
+      <el-row>
+        <el-input type="text"  v-model="deliveryId" ></el-input>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="Excel文件">
+            <el-upload
+              :limit="1"
+              :file-list="fileList1" 
+              action=""
+              :on-change="handleChange1"
+              :auto-upload="false"
+              :multiple="false">
+              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            </el-upload>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="电子文件">
+             <el-upload
+              :limit="100"
+              :file-list="fileList2" 
+              action=""
+              :on-change="handleChange2"
+              :auto-upload="false"
+              :multiple="true">
+              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            </el-upload>
+          </el-form-item>
+        </el-col>
+         <el-col :span="8">
+           <el-button type="primary" plain icon="save" @click="batchImport()">导入</el-button> 
+           <el-button type="primary" plain icon="save" @click="importDialogVisible=true">批量导入</el-button> 
+         </el-col>
+      </el-row>
+      <el-row>
+         <el-col>
+           <el-input type="textarea" :rows="6" v-model="importMessage"></el-input>
+         </el-col>
+      </el-row>
+    </el-form>
   </div>
 </template>
 
 <script type="text/javascript">
+import ImportDocument from '@/components/controls/ImportDocument'
 
 export default {
   name: "TestComp1",
+  components: {
+    ImportDocument:ImportDocument
+  },
   permit: 1,
   data() {
     return {
@@ -95,7 +152,12 @@ export default {
         id:"",
         result:""
       },
-      formLabelWidth: "120px"
+      fileList1:[],
+      fileList2:[],
+      importMessage:"",
+      deliveryId:"",
+      formLabelWidth: "120px",
+      importDialogVisible: false
     };
   },
   methods: {
@@ -133,6 +195,38 @@ export default {
         console.log(error);
         _self.loading = false;
       });
+    },
+    handleChange1(file, fileList){
+      this.fileList1 = fileList;
+    },
+    handleChange2(file, fileList){
+      this.fileList2 = fileList;
+    },
+    batchImport(){
+      let _self = this;
+      let formdata = new FormData();
+      let m = new Map();
+      m.set("id",_self.deliveryId);
+      formdata.append("metaData",JSON.stringify(m));
+      formdata.append("excel",_self.fileList1[0].raw);
+      _self.fileList2.forEach(function (file) {
+          formdata.append("files", file.raw, file.name);
+      });
+      _self.loading =true;
+       axios.post("/import/batchImport",formdata,{
+            'Content-Type': 'multipart/form-data'
+          })
+        .then(function(response) {
+          _self.importMessage = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          _self.$message("导入失败!");
+          console.log(error);
+        });
+    },
+    onImported(){
+      console.log("onImported");
     }
   }
 };

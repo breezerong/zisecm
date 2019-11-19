@@ -1,0 +1,165 @@
+<template>
+  <el-form label-width="120px" @submit.native.prevent>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="导入模板">
+          <el-select v-model="selectedTemplate">
+            <div v-for="(item,idx) in templateData" :key="idx">
+              <el-option :label="item.NAME" :value="item.ID" :key="idx+10"></el-option>
+            </div>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">下载模板</el-button>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始导入</el-button>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="8">
+        <el-form-item label="Excel文件">
+          <el-upload
+            :limit="1"
+            :file-list="fileList1"
+            action
+            :on-change="handleChange1"
+            :auto-upload="false"
+            :multiple="false"
+          >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-col>
+      <el-col :span="8">
+        <el-form-item label="电子文件">
+          <el-upload
+            :limit="100"
+            :file-list="fileList2"
+            action
+            :on-change="handleChange2"
+            :auto-upload="false"
+            :multiple="true"
+          >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col>
+        <el-input type="textarea" :rows="6" v-model="importMessage"></el-input>
+      </el-col>
+    </el-row>
+  </el-form>
+</template>
+
+<script type="text/javascript">
+export default {
+  name: "ImportDocument",
+  data() {
+    return {
+      fileList1: [],
+      fileList2: [],
+      importMessage: "",
+      templateData:[],
+      selectedTemplate:"",
+      formLabelWidth: "120px"
+    };
+  },
+  mounted() {
+    this.loadTemplate();
+  },
+  props: {
+    deliveryId: { type: [String], required: true }
+  },
+  methods: {
+    loadTemplate(){
+      let _self = this;
+      _self.loading = true;
+      axios.get("/import/getImportTemplates").then(function(response) {
+          _self.templateData = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          _self.$message("读取模板失败!");
+          console.log(error);
+        });
+    },
+    downloadTemplate(){
+      let _self = this;
+      if(_self.deliveryId==null || _self.deliveryId.length==0){
+        _self.$message("请选择移交单导入!");
+        return;
+      }
+      if(_self.selectedTemplate==null || _self.selectedTemplate.length==0){
+        _self.$message("请选择模板!");
+        return;
+      }
+      // 拦截器会自动替换成目标url
+      let url = "/zisecm/dc/getContent?id="+_self.selectedTemplate+"&token="+sessionStorage.getItem('access-token');
+      window.open(url);
+    },
+    handleChange1(file, fileList) {
+      this.fileList1 = fileList;
+    },
+    handleChange2(file, fileList) {
+      this.fileList2 = fileList;
+    },
+    batchImport() {
+      let _self = this;
+      if (_self.fileList1 == null || _self.fileList1.length == 0||_self.fileList1[0].raw==null) {
+        _self.$message("请选择导入Excel文件!");
+        return;
+      }
+      if(_self.deliveryId==null || _self.deliveryId.length==0){
+         _self.$message("请选择移交单导入!");
+        return;
+      }
+      let formdata = new FormData();
+      let m = new Map();
+      m.set("id", _self.deliveryId);
+      formdata.append("metaData", JSON.stringify(m));
+      formdata.append("excel", _self.fileList1[0].raw);
+      _self.fileList2.forEach(function(file) {
+        formdata.append("files", file.raw, file.name);
+      });
+      _self.loading = true;
+      axios
+        .post("/import/batchImport", formdata, {
+          "Content-Type": "multipart/form-data"
+        })
+        .then(function(response) {
+          _self.importMessage = response.data.data;
+          _self.loading = false;
+          _self.$emit("onImported");
+        })
+        .catch(function(error) {
+          _self.$message("导入失败!");
+          console.log(error);
+        });
+    }
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+h1,
+h2 {
+  font-weight: normal;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #42b983;
+}
+</style>
