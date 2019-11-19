@@ -187,6 +187,8 @@
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button>
+                      <el-button type="primary" plain size="small" title="上移"  @click="onMoveUp()">上移</el-button>
+                      <el-button type="primary" plain size="small" title="下移"  @click="onMoveDown()">下移</el-button>
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
@@ -387,10 +389,10 @@ export default {
            
             _self.showInnerFile(null);
             _self.reuseVisible=false;
-          _self.$message(_self.$t("message.deleteSuccess"));
+          _self.$message("添加成功！");
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.deleteFailured"));
+          _self.$message("添加失败！");
           console.log(error);
       });
       
@@ -557,8 +559,73 @@ export default {
     },
     selectInnerChange(val){
       this.selectedInnerItems = val;
-    }
-    ,
+    },
+    onMoveUp(){
+      let _self=this;
+      if(_self.selectedInnerItems.length!=1){
+         _self.$message("请选择一条数据！");
+        return;
+      }
+      var m = new Map();
+      m.set('parentId',_self.archiveId);
+      m.set('childId',_self.selectedInnerItems[0].ID);
+       _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/moveUp"
+      })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.showInnerFile(null);
+          }
+          else{
+             _self.$message( response.data.message);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    onMoveDown(){
+      let _self=this;
+      if(_self.selectedInnerItems.length!=1){
+         _self.$message("请选择一条数据！");
+        return;
+      }
+      var m = new Map();
+      m.set('parentId',_self.archiveId);
+      m.set('childId',_self.selectedInnerItems[0].ID);
+       _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/moveDown"
+      })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.showInnerFile(null);
+          }
+          else{
+             _self.$message( response.data.message);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
     sortchange(column){
       console.log(JSON.stringify(column));
       console.log(column.column.property);
@@ -1277,11 +1344,7 @@ export default {
       
       var i;
       for(i in tab){
-        if(tab[i]["C_LOCK_STATUS"]==="已封卷")
-        {
-          _self.$message("案卷："+tab[i]["CODING"]+"已封卷不允许删除！");
-          return;
-        }
+        
         m.push(tab[i]["ID"]);
       }
       console.log(JSON.stringify(m));
@@ -1361,7 +1424,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/dc/delDocument"
+          url: "/dc/delDocumentAndRelation"
         })
         .then(function(response) {
           _self.showInnerFile(null);

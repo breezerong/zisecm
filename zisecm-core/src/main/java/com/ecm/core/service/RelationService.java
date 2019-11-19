@@ -44,6 +44,10 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 		// TODO Auto-generated method stub
 		return ecmRelationMapper.updateByPrimaryKey((com.ecm.core.entity.EcmRelation) obj)>0;
 	}
+	
+	public boolean updateObjectByPrimaryKeySelective(String token, Object obj) {
+		return ecmRelationMapper.updateByPrimaryKeySelective((com.ecm.core.entity.EcmRelation) obj)>0;
+	}
 
 	@Override
 	public boolean deleteObject(String token, Object obj) throws EcmException {
