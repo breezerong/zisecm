@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: flowable
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/flowable?characterEncoding=UTF-8&serverTimezone=GMT&nullCatalogMeansCurrent=true
+      #url: jdbc:mysql://localhost:3306/flowable?characterEncoding=UTF-8&serverTimezone=GMT
+      username: root
+      password: password
+server:
+    port: 8088
+swagger:
+    basePackage: com.ecm.flowable.controller
+flowable:
+    check-process-definitions: false
+rocketmq:
+  namesrvaddr: 192.168.200.57:9876

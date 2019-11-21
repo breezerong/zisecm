@@ -14,7 +14,7 @@ import com.ecm.icore.bpm.IProcessEngine;
  */
 @Component
 @Scope("prototype")
-public class ProcessEngine implements IProcessEngine {
+public class ProcessEngineExt implements IProcessEngine {
 
 	/**
 	 * 活动定义服务

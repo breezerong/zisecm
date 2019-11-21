@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.EcmContext;
-import com.ecm.core.bpm.ProcessEngine;
+import com.ecm.core.bpm.ProcessEngineExt;
 import com.ecm.core.bpm.ProcessService;
 import com.ecm.core.bpm.WorkflowAuditService;
 import com.ecm.core.bpm.WorkflowService;
@@ -35,7 +35,7 @@ import com.ecm.core.service.QueueItemService;
 public class WorkflowContoller extends ControllerAbstract{
 
 	@Autowired
-	private ProcessEngine processEngine;
+	private ProcessEngineExt processEngine;
 	
 	@RequestMapping("/workflow/getProcess")
 	@ResponseBody
