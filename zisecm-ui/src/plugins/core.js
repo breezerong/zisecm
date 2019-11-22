@@ -1,7 +1,6 @@
 import Vue from 'vue'
 
 const Modules = [
-	require.context("@/core/components",true,/\.vue$/),
 	require.context("@/custom/components",true,/\.vue$/)
 ]
 
