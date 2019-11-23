@@ -110,8 +110,7 @@
           <tr>
             <td class="navbar">
               <el-breadcrumb>
-                <el-breadcrumb-item>档案管理</el-breadcrumb-item>
-                <el-breadcrumb-item>按卷整理</el-breadcrumb-item>
+                <el-breadcrumb-item>档案移交</el-breadcrumb-item>
               </el-breadcrumb>
             </td>
           </tr>
@@ -125,6 +124,9 @@
                     </el-tooltip>
                     <el-tooltip  class="item" effect="dark" :content="$t('application.edit')+$t('application.folder')" placement="top">
                       <el-button type="primary" icon="el-icon-info" circle @click="onEditFolder()"></el-button>
+                    </el-tooltip>
+                    <el-tooltip  class="item" effect="dark" content="归档" placement="top">
+                      <el-button type="primary" icon="el-icon-document" circle @click="onArchived"></el-button>
                     </el-tooltip>
                     <el-tooltip  class="item" effect="dark" :content="$t('application.delete')+$t('application.transfer')" placement="top">
                       <el-button type="primary" icon="el-icon-delete" circle @click="onDeleteTransfer()"></el-button>
@@ -1512,6 +1514,48 @@ export default {
       };
       this.folderDialogVisible = true;
     },
+    //归档
+    onArchived(){
+      let _self=this;
+      if(_self.selectTransferRow==null||_self.selectTransferRow.length==0){
+        _self.$message('请选择数据！');
+        return;
+      }
+
+      let tab = _self.selectTransferRow;
+          var m = [];
+          var i;
+          for(i in tab){
+            if(tab[i]["STATUS"]!="产生")
+            {
+              _self.$message("移交单"+tab[i]["CODING"]+"已提交不能再次提交！");
+              return;
+            }
+            m.push(tab[i]["ID"]);
+          }
+          console.log(JSON.stringify(m));
+          _self.axios({
+              headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+              },
+              method: "post",
+              data: JSON.stringify(m),
+              url: "/dc/archived"
+            })
+            .then(function(response) {
+              _self.loadTransferGridData();
+              _self.loadGridData(null);
+              
+              _self.showInnerFile(null);
+              _self.$message('操作成功');
+            })
+            .catch(function(error) {
+              _self.$message('操作失败');
+              console.log(error);
+          });
+        
+      
+    },
     // 编辑文件夹事件
     onEditFolder()
     {
@@ -1697,7 +1741,7 @@ export default {
      this. loadPageInfo();
     }
   },
-  components: {
+  components:{
     ShowProperty: ShowProperty,
     PrintPage:PrintPage,
     PrintVolumes:PrintVolumes,
