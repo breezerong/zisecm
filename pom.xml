@@ -13,6 +13,5 @@
   	<module>zisecm-core</module>
   	<module>zisecm-portal</module>
   	<module>zisecm-ESIndexAgent</module>
-  	<module>zisecm-portal-archive</module>
   </modules>
 </project>
