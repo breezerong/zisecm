@@ -8,6 +8,7 @@ import './plugins/axios.js'
 import './plugins/formatter.js'
 import './assets/styles/main.css'
 import echarts from 'echarts'
+import './assets/icons/iconfont.css'
 
 Vue.config.productionTip = false
 Vue.prototype.getLang = function (){

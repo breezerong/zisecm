@@ -114,7 +114,7 @@
     set NAME = #{name,jdbcType=VARCHAR},
       DESCRIPTION = #{description,jdbcType=VARCHAR},
       GRID_VIEW = #{gridView,jdbcType=VARCHAR},
-      LAGN_KEY = #{langKey,jdbcType=VARCHAR},
+      LANG_KEY = #{langKey,jdbcType=VARCHAR},
       ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
       ENABLED = #{enabled,jdbcType=BIT}
     where ID = #{id,jdbcType=VARCHAR}

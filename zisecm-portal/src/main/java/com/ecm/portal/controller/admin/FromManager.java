@@ -83,7 +83,7 @@ public class FromManager extends ControllerAbstract{
 			List<EcmForm> list = formService.getAllObject(getToken());
 			for(int i=list.size()-1;i>=0;i--)
 			{
-				if(!"1".equals(list.get(i).getIsDefault()))
+				if(!list.get(i).getIsDefault())
 				{
 					list.remove(list.get(i));
 				}

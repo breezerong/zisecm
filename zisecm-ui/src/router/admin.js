@@ -202,7 +202,7 @@ export const adminRouter = {
         requireAuth: true,
         permit: 9
       },
-      path: '/managercenter/cardSearchitemmanager',
+      path: '/managercenter/cardsearchitemmanager',
       component: () => import('@/views/admin/CardSearchItemManager.vue'),
       name: '卡片表单项'
     },

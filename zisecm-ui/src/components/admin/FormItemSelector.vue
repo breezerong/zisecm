@@ -30,7 +30,7 @@
                               style="width: 100%">
                       <el-table-column label="表单名称" sortable align="left">
                         <template slot-scope="scope">
-                          <el-button type="primary"  @click="showitem(scope.row.id)">{{scope.row.typeName}}</el-button>
+                          <el-button type="primary"  @click="showItem(scope.row.id)">{{scope.row.typeName}}</el-button>
                         </template>
                       </el-table-column>
                     </el-table>  
@@ -41,20 +41,21 @@
                               border
                               :height="tableHeight"
                               v-loading="loading2"
-                              row-style="height: 0"
-                              cell-style="padding:0"
                               style="width: 100%">
-                      <el-table-column label="ID" prop="id" width="60">
+                      <el-table-column prop="id" label="ID" min-width="25%" >
                       </el-table-column>
-                      <el-table-column prop="attrName" label="名称" width="120" sortable>
+                      <el-table-column prop="attrName" label="名称" min-width="20%" sortable>
                       </el-table-column>
-                      <el-table-column prop="label" label="标签" width="120" sortable>
+                      <el-table-column prop="label" label="标签" min-width="20%" sortable>
                       </el-table-column>
-                      <el-table-column prop="controlType" label="类型" width="80" sortable>
+                      <el-table-column  label="类型" min-width="10%"  sortable>
+                         <template slot-scope="scope">
+                           {{scope.row.controlType}}
+                        </template>
                       </el-table-column>
                       <el-table-column label="操作" width="80">
                         <template slot-scope="scope">
-                          <el-button :plain="true" type="primary" size="small" icon="edit" @click="selectitem(scope.row)">选择</el-button>
+                          <el-button :plain="true" type="primary" size="small" icon="edit" @click="selectItem(scope.row)">选择</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -80,30 +81,18 @@ export default {
       loading:false,
       loading2:false,
       currrentType:"",
-      tableHeight: window.innerHeight-320,
+      tableHeight: window.innerHeight-420,
       formLabelWidth: "120px"
     };
   },
-   created(){ 
-     
-    let _self = this;
-    _self.loading = true;
-    axios.get('/admin/getDefaultForm')
-      .then(function(response) {
-        _self.catList = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-
-    },
+  mounted(){ 
+    this.refreshData();
+  },
   methods: {
     refreshData() {
       let _self = this;
       _self.loading = true;
-      axios.get('/admin/getDefaultForm')
+      axios.post('/admin/getDefaultForm')
       .then(function(response) {
         _self.catList = response.data.data;
         _self.loading = false;
@@ -113,7 +102,7 @@ export default {
         _self.loading = false;
       });
     },
-    showitem(indata) {
+    showItem(indata) {
       let _self = this;
       _self.loading2 = true;
       _self.currentType = indata.name;
@@ -128,23 +117,17 @@ export default {
         _self.loading2 = false;
       });
     },
-    selectitem(indata) {
+    selectItem(indata) {
       let _self = this;
-      _self.$emit('onselected',indata);
+      _self.$emit('onSelected',indata);
     },
     search() {
       let _self = this;
-      let tab = _self.dataListFull;
-      if (_self.inputkey != "") {
-        _self.dataList = [];
-        var i;
-        for (i in tab) {
-          if (tab[i].label.indexOf(_self.inputkey) >= 0) {
-            _self.dataList.push(tab[i]);
-          }
-        }
-      } else {
-        _self.dataList = _self.dataListFull;
+      _self.dataList = [];
+      if (_self.inputkey != null) {
+        _self.dataList = _self.dataListFull.filter(function(item){
+          return item.attrName.match(_self.inputkey) || item.label.match(_self.inputkey)|| item.id.match(_self.inputkey);
+        });
       }
     }
   }

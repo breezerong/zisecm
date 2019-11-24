@@ -13,6 +13,7 @@ import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmSuggestion;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.search.ESClient;
+import com.ecm.core.search.SearchClient;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.ISearchService;
 
@@ -108,9 +109,9 @@ public class DBSearchService  extends EcmService  implements ISearchService {
 	@Override
 	public Object findByCard(String token, String gridName,Pager pager, String typeName, List<EcmFormItem> conditions) {
 		// TODO Auto-generated method stub
-		String cond = " 1=1 ";
+		String cond = " STATUS='"+SearchClient.getInstance().getReleaseStatus()+"' ";
 		if(!typeName.equalsIgnoreCase("all")&&!typeName.equals("所有")) {
-			cond = "TYPE_NAME='"+typeName+"'";
+			cond += " and TYPE_NAME='"+typeName+"'";
 		}
 		for(EcmFormItem item:conditions) {
 			String attrName = item.getAttrName();

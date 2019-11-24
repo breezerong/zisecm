@@ -41,27 +41,45 @@
                       border
                       :height="tableHeight"
                       v-loading="loading"
-                      row-style="height: 0"
-                      cell-style="padding:0"
                       style="width: 100%">
               <el-table-column
                 label="行号"
                 type="index"
                 width="60">
               </el-table-column>
-              <el-table-column label="名称" width="180" >
+              <el-table-column label="名称" width="160" >
                 <template slot-scope="scope">
                   <el-input  v-model="scope.row.name"></el-input>
                 </template>
               </el-table-column>
-              <el-table-column label="说明" width="240">
+              <el-table-column label="说明" min-width="20%">
                 <template slot-scope="scope">
                   <el-input  v-model="scope.row.description"></el-input>
                 </template>
               </el-table-column>
+              <el-table-column label="列表" width="160">
+                <template slot-scope="scope">
+                  <el-input  v-model="scope.row.gridView"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="语言标签" width="160">
+                <template slot-scope="scope">
+                  <el-input  v-model="scope.row.langKey"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="排序" width="120">
+                <template slot-scope="scope">
+                  <el-input  v-model="scope.row.orderIndex"></el-input>
+                </template>
+              </el-table-column>
+              <el-table-column label="状态" width="120">
+                <template slot-scope="scope">
+                  <el-input  v-model="scope.row.enabled"></el-input>
+                </template>
+              </el-table-column>
               <el-table-column label="操作" width="320">
                 <template slot-scope="scope">
-                  <router-link :to="{path:'/CardSearchItemManager',query:{parentid:scope.row.id,name:scope.row.name}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link>
+                  <router-link :to="{path:'/managercenter/cardsearchitemmanager',query:{parentid:scope.row.id,name:scope.row.name}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link>
                   &nbsp; 
                   <el-button :plain="true" type="primary" size="small" icon="edit" @click="saveitem(scope.row)">保存</el-button>
                   <el-button :plain="true" type="warning" size="small" icon="edit" @click="copyitem(scope.row)">复制</el-button>
@@ -98,39 +116,14 @@ export default {
       formLabelWidth: "120px"
     };
   },
-  created() {
-    let _self = this;
-    _self.loading = true;
-    _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "get",
-        url: "/admin/getCardSearch"
-      })
-      .then(function(response) {
-        _self.dataListFull = response.data.data;
-        _self.dataList = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+  mounted() {
+    this.refreshData();
   },
   methods: {
     refreshData() {
       let _self = this;
       _self.loading = true;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "get",
-          url: "/admin/getCardSearch"
-        })
+      axios.get("/admin/getCardSearch")
         .then(function(response) {
           _self.dataListFull = response.data.data;
           _self.dataList = response.data.data;
@@ -143,16 +136,7 @@ export default {
     },
     saveitem(indata) {
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/updateCardSearch"
-        })
+      axios.post("/admin/updateCardSearch",JSON.stringify(indata))
         .then(function(response) {
           _self.$message("保存成功!");
         })
@@ -162,16 +146,7 @@ export default {
     },
     delitem(indata) {
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/deleteCardSearch"
-        })
+      axios.poset("/admin/deleteCardSearch",JSON.stringify(indata))
         .then(function(response) {
           _self.$message("删除成功!");
           _self.refreshData();
@@ -182,16 +157,7 @@ export default {
     },
     additem(indata) {
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/newCardSearch"
-        })
+      axios.post("/admin/newCardSearch",JSON.stringify(indata))
         .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();
@@ -202,16 +168,7 @@ export default {
     },
     copyitem(indata) {
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/copyCardSearch"
-        })
+      axios.post("/admin/copyCardSearch",JSON.stringify(indata))
         .then(function(response) {
           _self.$message("复制成功!");
           _self.dialogVisible = false;
@@ -222,22 +179,12 @@ export default {
         });
     },
     searchform() {
-      let _self = this;
-      let tab = _self.dataListFull;
-      
-      if (_self.inputkey != "") {
-        _self.dataList = [];
-        var i;
-        for (i in tab) {
-          if (
-            tab[i].name.indexOf(_self.inputkey) >= 0 || 
-            (tab[i].description && tab[i].description.indexOf(_self.inputkey) >= 0)
-          ) {
-            _self.dataList.push(tab[i]);
-          }
-        }
-      } else {
-        _self.dataList = _self.dataListFull;
+       let _self = this;
+      _self.dataList = [];
+      if (_self.inputkey != "" || _self.parentid != "") {
+        _self.dataList = _self.dataListFull.filter(function(item){
+          return item.name.match(_self.inputkey) || item.description.match(_self.inputkey);
+        });
       }
     }
   }
