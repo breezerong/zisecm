@@ -470,7 +470,9 @@ export default {
       }
     },
     //查看属性
-    showItemProperty() {},
+    showItemProperty(row) {
+      window.open("/#/ViewDoc?id="+row.ID,"_blank")
+    },
     showFileBox(){
       if(this.showBox){
         this.loadAllGridData(this.currentFolder)
