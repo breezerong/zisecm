@@ -8,7 +8,7 @@ export const dcRouter = [
 			component: () => import('@/views/dc/CompanyDoc.vue'),
 			name: '公司文档'
 		},
-		{
+		/* {
 			meta: {
 				requireAuth: true,
 				permit: 9
@@ -16,7 +16,7 @@ export const dcRouter = [
 			path: '/viewdoc',
 			component: () => import('@/views/dc/ViewDoc.vue'),
 			name: '查看文档'
-		},
+		}, */
 		{
 			meta: {
 				requireAuth: true,
