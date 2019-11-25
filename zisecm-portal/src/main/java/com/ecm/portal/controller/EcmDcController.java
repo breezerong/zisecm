@@ -606,6 +606,29 @@ public class EcmDcController extends ControllerAbstract{
 		return mp;
 	}
 	
+	@RequestMapping(value = "/dc/getDocUseInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getDocUseInfo(@RequestBody String id) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		
+		try {
+			StringBuffer sql = new StringBuffer();
+			sql.append("select ");
+			sql.append("(select count(*) from ecm_relation where NAME='irel_borrow' and CHILD_ID='"+id+"') as borrowCount,");
+			sql.append("(select count(*) from ecm_audit_general where ACTION_NAME='ecm_read' and DOC_ID='"+id+"') as readCount,");
+			sql.append("(select count(*) from ecm_audit_general where ACTION_NAME='ecm_download' and DOC_ID='"+id+"') as downloadCount");
+			sql.append(" from dual ");
+			List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql.toString());
+			mp.put("data", list.get(0));
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
 	@RequestMapping(value = "/dc/createRelation", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> createRelation(@RequestBody EcmRelation en) {
