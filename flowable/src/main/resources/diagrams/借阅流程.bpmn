@@ -41,6 +41,7 @@
     <sequenceFlow id="flow38" sourceRef="usertask6" targetRef="servicetask2"></sequenceFlow>
     <sequenceFlow id="flow39" sourceRef="servicetask2" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow40" sourceRef="usertask5" targetRef="servicetask2"></sequenceFlow>
+    <sequenceFlow id="flow41" name="同意" sourceRef="usertask2" targetRef="exclusivegateway4"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_process_borrow">
     <bpmndi:BPMNPlane bpmnElement="process_borrow" id="BPMNPlane_process_borrow">
@@ -246,6 +247,13 @@
       <bpmndi:BPMNEdge bpmnElement="flow40" id="BPMNEdge_flow40">
         <omgdi:waypoint x="1032.0" y="755.0"></omgdi:waypoint>
         <omgdi:waypoint x="1032.0" y="780.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow41" id="BPMNEdge_flow41">
+        <omgdi:waypoint x="382.0" y="119.0"></omgdi:waypoint>
+        <omgdi:waypoint x="382.0" y="146.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="382.0" y="119.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

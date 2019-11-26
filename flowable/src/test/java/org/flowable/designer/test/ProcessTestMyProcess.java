@@ -59,7 +59,7 @@ import com.ecm.flowable.controller.ExpenseController;
 		variableMap.put("name", "Activiti");
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", variableMap);
 		assertNotNull(processInstance.getId());
-		System.out.println("id " + processInstance.getId() + " "
+		System.out.println("ProcessId=============================== " + processInstance.getId() + "  ProcessDefinitionId=============================== "
 				+ processInstance.getProcessDefinitionId());
 	}
 }
