@@ -29,7 +29,7 @@ public class ProcessConfig {
 
     @Autowired
     private DataSourceProperties dataSourceProperties;
-/*
+
     @Bean
     @Primary
     protected ProcessEngineConfiguration configuration() {
@@ -57,12 +57,12 @@ public class ProcessConfig {
         processEngineConfiguration.setTypedEventListeners(map);
         return processEngineConfiguration;
     }
-    */
-/*
+
+
     @Bean
     protected ProcessEngine engine() {
         //创建流程引擎
         return ProcessEngines.getDefaultProcessEngine();
     }
-    */
+   
 }

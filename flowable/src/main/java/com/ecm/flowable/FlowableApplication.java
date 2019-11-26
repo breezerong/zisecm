@@ -8,8 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan({"com.ecm.flowable.*"})
 public class FlowableApplication {
 
-//	public static void main(String[] args) {
-//		SpringApplication.run(FlowableApplication.class, args);
-//	}
+	public static void main(String[] args) {
+		SpringApplication.run(FlowableApplication.class, args);
+	}
 
 }
