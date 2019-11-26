@@ -7,12 +7,21 @@
     <userTask id="usertask4" name="公司分管领导审批"></userTask>
     <sequenceFlow id="flow3" name="纸质借阅" sourceRef="exclusivegateway5" targetRef="usertask4"></sequenceFlow>
     <userTask id="usertask5" name="出库"></userTask>
-    <startEvent id="startevent1" name="Start"></startEvent>
-    <exclusiveGateway id="纸质借阅或内部公开" name="纸质借阅或内部公开">
-      <documentation>纸质借阅或内部公开</documentation>
+    <startEvent id="startevent1" name="Start" activiti:initiator="1"></startEvent>
+    <exclusiveGateway id="exclusivegateway1" name="exclusivegateway1">
+      <documentation>纸质借阅&amp;内部公开</documentation>
+      <extensionElements>
+        <activiti:executionListener event="end" class="com.ecm.flowable.listener.StartExecutorListener"></activiti:executionListener>
+      </extensionElements>
     </exclusiveGateway>
-    <sequenceFlow id="flow14" name="启动" sourceRef="startevent1" targetRef="纸质借阅或内部公开"></sequenceFlow>
-    <sequenceFlow id="flow15" name="否" sourceRef="纸质借阅或内部公开" targetRef="usertask2"></sequenceFlow>
+    <sequenceFlow id="flow14" name="启动" sourceRef="startevent1" targetRef="exclusivegateway1">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.ecm.flowable.listener.StartExecutorListener"></activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="flow15" name="否" sourceRef="exclusivegateway1" targetRef="usertask2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${input=='否'}]]></conditionExpression>
+    </sequenceFlow>
     <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway"></exclusiveGateway>
     <exclusiveGateway id="exclusivegateway5" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow17" name="本部门文档" sourceRef="exclusivegateway4" targetRef="exclusivegateway5"></sequenceFlow>
@@ -28,7 +37,9 @@
     <sequenceFlow id="flow24" name="纸质借阅" sourceRef="exclusivegateway8" targetRef="usertask5"></sequenceFlow>
     <serviceTask id="servicetask1" name="自动授权" activiti:expression="1=1"></serviceTask>
     <sequenceFlow id="flow25" name="否" sourceRef="exclusivegateway8" targetRef="servicetask1"></sequenceFlow>
-    <sequenceFlow id="flow27" name="纸质借阅或内部公开" sourceRef="纸质借阅或内部公开" targetRef="usertask5"></sequenceFlow>
+    <sequenceFlow id="flow27" name="纸质借阅&amp;内部公开" sourceRef="exclusivegateway1" targetRef="usertask5">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${input=='纸质借阅&内部公开'}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="servicetask1"></sequenceFlow>
     <userTask id="usertask6" name="借阅驳回"></userTask>
     <sequenceFlow id="flow29" name="reject" sourceRef="usertask2" targetRef="usertask6"></sequenceFlow>
@@ -60,7 +71,7 @@
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="30.0" y="74.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="纸质借阅或内部公开" id="BPMNShape_纸质借阅或内部公开">
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
         <omgdc:Bounds height="40.0" width="40.0" x="230.0" y="71.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway4" id="BPMNShape_exclusivegateway4">
@@ -108,7 +119,7 @@
         <omgdi:waypoint x="65.0" y="91.0"></omgdi:waypoint>
         <omgdi:waypoint x="230.0" y="91.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="24.0" x="65.0" y="91.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="100.0" x="65.0" y="91.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
@@ -252,7 +263,7 @@
         <omgdi:waypoint x="382.0" y="119.0"></omgdi:waypoint>
         <omgdi:waypoint x="382.0" y="146.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="382.0" y="119.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="382.0" y="119.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

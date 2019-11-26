@@ -53,7 +53,7 @@ import com.ecm.flowable.controller.ExpenseController;
 	@Test
 	public void startProcess() throws Exception {
 		RepositoryService repositoryService = activitiRule.getRepositoryService();
-		//repositoryService.createDeployment().addInputStream("借阅流程.bpmn", new FileInputStream(filename)).deploy();
+		repositoryService.createDeployment().addInputStream("借阅流程.bpmn", new FileInputStream(filename)).deploy();
 		RuntimeService runtimeService = activitiRule.getRuntimeService();
 		Map<String, Object> variableMap = new HashMap<String, Object>();
 		variableMap.put("name", "Activiti");

@@ -12,6 +12,8 @@ import org.flowable.engine.delegate.ExecutionListener;
 public class StartExecutorListener implements ExecutionListener {
     @Override
     public void notify(DelegateExecution delegateExecution) {
-        System.out.println("流程开始");
+    	delegateExecution.setTransientVariable("input","否");
+    	//delegateExecution.setTransientVariable("input","纸质借阅&内部公开");
+    	
     }
 }
