@@ -17,6 +17,9 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="标签" :label-width="formLabelWidth">
+              <el-input v-model="form.typeTag" auto-complete="off"></el-input>
+            </el-form-item>
             <el-form-item label="状态" :label-width="formLabelWidth">
               <el-input v-model="form.status" auto-complete="off"></el-input>
             </el-form-item>
@@ -64,22 +67,27 @@
             <el-input  v-model="scope.row.name"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="说明" width="180">
+        <el-table-column label="说明" min-width="20%">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.description"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="存储名称" width="240">
+        <el-table-column label="存储名称" width="180">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.storeName"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="240">
+        <el-table-column label="标签" width="180">
+          <template slot-scope="scope">
+            <el-input  v-model="scope.row.typeTag"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" width="120">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.status"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="操作"  width="320">
+        <el-table-column label="操作"  width="180">
           <template slot-scope="scope">
             <el-button :plain="true" type="primary" size="small" icon="edit" @click="saveitem(scope.row)">保存</el-button>
             <el-button :plain="true" type="danger" size="small" icon="delete" @click="delitem(scope.row)">删除</el-button>
@@ -114,7 +122,7 @@ export default {
         description: "",
         storeType: 0,
         storeClass:"",
-        storePath:""
+        typeTag:""
       },
       formLabelWidth: "120px"
     };
@@ -184,7 +192,7 @@ export default {
     },
     additem(indata) {
       let _self = this;
-      axios('/admin/newType',JSON.stringify(indata))
+      axios.post('/admin/newType',JSON.stringify(indata))
       .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();

@@ -27,6 +27,7 @@ import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.AuditContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
@@ -36,6 +37,7 @@ import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.entity.UserEntity;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
@@ -320,6 +322,18 @@ public class EcmDcController extends ControllerAbstract{
 			en.setInputStream(uploadFile.getInputStream());
 		}
 		String id = documentService.newObject(getToken(),doc,en);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("id", id);
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/newAudit", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> newAudit(@RequestBody String objId) throws Exception {
+		
+		
+		String id = documentService.newAudit(getToken(), null, AuditContext.READ, objId, null, null);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);
