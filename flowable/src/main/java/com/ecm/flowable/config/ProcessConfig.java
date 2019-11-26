@@ -29,40 +29,40 @@ public class ProcessConfig {
 
     @Autowired
     private DataSourceProperties dataSourceProperties;
-/*
-    @Bean
-    @Primary
-    protected ProcessEngineConfiguration configuration() {
 
-        List<FlowableEventListener> list = new ArrayList<>();
-        list.add(new JobListener());
-        Map<String,List<FlowableEventListener>> map = new HashMap<>();
-        map.put("JOB_EXECUTION_SUCCESS",list);
-        map.put("JOB_EXECUTION_FAILURE",list);
-
-        ProcessEngineConfiguration processEngineConfiguration = StandaloneProcessEngineConfiguration
-                .createStandaloneProcessEngineConfiguration()
-                .setJdbcUrl(dataSourceProperties.getUrl())
-                .setJdbcDriver(dataSourceProperties.getDriverClassName())
-                .setJdbcUsername(dataSourceProperties.getUsername())
-                .setJdbcPassword(dataSourceProperties.getPassword())
-                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE)
-                .setAsyncExecutorActivate(false)
-                .setCreateDiagramOnDeploy(true)
-                .setProcessDiagramGenerator(new DefaultProcessDiagramGenerator())
-                .setActivityFontName("宋体")
-                .setAnnotationFontName("宋体")
-                .setLabelFontName("宋体");
-
-        processEngineConfiguration.setTypedEventListeners(map);
-        return processEngineConfiguration;
-    }
-    */
-/*
-    @Bean
-    protected ProcessEngine engine() {
-        //创建流程引擎
-        return ProcessEngines.getDefaultProcessEngine();
-    }
-    */
+//    @Bean
+//    @Primary
+//    protected ProcessEngineConfiguration configuration() {
+//
+//        List<FlowableEventListener> list = new ArrayList<>();
+//        list.add(new JobListener());
+//        Map<String,List<FlowableEventListener>> map = new HashMap<>();
+//        map.put("JOB_EXECUTION_SUCCESS",list);
+//        map.put("JOB_EXECUTION_FAILURE",list);
+//
+//        ProcessEngineConfiguration processEngineConfiguration = StandaloneProcessEngineConfiguration
+//                .createStandaloneProcessEngineConfiguration()
+//                .setJdbcUrl(dataSourceProperties.getUrl())
+//                .setJdbcDriver(dataSourceProperties.getDriverClassName())
+//                .setJdbcUsername(dataSourceProperties.getUsername())
+//                .setJdbcPassword(dataSourceProperties.getPassword())
+//                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE)
+//                .setAsyncExecutorActivate(false)
+//                .setCreateDiagramOnDeploy(true)
+//                .setProcessDiagramGenerator(new DefaultProcessDiagramGenerator())
+//                .setActivityFontName("宋体")
+//                .setAnnotationFontName("宋体")
+//                .setLabelFontName("宋体");
+//
+//        processEngineConfiguration.setTypedEventListeners(map);
+//        return processEngineConfiguration;
+//    }
+//
+//
+//    @Bean
+//    protected ProcessEngine engine() {
+//        //创建流程引擎
+//        return ProcessEngines.getDefaultProcessEngine();
+//    }
+   
 }

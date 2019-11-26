@@ -39,16 +39,16 @@
         <ShowProperty :itemId="doc.id" :typeName="doc.typeName" :folderId="doc.folderId"></ShowProperty>
       </template>
       <template v-if="dialog.title=='关联文档'">
-       <!--  <RelationDocs :docId="docId"></RelationDocs> -->
+       <RelationDocs :docId="docId"></RelationDocs>
       </template>
        <template v-if="dialog.title=='文档版本'">
-        <!-- <DocVersion :docId="docId"></DocVersion> -->
+        <DocVersion :docId="docId"></DocVersion>
       </template>
        <template v-if="dialog.title=='格式副本'">
-        <!-- <ViewRedition :docId="docId"></ViewRedition> -->
+        <ViewRedition :docId="docId"></ViewRedition>
       </template>
       <template v-if="dialog.title=='利用信息'">
-        <!-- <UseInfo :docId="docId"></UseInfo> -->
+        <UseInfo :docId="docId"></UseInfo>
       </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog.visible = false">取 消</el-button>
@@ -62,20 +62,20 @@
 
 import ShowProperty from '@/components/ShowProperty.vue'
 
-/* import DocAttrs from './DocAttrs.vue'
+import DocAttrs from './DocAttrs.vue'
 import RelationDocs from './RelationDocs.vue'
 import DocVersion from './DocVersion.vue'
 import UseInfo from './UseInfo.vue'
-import ViewRedition from './ViewRedition.vue' */
+import ViewRedition from './ViewRedition.vue'
 
 export default {
   components:{
-    ShowProperty:ShowProperty
-   /*  DocAttrs:DocAttrs,
+    ShowProperty:ShowProperty,
+    DocAttrs:DocAttrs,
     RelationDocs:RelationDocs,
     DocVersion:DocVersion,
     UseInfo:UseInfo,
-    ViewRedition:ViewRedition */
+    ViewRedition:ViewRedition
   },
   data(){
     return {
@@ -98,15 +98,15 @@ export default {
   },
   created(){
     var _self = this;
-    this.docId = this.$route.query.paraName;
+    this.docId = this.$route.query.id;
     var user = sessionStorage.getItem("access-user");
     this.user = JSON.parse(user);
     this.token = sessionStorage.getItem("access-token");
-    axios.post("/zisecm//dc/getDocument",this.docId).then(function(response) {
+    axios.post("/dc/getDocument",this.docId).then(function(response) {
         _self.docObj=response.data.data;
         _self.doc.id=_self.docObj.ID;
         _self.doc.code=_self.docObj.CODING;
-        _self.doc.title=_self.docObj.TITLE;
+        _self.doc.title=_self.docObj.NAME;
         _self.doc.folderId=_self.docObj.FOLDER_ID;
         _self.doc.typeName=_self.docObj.TYPE_NAME;
         console.log(_self.doc);

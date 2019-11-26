@@ -52,6 +52,14 @@ const router = new Router({
 			]
 		},
 		{
+			meta: {
+				requireAuth: true,permit: 9
+			},
+			path: '/ViewDoc',
+			name: 'viewDoc',
+			component: () => import( /* webpackChunkName: "home1" */ '@/views/dc/ViewDoc.vue')
+		},
+		{
 			path: '/login',
 			name: 'login',
 			component: () => import( /* webpackChunkName: "Login" */ '@/views/Login.vue')
