@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
   <process id="process_borrow" name="Borrow" isExecutable="true">
     <userTask id="usertask2" name="申请部门领导审批"></userTask>
     <userTask id="usertask3" name="文档所属部门领导审批"></userTask>
@@ -7,19 +7,15 @@
     <userTask id="usertask4" name="公司分管领导审批"></userTask>
     <sequenceFlow id="flow3" name="纸质借阅" sourceRef="exclusivegateway5" targetRef="usertask4"></sequenceFlow>
     <userTask id="usertask5" name="出库"></userTask>
-    <startEvent id="startevent1" name="Start" activiti:initiator="1"></startEvent>
-    <exclusiveGateway id="exclusivegateway1" name="exclusivegateway1">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <exclusiveGateway id="exclusivegateway_paperAndOpen" name="exclusivegateway_paperAndOpen">
       <documentation>纸质借阅&amp;内部公开</documentation>
       <extensionElements>
-        <activiti:executionListener event="end" class="com.ecm.flowable.listener.StartExecutorListener"></activiti:executionListener>
+        <flowable:executionListener event="start" class="com.ecm.flowable.listener.StartExecutorListener"></flowable:executionListener>
       </extensionElements>
     </exclusiveGateway>
-    <sequenceFlow id="flow14" name="启动" sourceRef="startevent1" targetRef="exclusivegateway1">
-      <extensionElements>
-        <activiti:executionListener event="take" class="com.ecm.flowable.listener.StartExecutorListener"></activiti:executionListener>
-      </extensionElements>
-    </sequenceFlow>
-    <sequenceFlow id="flow15" name="否" sourceRef="exclusivegateway1" targetRef="usertask2">
+    <sequenceFlow id="flow14" name="启动" sourceRef="startevent1" targetRef="exclusivegateway_paperAndOpen"></sequenceFlow>
+    <sequenceFlow id="flow15" name="否" sourceRef="exclusivegateway_paperAndOpen" targetRef="usertask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${input=='否'}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway"></exclusiveGateway>
@@ -35,9 +31,9 @@
     <exclusiveGateway id="exclusivegateway8" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow23" name="同意" sourceRef="usertask4" targetRef="exclusivegateway8"></sequenceFlow>
     <sequenceFlow id="flow24" name="纸质借阅" sourceRef="exclusivegateway8" targetRef="usertask5"></sequenceFlow>
-    <serviceTask id="servicetask1" name="自动授权" activiti:expression="1=1"></serviceTask>
+    <serviceTask id="servicetask1" name="自动授权" flowable:expression="1==1"></serviceTask>
     <sequenceFlow id="flow25" name="否" sourceRef="exclusivegateway8" targetRef="servicetask1"></sequenceFlow>
-    <sequenceFlow id="flow27" name="纸质借阅&amp;内部公开" sourceRef="exclusivegateway1" targetRef="usertask5">
+    <sequenceFlow id="flow27" name="纸质借阅&amp;内部公开" sourceRef="exclusivegateway_paperAndOpen" targetRef="usertask5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${input=='纸质借阅&内部公开'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="servicetask1"></sequenceFlow>
@@ -47,7 +43,7 @@
     <sequenceFlow id="flow31" name="reject" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
     <sequenceFlow id="flow32" name="同意" sourceRef="usertask6" targetRef="usertask2"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <serviceTask id="servicetask2" name="Service Task" activiti:expression="1=1"></serviceTask>
+    <serviceTask id="servicetask2" name="Service Task" flowable:expression="1==1"></serviceTask>
     <sequenceFlow id="flow36" sourceRef="servicetask1" targetRef="servicetask2"></sequenceFlow>
     <sequenceFlow id="flow38" sourceRef="usertask6" targetRef="servicetask2"></sequenceFlow>
     <sequenceFlow id="flow39" sourceRef="servicetask2" targetRef="endevent1"></sequenceFlow>
@@ -71,7 +67,7 @@
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="30.0" y="74.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway_paperAndOpen" id="BPMNShape_exclusivegateway_paperAndOpen">
         <omgdc:Bounds height="40.0" width="40.0" x="230.0" y="71.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway4" id="BPMNShape_exclusivegateway4">
@@ -119,7 +115,7 @@
         <omgdi:waypoint x="65.0" y="91.0"></omgdi:waypoint>
         <omgdi:waypoint x="230.0" y="91.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="65.0" y="91.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="65.0" y="91.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
