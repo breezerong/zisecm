@@ -22,6 +22,15 @@ export const dcRouter = [
 				requireAuth: true,
 				permit: 9
 			},
+			path: '/dc/folderview',
+			component: () => import('@/views/dc/FolderView.vue'),
+			name: '查看文件夹'
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 9
+			},
 			path: '/dc/folder',
 			component: () => import('@/views/dc/FolderClassification.vue'),
 			name: '文件夹浏览'
