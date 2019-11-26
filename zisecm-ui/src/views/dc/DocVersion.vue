@@ -1,7 +1,6 @@
 <template>
   <el-table :data="tabledata">
-    <el-table-column label="文件名" prop="fileName"></el-table-column>
-    <el-table-column label="版本" prop="version"></el-table-column>
+    <el-table-column v-for="item in gridList" :key="item.id" :label="item.label" :prop="item.attrName"></el-table-column>   
     <el-table-column align="right">
       <template slot-scope="scope">
         <el-button size="mini" @click="downloadDoc(scope.row)">下载</el-button>
@@ -42,6 +41,7 @@ export default {
         m.set("lang", _self.currentLanguage);
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
           _self.gridList = response.data.data;
+          console.log(_self.gridList);
         });
       },
       downloadDoc(row){
