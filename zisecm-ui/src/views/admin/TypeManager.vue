@@ -20,6 +20,9 @@
             <el-form-item label="标签" :label-width="formLabelWidth">
               <el-input v-model="form.typeTag" auto-complete="off"></el-input>
             </el-form-item>
+            <el-form-item label="默认列表" :label-width="formLabelWidth">
+              <el-input v-model="form.gridName" auto-complete="off"></el-input>
+            </el-form-item>
             <el-form-item label="状态" :label-width="formLabelWidth">
               <el-input v-model="form.status" auto-complete="off"></el-input>
             </el-form-item>
@@ -80,6 +83,11 @@
         <el-table-column label="标签" width="180">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.typeTag"></el-input>
+          </template>
+        </el-table-column>
+         <el-table-column label="默认列表" width="160">
+          <template slot-scope="scope">
+            <el-input  v-model="scope.row.gridName"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="状态" width="120">
