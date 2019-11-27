@@ -1,11 +1,8 @@
 <template>
-  <el-table :data="tabledata">
-    <el-table-column v-for="item in gridList" :key="item.id" :label="item.label" :prop="item.attrName"></el-table-column>   
-    <el-table-column align="right">
-      <template slot-scope="scope">
-        <el-button size="mini" @click="downloadDoc(scope.row)">下载</el-button>
-      </template>
-    </el-table-column>
+  <el-table :data="tabledata" size="mini">
+    <template  v-for="item in gridList">
+      <el-table-column :key="item.id" :label="item.label" :prop="item.attrName"></el-table-column>
+    </template>
   </el-table>
 </template>
 
@@ -16,14 +13,7 @@ export default {
             gridviewName:'RevisionGrid',
             gridList: [],
             currentLanguage: "zh-cn",
-            tabledata:[
-                {
-                    fileName:"文件名",version:"AAAA"
-                },
-                {
-                    fileName:"ban'b",version:"AAAA"
-                }
-            ]
+            tabledata:[]
         }
     },
     props:{
@@ -42,7 +32,17 @@ export default {
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
           _self.gridList = response.data.data;
           console.log(_self.gridList);
+          _self.loadData();
         });
+      },
+      loadData(){
+          let _self = this;
+          axios.post("/dc/getVerions",this.docId).then(function(response) {
+            let result = response.data;
+            if(result.code==1){
+              _self.tabledata = result.data;
+            }
+          });
       },
       downloadDoc(row){
 

@@ -1,4 +1,4 @@
-package org.flowable.designer.test;
+package com.ecm.flowable;
 
 import static org.junit.Assert.assertNotNull;
 

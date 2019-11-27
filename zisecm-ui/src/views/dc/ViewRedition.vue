@@ -1,8 +1,12 @@
 <template>
   <el-table :data="tabledata">
-    <el-table-column label="文件名" prop="fileName"></el-table-column>
-    <el-table-column label="版本" prop="version"></el-table-column>
-    <el-table-column align="right">
+    <template  v-for="item in gridList">
+      <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
+        <template v-if="item.attrName=='C_DOC_DATE'"></template>
+      </el-table-column>
+    </template>
+    
+    <el-table-column>
       <template slot-scope="scope">
         <el-button size="mini">下载</el-button>
       </template>
@@ -14,17 +18,15 @@
 export default {
     data(){
         return{
-            gridviewName:'GeneralRelationGrid',
-            gridList: [],
+            gridviewName:'GeneralGrid',
+            gridList: [
+              {id:'1',attrName:'NAME',label:'文件名'},
+              {id:'2',attrName:'FORMAT_NAME',label:'格式'},
+              {id:'3',attrName:'CREATION_DATE',label:'创建时间'},
+              {id:'4',attrName:'MODIFIED_DATE',label:'修改时间'}
+            ],
             currentLanguage: "zh-cn",
-            tabledata:[
-                {
-                    fileName:"文件名",version:"AAAA"
-                },
-                {
-                    fileName:"ban'b",version:"AAAA"
-                }
-            ]
+            tabledata:[]
         }
     },
     props:{
@@ -36,17 +38,28 @@ export default {
     name:"ViewRedition",
     created(){
       console.log("格式副本 created");
+      this.loadGridView();
     },
     methods:{
       loadGridView(){
         let _self = this;
-        var m = new Map();
-        m.set("gridName", _self.gridviewName);
-        m.set("lang", _self.currentLanguage);
-        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
-          _self.gridList = response.data.data;
-          console.log(_self.gridList);
-        });
+        _self.loadData();        
+      },
+      loadData(){
+          let _self = this;
+          axios.post("/dc/getRenditions",this.docId).then(function(response) {
+            let result = response.data;
+            console.log(result);
+            if(result.code==1){
+              _self.tabledata = result.data;
+            }
+          });
+      },
+      downloadDoc(row){
+
+      },
+      formatDocDate(date){
+        return this.dateFormat(date);
       }
     }
 }

@@ -16,7 +16,7 @@
         <el-col :span="4" class="aside-rigth">
             <div style="padding-top:10px;">
               <template v-if="docObj!=null">
-              <el-button size="mini">借阅</el-button>
+              <el-button size="mini" @click="menuClick('借阅')">借阅</el-button>
               <el-button size="mini">下载</el-button>
               </template>
             </div>
@@ -36,7 +36,7 @@
 
     <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
       <template v-if="dialog.title=='文档属性'">
-        <ShowProperty :itemId="doc.id" :typeName="doc.typeName" :folderId="doc.folderId"></ShowProperty>
+        <ShowProperty ref="ShowProperty" :itemId="doc.id" :typeName="doc.typeName" :folderId="doc.folderId"></ShowProperty>
       </template>
       <template v-if="dialog.title=='关联文档'">
        <RelationDocs :docId="docId"></RelationDocs>
@@ -50,9 +50,12 @@
       <template v-if="dialog.title=='利用信息'">
         <UseInfo :docId="docId"></UseInfo>
       </template>
+      <template v-if="dialog.title=='借阅'">
+        借阅
+      </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="dialog.visible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogSubmit()">确 定</el-button>
       </span>
     </el-dialog>
   </el-container>
@@ -127,27 +130,21 @@ export default {
     },
     menuClick(type){
       this.dialog.title=type;
-      switch (type) {
-        case '文档属性':
-          
-          break;
-       case '关联文档':
-          
-          break;
-      case '文档版本':
-    
-          break;
-      case '格式副本':
-    
-          break;      
-      case '利用信息':
-    
-          break;
-      }
       this.dialog.visible=true
     },
     handleClose(done){
       this.dialog.visible = false
+    },
+    dialogSubmit(){
+      if(this.dialog.title=='文档属性'){
+        this.$message("文档属性");
+        this.$refs.ShowProperty.saveItem();
+        this.dialog.visible = false
+      }else if(this.dialog.title=='借阅'){
+        this.$message("借阅");
+      }else{
+        this.dialog.visible = false
+      }
     }
   }
 }
