@@ -54,5 +54,12 @@ public class AuthService implements IAuthService {
 		// TODO Auto-generated method stub
 		return SessionManager.getInstance().getSession(token);
 	}
+	@Override
+	public void logout(String token) {
+		IEcmSession session = SessionManager.getInstance().getSession(token);
+		if(session!=null) {
+			SessionManager.getInstance().getLoginSession().invalidate(token);
+		}
+	}
 
 }
