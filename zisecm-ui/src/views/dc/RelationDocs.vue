@@ -12,14 +12,7 @@ export default {
             gridviewName:'GeneralRelationGrid',
             gridList: [],
             currentLanguage: "zh-cn",
-            tabledata:[
-                {
-                    fileName:"文件名",version:"AAAA"
-                },
-                {
-                    fileName:"ban'b",version:"AAAA"
-                }
-            ]
+            tabledata:[]
         }
     },
     props:{
@@ -41,7 +34,17 @@ export default {
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
           _self.gridList = response.data.data;
           console.log(_self.gridList);
+          _self.loadData();
         });
+      },
+      loadData(){
+          let _self = this;
+          axios.post("/dc/getRelations",this.docId).then(function(response) {
+            let result = response.data;
+            if(result.code==1){
+              _self.tabledata = result.data;
+            }
+          });
       },
       downloadDoc(row){
 

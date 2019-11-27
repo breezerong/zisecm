@@ -606,9 +606,10 @@ public class EcmDcController extends ControllerAbstract{
 	public Map<String, Object> getRelations(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			String sql = "select b.ID,a.RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.CREATOR,b.CREATION_DATE"
-					+ "from ecm_relation a, ecm_document b where a.RELATION_NAME not like 'irel%' and (a.PARENT_ID=b.ID or a.CHILD_ID=b.ID)"
+			String sql = "select b.ID,a.NAME AS RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.CREATOR,b.CREATION_DATE"
+					+ " from ecm_relation a, ecm_document b where a.NAME not like 'irel%' and (a.PARENT_ID=b.ID or a.CHILD_ID=b.ID)"
 					+ " and b.ID='"+id+"' order by b.CREATION_DATE";
+			System.out.println(sql);
 			List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql);
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);

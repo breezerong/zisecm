@@ -5,10 +5,10 @@
             <label>{{viewData.borrowCount}}</label>
         </el-form-item>
         <el-form-item label="查看次数:">
-            <label>{{viewData.downloadCount}}</label>
+            <label>{{viewData.readCount}}</label>
         </el-form-item>
         <el-form-item label="下载次数:">
-            <label>{{viewData.readCount}}</label>
+            <label>{{viewData.downloadCount}}</label>
         </el-form-item>
       </el-form>    
   </el-container>
