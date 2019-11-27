@@ -9,7 +9,7 @@ spring:
       username: ecmadmin
       password: Passw0rd!19
 server:
-    port: 8088
+    port: 8080
 swagger:
     basePackage: com.ecm.flowable.controller
 flowable:
