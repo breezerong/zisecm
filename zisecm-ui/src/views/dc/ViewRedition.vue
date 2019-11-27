@@ -14,6 +14,9 @@
 export default {
     data(){
         return{
+            gridviewName:'GeneralRelationGrid',
+            gridList: [],
+            currentLanguage: "zh-cn",
             tabledata:[
                 {
                     fileName:"文件名",version:"AAAA"
@@ -34,8 +37,17 @@ export default {
     created(){
       console.log("格式副本 created");
     },
-    mounted(){
-      console.log("格式副本 mounted");
+    methods:{
+      loadGridView(){
+        let _self = this;
+        var m = new Map();
+        m.set("gridName", _self.gridviewName);
+        m.set("lang", _self.currentLanguage);
+        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
+          _self.gridList = response.data.data;
+          console.log(_self.gridList);
+        });
+      }
     }
 }
 </script>

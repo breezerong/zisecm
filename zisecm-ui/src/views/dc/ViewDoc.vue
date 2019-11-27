@@ -104,18 +104,27 @@ export default {
     this.token = sessionStorage.getItem("access-token");
     axios.post("/dc/getDocument",this.docId).then(function(response) {
         _self.docObj=response.data.data;
+        console.log(_self.docObj);
         _self.doc.id=_self.docObj.ID;
         _self.doc.code=_self.docObj.CODING;
         _self.doc.title=_self.docObj.NAME;
         _self.doc.folderId=_self.docObj.FOLDER_ID;
         _self.doc.typeName=_self.docObj.TYPE_NAME;
         console.log(_self.doc);
+        _self.writeReadLog()
       }).catch(function(error) {
         console.log(error);
     });
       
   },
   methods:{
+    writeReadLog(){
+      axios.post("/dc/newAudit",this.docId).then(function(response) {
+        console.log("writeReadLog");
+        console.log(response);
+      });
+      
+    },
     menuClick(type){
       this.dialog.title=type;
       switch (type) {
