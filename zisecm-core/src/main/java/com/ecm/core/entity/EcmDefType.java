@@ -13,6 +13,8 @@ public class EcmDefType extends EcmSysObject{
     private String storeName;
     
     private String typeTag;
+    
+    private String gridName;
 
     
     public String getTypeTag() {
@@ -38,4 +40,12 @@ public class EcmDefType extends EcmSysObject{
     public void setStoreName(String storeName) {
         this.storeName = storeName == null ? null : storeName.trim();
     }
+
+	public String getGridName() {
+		return gridName;
+	}
+
+	public void setGridName(String gridName) {
+		this.gridName = gridName;
+	}
 }
