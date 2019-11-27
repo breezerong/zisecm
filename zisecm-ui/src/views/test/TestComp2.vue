@@ -14,6 +14,7 @@
           </el-form-item>
         </el-col>
          <el-col :span="8">
+           <el-button type="primary" plain icon="save" @click="deployProcess()">发布</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow()">启动</el-button> 
          </el-col>
       </el-row>
@@ -39,9 +40,21 @@ export default {
       let _self = this;
       _self.loading =true;
       let m = new  Map();
-      m.set("processId",_self.wfData.formId);
-      m.set("name","2");
-      axios.post("/workflow/startWrokflow",JSON.stringify(m)).then(function(response){
+      m.set("formId",_self.wfData.formId);
+      axios.post("/workflow/borrow/startWorkflow",JSON.stringify(m)).then(function(response){
+        console.log(response);  
+        _self.loading = false;
+      }).catch(function(error){
+        console.log(error);
+        _self.loading = false;
+      });
+    },
+      deployProcess(){
+      let _self = this;
+      _self.loading =true;
+      let m = new  Map();
+      m.set("formId",_self.wfData.formId);
+      axios.post("/workflow/borrow/deploymentProcess",JSON.stringify(m)).then(function(response){
         console.log(response);  
         _self.loading = false;
       }).catch(function(error){

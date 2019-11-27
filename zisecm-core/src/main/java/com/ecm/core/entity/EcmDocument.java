@@ -98,6 +98,18 @@ public class EcmDocument extends EcmSysObject{
      */
     private String lockClient;
     /**
+     * 密级 
+     */
+    private String securityLevel;
+    public String getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(String securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+ 
+	/**
      * 生命周期名称
      */
     private String lifecycleName;
