@@ -586,7 +586,7 @@
     <properties key="independentObject" value="1073016150"/>
     <graphicsAlgorithm xsi:type="al:Polyline" foreground="//@colors.2" lineWidth="1" filled="false" transparency="0.0"/>
     <connectionDecorators visible="true" active="true" location="0.5">
-      <graphicsAlgorithm xsi:type="al:MultiText" lineWidth="1" filled="false" transparency="0.0" width="24" height="14" style="//@styles.0" font="//@fonts.0" verticalAlignment="ALIGNMENT_TOP" value="&#x540c;&#x610f;"/>
+      <graphicsAlgorithm xsi:type="al:MultiText" lineWidth="1" filled="false" transparency="0.0" width="100" height="14" style="//@styles.0" font="//@fonts.0" verticalAlignment="ALIGNMENT_TOP" value="&#x540c;&#x610f;"/>
     </connectionDecorators>
     <connectionDecorators visible="true" locationRelative="true" location="1.0">
       <graphicsAlgorithm xsi:type="al:Polygon" lineWidth="1" filled="true" transparency="0.0" style="//@styles.2">

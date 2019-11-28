@@ -66,9 +66,9 @@
     </sequenceFlow>
     <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="servicetask1"></sequenceFlow>
     <userTask id="usertask6" name="借阅驳回" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser}"></userTask>
-    <sequenceFlow id="flow29" name="reject" sourceRef="usertask2" targetRef="usertask6"></sequenceFlow>
-    <sequenceFlow id="flow30" name="reject" sourceRef="usertask3" targetRef="usertask6"></sequenceFlow>
-    <sequenceFlow id="flow31" name="reject" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
+    <sequenceFlow id="flow29" name="驳回" sourceRef="usertask2" targetRef="usertask6"></sequenceFlow>
+    <sequenceFlow id="flow30" name="驳回" sourceRef="usertask3" targetRef="usertask6"></sequenceFlow>
+    <sequenceFlow id="flow31" name="驳回" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
     <sequenceFlow id="flow32" name="同意" sourceRef="usertask6" targetRef="usertask2"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
     <serviceTask id="servicetask2" name="Service Task" flowable:class="com.ecm.flowable.listener.StartExecutorListener"></serviceTask>
