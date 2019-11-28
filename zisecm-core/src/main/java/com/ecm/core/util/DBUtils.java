@@ -22,7 +22,7 @@ public class DBUtils {
 
 	public static String getSingleQuotationMark() {
 		if ("mysql".equalsIgnoreCase(databaseType)) {
-			return "\\\\'";
+			return "''";
 		} else if ("oracle".equalsIgnoreCase(databaseType)) {
 			return "''";
 		} else if ("sqlserver".equalsIgnoreCase(databaseType)) {

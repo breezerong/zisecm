@@ -92,6 +92,16 @@
               style="width: 100%"
             >
               <el-table-column type="selection" @selection-change="selectChange"></el-table-column>
+              <el-table-column :label="$t('field.indexNumber')" width="60">
+                        <template slot-scope="scope">
+                          <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
+                        </template>
+                      </el-table-column>
+              <el-table-column width="40">
+                        <template slot-scope="scope">
+                          <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
+                        </template>
+                      </el-table-column>
               <div v-for="(citem,idx) in gridList">
                 <div v-if="citem.visibleType==1">
                   <div v-if="(citem.width+'').indexOf('%')>0">

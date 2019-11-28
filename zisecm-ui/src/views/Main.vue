@@ -13,10 +13,10 @@
             <el-menu default-lactive="1" mode="horizontal">
               <template v-for="item in dataList.menuItems">
                 <template v-if="item.submenus && item.url==null">
-                  <el-submenu :index="item.id+''">
+                  <el-submenu :index="item.id+''" :key="item.id">
                     <template slot="title">{{item.label}}</template>
                     <template v-for="sitem in item.submenus">
-                      <el-menu-item :index="sitem.id+''">
+                      <el-menu-item :index="sitem.id+''" :key="sitem.id">
                         <i v-if="sitem.icon!=null" :class="sitem.icon"></i>
                         <router-link :to="sitem.url">{{sitem.label}}</router-link>
                       </el-menu-item>
@@ -24,7 +24,7 @@
                   </el-submenu>
                 </template>
                 <template v-else>
-                  <el-menu-item :index="item.id+''">
+                  <el-menu-item :index="item.id+''" :key="item.id+'_e'">
                     <router-link :to="item.url">{{item.label}}</router-link>
                   </el-menu-item>
                 </template>
@@ -80,7 +80,7 @@ export default {
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     this.loadMenu();
     this.checklogin();
-    if(this.$route.path=="/"){
+    if(this.$route && this.$route.path && this.$route.path=="/"){
       this.$router.push({ path: "/home" });
     }
     this.$nextTick(function() {
