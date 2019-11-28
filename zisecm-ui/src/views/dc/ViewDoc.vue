@@ -18,14 +18,21 @@
              {{message}}
            </template>
            <template v-else-if="doc.permit<3">
-             您没有查看当前文档内容权限，如果需要查看，请点击右上角借阅按钮进行申请授权。
+             <div style="padding-top:40px;">
+              您没有查看当前文档内容权限，如果需要查看，请点击右上角借阅按钮进行申请授权。
+             </div>
            </template>
            <template v-else>
              <OfficeDocViewer v-if="viewerType==1" v-bind:id="doc.id" v-bind:format="doc.format"></OfficeDocViewer>
              <ImageViewer v-else-if="viewerType==2" v-bind:id="doc.id" v-bind:format="doc.format"></ImageViewer>
              <VideoPlayer v-else-if="viewerType==3" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
              <AudioPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
-             <div v-else>当前格式：{{doc.format}}不支持在线查看，请借阅下载查看。</div>
+             <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
+                当前文件没有电子文件。
+              </div>
+             <div v-else style="padding-top:40px;">
+               当前格式：{{doc.format}}不支持在线查看，请借阅下载查看。
+              </div>
            </template>
         </el-col>
         <el-col :span="2" class="aside-rigth">
@@ -118,6 +125,7 @@ export default {
         typeName:"",
         format:"",
         permit:0,
+        contentSize:0,
         hasPdf:false,
       },
       message:"加载中。。。",
@@ -149,6 +157,7 @@ export default {
         _self.doc.code=_self.docObj.CODING;
         _self.doc.revision=_self.docObj.REVISION;
         _self.doc.title=_self.docObj.NAME;
+        _self.doc.contentSize = _self.docObj.CONTENT_SIZE;
         _self.doc.folderId=_self.docObj.FOLDER_ID;
         if(!_self.doc.hasPdf){
           _self.doc.typeName=_self.docObj.TYPE_NAME;

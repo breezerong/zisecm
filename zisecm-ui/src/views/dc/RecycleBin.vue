@@ -1,5 +1,11 @@
 <template>
   <div>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
+      <div slot="footer" class="dialog-footer">
+         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
     <el-dialog
       title="选择需要展示的字段"
       :visible.sync="columnsInfo.dialogFormVisible"
@@ -91,7 +97,7 @@
               @sort-change="sortchange"
               style="width: 100%"
             >
-              <el-table-column type="selection" @selection-change="selectChange"></el-table-column>
+              <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>
               <el-table-column :label="$t('field.indexNumber')" width="60">
                         <template slot-scope="scope">
                           <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
@@ -102,7 +108,7 @@
                           <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
                         </template>
                       </el-table-column>
-              <div v-for="(citem,idx) in gridList">
+              <div v-for="(citem,idx) in gridList" :key="idx+'C'">
                 <div v-if="citem.visibleType==1">
                   <div v-if="(citem.width+'').indexOf('%')>0">
                     <el-table-column
@@ -125,6 +131,7 @@
                     <el-table-column
                       :label="citem.label"
                       :prop="citem.attrName"
+                      :width="citem.width"
                       :sortable="citem.allowOrderby"
                     >
                       <template slot-scope="scope">
@@ -166,7 +173,11 @@
   </div>
 </template>
 <script>
+import ShowProperty from '@/components/ShowProperty'
 export default {
+  components: {
+    ShowProperty: ShowProperty
+  },
   data() {
     return {
       columnsInfo: {
@@ -195,6 +206,8 @@ export default {
         label: "name"
       },
       selectedItemList: [],
+      propertyVisible:false,
+      selectedItemId:"",
       disable:true
     };
   },
@@ -420,7 +433,15 @@ export default {
       }
     },
     //查看属性
-    showItemProperty() {},
+    showItemProperty(indata) {
+      let _self = this;
+      _self.selectedItemId = indata.ID ;
+      _self.propertyVisible = true;
+      if(_self.$refs.ShowProperty){
+        _self.$refs.ShowProperty.myItemId = indata.ID ;
+        _self.$refs.ShowProperty.loadFormInfo();
+      }
+    },
     //恢复文档
     restoreItem() {
       let _self = this;
