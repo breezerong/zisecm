@@ -224,7 +224,22 @@ public class EcmDcController extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> data = documentService.getObjectMapById(getToken(),id);
+			int permit = documentService.getPermit(getToken(), id);
+			boolean hasPdf = data.get("FORMAT_NAME")!=null && data.get("FORMAT_NAME").toString().equalsIgnoreCase("pdf");
+			if(!hasPdf) {
+				List<EcmContent> list = contentService.getObjects(getToken(), id, 0);
+				if(list!=null) {
+					for(EcmContent en:list) {
+						if("pdf".equalsIgnoreCase(en.getFormatName())){
+							hasPdf = true;
+							break;
+						}
+					}
+				}
+			}
 			mp.put("data", data);
+			mp.put("permit", permit);
+			mp.put("hasPdf", hasPdf);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
@@ -543,6 +558,8 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		return mp;
 	}
+	
+	
 	
 	@RequestMapping(value = "/dc/checkIn", method = RequestMethod.POST)
 	@ResponseBody

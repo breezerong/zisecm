@@ -22,13 +22,13 @@
                   </template>
                  </el-table-column>
                 </el-table-column>
-                <el-table-column prop="taskName" label="名称" min-width="10%" >
+                <el-table-column prop="name" label="名称" min-width="10%" >
                 </el-table-column>
                 <el-table-column prop="performer" label="用户" width="120" >
                 </el-table-column>
-                <el-table-column prop="startDate" label="开始时间" sortable :formatter="dateFormatter"  width="160">
+                <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter"  width="160">
                 </el-table-column>
-                <el-table-column prop="completeDate" label="完成时间" sortable :formatter="dateFormatter"  width="160">
+                <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  width="160">
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果" width="100">
                 </el-table-column>
@@ -69,11 +69,11 @@
                 style="width: 100%">
                 <el-table-column type="index" width="50">
                 </el-table-column>
-                <el-table-column prop="taskName" label="名称"  min-width="30%" sortable>
+                <el-table-column prop="name" label="名称"  min-width="30%" sortable>
                 </el-table-column>
-                <el-table-column prop="startDate" label="开始时间" :formatter="dateFormatter" min-width="10%" sortable>
+                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter" min-width="10%" sortable>
                 </el-table-column>
-                <el-table-column prop="completeDate" label="完成时间" :formatter="dateFormatter"   min-width="10%" sortable>
+                <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"   min-width="10%" sortable>
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果"  min-width="10%">
                 </el-table-column>
@@ -145,7 +145,7 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/workflow/getMyDoneTask',JSON.stringify(m))
+      axios.post('/workflow/doneTask',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

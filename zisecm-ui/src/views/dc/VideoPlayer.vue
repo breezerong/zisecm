@@ -25,33 +25,28 @@ export default {
       itemHeight: window.innerHeight - 50
     };
   },
+  props: {
+    id:{type:String},
+    format:{type:String}
+  },
   created() {
-    this.id = this.$route.query.id;
-    this.format = this.$route.query.format;
+    if(this.id==null && this.$route.query.id){
+      this.id = this.$route.query.id;
+    }
+    if(this.format==null && this.$route.query.format){
+      this.format = this.$route.query.format;
+    }
     this.videoType = "video/" + this.format;
     this.videoUrl =
       "/dc/getContent?id=" +
       this.id +
       "&token=" +
       sessionStorage.getItem("access-token");
-    //this.initVideo();
+    console.log(this.videoUrl);
+    console.log(this.format);
   },
   methods: {
-    initVideo() {
-      //初始化视频方法
-      let myPlayer = this.$video("myVideo", {
-        //确定播放器是否具有用户可以与之交互的控件。没有控件，启动视频播放的唯一方法是使用autoplay属性或通过Player API。
-        controls: true,
-        //自动播放属性,muted:静音播放
-        autoplay: "muted",
-        //建议浏览器是否应在<video>加载元素后立即开始下载视频数据。
-        preload: "auto",
-        //设置视频播放器的显示宽度（以像素为单位）
-        width: "1024px",
-        //设置视频播放器的显示高度（以像素为单位）
-        height: "768px"
-      });
-    }
+ 
   }
 };
 </script>

@@ -1,6 +1,9 @@
 <template>
   <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
-    <img v-for="src in imageArray" :src="src" :key="src" width="240" style="cursor:hand">
+    <img v-for="src in imageArray" :src="src" :key="src" width="240" style="cursor:hand;width:auto;
+        height:auto;
+        max-width:70%;
+        max-height:100%;">
   </viewer>
 </template>
 
@@ -12,14 +15,22 @@ export default {
   
   data() {
     return {
-      id:"",
       imageArray:[],
       imageViewer: Object,
       tableHeight: window.innerHeight - 50
     };
   },
+  props: {
+    id:{type:String},
+    format:{type:String}
+  },
   created() {
-    this.id = this.$route.query.id;
+    if(this.id==null && this.$route.query.id){
+      this.id = this.$route.query.id;
+    }
+    if(this.format==null && this.$route.query.format){
+      this.format = this.$route.query.format;
+    }
     this.imageArray[0] =  "/dc/getContent?id="+this.id+"&token="+sessionStorage.getItem('access-token');
   },
   methods: {

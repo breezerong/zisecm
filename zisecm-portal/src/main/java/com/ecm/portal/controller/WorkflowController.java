@@ -15,16 +15,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.identity.Authentication;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,8 +52,8 @@ import com.ecm.flowable.listener.JobListener;
 import com.ecm.portal.controller.ControllerAbstract;
 
 @Controller
-@RequestMapping(value = "/workflow/borrow")
-public class BorrowController  extends ControllerAbstract{
+@RequestMapping(value = "/workflow")
+public class WorkflowController  extends ControllerAbstract{
   	@Autowired
     private RuntimeService runtimeService;
  	    @Autowired
@@ -59,6 +62,9 @@ public class BorrowController  extends ControllerAbstract{
 	    private RepositoryService repositoryService;
 	    @Autowired
 	    private ProcessEngine processEngine;
+	    @Autowired
+	    private HistoryService historyService;
+	    
 		@Autowired
 		private WorkflowAuditService workflowAuditService;
 		@Autowired
@@ -93,14 +99,24 @@ public class BorrowController  extends ControllerAbstract{
 	    @RequestMapping(value = "/startWorkflow")
 	    @ResponseBody
 	    public Map<String, Object> startWorkflow(@RequestBody String argStr) {
+//	    	try {
+//				deploymentProcessExpense();
+//			} catch (Exception e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 	        //启动流程
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			Map<String, Object> result = new HashMap<String, Object>();
 			try {
 		    	String userName =workflowAuditService.getSession(getToken()).getCurrentUser().getUserName();
+		    		Authentication.setAuthenticatedUserId(userName);
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
  			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
- 					//创建流程日志
+  			        //创建流程日志
+ 			       runtimeService.setVariable(processInstance.getId(), "startUser", userName);
+ 			       List hpis = historyService.createHistoricProcessInstanceQuery()
+ 			              .startedBy(userName).list();
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setWorkflowId(processInstance.getId());
@@ -122,16 +138,72 @@ public class BorrowController  extends ControllerAbstract{
 	    }
 
 	    /**
-	     * 获取审批管理列表
+	     * 获取userId已审批的任务
 	     */
-	    @RequestMapping(value = "listTask")
+	    @RequestMapping(value = "doneTask")
 	    @ResponseBody
-	    public Object list(String userId) {
-	        List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
-	        for (Task task : tasks) {
+	    public HashMap<String,Object> doneTask(String userId) {
+	    	List<HistoricTaskInstance> tasks =  historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
+ 	        List<HashMap> resultList = new ArrayList<HashMap>();
+	        for (HistoricTaskInstance task : tasks) {
+		        HashMap<String, Object> map = new HashMap<>();
+		        map.put("id", task.getId());
+		        map.put("name", task.getName());
+		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
+		        map.put("createTime", task.getCreateTime());
+		        map.put("endTime", task.getEndTime());
+ 		        resultList.add(map);
 	            System.out.println(task.toString());
 	        }
-	        return tasks.toArray().toString();
+	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
+	        resultMap.put("data",  resultList);
+	        return resultMap;
+	    }
+
+	    /**
+	     * 获取userId待已审批的任务
+	     */
+	    @RequestMapping(value = "todoTask")
+	    @ResponseBody
+	    public HashMap<String,Object> todoTask(String userId) {
+	        List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
+	        List<HashMap> resultList = new ArrayList<HashMap>();
+	        for (Task task : tasks) {
+		        HashMap<String, Object> map = new HashMap<>();
+		        map.put("id", task.getId());
+		        map.put("name", task.getName());
+		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
+		        map.put("createTime", task.getCreateTime());
+		        resultList.add(map);
+	            System.out.println(task.toString());
+	        }
+	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
+	        resultMap.put("data",  resultList);
+	        return resultMap;
+	    }
+
+	    /**
+	     * 获取我发起的流程
+	     */
+	    @RequestMapping(value = "myWorkflow")
+	    @ResponseBody
+	    public HashMap<String,Object> myWorkflow(String userId) {
+	    	List<HistoricProcessInstance> tasks =  historyService.createHistoricProcessInstanceQuery().startedBy(userId).orderByProcessInstanceStartTime().desc().list();
+
+ 	        List<HashMap> resultList = new ArrayList<HashMap>();
+	        for (HistoricProcessInstance task : tasks) {
+		        HashMap<String, Object> map = new HashMap<>();
+		        map.put("id", task.getId());
+		        map.put("name", task.getName());
+		        map.put("startUser", userId);
+		        map.put("createTime", task.getStartTime());
+		        map.put("endTime", task.getEndTime());
+		        resultList.add(map);
+	            System.out.println(task.toString());
+	        }
+	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
+	        resultMap.put("data",  resultList);
+	        return resultMap;
 	    }
 
 	    /**
@@ -148,7 +220,12 @@ public class BorrowController  extends ControllerAbstract{
 	        }
 	        //通过审核
 	        HashMap<String, Object> map = new HashMap<>();
-	        map.put("outcome", "通过");
+	        if(1==1) {
+		        map.put("outcome", "通过");
+	        }else {
+		        map.put("outcome", "驳回");
+
+	        }
 	        taskService.complete(taskId, map);
 	        return "processed ok!";
 	    }

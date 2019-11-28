@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.LoginUser;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.SpringUtil;
 
 @Component(value="startExecutorListener")
@@ -35,8 +37,11 @@ public class StartExecutorListener  implements ExecutionListener  {
 
     	Map<String, VariableInstance>  varMap = delegateExecution.getVariableInstances();
     	String formId= varMap.get("formId").getTextValue();
+    	String userName=null;
     	try {
-			token = authService.login("workflow","admin","admin").getToken();
+    		IEcmSession ecmSession=authService.login("workflow","admin","admin");
+    		userName=ecmSession.getCurrentUser().getUserName();
+			token = ecmSession.getToken();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,6 +57,10 @@ public class StartExecutorListener  implements ExecutionListener  {
         map.put("beyondLeaderPermision", true);
         map.put("securityLevel", ecmObject.getSecurityLevel());
         map.put("Task_review", "reject");
+        map.put("taskUser_owner", userName);
+        map.put("taskUser_owner_leader", "Admin");
+        map.put("taskUser_doc_leader", "Admin");
+        map.put("taskUser_leader_in_charge", "Admin");
         
         //map 需要从借阅表单ecm.document.type_name="借阅单" +  流程记录里取
         //流程记录中记录了表单ID

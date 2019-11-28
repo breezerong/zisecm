@@ -151,7 +151,6 @@
                         </template>
                         <template slot-scope="scope">
                           <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                          <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
                           <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
                         </template>
                       </el-table-column>
@@ -287,14 +286,15 @@ export default {
       }
     },
     showNewWindow(id){
-      let condition = this.id;
+      let condition = id;
       let href = this.$router.resolve({
-        name: 'docviewer',
+        path: '/viewdoc',
         query: {
           id: condition
+          //token: sessionStorage.getItem('access-token')
         }
       });
-      console.log(href);
+      //console.log(href);
       window.open(href.href, '_blank');
     },
     getgriditem(attrName){

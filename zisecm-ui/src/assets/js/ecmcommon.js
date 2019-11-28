@@ -21,6 +21,10 @@ function dateFormat(value){
     var crtTime = new Date(value);
     return dateFtt("yyyy-MM-dd",crtTime);
 }
+function datetimeFormat(value){
+    var crtTime = new Date(value);
+    return dateFtt("yyyy-MM-dd hh:mm:ss",crtTime);
+}
 export{
-    dateFormat
+    dateFormat,datetimeFormat
 }

@@ -41,7 +41,7 @@ export default {
       _self.loading =true;
       let m = new  Map();
       m.set("formId",_self.wfData.formId);
-      axios.post("/workflow/borrow/startWorkflow",JSON.stringify(m)).then(function(response){
+      axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
         console.log(response);  
         _self.loading = false;
       }).catch(function(error){
@@ -54,7 +54,7 @@ export default {
       _self.loading =true;
       let m = new  Map();
       m.set("formId",_self.wfData.formId);
-      axios.post("/workflow/borrow/deploymentProcess",JSON.stringify(m)).then(function(response){
+      axios.post("/workflow/deploymentProcess",JSON.stringify(m)).then(function(response){
         console.log(response);  
         _self.loading = false;
       }).catch(function(error){

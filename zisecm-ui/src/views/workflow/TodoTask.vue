@@ -6,17 +6,17 @@
               <div v-if="!isCompleteSelected">
               <el-col :span="12">
                 <el-form-item label="任务名称" :label-width="formLabelWidth" style="float:left">
-                  {{currentData.taskName}}
+                  {{currentData.name}}
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="发送人" :label-width="formLabelWidth" style="float:left">
-                  {{currentData.sendUser}}
+                <el-form-item label="发起人" :label-width="formLabelWidth" style="float:left">
+                  {{currentData.startUser}}
                 </el-form-item>
               </el-col>
               <el-col>
-                <el-form-item label="发送时间" :label-width="formLabelWidth" style="float:left">
-                  {{dateFormat(currentData,'')}}
+                <el-form-item label="到达时间" :label-width="formLabelWidth" style="float:left">
+                  {{dateFormat(currentData.createTime,'')}}
                 </el-form-item>
               </el-col>
               </div>
@@ -78,11 +78,11 @@
                 </el-table-column> 
                 <el-table-column type="index" width="50">
                 </el-table-column>
-                <el-table-column prop="taskName" label="任务名称" min-width="15%" sortable>
+                <el-table-column prop="name" label="任务名称" min-width="15%" sortable>
                 </el-table-column>
-                <el-table-column prop="sendUser" label="发送人" min-width="15%" sortable>
+                <el-table-column prop="startUser" label="发起人" min-width="15%" sortable>
                 </el-table-column>
-                <el-table-column prop="sendDate" label="发送时间" :formatter="dateFormatter" min-width="10%" sortable>
+                <el-table-column prop="createTime" label="到达时间" :formatter="dateFormatter" min-width="10%" sortable>
                 </el-table-column>
                 <el-table-column label="操作"  width="80">
                   <template slot-scope="scope">
@@ -153,7 +153,7 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/workflow/getMyTodoTask',JSON.stringify(m))
+      axios.post('/workflow/todoTask?userId='+sessionStorage.getItem("access-userName"),JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

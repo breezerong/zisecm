@@ -53,17 +53,18 @@ const router = new Router({
 		},
 		{
 			meta: {
-				requireAuth: true,permit: 9
+				requireAuth: true,permit: 3
 			},
-			path: '/ViewDoc',
-			name: 'viewDoc',
+			path: '/viewdoc',
+			name: 'viewdoc',
 			component: () => import( /* webpackChunkName: "home1" */ '@/views/dc/ViewDoc.vue')
 		},
 		{
 			path: '/login',
 			name: 'login',
 			component: () => import( /* webpackChunkName: "Login" */ '@/views/Login.vue')
-		}
+		},
+		
 	]
 })
 router.beforeEach((to, from, next) => {
