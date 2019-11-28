@@ -46,7 +46,14 @@ const router = new Router({
 					},
 					path: '/home',
 					component: () => import('@/views/Home.vue'),
-					name: '首页'
+					name: '首页',
+					children:[
+						{
+							path: '',
+							name: '首页内容',
+							component: () => import('@/views/HomeContent.vue'),
+						}
+					]
 				},
 				searchRouter,
 				...dcRouter,
