@@ -62,7 +62,7 @@
     <sequenceFlow id="flow19" name="否" sourceRef="exclusivegateway6" targetRef="exclusivegateway7"></sequenceFlow>
     <sequenceFlow id="flow20" name="通过" sourceRef="usertask3" targetRef="exclusivegateway5"></sequenceFlow>
     <sequenceFlow id="flow21" name="下载" sourceRef="exclusivegateway6" targetRef="usertask4">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${needDownload==true}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='下载'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow22" name="超过部门领导审批上限" sourceRef="exclusivegateway7" targetRef="usertask4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${beyondLeaderPermision==true}]]></conditionExpression>
