@@ -1,5 +1,11 @@
 <template>
   <div>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
     <el-dialog
       title="选择需要展示的字段"
       :visible.sync="columnsInfo.dialogFormVisible"
@@ -80,7 +86,7 @@
               &nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
                 <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
-                <el-checkbox v-model="showBox" @change="showFileBox">{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
+                <el-checkbox v-model="showBox" :disabled="disable" @change="showFileBox">{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
               </template>
             </el-col>
           </el-row>
@@ -93,7 +99,9 @@
               @selection-change="selectChange"
               @sort-change="sortchange"
               style="width: 100%"
+              fit
             >
+              <el-table-column type="selection" @selection-change="selectChange" ></el-table-column>
               <el-table-column type="selection" @selection-change="selectChange"></el-table-column>
               <el-table-column :label="$t('field.indexNumber')" width="60">
                         <template slot-scope="scope">
@@ -105,7 +113,7 @@
                           <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
                         </template>
                       </el-table-column>
-              <div v-for="(citem,idx) in gridList">
+>              <div v-for="(citem,idx) in gridList">
                 <div v-if="citem.visibleType==1">
                   <div v-if="(citem.width+'').indexOf('%')>0">
                     <el-table-column
@@ -127,11 +135,10 @@
                   <div v-else>
                     <el-table-column
                       :label="citem.label"
-                      :width="citem.width"
                       :prop="citem.attrName"
                       :sortable="citem.allowOrderby"
                     >
-                      <template slot-scope="scope">
+                      <template slot-scope="scope" >
                         <div v-if="citem.attrName.indexOf('DATE')>0">
                           <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                         </div>
@@ -170,7 +177,11 @@
   </div>
 </template>
 <script>
+import ShowProperty from '@/components/ShowProperty'
 export default {
+   components: {
+    ShowProperty: ShowProperty
+  },
   data() {
     return {
       currentuser:{
@@ -184,6 +195,7 @@ export default {
       },
       tableHeight: window.innerHeight - 178,
       currentLanguage: "zh-cn",
+      propertyVisible:false,
       loading: false,
       currentFolder: [],
       isFileAdmin:false,
@@ -202,7 +214,8 @@ export default {
         children: "children",
         label: "name"
       },
-      selectedItemList: []
+      selectedItemList: [],
+      disable:true
     };
   },
   created() {
@@ -270,6 +283,7 @@ export default {
     },
     handleNodeClick(indata) {
       let _self = this;
+      _self.disable = false
       _self.currentFolder = indata;
       if (indata.extended == false) {
         _self.loading = true;
@@ -428,7 +442,38 @@ export default {
      //借阅
     borrowItem() {},
     //导出Excel
-    exportExcel() {},
+    exportExcel() {
+      var url="/dc/getExportExcel";
+      var m = new Map();
+      if(this.showBox){
+        m.set("showBox",true)
+      }else{
+        m.set("showBox",false)
+      }
+      m.set("gridName",this.currentFolder.gridView)
+      m.set("lang", this.currentLanguage);
+      m.set("folderId",this.currentFolder.id)
+      m.set("orderBy", "MODIFIED_DATE desc");
+      axios.post(url,JSON.stringify(m),{
+        'responseType': 'blob',
+      }).then(res => {
+          let fileName = res.headers['content-disposition'].split(';')[1].split('=')[1].replace(/\"/g,'')
+          let type = res.headers['content-type']
+          let blob = new Blob([res.data], {type: type})
+          // IE
+          if (window.navigator.msSaveBlob){
+              window.navigator.msSaveBlob(blob, fileName)
+          }else {
+          // console.log(3)
+          var link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = fileName
+          link.click()
+          //释放内存
+          window.URL.revokeObjectURL(link.href)
+        }
+      });
+    },
     //下架文档
     obtainItem() {
       let _self = this;
@@ -459,6 +504,12 @@ export default {
             });
           }
         })
+      }else {
+        this.$message({
+          showClose: true,
+          message: "请勾选待下架文件",
+          duration: 2000
+        });
       }
     },
     //销毁文档
@@ -469,7 +520,7 @@ export default {
         for (var i = 0; i < this.selectedItemList.length; i++) {
           deletItemId.push(this.selectedItemList[i].ID);
         }
-        axios("/dc/destroyDocuments",JSON.stringify(deletItemId)).then(function(response){
+        axios.post("/dc/destroyDocuments",JSON.stringify(deletItemId)).then(function(response){
           if(response.data.code){
             if(_self.showBox){
               _self.loadAllGridData(_self.currentFolder)
@@ -491,11 +542,23 @@ export default {
             });
           }
         })
+      }else {
+        this.$message({
+          showClose: true,
+          message: "请勾选待销毁文件",
+          duration: 2000
+        });
       }
     },
     //查看属性
     showItemProperty(row) {
-      window.open("/#/ViewDoc?id="+row.ID,"_blank")
+      let _self = this;
+      _self.selectedItemId = indata.ID ;
+      _self.propertyVisible = true;
+      if(_self.$refs.ShowProperty){
+        _self.$refs.ShowProperty.myItemId = indata.ID ;
+        _self.$refs.ShowProperty.loadFormInfo();
+      }
     },
     showFileBox(){
       if(this.showBox){
