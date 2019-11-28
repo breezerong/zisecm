@@ -64,7 +64,7 @@
         <DocVersion :docId="docId"></DocVersion>
       </template>
        <template v-if="dialog.title=='格式副本'">
-        <ViewRedition :docId="docId"></ViewRedition>
+        <ViewRedition :docId="docId" :downloadEnable="downloadEnable"></ViewRedition>
       </template>
       <template v-if="dialog.title=='利用信息'">
         <UseInfo :docId="docId"></UseInfo>
@@ -141,6 +141,11 @@ export default {
     _self.getUserIP((ip) => {
       _self.ip = ip;
     });
+  },
+  computed:{
+    downloadEnable(){
+      return this.doc.permit>=4;
+    }
   },
   mounted(){
     var _self = this;
