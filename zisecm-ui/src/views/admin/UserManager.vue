@@ -195,7 +195,7 @@
             </el-table-column>
             <el-table-column label="签名图片" width="150" :formatter="imageFormat">
               <template slot-scope="scope">
-                <img :src="'/admin/getUserImage?id='+scope.row.id+'&token='+token" >
+                <img :src="_self.axios.defaults.baseURL+'/admin/getUserImage?id='+scope.row.id+'&token='+token" >
               </template>
             </el-table-column>
             <el-table-column label="说明" min-width="15%">

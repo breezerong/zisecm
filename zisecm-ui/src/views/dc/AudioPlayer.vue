@@ -68,7 +68,7 @@ export default {
       this.format = this.$route.query.format;
     }
     this.audioUrl =
-      "/dc/getContent?id=" +
+      this.axios.defaults.baseURL+"/dc/getContent?id=" +
       this.id +
       "&token=" +
       sessionStorage.getItem("access-token");

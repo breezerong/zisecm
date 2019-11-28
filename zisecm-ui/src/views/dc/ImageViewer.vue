@@ -31,7 +31,8 @@ export default {
     if(this.format==null && this.$route.query.format){
       this.format = this.$route.query.format;
     }
-    this.imageArray[0] =  "/dc/getContent?id="+this.id+"&token="+sessionStorage.getItem('access-token');
+    console.log(this.axios.defaults.baseURL);
+    this.imageArray[0] =  this.axios.defaults.baseURL+"/dc/getContent?id="+this.id+"&token="+sessionStorage.getItem('access-token');
   },
   methods: {
     inited (viewer) {

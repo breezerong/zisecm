@@ -76,7 +76,7 @@
 <script>
 
 import ShowProperty from '@/components/ShowProperty.vue'
-import "@/assets/js/watermark.js"
+import Watermark from "@/assets/js/watermark.js"
 import DocAttrs from './DocAttrs.vue'
 import RelationDocs from './RelationDocs.vue'
 import DocVersion from './DocVersion.vue'
@@ -108,7 +108,7 @@ export default {
       docId:"",
       docObj:null,
       viewerType: 0,
-      
+      ip:"",
       doc:{
         id:"",
         code:"",
@@ -129,6 +129,12 @@ export default {
     }
   },
   created(){
+    var _self = this;
+    _self.getUserIP((ip) => {
+      _self.ip = ip;
+    });
+  },
+  mounted(){
     var _self = this;
     this.docId = this.$route.query.id;
     var user = sessionStorage.getItem("access-user");
@@ -157,20 +163,15 @@ export default {
         console.log(error);
     });
     _self.watermarkText =  sessionStorage.getItem("access-userName");
-		var showText = _self.watermarkText +' '+ window.location.host
+		var showText = _self.watermarkText +' '+ _self.ip
 				+' '+ _self.datetimeFormat(new Date());
-		watermark.init({
-			watermark_txt : showText,
-			watermark_width : 200
-		});
-		setInterval(function() {
-			var showText1 = _self.watermarkText +' '+ window.location.host
-				+' '+ _self.datetimeFormat(new Date());
-			watermark.load({
-				watermark_txt : showText1,
-				watermark_width : 200
-			});
-		}, 3000); //每3秒刷新一次  3000的单位是毫秒  
+    Watermark.set(showText);
+    console.log(showText);
+		// setInterval(function() {
+		// 	var showText1 = _self.watermarkText +' '+ _self.ip
+		// 		+' '+ _self.datetimeFormat(new Date());
+		// 	Watermark.set(showText1);
+		// }, 10000); //每10秒刷新一次  3000的单位是毫秒  
   },
   methods:{
     //office文档:1,图片：2，视频：3，音频：4
@@ -225,7 +226,34 @@ export default {
       }else{
         this.dialog.visible = false
       }
-    }
+    },
+    getUserIP(onNewIP) {
+        let MyPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        let pc = new MyPeerConnection({
+            iceServers: []
+          });
+        let noop = () => {
+          };
+        let localIPs = {};
+        let ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g;
+        let iterateIP = (ip) => {
+          if (!localIPs[ip]) onNewIP(ip);
+          localIPs[ip] = true;
+        };
+        pc.createDataChannel('');
+        pc.createOffer().then((sdp) => {
+          sdp.sdp.split('\n').forEach(function (line) {
+            if (line.indexOf('candidate') < 0) return;
+            line.match(ipRegex).forEach(iterateIP);
+          });
+          pc.setLocalDescription(sdp, noop, noop);
+        }).catch((reason) => {
+        });
+        pc.onicecandidate = (ice) => {
+          if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+          ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+        };
+      }
   }
 }
 </script>

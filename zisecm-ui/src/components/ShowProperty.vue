@@ -54,6 +54,7 @@ export default {
     return {
       tableHeight: window.innerHeight - 98,
       currentLanguage: "zh-cn",
+      permit:5,
       dataList: {
         rowdata: {
           parentId:"",
@@ -203,6 +204,10 @@ export default {
       }
       else
       {
+        if(_self.permit<5){
+          _self.$message("您没有修改当前文件属性的权限!");
+          return ;
+        }
         axios.post("/dc/saveDocument",JSON.stringify(m))
         .then(function(response) {
           let code = response.data.code;
@@ -232,7 +237,7 @@ export default {
         axios.post("/dc/getDocument",_self.myItemId)
           .then(function(response) {
             let tab = response.data.data;
-          
+            _self.permit =  response.data.permit;
             //console.log(JSON.stringify(tab));
             let frmItems = indata;
             var i;
