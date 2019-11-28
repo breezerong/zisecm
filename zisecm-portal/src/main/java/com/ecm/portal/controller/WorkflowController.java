@@ -26,6 +26,7 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.engine.task.Comment;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -158,6 +159,13 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
 		        map.put("createTime", task.getCreateTime());
 		        map.put("endTime", task.getEndTime());
+		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
+		        String taskComments="";
+		        for (int i = 0; i < commentsList.size(); i++) {
+	        	
+		        	taskComments=taskComments+commentsList.get(0).getFullMessage()+"; ";
+				}
+		        map.put("taskComments", taskComments);
  		        resultList.add(map);
 	            System.out.println(task.toString());
 	        }
@@ -223,7 +231,7 @@ public class WorkflowController  extends ControllerAbstract{
 		        	currentTaskName=tasks.get(0).getTaskDefinitionKey();
 		        }
 		        map.put("currentTaskName", currentTaskName);
-		        map.put("currentAssignee",  currentAssignee);
+		        map.put("currentAssignee",  currentTaskName+"--"+currentAssignee);
 		        map.put("endTime", process.getEndTime());
 		        resultList.add(map);
 	            System.out.println(process.toString());
