@@ -13,6 +13,47 @@
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+          
+          <el-form size="mini" :label-width="formLabelWidth">
+            
+            <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+              <el-upload
+                :limit="100"
+                :file-list="fileList" 
+                action=""
+                :on-change="handleChange"
+                :auto-upload="false"
+                :multiple="false">
+                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+              </el-upload>
+            </div>
+          </el-form> 
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="importdialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="uploadData(uploadID)">开始导入</el-button>
+          </div>
+        </el-dialog>
+
+    <el-dialog :visible.sync="childrenTypeSelectVisible">
+      <el-form>
+          <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+                <el-select  name="selectName"
+                v-model="selectedChildrenType" placeholder="'请选择文件类型'" 
+                style="display:block;">
+                      <div v-for="(name,nameIndex) in childrenTypes">
+                        <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+                      </div>
+                  </el-select>
+                
+          </el-form-item>
+      </el-form>
+       <div slot="footer" class="dialog-footer">
+          <el-button @click="childrenTypeSelectVisible=false;newArchiveFileItem(selectedChildrenType,selectRow)">{{$t('application.ok')}}</el-button>
+      </div>
+    </el-dialog>
+
     <iframe frameborder="0" name="PDFViewer" id="PDFViewer" style="width:100%;height:760px;display:none;" ref="PDFViewer"></iframe>
     <el-dialog :visible.syn="imageViewVisible" @close="imageViewVisible = false">
       <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
@@ -43,19 +84,31 @@
         </el-dialog>
       <table border="0" width="100%" >
           <tr>
-            <td class="navbar">
+            <td class="navbar" colspan="2">
               <el-breadcrumb>
                 <el-breadcrumb-item>{{$t('menu.dataCenter')}}</el-breadcrumb-item>
                 <el-breadcrumb-item>{{$t('menu.folderClassification')}}</el-breadcrumb-item>
               </el-breadcrumb>
             </td>
+            
           </tr>
           <tr>
+            <td rowspan="2" align="left" valign="top">
+              <el-tree
+                      :props="defaultProps"
+                      :data="dataList"
+                      node-key="id"
+                      :render-content="renderContent"
+                      default-expand-all
+                      highlight-current
+                      @node-click="handleNodeClick">
+                    </el-tree>
+            </td>
             <td>
               <table border="0" width="100%" class="topbar">
                 <tr>
-                  <td align="left" width="160px">
-                    <el-tooltip  class="item" effect="dark" :content="$t('application.newFolder')" placement="top">
+                  <!-- <td align="left" width="160px"> -->
+                    <!-- <el-tooltip  class="item" effect="dark" :content="$t('application.newFolder')" placement="top">
                       <el-button type="primary" icon="el-icon-circle-plus" circle @click="onNewFolder()"></el-button>
                     </el-tooltip>
                     <el-tooltip  class="item" effect="dark" :content="$t('application.edit')+$t('application.folder')" placement="top">
@@ -63,15 +116,20 @@
                     </el-tooltip>
                     <el-tooltip  class="item" effect="dark" :content="$t('application.delete')+$t('application.folder')" placement="top">
                       <el-button type="primary" icon="el-icon-delete" circle @click="onDeleleFolder()"></el-button>
-                    </el-tooltip>
+                    </el-tooltip> -->
                     
-                  </td>
+                  <!-- </td> -->
                   <td align="left" width="160px">
                     <el-input  v-model="inputkey" :placeholder="$t('message.pleaseInput')+$t('application.keyword')" @change="searchItem" prefix-icon="el-icon-search"></el-input>
+                    <el-radio v-model="radio" label="卷盒" @change="changeRadio">卷盒</el-radio>
+                    <el-radio v-model="radio" label="图册" @change="changeRadio">图册</el-radio>
                   </td>
                   <td>
-                    <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem()">{{$t('application.newDocument')}}</el-button>
-                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
+                    <!-- <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem()">{{$t('application.newDocument')}}</el-button> -->
+                    
+                    <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('卷盒')">{{$t('application.newArchive')}}</el-button>
+                    <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('图册')">{{$t('application.newVolume')}}</el-button>
+                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleArchiveItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
                     <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
                     <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button>
                     <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button>
@@ -86,187 +144,37 @@
           <td>
             <table border="0" width="100%">
                 <tr valign="top">
-                  <td align="left" width="160px" >
-                    <el-tree
-                      :props="defaultProps"
-                      :data="dataList"
-                      node-key="id"
-                      :render-content="renderContent"
-                      default-expand-all
-                      highlight-current
-                      @node-click="handleNodeClick">
-                    </el-tree>
-                  </td>
+                  <!-- <td align="left" width="160px" >
+                    
+                  </td> -->
                   <td>
                     <div>
-                        <el-table
-                        :height="tableHeight"
-                        :data="itemDataList"
-                        border
-                        v-loading="loading"
-                        @selection-change="selectChange"
-                        @sort-change="sortchange"
-                        @row-click="showInnerFile"
-                        style="width: 100%">
-                        <el-table-column type="selection" width="40" @selection-change="selectChange">
-                        </el-table-column>
-                        <el-table-column :label="$t('field.indexNumber')" width="60">
-                          <template slot-scope="scope">
-                            <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column width="40">
-                          <template slot-scope="scope">
-                            <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
-                          </template>
-                        </el-table-column>
-                        <div v-for="(citem,idx) in gridList">
-                          <div v-if="citem.visibleType==1">
-                            <div v-if="(citem.width+'').indexOf('%')>0">
-                                <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                            <div v-else>
-                              <el-table-column :label="citem.label" :width="citem.width" :prop="citem.attrName" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                          </div>
-                        </div>
-                        <el-table-column :label="$t('application.operation')" width="200">
-                          <template slot="header" slot-scope="scope">
-                            <el-select
-                              v-model="showFields"
-                              multiple
-                              collapse-tags
-                              style="width: 150px;"
-                              placeholder="请选择">
-                              <div v-for="item in gridList">
-                              <el-option
-                                :key="item.attrName"
-                                :label="item.label"
-                                :value="item.attrName">
-                              </el-option>
-                              </div>
-                            </el-select>
-                          </template>
-                          <template slot-scope="scope">
-                            <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                      <el-pagination
-                        background
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50, 100, 200]"
-                        :page-size="pageSize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="itemCount">
-                      </el-pagination>
+                      <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
+                      v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
+                      @pagechange="pageChange" v-bind:itemCount="itemCount"
+                      @rowclick="showInnerFile" @selectchange="selectChange"></DataGrid>
+
+                      
                     </div>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
-                      <el-table
-                        :height="tableHeight"
-                        :data="innerDataList"
-                        border
-                        v-loading="loading"
-                        @selection-change="selectInnerChange"
-                        @sort-change="sortchange"
-                        style="width: 100%">
-                        <el-table-column type="selection" width="40" @selection-change="selectInnerChange">
-                        </el-table-column>
-                        <el-table-column :label="$t('field.indexNumber')" width="60">
-                          <template slot-scope="scope">
-                            <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column width="40">
-                          <template slot-scope="scope">
-                            <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
-                          </template>
-                        </el-table-column>
-                        <div v-for="(citem,idx) in gridList">
-                          <div v-if="citem.visibleType==1">
-                            <div v-if="(citem.width+'').indexOf('%')>0">
-                                <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                            <div v-else>
-                              <el-table-column :label="citem.label" :width="citem.width" :prop="citem.attrName" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                          </div>
-                        </div>
-                        <el-table-column :label="$t('application.operation')" width="200">
-                          <template slot="header" slot-scope="scope">
-                            <el-select
-                              v-model="showFields"
-                              multiple
-                              collapse-tags
-                              style="width: 150px;"
-                              placeholder="请选择">
-                              <div v-for="item in gridList">
-                              <el-option
-                                :key="item.attrName"
-                                :label="item.label"
-                                :value="item.attrName">
-                              </el-option>
-                              </div>
-                            </el-select>
-                          </template>
-                          <template slot-scope="scope">
-                            <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                      <el-pagination
-                        background
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50, 100, 200]"
-                        :page-size="pageSize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="itemCount">
-                      </el-pagination>
+                      <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
+                      <!-- <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.addReuseFile')"  @click="reuseVisible=true">{{$t('application.addReuseFile')}}</el-button>
+                      
+                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button> -->
+                      <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
+                      
+                      <el-button type="primary" plain size="small" title="上移"  @click="onMoveUp()">上移</el-button>
+                      <el-button type="primary" plain size="small" title="下移"  @click="onMoveDown()">下移</el-button>
+                      <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
+                      v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
+                       @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
+                      @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
                     </div>
                     <div class="middle">
                       <el-button  v-show="showButton" type="primary" plain size="small" title="移除案卷"  @click="removeFromArchive()">&gt;</el-button>
@@ -276,91 +184,15 @@
                     </div>
                     <div class="right">
                       <span style="float:left;text-align:left;">未组卷列表</span>
-                      <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button>
-                      <el-button type="primary" plain size="small"  @click="newItem()">{{$t('application.createDocument')}}</el-button>
+                      
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedOutItems);uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedOutItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
-                      <el-table
-                        :height="tableHeight"
-                        :data="outerDataList"
-                        border
-                        v-loading="loading"
-                        @selection-change="selectOutChange"
-                        @sort-change="sortchange"
-                        style="width: 100%">
-                        <el-table-column type="selection" width="40" @selection-change="selectOutChange">
-                        </el-table-column>
-                        <el-table-column :label="$t('field.indexNumber')" width="60">
-                          <template slot-scope="scope">
-                            <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column width="40">
-                          <template slot-scope="scope">
-                            <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
-                          </template>
-                        </el-table-column>
-                        <div v-for="(citem,idx) in gridList">
-                          <div v-if="citem.visibleType==1">
-                            <div v-if="(citem.width+'').indexOf('%')>0">
-                                <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                            <div v-else>
-                              <el-table-column :label="citem.label" :width="citem.width" :prop="citem.attrName" :sortable="citem.allowOrderby">
-                                <template slot-scope="scope">
-                                  <div v-if="citem.attrName.indexOf('DATE')>0">
-                                    <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                                  </div>
-                                  <div v-else>
-                                    <span>{{scope.row[citem.attrName]}}</span>
-                                  </div>
-                                </template>
-                              </el-table-column>
-                            </div>
-                          </div>
-                        </div>
-                        <el-table-column :label="$t('application.operation')" width="200">
-                          <template slot="header" slot-scope="scope">
-                            <el-select
-                              v-model="showFields"
-                              multiple
-                              collapse-tags
-                              style="width: 150px;"
-                              placeholder="请选择">
-                              <div v-for="item in gridList">
-                              <el-option
-                                :key="item.attrName"
-                                :label="item.label"
-                                :value="item.attrName">
-                              </el-option>
-                              </div>
-                            </el-select>
-                          </template>
-                          <template slot-scope="scope">
-                            <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
-                          </template>
-                        </el-table-column>
-                      </el-table>
-                      <el-pagination
-                        background
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50, 100, 200]"
-                        :page-size="pageSize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="itemCount">
-                      </el-pagination>
+                      <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
+                      v-bind:columnList="outerGridList" v-bind:itemCount="outerCount"
+                       @pagesizechange="outerPageSizeChange"
+                      @pagechange="outerPageChange" @selectchange="selectOutChange"></DataGrid>
+                       
                     </div>
                   </td>
                 </tr>
@@ -386,6 +218,7 @@ export default {
   components: {
     ShowProperty: ShowProperty,
     // PDFViewer: PDFViewer,
+    DataGrid:DataGrid,
     PrintPage:PrintPage,
     PrintVolumes:PrintVolumes
     //Prints:Prints
@@ -406,9 +239,14 @@ export default {
       innerDataListFull:[],
       outerDataList:[],
       outerDataListFull:[],
+      childrenTypes:[],
       gridList: [],
+      innerGridList:[],
+      radio:"卷盒",
+      outerGridList:[],
       currentFolder: [],
       dataListFull: "",
+      uploadID:"",
       inputkey: "",
       loading: false,
       dialogName:"",
@@ -416,6 +254,10 @@ export default {
       itemCount: 0,
       innerCount:0,
       outerCount:0,
+      outerCurrentPage:1,
+      outerPageSize:20,
+      innerCurrentPage:1,
+      innerPageSize:20,
       selectedItemId: 0,
       currentPage:1,
       dialogVisible: false,
@@ -424,6 +266,16 @@ export default {
       selectedItems: [],
       selectedOutItems: [],
       selectedInnerItems:[],
+      selectedChildrenType:"",
+      selectRow:[],
+      importdialogVisible:false,
+      selectedItems: [],
+      selectedFileId:"",
+      selectedOutItems: [],
+      selectedInnerItems:[],
+      fileList:[],
+      childrenTypes:[],
+      childrenTypeSelectVisible:false,
       tableHeight: window.innerHeight - 408,
       folderAction:"",
       folderDialogVisible: false,
@@ -465,6 +317,7 @@ export default {
       }); 
     }
   },
+  
   created() {
     let _self = this;
     var psize = localStorage.getItem("docPageSize");
@@ -493,51 +346,267 @@ export default {
       });
   },
   methods: {
-
-
-    showInnerFile(row){
+    selectOneFile(row){
       let _self = this;
-      
-      // var key =row.CODING;
-      // if(key!=""){
-      //   key = "coding = '"+key+"' "; //此处需要修改
-      // }
-      
-      if(row.C_LOCK_STATUS==='已封卷')
+      if(_self.selectRow)
       {
-        _self.showButton=false;
-      }else
-      {
-         _self.showButton=true;
+        _self.selectedFileId=row.ID;
       }
-      _self.loadGridInfo(_self.currentFolder);
+    },
+    changeRadio(val){
+      let _self=this;
+       _self.loadGridData(_self.currentFolder);
+       _self.innerDataList=[];
+       _self.outerDataList=[];
+    },
+    onMoveUp(){
+      let _self=this;
+      if(_self.selectedInnerItems.length!=1){
+         _self.$message("请选择一条数据！");
+        return;
+      }
       var m = new Map();
-      m.set('gridName',_self.currentFolder.gridView);
-      m.set('condition',"");
-      if(row)
-      {
-        _self.archiveId=row.ID;
-      }
-      m.set('id',_self.archiveId);
-      m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
-      m.set('orderBy','');
-      // console.log('pagesize:', _self.pageSize);
-      _self
-      .axios({
+      m.set('parentId',_self.archiveId);
+      m.set('childId',_self.selectedInnerItems[0].ID);
+       _self.axios({
         headers: {
           "Content-Type": "application/json;charset=UTF-8"
         },
-        method: "post",
+        method: 'post',
         data: JSON.stringify(m),
-        url: "/dc/getDocuByRelationParentId"
+        url: "/dc/moveUp"
       })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.showInnerFile(null);
+          }
+          else{
+             _self.$message( response.data.message);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    beforeMount(selrow){
+      
+      let _self=this;
+      _self.fileList=[];
+      if(selrow.length!=1){
+         _self.$message("请选择一条数据！");
+        return;
+      }
+      _self.uploadID=selrow[0].ID;
+      _self.importdialogVisible=true;
+      
+    },
+    getFormData(selId){
+      let _self = this;
+      let formdata = new FormData();
+      var data = {};
+      data["ID"]=selId;
+      formdata.append("metaData",JSON.stringify(data));
+      _self.fileList.forEach(function (file) {
+        //console.log(file.name);
+        formdata.append("uploadFile", file.raw, file.name);
+      });
+      return formdata;
+    },
+    //上传文件
+    uploadData(selId){
+      let _self = this;
+      let formdata = _self.getFormData(selId);
+      console.log("UploadData getData");
+      console.log(formdata);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        datatype: 'json',
+        method: 'post',
+        data: formdata,
+        url: _self.uploadUrl
+      })
+      .then(function(response) {
+        _self.importdialogVisible = false;
+        // _self.refreshData();
+        _self.$message("导入成功!");
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+    },
+    onMoveDown(){
+      let _self=this;
+      if(_self.selectedInnerItems.length!=1){
+         _self.$message("请选择一条数据！");
+        return;
+      }
+      var m = new Map();
+      m.set('parentId',_self.archiveId);
+      m.set('childId',_self.selectedInnerItems[0].ID);
+       _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/moveDown"
+      })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.showInnerFile(null);
+          }
+          else{
+             _self.$message( response.data.message);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    handleChange(file, fileList){
+      this.fileList = fileList;
+    },
+    // 分页 当前页改变
+    innerPageChange(val)
+    {
+      this.innerCurrentPage = val;
+      this.showInnerFilepageChange();
+      //console.log('handleCurrentChange', val);
+    },
+    
+    // 加载表格样式
+    loadOutGridInfo() 
+    {
+      let _self = this;
+      _self.loading = true;
+      var m = new Map();
+      m.set('gridName','ArchiveGrid');
+      m.set('lang',_self.currentLanguage);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/getGridViewInfo"
+      })
+        .then(function(response) {
+          
+          _self.outerGridList = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    loadInnerGridInfo(){
+      let _self = this;
+      _self.loading = true;
+      var m = new Map();
+      m.set('gridName','ArchiveGrid');
+      m.set('lang',_self.currentLanguage);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/getGridViewInfo"
+      })
+        .then(function(response) {
+          
+          _self.innerGridList = response.data.data;
+          
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    innerPageSizeChange(val){
+      this.innerPageSize = val;
+      localStorage.setItem("docPageSize",val);
+      this.showInnerFilepageChange();
+    },
+   // 分页 当前页改变
+    pageChange(val) 
+    {
+      this.currentPage = val;
+      _self.loadGridData(_self.currentFolder);
+      //console.log('handleCurrentChange', val);
+    },
+    pageSizeChange(val){
+      this.pageSize = val;
+      localStorage.setItem("docPageSize",val);
+      _self.loadGridData(_self.currentFolder);
+    },
+    // 分页 当前页改变
+    outerPageChange(val)
+    {
+      this.outerCurrentPage = val;
+      this.loadGridOutData(_self.currentFolder);
+      //console.log('handleCurrentChange', val);
+    },
+    outerPageSizeChange(val){
+      this.outerPageSize = val;
+      localStorage.setItem("docPageSize",val);
+      this.loadGridOutData(_self.currentFolder);
+    },
+    getTypeNamesByMainList(keyName){
+      let _self=this;
+      axios.post("/dc/getOneParameterValue",keyName)
+      .then(function(response) {
+        
+        _self.childrenTypes = response.data.data;
+        
+      })
+      .catch(function(error) {
+        console.log(error);
+        
+      });
+    },
+    showInnerFile(row){
+      let _self = this;
+      if(row!=null){
+        _self.selectRow=row;
+      }
+      _self.selectedChildrenType=[];
+      _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
+      
+      _self.loadInnerGridInfo();
+      var m = new Map();
+      m.set('gridName','ArchiveGrid');
+      m.set('condition',"");
+      if(_self.selectRow)
+      {
+        _self.archiveId=_self.selectRow.ID;
+      }
+      m.set('id',_self.archiveId);
+      m.set('pageSize',_self.pageSize);
+      m.set('pageIndex', (_self.innerCurrentPage-1)*_self.innerPageSize);
+      m.set('orderBy','');
+      // console.log('pagesize:', _self.pageSize);
+      axios.post("/dc/getDocuByRelationParentId",JSON.stringify(m))
       .then(function(response) {
         
         _self.innerDataList = response.data.data;
         _self.innerDataListFull = response.data.data;
         _self.innerCount = response.data.pager.total;
         //console.log(JSON.stringify(response.data.datalist));
+        _self.loadOutGridInfo();
+        _self.loadGridOutData(_self.currentFolder);
         _self.loading = false;
       })
       .catch(function(error) {
@@ -761,13 +830,26 @@ export default {
     {
       let _self = this;
       var key =_self.inputkey;
+      var m = new Map();
       if(key!=""){
         key = "coding like '%"+key+"%' or title like '%"+key+"%'"; 
+        if(_self.radio=='卷盒'){
+          m.set('condition',key+" and TYPE_NAME='卷盒' ");
+        }else{
+          m.set('condition',key+" and TYPE_NAME='图册' ");
+        }
+      }else{
+        if(_self.radio=='卷盒'){
+          m.set('condition'," TYPE_NAME='卷盒' ");
+        }else{
+          m.set('condition'," TYPE_NAME='图册' ");
+        }
       }
-      var m = new Map();
+      
       m.set('gridName',indata.gridView);
       m.set('folderId',indata.id);
-      m.set('condition',key);
+      
+      
       m.set('pageSize',_self.pageSize);
       m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
       m.set('orderBy','');
@@ -779,7 +861,7 @@ export default {
         },
         method: "post",
         data: JSON.stringify(m),
-        url: "/dc/getDocuments"
+        url: "/dc/getInnerFolderDocuments"
       })
       .then(function(response) {
         _self.itemDataList = response.data.data;
@@ -862,14 +944,27 @@ export default {
       }
       _self.loadGridInfo(indata);
       _self.loadGridData(indata);
-      _self.loadGridOutData(indata);
+      
     },
     loadGridOutData(indata){
       let _self = this;
       _self.loading = true;
+      let whereSql='';
+      for(let i=0;i<_self.childrenTypes.length;i++){
+        whereSql+=" TYPE_NAME='"+_self.childrenTypes[i]+"' ";
+        if(i!=_self.childrenTypes.length-1){
+          whereSql+=" or "
+        }
+      }
+      
       var m = new Map();
       m.set('gridName',indata.gridView);
-      m.set('condition',"TYPE_NAME='"+indata.description+"'");
+      if(whereSql==''){
+        m.set('condition'," folder_id='"+indata.id+"' ");
+      }else{
+        m.set('condition',"folder_id='"+indata.id+"' and ("+whereSql+")");
+      }
+      
       m.set('folderId',indata.id);
       m.set('pageSize',_self.pageSize);
       m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
@@ -897,7 +992,7 @@ export default {
       });
 
     },
-    newArchiveItem()
+    newArchiveItem(typeName)
     {
       let _self = this;
       if(_self.currentFolder.id ){
@@ -905,9 +1000,30 @@ export default {
         _self.propertyVisible = true; 
         if(_self.$refs.ShowProperty){
           _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName=_self.currentFolder.typeName;
-          _self.$refs.ShowProperty.myTypeName = _self.currentFolder.typeName;
+          _self.dialogName=typeName;
+          _self.$refs.ShowProperty.myTypeName = typeName;
           _self.$refs.ShowProperty.myFolderId = _self.currentFolder.id;
+          _self.$refs.ShowProperty.loadFormInfo();
+        }
+      }
+      else{
+        _self.$message(_self.$t("message.pleaseSelectFolder"));
+      }
+    },
+    newArchiveFileItem(typeName,selectedRow)
+    {
+      let _self = this;
+      if(selectedRow.ID ){
+        _self.selectedItemId = "";
+        _self.propertyVisible = true; 
+        if(_self.$refs.ShowProperty){
+          _self.$refs.ShowProperty.myItemId = "";
+          _self.dialogName=typeName;
+          _self.$refs.ShowProperty.myTypeName =typeName;
+          _self.typeName=typeName;
+          _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
+          _self.$refs.ShowProperty.folderId = _self.currentFolder.id;
+          // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
           _self.$refs.ShowProperty.loadFormInfo();
         }
       }
@@ -936,8 +1052,100 @@ export default {
     },
     // 保存文档
     saveItem(){
-      this.$refs.ShowProperty.saveItem();
+      if(!this.$refs.ShowProperty.validFormValue()){
+        return;
+      }
+      let _self=this;
+      var m = new Map();
+      let dataRows = this.$refs.ShowProperty.dataList;
+      var i;
+      for (i in dataRows) {
+        if(dataRows[i].attrName && dataRows[i].attrName !='')
+        {
+          if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+          {
+            m.set(dataRows[i].attrName, dataRows[i].defaultValue);
+          }
+        }
+      }
+      if(_self.$refs.ShowProperty.myItemId!='')
+      {
+        m.set('ID',_self.$refs.ShowProperty.myItemId);
+      }
+      if(_self.$refs.ShowProperty.myTypeName!='')
+      {
+        m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
+        m.set('folderPath',_self.$refs.ShowProperty.folderPath);
+        m.set('transferId',_self.$refs.ShowProperty.parentDocId);
+        m.set('folderId',_self.$refs.ShowProperty.folderId);
+      }
+      let formdata = new FormData();
+      formdata.append("metaData",JSON.stringify(m));
       
+      if(_self.$refs.ShowProperty.file!="")
+      {
+        //console.log(_self.file);
+        formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+      }
+      // console.log(JSON.stringify(m));
+      if(_self.$refs.ShowProperty.myItemId=='')
+      {
+        _self.axios({
+          headers: {
+            'Content-Type': 'multipart/form-data'
+            // x-www-form-urlencoded'
+            //"Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: formdata,
+          url: "/dc/newArchiveOrDocument"
+        })
+        .then(function(response) {
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.$message("创建成功!");
+            _self.propertyVisible=false;
+            
+            _self.loadGridData(_self.currentFolder);
+            _self.showInnerFile(null);
+            // _self.loadGridOutData(_self.currentFolder);
+            _self.outerDataList=[];
+          }
+          else{
+             _self.$message("新建失败!");
+          }
+        })
+        .catch(function(error) {
+          _self.$message("新建失败!");
+          console.log(error);
+        });
+      }
+      else
+      {
+        _self.axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/saveDocument"
+        })
+        .then(function(response) {
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.$emit('onSaved','update');
+          }
+          else{
+             _self.$message("保存失败!");
+          }
+        })
+        .catch(function(error) {
+          _self.$message("保存失败!");
+          console.log(error);
+        });
+      }
     },
     // 保存结果事件
     onSaved(indata){
@@ -1012,6 +1220,54 @@ export default {
           console.log(error);
       });
     },
+    // 删除文档事件
+    onDeleleArchiveItem() {
+      let _self = this;
+      this.$confirm(_self.$t("message.deleteInfo"),_self.$t("application.info"), {
+          confirmButtonText: _self.$t("application.ok"),
+          cancelButtonText: _self.$t("application.cancel"),
+          type: 'warning'
+        }).then(() => {
+          _self.deleleInnerItem();
+        }).catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: '已取消删除'
+          // });          
+        });
+    },
+    // 删除文档
+    deleleInnerItem() {
+      let _self = this;
+      var m = [];
+      let tab = _self.selectedItems;
+      
+      var i;
+      for(i in tab){
+        
+        m.push(tab[i]["ID"]);
+      }
+      console.log(JSON.stringify(m));
+      _self.axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/delDocumentAndRelation"
+        })
+        .then(function(response) {
+          _self.loadGridData(_self.currentFolder);
+           
+            _self.showInnerFile(null);
+          _self.$message(_self.$t("message.deleteSuccess"));
+        })
+        .catch(function(error) {
+          _self.$message(_self.$t("message.deleteFailured"));
+          console.log(error);
+      });
+    },
+
     // 删除文档事件
     onDeleleItem() {
       let _self = this;

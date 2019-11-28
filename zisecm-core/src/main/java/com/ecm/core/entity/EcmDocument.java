@@ -107,6 +107,9 @@ public class EcmDocument extends EcmSysObject{
 
 	public void setSecurityLevel(String securityLevel) {
 		this.securityLevel = securityLevel;
+		if(attributes!=null) {
+			attributes.put("C_SECURITY_LEVEL", securityLevel);
+		}
 	}
  
 	/**
@@ -570,6 +573,9 @@ public class EcmDocument extends EcmSysObject{
 		case "VERSION_ID":
 			this.setVersionId(getString(value));
 			break;
+		case "C_SECURITY_LEVEL":
+			this.setSecurityLevel(getString(value));
+			break;
 		case "SYSTEM_VERSION":
 			this.setSystemVersion(value==null?0:Double.parseDouble(getString(value)));
 	    
@@ -636,6 +642,9 @@ public class EcmDocument extends EcmSysObject{
 		}
 		if(attributes.get("REVISION")!=null) {
 			this.setRevision(getString(attributes.get("REVISION")));
+		}
+		if(attributes.get("C_SECURITY_LEVEL")!=null) {
+			this.setSecurityLevel(getString(attributes.get("C_SECURITY_LEVEL")));
 		}
 		if(attributes.get("CODING")!=null) {
 			this.setCoding(getString(attributes.get("CODING")));
@@ -739,6 +748,13 @@ public class EcmDocument extends EcmSysObject{
 		this.isHidden = isHidden;
 		if(attributes!=null) {
 			attributes.put("IS_HIDDEN",  this.isHidden?1:0);
+		}
+	}
+	@Override
+	public void setId(String id) {
+		super.setId(id);
+        if(attributes!=null) {
+			attributes.put("ID",  id == null ? "" : id.trim());
 		}
 	}
 
