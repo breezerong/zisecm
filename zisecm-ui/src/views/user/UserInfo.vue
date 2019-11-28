@@ -71,7 +71,7 @@
       <el-row>
         <el-col :span="2">
           <el-form-item :label="$t('application.signImage')">
-            <img v-if="userData.id" :src="'/user/getUserImage?id='+userData.id+'&token='+token+'&ticket='+ticket" >
+            <img v-if="userData.id" :src="_self.axios.defaults.baseURL+'/user/getUserImage?id='+userData.id+'&token='+token+'&ticket='+ticket" >
           </el-form-item>
         </el-col>
       </el-row>

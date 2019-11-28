@@ -125,9 +125,9 @@
                           </div>
                         </div>
                       </div>
-                      <el-table-column :label="$t('application.operation')" width="240">
+                      <el-table-column :label="$t('application.operation')" width="210">
                         <template slot-scope="scope">
-                          <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
+                          <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                           <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
                           <el-button type="primary" plain size="small" title="替换文件" icon="el-icon-upload2" @click="showUpdateFile(scope.row)"></el-button>
                         </template>
@@ -429,17 +429,27 @@ export default {
     },
     // 查看内容
     showItemContent(indata){
-      let _self = this;
-      _self.imageArray = [];
-      _self.currentType = indata.FORMAT_NAME;
-      console.log(_self.currentType);
-      // 拦截器会自动替换成目标url
-      _self.imageArray[0] =  "/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      if(_self.currentType == "pdf"){
-         window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
-      }else{
-         _self.imageViewVisible =true;
-      }
+       let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
+      // let _self = this;
+      // _self.imageArray = [];
+      // _self.currentType = indata.FORMAT_NAME;
+      // console.log(_self.currentType);
+      // // 拦截器会自动替换成目标url
+      // _self.imageArray[0] =  _self.axios.defaults.baseURL+"/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
+      // if(_self.currentType == "pdf"){
+      //    window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
+      // }else{
+      //    _self.imageViewVisible =true;
+      // }
     },
     closepdf(){
       this.imageViewVisible=false

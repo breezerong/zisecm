@@ -94,7 +94,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page="currentPage"
-              :page-sizes="[20, 50, 100, 200]"
+              :page-sizes="[1, 2, 100, 200]"
               :page-size="pageSize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="itemCount">
@@ -119,7 +119,7 @@ export default {
       dataList: [],
       dataListFull: [],
       inputkey: "",
-      pageSize: 20,
+      pageSize: 1,
       itemCount: 0,
       selectedItems:[],
       currentPage: 1,
@@ -153,7 +153,8 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/workflow/todoTask?userId='+sessionStorage.getItem("access-userName"),JSON.stringify(m))
+      m.set("userId", sessionStorage.getItem("access-userName"));
+      axios.post('/workflow/todoTask',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

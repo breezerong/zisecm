@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.engine.task.Comment;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -114,9 +116,7 @@ public class WorkflowController  extends ControllerAbstract{
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
  			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
   			        //创建流程日志
- 			       runtimeService.setVariable(processInstance.getId(), "startUser", userName);
- 			       List hpis = historyService.createHistoricProcessInstanceQuery()
- 			              .startedBy(userName).list();
+  			        runtimeService.setVariable(processInstance.getId(), "startUser", userName);
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setWorkflowId(processInstance.getId());
@@ -142,8 +142,13 @@ public class WorkflowController  extends ControllerAbstract{
 	     */
 	    @RequestMapping(value = "doneTask")
 	    @ResponseBody
-	    public HashMap<String,Object> doneTask(String userId) {
-	    	List<HistoricTaskInstance> tasks =  historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
+	    public HashMap<String,Object> doneTask(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String userId= args.get("userId").toString();
+			String condition= args.get("condition").toString();
+			int pageSize= Integer.parseInt(args.get("pageSize").toString()) ;
+			int pageIndex= Integer.parseInt(args.get("pageIndex").toString());
+	    	List<HistoricTaskInstance> tasks =  historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().orderByTaskCreateTime().desc().listPage(pageIndex,pageSize);
  	        List<HashMap> resultList = new ArrayList<HashMap>();
 	        for (HistoricTaskInstance task : tasks) {
 		        HashMap<String, Object> map = new HashMap<>();
@@ -152,6 +157,13 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
 		        map.put("createTime", task.getCreateTime());
 		        map.put("endTime", task.getEndTime());
+		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
+		        String taskComments="";
+		        for (int i = 0; i < commentsList.size(); i++) {
+	        	
+		        	taskComments=taskComments+commentsList.get(0).getFullMessage()+"; ";
+				}
+		        map.put("taskComments", taskComments);
  		        resultList.add(map);
 	            System.out.println(task.toString());
 	        }
@@ -161,12 +173,18 @@ public class WorkflowController  extends ControllerAbstract{
 	    }
 
 	    /**
-	     * 获取userId待已审批的任务
+	     * 获取userId待审批的任务
 	     */
 	    @RequestMapping(value = "todoTask")
 	    @ResponseBody
-	    public HashMap<String,Object> todoTask(String userId) {
-	        List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
+	    public HashMap<String,Object> todoTask(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String userId= args.get("userId").toString();
+			String condition= args.get("condition").toString();
+			int pageSize= Integer.parseInt(args.get("pageSize").toString()) ;
+			int pageIndex= Integer.parseInt(args.get("pageIndex").toString());
+ 
+			List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().listPage(pageIndex, pageSize);
 	        List<HashMap> resultList = new ArrayList<HashMap>();
 	        for (Task task : tasks) {
 		        HashMap<String, Object> map = new HashMap<>();
@@ -187,19 +205,34 @@ public class WorkflowController  extends ControllerAbstract{
 	     */
 	    @RequestMapping(value = "myWorkflow")
 	    @ResponseBody
-	    public HashMap<String,Object> myWorkflow(String userId) {
-	    	List<HistoricProcessInstance> tasks =  historyService.createHistoricProcessInstanceQuery().startedBy(userId).orderByProcessInstanceStartTime().desc().list();
+	    public HashMap<String,Object> myWorkflow(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String userId= args.get("userId").toString();
+			String condition= args.get("condition").toString();
+			int pageSize= Integer.parseInt(args.get("pageSize").toString()) ;
+			int pageIndex= Integer.parseInt(args.get("pageIndex").toString());
+	    	List<HistoricProcessInstance> processes =  historyService.createHistoricProcessInstanceQuery().startedBy(userId).orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
 
  	        List<HashMap> resultList = new ArrayList<HashMap>();
-	        for (HistoricProcessInstance task : tasks) {
+	        for (HistoricProcessInstance process : processes) {
 		        HashMap<String, Object> map = new HashMap<>();
-		        map.put("id", task.getId());
-		        map.put("name", task.getName());
+		        map.put("id", process.getId());
+		        map.put("name", process.getName());
 		        map.put("startUser", userId);
-		        map.put("createTime", task.getStartTime());
-		        map.put("endTime", task.getEndTime());
+		        map.put("createTime", process.getStartTime());
+		        List<HistoricTaskInstance>  tasks= historyService.createHistoricTaskInstanceQuery().processInstanceId( process.getId()).list();
+		        String currentAssignee="";
+		        String currentTaskName="";
+		        if(tasks.size()>0)
+		        {
+		        	currentAssignee=tasks.get(0).getAssignee();
+		        	currentTaskName=tasks.get(0).getName();
+		        }
+		        map.put("currentTaskName", currentTaskName);
+		        map.put("currentAssignee",  currentTaskName+":"+currentAssignee);
+		        map.put("endTime", process.getEndTime());
 		        resultList.add(map);
-	            System.out.println(task.toString());
+	            System.out.println(process.toString());
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
@@ -211,22 +244,23 @@ public class WorkflowController  extends ControllerAbstract{
 	     *
 	     * @param taskId 任务ID
 	     */
-	    @RequestMapping(value = "apply")
+	    @RequestMapping(value = "completeTask")
 	    @ResponseBody
-	    public String apply(String taskId) {
-	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-	        if (task == null) {
-	            throw new RuntimeException("流程不存在");
+	    public String completeTask(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String taskId= args.get("taskId").toString();
+			String result= args.get("result").toString();
+			String message= args.get("message").toString();
+//	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+//	        if (task == null) {
+//	            throw new RuntimeException("流程不存在");
+//	        }
+	        if(!"".equals(message)) {
+	        	taskService.addComment(taskId, null, message);
 	        }
-	        //通过审核
-	        HashMap<String, Object> map = new HashMap<>();
-	        if(1==1) {
-		        map.put("outcome", "通过");
-	        }else {
-		        map.put("outcome", "驳回");
 
-	        }
-	        taskService.complete(taskId, map);
+	        //通过审核
+	        taskService.complete(taskId, Collections.singletonMap("outcome",result));
 	        return "processed ok!";
 	    }
 

@@ -607,7 +607,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 			} else {
 				StringBuilder sb = new StringBuilder();
-				sb.append("select max(PERMISSION) from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
+				sb.append("select max(PERMISSION) as PERMISSION from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
 				sb.append("b.NAME='").append(aclName);
 				sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and a.TARGET_NAME in('everyone'");
 				sb.append(",'").append(currentUser).append("'");

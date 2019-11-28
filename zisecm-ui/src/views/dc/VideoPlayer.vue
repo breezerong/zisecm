@@ -38,12 +38,12 @@ export default {
     }
     this.videoType = "video/" + this.format;
     this.videoUrl =
-      "/dc/getContent?id=" +
+      this.axios.defaults.baseURL+"/dc/getContent?id=" +
       this.id +
       "&token=" +
       sessionStorage.getItem("access-token");
-    console.log(this.videoUrl);
-    console.log(this.format);
+   // console.log(this.videoUrl);
+   // console.log(this.format);
   },
   methods: {
  

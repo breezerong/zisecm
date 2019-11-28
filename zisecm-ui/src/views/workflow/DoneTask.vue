@@ -32,7 +32,7 @@
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果" width="100">
                 </el-table-column>
-                <el-table-column prop="message" label="审批意见" min-width="30%">
+                <el-table-column prop="taskComments" label="审批意见" min-width="30%">
                 </el-table-column>
             </el-table>
           <div slot="footer" class="dialog-footer">
@@ -69,7 +69,7 @@
                 style="width: 100%">
                 <el-table-column type="index" width="50">
                 </el-table-column>
-                <el-table-column prop="name" label="名称"  min-width="30%" sortable>
+                <el-table-column prop="name" label="名称"  min-width="20%" sortable>
                 </el-table-column>
                 <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter" min-width="10%" sortable>
                 </el-table-column>
@@ -77,7 +77,7 @@
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果"  min-width="10%">
                 </el-table-column>
-                <el-table-column prop="message" label="审批意见"  min-width="15%">
+                <el-table-column prop="taskComments" label="审批意见"  min-width="15%">
                 </el-table-column>
                 <el-table-column label="操作"  width="80">
                   <template slot-scope="scope">
@@ -145,7 +145,8 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/workflow/doneTask',JSON.stringify(m))
+      m.set("userId", sessionStorage.getItem("access-userName"));
+       axios.post('/workflow/doneTask',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

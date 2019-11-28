@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +27,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
+import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.entity.ChartBean;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
@@ -39,9 +46,12 @@ import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.entity.UserEntity;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.FolderService;
 import com.ecm.core.service.RelationService;
+import com.ecm.portal.util.ExcelUtil;
 
 /**
  * @ClassName EcmDcController
@@ -61,6 +71,9 @@ public class EcmDcController extends ControllerAbstract{
 
 	@Autowired
 	private RelationService relatoinService;
+	
+	@Autowired
+	private FolderService folderService;
 
 
 
@@ -105,6 +118,35 @@ public class EcmDcController extends ControllerAbstract{
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/getNewDocuments", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> getNewDocument(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Pager pager = new Pager();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		int pageSize = Integer.parseInt(args.get("pageSize").toString());
+		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+		pager.setPageIndex(pageIndex);
+		pager.setPageSize(pageSize); 
+		StringBuffer sql = new StringBuffer("select * from ecm_document where STATUS='利用'  and TYPE_NAME<>'卷盒' ");
+		try {
+			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+			list = documentService.getMapList(getToken(), sql.toString(), pager);
+			if (list.size()>0) {
+				mp.put("data",list);
+				mp.put("code", ActionContext.SUCESS);
+			}else {
+				mp.put("data", null);
+				mp.put("code", ActionContext.SUCESS);
+			}
+		} catch (AccessDeniedException | EcmException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.FAILURE);
+			e.printStackTrace();
 		}
 		return mp;
 	}
@@ -310,6 +352,80 @@ public class EcmDcController extends ControllerAbstract{
 		}
 	}
 
+	@RequestMapping(value = "/dc/getExportExcel", method = RequestMethod.POST)
+	@ResponseBody
+	public void getExportExcel(HttpServletRequest request,HttpServletResponse response,@RequestBody String argStr) {
+		ExcelUtil excelUtil = new ExcelUtil();
+		List<Object[]> datalist = new ArrayList<Object[]>();
+		String limitExportNum = "2000";
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String gridName = args.get("gridName").toString();
+		String lang = args.get("lang").toString();
+		String folderId= args.get("folderId").toString();
+		String orderBy = args.get("orderBy").toString();
+		StringBuffer sql = new StringBuffer("select ID,");
+		StringBuffer condition = new StringBuffer();
+		StringBuffer queryAttr = new StringBuffer();
+		boolean showBox = Boolean.parseBoolean(args.get("showBox").toString()) ;
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		if (showBox) {
+			condition.append("("+gv.getCondition()+"or TYPE_NAME = '卷盒') and STATUS='利用'");
+		}else {
+			condition.append("("+gv.getCondition()+"and TYPE_NAME<>'卷盒') and STATUS='利用'");
+		}
+		List<EcmGridViewItem> list = gv.getGridViewItems(lang);
+		String[] titleName = new String[list.size()+1];
+		titleName[0] = "ID";
+		String[] titleCNName =new String[list.size()+1];
+		titleCNName[0] = "行ID";
+		for(int i = 1;i<list.size()+1;i++) {
+			titleName[i] = list.get(i-1).getAttrName();
+			titleCNName[i] = list.get(i-1).getLabel(); 
+			queryAttr.append(list.get(i-1).getAttrName()+",");
+		}
+		datalist.add(titleCNName);
+		sql.append(queryAttr.deleteCharAt(queryAttr.length()-1).toString()+" from ecm_document where 1=1");
+		if (!StringUtils.isEmpty(folderId)) {
+			sql.append(" and folder_id='"+folderId+"'");
+		}if (!StringUtils.isEmpty(condition.toString())) {
+			sql.append(" and "+condition.toString());
+		}if (!StringUtils.isEmpty(orderBy)) {
+			sql.append(" order by " + orderBy);
+		}else {
+			sql.append(" order by ID desc");
+		}
+		try {
+			List<Map<String, Object>> data = documentService.getMapList(getToken(), sql.toString());
+			for (Map<String, Object> map : data) {
+				Object[] values = new Object[titleName.length];
+				for(int i=0;i<titleName.length;i++) {
+					if ( map.get(titleName[i]) != null ) {
+						if(titleName[i].equals("C_DOC_DATE")) {
+							values[i] = DateUtils.DateToFolderPath((Date) map.get(titleName[i]), "-");
+						}else {
+							values[i] = map.get(titleName[i]);
+						}
+					}else {
+						values[i] = "";
+					}
+				}
+				datalist.add(values);
+			}
+		} catch (EcmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (AccessDeniedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			excelUtil.makeStreamExcel("filelist.xls","EXPORT",titleName,datalist,response,true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@RequestMapping(value = "/dc/saveDocument", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> saveDocument(@RequestBody String argStr) throws Exception {
@@ -848,4 +964,39 @@ public class EcmDcController extends ControllerAbstract{
 		  }
 		  return mp;
 		 }
+		
+		//创建接口返回馆藏状态信息，数据用于echarts显示
+		@RequestMapping("/dc/getCollectionData")
+		@ResponseBody
+		public Map<String, Object> collectionData(){
+			Map<String, Object> mp = new HashMap<String, Object>();
+			ChartBean bean = new ChartBean();
+			Pager pager = new Pager();
+			pager.setPageIndex(0);
+			pager.setPageSize(10000);
+			List<EcmFolder> list = new ArrayList<EcmFolder>(); 
+			try {
+				list = folderService.getFoldersByParentPath(getToken(),"/档案库");
+				for (EcmFolder ecmFolder : list) {
+					System.out.println(ecmFolder.getGridView());
+				}
+				for (EcmFolder ecmFolder : list) {
+					EcmGridView gv = CacheManagerOper.getEcmGridViews().get(ecmFolder.getGridView());
+					String condition = "("+gv.getCondition()+" and TYPE_NAME<>'卷盒' )  and STATUS='利用'";
+					bean.getxAxisData().add(ecmFolder.getName());
+					List<Map<String, Object>> count = documentService.getObjectsByConditon(getToken(), ecmFolder.getGridView(), "", pager, condition, "");
+					bean.getyAxisData().add((long) count.size());
+				}
+				mp.put("data", bean);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return mp;
+		}
+		
 }
