@@ -77,7 +77,7 @@
               &nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
                 <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
-                <el-checkbox v-model="showBox" @change="showFileBox">{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
+                <el-checkbox v-model="showBox" :disabled="disable" @change="showFileBox">{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
               </template>
             </el-col>
           </el-row>
@@ -114,7 +114,6 @@
                   <div v-else>
                     <el-table-column
                       :label="citem.label"
-                      :width="citem.width"
                       :prop="citem.attrName"
                       :sortable="citem.allowOrderby"
                     >
@@ -185,7 +184,8 @@ export default {
         children: "children",
         label: "name"
       },
-      selectedItemList: []
+      selectedItemList: [],
+      disable:true
     };
   },
   created() {
@@ -253,6 +253,7 @@ export default {
     },
     handleNodeClick(indata) {
       let _self = this;
+      _self.disable = false
       _self.currentFolder = indata;
       if (indata.extended == false) {
         _self.loading = true;
@@ -440,6 +441,12 @@ export default {
             });
           }
         })
+      }else {
+        this.$message({
+          showClose: true,
+          message: "请勾选待恢复选项",
+          duration: 2000
+        });
       }
     },
     //彻底删除文档
@@ -481,7 +488,13 @@ export default {
       }
     },
     //导出文档
-    exportItem() {},
+    exportItem() {
+      var m = new Map();
+      m.set("id","23d8527efc32481a969643dc8e6f1fd4");
+      axios.post("/dc/getContent",JSON.stringify(m)).then(function(response){
+        console.log(response.data)
+      })
+    },
     //显示卷盒在内的删除文件
     showFileBox(){
       if(this.showBox){

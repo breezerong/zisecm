@@ -80,7 +80,7 @@
               &nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
                 <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
-                <el-checkbox v-model="showBox" @change="showFileBox">{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
+                <el-checkbox v-model="showBox" :disabled="disable" @change="showFileBox">{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
               </template>
             </el-col>
           </el-row>
@@ -93,8 +93,9 @@
               @selection-change="selectChange"
               @sort-change="sortchange"
               style="width: 100%"
+              fit
             >
-              <el-table-column type="selection" @selection-change="selectChange"></el-table-column>
+              <el-table-column type="selection" @selection-change="selectChange" ></el-table-column>
               <div v-for="(citem,idx) in gridList">
                 <div v-if="citem.visibleType==1">
                   <div v-if="(citem.width+'').indexOf('%')>0">
@@ -117,11 +118,10 @@
                   <div v-else>
                     <el-table-column
                       :label="citem.label"
-                      :width="citem.width"
                       :prop="citem.attrName"
                       :sortable="citem.allowOrderby"
                     >
-                      <template slot-scope="scope">
+                      <template slot-scope="scope" >
                         <div v-if="citem.attrName.indexOf('DATE')>0">
                           <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                         </div>
@@ -192,7 +192,8 @@ export default {
         children: "children",
         label: "name"
       },
-      selectedItemList: []
+      selectedItemList: [],
+      disable:true
     };
   },
   created() {
@@ -260,6 +261,7 @@ export default {
     },
     handleNodeClick(indata) {
       let _self = this;
+      _self.disable = false
       _self.currentFolder = indata;
       if (indata.extended == false) {
         _self.loading = true;
@@ -418,7 +420,38 @@ export default {
      //借阅
     borrowItem() {},
     //导出Excel
-    exportExcel() {},
+    exportExcel() {
+      var url="/dc/getExportExcel";
+      var m = new Map();
+      if(this.showBox){
+        m.set("showBox",true)
+      }else{
+        m.set("showBox",false)
+      }
+      m.set("gridName",this.currentFolder.gridView)
+      m.set("lang", this.currentLanguage);
+      m.set("folderId",this.currentFolder.id)
+      m.set("orderBy", "MODIFIED_DATE desc");
+      axios.post(url,JSON.stringify(m),{
+        'responseType': 'blob',
+      }).then(res => {
+          let fileName = res.headers['content-disposition'].split(';')[1].split('=')[1].replace(/\"/g,'')
+          let type = res.headers['content-type']
+          let blob = new Blob([res.data], {type: type})
+          // IE
+          if (window.navigator.msSaveBlob){
+              window.navigator.msSaveBlob(blob, fileName)
+          }else {
+          // console.log(3)
+          var link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = fileName
+          link.click()
+          //释放内存
+          window.URL.revokeObjectURL(link.href)
+        }
+      });
+    },
     //下架文档
     obtainItem() {
       let _self = this;
@@ -449,6 +482,12 @@ export default {
             });
           }
         })
+      }else {
+        this.$message({
+          showClose: true,
+          message: "请勾选待下架文件",
+          duration: 2000
+        });
       }
     },
     //销毁文档
@@ -459,7 +498,7 @@ export default {
         for (var i = 0; i < this.selectedItemList.length; i++) {
           deletItemId.push(this.selectedItemList[i].ID);
         }
-        axios("/dc/destroyDocuments",JSON.stringify(deletItemId)).then(function(response){
+        axios.post("/dc/destroyDocuments",JSON.stringify(deletItemId)).then(function(response){
           if(response.data.code){
             if(_self.showBox){
               _self.loadAllGridData(_self.currentFolder)
@@ -481,6 +520,12 @@ export default {
             });
           }
         })
+      }else {
+        this.$message({
+          showClose: true,
+          message: "请勾选待销毁文件",
+          duration: 2000
+        });
       }
     },
     //查看属性

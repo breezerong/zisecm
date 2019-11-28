@@ -35,10 +35,16 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 	// 写入excel时，是否自动扩展列宽度来符合内容。
 	private boolean autoColumnWidth = false;
 
+	public boolean isAutoColumnWidth() {
+		return autoColumnWidth;
+	}
+
+
 	/**
 	 * 无参构造函数 默认
 	 */
 	public ExcelUtil() {
+		
 	}
 
  
@@ -141,7 +147,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
  	public void makeExcel(String sheetName, String[] fieldName, List<Object[]> data) throws IOException {
 		// 在内存中生成工作薄
-		HSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data);
+		HSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data,false);
 		// 截取文件夹路径
 		String filePath = path.substring(0, path.lastIndexOf("\\"));
 		// 如果路径不存在，创建路径
@@ -155,7 +161,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 	}
 
  	public void makeStreamExcel(String excelName, String sheetName, String[] fieldName, List<Object[]> data,
-			HttpServletResponse response) throws IOException {
+			HttpServletResponse response,boolean hideFirstRow) throws IOException {
 		OutputStream os = null;
 		response.reset(); // 清空输出流
 		os = response.getOutputStream(); // 取得输出流
@@ -163,12 +169,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 				"attachment; filename=" + new String(excelName.getBytes(), "ISO-8859-1")); // 设定输出文件头
 		response.setContentType("application/msexcel"); // 定义输出类型
 		// 在内存中生成工作薄
-		HSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data);
+		HSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data , hideFirstRow);
 		os.flush();
 		workbook.write(os);
 	}
 
- 	private HSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data) {
+ 	private HSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,boolean hideFirstRow) {
 		// 用来记录最大列宽,自动调整列宽。
 		Integer collength[] = new Integer[fieldName.length];
 
@@ -180,6 +186,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 		workbook.setSheetName(0, sheetName);
 		// 产生一行
 		HSSFRow row = sheet.createRow(0);
+		row.setZeroHeight(hideFirstRow);
 		// 产生单元格
 		HSSFCell cell;
 		// 写入各个字段的名称

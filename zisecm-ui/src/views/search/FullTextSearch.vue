@@ -250,6 +250,7 @@ export default {
   },
   created() {
     let _self = this;
+    console.log(this.$route.params.map)
     var psize = localStorage.getItem("FTSearchPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);
@@ -390,6 +391,8 @@ export default {
           _self.loading = false;
         });
     },
+    saveItem(){},
+    onSaved(){},
     search(isScend) {
       let _self = this;
       _self.isScend = isScend;
