@@ -17,7 +17,7 @@ public class DateUtils {
 	
 	
 	public static String DateToFolderPath(Date dt,String splitStr) {
-		String formatStr = "yyyy"+splitStr+"MM"+splitStr+"dd"+splitStr;
+		String formatStr = "yyyy"+splitStr+"MM"+splitStr+"dd";
 		SimpleDateFormat format = new SimpleDateFormat(formatStr);
 		String str = format.format(dt);
 		return str;
