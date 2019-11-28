@@ -175,7 +175,7 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/workflow/getMyWorkflow',JSON.stringify(m))
+      axios.post('/workflow/myWorkflow',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

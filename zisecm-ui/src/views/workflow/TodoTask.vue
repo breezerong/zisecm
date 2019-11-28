@@ -153,7 +153,7 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/expense/list?userId='+sessionStorage.getItem("access-userName"),JSON.stringify(m))
+      axios.post('/workflow/todoTask?userId='+sessionStorage.getItem("access-userName"),JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

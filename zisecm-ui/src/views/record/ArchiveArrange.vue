@@ -130,8 +130,9 @@
                     <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('卷盒')">{{$t('application.newArchive')}}</el-button>
                     <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('图册')">{{$t('application.newVolume')}}</el-button>
                     <el-button type="primary" icon="el-icon-delete"  @click="onDeleleArchiveItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
-                    <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
-                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button>
+                    <el-button type="primary" icon="el-icon-s-order"  @click="takeNumbers">{{$t('application.takeNumbers')}}</el-button>
+                    <!-- <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
+                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button> -->
                     <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button>
                     <el-button type="primary" icon="el-icon-printer" @click="printVolumesVisible = true">{{$t('application.PrintVolumes')}}</el-button>
                   
@@ -1283,6 +1284,42 @@ export default {
           //   message: '已取消删除'
           // });          
         });
+    },
+    takeNumbers(){
+      let _self =this;
+      if(_self.radio=='卷盒'&&_self.selectedItems.length<1){
+         _self.$message("请选择一条或多条卷盒数据！");
+          return;
+      }
+      let tab=_self.selectedItems;
+      let m = [];
+      let i;
+      for(i in tab){
+        if(tab[i]["CODING"]!=undefined &&tab[i]["CODING"]!=="")
+        {
+          _self.$message("卷盒"+tab[i]["CODING"]+"已取过号不需要再取号!");
+          return;
+        }
+        m.push(tab[i]["ID"]);
+      }
+      _self.axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/takeNumbers"
+        })
+        .then(function(response) {
+          _self.loadGridData(_self.currentFolder);
+           
+            _self.showInnerFile(null);
+          _self.$message(_self.$t("message.takeNumberSuccess"));
+        })
+        .catch(function(error) {
+          _self.$message(_self.$t("message.takeNumberFaild"));
+          console.log(error);
+      });
     },
     // 删除文档
     deleleItem() {
