@@ -97,7 +97,13 @@ public class NumberService extends EcmService {
 				String format = temps[1];
 				Date dt = new Date();
 				if(!attrName.equalsIgnoreCase("now")) {
-					dt = (Date)values.get(attrName);			
+					try {
+						dt = (Date)values.get(attrName);
+					}catch (Exception e) {
+						// TODO: handle exception
+						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+						dt=formatter.parse((String) values.get(attrName));
+					}
 				}
 				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				prefix +=  sdf.format(dt);

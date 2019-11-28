@@ -118,6 +118,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	public List<Map<String, Object>> getObjectsByConditon(String token,String gridName,String folderId,Pager pager,String condition,String orderBy){
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		String currentUser="";
+		try {
+			currentUser = getSession(token).getCurrentUser().getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(condition!=null&&condition.contains("@currentuser")) {
+    		
+			condition=condition.replaceAll("@currentuser", currentUser);
+    	}
 		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
@@ -336,7 +347,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		for (Object key : args.keySet().toArray()) {
 			if (key.toString().equalsIgnoreCase("ID")
 					||key.toString().equalsIgnoreCase("transferId")
-					||key.toString().equalsIgnoreCase("folderPath")) {
+					||key.toString().equalsIgnoreCase("folderPath")
+					||key.toString().equalsIgnoreCase("folderId")) {
 				continue;
 			}
 			if (args.get(key) == null) {

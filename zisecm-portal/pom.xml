@@ -11,11 +11,11 @@
 	<packaging>jar</packaging>
 	<dependencies>
 
-		<dependency>
-			<groupId>com.ecm.flowable</groupId>
-			<artifactId>flowable</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.ecm.flowable</groupId> -->
+<!-- 			<artifactId>flowable</artifactId> -->
+<!-- 			<version>0.0.1-SNAPSHOT</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.zisyun</groupId>
 			<artifactId>zisecm-core</artifactId>
