@@ -29,7 +29,7 @@
                             <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column>1</el-table-column>
+                        <el-table-column width="0"></el-table-column>
                         <el-table-column width="40" v-if="isshowicon">
                           <template slot-scope="scope">
                             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">

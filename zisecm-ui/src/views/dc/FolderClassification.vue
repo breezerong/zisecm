@@ -13,7 +13,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="70%">
-      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
+      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
@@ -145,13 +145,12 @@
                           </div>
                         </div>
                       </div>
-                      <el-table-column :label="$t('application.operation')" width="200">
+                      <el-table-column :label="$t('application.operation')" width="140">
                         <template slot="header" slot-scope="scope">
                          <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                         </template>
                         <template slot-scope="scope">
-                          <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                          <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
+                          <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                           <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
                         </template>
                       </el-table-column>
@@ -287,14 +286,15 @@ export default {
       }
     },
     showNewWindow(id){
-      let condition = this.id;
+      let condition = id;
       let href = this.$router.resolve({
-        name: 'docviewer',
+        path: '/viewdoc',
         query: {
           id: condition
+          //token: sessionStorage.getItem('access-token')
         }
       });
-      console.log(href);
+      //console.log(href);
       window.open(href.href, '_blank');
     },
     getgriditem(attrName){
@@ -559,7 +559,7 @@ export default {
       _self.imageArray = [];
       _self.currentType = indata.FORMAT_NAME;
       // 拦截器会自动替换成目标url
-      _self.imageArray[0] =  "/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
+      _self.imageArray[0] =  _self.axios.defaults.baseURL+"/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
       if(_self.currentType == "pdf"){
          window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
       }else{

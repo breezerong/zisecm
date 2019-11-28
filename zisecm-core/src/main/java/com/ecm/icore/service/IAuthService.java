@@ -21,4 +21,9 @@ public interface IAuthService {
 	 * @return
 	 */
 	IEcmSession login(String token);
+	/**
+	 * 登出
+	 * @param token
+	 */
+	void logout(String token);
 }

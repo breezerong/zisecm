@@ -1,0 +1,27 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>com.mysql.cj.jdbc.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:mysql://121.40.197.84:3306/HBArchiveDB?useUnicode=true&amp;characterEncoding=UTF-8&amp;nullCatalogMeansCurrent=true</value>
+		</property>
+		<property name="username">
+			<value>ecmadmin</value>
+		</property>
+		<property name="password" value="Passw0rd!19" />
+	</bean>
+	<bean id="processEngineConfiguration"
+		class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+		<property name="dataSource" ref="dataSource" />
+		<property name="databaseSchemaUpdate" value="true" />
+	</bean>
+	<bean id="ProcessConfig"
+		class="com.ecm.flowable.config.ProcessConfig">
+		<property name="processEngineConfiguration"
+			ref="processEngineConfiguration" />
+	</bean>
+</beans>

@@ -133,12 +133,13 @@
                   </div>
                 </div>
               </div>
-              <el-table-column align="left">
+              <el-table-column align="left" width="140">
                 <template slot="header" slot-scope="scope">
                   <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                 </template>
                 <template  slot-scope="scope">
-                  <el-button type="primary" @click="showItemProperty(scope.row)">{{$t('application.view')}}</el-button>                  
+                  <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
+                  <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>                 
                 </template>
               </el-table-column>
             </el-table>
@@ -244,6 +245,19 @@ export default {
           </span>
         );
       }
+    },
+    // 查看内容
+    showItemContent(indata){
+       let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
     },
     handleNodeClick(indata) {
       let _self = this;
@@ -515,7 +529,9 @@ export default {
       }
     },
     //查看属性
-    showItemProperty() {},
+    showItemProperty(row) {
+      window.open("/#/ViewDoc?id="+row.ID,"_blank")
+    },
     showFileBox(){
       if(this.showBox){
         this.loadAllGridData(this.currentFolder)

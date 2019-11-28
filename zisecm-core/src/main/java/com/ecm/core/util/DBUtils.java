@@ -78,6 +78,9 @@ public class DBUtils {
 		{
 			date = date.replace("Z", " UTC").replace("+0000", "").replace("T", " ");
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+			if(date.indexOf(" ")<0&&date.indexOf(":")<0) {
+				format = new SimpleDateFormat("yyyy-MM-dd");
+			}
 			try {
 				d = format.parse(date);
 			} catch (ParseException e) {

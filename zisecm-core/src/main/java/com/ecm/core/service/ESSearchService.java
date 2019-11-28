@@ -44,6 +44,7 @@ import com.ecm.core.entity.AggregationEntity;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.search.ESClient;
+import com.ecm.core.search.SearchClient;
 import com.ecm.icore.service.ISearchService;
 
 @Component
@@ -312,6 +313,14 @@ public class ESSearchService extends EcmService implements ISearchService {
 					hasTypeName = true;
 				}
 			}
+			//状态必须为“利用”
+			TermsQueryBuilder statusBuilder = QueryBuilders.termsQuery("status", SearchClient.getInstance().getReleaseStatus());
+			if (boolQueryBuilder1 == null) {
+				boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder);
+			} else {
+				boolQueryBuilder1.must(statusBuilder);
+			}
+			
 			if (typeNames != null && typeNames.size() > 0) {
 				TermsQueryBuilder typeBuilder = QueryBuilders.termsQuery("type_name", typeNames);
 				if (boolQueryBuilder1 == null) {
@@ -490,6 +499,14 @@ public class ESSearchService extends EcmService implements ISearchService {
 					sourceBuilder.query(boolQueryBuilder);
 				}
 
+				//状态必须为“利用”
+				TermsQueryBuilder statusBuilder = QueryBuilders.termsQuery("status", SearchClient.getInstance().getReleaseStatus());
+				if (boolQueryBuilder1 == null) {
+					boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder);
+				} else {
+					boolQueryBuilder1.must(statusBuilder);
+				}
+				
 				sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
 				// 类型名称
 				TermsAggregationBuilder aggregation = AggregationBuilders.terms("by_type_name").field("type_name");

@@ -5,15 +5,16 @@
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="ITEM_TYPE" jdbcType="VARCHAR" property="itemType" />
     <result column="VALUE" jdbcType="VARCHAR" property="value" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, NAME, DESCRIPTION, VALUE
+    ID, NAME, DESCRIPTION, ITEM_TYPE, VALUE
   </sql>
   <select id="selectAll" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ecm_parameter order by ID
+    from ecm_parameter order by ITEM_TYPE,NAME
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -32,10 +33,10 @@
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmParameter">
-    insert into ecm_parameter (ID, NAME, DESCRIPTION, 
+    insert into ecm_parameter (ID, NAME, DESCRIPTION, ITEM_TYPE,
       VALUE)
     values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{value,jdbcType=VARCHAR})
+      #{itemType,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR})
     <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
 		SELECT LAST_INSERT_ID() AS ID
 	</selectKey>
@@ -52,6 +53,9 @@
       <if test="description != null">
         DESCRIPTION,
       </if>
+      <if test="itemType != null">
+        ITEM_TYPE,
+      </if>
       <if test="value != null">
         VALUE,
       </if>
@@ -65,6 +69,9 @@
       </if>
       <if test="description != null">
         #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        #{itemType,jdbcType=VARCHAR},
       </if>
       <if test="value != null">
         #{value,jdbcType=VARCHAR},
@@ -80,6 +87,9 @@
       <if test="description != null">
         DESCRIPTION = #{description,jdbcType=VARCHAR},
       </if>
+       <if test="itemType != null">
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
       <if test="value != null">
         VALUE = #{value,jdbcType=VARCHAR},
       </if>
@@ -90,6 +100,7 @@
     update ecm_parameter
     set NAME = #{name,jdbcType=VARCHAR},
       DESCRIPTION = #{description,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
       VALUE = #{value,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmCardSearchItemMapper;
 import com.ecm.core.dao.EcmFormItemMapper;
@@ -70,7 +71,7 @@ public class CardSearchItemManager extends ControllerAbstract{
 		 }
 		 List<ExEcmCardSearchItem> list = merger(list0);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 mp.put("data", list);
 		 return mp;
 	 }
@@ -85,7 +86,7 @@ public class CardSearchItemManager extends ControllerAbstract{
 	 public  Map<String, Object>  updateCardSearchItem(@RequestBody  ExEcmCardSearchItem obj) {
 		 ecmCardSearchItem.updateByPrimaryKey(obj);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 return mp;
 	 }
 	 
@@ -99,7 +100,7 @@ public class CardSearchItemManager extends ControllerAbstract{
 	 public  Map<String, Object>  deleteCardSearchItem(@RequestBody  ExEcmCardSearchItem obj) {
 		 ecmCardSearchItem.deleteByPrimaryKey(obj.getId());
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 return mp;
 	 }
 	 
@@ -114,7 +115,7 @@ public class CardSearchItemManager extends ControllerAbstract{
 		 obj.createId();
 		 ecmCardSearchItem.insert(obj);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 return mp;
 	 }
 	 

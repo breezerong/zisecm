@@ -16,21 +16,6 @@ if (sessionStorage.getItem('token')) {
 	store.commit('set_token', sessionStorage.getItem('access-token'))
 }
 
-var currentRouter = {
-	routers: [
-		
-		
-		{
-			meta: {
-				requireAuth: true
-			},
-			path: '/helpcenter',
-			name: '帮助中心',
-			component: () => import( /* webpackChunkName: "helpcenter" */ '@/views/HelpCenter.vue')
-		}
-	]
-}
-
 const router = new Router({
 	routes: [{
 			meta: {
@@ -55,6 +40,14 @@ const router = new Router({
 						}
 					]
 				},
+				{
+					meta: {
+						requireAuth: true
+					},
+					path: '/helpcenter',
+					name: '帮助中心',
+					component: () => import( /* webpackChunkName: "helpcenter" */ '@/views/HelpCenter.vue')
+				},
 				searchRouter,
 				...dcRouter,
 				...recordRouter,
@@ -66,10 +59,19 @@ const router = new Router({
 			]
 		},
 		{
+			meta: {
+				requireAuth: true,permit: 3
+			},
+			path: '/viewdoc',
+			name: 'viewdoc',
+			component: () => import( /* webpackChunkName: "home1" */ '@/views/dc/ViewDoc.vue')
+		},
+		{
 			path: '/login',
 			name: 'login',
 			component: () => import( /* webpackChunkName: "Login" */ '@/views/Login.vue')
-		}
+		},
+		
 	]
 })
 router.beforeEach((to, from, next) => {

@@ -1,26 +1,30 @@
-function dateFtt(fmt, date)
-{
-    var o = {   
-        "M+" : date.getMonth()+1,                 //月份   
-        "d+" : date.getDate(),                    //日   
-        "h+" : date.getHours(),                   //小时   
-        "m+" : date.getMinutes(),                 //分   
-        "s+" : date.getSeconds(),                 //秒   
-        "q+" : Math.floor((date.getMonth()+3)/3), //季度   
-        "S"  : date.getMilliseconds()             //毫秒   
-    };   
-    if(/(y+)/.test(fmt))   
-        fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
-    for(var k in o)   
-        if(new RegExp("("+ k +")").test(fmt))   
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-    return fmt;   
-}
-
-function dateFormat(value){
-    var crtTime = new Date(value);
-    return dateFtt("yyyy-MM-dd",crtTime);
-}
+function getUserIP(onNewIP) {
+    let MyPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+    let pc = new MyPeerConnection({
+        iceServers: []
+      });
+    let noop = () => {
+      };
+    let localIPs = {};
+    let ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g;
+    let iterateIP = (ip) => {
+      if (!localIPs[ip]) onNewIP(ip);
+      localIPs[ip] = true;
+    };
+    pc.createDataChannel('');
+    pc.createOffer().then((sdp) => {
+      sdp.sdp.split('\n').forEach(function (line) {
+        if (line.indexOf('candidate') < 0) return;
+        line.match(ipRegex).forEach(iterateIP);
+      });
+      pc.setLocalDescription(sdp, noop, noop);
+    }).catch((reason) => {
+    });
+    pc.onicecandidate = (ice) => {
+      if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+      ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+    };
+  }
 export{
-    dateFormat
+    getUserIP
 }

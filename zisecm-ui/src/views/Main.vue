@@ -80,9 +80,11 @@ export default {
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     this.loadMenu();
     this.checklogin();
-    this.$router.push({ path: "/home" });
+    if(this.$route.path=="/"){
+      this.$router.push({ path: "/home" });
+    }
     this.$nextTick(function() {
-			setInterval(this.checklogin, 1000);
+			setInterval(this.checklogin, 2000);
 		});
   },
   methods: {
@@ -97,7 +99,7 @@ export default {
           if(response.data.code==1){
             _self.dataList = response.data.data;
           }
-          console.log(_self.dataList);
+          //console.log(_self.dataList);
           _self.loading = false;
         })
         .catch(function(error) {

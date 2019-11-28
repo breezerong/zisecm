@@ -25,13 +25,13 @@
                   </template>
                  </el-table-column>
                 </el-table-column>
-                <el-table-column prop="taskName" label="名称" min-width="15%" sortable>
+                <el-table-column prop="name" label="名称" min-width="15%" sortable>
                 </el-table-column>
-                <el-table-column prop="performer" label="用户" width="120" >
+                <el-table-column prop="startUser" label="用户" width="120" >
                 </el-table-column>
-                <el-table-column prop="startDate" label="开始时间" :formatter="dateFormatter"  width="160" sortable>
+                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter"  width="160" sortable>
                 </el-table-column>
-                <el-table-column prop="completeDate" label="完成时间" :formatter="dateFormatter"  width="160" sortable>
+                <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"  width="160" sortable>
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果" width="100">
                 </el-table-column>
@@ -84,13 +84,13 @@
                     </div>
                   </template>
                  </el-table-column>
-              <el-table-column prop="workflowName" label="名称" min-width="20%" >
+              <el-table-column prop="name" label="名称" min-width="20%" >
               </el-table-column>
-              <el-table-column prop="startDate" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
+              <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
               </el-table-column>
-              <el-table-column prop="completeDate" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
+              <el-table-column prop="endDate" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
               </el-table-column>
-              <el-table-column prop="currentUser" label="当前执行人"  min-width="20%">
+              <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
               </el-table-column>
               <el-table-column prop="description" label="流程说明" min-width="15%">
               </el-table-column>
@@ -175,7 +175,8 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/workflow/getMyWorkflow',JSON.stringify(m))
+      m.set("userId", sessionStorage.getItem("access-userName"));
+     axios.post('/workflow/myWorkflow',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

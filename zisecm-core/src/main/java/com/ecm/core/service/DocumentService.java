@@ -118,6 +118,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	public List<Map<String, Object>> getObjectsByConditon(String token,String gridName,String folderId,Pager pager,String condition,String orderBy){
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		String currentUser="";
+		try {
+			currentUser = getSession(token).getCurrentUser().getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(condition!=null&&condition.contains("@currentuser")) {
+    		
+			condition=condition.replaceAll("@currentuser", currentUser);
+    	}
 		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
@@ -336,7 +347,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		for (Object key : args.keySet().toArray()) {
 			if (key.toString().equalsIgnoreCase("ID")
 					||key.toString().equalsIgnoreCase("transferId")
-					||key.toString().equalsIgnoreCase("folderPath")) {
+					||key.toString().equalsIgnoreCase("folderPath")
+					||key.toString().equalsIgnoreCase("folderId")) {
 				continue;
 			}
 			if (args.get(key) == null) {
@@ -595,7 +607,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 			} else {
 				StringBuilder sb = new StringBuilder();
-				sb.append("select max(PERMISSION) from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
+				sb.append("select max(PERMISSION) as PERMISSION from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
 				sb.append("b.NAME='").append(aclName);
 				sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and a.TARGET_NAME in('everyone'");
 				sb.append(",'").append(currentUser).append("'");
@@ -1088,7 +1100,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no browse permission:" + id);
 		}
-		String sql = "select a.* from ecm_document a, ecm_docuemnt b where a.VERSION_ID=b.VERSION_ID and b.ID='" + id
+		String sql = "select a.* from ecm_document a, ecm_document b where a.VERSION_ID=b.VERSION_ID and b.ID='" + id
 				+ "' order by a.SYSTEM_VERSION DESC";
 		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
 		return list;

@@ -12,6 +12,7 @@ import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmAction;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmCardSearch;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmComponent;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmDefType;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmDocType;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmForm;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmGridView;
@@ -54,6 +55,9 @@ public class SystemManager extends ControllerAbstract{
 	CacheManagerEcmStore cacheManagerEcmStore;
 	
 	@Autowired
+	CacheManagerEcmDefType cacheManagerEcmDefType;
+	
+	@Autowired
 	CacheManagerEcmDocType cacheManagerEcmDocType;
 	
 	@Autowired
@@ -74,6 +78,7 @@ public class SystemManager extends ControllerAbstract{
 		 cacheManagerEcmDocType.initAllCaches();
 		 cacheManagerEcmCardSearch.initAllCaches();
 		 cacheManagerEcmSuggestion.initAllCaches();
+		 cacheManagerEcmDefType.initAllCaches();
 		 
 		 ESClient.getInstance().refreshCache();
 		 

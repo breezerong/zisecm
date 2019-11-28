@@ -1,6 +1,14 @@
 <template>
   <div>
     
+    <el-dialog title="添加复用文件" :visible.sync="reuseVisible" width="70%">
+      <AddReuse ref="addReuseModel"></AddReuse>
+      <div slot="footer" class="dialog-footer">
+            <el-button @click="reuseVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
+          </div>
+    </el-dialog>
+
     <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
           
           <el-form size="mini" :label-width="formLabelWidth">
@@ -102,8 +110,7 @@
           <tr>
             <td class="navbar">
               <el-breadcrumb>
-                <el-breadcrumb-item>档案管理</el-breadcrumb-item>
-                <el-breadcrumb-item>按卷整理</el-breadcrumb-item>
+                <el-breadcrumb-item>档案移交</el-breadcrumb-item>
               </el-breadcrumb>
             </td>
           </tr>
@@ -111,12 +118,15 @@
             <td>
               <table border="0" width="100%" class="topbar">
                 <tr>
-                  <td align="left" width="160px">
+                  <td align="left" width="380px">
                     <el-tooltip  class="item" effect="dark" :content="$t('application.newTransfer')" placement="top">
                       <el-button type="primary" icon="el-icon-circle-plus" circle @click="onNewFolder()"></el-button>
                     </el-tooltip>
                     <el-tooltip  class="item" effect="dark" :content="$t('application.edit')+$t('application.folder')" placement="top">
                       <el-button type="primary" icon="el-icon-info" circle @click="onEditFolder()"></el-button>
+                    </el-tooltip>
+                    <el-tooltip  class="item" effect="dark" content="归档" placement="top">
+                      <el-button type="primary" icon="el-icon-document" circle @click="onArchived"></el-button>
                     </el-tooltip>
                     <el-tooltip  class="item" effect="dark" :content="$t('application.delete')+$t('application.transfer')" placement="top">
                       <el-button type="primary" icon="el-icon-delete" circle @click="onDeleteTransfer()"></el-button>
@@ -174,11 +184,13 @@
                       <span style="float:left;text-align:left;">卷内文件列表</span>
                       <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
                       <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
-                      <el-button type="primary" plain size="small" :title="$t('application.addReuseFile')"  @click="autoPaper()">{{$t('application.addReuseFile')}}</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.addReuseFile')"  @click="reuseVisible=true">{{$t('application.addReuseFile')}}</el-button>
                       
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button>
+                      <el-button type="primary" plain size="small" title="上移"  @click="onMoveUp()">上移</el-button>
+                      <el-button type="primary" plain size="small" title="下移"  @click="onMoveDown()">下移</el-button>
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
@@ -207,6 +219,7 @@ import 'url-search-params-polyfill'
 
 import PrintPage from '@/views/record/PrintPage'
 import PrintVolumes from '@/views/record/PrintVolumes'
+import AddReuse from '@/views/record/AddReuse'
 export default {
   name: "ArchiveDelivery",
   
@@ -233,6 +246,7 @@ export default {
       transferDataListFull:[],
       selectedTypeName:[],
       transferCount:0,
+      reuseVisible:false,
       typeName:'卷盒',
       folderPath:'/表单/移交单',
       selectTransferRow:[],
@@ -278,6 +292,7 @@ export default {
       imageViewer: Object,
       currentType:"",
       orderBy:"",
+      selectedReuses:[],
       columnsInfo:{
         checkAll: true,
         checkedCities:[],
@@ -348,6 +363,43 @@ export default {
     this.loadTransferGridData();
   },
   methods: {
+    addReuseToVolume(){
+      let _self=this;
+      _self.selectedReuses= _self.$refs.addReuseModel.selectedRow;
+
+      var params = new Map();
+      var m = [];
+      let tab = _self.selectedReuses;
+      
+      var i;
+      for(i in tab){
+        m.push(tab[i]["ID"]);
+      }
+      params.set("cids",m)
+      params.set("id",_self.archiveId);
+      console.log(JSON.stringify(m));
+      _self.axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(params),
+          url: "/dc/addReuseToVolume"
+        })
+        .then(function(response) {
+          _self.loadGridData(null);
+           
+            _self.showInnerFile(null);
+            _self.reuseVisible=false;
+          _self.$message("添加成功！");
+        })
+        .catch(function(error) {
+          _self.$message("添加失败！");
+          console.log(error);
+      });
+      
+
+    },
 
     getTypeNames(keyName){
       let _self=this;
@@ -509,8 +561,73 @@ export default {
     },
     selectInnerChange(val){
       this.selectedInnerItems = val;
-    }
-    ,
+    },
+    onMoveUp(){
+      let _self=this;
+      if(_self.selectedInnerItems.length!=1){
+         _self.$message("请选择一条数据！");
+        return;
+      }
+      var m = new Map();
+      m.set('parentId',_self.archiveId);
+      m.set('childId',_self.selectedInnerItems[0].ID);
+       _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/moveUp"
+      })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.showInnerFile(null);
+          }
+          else{
+             _self.$message( response.data.message);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    onMoveDown(){
+      let _self=this;
+      if(_self.selectedInnerItems.length!=1){
+         _self.$message("请选择一条数据！");
+        return;
+      }
+      var m = new Map();
+      m.set('parentId',_self.archiveId);
+      m.set('childId',_self.selectedInnerItems[0].ID);
+       _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/moveDown"
+      })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.showInnerFile(null);
+          }
+          else{
+             _self.$message( response.data.message);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
     sortchange(column){
       console.log(JSON.stringify(column));
       console.log(column.column.property);
@@ -1229,11 +1346,7 @@ export default {
       
       var i;
       for(i in tab){
-        if(tab[i]["C_LOCK_STATUS"]==="已封卷")
-        {
-          _self.$message("案卷："+tab[i]["CODING"]+"已封卷不允许删除！");
-          return;
-        }
+        
         m.push(tab[i]["ID"]);
       }
       console.log(JSON.stringify(m));
@@ -1313,7 +1426,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/dc/delDocument"
+          url: "/dc/delDocumentAndRelation"
         })
         .then(function(response) {
           _self.showInnerFile(null);
@@ -1400,6 +1513,48 @@ export default {
         status:"产生"
       };
       this.folderDialogVisible = true;
+    },
+    //归档
+    onArchived(){
+      let _self=this;
+      if(_self.selectTransferRow==null||_self.selectTransferRow.length==0){
+        _self.$message('请选择数据！');
+        return;
+      }
+
+      let tab = _self.selectTransferRow;
+          var m = [];
+          var i;
+          for(i in tab){
+            if(tab[i]["STATUS"]!="产生")
+            {
+              _self.$message("移交单"+tab[i]["CODING"]+"已提交不能再次提交！");
+              return;
+            }
+            m.push(tab[i]["ID"]);
+          }
+          console.log(JSON.stringify(m));
+          _self.axios({
+              headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+              },
+              method: "post",
+              data: JSON.stringify(m),
+              url: "/dc/archived"
+            })
+            .then(function(response) {
+              _self.loadTransferGridData();
+              _self.loadGridData(null);
+              
+              _self.showInnerFile(null);
+              _self.$message('操作成功');
+            })
+            .catch(function(error) {
+              _self.$message('操作失败');
+              console.log(error);
+          });
+        
+      
     },
     // 编辑文件夹事件
     onEditFolder()
@@ -1586,12 +1741,12 @@ export default {
      this. loadPageInfo();
     }
   },
-  components: {
+  components:{
     ShowProperty: ShowProperty,
     PrintPage:PrintPage,
     PrintVolumes:PrintVolumes,
-    DataGrid:DataGrid
-    
+    DataGrid:DataGrid,
+    AddReuse:AddReuse    
     //Prints:Prints
   }
 };

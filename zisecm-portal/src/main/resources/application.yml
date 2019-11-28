@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: flowable
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://121.40.197.84:3306/HBArchiveDB?useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true
+      #url: jdbc:mysql://localhost:3306/flowable?characterEncoding=UTF-8&serverTimezone=GMT&nullCatalogMeansCurrent=true
+      #url: jdbc:mysql://localhost:3306/flowable?characterEncoding=UTF-8&serverTimezone=GMT
+      username: ecmadmin
+      password: Passw0rd!19
+server:
+    port: 8080
+swagger:
+    basePackage: com.ecm.flowable.controller
+flowable:
+    check-process-definitions: false
+rocketmq:
+  namesrvaddr: 192.168.200.57:9876
