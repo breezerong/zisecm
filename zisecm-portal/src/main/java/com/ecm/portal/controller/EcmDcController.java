@@ -27,6 +27,7 @@ import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.AuditContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
@@ -36,6 +37,7 @@ import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.entity.UserEntity;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
@@ -325,6 +327,18 @@ public class EcmDcController extends ControllerAbstract{
 		mp.put("id", id);
 		return mp;
 	}
+	
+	@RequestMapping(value = "/dc/newAudit", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> newAudit(@RequestBody String objId) throws Exception {
+		
+		
+		String id = documentService.newAudit(getToken(), null, AuditContext.READ, objId, null, null);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("id", id);
+		return mp;
+	}
 
 	@RequestMapping(value = "/dc/delDocument", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
@@ -592,11 +606,35 @@ public class EcmDcController extends ControllerAbstract{
 	public Map<String, Object> getRelations(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			String sql = "select b.ID,a.RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.CREATOR,b.CREATION_DATE"
-					+ "from ecm_relation a, ecm_document b where a.RELATION_NAME not like 'irel%' and (a.PARENT_ID=b.ID or a.CHILD_ID=b.ID)"
+			String sql = "select b.ID,a.NAME AS RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.CREATOR,b.CREATION_DATE"
+					+ " from ecm_relation a, ecm_document b where a.NAME not like 'irel%' and (a.PARENT_ID=b.ID or a.CHILD_ID=b.ID)"
 					+ " and b.ID='"+id+"' order by b.CREATION_DATE";
+			System.out.println(sql);
 			List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql);
 			mp.put("data", list);
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/getDocUseInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getDocUseInfo(@RequestBody String id) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		
+		try {
+			StringBuffer sql = new StringBuffer();
+			sql.append("select ");
+			sql.append("(select count(*) from ecm_relation where NAME='irel_borrow' and CHILD_ID='"+id+"') as borrowCount,");
+			sql.append("(select count(*) from ecm_audit_general where ACTION_NAME='ecm_read' and DOC_ID='"+id+"') as readCount,");
+			sql.append("(select count(*) from ecm_audit_general where ACTION_NAME='ecm_download' and DOC_ID='"+id+"') as downloadCount");
+			sql.append(" from dual ");
+			List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql.toString());
+			mp.put("data", list.get(0));
 			mp.put("code", ActionContext.SUCESS);
 		}
 		catch(Exception ex) {

@@ -14,6 +14,9 @@
             <el-form-item label="说明" :label-width="formLabelWidth">
               <el-input v-model="form.description" auto-complete="off"></el-input>
             </el-form-item>
+            <el-form-item label="类型" :label-width="formLabelWidth">
+              <el-input v-model="form.itemType" auto-complete="off"></el-input>
+            </el-form-item>
             <el-form-item label="值" :label-width="formLabelWidth">
               <el-input v-model="form.value" auto-complete="off"></el-input>
             </el-form-item>
@@ -68,11 +71,16 @@
                     <el-input  v-model="scope.row.description"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="值" width="320">
+                <el-table-column label="值" min-width="20%">
                   <template slot-scope="scope">
                     <el-input  v-model="scope.row.value"></el-input>
                   </template>
                 </el-table-column> 
+                <el-table-column label="类型" width="180">
+                 <template slot-scope="scope">
+                    <el-input  v-model="scope.row.itemType"></el-input>
+                  </template>
+                </el-table-column>
                 <el-table-column label="操作" width="240">
                   <template slot-scope="scope">
                     <el-button :plain="true" type="primary" size="small" icon="edit" @click="showcategory(scope.row)">选择</el-button>

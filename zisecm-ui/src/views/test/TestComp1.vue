@@ -125,6 +125,83 @@
          </el-col>
       </el-row>
     </el-form>
+    <el-form label-width="120px" @submit.native.prevent>
+      <el-row>
+         <el-col :span="8">
+           浏览测试
+         </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="文档ID">
+            <el-input type="text"  v-model="viewData.id" ></el-input>
+          </el-form-item>
+          <el-form-item label="格式">
+            <el-input type="text"  v-model="viewData.format" ></el-input>
+          </el-form-item>
+        </el-col>
+         <el-col :span="8">
+           <router-link :to="{path:'/dc/officedocviewer',query:{id:viewData.id,format:viewData.format}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link> 
+         </el-col>
+      </el-row>
+    </el-form>
+    <el-form label-width="120px" @submit.native.prevent>
+      <el-row>
+         <el-col :span="8">
+           图像查看
+         </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="文档ID">
+            <el-input type="text"  v-model="imageId" ></el-input>
+          </el-form-item>
+        </el-col>
+         <el-col :span="8">
+           <router-link :to="{path:'/dc/imageviewer',query:{id:imageId}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link> 
+         </el-col>
+      </el-row>
+    </el-form>
+    <el-form label-width="120px" @submit.native.prevent>
+      <el-row>
+         <el-col :span="8">
+           视频播放
+         </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="视频ID">
+            <el-input type="text"  v-model="videoData.id" ></el-input>
+          </el-form-item>
+          <el-form-item label="格式">
+            <el-input type="text"  v-model="videoData.format" ></el-input>
+          </el-form-item>
+        </el-col>
+         <el-col :span="8">
+           <router-link :to="{path:'/dc/videoplayer',query:{id:videoData.id,format:videoData.format}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link> 
+         </el-col>
+      </el-row>
+    </el-form>
+    <el-form label-width="120px" @submit.native.prevent>
+      <el-row>
+         <el-col :span="8">
+           音频播放
+         </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="音频ID">
+            <el-input type="text"  v-model="audioData.id" ></el-input>
+          </el-form-item>
+          <el-form-item label="格式">
+            <el-input type="text"  v-model="audioData.format" ></el-input>
+          </el-form-item>
+        </el-col>
+         <el-col :span="8">
+           <router-link :to="{path:'/dc/audioplayer',query:{id:audioData.id,format:audioData.format}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link> 
+         </el-col>
+      </el-row>
+    </el-form>
   </div>
 </template>
 
@@ -139,6 +216,15 @@ export default {
   permit: 1,
   data() {
     return {
+      imageId:"e99fda050aca4142b627cc4e7969586a",
+      videoData:{
+        id:"69c746af4cb1454486aff87a586b1275",
+        format:"mp4"
+      },
+      audioData:{
+        id:"ef4568f4e4ac40f9a9748d9682057a34",
+        format:"mp3"
+      },
       numData:{
         id:"",
         number:""
@@ -147,6 +233,10 @@ export default {
         id:"",
         type:"3",
         path:""
+      },
+      viewData:{
+        id:"e5e61e08910241c69d3dd484cad98cf9",
+        format:"docx"
       },
       fullData:{
         id:"",

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ecm.core.ActionContext;
 import com.ecm.core.dao.EcmCardSearchItemMapper;
 import com.ecm.core.dao.EcmCardSearchMapper;
 import com.ecm.core.entity.EcmCardSearch;
@@ -43,7 +44,7 @@ public class CardSearchManager extends ControllerAbstract{
 	 public   Map<String, Object>  getCardSearch() {
 		 List<EcmCardSearch> list =ecmCardSearch.selectAll();
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 mp.put("data", list);
 		 return mp;
 	 }
@@ -57,7 +58,7 @@ public class CardSearchManager extends ControllerAbstract{
 	 public  Map<String, Object>  updateCardSearch(@RequestBody  EcmCardSearch obj) {
 		 ecmCardSearch.updateByPrimaryKey(obj);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 return mp;
 	 }
 	 
@@ -87,11 +88,11 @@ public class CardSearchManager extends ControllerAbstract{
 				 en.setParentId(obj.getId());
 				 ecmCardSearchItem.insert(en);
 			 }
-			 mp.put("success", true);
+			 mp.put("code", ActionContext.SUCESS);
 		 }
 		 else
 		 {
-			 mp.put("success", false);
+			 mp.put("code", ActionContext.FAILURE);
 		 }
 
 		 return mp;
@@ -112,7 +113,7 @@ public class CardSearchManager extends ControllerAbstract{
 		 }
 		 ecmCardSearch.deleteByPrimaryKey(obj.getId());
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 return mp;
 	 }
 	 
@@ -129,7 +130,7 @@ public class CardSearchManager extends ControllerAbstract{
 		 //Long id=ecmCardSearch.insert(obj);
 		 //System.out.println("id:"+id);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		 mp.put("success", true);
+		 mp.put("code", ActionContext.SUCESS);
 		 return mp;
 	 }
 	 

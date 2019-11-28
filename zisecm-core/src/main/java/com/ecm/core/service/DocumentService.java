@@ -1100,7 +1100,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no browse permission:" + id);
 		}
-		String sql = "select a.* from ecm_document a, ecm_docuemnt b where a.VERSION_ID=b.VERSION_ID and b.ID='" + id
+		String sql = "select a.* from ecm_document a, ecm_document b where a.VERSION_ID=b.VERSION_ID and b.ID='" + id
 				+ "' order by a.SYSTEM_VERSION DESC";
 		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
 		return list;

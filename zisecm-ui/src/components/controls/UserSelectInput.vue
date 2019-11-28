@@ -135,15 +135,7 @@ export default {
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
       let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: m,
-          url: "/zisecm/admin/getUsers"
-        })
+      axios.post("/zisecm/admin/getUsers",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           if(_self.inputValue ){
@@ -177,15 +169,7 @@ export default {
       m.set("condition", "name like '%" + this.findValue + "%'");
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: m,
-          url: "/zisecm/admin/getUsers"
-        })
+      axios.post("/zisecm/admin/getUsers",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           for (var i = 0; i < _self.rightListId.length; i++) {

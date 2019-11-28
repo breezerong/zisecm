@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -19,7 +20,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 
 @SpringBootApplication
-@ComponentScan({"com.ecm.flowable.*","com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*"})
+@ComponentScan({ /* "com.ecm", */"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*","com.ecm.flowable"})
 @MapperScan("com.ecm.core.dao")
 @EnableTransactionManagement//(proxyTargetClass = true)
 public class ZisECMApplication extends SpringBootServletInitializer {
@@ -31,8 +32,8 @@ public class ZisECMApplication extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(ZisECMApplication.class, args);
-        
+        ApplicationContext app= SpringApplication.run(ZisECMApplication.class, args);
+        //SpringUtil.setAppcxt(app);
     }
     /*
     @Bean

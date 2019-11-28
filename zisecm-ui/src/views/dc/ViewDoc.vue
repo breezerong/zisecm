@@ -16,7 +16,7 @@
         <el-col :span="4" class="aside-rigth">
             <div style="padding-top:10px;">
               <template v-if="docObj!=null">
-              <el-button size="mini">借阅</el-button>
+              <el-button size="mini" @click="menuClick('借阅')">借阅</el-button>
               <el-button size="mini">下载</el-button>
               </template>
             </div>
@@ -36,23 +36,26 @@
 
     <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
       <template v-if="dialog.title=='文档属性'">
-        <ShowProperty :itemId="doc.id" :typeName="doc.typeName" :folderId="doc.folderId"></ShowProperty>
+        <ShowProperty ref="ShowProperty" :itemId="doc.id" :typeName="doc.typeName" :folderId="doc.folderId"></ShowProperty>
       </template>
       <template v-if="dialog.title=='关联文档'">
-       <!--  <RelationDocs :docId="docId"></RelationDocs> -->
+       <RelationDocs :docId="docId"></RelationDocs>
       </template>
        <template v-if="dialog.title=='文档版本'">
-        <!-- <DocVersion :docId="docId"></DocVersion> -->
+        <DocVersion :docId="docId"></DocVersion>
       </template>
        <template v-if="dialog.title=='格式副本'">
-        <!-- <ViewRedition :docId="docId"></ViewRedition> -->
+        <ViewRedition :docId="docId"></ViewRedition>
       </template>
       <template v-if="dialog.title=='利用信息'">
-        <!-- <UseInfo :docId="docId"></UseInfo> -->
+        <UseInfo :docId="docId"></UseInfo>
+      </template>
+      <template v-if="dialog.title=='借阅'">
+        借阅
       </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="dialog.visible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogSubmit()">确 定</el-button>
       </span>
     </el-dialog>
   </el-container>
@@ -62,20 +65,20 @@
 
 import ShowProperty from '@/components/ShowProperty.vue'
 
-/* import DocAttrs from './DocAttrs.vue'
+import DocAttrs from './DocAttrs.vue'
 import RelationDocs from './RelationDocs.vue'
 import DocVersion from './DocVersion.vue'
 import UseInfo from './UseInfo.vue'
-import ViewRedition from './ViewRedition.vue' */
+import ViewRedition from './ViewRedition.vue'
 
 export default {
   components:{
-    ShowProperty:ShowProperty
-   /*  DocAttrs:DocAttrs,
+    ShowProperty:ShowProperty,
+    DocAttrs:DocAttrs,
     RelationDocs:RelationDocs,
     DocVersion:DocVersion,
     UseInfo:UseInfo,
-    ViewRedition:ViewRedition */
+    ViewRedition:ViewRedition
   },
   data(){
     return {
@@ -98,47 +101,50 @@ export default {
   },
   created(){
     var _self = this;
-    this.docId = this.$route.query.paraName;
+    this.docId = this.$route.query.id;
     var user = sessionStorage.getItem("access-user");
     this.user = JSON.parse(user);
     this.token = sessionStorage.getItem("access-token");
-    axios.post("/zisecm//dc/getDocument",this.docId).then(function(response) {
+    axios.post("/dc/getDocument",this.docId).then(function(response) {
         _self.docObj=response.data.data;
+        console.log(_self.docObj);
         _self.doc.id=_self.docObj.ID;
         _self.doc.code=_self.docObj.CODING;
-        _self.doc.title=_self.docObj.TITLE;
+        _self.doc.title=_self.docObj.NAME;
         _self.doc.folderId=_self.docObj.FOLDER_ID;
         _self.doc.typeName=_self.docObj.TYPE_NAME;
         console.log(_self.doc);
+        _self.writeReadLog()
       }).catch(function(error) {
         console.log(error);
     });
       
   },
   methods:{
+    writeReadLog(){
+      axios.post("/dc/newAudit",this.docId).then(function(response) {
+        console.log("writeReadLog");
+        console.log(response);
+      });
+      
+    },
     menuClick(type){
       this.dialog.title=type;
-      switch (type) {
-        case '文档属性':
-          
-          break;
-       case '关联文档':
-          
-          break;
-      case '文档版本':
-    
-          break;
-      case '格式副本':
-    
-          break;      
-      case '利用信息':
-    
-          break;
-      }
       this.dialog.visible=true
     },
     handleClose(done){
       this.dialog.visible = false
+    },
+    dialogSubmit(){
+      if(this.dialog.title=='文档属性'){
+        this.$message("文档属性");
+        this.$refs.ShowProperty.saveItem();
+        this.dialog.visible = false
+      }else if(this.dialog.title=='借阅'){
+        this.$message("借阅");
+      }else{
+        this.dialog.visible = false
+      }
     }
   }
 }
