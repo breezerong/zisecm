@@ -47,8 +47,7 @@ public class StartExecutorListener  implements ExecutionListener  {
 			e.printStackTrace();
 		}  
     	EcmDocument  ecmObject = documentService.getObjectById(token, formId);
-    	
-      	//初始化变量栈
+       	//初始化变量栈
     	HashMap<String, Object> map = new HashMap<>();
         map.put("borrowType", ecmObject.getSubType());
         map.put("securityLevel", ecmObject.getSecurityLevel());
@@ -57,7 +56,7 @@ public class StartExecutorListener  implements ExecutionListener  {
         map.put("beyondLeaderPermision", true);
         map.put("securityLevel", ecmObject.getSecurityLevel());
         map.put("Task_review", "reject");
-        map.put("taskUser_owner", userName);
+        map.put("taskUser_owner", "Admin");
         map.put("taskUser_owner_leader", "Admin");
         map.put("taskUser_doc_leader", "Admin");
         map.put("taskUser_leader_in_charge", "Admin");
@@ -68,9 +67,7 @@ public class StartExecutorListener  implements ExecutionListener  {
  
     	String  process_name=delegateExecution.getProcessDefinitionId().split(":")[0];
     	if("process_borrow".equals(process_name)) {//借阅流程
-    		if("exclusivegateway_paperAndOpen".equals(delegateExecution.getCurrentActivityId())) {
             	delegateExecution.setTransientVariables(map);
-    		}
     	}
     	
     }

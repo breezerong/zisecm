@@ -145,7 +145,8 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      axios.post('/workflow/doneTask',JSON.stringify(m))
+      m.set("userId", sessionStorage.getItem("access-userName"));
+       axios.post('/workflow/doneTask',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;

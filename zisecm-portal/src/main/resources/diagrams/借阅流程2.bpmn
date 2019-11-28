@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
   <process id="process_borrow" name="借阅流程" isExecutable="true">
-    <userTask id="usertask2" name="申请部门领导审批" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser}"></userTask>
-    <userTask id="usertask3" name="文档所属部门领导审批" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser}"></userTask>
+    <documentation>借阅流程 说明 ：^_^</documentation>
+    <userTask id="usertask2" name="申请部门领导审批" default="flow29" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner_leader}">
+      <extensionElements>
+        <activiti:executionListener event="start" delegateExpression="asdfadsf "></activiti:executionListener>
+        <activiti:taskListener event="create" expression="asdf"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <userTask id="usertask3" name="文档所属部门领导审批" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_doc_leader}">
+      <extensionElements>
+        <activiti:executionListener event="start" delegateExpression="${approveTaskCreateListener}"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow2" name="否" sourceRef="exclusivegateway4" targetRef="usertask3"></sequenceFlow>
-    <userTask id="usertask4" name="公司分管领导审批" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser}"></userTask>
+    <userTask id="usertask4" name="公司分管领导审批" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_leader_in_charge}">
+      <extensionElements>
+        <activiti:executionListener event="start" delegateExpression="${approveTaskCreateListener}"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow3" name="纸质借阅" sourceRef="exclusivegateway5" targetRef="usertask4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅'}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="usertask5" name="出库" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="Admin"></userTask>
+    <userTask id="usertask5" name="出库" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="Admin">
+      <extensionElements>
+        <activiti:executionListener event="start" delegateExpression="${approveTaskCreateListener}"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
     <startEvent id="startevent1" name="Start"></startEvent>
     <exclusiveGateway id="exclusivegateway_paperAndOpen" name="exclusivegateway_paperAndOpen" default="flow15">
       <documentation>纸质借阅&amp;内部公开</documentation>
@@ -20,12 +38,12 @@
     <sequenceFlow id="flow15" name="否" sourceRef="exclusivegateway_paperAndOpen" targetRef="usertask2"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway" default="flow2">
       <extensionElements>
-        <activiti:executionListener event="start" expression="${startExecutorListener}"></activiti:executionListener>
+        <activiti:executionListener event="start" delegateExpression="${startExecutorListener}"></activiti:executionListener>
       </extensionElements>
     </exclusiveGateway>
     <exclusiveGateway id="exclusivegateway5" name="Exclusive Gateway" default="flow18">
       <extensionElements>
-        <activiti:executionListener event="start" expression="${startExecutorListener}"></activiti:executionListener>
+        <activiti:executionListener event="start" delegateExpression="${startExecutorListener}"></activiti:executionListener>
       </extensionElements>
     </exclusiveGateway>
     <sequenceFlow id="flow17" name="本部门文档" sourceRef="exclusivegateway4" targetRef="exclusivegateway5">
@@ -33,13 +51,13 @@
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway6" name="Exclusive Gateway" default="flow19">
       <extensionElements>
-        <activiti:executionListener event="start" expression="${startExecutorListener}"></activiti:executionListener>
+        <activiti:executionListener event="start" delegateExpression="${startExecutorListener}"></activiti:executionListener>
       </extensionElements>
     </exclusiveGateway>
     <sequenceFlow id="flow18" name="否" sourceRef="exclusivegateway5" targetRef="exclusivegateway6"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway7" name="Exclusive Gateway" default="flow28">
       <extensionElements>
-        <activiti:executionListener event="start" expression="${startExecutorListener}"></activiti:executionListener>
+        <activiti:executionListener event="start" delegateExpression="${startExecutorListener}"></activiti:executionListener>
       </extensionElements>
     </exclusiveGateway>
     <sequenceFlow id="flow19" name="否" sourceRef="exclusivegateway6" targetRef="exclusivegateway7"></sequenceFlow>
@@ -52,10 +70,12 @@
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway8" name="Exclusive Gateway" default="flow25">
       <extensionElements>
-        <activiti:executionListener event="start" expression="${startExecutorListener}"></activiti:executionListener>
+        <activiti:executionListener event="start" delegateExpression="${startExecutorListener}"></activiti:executionListener>
       </extensionElements>
     </exclusiveGateway>
-    <sequenceFlow id="flow23" name="同意" sourceRef="usertask4" targetRef="exclusivegateway8"></sequenceFlow>
+    <sequenceFlow id="flow23" name="同意" sourceRef="usertask4" targetRef="exclusivegateway8">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='同意'}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="flow24" name="纸质借阅" sourceRef="exclusivegateway8" targetRef="usertask5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅'}]]></conditionExpression>
     </sequenceFlow>
@@ -65,18 +85,28 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅' && securityLevel==内部公开}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="servicetask1"></sequenceFlow>
-    <userTask id="usertask6" name="借阅驳回" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser}"></userTask>
-    <sequenceFlow id="flow29" name="reject" sourceRef="usertask2" targetRef="usertask6"></sequenceFlow>
-    <sequenceFlow id="flow30" name="reject" sourceRef="usertask3" targetRef="usertask6"></sequenceFlow>
-    <sequenceFlow id="flow31" name="reject" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
-    <sequenceFlow id="flow32" name="同意" sourceRef="usertask6" targetRef="usertask2"></sequenceFlow>
+    <userTask id="usertask6" name="借阅驳回" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner}">
+      <extensionElements>
+        <activiti:executionListener event="start" delegateExpression="${approveTaskCreateListener}"></activiti:executionListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow29" name="驳回" sourceRef="usertask2" targetRef="usertask6">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='驳回'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow30" name="驳回" sourceRef="usertask3" targetRef="usertask6"></sequenceFlow>
+    <sequenceFlow id="flow31" name="驳回" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
+    <sequenceFlow id="flow32" name="同意" sourceRef="usertask6" targetRef="usertask2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='同意'}]]></conditionExpression>
+    </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
     <serviceTask id="servicetask2" name="Service Task"></serviceTask>
     <sequenceFlow id="flow36" sourceRef="servicetask1" targetRef="servicetask2"></sequenceFlow>
-    <sequenceFlow id="flow38" sourceRef="usertask6" targetRef="servicetask2"></sequenceFlow>
+    <sequenceFlow id="flow38" name="结束" sourceRef="usertask6" targetRef="servicetask2"></sequenceFlow>
     <sequenceFlow id="flow39" sourceRef="servicetask2" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow40" sourceRef="usertask5" targetRef="servicetask2"></sequenceFlow>
-    <sequenceFlow id="flow41" name="同意" sourceRef="usertask2" targetRef="exclusivegateway4"></sequenceFlow>
+    <sequenceFlow id="flow41" name="同意" sourceRef="usertask2" targetRef="exclusivegateway4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='同意'}]]></conditionExpression>
+    </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_process_borrow">
     <bpmndi:BPMNPlane bpmnElement="process_borrow" id="BPMNPlane_process_borrow">
@@ -199,7 +229,7 @@
         <omgdi:waypoint x="812.0" y="384.0"></omgdi:waypoint>
         <omgdi:waypoint x="812.0" y="572.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="812.0" y="384.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="812.0" y="384.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow24" id="BPMNEdge_flow24">
@@ -237,7 +267,7 @@
         <omgdi:waypoint x="435.0" y="91.0"></omgdi:waypoint>
         <omgdi:waypoint x="760.0" y="88.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="27.0" x="435.0" y="91.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="435.0" y="91.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow30" id="BPMNEdge_flow30">
@@ -245,14 +275,14 @@
         <omgdi:waypoint x="702.0" y="166.0"></omgdi:waypoint>
         <omgdi:waypoint x="812.0" y="116.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="27.0" x="663.0" y="166.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="663.0" y="166.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow31" id="BPMNEdge_flow31">
         <omgdi:waypoint x="812.0" y="329.0"></omgdi:waypoint>
         <omgdi:waypoint x="812.0" y="116.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="27.0" x="820.0" y="306.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="820.0" y="306.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
@@ -274,6 +304,9 @@
         <omgdi:waypoint x="1189.0" y="88.0"></omgdi:waypoint>
         <omgdi:waypoint x="1190.0" y="808.0"></omgdi:waypoint>
         <omgdi:waypoint x="1085.0" y="807.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="865.0" y="88.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow39" id="BPMNEdge_flow39">
         <omgdi:waypoint x="1032.0" y="835.0"></omgdi:waypoint>
