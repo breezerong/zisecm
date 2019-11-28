@@ -9,7 +9,13 @@ import './plugins/formatter.js'
 import './assets/styles/main.css'
 import echarts from 'echarts'
 import './assets/icons/iconfont.css'
+import ImgViewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
+import Video from 'video.js'
+import 'video.js/dist/video-js.css'
 
+Vue.prototype.$video = Video
+Vue.use(ImgViewer)
 Vue.config.productionTip = false
 Vue.prototype.getLang = function (){
   let lang = localStorage.getItem("localeLanguage") || "zh-cn"

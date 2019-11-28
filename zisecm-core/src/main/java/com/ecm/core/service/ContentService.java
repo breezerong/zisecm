@@ -49,6 +49,12 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 		}
 		return contentMapper.getContents(docId, contentType);
 	}
+	
+	@Override
+	public List<EcmContent> getObjects(String token, String condition) {
+		
+		return contentMapper.selectByCondition(condition);
+	}
 
 	@Override
 	public String newObject(String token, Object obj) throws EcmException {

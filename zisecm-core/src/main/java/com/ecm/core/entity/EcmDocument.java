@@ -750,6 +750,13 @@ public class EcmDocument extends EcmSysObject{
 			attributes.put("IS_HIDDEN",  this.isHidden?1:0);
 		}
 	}
+	@Override
+	public void setId(String id) {
+		super.setId(id);
+        if(attributes!=null) {
+			attributes.put("ID",  id == null ? "" : id.trim());
+		}
+	}
 
 	@Override
 	public void createId() {

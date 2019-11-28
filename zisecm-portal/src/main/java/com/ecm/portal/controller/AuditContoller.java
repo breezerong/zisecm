@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ecm.core.bpm.ProcessEngineExt;
+//import com.ecm.core.bpm.ProcessEngineExt;
 import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.service.AuditService;
 
@@ -16,8 +16,8 @@ public class AuditContoller extends ControllerAbstract {
 
 	@Autowired
 	protected AuditService auidtService;
-	@Autowired
-	private ProcessEngineExt processEngine;
+//	@Autowired
+//	private ProcessEngineExt processEngine;
 	
 	@RequestMapping("/addAudit")
 	@ResponseBody
