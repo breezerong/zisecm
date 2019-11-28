@@ -9,15 +9,21 @@ export default {
   name: "OfficeDocViewer",
   data() {
     return {
-      id:"",
-      format:"",
       owaUrl:"",
       itemHeight: window.innerHeight - 50
     };
   },
+  props: {
+    id:{type:String},
+    format:{type:String}
+  },
   created() {
-    this.id = this.$route.query.id;
-    this.format = this.$route.query.format;
+    if(this.id==null && this.$route.query.id){
+      this.id = this.$route.query.id;
+    }
+    if(this.format==null && this.$route.query.format){
+      this.format = this.$route.query.format;
+    }
     this.loadUrl();
   },
   methods: {
