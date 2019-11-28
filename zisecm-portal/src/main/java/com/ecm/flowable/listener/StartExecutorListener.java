@@ -35,8 +35,8 @@ public class StartExecutorListener  implements ExecutionListener  {
 //    	DocumentService documentService= SpringUtil.getBean(DocumentService.class);
 //    	AuthService authService=SpringUtil.getBean(AuthService.class);
 
-    	Map<String, VariableInstance>  varMap = delegateExecution.getVariableInstances();
-    	String formId= varMap.get("formId").getTextValue();
+    	Map<String, Object>  varMap = delegateExecution.getVariables();
+    	String formId= varMap.get("formId").toString();
     	String userName=null;
     	try {
     		IEcmSession ecmSession=authService.login("workflow","admin","admin");
@@ -48,18 +48,17 @@ public class StartExecutorListener  implements ExecutionListener  {
 		}  
     	EcmDocument  ecmObject = documentService.getObjectById(token, formId);
        	//初始化变量栈
-    	HashMap<String, Object> map = new HashMap<>();
-        map.put("borrowType", ecmObject.getSubType());
-        map.put("securityLevel", ecmObject.getSecurityLevel());
-        map.put("departmentDoc", true);
-        map.put("needDownload", true);
-        map.put("beyondLeaderPermision", true);
-        map.put("securityLevel", ecmObject.getSecurityLevel());
-        map.put("Task_review", "reject");
-        map.put("taskUser_owner", "Admin");
-        map.put("taskUser_owner_leader", "Admin");
-        map.put("taskUser_doc_leader", "Admin");
-        map.put("taskUser_leader_in_charge", "Admin");
+        varMap.put("borrowType", ecmObject.getSubType());
+        varMap.put("securityLevel", ecmObject.getSecurityLevel());
+        varMap.put("departmentDoc", true);
+        varMap.put("needDownload", true);
+        varMap.put("beyondLeaderPermision", true);
+        varMap.put("securityLevel", ecmObject.getSecurityLevel());
+        varMap.put("Task_review", "reject");
+        varMap.put("taskUser_owner", "Admin");
+        varMap.put("taskUser_owner_leader", "Admin");
+        varMap.put("taskUser_doc_leader", "Admin");
+        varMap.put("taskUser_leader_in_charge", "Admin");
         
         //map 需要从借阅表单ecm.document.type_name="借阅单" +  流程记录里取
         //流程记录中记录了表单ID
@@ -67,7 +66,7 @@ public class StartExecutorListener  implements ExecutionListener  {
  
     	String  process_name=delegateExecution.getProcessDefinitionId().split(":")[0];
     	if("process_borrow".equals(process_name)) {//借阅流程
-            	delegateExecution.setTransientVariables(map);
+            	delegateExecution.setTransientVariables(varMap);
     	}
     	
     }
