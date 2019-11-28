@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.common.engine.impl.identity.Authentication;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.RepositoryService;
@@ -59,6 +60,9 @@ public class BorrowController  extends ControllerAbstract{
 	    private RepositoryService repositoryService;
 	    @Autowired
 	    private ProcessEngine processEngine;
+	    @Autowired
+	    private HistoryService historyService;
+	    
 		@Autowired
 		private WorkflowAuditService workflowAuditService;
 		@Autowired
@@ -93,14 +97,24 @@ public class BorrowController  extends ControllerAbstract{
 	    @RequestMapping(value = "/startWorkflow")
 	    @ResponseBody
 	    public Map<String, Object> startWorkflow(@RequestBody String argStr) {
+//	    	try {
+//				deploymentProcessExpense();
+//			} catch (Exception e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 	        //启动流程
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			Map<String, Object> result = new HashMap<String, Object>();
 			try {
 		    	String userName =workflowAuditService.getSession(getToken()).getCurrentUser().getUserName();
+		    		Authentication.setAuthenticatedUserId(userName);
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
  			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
- 					//创建流程日志
+  			        //创建流程日志
+ 			       runtimeService.setVariable(processInstance.getId(), "startUser", userName);
+ 			       List hpis = historyService.createHistoricProcessInstanceQuery()
+ 			              .startedBy(userName).list();
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setWorkflowId(processInstance.getId());

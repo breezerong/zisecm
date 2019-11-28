@@ -80,12 +80,21 @@ public class ExpenseController {
 	     */
 	    @RequestMapping(value = "list")
 	    @ResponseBody
-	    public Object list(String userId) {
+	    public HashMap<String,Object> list(String userId) {
 	        List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().list();
+	        List<HashMap> resultList = new ArrayList<HashMap>();
 	        for (Task task : tasks) {
+		        HashMap<String, Object> map = new HashMap<>();
+		        map.put("id", task.getId());
+		        map.put("name", task.getName());
+		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
+		        map.put("createTime", task.getCreateTime());
+		        resultList.add(map);
 	            System.out.println(task.toString());
 	        }
-	        return tasks.toArray().toString();
+	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
+	        resultMap.put("data",  resultList);
+	        return resultMap;
 	    }
 
 	    /**
