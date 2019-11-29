@@ -2,21 +2,19 @@
 
 <template>
   <div>
-    <table>
-        <tr>
-           <td align="left" width="160px">
-                <el-input  v-model="inputkey" :placeholder="$t('message.pleaseInput')+$t('application.keyword')" @change="initData()" prefix-icon="el-icon-search"></el-input>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <DataGrid ref="dataGrid" key="left" v-bind:itemDataList="dataList"
+    <el-row>
+      <el-col>
+        <el-input  v-model="inputkey" :placeholder="$t('message.pleaseInput')+$t('application.keyword')" @change="initData()" prefix-icon="el-icon-search"></el-input>
+      </el-col>
+      
+    </el-row>
+    <el-row>
+      <DataGrid ref="dataGrid" key="left" v-bind:itemDataList="dataList"
                       v-bind:columnList="gridList" v-bind:itemCount="dataCount"
                       @pagesizechange="handleSizeChange" @pagechange="handleCurrentChange"
                       @selectchange="selectChange"></DataGrid>
-            </td>
-        </tr>
-    </table>
+    </el-row>
+    
   </div>
   
 </template>

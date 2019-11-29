@@ -155,7 +155,7 @@
       <el-col :span="6" style="padding-top:4px;">
           <el-button type="primary" icon="el-icon-circle-plus" 
           plain
-          size="small" @click="onNewFolder()">{{$t('application.newTransfer')}}</el-button>
+          size="small" @click="onNewFolder()" :title="$t('application.newTransfer')">{{$t('application.new')}}</el-button>
           <el-button
           type="primary"
            plain
@@ -1208,15 +1208,20 @@ export default {
 
         _self.dialogName = typeName;
         _self.propertyVisible = true;
-        if (_self.$refs.ShowProperty) {
-         _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName = typeName;
-          _self.$refs.ShowProperty.myTypeName = typeName;
-          _self.$refs.ShowProperty.parentDocId = selectedRow.ID;
-          _self.$refs.ShowProperty.folderPath = "/表单/移交单";
+
+        setTimeout(()=>{
+          if(_self.$refs.ShowProperty){
+          _self.$refs.ShowProperty.myItemId = "";
+          _self.dialogName=typeName;
+          _self.$refs.ShowProperty.myTypeName =typeName;
+          _self.typeName=typeName;
+          _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
+          _self.$refs.ShowProperty.folderPath = '/表单/移交单';
           // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
           _self.$refs.ShowProperty.loadFormInfo();
         }
+        },10);
+
       } else {
         _self.$message(_self.$t("message.pleaseSelectFolder"));
       }
