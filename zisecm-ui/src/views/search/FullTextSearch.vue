@@ -1,25 +1,12 @@
 <template>
   
   <div>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
-      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" v-bind:typeName="currentItem['TYPE_NAME']"></ShowProperty>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+      <ShowProperty ref="ShowProperty" width="100%"  v-bind:itemId="selectedItemId"></ShowProperty>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible="imageViewVisible" @close="imageViewVisible = false">
-      <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
-         <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
-          <img v-for="src in imageArray" :src="src" :key="src" width="240" @click="onImageClick" style="cursor:hand">
-        </viewer>
-      </div>
-      <div v-else>
-        <a :href="imageArray[0]" target="_blank">{{$t('application.download')}}</a>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="imageViewVisible = false">{{$t('application.cancel')}}</el-button>
-      </div>
-   </el-dialog>
     <div class="navbar">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>{{$t('menu.searchCenter')}}</el-breadcrumb-item>
@@ -58,7 +45,7 @@
         <el-row>
           <el-button size="small" type="primary" icon="el-icon-search" @click="handleScendSearch()" :disabled="searched==false">{{$t('application.scendSearch')}}</el-button>
         </el-row>
-        <div v-for="term in terms">
+        <div v-for="(term,idx) in terms" :key="idx+'_T'">
           <div v-if="term.fieldName != 'by_object_type'">
             <el-row>
               <el-row class="termHead">
@@ -67,7 +54,7 @@
               <el-row>
                 <div>
                   <el-checkbox-group v-model="checkedTerms[term.index]">
-                    <div v-for="gg in term.groups">
+                    <div v-for="(gg,gidx) in term.groups" :key="gidx+'_G'">
                       <el-checkbox :label="gg.name" :key="term.fieldName+''+gg.name">{{gg.name}}({{gg.value}})</el-checkbox>
                     </div>
                   </el-checkbox-group>
@@ -117,7 +104,7 @@
               <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0" />
             </template>
           </el-table-column>
-          <div v-for="(citem,idx) in gridList">
+          <div v-for="(citem,idx) in gridList" :key="idx+'_C'">
             <div v-if="citem.visibleType==1">
               <div v-if="(citem.width+'').indexOf('%')>0">
                 <el-table-column
@@ -287,16 +274,16 @@ export default {
     },
     // 查看内容
     showItemContent(indata){
-      let _self = this;
-      _self.imageArray = [];
-      _self.currentType = indata.FORMAT_NAME;
-      // 拦截器会自动替换成目标url
-      _self.imageArray[0] =  "/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      if(_self.currentType == "pdf"){
-         window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
-      }else{
-         _self.imageViewVisible =true;
-      }
+      let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
     },
     querySearch(queryString, cb) {
       let _self = this;
