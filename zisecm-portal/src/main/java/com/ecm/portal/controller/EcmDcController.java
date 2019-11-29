@@ -130,9 +130,15 @@ public class EcmDcController extends ControllerAbstract{
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+		String orderBy = args.get("orderBy").toString();
 		pager.setPageIndex(pageIndex);
 		pager.setPageSize(pageSize); 
 		StringBuffer sql = new StringBuffer("select * from ecm_document where STATUS='利用'  and TYPE_NAME<>'卷盒' ");
+		if(!StringUtils.isEmpty(orderBy)) {
+			sql.append("order by"+orderBy);
+		}else {
+			sql.append("order by ID desc");
+		}
 		try {
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = documentService.getMapList(getToken(), sql.toString(), pager);
