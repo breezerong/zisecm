@@ -88,7 +88,7 @@ export default {
         _self.$message("ParentID不能为空!");
         return;
       }
-      axios.get("/admin/getCardSearchItem",_self.parentformid)
+      axios.post("/admin/getCardSearchItem",_self.parentformid)
         .then(function(response) {
           _self.refreshData(response.data.data);
           _self.loading = false;
