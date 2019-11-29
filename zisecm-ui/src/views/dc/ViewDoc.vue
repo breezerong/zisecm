@@ -211,7 +211,7 @@ export default {
       //console.log(_self.viewerType);
     },
     download(){
-      let url = "/dc/getContent?id="+this.doc.id+"&token="+sessionStorage.getItem('access-token');
+      let url = this.axios.defaults.baseURL+"/dc/getContent?id="+this.doc.id+"&token="+sessionStorage.getItem('access-token')+"&action=download";
       window.open(url, '_blank');
     },
     writeReadLog(){

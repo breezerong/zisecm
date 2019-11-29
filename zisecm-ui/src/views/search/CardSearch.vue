@@ -1,5 +1,23 @@
 <template>
   <div>
+     <!-- 选字段对话框 -->
+    <el-dialog title="选择需要展示的字段" :visible.sync="columnsInfo.dialogFormVisible" width="40%" center top="15vh">
+      <el-checkbox :indeterminate="columnsInfo.isIndeterminate" v-model="columnsInfo.checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <div style="margin: 15px 0;"></div>
+      <el-checkbox-group v-model="showFields" @change="handleCheckedColsChange">
+        <el-checkbox v-for="item in gridList" :label="item.attrName" :key="item.attrName">{{item.label}}</el-checkbox>
+      </el-checkbox-group>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="columnsInfo.dialogFormVisible=false" size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+      <ShowProperty ref="ShowProperty" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
     <div class="navbar">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>{{$t('menu.searchCenter')}}</el-breadcrumb-item>
@@ -9,7 +27,7 @@
     </div>
     <div>
       <el-form label-position="right" label-width="120px">
-        <div v-for="subitem in formItemList">
+        <div v-for="(subitem,sidx) in formItemList" :key="sidx+'_S'">
           <el-col :span="8" style="align:left;">
             <el-form-item :label="subitem.label">
               <div v-if="subitem.controlType === 'TextBox'">
@@ -55,7 +73,7 @@
                   v-model="subitem.defaultValue"
                 >
                   <el-option label value></el-option>
-                  <div v-for="name in subitem.validValues">
+                  <div v-for="(name,vidx) in subitem.validValues" :key="vidx+'_V'">
                     <el-option :label="name" :value="name"></el-option>
                   </div>
                 </el-select>
@@ -91,7 +109,7 @@
             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0" />
           </template>
         </el-table-column>
-        <div v-for="(citem,idx) in gridList">
+        <div v-for="(citem,idx) in gridList" :key="idx+'_C'">
           <div v-if="citem.visibleType==1">
             <div v-if="(citem.width+'').indexOf('%')>0">
               <el-table-column
@@ -129,7 +147,7 @@
             </div>
           </div>
         </div>
-        <el-table-column :label="$t('application.operation')" width="157">
+        <el-table-column :label="$t('application.operation')" width="160">
           <template slot-scope="scope">
             <el-button
               type="primary"
@@ -165,11 +183,24 @@
 </template>
 
 <script type="text/javascript">
+import ShowProperty from '@/components/ShowProperty'
+
 export default {
   name: "CardSearch",
+    components: {
+    ShowProperty: ShowProperty
+  },
   permit: 1,
   data() {
     return {
+      columnsInfo:{
+        checkAll: true,
+        checkedCities:[],
+        temCol:[],
+        dialogFormVisible:false,
+        isIndeterminate:false
+      },
+      showFields: [],
       itemDataList: [],
       gridList: [],
       inputkey: "",
@@ -181,6 +212,8 @@ export default {
       currentPage: 1,
       loading: false,
       dialogVisible: false,
+      selectedItemId: "",
+      propertyVisible: false,
       tableHeight: window.innerHeight - 225,
       formLabelWidth: "120px"
     };
@@ -195,6 +228,29 @@ export default {
     _self.loadCard();
   },
   methods: {
+    // 查看属性
+    showItemProperty(indata){
+      let _self = this;
+      _self.selectedItemId = indata.ID ;
+      _self.propertyVisible = true;
+      if(_self.$refs.ShowProperty){
+        _self.$refs.ShowProperty.myItemId = indata.ID ;
+        _self.$refs.ShowProperty.loadFormInfo();
+      }
+    },
+    // 查看内容
+    showItemContent(indata){
+      let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
+    },
     // 分页 页数改变
     handleSizeChange(val) {
       this.pageSize = val;
@@ -210,6 +266,7 @@ export default {
       this.currentPage = val;
       this.search();
     },
+    
     loadCard() {
       let _self = this;
       _self.loading = true;
@@ -338,6 +395,40 @@ export default {
           console.log(error);
           _self.loading = false;
         });
+    },
+    //展示勾选弹框
+    dialogFormShow(){
+      this.columnsInfo.dialogFormVisible = true
+    },
+    //全选按钮
+    handleCheckAllChange(val) {
+      this.showFields=[]
+      if(val){
+        this.gridList.forEach(element => {
+          this.showFields.push(element.attrName)
+        });
+      }
+      this.columnsInfo.isIndeterminate = false;
+    },
+    //单个选中
+    handleCheckedColsChange(value) {
+      let checkedCount = value.length;
+      this.columnsInfo.checkAll = checkedCount === this.gridList.length;
+      this.columnsInfo.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.gridList.length;
+    },
+    confirmShow() {
+       let _self = this;
+       _self.gridList.forEach(element => {
+          element.visibleType = 2;
+        });
+       _self.showFields.forEach(element => {
+          let item = _self.getgriditem(element);
+          if (item) {
+            item.visibleType = 1;
+          }
+        });
+      this.columnsInfo.dialogFormVisible = false
     }
   }
 };

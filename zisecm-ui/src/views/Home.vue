@@ -65,9 +65,9 @@ export default {
     }
     _self.refreshCount();
     //定时刷新数量
-    _self.$nextTick(function() {
-      setInterval(_self.refreshCount, 10000);
-    });
+    // _self.$nextTick(function() {
+    //   setInterval(_self.refreshCount, 30000);
+    // });
   },
   methods: {
     // 刷新数量

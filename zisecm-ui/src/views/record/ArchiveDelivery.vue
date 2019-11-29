@@ -1,334 +1,410 @@
 <template>
   <div>
-    
-    <el-dialog title="添加复用文件" :visible.sync="reuseVisible" width="70%">
+    <el-dialog title="添加复用文件" :visible.sync="reuseVisible" width="80%">
       <AddReuse ref="addReuseModel"></AddReuse>
       <div slot="footer" class="dialog-footer">
-            <el-button @click="reuseVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
-          </div>
+        <el-button @click="reuseVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
+      </div>
     </el-dialog>
-
+    <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="60%" >
+        <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectTransferRow.ID"></BatchImport>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
+         </div>
+      </el-dialog>
     <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
-          
-          <el-form size="mini" :label-width="formLabelWidth">
-            
-            <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
-              <el-upload
-                :limit="100"
-                :file-list="fileList" 
-                action=""
-                :on-change="handleChange"
-                :auto-upload="false"
-                :multiple="false">
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-              </el-upload>
-            </div>
-          </el-form> 
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="importdialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="uploadData()">开始导入</el-button>
-          </div>
-        </el-dialog>
+      <el-form size="mini" :label-width="formLabelWidth">
+        <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+          <el-upload
+            :limit="100"
+            :file-list="fileList"
+            action
+            :on-change="handleChange"
+            :auto-upload="false"
+            :multiple="false"
+          >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+          </el-upload>
+        </div>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="importdialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="uploadData()">开始导入</el-button>
+      </div>
+    </el-dialog>
 
     <el-dialog :visible.sync="typeSelectVisible">
       <el-form>
-          <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
-                <el-select  name="selectName"
-                v-model="selectedTypeName" placeholder="'请选择文件类型'" 
-                style="display:block;">
-                      <div v-for="(name,nameIndex) in typeNames">
-                        <el-option :label="name" :value="name" :key="nameIndex"></el-option>
-                      </div>
-                  </el-select>
-                
-          </el-form-item>
+        <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+          <el-select
+            name="selectName"
+            v-model="selectedTypeName"
+            placeholder="'请选择文件类型'"
+            style="display:block;"
+          >
+            <div v-for="(name,nameIndex) in typeNames">
+              <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+            </div>
+          </el-select>
+        </el-form-item>
       </el-form>
-       <div slot="footer" class="dialog-footer">
-          <el-button @click="typeSelectVisible=false;newArchiveItem(selectedTypeName,selectTransferRow)">{{$t('application.ok')}}</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          @click="typeSelectVisible=false;newArchiveItem(selectedTypeName,selectTransferRow)"
+        >{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
 
     <el-dialog :visible.sync="childrenTypeSelectVisible">
       <el-form>
-          <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
-                <el-select  name="selectName"
-                v-model="selectedChildrenType" placeholder="'请选择文件类型'" 
-                style="display:block;">
-                      <div v-for="(name,nameIndex) in childrenTypes">
-                        <el-option :label="name" :value="name" :key="nameIndex"></el-option>
-                      </div>
-                  </el-select>
-                
-          </el-form-item>
+        <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+          <el-select
+            name="selectName"
+            v-model="selectedChildrenType"
+            placeholder="'请选择文件类型'"
+            style="display:block;"
+          >
+            <div v-for="(name,nameIndex) in childrenTypes">
+              <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+            </div>
+          </el-select>
+        </el-form-item>
       </el-form>
-       <div slot="footer" class="dialog-footer">
-          <el-button @click="childrenTypeSelectVisible=false;newArchiveItem(selectedChildrenType,selectRow)">{{$t('application.ok')}}</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          @click="childrenTypeSelectVisible=false;newArchiveItem(selectedChildrenType,selectRow)"
+        >{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
 
     <el-dialog :visible.sync="printsVisible">
-      <PrintPage ref='printPage' v-bind:archiveId="this.archiveId"></PrintPage>
+      <PrintPage ref="printPage" v-bind:archiveId="this.archiveId"></PrintPage>
     </el-dialog>
-    <el-dialog :visible.sync="printVolumesVisible"  width="80%">
-      <PrintVolumes ref='printVolumes' v-bind:archiveId="this.archiveId" v-bind:currentFolderId="this.currentFolder.id"></PrintVolumes>
+    <el-dialog :visible.sync="printVolumesVisible" width="80%">
+      <PrintVolumes
+        ref="printVolumes"
+        v-bind:archiveId="this.archiveId"
+        v-bind:currentFolderId="this.currentFolder.id"
+      ></PrintVolumes>
     </el-dialog>
-    
-    <el-dialog :title="dialogName+$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
-      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" :folderPath="folderPath" v-bind:itemId="selectedItemId" v-bind:folderPath="folderPath" v-bind:typeName="typeName"></ShowProperty>
+
+    <el-dialog
+      :title="dialogName+$t('application.property')"
+      :visible.sync="propertyVisible"
+      @close="propertyVisible = false"
+      width="80%"
+    >
+      <ShowProperty
+        ref="ShowProperty"
+        @onSaved="onSaved"
+        width="100%"
+        :folderPath="folderPath"
+        v-bind:itemId="selectedItemId"
+        v-bind:typeName="typeName"
+      ></ShowProperty>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+        <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+        <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <iframe frameborder="0" name="PDFViewer" id="PDFViewer" style="width:100%;height:760px;display:none;" ref="PDFViewer"></iframe>
-    <el-dialog :visible.syn="imageViewVisible" @close="imageViewVisible = false">
-      <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
-         <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
-          <img v-for="src in imageArray" :src="src" :key="src" width="240" @click="onImageClick" style="cursor:hand">
-        </viewer>
-      </div>
-      <div v-else>
-        <a :href="imageArray[0]" target="_blank">{{$t('application.download')}}</a>
-      </div>
+    <el-dialog
+      :title="folderAction"
+      :visible.sync="folderDialogVisible"
+      @close="folderDialogVisible = false"
+    >
+      <el-form :model="transferForm">
+        <el-form-item :label="$t('field.name')" :label-width="formLabelWidth">
+          <el-input v-model="transferForm.title" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="imageViewVisible = false">{{$t('application.cancel')}}</el-button>
+        <el-button type="primary" @click="saveTransfer(transferForm)">{{$t('application.ok')}}</el-button>
+        <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="folderAction" :visible.sync="folderDialogVisible"  @close="folderDialogVisible = false">
-          <el-form :model="transferForm">
-            <el-form-item :label="$t('field.name')" :label-width="formLabelWidth">
-              <el-input v-model="transferForm.title" auto-complete="off"></el-input>
-            </el-form-item>
-            
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="saveTransfer(transferForm)">{{$t('application.ok')}}</el-button>
-            <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
-          </div>
-        </el-dialog>
-      <table border="0" width="100%" >
-          <tr>
-            <td class="navbar">
-              <el-breadcrumb>
-                <el-breadcrumb-item>档案移交</el-breadcrumb-item>
-              </el-breadcrumb>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="380px">
-                    <el-tooltip  class="item" effect="dark" :content="$t('application.newTransfer')" placement="top">
-                      <el-button type="primary" icon="el-icon-circle-plus" circle @click="onNewFolder()"></el-button>
-                    </el-tooltip>
-                    <el-tooltip  class="item" effect="dark" :content="$t('application.edit')+$t('application.folder')" placement="top">
-                      <el-button type="primary" icon="el-icon-info" circle @click="onEditFolder()"></el-button>
-                    </el-tooltip>
-                    <el-tooltip  class="item" effect="dark" content="归档" placement="top">
-                      <el-button type="primary" icon="el-icon-document" circle @click="onArchived"></el-button>
-                    </el-tooltip>
-                    <el-tooltip  class="item" effect="dark" :content="$t('application.delete')+$t('application.transfer')" placement="top">
-                      <el-button type="primary" icon="el-icon-delete" circle @click="onDeleteTransfer()"></el-button>
-                    </el-tooltip>
-                    
-                  </td>
-                  <td align="left" width="160px">
-                    <el-input  v-model="inputkey" :placeholder="$t('message.pleaseInput')+$t('application.keyword')" @change="searchItem" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td>
-                    <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('卷盒',selectTransferRow)">{{$t('application.newArchive')}}</el-button>
-                    <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('图册',selectTransferRow)">{{$t('application.newVolume')}}</el-button>
-                    <el-button type="primary" icon="el-icon-edit"  @click="typeSelectVisible=true">{{$t('application.newDocument')}}</el-button>
+    <el-row>
+      <el-col :span="7" style="padding-top:4px;">
+          <el-button type="primary" icon="el-icon-circle-plus" 
+          plain
+          size="small" @click="onNewFolder()" :title="$t('application.newTransfer')">{{$t('application.new')}}</el-button>
+          <el-button
+          type="primary"
+           plain
+            size="small"
+          icon="el-icon-printer"
+          @click="printVolumesVisible = true"
+        >打印</el-button>
+          <el-button type="primary"
+          plain
+          size="small" icon="el-icon-right" @click="onArchived">移交</el-button>
+          <el-button type="primary"
+          plain
+          size="small" icon="el-icon-delete"  @click="onDeleteTransfer()">{{$t('application.delete')}}</el-button>
+  
+      </el-col>
+      <el-col :span="4">
+        <el-input
+          v-model="inputkey"
+          :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
+          @change="searchItem"
+          prefix-icon="el-icon-search"
+        ></el-input>
+      </el-col>
 
-                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')}}</el-button>
-                    <!-- <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
-                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button> -->
-                    <!-- <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button> -->
-                    <el-button type="primary" icon="el-icon-printer" @click="printVolumesVisible = true">{{$t('application.PrintVolumes')}}</el-button>
-                  
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
-            <table border="0" width="100%">
-                <tr valign="top">
-                  <td align="left" width="160px" >
-                    <!-- <el-tree
-                      :props="defaultProps"
-                      :data="dataList"
-                      node-key="id"
-                      :render-content="renderContent"
-                      default-expand-all
-                      highlight-current
-                      @node-click="handleNodeClick">
-                    </el-tree> -->
-                    <DataGrid ref="transferDataGrid" key="transfer" v-bind:itemDataList="transferDataList"
-                      v-bind:columnList="transferColumnList" @pagesizechange="handleSizeChange"
-                      @pagechange="handleCurrentChange" v-bind:itemCount="transferCount"
-                      @rowclick="loadGridData" @selectchange="transferselectChange"></DataGrid>
-                  </td>
-                  <td>
-                    <div>
-                      <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
-                      v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
-                      @pagechange="pageChange" v-bind:itemCount="itemCount"
-                      @rowclick="showInnerFile" @selectchange="selectChange"></DataGrid>
+      <el-col :span="13" style="padding-top:4px;">
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          icon="el-icon-edit"
+          @click="newArchiveItem('卷盒',selectTransferRow)"
+        >{{$t('application.newArchive')}}</el-button>
+        <el-button
+          type="primary"
+           plain
+            size="small"
+          icon="el-icon-edit"
+          @click="newArchiveItem('图册',selectTransferRow)"
+        >{{$t('application.newVolume')}}</el-button>
+        <el-button
+          type="primary"
+           plain
+            size="small"
+          icon="el-icon-edit"
+          @click="typeSelectVisible=true"
+        >{{$t('application.newDocument')}}</el-button>
+        <el-button type="primary" plain size="small" icon="el-icon-upload2"
+         @click="batchDialogVisible=true">批量导入</el-button> 
+       
+        <!-- <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
+        <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button>-->
+        <!-- <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button> -->
+        <el-button
+          type="primary"
+           plain
+            size="small"
+          icon="el-icon-printer"
+          @click="printVolumesVisible = true"
+        >打印清单</el-button>
+         <el-button
+          type="primary"
+          plain
+          size="small"
+          icon="el-icon-delete"
+          @click="onDeleleItem()"
+        >{{$t('application.delete')}}</el-button>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="6">
+        <DataGrid
+          ref="transferDataGrid"
+          key="transfer"
+          v-bind:isshowPage="false"
+          v-bind:itemDataList="transferDataList"
+          v-bind:columnList="transferColumnList"
+          @pagesizechange="handleSizeChange"
+          @pagechange="handleCurrentChange"
+          v-bind:itemCount="transferCount"
+          v-bind:tableHeight="leftTableHeight"
+          @rowclick="loadGridData"
+          @selectchange="transferselectChange"
+        ></DataGrid>
+      </el-col>
 
-                      
-                    </div>
-                    <div class="left">
-                      <span style="float:left;text-align:left;">卷内文件列表</span>
-                      <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
-                      <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
-                      <el-button type="primary" plain size="small" :title="$t('application.addReuseFile')"  @click="reuseVisible=true">{{$t('application.addReuseFile')}}</el-button>
-                      
-                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
-                      <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
-                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button>
-                      <el-button type="primary" plain size="small" title="上移"  @click="onMoveUp()">上移</el-button>
-                      <el-button type="primary" plain size="small" title="下移"  @click="onMoveDown()">下移</el-button>
-                      <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
-                      v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
-                       @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
-                      @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
+      <el-col :span="18">
+        <DataGrid
+          ref="mainDataGrid"
+          key="main"
+          v-bind:itemDataList="itemDataList"
+          v-bind:columnList="gridList"
+          @pagesizechange="pageSizeChange"
+          @pagechange="pageChange"
+          v-bind:itemCount="itemCount"
+          v-bind:tableHeight="rightTableHeight"
+          v-bind:isshowOption="true"
+          v-bind:propertyComponent="this.$refs.ShowProperty"
+          @rowclick="showInnerFile"
+          @selectchange="selectChange"
+        ></DataGrid>
 
-                      
-                    </div>
-                    
-                    
-                  </td>
-                </tr>
-              </table>
-          </td>
-        </tr>
-      </table>
+        <el-row>
+          <span style="float:left;text-align:left;">文件列表</span>
+          <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            @click="childrenTypeSelectVisible=true"
+          >{{$t('application.createDocument')}}</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            :title="$t('application.addReuseFile')"
+            @click="reuseVisible=true"
+          >{{$t('application.addReuseFile')}}</el-button>
+          
+          <el-button type="primary" plain size="small" title="删除" @click="onDeleleFileItem()">删除</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            title="挂载文件"
+            @click="importdialogVisible=true;uploadUrl='/dc/mountFile'"
+          >挂载文件</el-button>
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            :title="$t('application.viewRedition')"
+            @click="importdialogVisible=true;uploadUrl='/dc/addRendition'"
+          >格式副本</el-button>
+          <el-button type="primary" plain size="small" title="上移" @click="onMoveUp()">上移</el-button>
+          <el-button type="primary" plain size="small" title="下移" @click="onMoveDown()">下移</el-button>
+        </el-row>
+
+        <DataGrid
+          ref="leftDataGrid"
+          key="left"
+          v-bind:itemDataList="innerDataList"
+          v-bind:columnList="innerGridList"
+          v-bind:itemCount="innerCount"
+          v-bind:tableHeight="rightTableHeight"
+          :isshowOption="true"
+          @pagesizechange="innerPageSizeChange"
+          @rowclick="selectOneFile"
+          @pagechange="innerPageChange"
+          @selectchange="selectInnerChange"
+        ></DataGrid>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script type="text/javascript">
-import ShowProperty from '@/components/ShowProperty'
-import DataGrid from'@/components/DataGrid'
-import DataGridleft from'@/components/DataGrid'
+import ShowProperty from "@/components/ShowProperty";
+import DataGrid from "@/components/DataGrid";
+import DataGridleft from "@/components/DataGrid";
 //import Prints from '@/components/record/Print'
 
-import 'url-search-params-polyfill'
+import "url-search-params-polyfill";
 
-import PrintPage from '@/views/record/PrintPage'
-import PrintVolumes from '@/views/record/PrintVolumes'
-import AddReuse from '@/views/record/AddReuse'
+import PrintPage from "@/views/record/PrintPage";
+import PrintVolumes from "@/views/record/PrintVolumes";
+import AddReuse from "@/views/record/AddReuse";
+import BatchImport from '@/components/controls/ImportDocument'
+
+
 export default {
   name: "ArchiveDelivery",
-  
   data() {
     return {
-      imageFormat: 'jpg,jpeg,bmp,gif,png',
-      baseServerUrl: this.baseURL,
       currentLanguage: "zh-cn",
-      printsVisible:false,
-      printVolumesVisible:false,
-      archiveId:"",
+      printsVisible: false,
+      printVolumesVisible: false,
+      archiveId: "",
       dataList: [],
-      transferColumnList:[],
+      transferColumnList: [],
       showFields: [],
       itemDataList: [],
       itemDataListFull: [],
-      innerDataList:[],
-      innerDataListFull:[],
-      outerDataList:[],
-      outerDataListFull:[],
-      transferPageSize:20,
-      transferCurrentPage:1,
-      transferDataList:[],
-      transferDataListFull:[],
-      selectedTypeName:[],
-      transferCount:0,
-      reuseVisible:false,
-      typeName:'卷盒',
-      folderPath:'/表单/移交单',
-      selectTransferRow:[],
+      innerDataList: [],
+      innerDataListFull: [],
+      outerDataList: [],
+      outerDataListFull: [],
+      transferPageSize: 20,
+      transferCurrentPage: 1,
+      transferDataList: [],
+      transferDataListFull: [],
+      selectedTypeName: [],
+      transferCount: 0,
+      reuseVisible: false,
+      typeName: "卷盒",
+      folderPath: "/表单/移交单",
+      selectTransferRow: [],
       gridList: [],
-      innerGridList:[],
-      outerGridList:[],
+      innerGridList: [],
+      outerGridList: [],
       currentFolder: [],
       dataListFull: "",
       inputkey: "",
-      typeNames:[],
+      typeNames: [],
       loading: false,
-      dialogName:"",
-      outerCurrentPage:1,
-      outerPageSize:20,
-      innerCurrentPage:1,
-      innerPageSize:20,
+      dialogName: "",
+      outerCurrentPage: 1,
+      outerPageSize: 20,
+      innerCurrentPage: 1,
+      innerPageSize: 20,
       pageSize: 20,
       itemCount: 0,
-      innerCount:0,
-      outerCount:0,
-      selectedItemId: 0,
-      fileList:[],
-      currentPage:1,
+      innerCount: 0,
+      outerCount: 0,
+      selectedItemId: "",
+      fileList: [],
+      currentPage: 1,
       dialogVisible: false,
       propertyVisible: false,
-      showButton:true,
-      typeSelectVisible:false,
-      selectRow:[],
-      importdialogVisible:false,
+      showButton: true,
+      typeSelectVisible: false,
+      selectRow: [],
+      importdialogVisible: false,
+      batchDialogVisible:false,
       selectedItems: [],
-      selectedFileId:"",
+      selectedFileId: "",
       selectedOutItems: [],
-      selectedInnerItems:[],
-      childrenTypes:[],
-      uploadUrl:"",
-      selectedChildrenType:"",
-      childrenTypeSelectVisible:false,
-      tableHeight: window.innerHeight - 508,
-      folderAction:"",
+      selectedInnerItems: [],
+      childrenTypes: [],
+      uploadUrl: "",
+      selectedChildrenType: "",
+      childrenTypeSelectVisible: false,
+      leftTableHeight: window.innerHeight - 124,
+      rightTableHeight: (window.innerHeight - 200)/2,
+      folderAction: "",
       folderDialogVisible: false,
-      imageArray:[""],
-      imageViewVisible:false,
+      imageArray: [""],
+      imageViewVisible: false,
       imageViewer: Object,
-      currentType:"",
-      orderBy:"",
-      selectedReuses:[],
-      columnsInfo:{
+      currentType: "",
+      orderBy: "",
+      selectedReuses: [],
+      columnsInfo: {
         checkAll: true,
-        checkedCities:[],
-        temCol:[],
-        dialogFormVisible:false,
-        isIndeterminate:false
+        checkedCities: [],
+        temCol: [],
+        dialogFormVisible: false,
+        isIndeterminate: false
       },
       transferForm: {
         id: 0,
         title: "",
-        folderPath:"/表单/移交单",
-        typeName:"移交单",
-        status:"产生"
+        folderPath: "/表单/移交单",
+        typeName: "移交单",
+        status: "产生"
       },
       formLabelWidth: "120px",
       defaultProps: {
-        children: 'children',
-        label: 'name'
+        children: "children",
+        label: "name"
       }
     };
   },
-  watch:{
-    
-    showFields(val, oldVal){//普通的watch监听
+  watch: {
+    showFields(val, oldVal) {
+      //普通的watch监听
       //console.log("a: "+val, oldVal);
       let _self = this;
       _self.gridList.forEach(element => {
-        element.visibleType=2;
+        element.visibleType = 2;
       });
       val.forEach(element => {
         let item = _self.getgriditem(element);
-        if(item){
+        if (item) {
           //console.log(element);
-          item.visibleType=1;
-        } 
-      }); 
+          item.visibleType = 1;
+        }
+      });
     }
   },
   created() {
@@ -358,27 +434,32 @@ export default {
     //     console.log(error);
     //     _self.loading = false;
     //   });
-    this.getTypeNames('innerTransferDocType');
+    this.getTypeNames("innerTransferDocType");
     this.loadTransferGridInfo();
     this.loadTransferGridData();
   },
   methods: {
-    addReuseToVolume(){
-      let _self=this;
-      _self.selectedReuses= _self.$refs.addReuseModel.selectedRow;
+    //批量导入完成
+    onBatchImported(){
+      this.this.loadGridData();
+    },
+    addReuseToVolume() {
+      let _self = this;
+      _self.selectedReuses = _self.$refs.addReuseModel.selectedRow;
 
       var params = new Map();
       var m = [];
       let tab = _self.selectedReuses;
-      
+
       var i;
-      for(i in tab){
+      for (i in tab) {
         m.push(tab[i]["ID"]);
       }
-      params.set("cids",m)
-      params.set("id",_self.archiveId);
+      params.set("cids", m);
+      params.set("id", _self.archiveId);
       console.log(JSON.stringify(m));
-      _self.axios({
+      _self
+        .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -388,80 +469,73 @@ export default {
         })
         .then(function(response) {
           _self.loadGridData(null);
-           
-            _self.showInnerFile(null);
-            _self.reuseVisible=false;
+
+          _self.showInnerFile(null);
+          _self.reuseVisible = false;
           _self.$message("添加成功！");
         })
         .catch(function(error) {
           _self.$message("添加失败！");
           console.log(error);
-      });
-      
-
+        });
     },
 
-    getTypeNames(keyName){
-      let _self=this;
-      axios.post("/dc/getParameters",keyName)
-      .then(function(response) {
-        
-        _self.typeNames = response.data.data.innerTransferDocType;
-        
-      })
-      .catch(function(error) {
-        console.log(error);
-        
-      });
+    getTypeNames(keyName) {
+      let _self = this;
+      axios
+        .post("/dc/getParameters", keyName)
+        .then(function(response) {
+          _self.typeNames = response.data.data.innerTransferDocType;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
-    getTypeNamesByMainList(keyName){
-      let _self=this;
-      axios.post("/dc/getOneParameterValue",keyName)
-      .then(function(response) {
-        
-        _self.childrenTypes = response.data.data;
-        
-      })
-      .catch(function(error) {
-        console.log(error);
-        
-      });
+    getTypeNamesByMainList(keyName) {
+      let _self = this;
+      axios
+        .post("/dc/getOneParameterValue", keyName)
+        .then(function(response) {
+          _self.childrenTypes = response.data.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     confirmShow() {
-       let _self = this;
-       _self.gridList.forEach(element => {
-          element.visibleType = 2;
-        });
-       _self.showFields.forEach(element => {
-          let item = _self.getgriditem(element);
-          if (item) {
-            item.visibleType = 1;
-          }
-        });
-      this.columnsInfo.dialogFormVisible = false
-    },
-    dialogFormShow(){
-      this.columnsInfo.dialogFormVisible = true
-    },
-    selectOneFile(row){
       let _self = this;
-      if(_self.selectRow)
-      {
-        _self.selectedFileId=row.ID;
+      _self.gridList.forEach(element => {
+        element.visibleType = 2;
+      });
+      _self.showFields.forEach(element => {
+        let item = _self.getgriditem(element);
+        if (item) {
+          item.visibleType = 1;
+        }
+      });
+      this.columnsInfo.dialogFormVisible = false;
+    },
+    dialogFormShow() {
+      this.columnsInfo.dialogFormVisible = true;
+    },
+    selectOneFile(row) {
+      let _self = this;
+      if (_self.selectRow) {
+        _self.selectedFileId = row.ID;
       }
     },
-    showInnerFile(row){
+    showInnerFile(row) {
       let _self = this;
-      if(row!=null){
-        _self.selectRow=row;
+      if (row != null) {
+        _self.selectRow = row;
       }
-      _self.selectedChildrenType=[];
+      _self.selectedChildrenType = [];
       _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
       // var key =row.CODING;
       // if(key!=""){
       //   key = "coding = '"+key+"' "; //此处需要修改
       // }
-      
+
       // if(_self.selectRow.C_LOCK_STATUS==='已封卷')
       // {
       //   _self.showButton=false;
@@ -471,57 +545,66 @@ export default {
       // }
       _self.loadInnerGridInfo();
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
-      m.set('condition',"");
-      if(_self.selectRow)
-      {
-        _self.archiveId=_self.selectRow.ID;
+      m.set("gridName", "ArchiveGrid");
+      m.set("condition", "");
+      if (_self.selectRow) {
+        _self.archiveId = _self.selectRow.ID;
       }
-      m.set('id',_self.archiveId);
-      m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.innerCurrentPage-1)*_self.innerPageSize);
-      m.set('orderBy','');
+      m.set("id", _self.archiveId);
+      m.set("pageSize", _self.pageSize);
+      m.set("pageIndex", (_self.innerCurrentPage - 1) * _self.innerPageSize);
+      m.set("orderBy", "");
       // console.log('pagesize:', _self.pageSize);
-      axios.post("/dc/getDocuByRelationParentId",JSON.stringify(m))
-      .then(function(response) {
-        
-        _self.innerDataList = response.data.data;
-        _self.innerDataListFull = response.data.data;
-        _self.innerCount = response.data.pager.total;
-        //console.log(JSON.stringify(response.data.datalist));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+      axios
+        .post("/dc/getDocuByRelationParentId", JSON.stringify(m))
+        .then(function(response) {
+          _self.innerDataList = response.data.data;
+          _self.innerDataListFull = response.data.data;
+          _self.innerCount = response.data.pager.total;
+          //console.log(JSON.stringify(response.data.datalist));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
-    
-    renderContent: function (h, {node, data, store}) {
+
+    renderContent: function(h, { node, data, store }) {
       console.log(data);
-      if(data.extended){
-        return (<span><i class='el-icon-folder-opened'></i><span style="padding-left: 4px;">{node.label}</span></span>);
-      }else{
-        return (<span><i class='el-icon-folder'></i><span style="padding-left: 4px;">{node.label}</span></span>);
+      if (data.extended) {
+        return (
+          <span>
+            <i class="el-icon-folder-opened"></i>
+            <span style="padding-left: 4px;">{node.label}</span>
+          </span>
+        );
+      } else {
+        return (
+          <span>
+            <i class="el-icon-folder"></i>
+            <span style="padding-left: 4px;">{node.label}</span>
+          </span>
+        );
       }
     },
-    showNewWindow(id){
+    showNewWindow(id) {
       let condition = this.id;
       let href = this.$router.resolve({
-        name: 'docviewer',
+        name: "docviewer",
         query: {
           id: condition,
           token: this.getToken()
         }
       });
       console.log(href);
-      window.open(href.href, '_blank');
+      window.open(href.href, "_blank");
     },
-    getgriditem(attrName){
+    getgriditem(attrName) {
       let _self = this;
-      let ret =null;
+      let ret = null;
       _self.gridList.forEach(element => {
-        if(element.attrName==attrName){
+        if (element.attrName == attrName) {
           ret = element;
           return;
         }
@@ -529,65 +612,61 @@ export default {
       return ret;
     },
     handleCheckChange(data, checked, indeterminate) {
-        data.visibleType=(checked?1:0);
+      data.visibleType = checked ? 1 : 0;
     },
-    inited (viewer) {
+    inited(viewer) {
       this.imageViewer = viewer;
     },
-    onImageClick(){
+    onImageClick() {
       this.imageViewVisible = false;
     },
-    formatImage(indata){
-      var url = './static/img/format/f_'+indata+'_16.gif';
+    formatImage(indata) {
+      var url = "./static/img/format/f_" + indata + "_16.gif";
       return url;
     },
     // 表格行选择
-    transferselectChange(val) 
-    {
+    transferselectChange(val) {
       // console.log(JSON.stringify(val));
       this.selectTransferRow = val;
     },
     // 表格行选择
-    selectChange(val) 
-    {
+    selectChange(val) {
       // console.log(JSON.stringify(val));
       this.selectedItems = val;
     },
     // 表格行选择
-    selectOutChange(val) 
-    {
+    selectOutChange(val) {
       // console.log(JSON.stringify(val));
       this.selectedOutItems = val;
     },
-    selectInnerChange(val){
+    selectInnerChange(val) {
       this.selectedInnerItems = val;
     },
-    onMoveUp(){
-      let _self=this;
-      if(_self.selectedInnerItems.length!=1){
-         _self.$message("请选择一条数据！");
+    onMoveUp() {
+      let _self = this;
+      if (_self.selectedInnerItems.length != 1) {
+        _self.$message("请选择一条数据！");
         return;
       }
       var m = new Map();
-      m.set('parentId',_self.archiveId);
-      m.set('childId',_self.selectedInnerItems[0].ID);
-       _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'post',
-        data: JSON.stringify(m),
-        url: "/dc/moveUp"
-      })
+      m.set("parentId", _self.archiveId);
+      m.set("childId", _self.selectedInnerItems[0].ID);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/moveUp"
+        })
         .then(function(response) {
-          
           let code = response.data.code;
           //console.log(JSON.stringify(response));
-          if(code==1){
+          if (code == 1) {
             _self.showInnerFile(null);
-          }
-          else{
-             _self.$message( response.data.message);
+          } else {
+            _self.$message(response.data.message);
           }
         })
         .catch(function(error) {
@@ -595,32 +674,31 @@ export default {
           _self.loading = false;
         });
     },
-    onMoveDown(){
-      let _self=this;
-      if(_self.selectedInnerItems.length!=1){
-         _self.$message("请选择一条数据！");
+    onMoveDown() {
+      let _self = this;
+      if (_self.selectedInnerItems.length != 1) {
+        _self.$message("请选择一条数据！");
         return;
       }
       var m = new Map();
-      m.set('parentId',_self.archiveId);
-      m.set('childId',_self.selectedInnerItems[0].ID);
-       _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'post',
-        data: JSON.stringify(m),
-        url: "/dc/moveDown"
-      })
+      m.set("parentId", _self.archiveId);
+      m.set("childId", _self.selectedInnerItems[0].ID);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/moveDown"
+        })
         .then(function(response) {
-          
           let code = response.data.code;
           //console.log(JSON.stringify(response));
-          if(code==1){
+          if (code == 1) {
             _self.showInnerFile(null);
-          }
-          else{
-             _self.$message( response.data.message);
+          } else {
+            _self.$message(response.data.message);
           }
         })
         .catch(function(error) {
@@ -628,30 +706,33 @@ export default {
           _self.loading = false;
         });
     },
-    sortchange(column){
+    sortchange(column) {
       console.log(JSON.stringify(column));
       console.log(column.column.property);
-      console.log(column.column.order);//ascending, descending
-      this.orderBy = column.column.property+ column.column.order=="ascending"?" ASC":" DESC";
+      console.log(column.column.order); //ascending, descending
+      this.orderBy =
+        column.column.property + column.column.order == "ascending"
+          ? " ASC"
+          : " DESC";
     },
-    loadInnerGridInfo(){
+    loadInnerGridInfo() {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
-      m.set('lang',_self.currentLanguage);
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'post',
-        data: JSON.stringify(m),
-        url: "/dc/getGridViewInfo"
-      })
+      m.set("gridName", "ArchiveGrid");
+      m.set("lang", _self.currentLanguage);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getGridViewInfo"
+        })
         .then(function(response) {
-          
           _self.innerGridList = response.data.data;
-          
+
           _self.loading = false;
         })
         .catch(function(error) {
@@ -660,38 +741,37 @@ export default {
         });
     },
     // 分页 当前页改变
-    transferPageChange(val)
-    {
+    transferPageChange(val) {
       this.transferCurrentPage = val;
       this.loadTransferGridData();
       //console.log('handleCurrentChange', val);
     },
-    transferPageSizeChange(val){
+    transferPageSizeChange(val) {
       this.transferPageSize = val;
-      localStorage.setItem("docPageSize",val);
+      localStorage.setItem("docPageSize", val);
       this.loadTransferGridData();
     },
     // 加载移交单表格样式
-    loadTransferGridInfo() 
-    {
+    loadTransferGridInfo() {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','DeliveryGrid');
-      m.set('lang',_self.currentLanguage);
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'post',
-        data: JSON.stringify(m),
-        url: "/dc/getGridViewInfo"
-      })
+      m.set("gridName", "DeliveryGrid");
+      m.set("lang", _self.currentLanguage);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getGridViewInfo"
+        })
         .then(function(response) {
           _self.showFields = [];
           _self.transferColumnList = response.data.data;
           _self.transferColumnList.forEach(element => {
-            if(element.visibleType==1){
+            if (element.visibleType == 1) {
               _self.showFields.push(element.attrName);
             }
           });
@@ -702,62 +782,64 @@ export default {
           _self.loading = false;
         });
     },
-    loadTransferGridData(){
+    loadTransferGridData() {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','DeliveryGrid');
-      m.set('condition',"creator='@currentuser' and status='产生'");
+      m.set("gridName", "DeliveryGrid");
+      m.set("condition", "creator='@currentuser' and status='产生'");
       // m.set('folderId',indata.id);
       // m.set('status','产生')
-      m.set('folderPath','/表单/移交单')
-      m.set('pageSize',_self.transferPageSize);
-      m.set('pageIndex', (_self.transferCurrentPage-1)*_self.transferPageSize);
-      m.set('orderBy','');
+      m.set("folderPath", "/表单/移交单");
+      m.set("pageSize", _self.transferPageSize);
+      m.set(
+        "pageIndex",
+        (_self.transferCurrentPage - 1) * _self.transferPageSize
+      );
+      m.set("orderBy", "");
       // console.log('pagesize:', _self.pageSize);
       _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/dc/getTransfer"
-      })
-      .then(function(response) {
-        _self.transferDataList = response.data.data;
-        _self.transferDataListFull = response.data.data;
-        _self.transferCount = response.data.pager.total;
-        //console.log(JSON.stringify(response.data.datalist));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getTransfer"
+        })
+        .then(function(response) {
+          _self.transferDataList = response.data.data;
+          _self.transferDataListFull = response.data.data;
+          _self.transferCount = response.data.pager.total;
+          //console.log(JSON.stringify(response.data.datalist));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
     // 加载表格样式
-    loadGridInfo() 
-    {
+    loadGridInfo() {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
-      m.set('lang',_self.currentLanguage);
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'post',
-        data: JSON.stringify(m),
-        url: "/dc/getGridViewInfo"
-      })
+      m.set("gridName", "ArchiveGrid");
+      m.set("lang", _self.currentLanguage);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getGridViewInfo"
+        })
         .then(function(response) {
           _self.showFields = [];
           _self.gridList = response.data.data;
           _self.gridList.forEach(element => {
-            if(element.visibleType==1){
+            if (element.visibleType == 1) {
               _self.showFields.push(element.attrName);
             }
           });
@@ -768,175 +850,162 @@ export default {
           _self.loading = false;
         });
     },
-    removeFromArchive()
-    {
+    removeFromArchive() {
       let _self = this;
-      if(_self.archiveId==='')
-      {
-        alert('请选择一条案卷！');
+      if (_self.archiveId === "") {
+        alert("请选择一条案卷！");
         return;
       }
 
-      if(_self.selectedInnerItems.length===0)
-      {
-        alert('请选择一条或多条卷内文件！');
+      if (_self.selectedInnerItems.length === 0) {
+        alert("请选择一条或多条卷内文件！");
         return;
       }
       var m = new Map();
-      m.set('archiveId',_self.archiveId);
-      let innerIds=new Array();
-      for(let i=0;i<_self.selectedInnerItems.length;i++)
-      {
+      m.set("archiveId", _self.archiveId);
+      let innerIds = new Array();
+      for (let i = 0; i < _self.selectedInnerItems.length; i++) {
         innerIds.push(_self.selectedInnerItems[i].ID);
       }
-      m.set('fileIds',innerIds);
+      m.set("fileIds", innerIds);
 
       // console.log('pagesize:', _self.pageSize);
       _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/dc/removeFromArchive"
-      })
-      .then(function(response) {
-        _self.showInnerFile(null);
-        _self.loadGridOutData();
-        
-        //console.log(JSON.stringify(response.data.datalist));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-    }
-    ,
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/removeFromArchive"
+        })
+        .then(function(response) {
+          _self.showInnerFile(null);
+          _self.loadGridOutData();
+
+          //console.log(JSON.stringify(response.data.datalist));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
     // 添加至archive
-    addToArchive() 
-    {
+    addToArchive() {
       let _self = this;
-      if(_self.archiveId==='')
-      {
-        alert('请选择一条案卷！');
+      if (_self.archiveId === "") {
+        alert("请选择一条案卷！");
         return;
       }
 
-      if(_self.selectedOutItems.length===0)
-      {
-        alert('请选择一条或多条未组卷文件！');
+      if (_self.selectedOutItems.length === 0) {
+        alert("请选择一条或多条未组卷文件！");
         return;
       }
       var m = new Map();
-      m.set('archiveId',_self.archiveId);
-      let outIds=new Array();
-      for(let i=0;i<_self.selectedOutItems.length;i++)
-      {
+      m.set("archiveId", _self.archiveId);
+      let outIds = new Array();
+      for (let i = 0; i < _self.selectedOutItems.length; i++) {
         outIds.push(_self.selectedOutItems[i].ID);
       }
-      m.set('fileIds',outIds);
+      m.set("fileIds", outIds);
 
       // console.log('pagesize:', _self.pageSize);
       _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/dc/addToArchive"
-      })
-      .then(function(response) {
-        _self.showInnerFile(null);
-        _self.loadGridOutData();
-         
-        //console.log(JSON.stringify(response.data.datalist));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/addToArchive"
+        })
+        .then(function(response) {
+          _self.showInnerFile(null);
+          _self.loadGridOutData();
+
+          //console.log(JSON.stringify(response.data.datalist));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
     // 加载表格数据
-    loadGridData(row) 
-    {
+    loadGridData(row) {
       let _self = this;
       _self.loadGridInfo();
-      if(row!=null){
-        _self.selectTransferRow=row;
+      if (row != null) {
+        _self.selectTransferRow = row;
       }
-      var key =_self.inputkey;
-      if(key!=""){
-        key = "coding like '%"+key+"%' or title like '%"+key+"%'"; 
+      var key = _self.inputkey;
+      if (key != "") {
+        key = "coding like '%" + key + "%' or title like '%" + key + "%'";
       }
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
+      m.set("gridName", "ArchiveGrid");
       // m.set('folderId',indata.id);
-      m.set('condition',key);
-      m.set('id',_self.selectTransferRow.ID);
-      m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
-      m.set('orderBy','');
+      m.set("condition", key);
+      m.set("id", _self.selectTransferRow.ID);
+      m.set("pageSize", _self.pageSize);
+      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
+      m.set("orderBy", "");
       // console.log('pagesize:', _self.pageSize);
       _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/dc/getDocuByRelationParentId"
-      })
-      .then(function(response) {
-        _self.itemDataList = response.data.data;
-        _self.itemDataListFull = response.data.data;
-        _self.itemCount = response.data.pager.total;
-        //console.log(JSON.stringify(response.data.datalist));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getDocuByRelationParentId"
+        })
+        .then(function(response) {
+          _self.itemDataList = response.data.data;
+          _self.itemDataListFull = response.data.data;
+          _self.itemCount = response.data.pager.total;
+          //console.log(JSON.stringify(response.data.datalist));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
     // 分页 页数改变
-    handleSizeChange(val) 
-    {
+    handleSizeChange(val) {
       this.pageSize = val;
-      localStorage.setItem("docPageSize",val);
+      localStorage.setItem("docPageSize", val);
       this.loadGridData();
       //console.log('handleSizeChange', val);
     },
     // 分页 当前页改变
-    outerPageChange(val)
-    {
+    outerPageChange(val) {
       this.outerCurrentPage = val;
       this.loadGridOutData();
       //console.log('handleCurrentChange', val);
     },
-    outerPageSizeChange(val){
+    outerPageSizeChange(val) {
       this.outerPageSize = val;
-      localStorage.setItem("docPageSize",val);
+      localStorage.setItem("docPageSize", val);
       this.loadGridOutData();
     },
     // 分页 当前页改变
-    innerPageChange(val)
-    {
+    innerPageChange(val) {
       this.innerCurrentPage = val;
       this.showInnerFilepageChange();
       //console.log('handleCurrentChange', val);
     },
-    innerPageSizeChange(val){
+    innerPageSizeChange(val) {
       this.innerPageSize = val;
-      localStorage.setItem("docPageSize",val);
+      localStorage.setItem("docPageSize", val);
       this.showInnerFilepageChange();
     },
-    showInnerFilepageChange(){
+    showInnerFilepageChange() {
       let _self = this;
-      
+
       // if(_self.selectRow.C_LOCK_STATUS==='已封卷')
       // {
       //   _self.showButton=false;
@@ -946,54 +1015,50 @@ export default {
       // }
       _self.loadGridInfo();
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
-      m.set('condition',"");
-      if(_self.selectRow)
-      {
-        _self.archiveId=_self.selectRow.ID;
+      m.set("gridName", "ArchiveGrid");
+      m.set("condition", "");
+      if (_self.selectRow) {
+        _self.archiveId = _self.selectRow.ID;
       }
-      m.set('id',_self.archiveId);
-      m.set('pageSize',_self.innerPageSize);
-      m.set('pageIndex', (_self.innerCurrentPage-1)*_self.innerPageSize);
-      m.set('orderBy','');
+      m.set("id", _self.archiveId);
+      m.set("pageSize", _self.innerPageSize);
+      m.set("pageIndex", (_self.innerCurrentPage - 1) * _self.innerPageSize);
+      m.set("orderBy", "");
       // console.log('pagesize:', _self.pageSize);
       _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/dc/getDocuByRelationParentId"
-      })
-      .then(function(response) {
-        
-        _self.innerDataList = response.data.data;
-        _self.innerDataListFull = response.data.data;
-        _self.innerCount = response.data.pager.total;
-        //console.log(JSON.stringify(response.data.datalist));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getDocuByRelationParentId"
+        })
+        .then(function(response) {
+          _self.innerDataList = response.data.data;
+          _self.innerDataListFull = response.data.data;
+          _self.innerCount = response.data.pager.total;
+          //console.log(JSON.stringify(response.data.datalist));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
-    pageSizeChange(val){
+    pageSizeChange(val) {
       this.pageSize = val;
-      localStorage.setItem("docPageSize",val);
+      localStorage.setItem("docPageSize", val);
       this.loadGridData();
     },
     // 分页 当前页改变
-    pageChange(val) 
-    {
+    pageChange(val) {
       this.currentPage = val;
       this.loadGridData();
       //console.log('handleCurrentChange', val);
     },
     // 分页 当前页改变
-    handleCurrentChange(val) 
-    {
+    handleCurrentChange(val) {
       this.currentPage = val;
       this.loadGridData();
       //console.log('handleCurrentChange', val);
@@ -1003,23 +1068,23 @@ export default {
       let _self = this;
       _self.loading = true;
       _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: 0,
-        url: "/admin/getFolder"
-      })
-      .then(function(response) {
-        _self.dataList = response.data.data;
-        console.log(_self.dataList);
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: 0,
+          url: "/admin/getFolder"
+        })
+        .then(function(response) {
+          _self.dataList = response.data.data;
+          console.log(_self.dataList);
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
     // 文件夹节点点击事件
     handleNodeClick(indata) {
@@ -1027,28 +1092,27 @@ export default {
       _self.currentFolder = indata;
       //console.log(JSON.stringify(indata));
       // 没有加载，逐级加载
-      if(indata.extended == false)
-      {
+      if (indata.extended == false) {
         _self.loading = true;
         _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: indata.id,
-          url: "/admin/getFolder"
-        })
-        .then(function(response) {
-          indata.children = response.data.data;
-          //console.log(JSON.stringify(indata));
-          indata.extended = true;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
+          .axios({
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            },
+            method: "post",
+            data: indata.id,
+            url: "/admin/getFolder"
+          })
+          .then(function(response) {
+            indata.children = response.data.data;
+            //console.log(JSON.stringify(indata));
+            indata.extended = true;
+            _self.loading = false;
+          })
+          .catch(function(error) {
+            console.log(error);
+            _self.loading = false;
+          });
       }
       _self.loadGridInfo();
       _self.loadGridData();
@@ -1056,23 +1120,22 @@ export default {
       _self.loadGridOutData();
     },
     // 加载表格样式
-    loadOutGridInfo() 
-    {
+    loadOutGridInfo() {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
-      m.set('lang',_self.currentLanguage);
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'post',
-        data: JSON.stringify(m),
-        url: "/dc/getGridViewInfo"
-      })
+      m.set("gridName", "ArchiveGrid");
+      m.set("lang", _self.currentLanguage);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getGridViewInfo"
+        })
         .then(function(response) {
-          
           _self.outerGridList = response.data.data;
           _self.loading = false;
         })
@@ -1081,46 +1144,48 @@ export default {
           _self.loading = false;
         });
     },
-    loadGridOutData(){
+    loadGridOutData() {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
-      m.set('condition',"TYPE_NAME='技术文件'");
+      m.set("gridName", "ArchiveGrid");
+      m.set("condition", "TYPE_NAME='技术文件'");
       // m.set('folderId',indata.id);
-      m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.outerCurrentPage-1)*_self.outerPageSize);
-      m.set('orderBy','');
+      m.set("pageSize", _self.pageSize);
+      m.set("pageIndex", (_self.outerCurrentPage - 1) * _self.outerPageSize);
+      m.set("orderBy", "");
       // console.log('pagesize:', _self.pageSize);
       _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/dc/getOutDocuments"
-      })
-      .then(function(response) {
-        _self.outerDataList = response.data.data;
-        _self.outerDataListFull = response.data.data;
-        _self.outerCount = response.data.pager.total;
-        //console.log(JSON.stringify(response.data.datalist));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
-
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/getOutDocuments"
+        })
+        .then(function(response) {
+          _self.outerDataList = response.data.data;
+          _self.outerDataListFull = response.data.data;
+          _self.outerCount = response.data.pager.total;
+          //console.log(JSON.stringify(response.data.datalist));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
-    newArchiveItem(typeName,selectedRow)
-    {
+    newArchiveItem(typeName, selectedRow) {
       let _self = this;
-      if(selectedRow.ID ){
+      if (selectedRow.ID) {
         _self.selectedItemId = "";
-        _self.propertyVisible = true; 
-        if(_self.$refs.ShowProperty){
+
+        _self.dialogName = typeName;
+        _self.propertyVisible = true;
+
+        setTimeout(()=>{
+          if(_self.$refs.ShowProperty){
           _self.$refs.ShowProperty.myItemId = "";
           _self.dialogName=typeName;
           _self.$refs.ShowProperty.myTypeName =typeName;
@@ -1130,133 +1195,124 @@ export default {
           // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
           _self.$refs.ShowProperty.loadFormInfo();
         }
-      }
-      else{
+        },10);
+
+      } else {
         _self.$message(_self.$t("message.pleaseSelectFolder"));
       }
     },
     // 新建文档
-    newItem()
-    {
+    newItem() {
       let _self = this;
-      if(_self.currentFolder.id ){
+      if (_self.currentFolder.id) {
         _self.selectedItemId = "";
-        _self.propertyVisible = true; 
-        if(_self.$refs.ShowProperty){
+        _self.propertyVisible = true;
+        if (_self.$refs.ShowProperty) {
           _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName=_self.currentFolder.description;
+          _self.dialogName = _self.currentFolder.description;
           _self.$refs.ShowProperty.myTypeName = _self.currentFolder.description;
           _self.$refs.ShowProperty.myFolderId = _self.currentFolder.id;
           _self.$refs.ShowProperty.loadFormInfo();
         }
-      }
-      else{
+      } else {
         _self.$message(_self.$t("message.pleaseSelectFolder"));
       }
     },
     // 保存文档
-    saveItem(){
-      if(!this.$refs.ShowProperty.validFormValue()){
+    saveItem() {
+      if (!this.$refs.ShowProperty.validFormValue()) {
         return;
       }
-      let _self=this;
+      let _self = this;
       var m = new Map();
       let dataRows = this.$refs.ShowProperty.dataList;
       var i;
       for (i in dataRows) {
-        if(dataRows[i].attrName && dataRows[i].attrName !='')
-        {
-          if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
-          {
+        if (dataRows[i].attrName && dataRows[i].attrName != "") {
+          if (
+            dataRows[i].attrName != "FOLDER_ID" &&
+            dataRows[i].attrName != "ID"
+          ) {
             m.set(dataRows[i].attrName, dataRows[i].defaultValue);
           }
         }
       }
-      if(_self.$refs.ShowProperty.myItemId!='')
-      {
-        m.set('ID',_self.$refs.ShowProperty.myItemId);
+      if (_self.$refs.ShowProperty.myItemId != "") {
+        m.set("ID", _self.$refs.ShowProperty.myItemId);
       }
-      if(_self.$refs.ShowProperty.myTypeName!='')
-      {
-        m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
-        m.set('folderPath',_self.$refs.ShowProperty.folderPath);
-        m.set('transferId',_self.$refs.ShowProperty.parentDocId);
+      if (_self.$refs.ShowProperty.myTypeName != "") {
+        m.set("TYPE_NAME", _self.$refs.ShowProperty.myTypeName);
+        m.set("folderPath", _self.$refs.ShowProperty.folderPath);
+        m.set("transferId", _self.$refs.ShowProperty.parentDocId);
       }
       let formdata = new FormData();
-      formdata.append("metaData",JSON.stringify(m));
-      
-      if(_self.$refs.ShowProperty.file!="")
-      {
+      formdata.append("metaData", JSON.stringify(m));
+
+      if (_self.$refs.ShowProperty.file != "") {
         //console.log(_self.file);
-        formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+        formdata.append("uploadFile", _self.$refs.ShowProperty.file.raw);
       }
       // console.log(JSON.stringify(m));
-      if(_self.$refs.ShowProperty.myItemId=='')
-      {
-        _self.axios({
-          headers: {
-            'Content-Type': 'multipart/form-data'
-            // x-www-form-urlencoded'
-            //"Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: formdata,
-          url: "/dc/newArchiveOrDocument"
-        })
-        .then(function(response) {
-          let code = response.data.code;
-          //console.log(JSON.stringify(response));
-          if(code==1){
-            _self.$message("创建成功!");
-            _self.propertyVisible=false;
-            
-            _self.loadTransferGridData();
-            _self.loadGridData(null);
-            _self.showInnerFile(null);
-          }
-          else{
-             _self.$message("新建失败!");
-          }
-        })
-        .catch(function(error) {
-          _self.$message("新建失败!");
-          console.log(error);
-        });
-      }
-      else
-      {
-        _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/saveDocument"
-        })
-        .then(function(response) {
-          let code = response.data.code;
-          //console.log(JSON.stringify(response));
-          if(code==1){
-            _self.$emit('onSaved','update');
-          }
-          else{
-             _self.$message("保存失败!");
-          }
-        })
-        .catch(function(error) {
-          _self.$message("保存失败!");
-          console.log(error);
-        });
+      if (_self.$refs.ShowProperty.myItemId == "") {
+        _self
+          .axios({
+            headers: {
+              "Content-Type": "multipart/form-data"
+              // x-www-form-urlencoded'
+              //"Content-Type": "application/json;charset=UTF-8"
+            },
+            method: "post",
+            data: formdata,
+            url: "/dc/newArchiveOrDocument"
+          })
+          .then(function(response) {
+            let code = response.data.code;
+            //console.log(JSON.stringify(response));
+            if (code == 1) {
+              _self.$message("创建成功!");
+              _self.propertyVisible = false;
+
+              _self.loadTransferGridData();
+              _self.loadGridData(null);
+              _self.showInnerFile(null);
+            } else {
+              _self.$message("新建失败!");
+            }
+          })
+          .catch(function(error) {
+            _self.$message("新建失败!");
+            console.log(error);
+          });
+      } else {
+        _self
+          .axios({
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            },
+            method: "post",
+            data: JSON.stringify(m),
+            url: "/dc/saveDocument"
+          })
+          .then(function(response) {
+            let code = response.data.code;
+            //console.log(JSON.stringify(response));
+            if (code == 1) {
+              _self.$emit("onSaved", "update");
+            } else {
+              _self.$message("保存失败!");
+            }
+          })
+          .catch(function(error) {
+            _self.$message("保存失败!");
+            console.log(error);
+          });
       }
     },
     // 保存结果事件
-    onSaved(indata){
-      if(indata=='update')
-      {
+    onSaved(indata) {
+      if (indata == "update") {
         this.$message(this.$t("message.saveSuccess"));
-      }
-      else
-      {
+      } else {
         this.$message("新建成功!");
       }
       this.propertyVisible = false;
@@ -1264,18 +1320,18 @@ export default {
       this.loadGridOutData();
     },
     //开卷
-    onOpenPage(){
+    onOpenPage() {
       let _self = this;
-      var m=new Map();
+      var m = new Map();
       let tab = _self.selectedItems;
-      if(tab.length<1)
-      {
+      if (tab.length < 1) {
         _self.$message("请选择一条或多条案卷数据！");
         return;
       }
-      m.set("files",tab);
+      m.set("files", tab);
       console.log(JSON.stringify(m));
-      _self.axios({
+      _self
+        .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -1285,27 +1341,31 @@ export default {
         })
         .then(function(response) {
           _self.loadGridData();
-          _self.$message(_self.$t("message.openPage")+_self.$t("message.success"));
+          _self.$message(
+            _self.$t("message.openPage") + _self.$t("message.success")
+          );
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.openPage")+_self.$t("message.failured"));
+          _self.$message(
+            _self.$t("message.openPage") + _self.$t("message.failured")
+          );
           console.log(error);
-      });
+        });
     },
 
     //封卷
-    onClosePage(){
+    onClosePage() {
       let _self = this;
-      var m=new Map();
+      var m = new Map();
       let tab = _self.selectedItems;
-      if(tab.length<1)
-      {
+      if (tab.length < 1) {
         _self.$message("请选择一条或多条案卷数据！");
         return;
       }
-      m.set("files",tab);
+      m.set("files", tab);
       console.log(JSON.stringify(m));
-      _self.axios({
+      _self
+        .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -1315,27 +1375,37 @@ export default {
         })
         .then(function(response) {
           _self.loadGridData();
-          _self.$message(_self.$t("message.closePage")+_self.$t("message.success"));
+          _self.$message(
+            _self.$t("message.closePage") + _self.$t("message.success")
+          );
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.closePage")+_self.$t("message.failured"));
+          _self.$message(
+            _self.$t("message.closePage") + _self.$t("message.failured")
+          );
           console.log(error);
-      });
+        });
     },
     // 删除文档事件
     onDeleleItem() {
       let _self = this;
-      this.$confirm(_self.$t("message.deleteInfo"),_self.$t("application.info"), {
+      this.$confirm(
+        _self.$t("message.deleteInfo"),
+        _self.$t("application.info"),
+        {
           confirmButtonText: _self.$t("application.ok"),
           cancelButtonText: _self.$t("application.cancel"),
-          type: 'warning'
-        }).then(() => {
+          type: "warning"
+        }
+      )
+        .then(() => {
           _self.deleleItem();
-        }).catch(() => {
+        })
+        .catch(() => {
           // this.$message({
           //   type: 'info',
           //   message: '已取消删除'
-          // });          
+          // });
         });
     },
     // 删除文档
@@ -1343,14 +1413,14 @@ export default {
       let _self = this;
       var m = [];
       let tab = _self.selectedItems;
-      
+
       var i;
-      for(i in tab){
-        
+      for (i in tab) {
         m.push(tab[i]["ID"]);
       }
       console.log(JSON.stringify(m));
-      _self.axios({
+      _self
+        .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -1360,39 +1430,46 @@ export default {
         })
         .then(function(response) {
           _self.loadGridData(null);
-           
-            _self.showInnerFile(null);
+
+          _self.showInnerFile(null);
           _self.$message(_self.$t("message.deleteSuccess"));
         })
         .catch(function(error) {
           _self.$message(_self.$t("message.deleteFailured"));
           console.log(error);
-      });
+        });
     },
     // 删除文档事件
     onDeleleFileItem() {
       let _self = this;
-      this.$confirm(_self.$t("message.deleteInfo"),_self.$t("application.info"), {
+      this.$confirm(
+        _self.$t("message.deleteInfo"),
+        _self.$t("application.info"),
+        {
           confirmButtonText: _self.$t("application.ok"),
           cancelButtonText: _self.$t("application.cancel"),
-          type: 'warning'
-        }).then(() => {
+          type: "warning"
+        }
+      )
+        .then(() => {
           _self.deleleFileItem();
-        }).catch(() => {
+        })
+        .catch(() => {
           // this.$message({
           //   type: 'info',
           //   message: '已取消删除'
-          // });          
+          // });
         });
     },
     // 自动组卷
     autoPaper() {
       let _self = this;
-      var m=new Map();
+      var m = new Map();
       let tab = _self.selectedOutItems;
-      m.set("files",tab);
+      m.set("files", tab);
       console.log(JSON.stringify(m));
-      _self.axios({
+      _self
+        .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -1408,7 +1485,7 @@ export default {
         .catch(function(error) {
           _self.$message(_self.$t("message.paperFaild"));
           console.log(error);
-      });
+        });
     },
     // 删除文档
     deleleFileItem() {
@@ -1416,11 +1493,12 @@ export default {
       var m = [];
       let tab = _self.selectedInnerItems;
       var i;
-      for(i in tab){
+      for (i in tab) {
         m.push(tab[i]["ID"]);
       }
       console.log(JSON.stringify(m));
-      _self.axios({
+      _self
+        .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -1435,48 +1513,55 @@ export default {
         .catch(function(error) {
           _self.$message(_self.$t("message.deleteFailured"));
           console.log(error);
-      });
+        });
     },
     // 查看属性
-    showItemProperty(indata){
+    showItemProperty(indata) {
       let _self = this;
-      _self.selectedItemId = indata.ID ;
+      _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
-      if(_self.$refs.ShowProperty){
-        _self.dialogName=indata.TYPE_NAME;
-        _self.$refs.ShowProperty.myItemId = indata.ID ;
+      if (_self.$refs.ShowProperty) {
+        _self.dialogName = indata.TYPE_NAME;
+        _self.$refs.ShowProperty.myItemId = indata.ID;
         _self.$refs.ShowProperty.loadFormInfo();
       }
     },
     // 查看内容
-    showItemContent(indata){
+    showItemContent(indata) {
       let _self = this;
       _self.imageArray = [];
       _self.currentType = indata.FORMAT_NAME;
       // 拦截器会自动替换成目标url
-      _self.imageArray[0] =  "/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      if(_self.currentType == "pdf"){
-         window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
-      }else{
-         _self.imageViewVisible =true;
+      _self.imageArray[0] =
+        "/dc/getContent?id=" +
+        indata.ID +
+        "&token=" +
+        sessionStorage.getItem("access-token");
+      if (_self.currentType == "pdf") {
+        window.open(
+          "./static/pdfviewer/web/viewer.html?file=" +
+            encodeURIComponent(_self.imageArray[0]) +
+            "&.pdf"
+        );
+      } else {
+        _self.imageViewVisible = true;
       }
     },
-    closepdf(){
-      this.imageViewVisible=false
+    closepdf() {
+      this.imageViewVisible = false;
     },
     // 保存移交单
     saveTransfer(indata) {
       let _self = this;
-      if(_self.folderAction == _self.$t("application.newTransfer"))
-      {
+      if (_self.folderAction == _self.$t("application.newTransfer")) {
         _self.newFolder(indata);
       }
-      
     },
     // 删除文件夹
     delFolder() {
       let _self = this;
-      _self.axios({
+      _self
+        .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -1486,13 +1571,10 @@ export default {
           url: "/admin/deleteFolder"
         })
         .then(function(response) {
-          if(response.data.code==1)
-          {
+          if (response.data.code == 1) {
             _self.$message(_self.$t("message.deleteSuccess"));
             _self.refreshFolderData();
-          }
-          else
-          {
+          } else {
             _self.$message(response.data.msg);
           }
         })
@@ -1501,98 +1583,102 @@ export default {
         });
     },
     // 新建文件夹事件
-    onNewFolder()
-    {
-      
+    onNewFolder() {
       this.folderAction = this.$t("application.newTransfer");
-      this.transferForm ={
+      this.transferForm = {
         id: null,
-        title:"",
-        folderPath:"/表单/移交单",
-        typeName:"移交单",
-        status:"产生"
+        title: "",
+        folderPath: "/表单/移交单",
+        typeName: "移交单",
+        status: "产生"
       };
       this.folderDialogVisible = true;
     },
     //归档
-    onArchived(){
-      let _self=this;
-      if(_self.selectTransferRow==null||_self.selectTransferRow.length==0){
-        _self.$message('请选择数据！');
+    onArchived() {
+      let _self = this;
+      if (
+        _self.selectTransferRow == null ||
+        _self.selectTransferRow.length == 0
+      ) {
+        _self.$message("请选择数据！");
         return;
       }
 
       let tab = _self.selectTransferRow;
-          var m = [];
-          var i;
-          for(i in tab){
-            if(tab[i]["STATUS"]!="产生")
-            {
-              _self.$message("移交单"+tab[i]["CODING"]+"已提交不能再次提交！");
-              return;
-            }
-            m.push(tab[i]["ID"]);
-          }
-          console.log(JSON.stringify(m));
-          _self.axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/archived"
-            })
-            .then(function(response) {
-              _self.loadTransferGridData();
-              _self.loadGridData(null);
-              
-              _self.showInnerFile(null);
-              _self.$message('操作成功');
-            })
-            .catch(function(error) {
-              _self.$message('操作失败');
-              console.log(error);
-          });
-        
-      
+      var m = [];
+      var i;
+      for (i in tab) {
+        if (tab[i]["STATUS"] != "产生") {
+          _self.$message("移交单" + tab[i]["CODING"] + "已提交不能再次提交！");
+          return;
+        }
+        m.push(tab[i]["ID"]);
+      }
+      console.log(JSON.stringify(m));
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/archived"
+        })
+        .then(function(response) {
+          _self.loadTransferGridData();
+          _self.loadGridData(null);
+
+          _self.showInnerFile(null);
+          _self.$message("操作成功");
+        })
+        .catch(function(error) {
+          _self.$message("操作失败");
+          console.log(error);
+        });
     },
     // 编辑文件夹事件
-    onEditFolder()
-    {
-      if(!this.currentFolder||!this.currentFolder.id)
-      {
+    onEditFolder() {
+      if (!this.currentFolder || !this.currentFolder.id) {
         this.$message(this.$t("message.pleaseSelectFolder"));
         return;
       }
-      this.folderAction = this.$t("application.edit")+this.$t("application.folder");
+      this.folderAction =
+        this.$t("application.edit") + this.$t("application.folder");
       this.folderForm = this.currentFolder;
       this.folderDialogVisible = true;
     },
-    onDeleteTransfer(){
+    onDeleteTransfer() {
       let _self = this;
-      if(!_self.selectTransferRow){
+      if (!_self.selectTransferRow) {
         _self.$message(_self.$t("message.pleaseSelectTransfer"));
         return;
       }
 
-       _self.$confirm(_self.$t("message.deleteInfo"), _self.$t("application.info"), {
-          confirmButtonText: _self.$t("application.ok"),
-          cancelButtonText: _self.$t("application.cancel"),
-          type: 'warning'
-        }).then(() => {
+      _self
+        .$confirm(
+          _self.$t("message.deleteInfo"),
+          _self.$t("application.info"),
+          {
+            confirmButtonText: _self.$t("application.ok"),
+            cancelButtonText: _self.$t("application.cancel"),
+            type: "warning"
+          }
+        )
+        .then(() => {
           let tab = _self.selectTransferRow;
           var m = [];
           var i;
-          for(i in tab){
-            if(tab[i]["STATUS"]!="产生")
-            {
-              _self.$message("移交单"+tab[i]["CODING"]+"已提交不能删除！");
+          for (i in tab) {
+            if (tab[i]["STATUS"] != "产生") {
+              _self.$message("移交单" + tab[i]["CODING"] + "已提交不能删除！");
               return;
             }
             m.push(tab[i]["ID"]);
           }
           console.log(JSON.stringify(m));
-          _self.axios({
+          _self
+            .axios({
               headers: {
                 "Content-Type": "application/json;charset=UTF-8"
               },
@@ -1603,82 +1689,87 @@ export default {
             .then(function(response) {
               _self.loadTransferGridData();
               _self.loadGridData(null);
-              
+
               _self.showInnerFile(null);
               _self.$message(_self.$t("message.deleteSuccess"));
             })
             .catch(function(error) {
               _self.$message(_self.$t("message.deleteFailured"));
               console.log(error);
-          });
-        }).catch(() => {
+            });
+        })
+        .catch(() => {
           // this.$message({
           //   type: 'info',
           //   message: '已取消删除'
-          // });          
+          // });
         });
-
-      
     },
-    onDeleleFolder()
-    {
+    onDeleleFolder() {
       let _self = this;
-      if(!_self.currentFolder||!_self.currentFolder.id)
-      {
+      if (!_self.currentFolder || !_self.currentFolder.id) {
         _self.$message(_self.$t("message.pleaseSelectFolder"));
         return;
       }
-      _self.$confirm(_self.$t("message.deleteInfo"), _self.$t("application.info"), {
-          confirmButtonText: _self.$t("application.ok"),
-          cancelButtonText: _self.$t("application.cancel"),
-          type: 'warning'
-        }).then(() => {
+      _self
+        .$confirm(
+          _self.$t("message.deleteInfo"),
+          _self.$t("application.info"),
+          {
+            confirmButtonText: _self.$t("application.ok"),
+            cancelButtonText: _self.$t("application.cancel"),
+            type: "warning"
+          }
+        )
+        .then(() => {
           _self.delFolder();
-        }).catch(() => {
+        })
+        .catch(() => {
           // this.$message({
           //   type: 'info',
           //   message: '已取消删除'
-          // });          
+          // });
         });
-    }, 
-    handleChange(file, fileList){
+    },
+    handleChange(file, fileList) {
       this.fileList = fileList;
     },
-    getFormData(){
+    getFormData() {
       let _self = this;
       let formdata = new FormData();
       var data = {};
-      data["ID"]=_self.selectedFileId;
-      formdata.append("metaData",JSON.stringify(data));
-      _self.fileList.forEach(function (file) {
+      data["ID"] = _self.selectedFileId;
+      formdata.append("metaData", JSON.stringify(data));
+      _self.fileList.forEach(function(file) {
         //console.log(file.name);
         formdata.append("uploadFile", file.raw, file.name);
       });
       return formdata;
     },
     //上传文件
-    uploadData(){
+    uploadData() {
       let _self = this;
       let formdata = _self.getFormData();
       console.log("UploadData getData");
       console.log(formdata);
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        datatype: 'json',
-        method: 'post',
-        data: formdata,
-        url: _self.uploadUrl
-      })
-      .then(function(response) {
-        _self.importdialogVisible = false;
-        // _self.refreshData();
-        _self.$message("导入成功!");
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          datatype: "json",
+          method: "post",
+          data: formdata,
+          url: _self.uploadUrl
+        })
+        .then(function(response) {
+          _self.importdialogVisible = false;
+          // _self.refreshData();
+          _self.$message("导入成功!");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     // 新建文件夹
     newFolder(indata) {
@@ -1694,18 +1785,16 @@ export default {
           url: "/dc/newTransfer"
         })
         .then(function(response) {
-          
-          let code= response.data.code;
-          if(code=='1'){
+          let code = response.data.code;
+          if (code == "1") {
             _self.$message("创建成功!");
             _self.folderDialogVisible = false;
-            
+
             _self.loadTransferGridData();
             _self.loadGridData(null);
             _self.showInnerFile(null);
-          }
-          else{
-             _self.$message("新建失败!");
+          } else {
+            _self.$message("新建失败!");
           }
           //_self.refreshFolderData();
         })
@@ -1737,16 +1826,17 @@ export default {
     },
     //查询文档
     searchItem() {
-     this.loadGridData();
-     this. loadPageInfo();
+      this.loadGridData();
+      this.loadPageInfo();
     }
   },
-  components:{
+  components: {
     ShowProperty: ShowProperty,
-    PrintPage:PrintPage,
-    PrintVolumes:PrintVolumes,
-    DataGrid:DataGrid,
-    AddReuse:AddReuse    
+    PrintPage: PrintPage,
+    PrintVolumes: PrintVolumes,
+    DataGrid: DataGrid,
+    AddReuse: AddReuse,
+    BatchImport:BatchImport
     //Prints:Prints
   }
 };
@@ -1754,29 +1844,31 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+body,
+html {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
+}
+.left,
+.right {
+  width: 100%;
+}
+.middle {
+  width: 5%;
+}
+.left,
+.middle,
+.right {
+  /* width:200px; */
+  /* height:100px; */
+  /* background-color:rgb(34,124,134); */
+  float: left;
+  height: 100%;
+}
 
-body,html{
-			height:100%;
-			margin:0px;
-			padding:0px;
-			overflow:hidden;
-		}
-    .left,.right{
-			width:100%;
-      }
-      .middle{
-        width:5%;
-      }
-		.left,.middle,.right{
-			/* width:200px; */
-			/* height:100px; */
-			/* background-color:rgb(34,124,134); */
-			float:left;
-			height:100%;
-		}
-		
-
-  /* *{
+/* *{
         margin: 0;
         padding: 0;
       }            
@@ -1818,13 +1910,13 @@ a {
   color: #42b983;
 }
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
-    position: absolute;
-    right: 2px;
-    font-family: element-icons;
-    content: "\E6DA";
-    font-size: 12px;
-    font-weight: 700;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  position: absolute;
+  right: 2px;
+  font-family: element-icons;
+  content: "\E6DA";
+  font-size: 12px;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 </style>

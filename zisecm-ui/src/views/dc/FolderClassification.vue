@@ -18,20 +18,6 @@
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <iframe frameborder="0" name="PDFViewer" id="PDFViewer" style="width:100%;height:760px;display:none;" ref="PDFViewer"></iframe>
-    <el-dialog :visible.syn="imageViewVisible" @close="imageViewVisible = false">
-      <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
-         <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
-          <img v-for="src in imageArray" :src="src" :key="src" width="240" @click="onImageClick" style="cursor:hand">
-        </viewer>
-      </div>
-      <div v-else>
-        <a :href="imageArray[0]" target="_blank">{{$t('application.download')}}</a>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="imageViewVisible = false">{{$t('application.cancel')}}</el-button>
-      </div>
-    </el-dialog>
     <el-dialog :title="folderAction" :visible.sync="folderDialogVisible"  @close="folderDialogVisible = false">
           <el-form :model="folderForm">
             <el-form-item :label="$t('field.name')" :label-width="formLabelWidth">
