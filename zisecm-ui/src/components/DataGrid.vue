@@ -29,7 +29,7 @@
                             <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column width="0"></el-table-column>
+                        <el-table-column width="10"></el-table-column>
                         <el-table-column width="40" v-if="isshowicon">
                           <template slot-scope="scope">
                             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
@@ -102,13 +102,12 @@ export default {
             },
             currentPage:1,
             pageSize: 20,
-            itemCount: 0,
             showFields:[]
         }
     },
     props:{
-        itemDataList:[],
-        columnList:[],
+        itemDataList:{type:Array,default:false},
+        columnList:{type:Array,default:false},
         isshowicon:{type:Boolean,default:false},
         isshowOption:{type:Boolean,default:false},
         tableHeight:{type:[String,Number],default:window.innerHeight - 408},
@@ -221,4 +220,5 @@ export default {
 }
 </script>
 <style scoped>
+.el-table--striped .el-table__body tr.el-table__row--striped td{background:#FAFAFA}.el-table--striped .el-table__body tr.el-table__row--striped.current-row td,.el-table__body tr.current-row>td,.el-table__body tr.hover-row.current-row>td,.el-table__body tr.hover-row.el-table__row--striped.current-row>td,.el-table__body tr.hover-row.el-table__row--striped>td,.el-table__body tr.hover-row>td{background-color:rgb(140, 211, 252)}
 </style>
