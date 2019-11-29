@@ -1,7 +1,13 @@
 <template>
     <div>
            <div>
-
+                <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+                  <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="saveItem();propertyVisible = false">{{$t('application.save')}}</el-button> 
+                    <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+                  </div>
+                </el-dialog>
                <!-- 选字段对话框 -->
                 <el-dialog title="选择需要展示的字段" :visible.sync="columnsInfo.dialogFormVisible" width="40%" center top="15vh">
                     <el-checkbox :indeterminate="columnsInfo.isIndeterminate" v-model="columnsInfo.checkAll" @change="handleCheckAllChange">全选</el-checkbox>
@@ -29,7 +35,7 @@
                             <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column width="10"></el-table-column>
+                        <el-table-column width="1"></el-table-column>
                         <el-table-column width="40" v-if="isshowicon">
                           <template slot-scope="scope">
                             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
@@ -63,19 +69,24 @@
                             </div>
                           </div>
                         </div>
-                        <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="200">
+                        <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="140">
                           
                           <template slot="header" slot-scope="scope">
                                 <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                             </template>
                           <template slot-scope="scope">
-                            <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
+                            <!-- <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
+                            <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button> -->
+                            
+                              <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
+                              <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>                 
+                            
+                          
                           </template>
                         </el-table-column>
                       </el-table>
-                      <el-pagination
+                      <el-pagination v-if="isshowPage"
                         background
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -89,6 +100,7 @@
     </div>
 </template>
 <script type="text/javascript">
+import ShowProperty from '@/components/ShowProperty'
 export default {
     name:"dataGrid",
     data() {
@@ -100,6 +112,7 @@ export default {
                 dialogFormVisible:false,
                 isIndeterminate:false
             },
+            propertyVisible:false,
             currentPage:1,
             pageSize: 20,
             showFields:[]
@@ -112,7 +125,8 @@ export default {
         isshowOption:{type:Boolean,default:false},
         tableHeight:{type:[String,Number],default:window.innerHeight - 408},
         tableWidth:{type:[String,Number],default:'100%'},
-        itemCount:{type:[String,Number]}
+        itemCount:{type:[String,Number]},
+        isshowPage:{type:Boolean,default:true}
     },
    watch:{
     
@@ -131,7 +145,39 @@ export default {
       }); 
     }
   },
+  components: {
+    ShowProperty: ShowProperty
+  },
    methods:{
+     // 查看内容
+    showItemContent(indata){
+       let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
+    },
+      // 保存文档
+    saveItem(){
+      this.$refs.ShowProperty.saveItem();
+    },
+     //查看属性
+    showItemProperty(indata) {
+      let _self = this;
+      _self.propertyVisible = true;
+      setTimeout(()=>{
+        if(_self.$refs.ShowProperty){
+        _self.$refs.ShowProperty.myItemId = indata.ID ;
+        _self.$refs.ShowProperty.loadFormInfo();
+      }
+      },10);
+      
+    },
         showFieldOption(){
             let _self=this;
             _self.showFields = [];

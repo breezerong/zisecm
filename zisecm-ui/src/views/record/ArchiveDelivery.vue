@@ -101,7 +101,6 @@
         width="100%"
         :folderPath="folderPath"
         v-bind:itemId="selectedItemId"
-        v-bind:folderPath="folderPath"
         v-bind:typeName="typeName"
       ></ShowProperty>
       <div slot="footer" class="dialog-footer">
@@ -202,6 +201,7 @@
         <DataGrid
           ref="transferDataGrid"
           key="transfer"
+          v-bind:isshowPage="false"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
@@ -223,6 +223,8 @@
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
           v-bind:tableHeight="rightTableHeight"
+          v-bind:isshowOption="true"
+          v-bind:propertyComponent="this.$refs.ShowProperty"
           @rowclick="showInnerFile"
           @selectchange="selectChange"
         ></DataGrid>
@@ -270,6 +272,7 @@
           v-bind:columnList="innerGridList"
           v-bind:itemCount="innerCount"
           v-bind:tableHeight="rightTableHeight"
+          :isshowOption="true"
           @pagesizechange="innerPageSizeChange"
           @rowclick="selectOneFile"
           @pagechange="innerPageChange"
