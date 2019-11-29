@@ -22,31 +22,10 @@
             <el-button type="primary" @click="updateNewFile()">确 定</el-button>
           </div>
         </el-dialog>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="76%">
-      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+      <ShowProperty ref="ShowProperty" width="100%"  @onSaved="onSaved" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
-      </div>
-    </el-dialog>
-    <iframe frameborder="0" name="PDFViewer" id="PDFViewer" style="width:100%;height:760px;display:none;" ref="PDFViewer"></iframe>
-    <el-dialog :visible="imageViewVisible" @close="imageViewVisible = false">
-      <div v-if="currentType=='pdf'">
-        
-        <!--
-        <PDFViewer :pdfurl="imageArray[0]" @closepdf="closepdf" style="width:100%;height:760px;" ref="PDFViewer">
-        </PDFViewer>
-        -->
-      </div>
-      <div v-else-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
-         <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
-          <img v-for="src in imageArray" :src="src" :key="src" width="240" @click="onImageClick" style="cursor:hand">
-        </viewer>
-      </div>
-      <div v-else>
-        <a :href="imageArray[0]" target="_blank">{{$t('application.download')}}</a>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="imageViewVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
       <table border="0" width="100%" >
@@ -437,19 +416,7 @@ export default {
           //token: sessionStorage.getItem('access-token')
         }
       });
-      //console.log(href);
       window.open(href.href, '_blank');
-      // let _self = this;
-      // _self.imageArray = [];
-      // _self.currentType = indata.FORMAT_NAME;
-      // console.log(_self.currentType);
-      // // 拦截器会自动替换成目标url
-      // _self.imageArray[0] =  _self.axios.defaults.baseURL+"/zisecm/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      // if(_self.currentType == "pdf"){
-      //    window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
-      // }else{
-      //    _self.imageViewVisible =true;
-      // }
     },
     closepdf(){
       this.imageViewVisible=false
