@@ -54,20 +54,7 @@
       </div>
     </el-dialog>
 
-    <iframe frameborder="0" name="PDFViewer" id="PDFViewer" style="width:100%;height:760px;display:none;" ref="PDFViewer"></iframe>
-    <el-dialog :visible.syn="imageViewVisible" @close="imageViewVisible = false">
-      <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
-         <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
-          <img v-for="src in imageArray" :src="src" :key="src" width="240" @click="onImageClick" style="cursor:hand">
-        </viewer>
-      </div>
-      <div v-else>
-        <a :href="imageArray[0]" target="_blank">{{$t('application.download')}}</a>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="imageViewVisible = false">{{$t('application.cancel')}}</el-button>
-      </div>
-    </el-dialog>
+    
     <el-dialog :title="folderAction" :visible.sync="folderDialogVisible"  @close="folderDialogVisible = false">
           <el-form :model="folderForm">
             <el-form-item :label="$t('field.name')" :label-width="formLabelWidth">
@@ -82,18 +69,8 @@
             <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
           </div>
         </el-dialog>
-      <table border="0" width="100%" >
-          <tr>
-            <td class="navbar" colspan="2">
-              <el-breadcrumb>
-                <el-breadcrumb-item>{{$t('menu.dataCenter')}}</el-breadcrumb-item>
-                <el-breadcrumb-item>{{$t('menu.folderClassification')}}</el-breadcrumb-item>
-              </el-breadcrumb>
-            </td>
-            
-          </tr>
-          <tr>
-            <td rowspan="2" align="left" valign="top">
+      <el-row>
+        <el-col :span="4">
               <el-tree
                       :props="defaultProps"
                       :data="dataList"
@@ -103,63 +80,38 @@
                       highlight-current
                       @node-click="handleNodeClick">
                     </el-tree>
-            </td>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <!-- <td align="left" width="160px"> -->
-                    <!-- <el-tooltip  class="item" effect="dark" :content="$t('application.newFolder')" placement="top">
-                      <el-button type="primary" icon="el-icon-circle-plus" circle @click="onNewFolder()"></el-button>
-                    </el-tooltip>
-                    <el-tooltip  class="item" effect="dark" :content="$t('application.edit')+$t('application.folder')" placement="top">
-                      <el-button type="primary" icon="el-icon-info" circle @click="onEditFolder()"></el-button>
-                    </el-tooltip>
-                    <el-tooltip  class="item" effect="dark" :content="$t('application.delete')+$t('application.folder')" placement="top">
-                      <el-button type="primary" icon="el-icon-delete" circle @click="onDeleleFolder()"></el-button>
-                    </el-tooltip> -->
-                    
-                  <!-- </td> -->
-                  <td align="left" width="160px">
+        </el-col>
+        <el-col :span="20">
+          <el-row>
+            <el-col :span="3">
+              
                     <el-input  v-model="inputkey" :placeholder="$t('message.pleaseInput')+$t('application.keyword')" @change="searchItem" prefix-icon="el-icon-search"></el-input>
+                </el-col>
+            <el-col :span="4" style="padding-top:8px;">      
                     <el-radio v-model="radio" label="卷盒" @change="changeRadio">卷盒</el-radio>
                     <el-radio v-model="radio" label="图册" @change="changeRadio">图册</el-radio>
-                  </td>
-                  <td>
-                    <!-- <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem()">{{$t('application.newDocument')}}</el-button> -->
-                    
-                    <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('卷盒')">{{$t('application.newArchive')}}</el-button>
-                    <el-button type="primary" icon="el-icon-edit"  @click="newArchiveItem('图册')">{{$t('application.newVolume')}}</el-button>
-                    <el-button type="primary" icon="el-icon-delete"  @click="onDeleleArchiveItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
-                    <el-button type="primary" icon="el-icon-s-order"  @click="takeNumbers">{{$t('application.takeNumbers')}}</el-button>
-                    <el-button type="primary" icon="el-icon-notebook-2"  @click="fetchInformation">{{$t('application.fetchInformation')}}</el-button>
-                    <el-button type="primary" icon="el-icon-sell"  @click="putInStorage">{{$t('application.warehousing')}}</el-button>
-                   
-                    <!-- <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
-                    <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button> -->
-                    <!-- <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button>
-                    <el-button type="primary" icon="el-icon-printer" @click="printVolumesVisible = true">{{$t('application.PrintVolumes')}}</el-button> -->
-                  
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
-            <table border="0" width="100%">
-                <tr valign="top">
-                  <!-- <td align="left" width="160px" >
-                    
-                  </td> -->
-                  <td>
-                    <div>
+            </el-col>
+            <el-col :span="17" style="padding-top:4px;">
+                    <el-button type="primary" plain
+          size="small" icon="el-icon-edit"  @click="newArchiveItem('卷盒')">{{$t('application.newArchive')}}</el-button>
+                    <el-button type="primary"  plain
+          size="small" icon="el-icon-edit"  @click="newArchiveItem('图册')">{{$t('application.newVolume')}}</el-button>
+                    <el-button type="primary" plain
+          size="small" icon="el-icon-delete"  @click="onDeleleArchiveItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
+                    <el-button type="primary" plain
+          size="small" icon="el-icon-s-order"  @click="takeNumbers">{{$t('application.takeNumbers')}}</el-button>
+                    <el-button type="primary" plain
+          size="small" icon="el-icon-notebook-2"  @click="fetchInformation">{{$t('application.fetchInformation')}}</el-button>
+                    <el-button type="primary" plain
+          size="small" icon="el-icon-sell"  @click="putInStorage">{{$t('application.warehousing')}}</el-button>
+            </el-col>
+          </el-row>
+          <el-row>
                       <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
                       v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
                       @pagechange="pageChange" v-bind:itemCount="itemCount"
+                      v-bind:tableHeight="rightTableHeight"
                       @rowclick="showInnerFile" @selectchange="selectChange"></DataGrid>
-
-                      
-                    </div>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
                       <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
@@ -169,7 +121,7 @@
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button> -->
-                      <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
+                      <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">著录</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       
@@ -178,6 +130,7 @@
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
+                       v-bind:tableHeight="rightTableHeight"
                       @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
                     </div>
                     <div class="middle">
@@ -194,16 +147,13 @@
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
                       v-bind:columnList="outerGridList" v-bind:itemCount="outerCount"
-                       @pagesizechange="outerPageSizeChange"
+                       @pagesizechange="outerPageSizeChange" v-bind:tableHeight="rightTableHeight"
                       @pagechange="outerPageChange" @selectchange="selectOutChange"></DataGrid>
                        
                     </div>
-                  </td>
-                </tr>
-              </table>
-          </td>
-        </tr>
-      </table>
+          </el-row>
+        </el-col>
+      </el-row>
   </div>
 </template>
 
@@ -229,9 +179,8 @@ export default {
   },
   data() {
     return {
-      imageFormat: 'jpg,jpeg,bmp,gif,png',
-      baseServerUrl: this.baseURL,
-      currentLanguage: "zh-cn",
+      rightTableHeight: (window.innerHeight - 200)/2,
+      currentLanguage: this.getLang(),
       printsVisible:false,
       printVolumesVisible:false,
       archiveId:"",

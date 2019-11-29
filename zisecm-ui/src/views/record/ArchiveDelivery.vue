@@ -109,33 +109,6 @@
         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <iframe
-      frameborder="0"
-      name="PDFViewer"
-      id="PDFViewer"
-      style="width:100%;height:760px;display:none;"
-      ref="PDFViewer"
-    ></iframe>
-    <el-dialog :visible.syn="imageViewVisible" @close="imageViewVisible = false">
-      <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
-        <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer">
-          <img
-            v-for="src in imageArray"
-            :src="src"
-            :key="src"
-            width="240"
-            @click="onImageClick"
-            style="cursor:hand"
-          />
-        </viewer>
-      </div>
-      <div v-else>
-        <a :href="imageArray[0]" target="_blank">{{$t('application.download')}}</a>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="imageViewVisible = false">{{$t('application.cancel')}}</el-button>
-      </div>
-    </el-dialog>
     <el-dialog
       :title="folderAction"
       :visible.sync="folderDialogVisible"
@@ -152,7 +125,7 @@
       </div>
     </el-dialog>
     <el-row>
-      <el-col :span="6" style="padding-top:4px;">
+      <el-col :span="7" style="padding-top:4px;">
           <el-button type="primary" icon="el-icon-circle-plus" 
           plain
           size="small" @click="onNewFolder()" :title="$t('application.newTransfer')">{{$t('application.new')}}</el-button>
@@ -166,11 +139,10 @@
           <el-button type="primary"
           plain
           size="small" icon="el-icon-right" @click="onArchived">移交</el-button>
-          
           <el-button type="primary"
           plain
           size="small" icon="el-icon-delete"  @click="onDeleteTransfer()">{{$t('application.delete')}}</el-button>
-    
+  
       </el-col>
       <el-col :span="4">
         <el-input
@@ -181,7 +153,7 @@
         ></el-input>
       </el-col>
 
-      <el-col :span="12" style="padding-top:4px;">
+      <el-col :span="13" style="padding-top:4px;">
         <el-button
           type="primary"
           plain
@@ -215,7 +187,7 @@
             size="small"
           icon="el-icon-printer"
           @click="printVolumesVisible = true"
-        >打印文件清单</el-button>
+        >打印清单</el-button>
          <el-button
           type="primary"
           plain
@@ -385,7 +357,7 @@ export default {
       selectedChildrenType: "",
       childrenTypeSelectVisible: false,
       leftTableHeight: window.innerHeight - 124,
-      rightTableHeight: window.innerHeight - 472,
+      rightTableHeight: (window.innerHeight - 200)/2,
       folderAction: "",
       folderDialogVisible: false,
       imageArray: [""],
