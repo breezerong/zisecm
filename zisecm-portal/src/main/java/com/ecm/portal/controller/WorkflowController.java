@@ -30,6 +30,7 @@ import org.flowable.engine.task.Comment;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.test.flowable.TODOApplication;
 
 @Controller
 @RequestMapping(value = "/workflow")
@@ -113,10 +115,11 @@ public class WorkflowController  extends ControllerAbstract{
 			try {
 		    	String userName =workflowAuditService.getSession(getToken()).getCurrentUser().getUserName();
 		    		Authentication.setAuthenticatedUserId(userName);
+		    		args.put("startUser", userName);
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
  			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
   			        //创建流程日志
-  			        runtimeService.setVariable(processInstance.getId(), "startUser", userName);
+  			        //runtimeService.setVariable(processInstance.getId(), "startUser", userName);
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setWorkflowId(processInstance.getId());
@@ -154,16 +157,17 @@ public class WorkflowController  extends ControllerAbstract{
 		        HashMap<String, Object> map = new HashMap<>();
 		        map.put("id", task.getId());
 		        map.put("name", task.getName());
-		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
+		        map.put("startUser", historyService.createHistoricProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult().getStartUserId());
 		        map.put("createTime", task.getCreateTime());
 		        map.put("endTime", task.getEndTime());
-		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
-		        String taskComments="";
-		        for (int i = 0; i < commentsList.size(); i++) {
-	        	
-		        	taskComments=taskComments+commentsList.get(0).getFullMessage()+"; ";
-				}
-		        map.put("taskComments", taskComments);
+		        getTaskApprovalResult(task.getId(), map);
+
+//		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
+//		        String taskComments="";
+//		        for (int i = 0; i < commentsList.size(); i++) {
+//	        	
+//		        	taskComments=taskComments+commentsList.get(0).getFullMessage()+"; ";
+//				}
  		        resultList.add(map);
 	            System.out.println(task.toString());
 	        }
@@ -171,6 +175,18 @@ public class WorkflowController  extends ControllerAbstract{
 	        resultMap.put("data",  resultList);
 	        return resultMap;
 	    }
+
+		private void getTaskApprovalResult(String taskId, HashMap<String, Object> map) {
+			List<HistoricVariableInstance> varList = historyService.createHistoricVariableInstanceQuery().taskId(taskId).list();
+			for (int i = 0; i < varList.size(); i++) {
+				if("outcome".equals( varList.get(i).getVariableName())) {
+			        map.put("result", varList.get(i).getValue());					
+				}else if("message".equals( varList.get(i).getVariableName())) {
+					
+			        map.put("message", varList.get(i).getValue());					
+				}
+			}
+		}
 
 	    /**
 	     * 获取userId待审批的任务
@@ -220,17 +236,23 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("name", process.getName());
 		        map.put("startUser", userId);
 		        map.put("createTime", process.getStartTime());
-		        List<HistoricTaskInstance>  tasks= historyService.createHistoricTaskInstanceQuery().processInstanceId( process.getId()).list();
+		        map.put("endTime", process.getEndTime()==null?"":process.getEndTime());
 		        String currentAssignee="";
 		        String currentTaskName="";
-		        if(tasks.size()>0)
-		        {
-		        	currentAssignee=tasks.get(0).getAssignee();
-		        	currentTaskName=tasks.get(0).getName();
-		        }
-		        map.put("currentTaskName", currentTaskName);
-		        map.put("currentAssignee",  currentTaskName+":"+currentAssignee);
-		        map.put("endTime", process.getEndTime());
+		        if(process.getEndTime()==null) {
+		        	List<HistoricTaskInstance>  tasks= historyService.createHistoricTaskInstanceQuery().processInstanceId( process.getId()).orderByHistoricTaskInstanceStartTime().desc().list();
+
+			        if(tasks.size()>0)
+			        {
+			        	currentAssignee=tasks.get(0).getAssignee();
+			        	currentTaskName=tasks.get(0).getName();
+			        }
+			        map.put("currentTaskName", currentTaskName);
+			        map.put("currentAssignee",  currentTaskName+":"+currentAssignee);
+			    }else {		        
+			        map.put("currentTaskName", "已结束");
+			        map.put("currentAssignee",  "已结束");
+			    }
 		        resultList.add(map);
 	            System.out.println(process.toString());
 	        }
@@ -251,18 +273,24 @@ public class WorkflowController  extends ControllerAbstract{
 			String taskId= args.get("taskId").toString();
 			String result= args.get("result").toString();
 			String message= args.get("message").toString();
+			args.put("outcome",result);
 //	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 //	        if (task == null) {
 //	            throw new RuntimeException("流程不存在");
 //	        }
-	        if(!"".equals(message)) {
-	        	taskService.addComment(taskId, null, message);
+	        setTaskApprovalResult(taskId, result, message);
+	        taskService.complete(taskId, args);
+	        return "processed ok!";
+	    }
+
+		private void setTaskApprovalResult(String taskId, String result, String message) {
+			if(!"".equals(message)) {
+		        taskService.setVariableLocal(taskId, "message",message);
 	        }
 
 	        //通过审核
-	        taskService.complete(taskId, Collections.singletonMap("outcome",result));
-	        return "processed ok!";
-	    }
+	        taskService.setVariableLocal(taskId, "outcome",result);
+		}
 
 	    /**
 	     * 拒绝
@@ -328,5 +356,73 @@ public class WorkflowController  extends ControllerAbstract{
 	        }
 	    }
 	
+	    
+	    /**
+	     * 批准
+	     *
+	     * @param 
+	     */
+	    @RequestMapping(value = "testWorkflow")
+	    @ResponseBody
+	    public String testWorkflow(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+
+			args.put("fileTopestSecurityLevel", "普通商密");
+			args.put("drawingNumber", 21);
+			args.put("fileNumber", 10);
+			args.put("message", "普通商密+21个图纸或10个文件");
+  
+ 			startSensen1(JSONUtils.mapToJson(args));
+//			args.put("fileTopestSecurityLevel", "内部公开");
+//			args.put("drawingNumber", 21);
+//			args.put("fileNumber", 10);
+//			args.put("message", "普通商密+21个图纸或10个文件");
+//
+// 			startSensen1(argStr);
+			
+ 
+	        //通过审核
+ 	        return "processed ok!";
+	    }
+	    
+	    
+	    /**
+	     * 批准
+	     *
+	     * @param 
+	     */
+	    @RequestMapping(value = "startSensen1")
+	    @ResponseBody
+	    public String startSensen1(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			
+			startWorkflow(argStr);
+			
+			//完成完成
+			int tasknumber = 0;
+			int i=30;
+			do {
+				i--;
+				args.put("userId", "Admin");
+				args.put("condition", "");
+				args.put("pageSize", "10");
+				args.put("pageIndex", "0");
+ 				HashMap<String,Object> tasks=todoTask(JSONUtils.mapToJson(args));
+					tasknumber= ((List)tasks.get("data")).size()-1;
+					System.out.println("tasknumber==="+tasknumber+1);
+					if(tasknumber>=0) {
+						String taskId= ((Map)((ArrayList)tasks.get("data")).get(0)).get("id").toString();
+						args.put("taskId", taskId);
+						args.put("result", "通过");
+						args.put("message", args.get("message"));
+ 						completeTask(JSONUtils.mapToJson(args));
+					}
+				} while (i>0);
+ 
+	        //通过审核
+ 	        return "processed ok!";
+	    }
+	        
+    
 	
 }

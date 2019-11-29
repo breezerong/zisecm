@@ -64,5 +64,27 @@ public class JSONUtils {
 		}
 		return list;
 	}
+	/**
+	 * json字符串转对象 
+	 * @param content  json字符串
+	 * @param valueType  对象类型
+	 * @return   对象
+	 * @throws Exception
+	 */
+	public static <T> T objectFromJsonStr(String content,Class<T> valueType) throws Exception {
+		T obj = objectMapper.readValue(content, valueType);
+		return obj;
+	};
 
+	public static ObjectMapper objectMapper;
+	
+	static {
+		objectMapper = new ObjectMapper();
+	}
+
+    public static String mapToJson(Map map) {
+    	JSON jsonObject = (JSON) JSONObject.toJSON(map);
+         return jsonObject.toJSONString();
+    }
+ 
 }

@@ -178,7 +178,6 @@ export default {
       innerDataList:[],
       dialogQrcodeVisible: true,
       currentLanguage: "zh-cn",
-      currentFolderId:"",
       gridList:[]
     };
   },
@@ -186,22 +185,24 @@ export default {
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     
     // this.loadFormInfo();
-    this.getArchiveObj(this.archiveId); 
+    this.getArchiveObj(this.archiveId,this.gridName); 
     
   },
   props: {
-    archiveId: {type:[String,Number],required:true},
-    currentFolderId:{type:[String,Number],required:true}
+    archiveId: {type:[String,Number]},
+    currentFolderId:{type:[String,Number]},
+    tableHeight:{type:Number},
+    gridName:{type:String}
   },
   methods: {
 
       // 加载表格样式
-    loadGridInfo() 
+    loadGridInfo(gridName) 
     {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName',"TechGrid");
+      m.set('gridName',gridName);
       m.set('lang',_self.currentLanguage);
       _self.axios({
         headers: {
@@ -209,7 +210,7 @@ export default {
         },
         method: 'post',
         data: JSON.stringify(m),
-        url: "/zisecm/dc/getGridViewInfo"
+        url: "/dc/getGridViewInfo"
       })
         .then(function(response) {
           
@@ -236,7 +237,7 @@ export default {
         },
         method: "post",
         data: JSON.stringify(m),
-        url: "/zisecm/dc/getAllDocuByRelationParentId"
+        url: "/dc/getAllDocuByRelationParentId"
       })
       .then(function(response) {
         
@@ -249,7 +250,7 @@ export default {
         _self.loading = false;
       });
     },
-    getArchiveObj(id){
+    getArchiveObj(id,gridName){
       let _self=this;
       var m = new Map();
       m.set('itemInfo',id);//ID 或类型
@@ -261,14 +262,14 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),//_self.myItemId+_self.myTypeName,
-          url: "/zisecm/dc/getArchiveObj"
+          url: "/dc/getArchiveObj"
         })
         .then(function(response) {
 
           _self.archiveCode= response.data.data.coding;
           _self.archiveTitle= response.data.data.title;
           _self.genarateQrcode(_self.archiveCode);
-          _self.loadGridInfo(); 
+          _self.loadGridInfo(gridName); 
           _self.InnerFile();
           //console.log(JSON.stringify(response.data.data));
           _self.loading = false;

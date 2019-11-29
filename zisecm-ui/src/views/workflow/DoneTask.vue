@@ -32,7 +32,7 @@
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果" width="100">
                 </el-table-column>
-                <el-table-column prop="taskComments" label="审批意见" min-width="30%">
+                <el-table-column prop="message" label="审批意见" min-width="30%">
                 </el-table-column>
             </el-table>
           <div slot="footer" class="dialog-footer">
@@ -77,7 +77,7 @@
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果"  min-width="10%">
                 </el-table-column>
-                <el-table-column prop="taskComments" label="审批意见"  min-width="15%">
+                <el-table-column prop="message" label="审批意见"  min-width="15%">
                 </el-table-column>
                 <el-table-column label="操作"  width="80">
                   <template slot-scope="scope">
