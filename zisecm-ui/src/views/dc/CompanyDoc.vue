@@ -1,5 +1,11 @@
 <template>
   <div>
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
     <el-dialog
       title="选择需要展示的字段"
       :visible.sync="columnsInfo.dialogFormVisible"
@@ -95,11 +101,20 @@
               style="width: 100%"
               fit
             >
-              <el-table-column type="selection" @selection-change="selectChange" ></el-table-column>
-              <div v-for="(citem,idx) in gridList">
+              <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>
+              <el-table-column :label="$t('field.indexNumber')" width="60">
+                        <template slot-scope="scope">
+                          <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
+                        </template>
+                      </el-table-column>
+              <el-table-column width="40">
+                        <template slot-scope="scope">
+                          <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" :title="scope.row.FORMAT_NAME" border="0">
+                        </template>
+                      </el-table-column>
+>              <div v-for="(citem,idx) in gridList" :key="idx">
                 <div v-if="citem.visibleType==1">
-                  <div v-if="(citem.width+'').indexOf('%')>0">
-                    <el-table-column
+                    <el-table-column v-if="(citem.width+'').indexOf('%')>0"
                       :label="citem.label"
                       :prop="citem.attrName"
                       :min-width="citem.width"
@@ -114,11 +129,10 @@
                         </div>
                       </template>
                     </el-table-column>
-                  </div>
-                  <div v-else>
-                    <el-table-column
+                    <el-table-column v-else 
                       :label="citem.label"
                       :prop="citem.attrName"
+                      :width="citem.width"
                       :sortable="citem.allowOrderby"
                     >
                       <template slot-scope="scope" >
@@ -130,7 +144,6 @@
                         </div>
                       </template>
                     </el-table-column>
-                  </div>
                 </div>
               </div>
               <el-table-column align="left" width="140">
@@ -160,7 +173,11 @@
   </div>
 </template>
 <script>
+import ShowProperty from '@/components/ShowProperty'
 export default {
+   components: {
+    ShowProperty: ShowProperty
+  },
   data() {
     return {
       currentuser:{
@@ -174,6 +191,7 @@ export default {
       },
       tableHeight: window.innerHeight - 178,
       currentLanguage: "zh-cn",
+      propertyVisible:false,
       loading: false,
       currentFolder: [],
       isFileAdmin:false,
@@ -188,6 +206,7 @@ export default {
       itemCount: 0,
       inputkey: "",
       currentPage: 1,
+      selectedItemId:"",
       defaultProps: {
         children: "children",
         label: "name"
@@ -469,14 +488,14 @@ export default {
             }
             _self.$message({
             showClose: true,
-            message: "删除成功",
+            message: "下架成功!",
             duration: 2000,
             type: 'success'
             });
           }else{
             _self.$message({
             showClose: true,
-            message: "删除失败",
+            message: "下架失败!",
             duration: 2000,
             type: 'warning'
             });
@@ -485,7 +504,7 @@ export default {
       }else {
         this.$message({
           showClose: true,
-          message: "请勾选待下架文件",
+          message: "请勾选待下架文件!",
           duration: 2000
         });
       }
@@ -507,14 +526,14 @@ export default {
             }
             _self.$message({
             showClose: true,
-            message: "删除成功",
+            message: "销毁成功!",
             duration: 2000,
             type: 'success'
             });
           }else{
             _self.$message({
             showClose: true,
-            message: "删除失败",
+            message: "销毁成功!",
             duration: 2000,
             type: 'warning'
             });
@@ -523,14 +542,20 @@ export default {
       }else {
         this.$message({
           showClose: true,
-          message: "请勾选待销毁文件",
+          message: "请勾选待销毁文件!",
           duration: 2000
         });
       }
     },
     //查看属性
-    showItemProperty(row) {
-      window.open("/#/ViewDoc?id="+row.ID,"_blank")
+    showItemProperty(indata) {
+      let _self = this;
+      _self.selectedItemId = indata.ID ;
+      _self.propertyVisible = true;
+      if(_self.$refs.ShowProperty){
+        _self.$refs.ShowProperty.myItemId = indata.ID ;
+        _self.$refs.ShowProperty.loadFormInfo();
+      }
     },
     showFileBox(){
       if(this.showBox){

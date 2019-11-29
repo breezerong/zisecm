@@ -6,7 +6,7 @@
         <el-button @click="categoryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="表单校验" :visible.sync="checkVisible" width="70%">
+    <el-dialog title="表单校验" :visible.sync="checkVisible" width="80%">
       <FormItemCheck ref="FormItemCheck"  :parentformid="parentid"></FormItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">取 消</el-button>
@@ -313,7 +313,7 @@ export default {
         minCount:0,
         maxCount:0
       },
-      formLabelWidth: "120px",
+      formLabelWidth: "140px",
       formLabelWidth2: "100px"
     };
   },

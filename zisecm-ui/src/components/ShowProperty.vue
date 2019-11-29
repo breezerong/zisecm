@@ -10,13 +10,14 @@
         <el-col :span="showCellValue(item)" v-bind:key="itemIndex">
           <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:'必填',trigger:'blur'}]">
                 <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue"></el-input>
+                <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue"></el-input>
                 <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue"></el-input>
                 <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue"></el-checkbox>
                 <el-date-picker v-else-if="item.controlType=='Date'" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;"></el-date-picker>
                 <el-select  :name="item.attrName"
                 v-else-if="item.controlType=='Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
                 v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" style="display:block;">
-                      <div v-for="(name,nameIndex) in item.validValues">
+                      <div v-for="(name,nameIndex) in item.validValues" :key="nameIndex+'N'">
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>
                   </el-select>
@@ -206,6 +207,10 @@ export default {
       {
         if(_self.permit<5){
           _self.$message("您没有修改当前文件属性的权限!");
+          return ;
+        }
+        if(m.get("STATUS")&&(m.get("STATUS")=="利用"||m.get("STATUS")=="销毁")){
+          _self.$message("请先下架后再修改属性!");
           return ;
         }
         axios.post("/dc/saveDocument",JSON.stringify(m))

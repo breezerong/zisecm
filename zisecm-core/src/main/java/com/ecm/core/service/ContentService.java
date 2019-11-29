@@ -163,12 +163,17 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 		// TODO Auto-generated method stub
 		return contentMapper.selectByPrimaryKey(objId);
 	}
-	
+	/**
+	 */
 	@Override
 	public EcmContent getObject(String token, String objId,int contentType,String formatName) {
 		// TODO Auto-generated method stub
-		String sql = " PARENT_ID='"+DBUtils.getString(objId)+"' and CONTENT_TYPE="+contentType
+		String sql = " PARENT_ID='"+DBUtils.getString(objId)
 				+" and FORMAT_NAME='"+DBUtils.getString(formatName)+"'";
+		if(contentType>0) {
+			sql = " PARENT_ID='"+DBUtils.getString(objId)+"' and CONTENT_TYPE="+contentType
+					+" and FORMAT_NAME='"+DBUtils.getString(formatName)+"'";
+		}
 		List<EcmContent> list = contentMapper.selectByCondition(sql);
 		if(list.size()>0) {
 			return list.get(0);

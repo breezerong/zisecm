@@ -12,14 +12,14 @@
         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="70%">
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
       <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <iframe frameborder="0" name="PDFViewer" id="PDFViewer" style="width:100%;height:760px;display:none;" ref="PDFViewer"></iframe>
-    <el-dialog :visible.syn="imageViewVisible" @close="imageViewVisible = false">
+    <el-dialog visible="imageViewVisible" @close="imageViewVisible = false">
       <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
          <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
           <img v-for="src in imageArray" :src="src" :key="src" width="240" @click="onImageClick" style="cursor:hand">

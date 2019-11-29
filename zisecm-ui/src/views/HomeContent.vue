@@ -49,13 +49,13 @@
                 type="primary"
               >更多</el-link>
             </div>
-            <el-table :data="dataList.todoData" style="width:100%;" :show-header="false">
-              <el-table-column prop="taskName" label="任务名称">
-                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.taskName)}}</el-link>
+            <el-table :data="dataList.todoData" v-loading="loadingTodoData" style="width:100%;" :show-header="false">
+              <el-table-column label="任务名称">
+                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.name)}}</el-link>
               </el-table-column>
-              <el-table-column prop="sendUser" label="发送人"></el-table-column>
+              <el-table-column prop="startUser" label="发送人"></el-table-column>
               <el-table-column label="发送时间" align="right">
-                <template slot-scope="scope">{{dateFormat(scope.row.sendDate)}}</template>
+                <template slot-scope="scope">{{dateFormat(scope.row.createTime)}}</template>
               </el-table-column>
             </el-table>
           </el-card>
@@ -64,14 +64,13 @@
               <span style="float: left;">最新文档</span>
             </div>
             <el-table
-              v-loading="loading"
+              v-loading="loadingNewDocData"
               :data="dataList.newdocData"
-              stripe
               style="width:100%;"
               :show-header="false"
             >
               <el-table-column prop="CODING" label="编号"></el-table-column>
-              <el-table-column prop="REVISION" label="版本"></el-table-column>
+              <el-table-column width="90" prop="REVISION" label="版本"></el-table-column>
               <el-table-column prop="NAME" label="文件名"></el-table-column>
               <el-table-column label="编制日期" align="right">
                 <template slot-scope="scope">{{dateFormat(scope.row.C_DOC_DATE)}}</template>
@@ -100,7 +99,7 @@
               <el-link :underline="false" style="float: right; padding: 3px 0" type="primary">更多</el-link>
             </div>
             <el-table
-              v-loading="loading"
+              v-loading="loadingNoticeData"
               :data="dataList.notiData"
               style="width:100%;"
               :show-header="false"
@@ -140,49 +139,14 @@ export default {
         yAxisData: []
       },
       dataList: {
-        todoData: [
-          {
-            id:'123',
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          }
-        ],
+        todoData: [],
         newdocData: [],
         notiData: []
       },
       inputkey: "",
-      loading: false,
+      loadingTodoData: false,
+      loadingNewDocData :false,
+      loadingNoticeData:false,
       checkAll: true,
       isIndeterminate: false,
       checkedCards: [],
@@ -242,13 +206,16 @@ export default {
     getToDoList() {
       let _self = this;
       var m = new Map();
+      _self.loadingTodoData = true
       m.set("condition", "");
       m.set("pageSize", 7);
       m.set("pageIndex", 0);
+      m.set("userId", sessionStorage.getItem("access-userName"));
       axios
-        .post("/workflow/getMyTodoTask", JSON.stringify(m))
+        .post("/workflow/todoTask", JSON.stringify(m))
         .then(function(response) {
-          // _self.dataList.todoData = response.data.data;
+          _self.dataList.todoData = response.data.data;
+          _self.loadingTodoData = false
         })
         .catch(function(error) {
           console.log(error);
@@ -257,6 +224,7 @@ export default {
     //获取通知公告栏信息列表
     getNewsList() {
       let _self = this;
+      _self.loadingNoticeData = true
       var m = new Map();
       m.set("gridName", "NewsGrid");
       m.set("folderId", "");
@@ -268,6 +236,7 @@ export default {
         .post("/dc/getDocuments", JSON.stringify(m))
         .then(function(response) {
           _self.dataList.notiData = response.data.data;
+          _self.loadingNoticeData = false
         })
         .catch(function(error) {
           console.log(error);
@@ -320,6 +289,7 @@ export default {
     //获取最新的5条新建文档
     getDocument() {
       let _self = this;
+      _self.loadingNewDocData = true
       var m = new Map();
       m.set("pageSize", 7);
       m.set("pageIndex", 0);
@@ -328,6 +298,7 @@ export default {
         .post("/dc/getNewDocuments", JSON.stringify(m))
         .then(function(response) {
           _self.dataList.newdocData = response.data.data;
+          _self.loadingNewDocData = false
         })
         .catch(function(error) {
           console.log(error);

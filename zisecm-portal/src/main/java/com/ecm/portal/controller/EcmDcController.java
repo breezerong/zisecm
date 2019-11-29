@@ -130,9 +130,15 @@ public class EcmDcController extends ControllerAbstract{
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+		String orderBy = args.get("orderBy").toString();
 		pager.setPageIndex(pageIndex);
 		pager.setPageSize(pageSize); 
 		StringBuffer sql = new StringBuffer("select * from ecm_document where STATUS='利用'  and TYPE_NAME<>'卷盒' ");
+		if(!StringUtils.isEmpty(orderBy)) {
+			sql.append("order by"+orderBy);
+		}else {
+			sql.append("order by ID desc");
+		}
 		try {
 			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 			list = documentService.getMapList(getToken(), sql.toString(), pager);
@@ -324,7 +330,27 @@ public class EcmDcController extends ControllerAbstract{
 			else{
 				id = request.getParameter("id");
 			}
-			EcmContent en = contentService.getPrimaryContent(getToken(),id);
+			String action = "";
+			if(request.getAttribute("action")!=null){
+				action = request.getAttribute("action").toString();
+			}
+			else{
+				action = request.getParameter("action");
+			}
+			String format = "";
+			if(request.getAttribute("format")!=null){
+				format = request.getAttribute("format").toString();
+			}
+			else{
+				format = request.getParameter("format");
+			}
+			EcmContent en = null;
+			if(!StringUtils.isEmpty(format)){
+				en = contentService.getObject(getToken(), id, 0, format);
+			}else
+			{
+				en =contentService.getPrimaryContent(getToken(),id);
+			}
 			InputStream iStream = contentService.getContentStream(getToken(),en);
 			// 清空response
             response.reset();
@@ -333,19 +359,24 @@ public class EcmDcController extends ControllerAbstract{
             response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
             response.addHeader("Content-Length", "" + en.getContentSize());
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-//            if(en.getFormatName().equalsIgnoreCase("pdf")){
-//            	response.setContentType("application/form-data");
-//            }else {
+            try {
             	response.setContentType("application/octet-stream");
-//            }
-            byte[] buffer = new byte[8 * 1024];
-			int bytesRead;
-			while ((bytesRead = iStream.read(buffer)) != -1) {
-				toClient.write(buffer, 0, bytesRead);
-			}
-			iStream.close();
-            toClient.flush();
-            toClient.close();
+	            byte[] buffer = new byte[8 * 1024];
+				int bytesRead;
+				while ((bytesRead = iStream.read(buffer)) != -1) {
+					toClient.write(buffer, 0, bytesRead);
+				}
+            }finally {
+				iStream.close();
+	            toClient.flush();
+	            toClient.close();
+	            if(!StringUtils.isEmpty(action)&&action.equals("download")) {
+	            	contentService.newAudit(getToken(), "portal", AuditContext.DOWNLOAD, id, null, null);
+	            }else {
+	            	contentService.newAudit(getToken(), "portal", AuditContext.READ, id, null, null);
+	            }
+            }
+            
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -739,7 +770,7 @@ public class EcmDcController extends ControllerAbstract{
 	public Map<String, Object> getRelations(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			String sql = "select b.ID,a.NAME AS RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.CREATOR,b.CREATION_DATE"
+			String sql = "select b.ID,a.NAME AS RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.C_SECURITY_LEVEL,b.CREATOR,b.CREATION_DATE,b.C_DOC_DATE"
 					+ " from ecm_relation a, ecm_document b where a.NAME not like 'irel%' and (a.PARENT_ID=b.ID or a.CHILD_ID=b.ID)"
 					+ " and b.ID='"+id+"' order by b.CREATION_DATE";
 			System.out.println(sql);
