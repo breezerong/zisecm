@@ -84,9 +84,9 @@ export default {
     this.loadFormInfo();
   },
   props: {
-    itemId: {type:[String,Number],required:true},
-    typeName: {type:String,required:true},
-    folderId: {type:[String,Number],required:true},
+    itemId: {type:String},
+    typeName: {type:String},
+    folderId: {type:String},
     folderPath:{type:String}
   },
   methods: {
@@ -113,7 +113,7 @@ export default {
       var m = new Map();
       m.set('itemInfo',_self.myItemId+_self.myTypeName);//ID 或类型
       m.set('lang',_self.getLang());
-      console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
+      //console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
       axios.post("/dc/getFormItem",JSON.stringify(m))
         .then(function(response) {
 

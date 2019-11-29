@@ -13,10 +13,7 @@
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow2" name="否" sourceRef="exclusivegateway4" targetRef="usertask3"></sequenceFlow>
-    <userTask id="usertask4" name="公司分管领导审批" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_leader_in_charge}">
-      <extensionElements>
-        <flowable:executionListener event="start" delegateExpression="${startExecutorListener}"></flowable:executionListener>
-      </extensionElements>
+    <userTask id="usertask4" name="公司分管领导审批"  default="flow31" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_leader_in_charge}">
     </userTask>
     <sequenceFlow id="flow3" name="纸质借阅" sourceRef="exclusivegateway5" targetRef="usertask4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅'}]]></conditionExpression>
@@ -81,7 +78,7 @@
     <serviceTask id="servicetask1" name="自动授权" flowable:class="com.ecm.flowable.listener.StartExecutorListener"></serviceTask>
     <sequenceFlow id="flow25" name="否" sourceRef="exclusivegateway8" targetRef="servicetask1"></sequenceFlow>
     <sequenceFlow id="flow27" name="纸质借阅&amp;内部公开" sourceRef="exclusivegateway_paperAndOpen" targetRef="usertask5">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅' && securityLevel==内部公开}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅' && securityLevel=='内部公开'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="servicetask1"></sequenceFlow>
     <userTask id="usertask6" name="借阅驳回" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner}">
@@ -93,7 +90,9 @@
           <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='驳回'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow30" name="驳回" sourceRef="usertask3" targetRef="usertask6"></sequenceFlow>
-    <sequenceFlow id="flow31" name="驳回" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
+    <sequenceFlow id="flow31" name="驳回" sourceRef="usertask4" targetRef="usertask6">
+          <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='驳回'}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="flow32" name="通过" sourceRef="usertask6" targetRef="usertask2">
               <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='通过'}]]></conditionExpression>
     </sequenceFlow>
