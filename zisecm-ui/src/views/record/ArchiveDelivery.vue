@@ -1120,7 +1120,8 @@ export default {
       if(selectedRow.ID ){
         _self.selectedItemId = "";
         _self.propertyVisible = true; 
-        if(_self.$refs.ShowProperty){
+        setTimeout(()=>{
+          if(_self.$refs.ShowProperty){
           _self.$refs.ShowProperty.myItemId = "";
           _self.dialogName=typeName;
           _self.$refs.ShowProperty.myTypeName =typeName;
@@ -1130,6 +1131,8 @@ export default {
           // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
           _self.$refs.ShowProperty.loadFormInfo();
         }
+        },10);
+        
       }
       else{
         _self.$message(_self.$t("message.pleaseSelectFolder"));

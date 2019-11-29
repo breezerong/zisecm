@@ -124,7 +124,8 @@
     "obtained":"Obtained",
     "destroy":"Destroy",
     "show":"Show",
-    "fileBox":"FileBox"
+    "fileBox":"FileBox",
+    "warehousing":"Warehousing"
 },
 "menu": {
     "home":"Home",
@@ -179,7 +180,9 @@
     "cannotCreateRoot":"Cannot create root folder!",
     "signImageSize":"56X26, 100dpi, jpg",
     "differentPassword":"New password cannot be comfirmed.",
-    "cannotChangePassword":"User password cannot be changed."
+    "cannotChangePassword":"User password cannot be changed.",
+    "warehousingSuccess":"Warehousing is successful",
+    "warehousingFail":"Warehousing is failed"
 },
 "field": {
     "indexNumber":"S/N",
