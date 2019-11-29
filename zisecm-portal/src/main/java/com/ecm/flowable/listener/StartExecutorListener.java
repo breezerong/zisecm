@@ -60,12 +60,11 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate {
 	        
 	        //批次文件是否有商密文件
 	        TODOApplication.getNeedTOChange();
-	        String  fileTopestSecurityLevel="受限";
+	        String  fileTopestSecurityLevel=varMap.get("fileTopestSecurityLevel")==null?"":varMap.get("fileTopestSecurityLevel").toString();
 
 	        TODOApplication.getNeedTOChange();
-	        int drawingNumber=0;
-	        int fileNumber=0;
-	        
+	        int drawingNumber=varMap.get("drawingNumber")==null?0:Integer.valueOf(varMap.get("drawingNumber").toString());
+	        int fileNumber=varMap.get("fileNumber")==null?0:Integer.valueOf(varMap.get("fileNumber").toString());
 	        switch (fileTopestSecurityLevel) {
 
 	        case "普通商密":
@@ -121,6 +120,6 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate {
 	@Override
 	public void execute(DelegateExecution arg0) {
 		System.out.println("javadelegate.");
-		
+		//自动方法需要执行的东西
 	}
 }

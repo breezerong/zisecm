@@ -53,6 +53,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.test.flowable.TODOApplication;
 
 @Controller
 @RequestMapping(value = "/workflow")
@@ -159,7 +160,7 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("startUser", historyService.createHistoricProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult().getStartUserId());
 		        map.put("createTime", task.getCreateTime());
 		        map.put("endTime", task.getEndTime());
-		        getTaskApprovalResult(task, map);
+		        getTaskApprovalResult(task.getId(), map);
 
 //		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
 //		        String taskComments="";
@@ -175,8 +176,8 @@ public class WorkflowController  extends ControllerAbstract{
 	        return resultMap;
 	    }
 
-		private void getTaskApprovalResult(HistoricTaskInstance task, HashMap<String, Object> map) {
-			List<HistoricVariableInstance> varList = historyService.createHistoricVariableInstanceQuery().taskId(task.getId()).list();
+		private void getTaskApprovalResult(String taskId, HashMap<String, Object> map) {
+			List<HistoricVariableInstance> varList = historyService.createHistoricVariableInstanceQuery().taskId(taskId).list();
 			for (int i = 0; i < varList.size(); i++) {
 				if("outcome".equals( varList.get(i).getVariableName())) {
 			        map.put("result", varList.get(i).getValue());					
@@ -252,7 +253,6 @@ public class WorkflowController  extends ControllerAbstract{
 			        map.put("currentTaskName", "已结束");
 			        map.put("currentAssignee",  "已结束");
 			    }
-		        map.put("endTime", process.getEndTime());
 		        resultList.add(map);
 	            System.out.println(process.toString());
 	        }
@@ -366,7 +366,19 @@ public class WorkflowController  extends ControllerAbstract{
 	    @ResponseBody
 	    public String testWorkflow(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
- 			startSensen1(argStr);
+
+			args.put("fileTopestSecurityLevel", "普通商密");
+			args.put("drawingNumber", 21);
+			args.put("fileNumber", 10);
+			args.put("message", "普通商密+21个图纸或10个文件");
+  
+ 			startSensen1(JSONUtils.mapToJson(args));
+//			args.put("fileTopestSecurityLevel", "内部公开");
+//			args.put("drawingNumber", 21);
+//			args.put("fileNumber", 10);
+//			args.put("message", "普通商密+21个图纸或10个文件");
+//
+// 			startSensen1(argStr);
 			
  
 	        //通过审核
@@ -384,7 +396,7 @@ public class WorkflowController  extends ControllerAbstract{
 	    public String startSensen1(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			
-			//startWorkflow(argStr);
+			startWorkflow(argStr);
 			
 			//完成完成
 			int tasknumber = 0;
@@ -395,15 +407,15 @@ public class WorkflowController  extends ControllerAbstract{
 				args.put("condition", "");
 				args.put("pageSize", "10");
 				args.put("pageIndex", "0");
- 				HashMap<String,Object> tasks=todoTask(JSONUtils.mapToJson(args).toJSONString());
+ 				HashMap<String,Object> tasks=todoTask(JSONUtils.mapToJson(args));
 					tasknumber= ((List)tasks.get("data")).size()-1;
 					System.out.println("tasknumber==="+tasknumber+1);
 					if(tasknumber>=0) {
 						String taskId= ((Map)((ArrayList)tasks.get("data")).get(0)).get("id").toString();
 						args.put("taskId", taskId);
 						args.put("result", "通过");
-						args.put("message", "");
- 						completeTask(JSONUtils.mapToJson(args).toJSONString());
+						args.put("message", args.get("message"));
+ 						completeTask(JSONUtils.mapToJson(args));
 					}
 				} while (i>0);
  

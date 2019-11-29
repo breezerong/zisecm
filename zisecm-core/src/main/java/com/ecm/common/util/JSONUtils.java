@@ -82,9 +82,9 @@ public class JSONUtils {
 		objectMapper = new ObjectMapper();
 	}
 
-    public static JSON mapToJson(Map map) {
+    public static String mapToJson(Map map) {
     	JSON jsonObject = (JSON) JSONObject.toJSON(map);
-         return jsonObject;
+         return jsonObject.toJSONString();
     }
  
 }
