@@ -116,9 +116,7 @@ public class WorkflowController  extends ControllerAbstract{
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
  			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
   			        //创建流程日志
- 			       runtimeService.setVariable(processInstance.getId(), "startUser", userName);
- 			       List hpis = historyService.createHistoricProcessInstanceQuery()
- 			              .startedBy(userName).list();
+  			        runtimeService.setVariable(processInstance.getId(), "startUser", userName);
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setWorkflowId(processInstance.getId());
@@ -228,10 +226,10 @@ public class WorkflowController  extends ControllerAbstract{
 		        if(tasks.size()>0)
 		        {
 		        	currentAssignee=tasks.get(0).getAssignee();
-		        	currentTaskName=tasks.get(0).getTaskDefinitionKey();
+		        	currentTaskName=tasks.get(0).getName();
 		        }
 		        map.put("currentTaskName", currentTaskName);
-		        map.put("currentAssignee",  currentTaskName+"--"+currentAssignee);
+		        map.put("currentAssignee",  currentTaskName+":"+currentAssignee);
 		        map.put("endTime", process.getEndTime());
 		        resultList.add(map);
 	            System.out.println(process.toString());
