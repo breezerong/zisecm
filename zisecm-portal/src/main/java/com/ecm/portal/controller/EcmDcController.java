@@ -1005,22 +1005,33 @@ public class EcmDcController extends ControllerAbstract{
 			Pager pager = new Pager();
 			pager.setPageIndex(0);
 			pager.setPageSize(10000);
-			List<EcmFolder> list = new ArrayList<EcmFolder>(); 
+			List<EcmFolder> list = new ArrayList<EcmFolder>();
+			List<Map<String, Object>> arcCountList = new ArrayList<Map<String,Object>>();
 			try {
 				list = folderService.getFoldersByParentPath(getToken(),"/档案库");
+				arcCountList = documentService.getMapList(getToken(), "select C_ARC_CLASSIC, count(*) C_COUNT from ecm_document where STATUS='利用' and type_name<>'卷盒' and C_ARC_CLASSIC<>'' and C_ARC_CLASSIC is not null group by C_ARC_CLASSIC");
 				for (EcmFolder ecmFolder : list) {
-					System.out.println(ecmFolder.getGridView());
-				}
-				for (EcmFolder ecmFolder : list) {
-					EcmGridView gv = CacheManagerOper.getEcmGridViews().get(ecmFolder.getGridView());
-					String condition = "("+gv.getCondition()+" and TYPE_NAME<>'卷盒' )  and STATUS='利用'";
+					String ecmName = ecmFolder.getName();
+					boolean flag = false;
+					long count = 0;
 					bean.getxAxisData().add(ecmFolder.getName());
-					List<Map<String, Object>> count = documentService.getObjectsByConditon(getToken(), ecmFolder.getGridView(), "", pager, condition, "");
-					bean.getyAxisData().add((long) count.size());
+					for (Map<String, Object> map : arcCountList) {
+						if(ecmName.equals(map.get("C_ARC_CLASSIC"))) {
+							flag = true;
+							count = (long) map.get("C_COUNT");
+						}
+					}
+					if (flag) {
+						bean.getyAxisData().add(count);
+						flag = false;
+						count = 0;
+					}else {
+						bean.getyAxisData().add(count);
+					}
 				}
 				mp.put("data", bean);
 				mp.put("code", ActionContext.SUCESS);
-			} catch (AccessDeniedException e) {
+			} catch (AccessDeniedException | EcmException e) {
 				// TODO Auto-generated catch block
 				mp.put("code", ActionContext.FAILURE);
 				mp.put("message", e.getMessage());

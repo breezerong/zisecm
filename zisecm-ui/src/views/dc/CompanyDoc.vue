@@ -1,7 +1,19 @@
 <template>
   <div>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
-      <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
+    <el-dialog
+      :title="$t('application.property')"
+      :visible.sync="propertyVisible"
+      @close="propertyVisible = false"
+      width="80%"
+    >
+      <ShowProperty
+        ref="ShowProperty"
+        @onSaved="onSaved"
+        width="100%"
+        v-bind:itemId="selectedItemId"
+        v-bind:folderId="currentFolder.id"
+        v-bind:typeName="currentFolder.typeName"
+      ></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
@@ -82,11 +94,14 @@
                 type="primary"
                 icon="el-icon-document-delete"
                 @click="destroyItem()"
-              >{{$t('application.destroy')}}</el-button>
-              &nbsp;&nbsp;&nbsp;
+              >{{$t('application.destroy')}}</el-button>&nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
                 <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
-                <el-checkbox v-model="showBox" :disabled="disable" @change="showFileBox">{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
+                <el-checkbox
+                  v-model="showBox"
+                  :disabled="disable"
+                  @change="showFileBox"
+                >{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
               </template>
             </el-col>
           </el-row>
@@ -103,56 +118,76 @@
             >
               <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>
               <el-table-column :label="$t('field.indexNumber')" width="60">
-                        <template slot-scope="scope">
-                          <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                        </template>
-                      </el-table-column>
+                <template slot-scope="scope">
+                  <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
+                </template>
+              </el-table-column>
               <el-table-column width="40">
-                        <template slot-scope="scope">
-                          <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" :title="scope.row.FORMAT_NAME" border="0">
-                        </template>
-                      </el-table-column>
->              <div v-for="(citem,idx) in gridList" :key="idx">
+                <template slot-scope="scope">
+                  <img
+                    :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                    :title="scope.row.FORMAT_NAME"
+                    border="0"
+                  />
+                </template>
+              </el-table-column>>
+              <div v-for="(citem,idx) in gridList" :key="idx">
                 <div v-if="citem.visibleType==1">
-                    <el-table-column v-if="(citem.width+'').indexOf('%')>0"
-                      :label="citem.label"
-                      :prop="citem.attrName"
-                      :min-width="citem.width"
-                      :sortable="citem.allowOrderby"
-                    >
-                      <template slot-scope="scope">
-                        <div v-if="citem.attrName.indexOf('DATE')>0">
-                          <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                        </div>
-                        <div v-else>
-                          <span>{{scope.row[citem.attrName]}}</span>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column v-else 
-                      :label="citem.label"
-                      :prop="citem.attrName"
-                      :width="citem.width"
-                      :sortable="citem.allowOrderby"
-                    >
-                      <template slot-scope="scope" >
-                        <div v-if="citem.attrName.indexOf('DATE')>0">
-                          <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                        </div>
-                        <div v-else>
-                          <span>{{scope.row[citem.attrName]}}</span>
-                        </div>
-                      </template>
-                    </el-table-column>
+                  <el-table-column
+                    v-if="(citem.width+'').indexOf('%')>0"
+                    :label="citem.label"
+                    :prop="citem.attrName"
+                    :min-width="citem.width"
+                    :sortable="citem.allowOrderby"
+                  >
+                    <template slot-scope="scope">
+                      <div v-if="citem.attrName.indexOf('DATE')>0">
+                        <span>{{dateFormat(scope.row[citem.attrName])}}</span>
+                      </div>
+                      <div v-else>
+                        <span>{{scope.row[citem.attrName]}}</span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    v-else
+                    :label="citem.label"
+                    :prop="citem.attrName"
+                    :width="citem.width"
+                    :sortable="citem.allowOrderby"
+                  >
+                    <template slot-scope="scope">
+                      <div v-if="citem.attrName.indexOf('DATE')>0">
+                        <span>{{dateFormat(scope.row[citem.attrName])}}</span>
+                      </div>
+                      <div v-else>
+                        <span>{{scope.row[citem.attrName]}}</span>
+                      </div>
+                    </template>
+                  </el-table-column>
                 </div>
               </div>
               <el-table-column align="left" width="140">
                 <template slot="header" slot-scope="scope">
                   <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                 </template>
-                <template  slot-scope="scope">
-                  <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                  <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>                 
+                <template slot-scope="scope">
+                  <el-button
+                    type="primary"
+                    plain
+                    size="small"
+                    :title="$t('application.property')"
+                    icon="el-icon-info"
+                    @click="showItemProperty(scope.row)"
+                  ></el-button>
+                  <el-button
+                    type="primary"
+                    plain
+                    size="small"
+                    :title="$t('application.viewContent')"
+                    icon="el-icon-picture-outline"
+                    @click="showItemContent(scope.row)"
+                  ></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -173,16 +208,16 @@
   </div>
 </template>
 <script>
-import ShowProperty from '@/components/ShowProperty'
+import ShowProperty from "@/components/ShowProperty";
 export default {
-   components: {
+  components: {
     ShowProperty: ShowProperty
   },
   data() {
     return {
-      currentuser:{
-        user:{},
-        roles:[]
+      currentuser: {
+        user: {},
+        roles: []
       },
       columnsInfo: {
         checkAll: true,
@@ -191,42 +226,42 @@ export default {
       },
       tableHeight: window.innerHeight - 178,
       currentLanguage: "zh-cn",
-      propertyVisible:false,
+      propertyVisible: false,
       loading: false,
       currentFolder: [],
-      isFileAdmin:false,
+      isFileAdmin: false,
       showFields: [],
       pageSize: 20,
       dataList: [],
       gridList: [],
       itemDataList: [],
       itemDataListFull: [],
-      showBox:false,
+      showBox: false,
       orderBy: "",
       itemCount: 0,
       inputkey: "",
       currentPage: 1,
-      selectedItemId:"",
+      selectedItemId: "",
       defaultProps: {
         children: "children",
         label: "name"
       },
       selectedItemList: [],
-      disable:true
+      disable: true,
+      exportAble: false
     };
   },
   created() {
-    var username = sessionStorage.getItem("access-userName")
-    let _self = this
-     axios.post("/user/getGroupByUserName",username)
-     .then(function(response){
-        var groupList = response.data.data
-        groupList.forEach(function(val,index,arr){
-             if (val.name == '档案管理员') {
-               _self.isFileAdmin = true
-             }
-        })
-    })
+    var username = sessionStorage.getItem("access-userName");
+    let _self = this;
+    axios.post("/user/getGroupByUserName", username).then(function(response) {
+      var groupList = response.data.data;
+      groupList.forEach(function(val, index, arr) {
+        if (val.name == "档案管理员") {
+          _self.isFileAdmin = true;
+        }
+      });
+    });
   },
   mounted() {
     let _self = this;
@@ -236,7 +271,8 @@ export default {
     }
     _self.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     _self.loading = true;
-    axios.post("/admin/getArchivesFolder",0)
+    axios
+      .post("/admin/getArchivesFolder", 0)
       .then(function(response) {
         _self.dataList = response.data.data;
         // console.log(JSON.stringify(_self.dataList));
@@ -266,25 +302,27 @@ export default {
       }
     },
     // 查看内容
-    showItemContent(indata){
-       let condition = indata.ID;
+    showItemContent(indata) {
+      let condition = indata.ID;
       let href = this.$router.resolve({
-        path: '/viewdoc',
+        path: "/viewdoc",
         query: {
           id: condition
           //token: sessionStorage.getItem('access-token')
         }
       });
       //console.log(href);
-      window.open(href.href, '_blank');
+      window.open(href.href, "_blank");
     },
     handleNodeClick(indata) {
       let _self = this;
-      _self.disable = false
+      _self.disable = false;
+      _self.exportAble = true;
       _self.currentFolder = indata;
       if (indata.extended == false) {
         _self.loading = true;
-        axios.post("/admin/getFolder",indata.id)
+        axios
+          .post("/admin/getFolder", indata.id)
           .then(function(response) {
             indata.children = response.data.data;
             //console.log(JSON.stringify(indata));
@@ -297,10 +335,10 @@ export default {
           });
       }
       _self.loadGridInfo(indata);
-      if(_self.showBox){
-        _self.loadAllGridData(indata)
-      }else{
-        _self.loadGridData(indata)
+      if (_self.showBox) {
+        _self.loadAllGridData(indata);
+      } else {
+        _self.loadGridData(indata);
       }
     },
     sortchange(column) {
@@ -316,7 +354,8 @@ export default {
       var m = new Map();
       m.set("gridName", indata.gridView);
       m.set("lang", _self.currentLanguage);
-      axios.post("/dc/getGridViewInfo",JSON.stringify(m))
+      axios
+        .post("/dc/getGridViewInfo", JSON.stringify(m))
         .then(function(response) {
           _self.showFields = [];
           _self.gridList = response.data.data;
@@ -343,7 +382,8 @@ export default {
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "MODIFIED_DATE desc");
-      axios.post("/dc/getExceptBoxDocuments",JSON.stringify(m))
+      axios
+        .post("/dc/getExceptBoxDocuments", JSON.stringify(m))
         .then(function(response) {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
@@ -353,7 +393,7 @@ export default {
         });
     },
     //获取包含卷盒在内的所有信息
-    loadAllGridData(indata){
+    loadAllGridData(indata) {
       let _self = this;
       var key = _self.inputkey;
       var m = new Map();
@@ -361,9 +401,10 @@ export default {
       m.set("folderId", indata.id);
       m.set("condition", key);
       m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize );
+      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "MODIFIED_DATE desc");
-      axios.post("/dc/getContainBoxDocuments",JSON.stringify(m))
+      axios
+        .post("/dc/getContainBoxDocuments", JSON.stringify(m))
         .then(function(response) {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
@@ -428,80 +469,95 @@ export default {
     },
     //搜索
     searchItem() {
-      let _self = this
+      let _self = this;
       _self.loadGridInfo(_self.currentFolder);
-      if(_self.showBox){
-        _self.loadAllGridData(_self.currentFolder)
-      }else{
-        _self.loadGridData(_self.currentFolder)
+      if (_self.showBox) {
+        _self.loadAllGridData(_self.currentFolder);
+      } else {
+        _self.loadGridData(_self.currentFolder);
       }
     },
-     //借阅
+    //借阅
     borrowItem() {},
     //导出Excel
     exportExcel() {
-      var url="/dc/getExportExcel";
+      var url = "/dc/getExportExcel";
       var m = new Map();
-      if(this.showBox){
-        m.set("showBox",true)
-      }else{
-        m.set("showBox",false)
-      }
-      m.set("gridName",this.currentFolder.gridView)
-      m.set("lang", this.currentLanguage);
-      m.set("folderId",this.currentFolder.id)
-      m.set("orderBy", "MODIFIED_DATE desc");
-      axios.post(url,JSON.stringify(m),{
-        'responseType': 'blob',
-      }).then(res => {
-          let fileName = res.headers['content-disposition'].split(';')[1].split('=')[1].replace(/\"/g,'')
-          let type = res.headers['content-type']
-          let blob = new Blob([res.data], {type: type})
-          // IE
-          if (window.navigator.msSaveBlob){
-              window.navigator.msSaveBlob(blob, fileName)
-          }else {
-          // console.log(3)
-          var link = document.createElement('a')
-          link.href = window.URL.createObjectURL(blob)
-          link.download = fileName
-          link.click()
-          //释放内存
-          window.URL.revokeObjectURL(link.href)
+      if (this.exportAble) {
+        if (this.showBox) {
+          m.set("showBox", true);
+        } else {
+          m.set("showBox", false);
         }
-      });
+        m.set("gridName", this.currentFolder.gridView);
+        m.set("lang", this.currentLanguage);
+        m.set("folderId", this.currentFolder.id);
+        m.set("orderBy", "MODIFIED_DATE desc");
+        axios
+          .post(url, JSON.stringify(m), {
+            responseType: "blob"
+          })
+          .then(res => {
+            let fileName = res.headers["content-disposition"]
+              .split(";")[1]
+              .split("=")[1]
+              .replace(/\"/g, "");
+            let type = res.headers["content-type"];
+            let blob = new Blob([res.data], { type: type });
+            // IE
+            if (window.navigator.msSaveBlob) {
+              window.navigator.msSaveBlob(blob, fileName);
+            } else {
+              // console.log(3)
+              var link = document.createElement("a");
+              link.href = window.URL.createObjectURL(blob);
+              link.download = fileName;
+              link.click();
+              //释放内存
+              window.URL.revokeObjectURL(link.href);
+            }
+          });
+      } else {
+        this.$message({
+          showClose: true,
+          message: "请在文档目录下进行操作!",
+          duration: 2000
+        });
+      }
     },
     //下架文档
     obtainItem() {
       let _self = this;
       var obtainItemId = [];
-      if (this.selectedItemList.length > 0){
+      if (this.selectedItemList.length > 0) {
         for (var i = 0; i < this.selectedItemList.length; i++) {
           obtainItemId.push(this.selectedItemList[i].ID);
         }
-        axios.post("/dc/obtainDocuments",JSON.stringify(obtainItemId)).then(function(response){
-          if(response.data.code){
-            if(_self.showBox){
-              _self.loadAllGridData(_self.currentFolder)
-            }else{
-              _self.loadGridData(_self.currentFolder);
+        axios
+          .post("/dc/obtainDocuments", JSON.stringify(obtainItemId))
+          .then(function(response) {
+            if (response.data.code) {
+              if (_self.showBox) {
+                _self.loadAllGridData(_self.currentFolder);
+              } else {
+                _self.loadGridData(_self.currentFolder);
+              }
+              _self.$message({
+                showClose: true,
+                message: "下架成功!",
+                duration: 2000,
+                type: "success"
+              });
+            } else {
+              _self.$message({
+                showClose: true,
+                message: "下架失败!",
+                duration: 2000,
+                type: "warning"
+              });
             }
-            _self.$message({
-            showClose: true,
-            message: "下架成功!",
-            duration: 2000,
-            type: 'success'
-            });
-          }else{
-            _self.$message({
-            showClose: true,
-            message: "下架失败!",
-            duration: 2000,
-            type: 'warning'
-            });
-          }
-        })
-      }else {
+          });
+      } else {
         this.$message({
           showClose: true,
           message: "请勾选待下架文件!",
@@ -513,33 +569,35 @@ export default {
     destroyItem() {
       let _self = this;
       var deletItemId = [];
-      if (this.selectedItemList.length > 0){
+      if (this.selectedItemList.length > 0) {
         for (var i = 0; i < this.selectedItemList.length; i++) {
           deletItemId.push(this.selectedItemList[i].ID);
         }
-        axios.post("/dc/destroyDocuments",JSON.stringify(deletItemId)).then(function(response){
-          if(response.data.code){
-            if(_self.showBox){
-              _self.loadAllGridData(_self.currentFolder)
-            }else{
-              _self.loadGridData(_self.currentFolder);
+        axios
+          .post("/dc/destroyDocuments", JSON.stringify(deletItemId))
+          .then(function(response) {
+            if (response.data.code) {
+              if (_self.showBox) {
+                _self.loadAllGridData(_self.currentFolder);
+              } else {
+                _self.loadGridData(_self.currentFolder);
+              }
+              _self.$message({
+                showClose: true,
+                message: "销毁成功!",
+                duration: 2000,
+                type: "success"
+              });
+            } else {
+              _self.$message({
+                showClose: true,
+                message: "销毁成功!",
+                duration: 2000,
+                type: "warning"
+              });
             }
-            _self.$message({
-            showClose: true,
-            message: "销毁成功!",
-            duration: 2000,
-            type: 'success'
-            });
-          }else{
-            _self.$message({
-            showClose: true,
-            message: "销毁成功!",
-            duration: 2000,
-            type: 'warning'
-            });
-          }
-        })
-      }else {
+          });
+      } else {
         this.$message({
           showClose: true,
           message: "请勾选待销毁文件!",
@@ -550,41 +608,41 @@ export default {
     //查看属性
     showItemProperty(indata) {
       let _self = this;
-      _self.selectedItemId = indata.ID ;
+      _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
-      if(_self.$refs.ShowProperty){
-        _self.$refs.ShowProperty.myItemId = indata.ID ;
+      if (_self.$refs.ShowProperty) {
+        _self.$refs.ShowProperty.myItemId = indata.ID;
         _self.$refs.ShowProperty.loadFormInfo();
       }
     },
-    showFileBox(){
-      if(this.showBox){
-        this.loadAllGridData(this.currentFolder)
-      }else{
-        this.loadGridData(this.currentFolder)
+    showFileBox() {
+      if (this.showBox) {
+        this.loadAllGridData(this.currentFolder);
+      } else {
+        this.loadGridData(this.currentFolder);
       }
     },
     //分页 页数改变
-    handleSizeChange(val){
-      let _self = this
+    handleSizeChange(val) {
+      let _self = this;
       this.pageSize = val;
       localStorage.setItem("docPageSize", val);
       _self.loadGridInfo(this.currentFolder);
-      if(_self.showBox){
-        _self.loadAllGridData(this.currentFolder)
-      }else{
-        _self.loadGridData(this.currentFolder)
+      if (_self.showBox) {
+        _self.loadAllGridData(this.currentFolder);
+      } else {
+        _self.loadGridData(this.currentFolder);
       }
     },
     // 分页 当前页改变
     handleCurrentChange(val) {
-      let _self = this
+      let _self = this;
       this.currentPage = val;
       _self.loadGridInfo(this.currentFolder);
-      if(_self.showBox){
-        _self.loadAllGridData(this.currentFolder)
-      }else{
-        _self.loadGridData(this.currentFolder)
+      if (_self.showBox) {
+        _self.loadAllGridData(this.currentFolder);
+      } else {
+        _self.loadGridData(this.currentFolder);
       }
     }
   }
