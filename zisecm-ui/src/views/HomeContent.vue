@@ -50,12 +50,12 @@
               >更多</el-link>
             </div>
             <el-table :data="dataList.todoData" style="width:100%;" :show-header="false">
-              <el-table-column prop="taskName" label="任务名称">
-                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.taskName)}}</el-link>
+              <el-table-column label="任务名称">
+                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.name)}}</el-link>
               </el-table-column>
-              <el-table-column prop="sendUser" label="发送人"></el-table-column>
+              <el-table-column prop="startUser" label="发送人"></el-table-column>
               <el-table-column label="发送时间" align="right">
-                <template slot-scope="scope">{{dateFormat(scope.row.sendDate)}}</template>
+                <template slot-scope="scope">{{dateFormat(scope.row.createTime)}}</template>
               </el-table-column>
             </el-table>
           </el-card>
@@ -140,44 +140,7 @@ export default {
         yAxisData: []
       },
       dataList: {
-        todoData: [
-          {
-            id:'123',
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          },
-          {
-            taskName: "虚拟数据，真实数据已经被注释",
-            sendUser: "xiuxiu",
-            sendDate: "2019-11-27T19:47:29.000+0000"
-          }
-        ],
+        todoData: [],
         newdocData: [],
         notiData: []
       },
@@ -245,10 +208,11 @@ export default {
       m.set("condition", "");
       m.set("pageSize", 7);
       m.set("pageIndex", 0);
+      m.set("userId", sessionStorage.getItem("access-userName"));
       axios
-        .post("/workflow/getMyTodoTask", JSON.stringify(m))
+        .post("/workflow/todoTask", JSON.stringify(m))
         .then(function(response) {
-          // _self.dataList.todoData = response.data.data;
+          _self.dataList.todoData = response.data.data;
         })
         .catch(function(error) {
           console.log(error);

@@ -1,5 +1,5 @@
 <template>
-  <el-table>
+  <el-table :data="tabledata">
     <el-table-column v-for="item in gridList" :key="item.id" :label="item.label" :prop="item.attrName"></el-table-column> 
     
   </el-table>
@@ -43,6 +43,7 @@ export default {
             let result = response.data;
             if(result.code==1){
               _self.tabledata = result.data;
+               console.log(_self.tabledata);
             }
           });
       },
