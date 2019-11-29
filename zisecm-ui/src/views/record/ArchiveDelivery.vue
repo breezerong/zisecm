@@ -101,7 +101,6 @@
         width="100%"
         :folderPath="folderPath"
         v-bind:itemId="selectedItemId"
-        v-bind:folderPath="folderPath"
         v-bind:typeName="typeName"
       ></ShowProperty>
       <div slot="footer" class="dialog-footer">
@@ -128,7 +127,7 @@
       <el-col :span="7" style="padding-top:4px;">
           <el-button type="primary" icon="el-icon-circle-plus" 
           plain
-          size="small" @click="onNewFolder()">{{$t('application.new')}}</el-button>
+          size="small" @click="onNewFolder()" :title="$t('application.newTransfer')">{{$t('application.new')}}</el-button>
           <el-button
           type="primary"
            plain
@@ -202,6 +201,7 @@
         <DataGrid
           ref="transferDataGrid"
           key="transfer"
+          v-bind:isshowPage="false"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
@@ -223,6 +223,8 @@
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
           v-bind:tableHeight="rightTableHeight"
+          v-bind:isshowOption="true"
+          v-bind:propertyComponent="this.$refs.ShowProperty"
           @rowclick="showInnerFile"
           @selectchange="selectChange"
         ></DataGrid>
@@ -270,6 +272,7 @@
           v-bind:columnList="innerGridList"
           v-bind:itemCount="innerCount"
           v-bind:tableHeight="rightTableHeight"
+          :isshowOption="true"
           @pagesizechange="innerPageSizeChange"
           @rowclick="selectOneFile"
           @pagechange="innerPageChange"
@@ -1180,15 +1183,20 @@ export default {
 
         _self.dialogName = typeName;
         _self.propertyVisible = true;
-        if (_self.$refs.ShowProperty) {
-         _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName = typeName;
-          _self.$refs.ShowProperty.myTypeName = typeName;
-          _self.$refs.ShowProperty.parentDocId = selectedRow.ID;
-          _self.$refs.ShowProperty.folderPath = "/表单/移交单";
+
+        setTimeout(()=>{
+          if(_self.$refs.ShowProperty){
+          _self.$refs.ShowProperty.myItemId = "";
+          _self.dialogName=typeName;
+          _self.$refs.ShowProperty.myTypeName =typeName;
+          _self.typeName=typeName;
+          _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
+          _self.$refs.ShowProperty.folderPath = '/表单/移交单';
           // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
           _self.$refs.ShowProperty.loadFormInfo();
         }
+        },10);
+
       } else {
         _self.$message(_self.$t("message.pleaseSelectFolder"));
       }
