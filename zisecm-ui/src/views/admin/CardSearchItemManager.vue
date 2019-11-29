@@ -11,8 +11,8 @@
         <el-button @click="formitemVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="卡片表单校验" :visible.sync="checkVisible">
-      <CardSearchItemCheck ref="CardSearchItemCheck" width="560" :parentformid="parentId"></CardSearchItemCheck>
+    <el-dialog title="卡片表单校验" :visible.sync="checkVisible" width="80%">
+      <CardSearchItemCheck ref="CardSearchItemCheck" width="100%" :parentformid="parentId"></CardSearchItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">取 消</el-button>
       </div>
@@ -32,7 +32,9 @@
             <el-button @click="formitemVisible=true">选择字段</el-button>
           </el-col>
         </el-row>
-
+        <el-form-item label="说明" :label-width="formLabelWidth">
+          <el-input v-model="form.description" auto-complete="off"></el-input>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="序号" :label-width="formLabelWidth2">
@@ -43,7 +45,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="additem(form)">确 定</el-button>
+        <el-button type="primary" @click="addItem(form)">确 定</el-button>
       </div>
     </el-dialog>
     <div class="navbar">
@@ -87,6 +89,11 @@
       <el-table-column label="表单ID" width="260">
         <template slot-scope="scope">
           <el-input v-model="scope.row.formItemId"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="说明" width="260">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.description"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="序号" width="80">
@@ -153,6 +160,7 @@ export default {
         id: "",
         parentId: "",
         formItemId: "",
+        description:"",
         orderIndex: 1
       },
       formLabelWidth: "120px",
@@ -231,7 +239,7 @@ export default {
     addItem(indata) {
       let _self = this;
       if (_self.dialogtitle == "编辑") {
-        _self.saveitem(indata);
+        _self.saveItem(indata);
         this.dialogVisible = false;
       } else {
         axios
