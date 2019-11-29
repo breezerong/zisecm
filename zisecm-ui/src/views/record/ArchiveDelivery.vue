@@ -1205,10 +1205,11 @@ export default {
       let _self = this;
       if (selectedRow.ID) {
         _self.selectedItemId = "";
+
         _self.dialogName = typeName;
         _self.propertyVisible = true;
         if (_self.$refs.ShowProperty) {
-          _self.$refs.ShowProperty.myItemId = "";
+         _self.$refs.ShowProperty.myItemId = "";
           _self.dialogName = typeName;
           _self.$refs.ShowProperty.myTypeName = typeName;
           _self.$refs.ShowProperty.parentDocId = selectedRow.ID;

@@ -132,11 +132,12 @@
                     <el-button type="primary" icon="el-icon-delete"  @click="onDeleleArchiveItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
                     <el-button type="primary" icon="el-icon-s-order"  @click="takeNumbers">{{$t('application.takeNumbers')}}</el-button>
                     <el-button type="primary" icon="el-icon-notebook-2"  @click="fetchInformation">{{$t('application.fetchInformation')}}</el-button>
+                    <el-button type="primary" icon="el-icon-sell"  @click="putInStorage">{{$t('application.warehousing')}}</el-button>
                    
                     <!-- <el-button type="primary" icon="el-icon-s-release"  @click="onClosePage()">{{$t('application.sealVolume')}}</el-button>
                     <el-button type="primary" icon="el-icon-folder-opened"  @click="onOpenPage()">{{$t('application.openPage')}}</el-button> -->
-                    <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button>
-                    <el-button type="primary" icon="el-icon-printer" @click="printVolumesVisible = true">{{$t('application.PrintVolumes')}}</el-button>
+                    <!-- <el-button type="primary" icon="el-icon-printer" @click="printsVisible = true">{{$t('application.PrintCover')}}</el-button>
+                    <el-button type="primary" icon="el-icon-printer" @click="printVolumesVisible = true">{{$t('application.PrintVolumes')}}</el-button> -->
                   
                   </td>
                 </tr>
@@ -349,6 +350,49 @@ export default {
       });
   },
   methods: {
+    ///上架
+    putInStorage(){
+      let _self=this;
+      if(_self.radio!='卷盒'){
+          _self.$message('请选择卷盒数据！');
+          return;
+      }
+      if(_self.selectedItems.length===0){
+         _self.$message('请选择一条或多条卷盒数据！');
+          return;
+      }
+
+      let tab=_self.selectedItems;
+      let m = [];
+      let i;
+      for(i in tab){
+        if(tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")
+        {
+          _self.$message("所选卷盒中有未取号的数据，请先对其进行取号并提取信息！");
+          return;
+        }
+        m.push(tab[i]["ID"]);
+      }
+      _self.axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/dc/putInStorage"
+        })
+        .then(function(response) {
+          _self.loadGridData(_self.currentFolder);
+          _self.innerDataList=[];
+            // _self.showInnerFile(null);
+          _self.$message(_self.$t("message.warehousingSuccess"));
+        })
+        .catch(function(error) {
+          _self.$message(_self.$t("message.warehousingFail"));
+          console.log(error);
+      });
+
+    },
     selectOneFile(row){
       let _self = this;
       if(_self.selectRow)
@@ -362,6 +406,7 @@ export default {
        _self.innerDataList=[];
        _self.outerDataList=[];
     },
+    //上移
     onMoveUp(){
       let _self=this;
       if(_self.selectedInnerItems.length!=1){
@@ -395,6 +440,7 @@ export default {
           _self.loading = false;
         });
     },
+    //挂载
     beforeMount(selrow){
       
       let _self=this;
@@ -443,6 +489,7 @@ export default {
         console.log(error);
       });
     },
+    //下移
     onMoveDown(){
       let _self=this;
       if(_self.selectedInnerItems.length!=1){
