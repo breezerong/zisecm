@@ -1,27 +1,28 @@
 package com.ecm.flowable.listener;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.flowable.engine.RuntimeService;
-import org.flowable.engine.TaskService;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.ExecutionListener;
-import org.flowable.variable.api.persistence.entity.VariableInstance;
+import org.flowable.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import com.ecm.core.entity.EcmDocument;
-import com.ecm.core.entity.LoginUser;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.icore.service.IEcmSession;
-import com.ecm.portal.SpringUtil;
+import com.ecm.portal.test.flowable.TODOApplication;
 
 @Component(value="startExecutorListener")
-public class StartExecutorListener  implements ExecutionListener  {
-  	@Autowired
+public class StartExecutorListener  implements ExecutionListener ,JavaDelegate {
+  	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Autowired
     private RuntimeService runtimeService;
 	
   	@Autowired
@@ -50,53 +51,63 @@ public class StartExecutorListener  implements ExecutionListener  {
     	
 	    	//初始化变量栈
 	        varMap.put("borrowType", ecmObject.getSubType());
-	        varMap.put("securityLevel", ecmObject.getSecurityLevel());
 	        
 	        
 	        //是否本部门文档
-	        //TODO liao
-	        varMap.put("departmentDoc", ecmObject.getAttributeValue("C_CREATION_UNIT").equals(ecmObject.getAttributeValue("C_DESC1")));
+	        TODOApplication.getNeedTOChange();
+	        varMap.put("departmentDoc", ecmObject.getAttributes().get("C_CREATION_UNIT").equals(ecmObject.getAttributes().get("C_DESC1")));
 	        
 	        
 	        //批次文件是否有商密文件
-	        // TODO liao
-	        String  fileTopestSecurityLevel="受限";
-	
-	        
+	        TODOApplication.getNeedTOChange();
+	        String  fileTopestSecurityLevel=varMap.get("fileTopestSecurityLevel")==null?"":varMap.get("fileTopestSecurityLevel").toString();
+
+	        TODOApplication.getNeedTOChange();
+	        int drawingNumber=varMap.get("drawingNumber")==null?0:Integer.valueOf(varMap.get("drawingNumber").toString());
+	        int fileNumber=varMap.get("fileNumber")==null?0:Integer.valueOf(varMap.get("fileNumber").toString());
 	        switch (fileTopestSecurityLevel) {
-			case "普通商密":
+
+	        case "普通商密":
 			case "核心商密":
-		        varMap.put("beyondLeaderPermision", true);
 				//20个图册或100个文件以上
-				
+				if(drawingNumber>20||fileNumber>100) {
+					varMap.put("beyondLeaderPermision", true);	
+				}else {
+					varMap.put("beyondLeaderPermision", true);					
+				}
 				break;
+
 			case "受限":
-		        varMap.put("beyondLeaderPermision", true);
 				//30个图册或150个文件以上
-	
+				if(drawingNumber>30||fileNumber>150) {
+					varMap.put("beyondLeaderPermision", true);	
+				}else {
+					varMap.put("beyondLeaderPermision", true);					
+				}
 				break;
 	
 			default:
 		        varMap.put("beyondLeaderPermision", false);
 				break;
 			}
-	        varMap.put("beyondLeaderPermision", true);
-	        varMap.put("securityLevel", ecmObject.getSecurityLevel());
 	        
-	        //map 需要从借阅表单ecm.document.type_name="借阅单" +  流程记录里取
-	        //流程记录中记录了表单ID
-	        //
-	 
+	        varMap.put("securityLevel", fileTopestSecurityLevel);
+
 	    	String  process_name=delegateExecution.getProcessDefinitionId().split(":")[0];
-	    	if("process_borrow".equals(process_name)) {//借阅流程
+	    	switch (process_name) {
+			case "process_borrow":
+				//runtimeService.getVariables("1995ac1d-1259-11ea-9171-00505622af9b")
 	            varMap.put("taskUser_owner", runtimeService.getVariable(delegateExecution.getProcessInstanceId(), "startUser"));
-	            varMap.put("taskUser_owner_leader", ecmObject.getAttributeValue("C_REVIEWER1"));
-	            varMap.put("taskUser_doc_leader", ecmObject.getAttributeValue("C_REVIEWER2"));
-	            varMap.put("taskUser_leader_in_charge", ecmObject.getAttributeValue("C_REVIEWER3"));
-	
-	            delegateExecution.setTransientVariables(varMap);
-	    	}
-		} catch (Exception e) {
+	            varMap.put("taskUser_owner_leader", ecmObject.getAttributes().get("C_REVIEWER1"));
+	            varMap.put("taskUser_doc_leader", ecmObject.getAttributes().get("C_REVIEWER2"));
+	            varMap.put("taskUser_leader_in_charge", ecmObject.getAttributes().get("C_REVIEWER3"));
+				break;
+
+			default:
+				break;
+			}
+            delegateExecution.setTransientVariables(varMap);
+    	} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			  if(ecmSession!=null) {
@@ -105,4 +116,10 @@ public class StartExecutorListener  implements ExecutionListener  {
 		} 
   
     }
+
+	@Override
+	public void execute(DelegateExecution arg0) {
+		System.out.println("javadelegate.");
+		//自动方法需要执行的东西
+	}
 }

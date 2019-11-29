@@ -84,7 +84,8 @@
     <el-dialog :visible.sync="printVolumesVisible" width="80%">
       <PrintVolumes
         ref="printVolumes"
-        v-bind:archiveId="this.archiveId"
+        v-bind:archiveId="this.printObjId"
+        v-bind:gridName="printGridName"
         v-bind:currentFolderId="this.currentFolder.id"
       ></PrintVolumes>
     </el-dialog>
@@ -101,7 +102,6 @@
         width="100%"
         :folderPath="folderPath"
         v-bind:itemId="selectedItemId"
-        v-bind:folderPath="folderPath"
         v-bind:typeName="typeName"
       ></ShowProperty>
       <div slot="footer" class="dialog-footer">
@@ -134,7 +134,7 @@
            plain
             size="small"
           icon="el-icon-printer"
-          @click="printVolumesVisible = true"
+          @click="beforePrint(selectTransferRow,'PrintDelivery')"
         >打印</el-button>
           <el-button type="primary"
           plain
@@ -186,7 +186,7 @@
            plain
             size="small"
           icon="el-icon-printer"
-          @click="printVolumesVisible = true"
+          @click="beforePrint(selectedItems,'PrintVolumeOrder')"
         >打印清单</el-button>
          <el-button
           type="primary"
@@ -202,6 +202,7 @@
         <DataGrid
           ref="transferDataGrid"
           key="transfer"
+          v-bind:isshowPage="false"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
@@ -223,6 +224,8 @@
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
           v-bind:tableHeight="rightTableHeight"
+          v-bind:isshowOption="true"
+          v-bind:propertyComponent="this.$refs.ShowProperty"
           @rowclick="showInnerFile"
           @selectchange="selectChange"
         ></DataGrid>
@@ -270,6 +273,7 @@
           v-bind:columnList="innerGridList"
           v-bind:itemCount="innerCount"
           v-bind:tableHeight="rightTableHeight"
+          :isshowOption="true"
           @pagesizechange="innerPageSizeChange"
           @rowclick="selectOneFile"
           @pagechange="innerPageChange"
@@ -301,6 +305,7 @@ export default {
       currentLanguage: "zh-cn",
       printsVisible: false,
       printVolumesVisible: false,
+      printObjId:"",
       archiveId: "",
       dataList: [],
       transferColumnList: [],
@@ -316,6 +321,7 @@ export default {
       transferDataList: [],
       transferDataListFull: [],
       selectedTypeName: [],
+      printGridName:"",
       transferCount: 0,
       reuseVisible: false,
       typeName: "卷盒",
@@ -436,6 +442,16 @@ export default {
     this.loadTransferGridData();
   },
   methods: {
+    beforePrint(selectedRow,gridName){
+      let _self=this;
+      if(selectedRow.length!=1){
+        _self.$message('请选择一条数据进行打印');
+        return;
+      }
+      _self.printVolumesVisible = true;
+      _self.printGridName=gridName;
+      _self.printObjId=selectedRow[0].ID;
+    },
     //批量导入完成
     onBatchImported(){
       this.this.loadGridData();
@@ -936,11 +952,13 @@ export default {
       _self.loadGridInfo();
       if (row != null) {
         _self.selectTransferRow = row;
+        
       }
       var key = _self.inputkey;
       if (key != "") {
         key = "coding like '%" + key + "%' or title like '%" + key + "%'";
       }
+      _self.archiveId=_self.selectTransferRow.ID;
       var m = new Map();
       m.set("gridName", "ArchiveGrid");
       // m.set('folderId',indata.id);

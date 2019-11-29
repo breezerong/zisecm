@@ -132,6 +132,7 @@ public class CardSearchItemManager extends ControllerAbstract{
 			 ExEcmCardSearchItem en = new ExEcmCardSearchItem();
 			 en.setParentId(fromEn.getParentId());
 			 en.setId(fromEn.getId());
+			 en.setDescription(fromEn.getDescription());
 			 en.setFormItemId(fromEn.getFormItemId());
 			 en.setOrderIndex(fromEn.getOrderIndex());
 			 EcmFormItem formItem = ecmFormItem.selectByPrimaryKey(en.getFormItemId());

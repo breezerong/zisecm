@@ -337,9 +337,9 @@ export default {
       this.selectedItems = val;
     },
     sortchange(column){
-      console.log(JSON.stringify(column));
-      console.log(column.column.property);
-      console.log(column.column.order);//ascending, descending
+      //console.log(JSON.stringify(column));
+      //console.log(column.column.property);
+      //console.log(column.column.order);//ascending, descending
       this.orderBy = column.column.property+ column.column.order=="ascending"?" ASC":" DESC";
     },
     // 加载表格样式

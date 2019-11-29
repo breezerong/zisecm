@@ -27,26 +27,6 @@ import com.ecm.flowable.controller.ExpenseController;
 @ComponentScan({"com.ecm.flowable.*"})
  public class ProcessTestMyProcess {
 
-	private String filename = "C:\\Workfolder\\zisecm\\flowable\\src\\main\\resources\\diagrams\\借阅流程.bpmn";
- 
-//	@Test
-//	public void startProcess() throws Exception {
-//		
-//		AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext(ProcessTestMyProcess.class);
-////		ExpenseController econtroller= (ExpenseController)context.getBean("expenseController");
-////		econtroller.deploymentProcessExpense();
-//		context.refresh();
-//		
-//		RuntimeService runtimeService= (RuntimeService)context.getBean(RuntimeService.class);
-//		
-// 		Map<String, Object> variableMap = new HashMap<String, Object>();
-//		variableMap.put("name", "Activiti");
-//		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("myProcess", variableMap);
-//		assertNotNull(processInstance.getId());
-//		System.out.println("id " + processInstance.getId() + " "
-//				+ processInstance.getProcessDefinitionId());
-//	}
-//	
 	
  	@Rule
 	public FlowableRule activitiRule = new FlowableRule();
@@ -60,7 +40,8 @@ import com.ecm.flowable.controller.ExpenseController;
 		variableMap.put("name", "Activiti");
 		variableMap.put("formID", "xxxxx");//流程发起时，将表单ID写入流程中
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", variableMap);
-//process id 
+
+		//process id 
 		
 		//WorkflowAuditService
 		

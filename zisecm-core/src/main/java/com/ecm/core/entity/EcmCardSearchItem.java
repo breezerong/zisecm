@@ -12,6 +12,8 @@ public class EcmCardSearchItem extends EcmObject{
     private String formItemId;
 
     private Integer orderIndex;
+    
+    private String description;
 
     public String getParentId() {
         return parentId;
@@ -53,10 +55,19 @@ public class EcmCardSearchItem extends EcmObject{
 		en.setFormItemId(getFormItemId());
 		en.setOrderIndex(getOrderIndex());
 		en.setParentId(getParentId());
+		en.setDescription(getDescription());
 		en.setId(getId());
 		if(ecmFormItem != null) {
 			en.setEcmFormItem(ecmFormItem.clone());
 		}
 		return en;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
