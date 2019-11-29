@@ -2,11 +2,18 @@
   <el-table :data="tabledata">
     <template  v-for="item in gridList">
       <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
-        <template v-if="item.attrName=='C_DOC_DATE'"></template>
+        <template slot-scope="scope">
+            <template v-if="item.attrName=='creationDate' || item.attrName=='modifiedDate'">
+              {{dateFormat(scope.row[item.attrName])}}
+            </template>
+            <template v-else>
+              {{scope.row[item.attrName]}}  
+            </template>            
+        </template>        
       </el-table-column>
     </template>
     
-    <el-table-column v-if="downloadEnable">
+    <el-table-column v-if="downloadEnable" align="right">
       <template slot-scope="scope">
         <el-button size="mini" @click="download(scope.row)">下载</el-button>
       </template>
@@ -41,7 +48,6 @@ export default {
     },
     name:"ViewRedition",
     created(){
-      console.log("格式副本 created");
       this.loadGridView();
     },
     methods:{
@@ -53,24 +59,17 @@ export default {
           let _self = this;
           axios.post("/dc/getRenditions",this.docId).then(function(response) {
             let result = response.data;
-            console.log(result);
             if(result.code==1){
               _self.tabledata = result.data;
-              console.log(_self.tabledata);
             }
           });
       },
       download(row){
-        let url = "/dc/getContent?id="+row.id+"&token="+sessionStorage.getItem('access-token');
+        let url = "/dc/getContent?id="+row.id+"&token="+sessionStorage.getItem('access-token')+"&action=download&format="+row.formatName;
         window.open(url, '_blank');
-      },
-      formatDocDate(date){
-        return this.dateFormat(date);
       }
     }
 }
 </script>
-
 <style>
-
 </style>
