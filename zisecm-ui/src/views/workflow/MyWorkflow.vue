@@ -88,11 +88,9 @@
               </el-table-column>
               <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
               </el-table-column>
-              <el-table-column prop="endDate" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
+              <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
               </el-table-column>
               <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
-              </el-table-column>
-              <el-table-column prop="description" label="流程说明" min-width="15%">
               </el-table-column>
               <el-table-column label="操作"  width="80">
                 <template slot-scope="scope">
