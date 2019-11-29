@@ -33,7 +33,7 @@ public interface IContentService {
 	 * 根据类型
 	 * @param token
 	 * @param objId
-	 * @param contentType 类型,1:主文件，2：格式副本，3：附件
+	 * @param contentType 类型,1:主文件，2：格式副本，3：附件，小于1任意类型
 	 * @param formatName 格式（扩展名，都使用小写）
 	 * @return
 	 */

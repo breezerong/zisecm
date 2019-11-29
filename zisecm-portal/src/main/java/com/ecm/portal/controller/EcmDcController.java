@@ -330,10 +330,27 @@ public class EcmDcController extends ControllerAbstract{
 			else{
 				id = request.getParameter("id");
 			}
-			EcmContent en = contentService.getObjectById(getToken(), id);
-	        if(en==null) {
-	            en = contentService.getPrimaryContent(getToken(),id);
-	        }
+			String action = "";
+			if(request.getAttribute("action")!=null){
+				action = request.getAttribute("action").toString();
+			}
+			else{
+				action = request.getParameter("action");
+			}
+			String format = "";
+			if(request.getAttribute("format")!=null){
+				format = request.getAttribute("format").toString();
+			}
+			else{
+				format = request.getParameter("format");
+			}
+			EcmContent en = null;
+			if(!StringUtils.isEmpty(format)){
+				en = contentService.getObject(getToken(), id, 0, format);
+			}else
+			{
+				en =contentService.getPrimaryContent(getToken(),id);
+			}
 			InputStream iStream = contentService.getContentStream(getToken(),en);
 			// 清空response
             response.reset();
@@ -342,19 +359,24 @@ public class EcmDcController extends ControllerAbstract{
             response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
             response.addHeader("Content-Length", "" + en.getContentSize());
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-//            if(en.getFormatName().equalsIgnoreCase("pdf")){
-//            	response.setContentType("application/form-data");
-//            }else {
+            try {
             	response.setContentType("application/octet-stream");
-//            }
-            byte[] buffer = new byte[8 * 1024];
-			int bytesRead;
-			while ((bytesRead = iStream.read(buffer)) != -1) {
-				toClient.write(buffer, 0, bytesRead);
-			}
-			iStream.close();
-            toClient.flush();
-            toClient.close();
+	            byte[] buffer = new byte[8 * 1024];
+				int bytesRead;
+				while ((bytesRead = iStream.read(buffer)) != -1) {
+					toClient.write(buffer, 0, bytesRead);
+				}
+            }finally {
+				iStream.close();
+	            toClient.flush();
+	            toClient.close();
+	            if(!StringUtils.isEmpty(action)&&action.equals("download")) {
+	            	contentService.newAudit(getToken(), "portal", AuditContext.DOWNLOAD, id, null, null);
+	            }else {
+	            	contentService.newAudit(getToken(), "portal", AuditContext.READ, id, null, null);
+	            }
+            }
+            
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

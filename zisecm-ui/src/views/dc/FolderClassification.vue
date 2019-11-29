@@ -19,7 +19,7 @@
       </div>
     </el-dialog>
     <iframe frameborder="0" name="PDFViewer" id="PDFViewer" style="width:100%;height:760px;display:none;" ref="PDFViewer"></iframe>
-    <el-dialog :visible.syn="imageViewVisible" @close="imageViewVisible = false">
+    <el-dialog visible="imageViewVisible" @close="imageViewVisible = false">
       <div v-if=" currentType!='' && imageFormat.indexOf(currentType)>-1">
          <viewer :images="imageArray" @inited="inited" class="viewer" ref="viewer" >
           <img v-for="src in imageArray" :src="src" :key="src" width="240" @click="onImageClick" style="cursor:hand">
