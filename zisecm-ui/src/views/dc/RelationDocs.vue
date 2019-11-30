@@ -47,6 +47,7 @@ export default {
         m.set("gridName", _self.gridviewName);
         m.set("lang", _self.currentLanguage);
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
+          
           _self.gridList = response.data.data;
           _self.loadData();
         });
@@ -55,6 +56,7 @@ export default {
           let _self = this;
           axios.post("/dc/getRelations",this.docId).then(function(response) {
             let result = response.data;
+            
             if(result.code==1){
               _self.tabledata = result.data;
             }

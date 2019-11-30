@@ -65,7 +65,7 @@ export default {
           });
       },
       download(row){
-        let url = this.axios.defaults.baseURL+"/dc/getContent?id="+row.id+"&token="+sessionStorage.getItem('access-token')+"&action=download&format="+row.formatName;
+        let url = this.axios.defaults.baseURL+"/dc/getContent?id="+row.parentId+"&token="+sessionStorage.getItem('access-token')+"&action=download&format="+row.formatName;
         window.open(url, '_blank');
       }
     }
