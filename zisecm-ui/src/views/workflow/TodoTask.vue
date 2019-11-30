@@ -22,12 +22,11 @@
               </div>
               <el-col>
                 <el-form-item label="通过类型" :label-width="formLabelWidth" style="float:left">
-                  <el-select v-model="form.result">
-                    <el-option label="通过" value="通过"></el-option>
-                    <!--
-                    <el-option label="驳回" value="驳回"></el-option>
-                    -->
-                  </el-select>
+                  <el-radio-group  v-model="form.result"  >
+                      <el-radio-button label="通过"   >通过</el-radio-button>
+                      <el-radio-button label="驳回" aria-checked="true"   >驳回</el-radio-button>
+                   </el-radio-group>
+
                 </el-form-item>
               </el-col>
               <el-col>
@@ -128,6 +127,7 @@ export default {
       dialogTitle:"查看任务",
       isCompleteSelected: false,
       tableHeight: window.innerHeight - 170,
+      result:"通过",
       form: {
         taskId: 0,
         result: "通过",

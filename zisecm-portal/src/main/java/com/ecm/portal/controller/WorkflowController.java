@@ -103,12 +103,6 @@ public class WorkflowController  extends ControllerAbstract{
 	    @RequestMapping(value = "/startWorkflow")
 	    @ResponseBody
 	    public Map<String, Object> startWorkflow(@RequestBody String argStr) {
-//	    	try {
-//				deploymentProcessExpense();
-//			} catch (Exception e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
 	        //启动流程
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			Map<String, Object> result = new HashMap<String, Object>();
@@ -119,7 +113,8 @@ public class WorkflowController  extends ControllerAbstract{
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
  			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
   			        //创建流程日志
-  			        //runtimeService.setVariable(processInstance.getId(), "startUser", userName);
+  			        runtimeService.setVariable(processInstance.getId(), "processInstanceID", processInstance.getId());
+  			        runtimeService.setVariable(processInstance.getId(), "processInstanceName", processInstance.getName());
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setWorkflowId(processInstance.getId());
@@ -209,7 +204,6 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
 		        map.put("createTime", task.getCreateTime());
 		        resultList.add(map);
-	            System.out.println(task.toString());
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
@@ -366,19 +360,51 @@ public class WorkflowController  extends ControllerAbstract{
 	    @ResponseBody
 	    public String testWorkflow(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String senseNumber=args.get("formId").toString();
+			args.put("formId", "cd857371a932488dabbf9bf399ba942e");
+			
+			switch (senseNumber) {
+			case "1":
+				args.put("case", "1");
+				args.put("fileTopestSecurityLevel", "普通商密");
+				args.put("drawingNumber", 21);
+				args.put("fileNumber", 10);
+				args.put("message", "1.普通商密+21个图纸或10个文件");
+		
+				break;
 
-			args.put("fileTopestSecurityLevel", "普通商密");
-			args.put("drawingNumber", 21);
-			args.put("fileNumber", 10);
-			args.put("message", "普通商密+21个图纸或10个文件");
-  
- 			startSensen1(JSONUtils.mapToJson(args));
-//			args.put("fileTopestSecurityLevel", "内部公开");
-//			args.put("drawingNumber", 21);
-//			args.put("fileNumber", 10);
-//			args.put("message", "普通商密+21个图纸或10个文件");
-//
-// 			startSensen1(argStr);
+			case "2":
+				args.put("case", "2");
+				args.put("fileTopestSecurityLevel", "普通商密");
+				args.put("drawingNumber", 2);
+				args.put("fileNumber", 2);
+				args.put("message", "2.普通商密+2个图纸或2个文件");
+		
+				break;
+
+			case "3":
+				args.put("case", "3");
+				args.put("fileTopestSecurityLevel", "受限");
+				args.put("drawingNumber", 21);
+				args.put("fileNumber", 10);
+				args.put("message", "3.受限+21个图纸或10个文件");
+				break;
+
+			case "4":
+				args.put("case", "4");
+				args.put("fileTopestSecurityLevel", "内部公开");
+				args.put("drawingNumber", 300);
+				args.put("fileNumber", 300);
+				args.put("message", "4.内部公开+300个图纸或300个文件");
+
+				break;
+
+ 
+			default:
+				break;
+			}
+
+			startSensen1(JSONUtils.mapToJson(args));
 			
  
 	        //通过审核
