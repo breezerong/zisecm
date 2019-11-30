@@ -4,7 +4,7 @@
       <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
         <template slot-scope="scope">
             <template v-if="item.attrName=='creationDate' || item.attrName=='modifiedDate'">
-              {{dateFormat(scope.row[item.attrName])}}
+              {{datetimeFormat(scope.row[item.attrName])}}
             </template>
             <template v-else>
               {{scope.row[item.attrName]}}  
@@ -27,7 +27,7 @@ export default {
         return{
             gridviewName:'GeneralGrid',
             gridList: [
-              {id:'1',attrName:'name',label:'文件名'},
+              //{id:'1',attrName:'name',label:'文件名'},
               {id:'2',attrName:'formatName',label:'格式'},
               {id:'3',attrName:'creationDate',label:'创建时间'},
               {id:'4',attrName:'modifiedDate',label:'修改时间'}
@@ -65,7 +65,7 @@ export default {
           });
       },
       download(row){
-        let url = "/dc/getContent?id="+row.id+"&token="+sessionStorage.getItem('access-token')+"&action=download&format="+row.formatName;
+        let url = this.axios.defaults.baseURL+"/dc/getContent?id="+row.id+"&token="+sessionStorage.getItem('access-token')+"&action=download&format="+row.formatName;
         window.open(url, '_blank');
       }
     }

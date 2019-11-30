@@ -43,16 +43,12 @@
         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
       </div>
     </el-dialog>
-    <table border="0" width="100%" height="100%">
-      <tr>
-        <td class="navbar">
-          <el-breadcrumb>
-            <el-breadcrumb-item>{{$t('menu.companyDoc')}}</el-breadcrumb-item>
-          </el-breadcrumb>
-        </td>
-      </tr>
+
       <el-container>
         <el-aside width="160px">
+           <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
+            <el-breadcrumb-item>{{$t('menu.companyDoc')}}</el-breadcrumb-item>
+          </el-breadcrumb>
           <el-tree
             :props="defaultProps"
             :data="dataList"
@@ -64,7 +60,7 @@
           ></el-tree>
         </el-aside>
         <el-main>
-          <el-row>
+          <el-row style="padding-top:4px;">
             <el-col :span="4">
               <el-input
                 v-model="inputkey"
@@ -77,21 +73,29 @@
               &nbsp;&nbsp;&nbsp;
               <el-button
                 type="primary"
+                plain
+                size="medium"
                 icon="el-icon-document"
                 @click="borrowItem()"
               >{{$t('application.borrow')}}</el-button>
               <el-button
                 type="primary"
+                plain
+                size="medium"
                 icon="el-icon-upload2"
                 @click="exportExcel()"
               >{{$t('application.export')+'Excel'}}</el-button>
               <el-button
                 type="primary"
+                plain
+                size="medium"
                 icon="el-icon-bottom"
                 @click="obtainItem()"
               >{{$t('application.obtained')}}</el-button>
               <el-button
                 type="primary"
+                plain
+                size="medium"
                 icon="el-icon-document-delete"
                 @click="destroyItem()"
               >{{$t('application.destroy')}}</el-button>&nbsp;&nbsp;&nbsp;
@@ -194,7 +198,6 @@
           </el-row>
         </el-main>
       </el-container>
-    </table>
     <el-pagination
       background
       @size-change="handleSizeChange"
@@ -224,7 +227,7 @@ export default {
         dialogFormVisible: false,
         isIndeterminate: false
       },
-      tableHeight: window.innerHeight - 178,
+      tableHeight: window.innerHeight - 125,
       currentLanguage: "zh-cn",
       propertyVisible: false,
       loading: false,

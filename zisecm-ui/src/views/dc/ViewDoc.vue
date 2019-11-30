@@ -64,7 +64,7 @@
         <DocVersion :docId="docId"></DocVersion>
       </template>
        <template v-if="dialog.title=='格式副本'">
-        <ViewRedition :docId="docId" :downloadEnable="downloadEnable"></ViewRedition>
+        <ViewRedition :docId="docId" :downloadEnable="doc.permit>=4"></ViewRedition>
       </template>
       <template v-if="dialog.title=='利用信息'">
         <UseInfo :docId="docId"></UseInfo>

@@ -754,7 +754,7 @@ public class EcmDcController extends ControllerAbstract{
 	public Map<String, Object> getRenditions(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			List<EcmContent>  list = documentService.getAllRendition(getToken(), id);
+			List<EcmContent>  list = contentService.getObjects(getToken(), id, 0);
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);
 		}
