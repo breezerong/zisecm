@@ -21,7 +21,7 @@
                     </div>
                 </el-dialog>
                     <el-table
-                        :height="tableHeight"
+                        :max-height="tableHeight"
                         :data="itemDataList"
                         border
                         @selection-change="selectChange"
@@ -41,7 +41,7 @@
                             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
                           </template>
                         </el-table-column>
-                        <div v-for="(citem,idx) in columnList">
+                        <div v-for="(citem,idx) in columnList" :key="idx+'_C'">
                           <div v-if="citem.visibleType==1">
                             <div v-if="(citem.width+'').indexOf('%')>0">
                                 <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
@@ -70,19 +70,16 @@
                           </div>
                         </div>
                         <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="140">
-                          
-                          <template slot="header" slot-scope="scope">
-                                <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
-                            </template>
+                          <template slot="header">
+                            <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
+                          </template>
                           <template slot-scope="scope">
                             <!-- <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button> -->
                             
                               <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                              <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>                 
-                            
-                          
+                              <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
                           </template>
                         </el-table-column>
                       </el-table>
@@ -115,7 +112,8 @@ export default {
             propertyVisible:false,
             currentPage:1,
             pageSize: 20,
-            showFields:[]
+            showFields:[],
+            selectedItemId:""
         }
     },
     props:{
@@ -169,6 +167,7 @@ export default {
      //查看属性
     showItemProperty(indata) {
       let _self = this;
+      _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
       setTimeout(()=>{
         if(_self.$refs.ShowProperty){
@@ -177,6 +176,9 @@ export default {
       }
       },10);
       
+    },
+    onSaved(indata){
+
     },
         showFieldOption(){
             let _self=this;

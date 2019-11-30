@@ -33,13 +33,14 @@
         <DataGrid
           ref="transferDataGrid"
           key="transfer"
+          v-bind:isshowPage="false"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
           @pagechange="handleCurrentChange"
           v-bind:itemCount="transferCount"
           v-bind:tableHeight="leftTableHeight"
-          @rowclick="loadGridData"
+          @rowclick="loadGridData"  :isshowOption="true"
           @selectchange="transferselectChange"
         ></DataGrid>
       </el-col>
@@ -52,7 +53,7 @@
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
-          @rowclick="showInnerFile"
+          @rowclick="showInnerFile"  :isshowOption="true"
           v-bind:tableHeight="rightTableHeight"
           @selectchange="selectChange"
         ></DataGrid>
@@ -66,7 +67,7 @@
             v-bind:itemCount="innerCount"
             v-bind:tableHeight="rightTableHeight"
             @pagesizechange="innerPageSizeChange"
-            @rowclick="selectOneFile"
+            @rowclick="selectOneFile"  :isshowOption="true"
             @pagechange="innerPageChange"
             @selectchange="selectInnerChange"
           ></DataGrid>

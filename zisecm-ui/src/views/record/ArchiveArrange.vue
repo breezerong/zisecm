@@ -110,7 +110,7 @@
                       <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
                       v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
                       @pagechange="pageChange" v-bind:itemCount="itemCount"
-                      v-bind:tableHeight="rightTableHeight"
+                      v-bind:tableHeight="rightTableHeight" :isshowOption="true"
                       @rowclick="showInnerFile" @selectchange="selectChange"></DataGrid>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
@@ -130,10 +130,10 @@
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
-                       v-bind:tableHeight="rightTableHeight"
+                       v-bind:tableHeight="rightTableHeight" :isshowOption="true"
                       @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
                     </div>
-                    <div class="middle">
+                    <div class="middle" style="verticle-align:middle">
                       <el-button  v-show="showButton" type="primary" plain size="small" title="移除案卷"  @click="removeFromArchive()">&gt;</el-button>
                       <br>
                       <el-button  v-show="showButton" type="primary" plain size="small" title="添加到案卷"  @click="addToArchive()">&lt;</el-button>
@@ -146,7 +146,7 @@
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedOutItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
-                      v-bind:columnList="outerGridList" v-bind:itemCount="outerCount"
+                      v-bind:columnList="outerGridList" v-bind:itemCount="outerCount" :isshowOption="true"
                        @pagesizechange="outerPageSizeChange" v-bind:tableHeight="rightTableHeight"
                       @pagechange="outerPageChange" @selectchange="selectOutChange"></DataGrid>
                        
