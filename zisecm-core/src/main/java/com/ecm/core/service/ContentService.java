@@ -148,13 +148,10 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	public InputStream getContentStream(String token, EcmContent en) throws Exception {
 		// TODO Auto-generated method stub
 		InputStream fis = null;
-		if(en.getContentType()==1)
-		{
-			String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
-			File f = new File(fullPath+en.getFilePath());
-			en.setContentSize(f.length());
-			fis = new BufferedInputStream(new FileInputStream(fullPath+en.getFilePath()));
-		}
+		String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+		File f = new File(fullPath+en.getFilePath());
+		en.setContentSize(f.length());
+		fis = new BufferedInputStream(new FileInputStream(fullPath+en.getFilePath()));
 		return fis;
 	}
 
@@ -169,7 +166,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	public EcmContent getObject(String token, String objId,int contentType,String formatName) {
 		// TODO Auto-generated method stub
 		String sql = " PARENT_ID='"+DBUtils.getString(objId)
-				+" and FORMAT_NAME='"+DBUtils.getString(formatName)+"'";
+				+"' and FORMAT_NAME='"+DBUtils.getString(formatName)+"'";
 		if(contentType>0) {
 			sql = " PARENT_ID='"+DBUtils.getString(objId)+"' and CONTENT_TYPE="+contentType
 					+" and FORMAT_NAME='"+DBUtils.getString(formatName)+"'";

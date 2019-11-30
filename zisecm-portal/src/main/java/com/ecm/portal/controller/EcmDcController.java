@@ -773,7 +773,7 @@ public class EcmDcController extends ControllerAbstract{
 			String sql = "select b.ID,a.NAME AS RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.C_SECURITY_LEVEL,b.CREATOR,b.CREATION_DATE,b.C_DOC_DATE"
 					+ " from ecm_relation a, ecm_document b where a.NAME not like 'irel%' and (a.PARENT_ID=b.ID or a.CHILD_ID=b.ID)"
 					+ " and b.ID='"+id+"' order by b.CREATION_DATE";
-			System.out.println(sql);
+			//System.out.println(sql);
 			List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql);
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);
