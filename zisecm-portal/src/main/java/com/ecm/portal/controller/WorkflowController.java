@@ -113,8 +113,6 @@ public class WorkflowController  extends ControllerAbstract{
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
  			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
   			        //创建流程日志
-  			        runtimeService.setVariable(processInstance.getId(), "processInstanceID", processInstance.getId());
-  			        runtimeService.setVariable(processInstance.getId(), "processInstanceName", processInstance.getName());
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setWorkflowId(processInstance.getId());
