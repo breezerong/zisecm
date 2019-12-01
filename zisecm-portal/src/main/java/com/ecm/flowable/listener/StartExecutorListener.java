@@ -33,6 +33,9 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
    private AuthService authService;
   	private String token;
 	 
+    /**
+     * 监听 for executionListener
+     */
     @Override
     public void notify(DelegateExecution arg0) {
     	if(arg0.getVariable("processInstanceID")==null) {
@@ -124,6 +127,9 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
 		}
 	}
 
+	/**
+	 *JavaDelegate 方法  for serviceTask
+	 */
 	@Override
 	public void execute(DelegateExecution arg0) {
     	if(arg0.getVariable("processInstanceID")==null) {
@@ -138,6 +144,9 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
 		System.out.println("DelegateExecution_execute");
  	}
 
+	/**
+	 *TaskListener 方法 for taskListener
+	 */
 	@Override
 	public void notify(DelegateTask arg0) {
     	if(arg0.getVariable("processInstanceID")==null) {
