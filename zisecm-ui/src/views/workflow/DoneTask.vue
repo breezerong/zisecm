@@ -71,9 +71,9 @@
                 </el-table-column>
                 <el-table-column prop="name" label="名称"  min-width="20%" sortable>
                 </el-table-column>
-                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter" min-width="10%" sortable>
+                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter" min-width="12%" sortable>
                 </el-table-column>
-                <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"   min-width="10%" sortable>
+                <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"   min-width="12%" sortable>
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果"  min-width="10%">
                 </el-table-column>

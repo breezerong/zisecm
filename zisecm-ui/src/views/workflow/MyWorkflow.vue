@@ -25,7 +25,7 @@
                   </template>
                  </el-table-column>
                 </el-table-column>
-                <el-table-column prop="name" label="名称" min-width="15%" sortable>
+                <el-table-column prop="name" label="名称" min-width="20%" sortable>
                 </el-table-column>
                 <el-table-column prop="startUser" label="用户" width="120" >
                 </el-table-column>
