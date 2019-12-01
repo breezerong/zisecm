@@ -134,7 +134,9 @@ public class WorkflowController  extends ControllerAbstract{
 	    }
 
 	    /**
-	     * 获取userId已审批的任务
+	     * 获取已审批的任务
+	     * @param argStr    参数
+	     * 
 	     */
 	    @RequestMapping(value = "doneTask")
 	    @ResponseBody
@@ -173,9 +175,10 @@ public class WorkflowController  extends ControllerAbstract{
 			for (int i = 0; i < varList.size(); i++) {
 				if("outcome".equals( varList.get(i).getVariableName())) {
 			        map.put("result", varList.get(i).getValue());					
-				}else if("message".equals( varList.get(i).getVariableName())) {
-					
+				}else if("message".equals( varList.get(i).getVariableName())) {			
 			        map.put("message", varList.get(i).getValue());					
+				}else if("startUser".equals( varList.get(i).getVariableName())) {
+
 				}
 			}
 		}
@@ -348,9 +351,9 @@ public class WorkflowController  extends ControllerAbstract{
 	
 	    
 	    /**
-	     * 批准
+	     * 测试流程
 	     *
-	     * @param 
+	     * @param argStr
 	     */
 	    @RequestMapping(value = "testWorkflow")
 	    @ResponseBody
@@ -409,9 +412,9 @@ public class WorkflowController  extends ControllerAbstract{
 	    
 	    
 	    /**
-	     * 批准
+	     * 启动场景
 	     *
-	     * @param 
+	     * @param argStr
 	     */
 	    @RequestMapping(value = "startSensen1")
 	    @ResponseBody
