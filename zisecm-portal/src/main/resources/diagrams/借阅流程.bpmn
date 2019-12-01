@@ -76,12 +76,12 @@
     <sequenceFlow id="flow24" name="纸质借阅" sourceRef="exclusivegateway8" targetRef="usertask5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅'}]]></conditionExpression>
     </sequenceFlow>
-    <serviceTask id="servicetask1" name="自动授权" flowable:delegateExpression="${startExecutorListener}"></serviceTask>
-    <sequenceFlow id="flow25" name="否" sourceRef="exclusivegateway8" targetRef="servicetask1"></sequenceFlow>
+    <serviceTask id="automaticAuthorization" name="自动授权" flowable:delegateExpression="${startExecutorListener}"></serviceTask>
+    <sequenceFlow id="flow25" name="否" sourceRef="exclusivegateway8" targetRef="automaticAuthorization"></sequenceFlow>
     <sequenceFlow id="flow27" name="纸质借阅&amp;内部公开" sourceRef="exclusivegateway_paperAndOpen" targetRef="usertask5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅' && securityLevel=='内部公开'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="automaticAuthorization"></sequenceFlow>
     <userTask id="usertask6" name="借阅驳回" default="flow38" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner}">
       <extensionElements>
         <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
@@ -94,7 +94,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='通过'}]]></conditionExpression>
     </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <sequenceFlow id="flow36" name="结束" sourceRef="servicetask1" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow36" name="结束" sourceRef="automaticAuthorization" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow38" name="结束" sourceRef="usertask6" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow40" name="结束" sourceRef="usertask5" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow41" name="通过" sourceRef="usertask2" targetRef="exclusivegateway4">
@@ -136,7 +136,7 @@
       <bpmndi:BPMNShape bpmnElement="exclusivegateway8" id="BPMNShape_exclusivegateway8">
         <omgdc:Bounds height="40.0" width="40.0" x="792.0" y="572.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+      <bpmndi:BPMNShape bpmnElement="automaticAuthorization" id="BPMNShape_automaticAuthorization">
         <omgdc:Bounds height="55.0" width="105.0" x="330.0" y="565.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask6" id="BPMNShape_usertask6">

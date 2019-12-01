@@ -162,7 +162,6 @@ public class WorkflowController  extends ControllerAbstract{
 //		        	taskComments=taskComments+commentsList.get(0).getFullMessage()+"; ";
 //				}
  		        resultList.add(map);
-	            System.out.println(task.toString());
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
@@ -246,7 +245,6 @@ public class WorkflowController  extends ControllerAbstract{
 			        map.put("currentAssignee",  "已结束");
 			    }
 		        resultList.add(map);
-	            System.out.println(process.toString());
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
@@ -433,7 +431,6 @@ public class WorkflowController  extends ControllerAbstract{
 				args.put("pageIndex", "0");
  				HashMap<String,Object> tasks=todoTask(JSONUtils.mapToJson(args));
 					tasknumber= ((List)tasks.get("data")).size()-1;
-					System.out.println("tasknumber==="+tasknumber+1);
 					if(tasknumber>=0) {
 						String taskId= ((Map)((ArrayList)tasks.get("data")).get(0)).get("id").toString();
 						args.put("taskId", taskId);

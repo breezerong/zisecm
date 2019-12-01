@@ -40,7 +40,7 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
     		arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
     	}
     	extracted(arg0); 
-  
+		System.out.println("DelegateExecution_notify");
     }
 
 	private void extracted(org.flowable.variable.api.delegate.VariableScope arg0) {
@@ -73,6 +73,7 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
 	        TODOApplication.getNeedTOChange();
 	        String  fileTopestSecurityLevel=varMap.get("fileTopestSecurityLevel")==null?"":varMap.get("fileTopestSecurityLevel").toString();
 
+	        //图纸或文件借阅数量
 	        TODOApplication.getNeedTOChange();
 	        int drawingNumber=varMap.get("drawingNumber")==null?0:Integer.valueOf(varMap.get("drawingNumber").toString());
 	        int fileNumber=varMap.get("fileNumber")==null?0:Integer.valueOf(varMap.get("fileNumber").toString());
@@ -129,8 +130,12 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
     		arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
     		arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
     	}
+        if("automaticAuthorization".equals(arg0.getCurrentFlowElement().getId())) {
+            TODOApplication.getNeedTOChange();
+            //写出文档授权逻辑
+        }
     	extracted(arg0); 
-		System.out.println("DelegateExecution.");
+		System.out.println("DelegateExecution_execute");
  	}
 
 	@Override
@@ -140,7 +145,7 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
     		arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
     	}
     	extracted(arg0); 
-		System.out.println("DelegateTask.");
+		System.out.println("DelegateTask_notify");
 		
 	}
 }
