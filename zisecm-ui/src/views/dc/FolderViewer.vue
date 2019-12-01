@@ -133,7 +133,7 @@ import ShowProperty from '@/components/ShowProperty'
 import 'url-search-params-polyfill'
 
 export default {
-  name: "FolderView",
+  name: "FolderViewer",
   components: {
     ShowProperty: ShowProperty
   },

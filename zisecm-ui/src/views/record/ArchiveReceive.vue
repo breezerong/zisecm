@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="3" style="padding-top:4px;">
+      <el-col :span="6" style="padding-top:4px;float:left;text-align:left;">
         <el-button
           type="primary"
           icon="el-icon-back"
@@ -17,7 +17,6 @@
           @click="onUpdateStatus('整编')"
         >接收</el-button>
       </el-col>
-      <el-col :span="3">&nbsp;</el-col>
       <el-col :span="4">
         <el-input
           v-model="inputkey"

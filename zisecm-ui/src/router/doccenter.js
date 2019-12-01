@@ -14,8 +14,8 @@ export const dcRouter = [
 				requireAuth: true,
 				permit: 1
 			},
-			path: '/dc/folderview',
-			component: () => import('@/views/dc/FolderView.vue'),
+			path: '/dc/folderviewer',
+			component: () => import('@/views/dc/FolderViewer.vue'),
 			name: '查看文件夹'
 		},
 		{

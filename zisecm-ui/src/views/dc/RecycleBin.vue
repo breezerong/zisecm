@@ -33,8 +33,10 @@
     </el-dialog>
       <el-container>
         <el-aside width="160px">
+          
           <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
-            <el-breadcrumb-item>{{$t('menu.recycleBin')}}</el-breadcrumb-item>
+            
+            <el-breadcrumb-item><i class="el-icon-delete-solid"></i>&nbsp; {{$t('menu.recycleBin')}}</el-breadcrumb-item>
           </el-breadcrumb>
           <el-tree
             :props="defaultProps"
