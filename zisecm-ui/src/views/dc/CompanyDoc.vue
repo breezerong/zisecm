@@ -46,8 +46,10 @@
 
       <el-container>
         <el-aside width="160px">
+           
            <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
-            <el-breadcrumb-item>{{$t('menu.companyDoc')}}</el-breadcrumb-item>
+             
+            <el-breadcrumb-item><i class="el-icon-receiving"></i>&nbsp; {{$t('menu.companyDoc')}}</el-breadcrumb-item>
           </el-breadcrumb>
           <el-tree
             :props="defaultProps"
