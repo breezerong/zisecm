@@ -64,7 +64,7 @@
         <DocVersion :docId="docId"></DocVersion>
       </template>
        <template v-if="dialog.title=='格式副本'">
-        <ViewRedition :docId="docId" :downloadEnable="downloadEnable"></ViewRedition>
+        <ViewRedition :docId="docId" :downloadEnable="doc.permit>=4"></ViewRedition>
       </template>
       <template v-if="dialog.title=='利用信息'">
         <UseInfo :docId="docId"></UseInfo>
@@ -170,9 +170,7 @@ export default {
           _self.doc.typeName="pdf";
         }
         _self.doc.format = _self.docObj.FORMAT_NAME;
-        //console.log(_self.doc);
         _self.initViewerType();
-        //_self.writeReadLog()
       }).catch(function(error) {
         console.log(error);
     });
@@ -191,7 +189,6 @@ export default {
     //office文档:1,图片：2，视频：3，音频：4
     initViewerType(){
       let _self = this;
-      //console.log(_self.viewerType);
       if(_self.doc){
         if(_self.doc.format == "doc" || _self.doc.format == "docx" ||
         _self.doc.format == "ppt" ||_self.doc.format == "pptx" ||
@@ -213,16 +210,7 @@ export default {
     download(){
       let url = this.axios.defaults.baseURL+"/dc/getContent?id="+this.doc.id+"&token="+sessionStorage.getItem('access-token')+"&action=download";
       window.open(url, '_blank');
-    },
-    writeReadLog(){
-      axios.post("/dc/newAudit",this.docId).then(function(response) {
-        console.log("writeReadLog");
-        console.log(response);
-      });
-      
-    },
-
-    
+    },    
     menuClick(type){
       this.dialog.title=type;
       this.dialog.visible=true

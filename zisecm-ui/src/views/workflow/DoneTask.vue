@@ -24,7 +24,7 @@
                 </el-table-column>
                 <el-table-column prop="name" label="名称" min-width="10%" >
                 </el-table-column>
-                <el-table-column prop="performer" label="用户" width="120" >
+                <el-table-column prop="assignee" label="用户" width="120" >
                 </el-table-column>
                 <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter"  width="160">
                 </el-table-column>
@@ -71,9 +71,9 @@
                 </el-table-column>
                 <el-table-column prop="name" label="名称"  min-width="20%" sortable>
                 </el-table-column>
-                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter" min-width="10%" sortable>
+                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter" min-width="12%" sortable>
                 </el-table-column>
-                <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"   min-width="10%" sortable>
+                <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"   min-width="12%" sortable>
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果"  min-width="10%">
                 </el-table-column>
@@ -151,7 +151,7 @@ export default {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
         _self.loading = false;
-        _self.loadPageInfo();
+        _self.loadPageInfo(response.data.totalCount);
       })
       .catch(function(error) {
         console.log(error);
@@ -176,25 +176,18 @@ export default {
       this.refreshData();
     },
     // 加载页数 暂时未处理查询条件
-    loadPageInfo() {
+    loadPageInfo(val) {
       let _self = this;
-      var m = new Map();
-      m.set("condition", _self.inputkey);
-      axios.post("/workflow/getMyDoneCount",JSON.stringify(m))
-        .then(function(response) {
-          _self.itemCount = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
+      _self.itemCount = val;
+      _self.loading = false;
+     },
     showitem(indata) {
       let _self = this;
-       axios.post("/workflow/getWorkflowTask",JSON.stringify(indata.workflowId))
+      var m = new Map();
+      m.set("processInstanceId",indata.processInstanceId);
+       axios.post("/workflow/getWorkflowTask",JSON.stringify(m))
         .then(function(response) {
-          _self.taskList = response.data.data;
+          _self.taskList = response.data;
           //console.log(JSON.stringify(_self.taskList));
           _self.dialogVisible = true;
           _self.loading = false;

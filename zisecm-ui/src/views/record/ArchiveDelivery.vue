@@ -125,7 +125,7 @@
       </div>
     </el-dialog>
     <el-row>
-      <el-col :span="7" style="padding-top:4px;">
+      <el-col :span="7" style="padding-top:4px;float:left;text-align:left;">
           <el-button type="primary" icon="el-icon-circle-plus" 
           plain
           size="small" @click="onNewFolder()" :title="$t('application.newTransfer')">{{$t('application.new')}}</el-button>
@@ -144,7 +144,7 @@
           size="small" icon="el-icon-delete"  @click="onDeleteTransfer()">{{$t('application.delete')}}</el-button>
   
       </el-col>
-      <el-col :span="4">
+      <el-col :span="4" style="float:left;text-align:left;">
         <el-input
           v-model="inputkey"
           :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -153,7 +153,8 @@
         ></el-input>
       </el-col>
 
-      <el-col :span="13" style="padding-top:4px;">
+      <el-col :span="13" style="padding-top:4px;float:left;text-align:left;">
+        &nbsp; 
         <el-button
           type="primary"
           plain
@@ -582,7 +583,7 @@ export default {
           _self.innerDataList = response.data.data;
           _self.innerDataListFull = response.data.data;
           _self.innerCount = response.data.pager.total;
-          //console.log(JSON.stringify(response.data.datalist));
+          console.log(JSON.stringify(response.data.data));
           _self.loading = false;
         })
         .catch(function(error) {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="3" style="padding-top:4px;">
+      <el-col :span="6" style="padding-top:4px;float:left;text-align:left;">
         <el-button
           type="primary"
           icon="el-icon-back"
@@ -17,7 +17,6 @@
           @click="onUpdateStatus('整编')"
         >接收</el-button>
       </el-col>
-      <el-col :span="3">&nbsp;</el-col>
       <el-col :span="4">
         <el-input
           v-model="inputkey"
@@ -33,13 +32,14 @@
         <DataGrid
           ref="transferDataGrid"
           key="transfer"
+          v-bind:isshowPage="false"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
           @pagechange="handleCurrentChange"
           v-bind:itemCount="transferCount"
           v-bind:tableHeight="leftTableHeight"
-          @rowclick="loadGridData"
+          @rowclick="loadGridData"  :isshowOption="true"
           @selectchange="transferselectChange"
         ></DataGrid>
       </el-col>
@@ -54,7 +54,7 @@
           @pagechange="pageChange"
           v-bind:isshowOption="true"
           v-bind:itemCount="itemCount"
-          @rowclick="showInnerFile"
+          @rowclick="showInnerFile"  :isshowOption="true"
           v-bind:tableHeight="rightTableHeight"
           @selectchange="selectChange"
         ></DataGrid>
@@ -70,7 +70,7 @@
             v-bind:tableHeight="rightTableHeight"
             v-bind:loading="loading"
             @pagesizechange="innerPageSizeChange"
-            @rowclick="selectOneFile"
+            @rowclick="selectOneFile"  :isshowOption="true"
             @pagechange="innerPageChange"
             @selectchange="selectInnerChange"
           ></DataGrid>

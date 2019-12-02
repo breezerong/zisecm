@@ -22,17 +22,16 @@
               </div>
               <el-col>
                 <el-form-item label="通过类型" :label-width="formLabelWidth" style="float:left">
-                  <el-select v-model="form.result">
-                    <el-option label="通过" value="通过"></el-option>
-                    <!--
-                    <el-option label="驳回" value="驳回"></el-option>
-                    -->
-                  </el-select>
+                  <el-radio-group  v-model="form.result"  >
+                      <el-radio-button label="通过"   >通过</el-radio-button>
+                      <el-radio-button label="驳回" aria-checked="true"   >驳回</el-radio-button>
+                   </el-radio-group>
+
                 </el-form-item>
               </el-col>
               <el-col>
                 <el-form-item label="审批意见" :label-width="formLabelWidth">
-                  <el-input v-model="form.message" auto-complete="off"></el-input>
+                  <el-input type="textarea" :autosize="{minRows:3}" v-model="form.message" auto-complete="off"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -94,7 +93,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page="currentPage"
-              :page-sizes="[1, 2, 100, 200]"
+              :page-sizes="[20, 50, 100, 200]"
               :page-size="pageSize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="itemCount">
@@ -119,7 +118,7 @@ export default {
       dataList: [],
       dataListFull: [],
       inputkey: "",
-      pageSize: 1,
+      pageSize: 20,
       itemCount: 0,
       selectedItems:[],
       currentPage: 1,
@@ -128,6 +127,7 @@ export default {
       dialogTitle:"查看任务",
       isCompleteSelected: false,
       tableHeight: window.innerHeight - 170,
+      result:"通过",
       form: {
         taskId: 0,
         result: "通过",
@@ -159,7 +159,7 @@ export default {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
         _self.loading = false;
-        _self.loadPageInfo();
+        _self.loadPageInfo(response.data.totalCount);
       })
       .catch(function(error) {
         console.log(error);
@@ -185,20 +185,11 @@ export default {
       this.refreshData();
     },
     // 加载页数 暂时未处理查询条件
-    loadPageInfo() {
+    loadPageInfo(val) {
       let _self = this;
-      var m = new Map();
-      m.set("condition", _self.inputkey);
-      axios.post("/workflow/getMyTodoCount",JSON.stringify(m))
-        .then(function(response) {
-          _self.itemCount = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
+      _self.itemCount = val;
+      _self.loading = false;
+     },
     completetask(indata) {
       let _self = this;
       if(_self.isCompleteSelected) {

@@ -31,17 +31,13 @@
         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
       </div>
     </el-dialog>
-    <table border="0" width="100%" height="100%">
-      <tr>
-        <td class="navbar">
-          <el-breadcrumb>
-            <el-breadcrumb-item>{{$t('menu.fileManage')}}</el-breadcrumb-item>
-            <el-breadcrumb-item>{{$t('menu.recycleBin')}}</el-breadcrumb-item>
-          </el-breadcrumb>
-        </td>
-      </tr>
       <el-container>
         <el-aside width="160px">
+          
+          <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
+            
+            <el-breadcrumb-item><i class="el-icon-delete-solid"></i>&nbsp; {{$t('menu.recycleBin')}}</el-breadcrumb-item>
+          </el-breadcrumb>
           <el-tree
             :props="defaultProps"
             :data="dataList"
@@ -53,7 +49,7 @@
           ></el-tree>
         </el-aside>
         <el-main>
-          <el-row>
+          <el-row style="padding-top:4px;">
             <el-col :span="4">
               <el-input
                 v-model="inputkey"
@@ -67,16 +63,22 @@
               &nbsp;&nbsp;&nbsp;
               <el-button
                 type="primary"
+                plain
+                size="medium"
                 icon="el-icon-refresh-right"
                 @click="restoreItem()"
               >{{$t('application.restore')+$t('application.document')}}</el-button>
               <el-button
                 type="primary"
+                plain
+                size="medium"
                 icon="el-icon-delete"
                 @click="deleleItem()"
               >{{$t('application.completely')+$t('application.delete')}}</el-button>
               <el-button
                 type="primary"
+                plain
+                size="medium"
                 icon="el-icon-upload2"
                 @click="exportItem()"
               >{{$t('application.export')+$t('application.document')}}</el-button>
@@ -159,7 +161,6 @@
           </el-row>
         </el-main>
       </el-container>
-    </table>
     <el-pagination
       background
       @size-change="handleSizeChange"
@@ -185,7 +186,7 @@ export default {
         dialogFormVisible: false,
         isIndeterminate: false
       },
-      tableHeight: window.innerHeight - 178,
+      tableHeight: window.innerHeight - 125,
       currentLanguage: "zh-cn",
       loading: false,
       currentFolder: [],

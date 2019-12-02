@@ -15,7 +15,7 @@
           border
           v-loading="loading"
           @selection-change="selectChange"
-          @sort-change="sortchange"
+          @sort-change="sortChange"
           style="width: 100%"
         >
           <el-table-column :label="$t('field.indexNumber')" width="60">
@@ -94,6 +94,7 @@ export default {
       gridList: [],
       currentFolder: "",
       loading: false,
+      tableHeight: window.innerHeight - 80,
       imageViewVisible: false
     };
   },
@@ -170,9 +171,28 @@ export default {
             "&.pdf"
         );
       } else {
-        _self.imageViewVisible = true;
+        let condition = indata.ID;
+        let href = this.$router.resolve({
+          path: '/viewdoc',
+          query: {
+            id: condition
+            //token: sessionStorage.getItem('access-token')
+          }
+        });
+        window.open(href.href, '_blank');
       }
-    }
+    },
+    selectChange(val) 
+    {
+      // console.log(JSON.stringify(val));
+      //this.selectedItems = val;
+    },
+    sortChange(column){
+      //console.log(JSON.stringify(column));
+      //console.log(column.column.property);
+      //console.log(column.column.order);//ascending, descending
+      //this.orderBy = column.column.property+ column.column.order=="ascending"?" ASC":" DESC";
+    },
   }
 };
 </script>

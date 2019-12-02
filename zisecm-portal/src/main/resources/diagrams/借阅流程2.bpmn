@@ -4,12 +4,12 @@
     <documentation>借阅流程 说明 ：^_^</documentation>
     <userTask id="usertask2" name="申请部门领导审批" default="flow29" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner_leader}">
       <extensionElements>
-        <flowable:executionListener event="start" delegateExpression="${startExecutorListener}"></flowable:executionListener>
+        <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="usertask3" name="文档所属部门领导审批" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_doc_leader}">
+    <userTask id="usertask3" name="文档所属部门领导审批" default="flow30" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_doc_leader}">
       <extensionElements>
-        <flowable:executionListener event="start" delegateExpression="${startExecutorListener}"></flowable:executionListener>
+        <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow2" name="否" sourceRef="exclusivegateway4" targetRef="usertask3"></sequenceFlow>
@@ -56,7 +56,9 @@
       </extensionElements>
     </exclusiveGateway>
     <sequenceFlow id="flow19" name="否" sourceRef="exclusivegateway6" targetRef="exclusivegateway7"></sequenceFlow>
-    <sequenceFlow id="flow20" name="通过" sourceRef="usertask3" targetRef="exclusivegateway5"></sequenceFlow>
+    <sequenceFlow id="flow20" name="通过" sourceRef="usertask3" targetRef="exclusivegateway5">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='通过'}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="flow21" name="下载" sourceRef="exclusivegateway6" targetRef="usertask4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='下载'}]]></conditionExpression>
     </sequenceFlow>
@@ -74,31 +76,27 @@
     <sequenceFlow id="flow24" name="纸质借阅" sourceRef="exclusivegateway8" targetRef="usertask5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅'}]]></conditionExpression>
     </sequenceFlow>
-    <serviceTask id="servicetask1" name="自动授权" flowable:class="com.ecm.flowable.listener.StartExecutorListener"></serviceTask>
+    <serviceTask id="servicetask1" name="自动授权" flowable:delegateExpression="${startExecutorListener}"></serviceTask>
     <sequenceFlow id="flow25" name="否" sourceRef="exclusivegateway8" targetRef="servicetask1"></sequenceFlow>
     <sequenceFlow id="flow27" name="纸质借阅&amp;内部公开" sourceRef="exclusivegateway_paperAndOpen" targetRef="usertask5">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅' && securityLevel=='内部公开'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="servicetask1"></sequenceFlow>
-    <userTask id="usertask6" name="借阅驳回" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner}">
+    <userTask id="usertask6" name="借阅驳回" default="flow38" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner}">
       <extensionElements>
-        <flowable:executionListener event="start" delegateExpression="${startExecutorListener}"></flowable:executionListener>
+        <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
     </userTask>
-    <sequenceFlow id="flow29" name="驳回" sourceRef="usertask2" targetRef="usertask6">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='驳回'}]]></conditionExpression>
-    </sequenceFlow>
+    <sequenceFlow id="flow29" name="驳回" sourceRef="usertask2" targetRef="usertask6"></sequenceFlow>
     <sequenceFlow id="flow30" name="驳回" sourceRef="usertask3" targetRef="usertask6"></sequenceFlow>
-    <sequenceFlow id="flow31" name="驳回" sourceRef="usertask4" targetRef="usertask6">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='驳回'}]]></conditionExpression>
-    </sequenceFlow>
+    <sequenceFlow id="flow31" name="驳回" sourceRef="usertask4" targetRef="usertask6"></sequenceFlow>
     <sequenceFlow id="flow32" name="通过" sourceRef="usertask6" targetRef="usertask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='通过'}]]></conditionExpression>
     </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
-    <sequenceFlow id="flow36" sourceRef="servicetask1" targetRef="endevent1" flowable:class="com.ecm.flowable.listener.StartExecutorListener"></sequenceFlow>
+    <sequenceFlow id="flow36" name="结束" sourceRef="servicetask1" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow38" name="结束" sourceRef="usertask6" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow40" sourceRef="usertask5" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow40" name="结束" sourceRef="usertask5" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow41" name="通过" sourceRef="usertask2" targetRef="exclusivegateway4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='通过'}]]></conditionExpression>
     </sequenceFlow>
@@ -162,10 +160,10 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
-        <omgdi:waypoint x="65.0" y="91.0"></omgdi:waypoint>
+        <omgdi:waypoint x="195.0" y="97.0"></omgdi:waypoint>
         <omgdi:waypoint x="230.0" y="91.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="24.0" x="65.0" y="91.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="80" y="97.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
@@ -290,6 +288,9 @@
         <omgdi:waypoint x="382.0" y="620.0"></omgdi:waypoint>
         <omgdi:waypoint x="380.0" y="808.0"></omgdi:waypoint>
         <omgdi:waypoint x="1015.0" y="807.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="382.0" y="620.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow38" id="BPMNEdge_flow38">
         <omgdi:waypoint x="865.0" y="88.0"></omgdi:waypoint>
@@ -297,12 +298,15 @@
         <omgdi:waypoint x="1189.0" y="807.0"></omgdi:waypoint>
         <omgdi:waypoint x="1050.0" y="807.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="865.0" y="88.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="24.0" x="865.0" y="88.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow40" id="BPMNEdge_flow40">
         <omgdi:waypoint x="1032.0" y="755.0"></omgdi:waypoint>
         <omgdi:waypoint x="1032.0" y="790.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="100.0" x="1032.0" y="755.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow41" id="BPMNEdge_flow41">
         <omgdi:waypoint x="382.0" y="119.0"></omgdi:waypoint>

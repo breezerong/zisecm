@@ -25,7 +25,7 @@
                   </template>
                  </el-table-column>
                 </el-table-column>
-                <el-table-column prop="name" label="名称" min-width="15%" sortable>
+                <el-table-column prop="name" label="名称" min-width="20%" sortable>
                 </el-table-column>
                 <el-table-column prop="startUser" label="用户" width="120" >
                 </el-table-column>
@@ -179,7 +179,7 @@ export default {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
         _self.loading = false;
-        _self.loadPageInfo();
+        _self.loadPageInfo(response.data.totalCount);
       })
       .catch(function(error) {
         console.log(error);
@@ -204,26 +204,19 @@ export default {
       this.refreshData();
     },
     // 加载页数 暂时未处理查询条件
-    loadPageInfo() {
+    loadPageInfo(val) {
       let _self = this;
-      var m = new Map();
-      m.set("condition", _self.inputkey);
-      axios.post("/workflow/getMyWorkflowCount",JSON.stringify(m))
-        .then(function(response) {
-          _self.itemCount = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
+      _self.itemCount = val;
+      _self.loading = false;
+     },
     showitem(indata) {
       let _self = this;
-      _self.refreshProcess(indata.workflowId);
-      axios.post("/workflow/getWorkflowTask",JSON.stringify(indata.workflowId))
+      _self.refreshProcess(indata.id);
+       var m = new Map();
+      m.set("processInstanceId",indata.id);
+     axios.post("/workflow/getWorkflowTask",JSON.stringify(m))
         .then(function(response) {
-          _self.taskList = response.data.data;
+          _self.taskList = response.data;
           var k=-1;
           for(var i in _self.taskList){
             if(_self.taskList[i].completeDate==null){

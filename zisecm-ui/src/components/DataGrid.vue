@@ -4,7 +4,7 @@
                 <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
                   <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
                   <div slot="footer" class="dialog-footer">
-                    <el-button @click="saveItem();propertyVisible = false">{{$t('application.save')}}</el-button> 
+                    <el-button @click="saveItem()">{{$t('application.save')}}</el-button> 
                     <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
                   </div>
                 </el-dialog>
@@ -21,7 +21,7 @@
                     </div>
                 </el-dialog>
                     <el-table
-                        :height="tableHeight"
+                        :max-height="tableHeight"
                         :data="itemDataList"
                         border
                         @selection-change="selectChange"
@@ -36,13 +36,13 @@
                             <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column width="1"></el-table-column>
+                        
                         <el-table-column width="40" v-if="isshowicon">
                           <template slot-scope="scope">
                             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
                           </template>
                         </el-table-column>
-                        <div v-for="(citem,idx) in columnList">
+                        <div v-for="(citem,idx) in columnList" :key="idx+'_C'">
                           <div v-if="citem.visibleType==1">
                             <div v-if="(citem.width+'').indexOf('%')>0">
                                 <el-table-column :label="citem.label" :prop="citem.attrName" :min-width="citem.width" :sortable="citem.allowOrderby">
@@ -71,19 +71,16 @@
                           </div>
                         </div>
                         <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="140">
-                          
-                          <template slot="header" slot-scope="scope">
-                                <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
-                            </template>
+                          <template slot="header">
+                            <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
+                          </template>
                           <template slot-scope="scope">
                             <!-- <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button> -->
                             
                               <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                              <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>                 
-                            
-                          
+                              <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
                           </template>
                         </el-table-column>
                       </el-table>
@@ -116,13 +113,14 @@ export default {
             propertyVisible:false,
             currentPage:1,
             pageSize: 20,
-            showFields:[]
+            showFields:[],
+            selectedItemId:""
         }
     },
     props:{
         itemDataList:{type:Array,default:false},
         columnList:{type:Array,default:false},
-        isshowicon:{type:Boolean,default:false},
+        isshowicon:{type:Boolean,default:true},
         isshowOption:{type:Boolean,default:false},
         tableHeight:{type:[String,Number],default:window.innerHeight - 408},
         tableWidth:{type:[String,Number],default:'100%'},
@@ -171,6 +169,7 @@ export default {
      //查看属性
     showItemProperty(indata) {
       let _self = this;
+      _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
       setTimeout(()=>{
         if(_self.$refs.ShowProperty){
@@ -179,6 +178,17 @@ export default {
       }
       },10);
       
+    },
+    onSaved(indata){
+       if(indata=='update')
+      {
+        this.$message(this.$t("message.saveSuccess"));
+      }
+      else
+      {
+        //this.$message("新建成功!");
+      }
+      this.propertyVisible = false;
     },
         showFieldOption(){
             let _self=this;
