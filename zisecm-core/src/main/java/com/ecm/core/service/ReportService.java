@@ -35,7 +35,7 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getDrawingPorjectData(String token) {
-		String sql ="select C_PROJECT, count(*) as mycount from ecm_document where `TYPE_NAME`='图纸' group by `C_PROJECT` order by `C_PROJECT`";
+		String sql ="select C_PROJECT, count(*) as mycount from ecm_document where TYPE_NAME='图纸' group by C_PROJECT order by C_PROJECT";
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
@@ -67,7 +67,7 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getDrawingStatusData(String token, String projectName) {
-		String sql ="select `STATUS`, count(*) as mycount from ecm_document where `TYPE_NAME`='图纸' and C_PROJECT='"+projectName+"' group by `STATUS` order by `STATUS`";
+		String sql ="select STATUS, count(*) as mycount from ecm_document where TYPE_NAME='图纸' and C_PROJECT='"+projectName+"' group by STATUS order by STATUS";
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
@@ -82,7 +82,7 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getDocumentTypeData(String token) {
-		String sql ="select TYPE_NAME, count(*) as mycount from ecm_document  group by `TYPE_NAME` order by `TYPE_NAME`";
+		String sql ="select TYPE_NAME, count(*) as mycount from ecm_document  group by TYPE_NAME order by TYPE_NAME";
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
