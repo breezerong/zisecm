@@ -14,7 +14,7 @@
                 <i class="el-icon-time"></i>
                 <span slot="title">
                   <router-link to="/workflow/todotask">待办工作</router-link>
-                  <el-badge :value="todoCount" class="item"></el-badge>
+                  <!-- <el-badge :value="todoCount" class="item"></el-badge> -->
                 </span>
               </el-menu-item>
               <el-menu-item index="12">
@@ -77,16 +77,16 @@ export default {
     // 刷新待办数量
     refreshTodo() {
       let _self = this;
-      _self.loading = true;
-      axios.get("/workflow/getMyAllTodoCount")
-        .then(function(response) {
-          _self.todoCount = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
+      // _self.loading = true;
+      // axios.get("/workflow/getMyAllTodoCount")
+      //   .then(function(response) {
+      //     _self.todoCount = response.data.data;
+      //     _self.loading = false;
+      //   })
+      //   .catch(function(error) {
+      //     console.log(error);
+      //     _self.loading = false;
+      //   });
     },
   }
 };

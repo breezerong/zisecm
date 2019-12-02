@@ -37,6 +37,11 @@ const router = new Router({
 							path: '',
 							name: '首页内容',
 							component: () => import('@/views/HomeContent.vue'),
+						},
+						{
+							path: '/dc/folderviewer',
+							name: '通知消息',
+							component: () => import('@/views/dc/FolderViewer.vue'),
 						}
 					]
 				},

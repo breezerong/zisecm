@@ -27,6 +27,7 @@
                         @selection-change="selectChange"
                         @sort-change="sortchange"
                         @row-click="rowClick"
+                        v-loading="loading"
                         :style="{'width': tableWidth}">
                         <el-table-column type="selection" width="40">
                         </el-table-column>
@@ -124,7 +125,8 @@ export default {
         tableHeight:{type:[String,Number],default:window.innerHeight - 408},
         tableWidth:{type:[String,Number],default:'100%'},
         itemCount:{type:[String,Number]},
-        isshowPage:{type:Boolean,default:true}
+        isshowPage:{type:Boolean,default:true},
+        loading:{type:Boolean,default:false}
     },
    watch:{
     

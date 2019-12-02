@@ -12,7 +12,7 @@
               style="width: 100%">
                 <el-table-column label="序号" width="65">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.id==''">
+                    <div v-if="scope.row.endTime==''">
                       <el-tooltip class="item" effect="light" content="未完成" placement="right">
                         <el-button type="success" round>{{scope.$index+1}}</el-button>
                       </el-tooltip>
@@ -29,7 +29,7 @@
                 </el-table-column>
                 <el-table-column prop="startUser" label="用户" width="120" >
                 </el-table-column>
-                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter"  width="160" sortable>
+                <el-table-column prop="startTime" label="开始时间" :formatter="dateFormatter"  width="160" sortable>
                 </el-table-column>
                 <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"  width="160" sortable>
                 </el-table-column>
@@ -72,21 +72,20 @@
               style="width: 100%">
                 <el-table-column label="序号" width="80">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.completeDate">
-                      <el-tooltip class="item" effect="light" content="已完成" placement="right">
-                        <el-button type="info" round>{{scope.$index+1}}</el-button>
-                      </el-tooltip>
-                    </div>
-                    <div v-else>
-                      <el-tooltip class="item" effect="light" content="未完成" placement="right">
+                    <div v-if="scope.row.endTime==''">
+                     <el-tooltip class="item" effect="light" content="未完成" placement="right">
                         <el-button type="success" round>{{scope.$index+1}}</el-button>
+                      </el-tooltip>                    </div>
+                    <div v-else>
+                       <el-tooltip class="item" effect="light" content="已完成" placement="right">
+                        <el-button type="info" round>{{scope.$index+1}}</el-button>
                       </el-tooltip>
                     </div>
                   </template>
                  </el-table-column>
               <el-table-column prop="name" label="名称" min-width="20%" >
               </el-table-column>
-              <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
+              <el-table-column prop="startTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
               </el-table-column>
               <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
               </el-table-column>
@@ -156,15 +155,15 @@ export default {
     refreshProcess(wfId) {
       let _self = this;
       _self.loading = true;
-      axios.post('/workflow/getWfActivities',wfId)
-      .then(function(response) {
-        _self.activityList = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+      // axios.post('/workflow/getWfActivities',wfId)
+      // .then(function(response) {
+      //   _self.activityList = response.data.data;
+      //   _self.loading = false;
+      // })
+      // .catch(function(error) {
+      //   console.log(error);
+      //   _self.loading = false;
+      // });
     },
     refreshData() {
       let _self = this;

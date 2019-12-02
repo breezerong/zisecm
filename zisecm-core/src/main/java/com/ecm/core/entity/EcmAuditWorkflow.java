@@ -8,16 +8,25 @@ public class EcmAuditWorkflow extends EcmSysObject {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private String startUser;
+
+	public String getStartUser() {
+		return startUser;
+	}
+
+	public void setStartUser(String startUser) {
+		this.startUser = startUser;
+	}
 
 	private String processName;
 
-    private String workflowId;
+    private String processInstanceId;
 
-    private String workflowName;
+    private String processInstanceName;
 
-    private Date startDate;
+    private Date startTime;
 
-    private Date completeDate;
+    private Date endTime;
 
     private String docId;
 
@@ -27,7 +36,7 @@ public class EcmAuditWorkflow extends EcmSysObject {
 
     
     public EcmAuditWorkflow() {
-    	fields = "ID,CREATOR,PROCESS_NAME,WORKFLOW_ID,WORKFLOW_NAME,START_DATE,COMPLETE_DATE," + 
+    	fields = "ID,START_USER,PROCESS_NAME,PROCESS_INSTANCE_ID,PROCESS_INSTANCE_NAME,CREATE_TIME,END_TIME," + 
     			"DOC_ID,FORM_ID,DESCRIPTION";
     }
 
@@ -39,36 +48,36 @@ public class EcmAuditWorkflow extends EcmSysObject {
         this.processName = processName == null ? null : processName.trim();
     }
 
-    public String getWorkflowId() {
-        return workflowId;
+    public String getProcessInstanceId() {
+        return processInstanceId;
     }
 
-    public void setWorkflowId(String workflowId) {
-        this.workflowId = workflowId;
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
     }
 
-    public String getWorkflowName() {
-        return workflowName;
+    public String getProcessInstanceName() {
+        return processInstanceName;
     }
 
-    public void setWorkflowName(String workflowName) {
-        this.workflowName = workflowName == null ? null : workflowName.trim();
+    public void setProcessInstanceName(String processInstanceName) {
+        this.processInstanceName = processInstanceName == null ? null : processInstanceName.trim();
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 
-    public Date getCompleteDate() {
-        return completeDate;
+    public Date getEndTime() {
+        return endTime;
     }
 
-    public void setCompleteDate(Date completeDate) {
-        this.completeDate = completeDate;
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public String getDocId() {
