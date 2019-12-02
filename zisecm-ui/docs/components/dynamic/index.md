@@ -40,3 +40,15 @@ export default{
 }
 </script>
 ~~~
+
+## keep-alive
+### 动态组件的问题
+    在每次切换组件时组件就会重新加载、渲染并获取数据，如果每个组件在created时都会重新获取数据的话，那么在系统在有一定量的用户群后就会加大数据库的访问压力。
+    从官方的说法是： https://cn.vuejs.org/v2/cookbook/avoiding-memory-leaks.html
+    简单的说会用以导致内存泄漏，俗称浏览器崩溃
+### 处理方法
+~~~ html
+<keep-alive>
+    <component v-bind:is="currentComponent"></component>
+</keep-alive>
+~~~
