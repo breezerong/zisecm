@@ -3,11 +3,11 @@
 <mapper namespace="com.ecm.core.dao.EcmAuditWorkitemMapper">
   <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmAuditWorkitem">
     <id column="ID" jdbcType="VARCHAR" property="id" />
-    <result column="PERFORMER" jdbcType="VARCHAR" property="performer" />
-    <result column="START_DATE" jdbcType="TIMESTAMP" property="startDate" />
-    <result column="COMPLETE_DATE" jdbcType="TIMESTAMP" property="completeDate" />
+    <result column="ASSIGNEE" jdbcType="VARCHAR" property="assignee" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
     <result column="TASK_NAME" jdbcType="VARCHAR" property="taskName" />
-    <result column="WORKFLOW_ID" jdbcType="VARCHAR" property="workflowId" />
+    <result column="PROCESS_INSTANCE_ID" jdbcType="VARCHAR" property="processInstanceId" />
     <result column="TASK_ID" jdbcType="VARCHAR" property="taskId" />
     <result column="DOC_ID" jdbcType="VARCHAR" property="docId" />
     <result column="FORM_ID" jdbcType="VARCHAR" property="formId" />
@@ -16,7 +16,7 @@
     <result column="MESSAGE" jdbcType="VARCHAR" property="message" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, PERFORMER, START_DATE, COMPLETE_DATE, TASK_NAME, WORKFLOW_ID, TASK_ID, DOC_ID, 
+    ID, ASSIGNEE, CREATE_TIME, END_TIME, TASK_NAME, PROCESS_INSTANCE_ID, TASK_ID, DOC_ID, 
     FORM_ID, TASK_TYPE, RESULT, MESSAGE
   </sql>
   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
@@ -45,13 +45,13 @@
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
-    insert into ecm_audit_workitem (ID, PERFORMER, START_DATE, 
-      COMPLETE_DATE, TASK_NAME, WORKFLOW_ID, 
+    insert into ecm_audit_workitem (ID, ASSIGNEE, CREATE_TIME, 
+      END_TIME, TASK_NAME, PROCESS_INSTANCE_ID, 
       TASK_ID, DOC_ID, FORM_ID, 
       TASK_TYPE, RESULT, MESSAGE
       )
-    values (#{id,jdbcType=VARCHAR}, #{performer,jdbcType=VARCHAR}, #{startDate,jdbcType=TIMESTAMP}, 
-      #{completeDate,jdbcType=TIMESTAMP}, #{taskName,jdbcType=VARCHAR}, #{workflowId,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{assignee,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{taskName,jdbcType=VARCHAR}, #{processInstanceId,jdbcType=VARCHAR}, 
       #{taskId,jdbcType=VARCHAR}, #{docId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
       #{taskType,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}
       )
@@ -62,20 +62,20 @@
       <if test="id != null">
         ID,
       </if>
-      <if test="performer != null">
-        PERFORMER,
+      <if test="assignee != null">
+        ASSIGNEE,
       </if>
-      <if test="startDate != null">
-        START_DATE,
+      <if test="createTime != null">
+        CREATE_TIME,
       </if>
-      <if test="completeDate != null">
-        COMPLETE_DATE,
+      <if test="endTime != null">
+        END_TIME,
       </if>
       <if test="taskName != null">
         TASK_NAME,
       </if>
-      <if test="workflowId != null">
-        WORKFLOW_ID,
+      <if test="processInstanceId != null">
+        PROCESS_INSTANCE_ID,
       </if>
       <if test="taskId != null">
         TASK_ID,
@@ -100,20 +100,20 @@
       <if test="id != null">
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="performer != null">
-        #{performer,jdbcType=VARCHAR},
+      <if test="assignee != null">
+        #{assignee,jdbcType=VARCHAR},
       </if>
-      <if test="startDate != null">
-        #{startDate,jdbcType=TIMESTAMP},
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="completeDate != null">
-        #{completeDate,jdbcType=TIMESTAMP},
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="taskName != null">
         #{taskName,jdbcType=VARCHAR},
       </if>
-      <if test="workflowId != null">
-        #{workflowId,jdbcType=VARCHAR},
+      <if test="processInstanceId != null">
+        #{processInstanceId,jdbcType=VARCHAR},
       </if>
       <if test="taskId != null">
         #{taskId,jdbcType=VARCHAR},
@@ -138,20 +138,20 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
     update ecm_audit_workitem
     <set>
-      <if test="performer != null">
-        PERFORMER = #{performer,jdbcType=VARCHAR},
+      <if test="assignee != null">
+        ASSIGNEE = #{assignee,jdbcType=VARCHAR},
       </if>
-      <if test="startDate != null">
-        START_DATE = #{startDate,jdbcType=TIMESTAMP},
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="completeDate != null">
-        COMPLETE_DATE = #{completeDate,jdbcType=TIMESTAMP},
+      <if test="endTime != null">
+        END_TIME = #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="taskName != null">
         TASK_NAME = #{taskName,jdbcType=VARCHAR},
       </if>
-      <if test="workflowId != null">
-        WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      <if test="processInstanceId != null">
+        PROCESS_INSTANCE_ID = #{processInstanceId,jdbcType=VARCHAR},
       </if>
       <if test="taskId != null">
         TASK_ID = #{taskId,jdbcType=VARCHAR},
@@ -176,11 +176,11 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
     update ecm_audit_workitem
-    set PERFORMER = #{performer,jdbcType=VARCHAR},
-      START_DATE = #{startDate,jdbcType=TIMESTAMP},
-      COMPLETE_DATE = #{completeDate,jdbcType=TIMESTAMP},
+    set ASSIGNEE = #{assignee,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      END_TIME = #{endTime,jdbcType=TIMESTAMP},
       TASK_NAME = #{taskName,jdbcType=VARCHAR},
-      WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      PROCESS_INSTANCE_ID = #{processInstanceId,jdbcType=VARCHAR},
       TASK_ID = #{taskId,jdbcType=VARCHAR},
       DOC_ID = #{docId,jdbcType=VARCHAR},
       FORM_ID = #{formId,jdbcType=VARCHAR},

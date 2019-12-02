@@ -9,15 +9,15 @@ public class EcmAuditWorkitem extends EcmObject{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String performer;
+	private String assignee;
+ 
+	private Date createTime;
 
-    private Date startDate;
-
-    private Date completeDate;
+    private Date endTime;
 
     private String taskName;
 
-    private String workflowId;
+    private String processInstanceId;
 
     private String taskId;
 
@@ -31,28 +31,28 @@ public class EcmAuditWorkitem extends EcmObject{
 
     private String message;
 
-    public String getPerformer() {
-        return performer;
+    public String getAssignee() {
+        return assignee;
     }
 
-    public void setPerformer(String performer) {
-        this.performer = performer == null ? null : performer.trim();
+    public void setAssignee(String assignee) {
+        this.assignee = assignee == null ? null : assignee.trim();
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public Date getCompleteDate() {
-        return completeDate;
+    public Date getEndTime() {
+        return endTime;
     }
 
-    public void setCompleteDate(Date completeDate) {
-        this.completeDate = completeDate;
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public String getTaskName() {
@@ -63,12 +63,12 @@ public class EcmAuditWorkitem extends EcmObject{
         this.taskName = taskName == null ? null : taskName.trim();
     }
 
-    public String getWorkflowId() {
-        return workflowId;
+    public String getProcessInstanceId() {
+        return processInstanceId;
     }
 
-    public void setWorkflowId(String workflowId) {
-        this.workflowId = workflowId;
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
     }
 
     public String getTaskId() {

@@ -111,7 +111,7 @@ public class WorkitemService extends EcmObjectService<EcmWorkitem> implements IW
 				List<EcmAuditWorkflow> list = ecmAuditWorkflowMapper.selectByCondition(sql);
 				if(list.size()>0){
 					EcmAuditWorkflow awf = list.get(0);
-					awf.setCompleteDate(new Date());
+//					awf.setCompleteDate(new Date());
 					ecmAuditWorkflowMapper.updateByPrimaryKey(awf);
 				}
 				serverEvent.complateWorkflow(token, workflow);
@@ -127,29 +127,29 @@ public class WorkitemService extends EcmObjectService<EcmWorkitem> implements IW
 		cond = " WORKFLOW_ID='"+queueItem.getRouterId()+"' and TASK_ID='"+queueItem.getId()+"'";
 		List<EcmAuditWorkitem> list=  ecmAuditWorkitemMapper.selectByCondition(cond);
 		EcmAuditWorkitem audit =null;
-		if(list.size()>0) {
-			audit =	list.get(0);
-			audit.setCompleteDate(new Date());
-			audit.setPerformer(userName);
-			audit.setResult(result);
-			audit.setMessage(message);
-			ecmAuditWorkitemMapper.updateByPrimaryKey(audit);
-		}
-		else {
-			audit =	new EcmAuditWorkitem();
-			audit.createId();
-			audit.setStartDate(queueItem.getSendDate());
-			audit.setCompleteDate(new Date());
-			audit.setDocId(docId);
-			audit.setFormId(formId);
-			audit.setTaskName(workitem.getName());
-			audit.setPerformer(userName);
-			audit.setResult(result);
-			audit.setMessage(message);
-			audit.setWorkflowId(workitem.getWorkflowId());
-			audit.setTaskId(queueItem.getId());
-			ecmAuditWorkitemMapper.insert(audit);
-		}
+//		if(list.size()>0) {
+//			audit =	list.get(0);
+//			audit.setCompleteDate(new Date());
+//			audit.setPerformer(userName);
+//			audit.setResult(result);
+//			audit.setMessage(message);
+//			ecmAuditWorkitemMapper.updateByPrimaryKey(audit);
+//		}
+//		else {
+//			audit =	new EcmAuditWorkitem();
+//			audit.createId();
+//			audit.setStartDate(queueItem.getSendDate());
+//			audit.setCompleteDate(new Date());
+//			audit.setDocId(docId);
+//			audit.setFormId(formId);
+//			audit.setTaskName(workitem.getName());
+//			audit.setPerformer(userName);
+//			audit.setResult(result);
+//			audit.setMessage(message);
+//			audit.setWorkflowId(workitem.getWorkflowId());
+//			audit.setTaskId(queueItem.getId());
+//			ecmAuditWorkitemMapper.insert(audit);
+//		}
 		return true;
 	}
 	@Override
@@ -162,20 +162,20 @@ public class WorkitemService extends EcmObjectService<EcmWorkitem> implements IW
 	@Transactional(rollbackFor = Exception.class)
 	public boolean openTask(String token, EcmQueueItem queueItem) throws EcmException, AccessDeniedException {
 		if(queueItem.getStatus()==0) {
-			EcmWorkitem workitem = ecmWorkitemMapper.selectByPrimaryKey(queueItem.getWorkitemId());
-			EcmWorkflow workflow= ecmWorkflowMapper.selectByPrimaryKey(workitem.getWorkflowId());
-			queueItem.setStatus(1);
-			ecmQueueItemMapper.updateByPrimaryKey(queueItem);
-			EcmAuditWorkitem audit = new EcmAuditWorkitem();
-			audit.createId();
-			audit.setStartDate(new Date());
-			audit.setDocId(workflow.getDocId());
-			audit.setFormId(workflow.getFormId());
-			audit.setTaskName(workitem.getName());
-			audit.setPerformer(getSession(token).getCurrentUser().getUserName());
-			audit.setWorkflowId(workitem.getWorkflowId());
-			audit.setTaskId(queueItem.getId());
-			ecmAuditWorkitemMapper.insert(audit);
+//			EcmWorkitem workitem = ecmWorkitemMapper.selectByPrimaryKey(queueItem.getWorkitemId());
+//			EcmWorkflow workflow= ecmWorkflowMapper.selectByPrimaryKey(workitem.getWorkflowId());
+//			queueItem.setStatus(1);
+//			ecmQueueItemMapper.updateByPrimaryKey(queueItem);
+//			EcmAuditWorkitem audit = new EcmAuditWorkitem();
+//			audit.createId();
+//			audit.setStartDate(new Date());
+//			audit.setDocId(workflow.getDocId());
+//			audit.setFormId(workflow.getFormId());
+//			audit.setTaskName(workitem.getName());
+//			audit.setPerformer(getSession(token).getCurrentUser().getUserName());
+//			audit.setWorkflowId(workitem.getWorkflowId());
+//			audit.setTaskId(queueItem.getId());
+//			ecmAuditWorkitemMapper.insert(audit);
 		}
 		return true;
 	}

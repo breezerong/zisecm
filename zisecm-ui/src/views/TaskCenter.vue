@@ -12,8 +12,6 @@
                 <i class="el-icon-time"></i>
                 <span slot="title">
                   <router-link to="/workflow/todotask">待办工作</router-link>
-                  <el-badge :value="todoCount" class="item">
-                  </el-badge>
                 </span>
               </el-menu-item>
               <el-menu-item index="12">
@@ -39,28 +37,20 @@ export default {
   name: 'TaskCenter',
   data() {
     return {
-      todoCount:0,
       username:'',
       menuHeight: window.innerHeight -64
     };
   },
    created(){ 
     let _self = this;
-    _self.refreshCount();
+     _self.refreshCount();
     },
   methods: {
     refreshCount(){ 
     let _self = this;
-    _self.loading = true;
-    axios.get('/workflow/getMyAllTodoCount')
-      .then(function(response) {
-        _self.todoCount = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+        // _self.totalCount = response.data.totalCount;
+        // _self.loading = false;
+
 
     }
   }

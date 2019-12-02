@@ -50,7 +50,8 @@
           </el-card>
           <el-card :body-style="{ height: '260px' }">
             <div slot="header" class="clearfix">
-              <span style="float: left;">待办任务</span>
+              <span style="float: left;">待办任务<el-badge :value="totalCount" class="item"></el-badge>
+              </span>
               <el-link
                 :underline="false"
                 style="float: right; padding: 3px 0"
@@ -61,7 +62,7 @@
             <el-table :data="dataList.todoData" v-loading="loadingTodoData" style="width:100%;" :show-header="false">
               <el-table-column label="任务名称">
                 <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.name)}}</el-link>
-              </el-table-column>
+             </el-table-column>
               <el-table-column prop="startUser" label="发送人"></el-table-column>
               <el-table-column label="发送时间" align="right">
                 <template slot-scope="scope">{{dateFormat(scope.row.createTime)}}</template>
@@ -165,6 +166,7 @@ export default {
       propertyOnly: false,
       cards: [],
       cardsLabel: [],
+      totalCount:0,
       groupData: [],
       collectionChart: Object,
       dialogVisible:false
@@ -229,6 +231,7 @@ export default {
         .post("/workflow/todoTask", JSON.stringify(m))
         .then(function(response) {
           _self.dataList.todoData = response.data.data;
+          _self.totalCount = response.data.totalCount;
           _self.loadingTodoData = false
         })
         .catch(function(error) {

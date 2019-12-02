@@ -3,18 +3,18 @@
 <mapper namespace="com.ecm.core.dao.EcmAuditWorkflowMapper">
   <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmAuditWorkflow">
     <id column="ID" jdbcType="VARCHAR" property="id" />
-    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="START_USER" jdbcType="VARCHAR" property="startUser" />
     <result column="PROCESS_NAME" jdbcType="VARCHAR" property="processName" />
-    <result column="WORKFLOW_ID" jdbcType="VARCHAR" property="workflowId" />
-    <result column="WORKFLOW_NAME" jdbcType="VARCHAR" property="workflowName" />
-    <result column="START_DATE" jdbcType="TIMESTAMP" property="startDate" />
-    <result column="COMPLETE_DATE" jdbcType="TIMESTAMP" property="completeDate" />
+    <result column="PROCESS_INSTANCE_ID" jdbcType="VARCHAR" property="processInstanceId" />
+    <result column="PROCESS_INSTANCE_NAME" jdbcType="VARCHAR" property="processInstanceName" />
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
     <result column="DOC_ID" jdbcType="VARCHAR" property="docId" />
     <result column="FORM_ID" jdbcType="VARCHAR" property="formId" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, CREATOR, PROCESS_NAME, WORKFLOW_ID, WORKFLOW_NAME, START_DATE, COMPLETE_DATE, 
+    ID, START_USER, PROCESS_NAME,PROCESS_INSTANCE_ID, PROCESS_INSTANCE_NAME, START_TIME, END_TIME,  
     DOC_ID, FORM_ID, DESCRIPTION
   </sql>
   <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -43,13 +43,13 @@
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmAuditWorkflow">
-    insert into ecm_audit_workflow (ID, CREATOR, PROCESS_NAME, 
-      WORKFLOW_ID, WORKFLOW_NAME, START_DATE, 
-      COMPLETE_DATE, DOC_ID, FORM_ID, 
+    insert into ecm_audit_workflow (ID, START_USER, PROCESS_NAME, 
+      PROCESS_INSTANCE_ID, PROCESS_INSTANCE_NAME, START_TIME, 
+      END_TIME, DOC_ID, FORM_ID, 
       DESCRIPTION)
     values (#{id,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{processName,jdbcType=VARCHAR}, 
-      #{workflowId,jdbcType=VARCHAR}, #{workflowName,jdbcType=VARCHAR}, #{startDate,jdbcType=TIMESTAMP}, 
-      #{completeDate,jdbcType=TIMESTAMP}, #{docId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
+      #{processInstanceId,jdbcType=VARCHAR}, #{processInstanceName,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{docId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
       #{description,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmAuditWorkflow" useGeneratedKeys="true" keyColumn='ID' keyProperty="id">
@@ -59,22 +59,22 @@
         ID,
       </if>
       <if test="creator != null">
-        CREATOR,
+        START_USER,
       </if>
       <if test="processName != null">
         PROCESS_NAME,
       </if>
-      <if test="workflowId != null">
-        WORKFLOW_ID,
+      <if test="processInstanceId != null">
+        PROCESS_INSTANCE_ID,
       </if>
-      <if test="workflowName != null">
-        WORKFLOW_NAME,
+      <if test="processInstanceName != null">
+        PROCESS_INSTANCE_NAME,
       </if>
-      <if test="startDate != null">
-        START_DATE,
+      <if test="startTime != null">
+        START_TIME,
       </if>
-      <if test="completeDate != null">
-        COMPLETE_DATE,
+      <if test="endTime != null">
+        END_TIME,
       </if>
       <if test="docId != null">
         DOC_ID,
@@ -96,17 +96,17 @@
       <if test="processName != null">
         #{processName,jdbcType=VARCHAR},
       </if>
-      <if test="workflowId != null">
-        #{workflowId,jdbcType=VARCHAR},
+      <if test="processInstanceId != null">
+        #{processInstanceId,jdbcType=VARCHAR},
       </if>
-      <if test="workflowName != null">
-        #{workflowName,jdbcType=VARCHAR},
+      <if test="processInstanceName != null">
+        #{processInstanceName,jdbcType=VARCHAR},
       </if>
-      <if test="startDate != null">
-        #{startDate,jdbcType=TIMESTAMP},
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="completeDate != null">
-        #{completeDate,jdbcType=TIMESTAMP},
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="docId != null">
         #{docId,jdbcType=VARCHAR},
@@ -123,22 +123,22 @@
     update ecm_audit_workflow
     <set>
       <if test="creator != null">
-        CREATOR = #{creator,jdbcType=VARCHAR},
+        START_USER = #{creator,jdbcType=VARCHAR},
       </if>
       <if test="processName != null">
         PROCESS_NAME = #{processName,jdbcType=VARCHAR},
       </if>
-      <if test="workflowId != null">
-        WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      <if test="processInstanceId != null">
+        PROCESS_INSTANCE_ID = #{processInstanceId,jdbcType=VARCHAR},
       </if>
-      <if test="workflowName != null">
-        WORKFLOW_NAME = #{workflowName,jdbcType=VARCHAR},
+      <if test="processInstanceName != null">
+        PROCESS_INSTANCE_NAME = #{processInstanceName,jdbcType=VARCHAR},
       </if>
-      <if test="startDate != null">
-        START_DATE = #{startDate,jdbcType=TIMESTAMP},
+      <if test="startTime != null">
+        START_TIME = #{startTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="completeDate != null">
-        COMPLETE_DATE = #{completeDate,jdbcType=TIMESTAMP},
+      <if test="endTime != null">
+        END_TIME = #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="docId != null">
         DOC_ID = #{docId,jdbcType=VARCHAR},
@@ -154,12 +154,12 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmAuditWorkflow">
     update ecm_audit_workflow
-    set CREATOR = #{creator,jdbcType=VARCHAR},
+    set START_USER = #{creator,jdbcType=VARCHAR},
       PROCESS_NAME = #{processName,jdbcType=VARCHAR},
-      WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
-      WORKFLOW_NAME = #{workflowName,jdbcType=VARCHAR},
-      START_DATE = #{startDate,jdbcType=TIMESTAMP},
-      COMPLETE_DATE = #{completeDate,jdbcType=TIMESTAMP},
+      PROCESS_INSTANCE_ID = #{processInstanceId,jdbcType=VARCHAR},
+      PROCESS_INSTANCE_NAME = #{processInstanceName,jdbcType=VARCHAR},
+      START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      END_TIME = #{endTime,jdbcType=TIMESTAMP},
       DOC_ID = #{docId,jdbcType=VARCHAR},
       FORM_ID = #{formId,jdbcType=VARCHAR},
       DESCRIPTION = #{description,jdbcType=VARCHAR}

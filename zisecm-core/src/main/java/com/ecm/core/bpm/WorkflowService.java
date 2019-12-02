@@ -91,16 +91,16 @@ public class WorkflowService extends EcmObjectService<EcmWorkflow> implements IW
 		serverEvent.startWorkflow(token, wfEn);
 		
 		//创建流程日志
-		EcmAuditWorkflow audit = new EcmAuditWorkflow();
-		audit.createId();
-		audit.setWorkflowId(wfId);
-		audit.setWorkflowName(name);
-		audit.setProcessName(process.getName());
-		audit.setCreator(userName);
-		audit.setStartDate(new Date());
-		audit.setDocId(docId);
-		audit.setFormId(formId);
-		ecmAuditWorkflowMapper.insert(audit);
+//		EcmAuditWorkflow audit = new EcmAuditWorkflow();
+//		audit.createId();
+//		audit.setWorkflowId(wfId);
+//		audit.setWorkflowName(name);
+//		audit.setProcessName(process.getName());
+//		audit.setCreator(userName);
+//		audit.setStartDate(new Date());
+//		audit.setDocId(docId);
+//		audit.setFormId(formId);
+//		ecmAuditWorkflowMapper.insert(audit);
 		return true;
 	}
 	
