@@ -1,5 +1,14 @@
 <template>
   <el-container>
+    <el-dialog title="我的授权" :visible.sync="dialogVisible" width="20%">
+      <el-table :data="groupData" style="width:100%;height:300px">
+        <el-table-column type="index" width="50"></el-table-column>
+        <el-table-column prop="name" align="center" label="角色名称" ></el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
     <el-main>
       <el-row>
         <el-col :span="16">
@@ -47,7 +56,7 @@
                 style="float: right; padding: 3px 0"
                 @click="$router.push(jumpPath.todolist)"
                 type="primary"
-              >更多</el-link>
+              >更多>></el-link>
             </div>
             <el-table :data="dataList.todoData" v-loading="loadingTodoData" style="width:100%;" :show-header="false">
               <el-table-column label="任务名称">
@@ -90,13 +99,13 @@
             </el-col>
             <el-col :span="12">
               <i style="font-size : 50px" class="el-icon-s-claim"></i>
-              <el-link :underline="false" @click="$router.push({path:''})">我的授权</el-link>
+              <el-link :underline="false" @click="getMyGroup()">我的授权</el-link>
             </el-col>
           </el-card>
           <el-card :body-style="{ height: '200px' }">
             <div slot="header" class="clearfix">
               <span style="float: center;">通知公告</span>
-              <el-link :underline="false" style="float: right; padding: 3px 0" type="primary">更多</el-link>
+              <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
               v-loading="loadingNoticeData"
@@ -121,6 +130,9 @@
           </el-card>
         </el-col>
       </el-row>
+      <transition name="fade" mode="out-in">
+            <router-view :key="$route.fullPath"></router-view>
+          </transition>
     </el-main>
   </el-container>
 </template>
@@ -131,7 +143,7 @@ export default {
       jumpPath: {
         search: "",
         todolist: "/workflow/todotask",
-        notification: "",
+        notification: "/dc/folderviewer",
         userCenter: "/user/userinfo"
       },
       collectionChartData: {
@@ -153,7 +165,9 @@ export default {
       propertyOnly: false,
       cards: [],
       cardsLabel: [],
-      collectionChart: Object
+      groupData: [],
+      collectionChart: Object,
+      dialogVisible:false
     };
   },
   created() {
@@ -348,6 +362,14 @@ export default {
     },
     showFile(indata){
       alert("通过id跳转到文件展示界面")
+    },
+    getMyGroup(){
+      this.dialogVisible = true
+      let _self = this
+      var userName = sessionStorage.getItem("access-userName")
+      axios.post("/user/getGroupByUserName",userName).then(function(response){
+        _self.groupData = response.data.data
+      })
     }
   }
 };
