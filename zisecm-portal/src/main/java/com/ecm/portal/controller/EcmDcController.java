@@ -912,7 +912,7 @@ public class EcmDcController extends ControllerAbstract{
 			  EcmDocument ecmDocument = documentService.getObjectById(getToken(), id);
 			  if(ecmDocument.getTypeName().equals("卷盒")||ecmDocument.getTypeName().equals("图册")) {
 				  documentService.updateStatus(getToken(), id, "注销");
-				  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
+				  String sql = "select b.*,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
 						     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
 						     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
 				  List<Map<String, Object>>  childList = documentService.getMapList(getToken(), sql);
