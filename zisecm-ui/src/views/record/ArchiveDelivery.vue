@@ -125,7 +125,7 @@
       </div>
     </el-dialog>
     <el-row>
-      <el-col :span="6" style="padding-top:4px;float:left;text-align:left;">
+      <el-col :span="7" style="padding-top:4px;float:left;text-align:left;">
           <el-button type="primary" icon="el-icon-circle-plus" 
           plain
           size="small" @click="onNewFolder()" :title="$t('application.newTransfer')">{{$t('application.new')}}</el-button>
@@ -153,7 +153,7 @@
         ></el-input>
       </el-col>
 
-      <el-col :span="14" style="padding-top:4px;float:left;text-align:left;">
+      <el-col :span="13" style="padding-top:4px;float:left;text-align:left;">
         &nbsp; 
         <el-button
           type="primary"
