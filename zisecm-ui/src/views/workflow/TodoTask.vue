@@ -31,7 +31,7 @@
               </el-col>
               <el-col>
                 <el-form-item label="审批意见" :label-width="formLabelWidth">
-                  <el-input v-model="form.message" auto-complete="off"></el-input>
+                  <el-input type="textarea" :autosize="{minRows:3}" v-model="form.message" auto-complete="off"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -93,7 +93,7 @@
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page="currentPage"
-              :page-sizes="[1, 2, 100, 200]"
+              :page-sizes="[20, 50, 100, 200]"
               :page-size="pageSize"
               layout="total, sizes, prev, pager, next, jumper"
               :total="itemCount">
@@ -118,7 +118,7 @@ export default {
       dataList: [],
       dataListFull: [],
       inputkey: "",
-      pageSize: 1,
+      pageSize: 20,
       itemCount: 0,
       selectedItems:[],
       currentPage: 1,
@@ -159,7 +159,7 @@ export default {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
         _self.loading = false;
-        _self.loadPageInfo();
+        _self.loadPageInfo(response.data.totalCount);
       })
       .catch(function(error) {
         console.log(error);
@@ -185,20 +185,11 @@ export default {
       this.refreshData();
     },
     // 加载页数 暂时未处理查询条件
-    loadPageInfo() {
+    loadPageInfo(val) {
       let _self = this;
-      var m = new Map();
-      m.set("condition", _self.inputkey);
-      axios.post("/workflow/getMyTodoCount",JSON.stringify(m))
-        .then(function(response) {
-          _self.itemCount = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
+      _self.itemCount = val;
+      _self.loading = false;
+     },
     completetask(indata) {
       let _self = this;
       if(_self.isCompleteSelected) {
