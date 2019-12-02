@@ -3,30 +3,33 @@
     <el-main>
       <el-row>
         <el-col :span="16">
-          <el-card :body-style="{ height: '130px' }">
+          <el-card :body-style="{ height: '120px' }">
             <div slot="header" class="clearfix">
               <span style="float: left;">全文搜索</span>
             </div>
             <div>
-              <el-row>
+              <el-row style="padding-top:5px;padding-bottom:5px;">
                 <el-autocomplete
                   class="inline-input"
                   prefix-icon="el-icon-search"
                   :placeholder="$t('application.placeholderSearch')"
                   :trigger-on-focus="false"
                   @keyup.enter.native="jumpToFullSearch"
-                  style="width:50%;"
+                  style="width:80%;"
                   v-model="inputkey"
                 ></el-autocomplete>
                 <el-checkbox :label="$t('application.propertyOnly')" v-model="propertyOnly"></el-checkbox>
               </el-row>
               <el-row>
-                <span>{{$t('application.docTypeName')}}</span>
-                <el-checkbox
-                  :indeterminate="isIndeterminate"
-                  v-model="checkAll"
-                  @change="handleCheckAllChange"
-                >{{$t('application.selectAll')}}</el-checkbox>
+                <el-row style="padding-top:5px;padding-bottom:5px;float:left;text-align:left;">
+                  <span>{{$t('application.docTypeName')}}</span>
+                  <el-checkbox
+                    :indeterminate="isIndeterminate"
+                    v-model="checkAll"
+                    @change="handleCheckAllChange"
+                  >{{$t('application.selectAll')}}</el-checkbox>
+                </el-row>
+                <el-row style="padding-top:5px;padding-bottom:5px;float:left;text-align:left;">
                 <el-checkbox-group v-model="checkedCards">
                   <el-checkbox
                     v-for="card in cards"
@@ -36,10 +39,11 @@
                     @change="handleCheckedTypeChange"
                   >{{card.label}}</el-checkbox>
                 </el-checkbox-group>
+                </el-row>
               </el-row>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '260px' }">
+          <el-card :body-style="{ height: '200px' }">
             <div slot="header" class="clearfix">
               <span style="float: left;">待办任务</span>
               <el-link
@@ -59,7 +63,7 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '300px' }">
+          <el-card :body-style="{ height: '220px' }">
             <div slot="header" class="clearfix">
               <span style="float: left;">最新文档</span>
             </div>
@@ -79,33 +83,33 @@
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card :body-style="{ height: '80px' }">
+          <el-card :body-style="{ height: '40px' }">
             <div slot="header" class="clearfix">
-              <span style="float: center;">个人中心</span>
-              <el-link style="float: right; padding: 3px 0; visibility: hidden;">更多</el-link>
+              <span style="float: left;">个人中心</span>
             </div>
             <el-col :span="12">
-              <i style="font-size : 50px" class="el-icon-user"></i>
+              <i style="font-size : 32px" class="el-icon-user"></i>
               <el-link :underline="false" @click="$router.push(jumpPath.userCenter)">我的信息</el-link>
             </el-col>
             <el-col :span="12">
-              <i style="font-size : 50px" class="el-icon-s-claim"></i>
+              <i style="font-size : 32px" class="el-icon-s-claim"></i>
               <el-link :underline="false" @click="$router.push({path:''})">我的授权</el-link>
             </el-col>
           </el-card>
           <el-card :body-style="{ height: '200px' }">
             <div slot="header" class="clearfix">
-              <span style="float: center;">通知公告</span>
+              <span style="float: left;">通知公告</span>
               <el-link :underline="false" style="float: right; padding: 3px 0" type="primary">更多</el-link>
             </div>
             <el-table
               v-loading="loadingNoticeData"
               :data="dataList.notiData"
               style="width:100%;"
+              size="small"
               :show-header="false"
             >
               <el-table-column :show-overflow-tooltip="true" width="400" label="标题">
-                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.NAME)}}</el-link>
+                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row)">{{(scope.row.NAME)}}</el-link>
               </el-table-column>
               <el-table-column align="right">
                 <template slot-scope="scope">{{dateFormat(scope.row.CREATION_DATE)}}</template>
@@ -113,10 +117,6 @@
             </el-table>
           </el-card>
           <el-card :body-style="{ height: '350px' }">
-            <div slot="header" class="clearfix">
-              <span style="float: center;">馆藏状态</span>
-              <el-link style="float: right; padding: 3px 0; visibility: hidden;">更多</el-link>
-            </div>
             <div id="collectionChart" style="height: 100%;width: 100%;float: right;"></div>
           </el-card>
         </el-col>
@@ -249,7 +249,7 @@ export default {
         _self.collectionChartData = response.data.data;
         //绘制图表
         _self.collectionChart.setOption({
-          title: { text: "馆藏" },
+          title: { text: "馆藏", textStyle:{display:'none'} },
           tooltip: {},
           xAxis: {},
           yAxis: {
@@ -291,7 +291,7 @@ export default {
       let _self = this;
       _self.loadingNewDocData = true
       var m = new Map();
-      m.set("pageSize", 7);
+      m.set("pageSize", 6);
       m.set("pageIndex", 0);
       m.set("orderBy", " C_DOC_DATE DESC");
       axios
@@ -347,7 +347,16 @@ export default {
       });
     },
     showFile(indata){
-      alert("通过id跳转到文件展示界面")
+       let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
     }
   }
 };
