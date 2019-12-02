@@ -575,7 +575,7 @@ export default {
           _self.innerDataList = response.data.data;
           _self.innerDataListFull = response.data.data;
           _self.innerCount = response.data.pager.total;
-          //console.log(JSON.stringify(response.data.datalist));
+          console.log(JSON.stringify(response.data.data));
           _self.loading = false;
         })
         .catch(function(error) {

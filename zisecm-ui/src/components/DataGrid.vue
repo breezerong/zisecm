@@ -4,7 +4,7 @@
                 <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
                   <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
                   <div slot="footer" class="dialog-footer">
-                    <el-button @click="saveItem();propertyVisible = false">{{$t('application.save')}}</el-button> 
+                    <el-button @click="saveItem()">{{$t('application.save')}}</el-button> 
                     <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
                   </div>
                 </el-dialog>
@@ -35,7 +35,7 @@
                             <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
                           </template>
                         </el-table-column>
-                        <el-table-column width="1"></el-table-column>
+                        
                         <el-table-column width="40" v-if="isshowicon">
                           <template slot-scope="scope">
                             <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0">
@@ -119,7 +119,7 @@ export default {
     props:{
         itemDataList:{type:Array,default:false},
         columnList:{type:Array,default:false},
-        isshowicon:{type:Boolean,default:false},
+        isshowicon:{type:Boolean,default:true},
         isshowOption:{type:Boolean,default:false},
         tableHeight:{type:[String,Number],default:window.innerHeight - 408},
         tableWidth:{type:[String,Number],default:'100%'},
@@ -178,7 +178,15 @@ export default {
       
     },
     onSaved(indata){
-
+       if(indata=='update')
+      {
+        this.$message(this.$t("message.saveSuccess"));
+      }
+      else
+      {
+        //this.$message("新建成功!");
+      }
+      this.propertyVisible = false;
     },
         showFieldOption(){
             let _self=this;
