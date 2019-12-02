@@ -126,14 +126,13 @@ public class WorkflowController  extends ControllerAbstract{
   			        //创建流程日志
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
-					audit.setWorkflowId(processInstance.getId());
-					audit.setWorkflowName(processInstance.getName());
+					audit.setProcessInstanceId(processInstance.getId());
 					audit.setProcessName(processInstance.getProcessDefinitionName());
+					audit.setProcessInstanceName(processInstance.getName());
 					audit.setCreator(userName);
-					audit.setStartDate(new Date());
+					audit.setStartTime(processInstance.getStartTime());
 					audit.setFormId("formId");
 					ecmAuditWorkflowMapper.insert(audit);
-			        
 			        result.put("code", ActionContext.SUCESS);
 					result.put("processID", processInstance.getId());
 				} catch (Exception e) {
@@ -244,7 +243,7 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("id", process.getId());
 		        map.put("name", process.getName());
 		        map.put("startUser", userId);
-		        map.put("createTime", process.getStartTime());
+		        map.put("startTime", process.getStartTime());
 		        map.put("endTime", process.getEndTime()==null?"":process.getEndTime());
 		        String currentAssignee="";
 		        String currentTaskName="";
@@ -292,15 +291,16 @@ public class WorkflowController  extends ControllerAbstract{
 	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
 	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
 			audit.createId();
-			audit.setStartDate(task.getCreateTime());
-			audit.setCompleteDate(new Date());
+			audit.setCreateTime(task.getCreateTime());
+			audit.setEndTime(task.getEndTime());
 			audit.setDocId("");
 			audit.setFormId("");
 			audit.setTaskName(task.getName());
-			audit.setPerformer(task.getAssignee());
+			
+			audit.setAssignee(task.getAssignee());
 			audit.setResult(result);
 			audit.setMessage(message);
-			audit.setWorkflowId(task.getProcessInstanceId());
+			audit.setProcessInstanceId(task.getProcessInstanceId());
 			audit.setTaskId(taskId);
 			ecmAuditWorkitemMapper.insert(audit);
 	        return "processed ok!";
@@ -478,6 +478,25 @@ public class WorkflowController  extends ControllerAbstract{
 				List<Map> resultList = new ArrayList<Map>();
 	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
 	        try {
+				return workitemAuditService.getObjects(getToken(), "process_instance_id='"+processInstanceId+"'");
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+         	return  new ArrayList<EcmAuditWorkitem>();
+	    }
+	    
+	    /**
+	     * 待办任务数量
+	     * @param processInstanceId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "getMyAllTodoCount")
+	    public List<EcmAuditWorkitem>  getMyAllTodoCount(@RequestBody String argStr) {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				String processInstanceId=args.get("processInstanceId").toString();
+				List<Map> resultList = new ArrayList<Map>();
+	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+	        try {
 				return workitemAuditService.getObjects(getToken(), "workflow_id='"+processInstanceId+"'");
 			} catch (AccessDeniedException e) {
 				e.printStackTrace();
@@ -485,5 +504,4 @@ public class WorkflowController  extends ControllerAbstract{
          	return  new ArrayList<EcmAuditWorkitem>();
 	    }
 	    
-	
 }
