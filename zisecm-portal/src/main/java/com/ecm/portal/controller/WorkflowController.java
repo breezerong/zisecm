@@ -45,12 +45,17 @@ import com.ecm.core.ActionContext;
 import com.ecm.core.bpm.ProcessService;
 import com.ecm.core.bpm.WorkflowAuditService;
 import com.ecm.core.bpm.WorkflowService;
+import com.ecm.core.bpm.WorkitemAuditService;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
+import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.dao.EcmWorkflowMapper;
+import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.entity.EcmAuditWorkflow;
+import com.ecm.core.entity.EcmAuditWorkitem;
 import com.ecm.core.entity.EcmWorkflow;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.service.AuditService;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.portal.test.flowable.TODOApplication;
@@ -72,8 +77,14 @@ public class WorkflowController  extends ControllerAbstract{
 		@Autowired
 		private WorkflowAuditService workflowAuditService;
 		@Autowired
+		private  WorkitemAuditService  workitemAuditService;
+		@Autowired
 		private EcmAuditWorkflowMapper ecmAuditWorkflowMapper;
-	 
+		@Autowired
+		private EcmAuditWorkitemMapper ecmAuditWorkitemMapper;
+		@Autowired
+		private AuditService auditService;
+		
 	    /***************此处为业务代码******************/
 	    
 	    /**
@@ -151,6 +162,7 @@ public class WorkflowController  extends ControllerAbstract{
 	        for (HistoricTaskInstance task : tasks) {
 		        HashMap<String, Object> map = new HashMap<>();
 		        map.put("id", task.getId());
+		        map.put("processInstanceId", task.getProcessInstanceId());
 		        map.put("name", task.getName());
 		        map.put("startUser", historyService.createHistoricProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult().getStartUserId());
 		        map.put("createTime", task.getCreateTime());
@@ -167,6 +179,7 @@ public class WorkflowController  extends ControllerAbstract{
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
+	        resultMap.put("totalCount", historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().count());
 	        return resultMap;
 	    }
 
@@ -207,6 +220,8 @@ public class WorkflowController  extends ControllerAbstract{
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
+	        resultMap.put("totalCount", taskService.createTaskQuery().taskAssignee(userId).count());
+
 	        return resultMap;
 	    }
 
@@ -251,6 +266,7 @@ public class WorkflowController  extends ControllerAbstract{
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
+	        resultMap.put("totalCount", historyService.createHistoricProcessInstanceQuery().startedBy(userId).count());
 	        return resultMap;
 	    }
 
@@ -273,6 +289,20 @@ public class WorkflowController  extends ControllerAbstract{
 //	        }
 	        setTaskApprovalResult(taskId, result, message);
 	        taskService.complete(taskId, args);
+	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
+			audit.createId();
+			audit.setStartDate(task.getCreateTime());
+			audit.setCompleteDate(new Date());
+			audit.setDocId("");
+			audit.setFormId("");
+			audit.setTaskName(task.getName());
+			audit.setPerformer(task.getAssignee());
+			audit.setResult(result);
+			audit.setMessage(message);
+			audit.setWorkflowId(task.getProcessInstanceId());
+			audit.setTaskId(taskId);
+			ecmAuditWorkitemMapper.insert(audit);
 	        return "processed ok!";
 	    }
 
@@ -285,17 +315,6 @@ public class WorkflowController  extends ControllerAbstract{
 	        taskService.setVariableLocal(taskId, "outcome",result);
 		}
 
-	    /**
-	     * 拒绝
-	     */
-	    @ResponseBody
-	    @RequestMapping(value = "reject")
-	    public String reject(String taskId) {
-	        HashMap<String, Object> map = new HashMap<>();
-	        map.put("outcome", "驳回");
-	        taskService.complete(taskId, map);
-	        return "reject";
-	    }
 
 	    /**
 	     * 生成流程图
@@ -447,6 +466,24 @@ public class WorkflowController  extends ControllerAbstract{
  	        return "processed ok!";
 	    }
 	        
-    
+	    /**
+	     * 获取流程审批信息
+	     * @param processInstanceId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "getWorkflowTask")
+	    public List<EcmAuditWorkitem>  getWorkflowTask(@RequestBody String argStr) {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				String processInstanceId=args.get("processInstanceId").toString();
+				List<Map> resultList = new ArrayList<Map>();
+	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+	        try {
+				return workitemAuditService.getObjects(getToken(), "workflow_id='"+processInstanceId+"'");
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+         	return  new ArrayList<EcmAuditWorkitem>();
+	    }
+	    
 	
 }

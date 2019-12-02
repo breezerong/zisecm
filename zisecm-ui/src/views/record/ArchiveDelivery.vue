@@ -134,7 +134,7 @@
            plain
             size="small"
           icon="el-icon-printer"
-          @click="beforePrint(selectTransferRow,'PrintDelivery')"
+          @click="beforePrint(selectTransferRow,'PrintDelivery','文件清单')"
         >打印</el-button>
           <el-button type="primary"
           plain
@@ -187,7 +187,7 @@
            plain
             size="small"
           icon="el-icon-printer"
-          @click="beforePrint(selectedItems,'PrintVolumeOrder')"
+          @click="beforePrint(selectedItems,'PrintVolumeOrder','文件清单')"
         >打印清单</el-button>
          <el-button
           type="primary"
@@ -443,13 +443,21 @@ export default {
     this.loadTransferGridData();
   },
   methods: {
-    beforePrint(selectedRow,gridName){
+    beforePrint(selectedRow,gridName,vtitle){
       let _self=this;
       if(selectedRow.length!=1){
         _self.$message('请选择一条数据进行打印');
         return;
       }
       _self.printVolumesVisible = true;
+
+      setTimeout(()=>{
+        _self.$refs.printVolumes.dialogQrcodeVisible = false
+        _self.$refs.printVolumes.getArchiveObj(_self.$refs.printVolumes.archiveId,
+        _self.$refs.printVolumes.gridName,
+        vtitle); 
+      },10);
+
       _self.printGridName=gridName;
       _self.printObjId=selectedRow[0].ID;
     },
@@ -575,7 +583,7 @@ export default {
           _self.innerDataList = response.data.data;
           _self.innerDataListFull = response.data.data;
           _self.innerCount = response.data.pager.total;
-          //console.log(JSON.stringify(response.data.datalist));
+          console.log(JSON.stringify(response.data.data));
           _self.loading = false;
         })
         .catch(function(error) {

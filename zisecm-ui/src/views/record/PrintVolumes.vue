@@ -57,15 +57,19 @@
           </div>  --> 
 
         <div class="table">
-          <div class="table-tr" style="height:80px;text-align: center;">  
-              卷内目录
+          <div class="table-tr" style="height:30px;text-align: center;">  
+              {{volumeTitle}}
           </div> 
           <div class="table-tr">  
               <div class="table-td">  
-                  <div class="sub-table">  
+                  <div class="sub-table">
                       <div class="sub-table-tr">  
-                          <div class="sub-table-td" style="width: 50%;height:35px;">案卷号</div>  
-                          <div class="sub-table-td" style="width: 50%;height:35px;">{{archiveCode}}</div>  
+                          <div class="sub-table-td" style="width: 50%;height:35px;">编码</div>  
+                          <div class="sub-table-td" style="width: 50%;height:35px;">
+                            <div style="float:right" ref='qrCodeUrl2'></div>
+                            <br>
+                            {{archiveCode}}
+                            </div>  
                           
                       </div>  
                   </div>  
@@ -85,9 +89,9 @@
                                 <template slot-scope="scope">
                                     <span>{{ scope.$index+1}}</span>
                                 </template>
-                            </el-table-column>
-                        
-                        
+                        </el-table-column>
+                        <el-table-column width="1">
+                        </el-table-column>
                         <div v-for="(citem,idx) in gridList">
                           <div v-if="citem.visibleType==1">
                             <div v-if="(citem.width+'').indexOf('%')>0">
@@ -152,7 +156,7 @@
                   </template>
                 </el-table-column>
               </el-table> -->
-          <div ref='qrCodeUrl2'></div>
+          
   　　　　</div>
 
   　　　　<button @click="printCode" v-print="'#print'">打印</button>
@@ -166,10 +170,7 @@ import QRCode from 'qrcodejs2'// 引入qrcode
 Vue.use(Print)
 export default {
    name: 'test',
-    mounted () {
-      // 需要先显示出来，然后再隐藏掉；  否则动态生成的二维码，第一次会报错，对象找不到。可能是跟初始化有关系，没有显示出来的时候并没有初始化HTML
-      this.dialogQrcodeVisible = false
-    },
+    
   // name: "printPage",
   data() {
     return {
@@ -178,14 +179,17 @@ export default {
       innerDataList:[],
       dialogQrcodeVisible: true,
       currentLanguage: "zh-cn",
-      gridList:[]
+      gridList:[],
+      volumeTitle:""
     };
   },
   mounted() {
+    // 需要先显示出来，然后再隐藏掉；  否则动态生成的二维码，第一次会报错，对象找不到。可能是跟初始化有关系，没有显示出来的时候并没有初始化HTML
+      // this.dialogQrcodeVisible = false
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     
     // this.loadFormInfo();
-    this.getArchiveObj(this.archiveId,this.gridName); 
+    // this.getArchiveObj(this.archiveId,this.gridName); 
     
   },
   props: {
@@ -250,8 +254,9 @@ export default {
         _self.loading = false;
       });
     },
-    getArchiveObj(id,gridName){
+    getArchiveObj(id,gridName,volumeTitle){
       let _self=this;
+      _self.volumeTitle=volumeTitle;
       var m = new Map();
       m.set('itemInfo',id);//ID 或类型
       m.set('lang',_self.currentLanguage);
@@ -296,6 +301,7 @@ export default {
       this.dialogQrcodeVisible = false
     },
     genarateQrcode (url) {
+      this.$refs.qrCodeUrl2.innerHTML='';
       let qrcode = new QRCode(this.$refs.qrCodeUrl2, {
         width: 50,
         height: 50,

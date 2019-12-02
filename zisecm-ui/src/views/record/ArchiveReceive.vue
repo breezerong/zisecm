@@ -49,8 +49,10 @@
           key="main"
           v-bind:itemDataList="itemDataList"
           v-bind:columnList="gridList"
+          v-bind:loading="loading"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
+          v-bind:isshowOption="true"
           v-bind:itemCount="itemCount"
           @rowclick="showInnerFile"  :isshowOption="true"
           v-bind:tableHeight="rightTableHeight"
@@ -61,10 +63,12 @@
           <DataGrid
             ref="leftDataGrid"
             key="left"
+            v-bind:isshowOption="true"
             v-bind:itemDataList="innerDataList"
             v-bind:columnList="innerGridList"
             v-bind:itemCount="innerCount"
             v-bind:tableHeight="rightTableHeight"
+            v-bind:loading="loading"
             @pagesizechange="innerPageSizeChange"
             @rowclick="selectOneFile"  :isshowOption="true"
             @pagechange="innerPageChange"
@@ -304,6 +308,7 @@ export default {
       // {
       //    _self.showButton=true;
       // }
+      _self.loading=true;
       _self.loadInnerGridInfo();
       var m = new Map();
       m.set("gridName", "ArchiveGrid");
@@ -559,6 +564,7 @@ export default {
       );
       m.set("orderBy", "");
       // console.log('pagesize:', _self.pageSize);
+      _self.loading=true;
       _self
         .axios({
           headers: {
@@ -714,6 +720,7 @@ export default {
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "");
       // console.log('pagesize:', _self.pageSize);
+      _self.loading=true;
       _self
         .axios({
           headers: {
@@ -1356,6 +1363,7 @@ export default {
       params.set("ids", m);
       params.set("status", statusStep);
       console.log(JSON.stringify(m));
+      _self.loading=true;
       _self
         .axios({
           headers: {
@@ -1366,6 +1374,7 @@ export default {
           url: "/dc/updatestatus"
         })
         .then(function(response) {
+          _self.loading=false;
           _self.loadTransferGridData();
           _self.loadGridData(null);
 
