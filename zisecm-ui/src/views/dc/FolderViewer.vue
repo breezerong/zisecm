@@ -13,7 +13,7 @@
     <el-main>
       <el-table v-loading="loadingNoticeData" style="width:100%;height:100%"  :data="dataList.notiData">
         <el-table-column :show-overflow-tooltip="true" width="400" label="标题">
-          <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.NAME)}}</el-link>
+          <el-link slot-scope="scope" type="primary" @click="showFile(scope.row)">{{(scope.row.NAME)}}</el-link>
         </el-table-column>
         <el-table-column align="center" label="创建人" prop="CREATOR"></el-table-column>
         <el-table-column align="left" label="创建时间">
@@ -112,6 +112,16 @@ export default {
     },
     search(){
       this.getNewsList()
+    },
+    showFile(indata){
+       let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+        }
+      });
+      window.open(href.href, '_blank');
     },
     //分页 页数改变
     handleSizeChange(val) {
