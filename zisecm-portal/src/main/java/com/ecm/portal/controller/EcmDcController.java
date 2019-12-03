@@ -632,6 +632,7 @@ public class EcmDcController extends ControllerAbstract{
 				en.setName(uploadFile.getOriginalFilename());
 				en.setContentSize(uploadFile.getSize());
 				en.setInputStream(uploadFile.getInputStream());
+				en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
 				en.setContentType(1);
 				documentService.mountFile(getToken(), id, en);
 				mp.put("code", ActionContext.SUCESS);

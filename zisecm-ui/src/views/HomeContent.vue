@@ -8,12 +8,13 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
       </div>
+
     </el-dialog>
     <el-main>
       <el-row>
         <el-col :span="16">
           <el-card :body-style="{ height: '120px' }">
-            <div slot="header" class="clearfix">
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;">全文搜索</span>
             </div>
             <div>
@@ -53,7 +54,7 @@
             </div>
           </el-card>
           <el-card :body-style="{ height: '200px' }">
-            <div slot="header" class="clearfix">
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;">待办任务<el-badge :value="totalCount" class="item"></el-badge>
               </span>
               <el-link
@@ -74,7 +75,7 @@
             </el-table>
           </el-card>
           <el-card :body-style="{ height: '220px' }">
-            <div slot="header" class="clearfix">
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;">最新文档</span>
             </div>
             <el-table
@@ -83,10 +84,14 @@
               style="width:100%;"
               :show-header="false"
             >
-              <el-table-column prop="CODING" label="编号"></el-table-column>
-              <el-table-column width="90" prop="REVISION" label="版本"></el-table-column>
-              <el-table-column prop="NAME" label="文件名"></el-table-column>
-              <el-table-column label="编制日期" align="right">
+              <el-table-column prop="CODING" label="编码" width="200"></el-table-column>
+              <el-table-column width="60" prop="REVISION" label="版本"></el-table-column>
+              <el-table-column label="题名" min-width="20%" :show-overflow-tooltip="true">
+                <template slot-scope="scope">
+                  <el-link  type="primary" @click="showFile(scope.row)">{{scope.row.NAME}}</el-link>
+                </template>
+              </el-table-column>
+              <el-table-column label="编制日期" align="right" width="120">
                 <template slot-scope="scope">{{dateFormat(scope.row.C_DOC_DATE)}}</template>
               </el-table-column>
             </el-table>
@@ -94,7 +99,7 @@
         </el-col>
         <el-col :span="8">
           <el-card :body-style="{ height: '40px' }">
-            <div slot="header" class="clearfix">
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;">个人中心</span>
             </div>
             <el-col :span="12">
@@ -102,13 +107,13 @@
               <el-link :underline="false" @click="$router.push(jumpPath.userCenter)">我的信息</el-link>
             </el-col>
             <el-col :span="12">
-              <i style="font-size : 50px" class="el-icon-s-claim"></i>
+              <i style="font-size : 32px" class="el-icon-s-claim"></i>
               <el-link :underline="false" @click="getMyGroup()">我的授权</el-link>
             </el-col>
           </el-card>
           <el-card :body-style="{ height: '200px' }">
-            <div slot="header" class="clearfix">
-              <span style="float: center;">通知公告</span>
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
+              <span style="float: left;">通知公告</span>
               <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
@@ -118,10 +123,10 @@
               size="small"
               :show-header="false"
             >
-              <el-table-column :show-overflow-tooltip="true" width="400" label="标题">
+              <el-table-column :show-overflow-tooltip="true" min-width="60%" label="标题">
                 <el-link slot-scope="scope" type="primary" @click="showFile(scope.row)">{{(scope.row.NAME)}}</el-link>
               </el-table-column>
-              <el-table-column align="right">
+              <el-table-column align="right" width="120">
                 <template slot-scope="scope">{{dateFormat(scope.row.CREATION_DATE)}}</template>
               </el-table-column>
             </el-table>
@@ -374,7 +379,6 @@ export default {
       });
       //console.log(href);
       window.open(href.href, '_blank');
-      alert("通过id跳转到文件展示界面")
     },
     getMyGroup(){
       this.dialogVisible = true
