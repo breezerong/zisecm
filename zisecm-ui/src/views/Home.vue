@@ -52,7 +52,7 @@ export default {
       opens: ["10", "20"],
       username: "",
       clientPermission: 0,
-      menuHeight: window.innerHeight - 64
+      menuHeight: window.innerHeight - 100
     };
   },
   created() {

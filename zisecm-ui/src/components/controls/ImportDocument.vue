@@ -1,5 +1,5 @@
 <template>
-  <el-form label-width="120px" @submit.native.prevent>
+  <el-form label-width="120px" v-loading="loading" @submit.native.prevent>
     <el-row>
       <el-col :span="12">
         <el-form-item label="导入模板">
@@ -19,7 +19,7 @@
     </el-row>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="Excel文件">
+        <el-form-item label="Excel文件" style="float: left;">
           <el-upload
             :limit="1"
             :file-list="fileList1"
@@ -33,7 +33,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="电子文件">
+        <el-form-item label="电子文件" style="float: left;">
           <el-upload
             :limit="100"
             :file-list="fileList2"
@@ -41,10 +41,16 @@
             :on-change="handleChange2"
             :auto-upload="false"
             :multiple="true"
+            
           >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            
           </el-upload>
+         
         </el-form-item>
+      </el-col>
+      <el-col :span="4">
+         <el-button plain size="small" type="primary" @click="cleanFiles()">清除所有文件</el-button>
       </el-col>
     </el-row>
 
@@ -61,6 +67,7 @@ export default {
   name: "ImportDocument",
   data() {
     return {
+      loading: false,
       fileList1: [],
       fileList2: [],
       importMessage: "",
@@ -99,7 +106,7 @@ export default {
         return;
       }
       // 拦截器会自动替换成目标url
-      let url = "/zisecm/dc/getContent?id="+_self.selectedTemplate+"&token="+sessionStorage.getItem('access-token');
+      let url = this.axios.defaults.baseURL+"/dc/getContent?id="+_self.selectedTemplate+"&token="+sessionStorage.getItem('access-token');
       window.open(url);
     },
     handleChange1(file, fileList) {
@@ -134,12 +141,17 @@ export default {
         .then(function(response) {
           _self.importMessage = response.data.data;
           _self.loading = false;
+          _self.$message("导入成功!");
           _self.$emit("onImported");
         })
         .catch(function(error) {
           _self.$message("导入失败!");
           console.log(error);
         });
+    },
+    cleanFiles(){
+      this.fileList1 = [];
+      this.fileList2 = [];
     }
   }
 };

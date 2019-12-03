@@ -874,6 +874,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			EcmContent existCont = contentService.getObject(token, id, 2, content.getFormatName());
 			if (existCont != null) {
 				existCont.setName(content.getName());
+				existCont.setContentSize(content.getContentSize());
 				existCont.setInputStream(content.getInputStream());
 				contentService.updateObject(token, existCont);
 			} else {
@@ -1326,18 +1327,22 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(doc!=null&&content!=null) {
 			if (primary != null) {
 				primary.setName(content.getName());
+				
 				primary.setInputStream(content.getInputStream());
 				contentService.updateObject(token, primary);
+				doc.setFormatName(primary.getFormatName());
+				doc.setContentSize(primary.getContentSize());
 			} else {
 				content.createId();
 				content.setParentId(docId);
 				if (StringUtils.isEmpty(content.getStoreName())) {
 				    content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
 				   }
-				
 				contentService.newObject(token, content);
+				doc.setFormatName(content.getFormatName());
+				doc.setContentSize(content.getContentSize());
 			}
-			updateModifyInfo(token, docId);
+			this.updateObject(token, doc,null);
 			newAudit(token, null, AuditContext.MOUNT_FILE, docId, null, content.getName());
 			return true;
 			
