@@ -77,6 +77,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	private EcmLifeCycleMapper lifeCycleMapper;
 	@Autowired
 	private EcmLifeCycleItemMapper lifeCycleItemMapper;
+	
+	
 
 	@Override
 	public List<Map<String, Object>> getObjects(String token, String gridName, String folderId, Pager pager,

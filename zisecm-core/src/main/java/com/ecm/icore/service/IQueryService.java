@@ -2,6 +2,8 @@ package com.ecm.icore.service;
 
 import java.util.List;
 import java.util.Map;
+
+import com.ecm.core.entity.EcmQuery;
 /**
  * 查询服务接口
  * @author Haihong Rong
@@ -14,4 +16,6 @@ public interface IQueryService {
 	 * @return
 	 */
 	List<Map<String, Object>> executeSQL(String token, String sql);
+
+	EcmQuery getObjectByName(String token, String name);
 }

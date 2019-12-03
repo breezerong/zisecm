@@ -20,10 +20,13 @@
     <result column="IS_REPEAT" jdbcType="BIT" property="isRepeat" />
     <result column="MIN_COUNT" jdbcType="INTEGER" property="minCount" />
     <result column="MAX_COUNT" jdbcType="INTEGER" property="maxCount" />
+    <result column="ENABLE_CHANGE" jdbcType="BIT" property="enableChange" />
+    <result column="DEPEND_NAME" jdbcType="VARCHAR" property="dependName" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, PARENT_ID, ATTR_NAME, REQUIRED, VALIDATE_POLICY, READ_ONLY, ORDER_INDEX, WIDTH_TYPE, 
-    LABEL, SEARCHABLE, CONTROL_TYPE, QUERY_NAME, DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT
+    LABEL, SEARCHABLE, CONTROL_TYPE, QUERY_NAME, DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT,
+    ENABLE_CHANGE,DEPEND_NAME
   </sql>
   <select id="selectAll" resultMap="BaseResultMap">
     select
@@ -51,13 +54,14 @@
       REQUIRED, VALIDATE_POLICY, READ_ONLY, 
       ORDER_INDEX, WIDTH_TYPE, LABEL, 
       SEARCHABLE, CONTROL_TYPE, QUERY_NAME, 
-      DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT)
+      DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT,ENABLE_CHANGE,DEPEND_NAME)
     values (#{id,jdbcType=VARCHAR},#{parentId,jdbcType=VARCHAR}, #{attrName,jdbcType=VARCHAR}, 
       #{required,jdbcType=BIT}, #{validatePolicy,jdbcType=VARCHAR}, #{readOnly,jdbcType=BIT}, 
       #{orderIndex,jdbcType=INTEGER}, #{widthType,jdbcType=CHAR}, #{label,jdbcType=VARCHAR}, 
       #{searchable,jdbcType=BIT}, #{controlType,jdbcType=VARCHAR}, #{queryName,jdbcType=VARCHAR}, 
       #{defaultValue,jdbcType=VARCHAR}, #{isHide,jdbcType=BIT},#{valueList,jdbcType=VARCHAR},
-      #{isRepeat,jdbcType=BIT},#{minCount,jdbcType=INTEGER},#{maxCount,jdbcType=INTEGER}
+      #{isRepeat,jdbcType=BIT},#{minCount,jdbcType=INTEGER},#{maxCount,jdbcType=INTEGER},
+      #{enableChange,jdbcType=BIT}, #{dependName,jdbcType=VARCHAR}
       )
     <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
 		SELECT LAST_INSERT_ID() AS ID
@@ -120,6 +124,12 @@
       <if test="maxCount != null">
         MAX_COUNT,
       </if>
+      <if test="enableChange != null">
+        ENABLE_CHANGE,
+      </if>
+      <if test="dependName != null">
+        DEPEND_NAME,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
      <if test="id != null">
@@ -175,6 +185,12 @@
       </if>
       <if test="maxCount != null">
         #{maxCount,jdbcType=INTEGER},
+      </if>
+      <if test="enableChange != null">
+        #{enableChange,jdbcType=BIT},
+      </if>
+      <if test="dependName != null">
+        #{dependName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -232,6 +248,12 @@
       <if test="maxCount != null">
         MAX_COUNT = #{maxCount,jdbcType=INTEGER},
       </if>
+      <if test="enableChange != null">
+        ENABLE_CHANGE = #{enableChange,jdbcType=BIT},
+      </if>
+      <if test="dependName != null">
+        DEPEND_NAME = #{dependName,jdbcType=VARCHAR},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -253,7 +275,9 @@
       VALUE_LIST = #{valueList,jdbcType=VARCHAR},
       IS_REPEAT = #{isRepeat,jdbcType=BIT},
       MIN_COUNT = #{minCount,jdbcType=INTEGER},
-      MAX_COUNT = #{maxCount,jdbcType=INTEGER}
+      MAX_COUNT = #{maxCount,jdbcType=INTEGER},
+      ENABLE_CHANGE = #{enableChange,jdbcType=BIT},
+      DEPEND_NAME = #{dependName,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
