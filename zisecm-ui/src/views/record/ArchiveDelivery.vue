@@ -958,6 +958,7 @@ export default {
     // 加载表格数据
     loadGridData(row) {
       let _self = this;
+      _self.innerDataList=[];
       _self.loadGridInfo();
       if (row != null) {
         _self.selectTransferRow = row;
