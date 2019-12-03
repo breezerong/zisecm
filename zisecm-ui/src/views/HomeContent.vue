@@ -6,7 +6,7 @@
         <el-table-column prop="name" align="center" label="角色名称" ></el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
 
     </el-dialog>
@@ -15,7 +15,7 @@
         <el-col :span="16">
           <el-card :body-style="{ height: '120px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;">全文搜索</span>
+              <span style="float: left;">{{$t('menu.fullTextSearch')}}</span>
             </div>
             <div>
               <el-row style="padding-top:5px;padding-bottom:5px;">
@@ -136,9 +136,6 @@
           </el-card>
         </el-col>
       </el-row>
-      <transition name="fade" mode="out-in">
-            <router-view :key="$route.fullPath"></router-view>
-          </transition>
     </el-main>
   </el-container>
 </template>

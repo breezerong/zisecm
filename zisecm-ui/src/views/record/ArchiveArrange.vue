@@ -14,6 +14,14 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="打印背脊" width="43%" :visible="printRidgeVisible" @close="printRidgeVisible=false">
+      <div style="height:900px;">
+        <PrintRidge ref="printRidge"></PrintRidge>
+      </div>
+      
+      
+    </el-dialog>
+
     <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
           
           <el-form size="mini" :label-width="formLabelWidth">
@@ -102,6 +110,8 @@
           size="small" icon="el-icon-s-order"  @click="takeNumbers">{{$t('application.takeNumbers')}}</el-button>
                     <el-button type="primary" plain
           size="small" icon="el-icon-notebook-2"  @click="fetchInformation">{{$t('application.fetchInformation')}}</el-button>
+          <el-button type="primary" plain
+          size="small" icon="el-icon-printer"  @click="beforePrintRidge(selectedItems,'printRidgeGrid','打印背脊')">打印</el-button>
                     <el-button type="primary" plain
           size="small" icon="el-icon-sell"  @click="putInStorage">{{$t('application.warehousing')}}</el-button>
             </el-col>
@@ -167,6 +177,7 @@ import 'url-search-params-polyfill'
 
 import PrintPage from '@/views/record/PrintPage'
 import PrintVolumes from '@/views/record/PrintVolumes'
+import PrintRidge from '@/views/record/PrintRidge'
 export default {
   name: "FolderClassification",
   components: {
@@ -174,7 +185,8 @@ export default {
     // PDFViewer: PDFViewer,
     DataGrid:DataGrid,
     PrintPage:PrintPage,
-    PrintVolumes:PrintVolumes
+    PrintVolumes:PrintVolumes,
+    PrintRidge:PrintRidge
     //Prints:Prints
   },
   data() {
@@ -222,7 +234,6 @@ export default {
       selectedChildrenType:"",
       selectRow:[],
       importdialogVisible:false,
-      selectedItems: [],
       selectedFileId:"",
       selectedOutItems: [],
       selectedInnerItems:[],
@@ -237,6 +248,7 @@ export default {
       imageViewer: Object,
       currentType:"",
       orderBy:"",
+      printRidgeVisible:false,
       folderForm: {
         id: 0,
         name: "",
@@ -299,6 +311,25 @@ export default {
       });
   },
   methods: {
+  ///打印背脊
+    beforePrintRidge(selectedRow,gridName,vtitle){
+      let _self=this;
+      if(selectedRow.length!=1){
+        _self.$message('请选择一条数据进行打印');
+        return;
+      }
+      _self.printRidgeVisible = true;
+
+      setTimeout(()=>{
+        _self.$refs.printRidge.dialogQrcodeVisible = false
+        _self.$refs.printRidge.getArchiveObj(selectedRow[0].ID,
+        gridName,
+        vtitle); 
+      },10);
+
+      _self.printGridName=gridName;
+      _self.printObjId=selectedRow[0].ID;
+    },
     ///上架
     putInStorage(){
       let _self=this;
@@ -582,7 +613,12 @@ export default {
         _self.selectRow=row;
       }
       _self.selectedChildrenType=[];
-      _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
+      if(_self.typeName=='图册'){
+        _self.getTypeNamesByMainList("图册");
+      }else{
+        _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
+      }
+      
       
       _self.loadInnerGridInfo();
       var m = new Map();
