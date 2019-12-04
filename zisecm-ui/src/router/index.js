@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import {adminRouter} from '@/router/admin.js'
-import {recordRouter,borrowCenter} from '@/router/record.js'
+import {recordRouter} from '@/router/record.js'
 import {searchRouter} from '@/router/search.js'
 import {dcRouter} from '@/router/doccenter.js'
 import {reportRouter} from '@/router/report.js'
@@ -56,7 +56,6 @@ const router = new Router({
 				searchRouter,
 				...dcRouter,
 				...recordRouter,
-				borrowCenter,
 				workflowRouter,
 				reportRouter,
 				adminRouter,

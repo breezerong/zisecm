@@ -1,5 +1,4 @@
 <template>
-    <el-container>
       <el-container>
         <el-aside width="200px">
           <div v-bind:style="{height: menuHeight +'px'}">
@@ -35,7 +34,6 @@
           </transition>
         </el-main>
       </el-container>
-    </el-container>
 </template>
 <script type="text/javascript">
 export default {
