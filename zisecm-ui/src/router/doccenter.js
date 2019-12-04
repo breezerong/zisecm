@@ -5,7 +5,7 @@ export const dcRouter = [
 				permit: 1
 			},
 			path: '/dc/companydoc',
-			component: () => import('@/views/dc/CompanyDoc.vue'),
+			component: () => import('@/views/dc/shoppingcart.vue'),
 			name: '公司文档'
 		},
 		 
