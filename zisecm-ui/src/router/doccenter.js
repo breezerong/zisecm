@@ -5,10 +5,18 @@ export const dcRouter = [
 				permit: 1
 			},
 			path: '/dc/companydoc',
-			component: () => import('@/views/dc/shoppingcart.vue'),
+			component: () => import('@/views/dc/CompanyDoc.vue'),
 			name: '公司文档'
 		},
-		 
+		{
+			meta: {
+				requireAuth: true,
+				permit: 1
+			},
+			path: '/dc/shoppingcart',
+			component: () => import('@/views/dc/ShoppingCart.vue'),
+			name: '购物车'
+		},
 		{
 			meta: {
 				requireAuth: true,
