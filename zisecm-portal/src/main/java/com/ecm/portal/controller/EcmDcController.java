@@ -42,6 +42,7 @@ import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.entity.UserEntity;
@@ -50,6 +51,7 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
+import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
 import com.ecm.portal.util.ExcelUtil;
 
@@ -75,6 +77,8 @@ public class EcmDcController extends ControllerAbstract{
 	@Autowired
 	private FolderService folderService;
 
+	@Autowired
+	private QueryService queryService;
 
 
 
@@ -1041,5 +1045,31 @@ public class EcmDcController extends ControllerAbstract{
 			
 			return mp;
 		}
-		
+		@RequestMapping(value = "/dc/getSelectList", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> getSelectList(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String queryName = args.get("queryName").toString();
+			String dependValue = args.get("dependValue").toString();
+			Map<String, Object> mp = new HashMap<String, Object>();
+			EcmQuery query;
+			try {
+				query = queryService.getObjectByName(getToken(), queryName);
+				String sql = query.getSqlString();
+				sql = sql.replace("{0}", dependValue);
+				List<Map<String, Object>> list = queryService.executeSQL(getToken(), sql);
+				List<String> listName = new ArrayList<String>();
+				for(Map<String,Object> obj: list) {
+					listName.add(obj.get("NAME").toString());
+				}
+				mp.put("data", listName);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", e.getMessage());
+			}
+			return mp;
+		}
 }

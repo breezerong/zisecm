@@ -42,6 +42,30 @@ public class EcmFormItem extends EcmObject{
     private Integer minCount =0 ;
     
     private Integer maxCount =0;
+    /**
+     * 依赖字段名
+     */
+    private String dependName;
+    public String getDependName() {
+		return dependName;
+	}
+
+	public void setDependName(String dependName) {
+		this.dependName = dependName;
+	}
+
+	public Boolean getEnableChange() {
+		return enableChange;
+	}
+
+	public void setEnableChange(Boolean enableChange) {
+		this.enableChange = enableChange;
+	}
+
+	/**
+     * 启用变更事件
+     */
+    private Boolean enableChange=false;
     
     public Boolean getIsRepeat() {
 		return isRepeat;

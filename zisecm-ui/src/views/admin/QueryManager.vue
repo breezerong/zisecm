@@ -134,7 +134,7 @@ export default {
     },
     save(indata) {
       let _self = this;
-      axios('/admin/updateQuery',JSON.stringify(indata))
+      axios.post('/admin/updateQuery',JSON.stringify(indata))
       .then(function(response) {
         _self.$message("保存成功!");
       })

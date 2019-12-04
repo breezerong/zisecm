@@ -37,6 +37,12 @@ public class QueryService extends EcmObjectService<EcmQuery> implements IQuerySe
 		// TODO Auto-generated method stub
 		return (EcmQuery) ecmQuery.selectByPrimaryKey(id);
 	}
+	
+	@Override
+	public EcmQuery getObjectByName(String token,String name) {
+		// TODO Auto-generated method stub
+		return (EcmQuery) ecmQuery.selectByName(name);
+	}
 
 	@Override
 	public boolean updateObject(String token,Object obj) {

@@ -61,6 +61,8 @@
                   <el-option label="2" value="2"></el-option>
                   <el-option label="3" value="3"></el-option>
                   <el-option label="4" value="4"></el-option>
+                  <el-option label="6" value="6"></el-option>
+                  <el-option label="8" value="8"></el-option>
               </el-select>
             </el-form-item>
               </el-col>
@@ -135,6 +137,19 @@
               <el-col :span="8">
                 <el-form-item label="多值最多数" :label-width="formLabelWidth">
                     <el-input v-model="form.maxCount" auto-complete="off"></el-input>
+                </el-form-item>
+              </el-col>
+                <el-col :span="8">
+                <el-form-item label="启用变更事件" :label-width="formLabelWidth">
+                    <el-select v-model="form.enableChange">
+                      <el-option label="否" value="false"></el-option>
+                      <el-option label="是" value="true"></el-option>
+                    </el-select>
+                </el-form-item>
+              </el-col>
+                <el-col :span="8">
+                <el-form-item label="依赖属性" :label-width="formLabelWidth">
+                    <el-input v-model="form.dependName" auto-complete="off"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -310,6 +325,8 @@ export default {
         isHide: "false",
         valueList: "",
         isRepeat:false,
+        enableChange:false,
+        dependName:"",
         minCount:0,
         maxCount:0
       },
