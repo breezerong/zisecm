@@ -182,7 +182,8 @@
     "differentPassword":"New password cannot be comfirmed.",
     "cannotChangePassword":"User password cannot be changed.",
     "warehousingSuccess":"Warehousing is successful",
-    "warehousingFail":"Warehousing is failed"
+    "warehousingFail":"Warehousing is failed",
+    "pleaseSelectOneTransfer":"Please select a transfer"
 },
 "field": {
     "indexNumber":"S/N",

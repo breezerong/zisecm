@@ -180,7 +180,8 @@
     "cannotCreateRoot":"您不能新建根文件夹!",
     "signImageSize":"56X26, 100dpi, jpg",
     "differentPassword":"新密码和确认密码不相同！",
-    "cannotChangePassword":"用户不能修改密码！"
+    "cannotChangePassword":"用户不能修改密码！",
+    "pleaseSelectOneTransfer":"请选择一条移交单数据"
 },
 "field": {
     "indexNumber":"序号",

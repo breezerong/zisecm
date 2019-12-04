@@ -8,7 +8,7 @@
       </div>
     </el-dialog>
     <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="60%" >
-        <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectTransferRow.ID"></BatchImport>
+        <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectedOneTransfer.ID"></BatchImport>
         <div slot="footer" class="dialog-footer">
           <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
          </div>
@@ -73,7 +73,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button
-          @click="childrenTypeSelectVisible=false;newArchiveItem(selectedChildrenType,selectRow)"
+          @click="childrenTypeSelectVisible=false;newArchiveItem(selectedChildrenType,selectedItems)"
         >{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
@@ -238,7 +238,7 @@
             type="primary"
             plain
             size="small"
-            @click="childrenTypeSelectVisible=true"
+            @click="beforeCreateFile"
           >{{$t('application.createDocument')}}</el-button>
           <el-button
             type="primary"
@@ -328,6 +328,7 @@ export default {
       typeName: "卷盒",
       folderPath: "/表单/移交单",
       selectTransferRow: [],
+      selectedOneTransfer:[],
       gridList: [],
       innerGridList: [],
       outerGridList: [],
@@ -443,6 +444,24 @@ export default {
     this.loadTransferGridData();
   },
   methods: {
+    //著录文件
+    beforeCreateFile(){
+      let _self=this;
+      
+      if(_self.selectedItems.length!=1){
+        _self.$message('请选择一条数据！')
+        return;
+      }
+       _self.selectedChildrenType=[];
+      if(_self.selectedItems[0].TYPE_NAME=='图册'){
+        _self.getTypeNamesByMainList("图册");
+      }else{
+        _self.getTypeNamesByMainList(_self.selectedItems[0].SUB_TYPE);
+      }
+      _self.childrenTypeSelectVisible=true;
+      
+
+    },
     beforePrint(selectedRow,gridName,vtitle){
       let _self=this;
       if(selectedRow.length!=1){
@@ -961,19 +980,19 @@ export default {
       _self.innerDataList=[];
       _self.loadGridInfo();
       if (row != null) {
-        _self.selectTransferRow = row;
+        _self.selectedOneTransfer = row;
         
       }
       var key = _self.inputkey;
       if (key != "") {
         key = "coding like '%" + key + "%' or title like '%" + key + "%'";
       }
-      _self.archiveId=_self.selectTransferRow.ID;
+      _self.archiveId=_self.selectedOneTransfer.ID;
       var m = new Map();
       m.set("gridName", "ArchiveGrid");
       // m.set('folderId',indata.id);
       m.set("condition", key);
-      m.set("id", _self.selectTransferRow.ID);
+      m.set("id", _self.selectedOneTransfer.ID);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "");
@@ -1203,7 +1222,7 @@ export default {
     },
     newArchiveItem(typeName, selectedRow) {
       let _self = this;
-      if (selectedRow.ID) {
+      if (selectedRow.length==1) {
         _self.selectedItemId = "";
 
         _self.dialogName = typeName;
@@ -1223,7 +1242,7 @@ export default {
         },10);
 
       } else {
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
+        _self.$message(_self.$t("message.pleaseSelectOneTransfer"));
       }
     },
     // 新建文档

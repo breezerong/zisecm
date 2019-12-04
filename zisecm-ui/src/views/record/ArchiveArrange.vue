@@ -7,7 +7,7 @@
       <PrintVolumes ref='printVolumes' v-bind:archiveId="this.archiveId" v-bind:currentFolderId="this.currentFolder.id"></PrintVolumes>
     </el-dialog>
     
-    <el-dialog :title="dialogName+$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
+    <el-dialog width="80%" :title="dialogName+$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
       <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
@@ -58,7 +58,7 @@
           </el-form-item>
       </el-form>
        <div slot="footer" class="dialog-footer">
-          <el-button @click="childrenTypeSelectVisible=false;newArchiveFileItem(selectedChildrenType,selectRow)">{{$t('application.ok')}}</el-button>
+          <el-button @click="childrenTypeSelectVisible=false;newArchiveFileItem(selectedChildrenType,selectedItems)">{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
 
@@ -131,7 +131,7 @@
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button> -->
-                      <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">著录</el-button>
+                      <el-button type="primary" plain size="small"  @click="beforeCreateFile">著录</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       
@@ -311,6 +311,24 @@ export default {
       });
   },
   methods: {
+    //著录文件
+    beforeCreateFile(){
+      let _self=this;
+      
+      if(_self.selectedItems.length!=1){
+        _self.$message('请选择一条数据！')
+        return;
+      }
+       _self.selectedChildrenType=[];
+      if(_self.selectedItems[0].TYPE_NAME=='图册'){
+        _self.getTypeNamesByMainList("图册");
+      }else{
+        _self.getTypeNamesByMainList(_self.selectedItems[0].SUB_TYPE);
+      }
+      _self.childrenTypeSelectVisible=true;
+      
+
+    },
   ///打印背脊
     beforePrintRidge(selectedRow,gridName,vtitle){
       let _self=this;
@@ -1033,13 +1051,16 @@ export default {
       if(_self.currentFolder.id ){
         _self.selectedItemId = "";
         _self.propertyVisible = true; 
-        if(_self.$refs.ShowProperty){
-          _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName=typeName;
-          _self.$refs.ShowProperty.myTypeName = typeName;
-          _self.$refs.ShowProperty.myFolderId = _self.currentFolder.id;
-          _self.$refs.ShowProperty.loadFormInfo();
-        }
+        setTimeout(()=>{
+            if(_self.$refs.ShowProperty){
+            _self.$refs.ShowProperty.myItemId = "";
+            _self.dialogName=typeName;
+            _self.$refs.ShowProperty.myTypeName = typeName;
+            _self.$refs.ShowProperty.myFolderId = _self.currentFolder.id;
+            _self.$refs.ShowProperty.loadFormInfo();
+          }
+        },10);
+        
       }
       else{
         _self.$message(_self.$t("message.pleaseSelectFolder"));
@@ -1048,19 +1069,22 @@ export default {
     newArchiveFileItem(typeName,selectedRow)
     {
       let _self = this;
-      if(selectedRow.ID ){
+      if(selectedRow.length==1 ){
         _self.selectedItemId = "";
-        _self.propertyVisible = true; 
-        if(_self.$refs.ShowProperty){
-          _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName=typeName;
-          _self.$refs.ShowProperty.myTypeName =typeName;
-          _self.typeName=typeName;
-          _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
-          _self.$refs.ShowProperty.folderId = _self.currentFolder.id;
-          // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
-          _self.$refs.ShowProperty.loadFormInfo();
-        }
+        _self.propertyVisible = true;
+        setTimeout(()=>{
+          if(_self.$refs.ShowProperty){
+            _self.$refs.ShowProperty.myItemId = "";
+            _self.dialogName=typeName;
+            _self.$refs.ShowProperty.myTypeName =typeName;
+            _self.typeName=typeName;
+            _self.$refs.ShowProperty.parentDocId=selectedRow[0].ID;
+            _self.$refs.ShowProperty.folderId = _self.currentFolder.id;
+            // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
+            _self.$refs.ShowProperty.loadFormInfo();
+          }
+        },10);
+        
       }
       else{
         _self.$message(_self.$t("message.pleaseSelectFolder"));
