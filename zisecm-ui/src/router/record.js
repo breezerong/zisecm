@@ -25,5 +25,27 @@ export const recordRouter =  [
         path: '/record/archivearrange',
         name: '档案整理',
         component: () => import('@/views/record/ArchiveArrange.vue')
-    },
+    }
+    
 ]
+
+export const borrowCenter={
+    meta: {
+        requireAuth: true,
+        permit: 1
+    },
+    path: '/record/archiveoutgoing',
+    name: '出入库管理',
+    component: () => import('@/views/record/ArchiveOutgoing.vue'),
+    children: [
+        {
+            meta: {
+                requireAuth: true,
+                permit: 1
+            },
+            path: '/record/archiveoutgoing/archivepending',
+            name: '待入库',
+            component: () => import('@/views/record/ArchivePending.vue')
+        }
+    ]
+}
