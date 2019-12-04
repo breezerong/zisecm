@@ -7,7 +7,7 @@
         <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
     </userTask>
-    <userTask id="usertask3" name="文档所属部门领导审批" default="flow30" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_doc_leader}">
+    <userTask id="usertask3" name="文档形成领导审批" default="flow30" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_doc_leader}">
       <extensionElements>
         <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
