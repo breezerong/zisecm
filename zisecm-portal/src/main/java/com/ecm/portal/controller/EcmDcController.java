@@ -290,6 +290,20 @@ public class EcmDcController extends ControllerAbstract{
 					}
 				}
 			}
+			long changeCount =0; 
+			String typeName = data.get("TYPE_NAME").toString();
+			if(typeName.equals("图纸文件")) {
+				try {
+					String coding = data.get("CODING").toString();
+					String revision = data.get("REVISION").toString();
+					String cond = " TYPE_NAME='变更文件' and CODING='"+coding+"' and REVISION='"+revision+"'";
+					changeCount = documentService.getObjectCount(getToken(), null, null, cond);
+				}
+				catch(Exception ex) {
+					
+				}
+			}
+			mp.put("changeCount", changeCount);
 			mp.put("data", data);
 			mp.put("permit", permit);
 			mp.put("hasPdf", hasPdf);
@@ -456,7 +470,7 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		
 		try {
-			excelUtil.makeStreamExcel("filelist.xls","EXPORT",titleName,datalist,response,true);
+			excelUtil.makeStreamExcel("filelist.xlsx","EXPORT",titleName,datalist,response,true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

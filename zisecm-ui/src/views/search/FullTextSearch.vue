@@ -1,10 +1,14 @@
 <template>
-  
   <div>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
-      <ShowProperty ref="ShowProperty" width="100%"  v-bind:itemId="selectedItemId"></ShowProperty>
+    <el-dialog
+      :title="$t('application.property')"
+      :visible.sync="propertyVisible"
+      @close="propertyVisible = false"
+      width="80%"
+    >
+      <ShowProperty ref="ShowProperty" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
       <div slot="footer" class="dialog-footer">
-         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+        <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <div class="navbar">
@@ -29,43 +33,65 @@
     </div>
     <div>
       <div class="docType">
-        <span>{{$t('application.docTypeName')}}: </span>
-        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{$t('application.selectAll')}}</el-checkbox>
+        <span>{{$t('application.docTypeName')}}:</span>
+        <el-checkbox
+          :indeterminate="isIndeterminate"
+          v-model="checkAll"
+          @change="handleCheckAllChange"
+        >{{$t('application.selectAll')}}</el-checkbox>
         <el-checkbox-group v-model="checkedCards">
-          <el-checkbox v-for="card in cards" :label="card.label" :key="card.id" checked  @change="handleCheckedTypeChange">{{card.label}}</el-checkbox>
+          <el-checkbox
+            v-for="card in cards"
+            :label="card.label"
+            :key="card.id"
+            checked
+            @change="handleCheckedTypeChange"
+          >{{card.label}}</el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
     <div v-if="searched">
-    <div>
-      <span>{{$t('application.searchResult')}} {{itemCount}}, &nbsp; {{$t('application.takeTime')}} {{searchTime}}{{$t('application.scend')}}</span>
-    </div>
-    <el-container>
-      <el-aside width="200px">
-        <el-row>
-          <el-button size="small" type="primary" icon="el-icon-search" @click="handleScendSearch()" :disabled="searched==false">{{$t('application.scendSearch')}}</el-button>
-        </el-row>
-        <div v-for="(term,idx) in terms" :key="idx+'_T'">
-          <div v-if="term.fieldName != 'by_object_type'">
-            <el-row>
-              <el-row class="termHead">
-                <span>{{$t('application.'+term.fieldName)}}</span>
-              </el-row>
+      <div>
+        <span>{{$t('application.searchResult')}} {{itemCount}}, &nbsp; {{$t('application.takeTime')}} {{searchTime}}{{$t('application.scend')}}</span>
+      </div>
+      <el-container>
+        <el-col :span="3">
+        <el-aside class="fixed" id="searchBar" width="160px">
+          <el-row>
+            <el-button
+              size="small"
+              type="primary"
+              icon="el-icon-search"
+              @click="handleScendSearch()"
+              :disabled="searched==false"
+            >{{$t('application.scendSearch')}}</el-button>
+          </el-row>
+          <div v-for="(term,idx) in terms" :key="idx+'_T'">
+            <div v-if="term.fieldName != 'by_object_type'">
               <el-row>
-                <div>
-                  <el-checkbox-group v-model="checkedTerms[term.index]">
-                    <div v-for="(gg,gidx) in term.groups" :key="gidx+'_G'">
-                      <el-checkbox :label="gg.name" :key="term.fieldName+''+gg.name">{{gg.name}}({{gg.value}})</el-checkbox>
-                    </div>
-                  </el-checkbox-group>
-                </div>
+                <el-row class="termHead">
+                  <span>{{$t('application.'+term.fieldName)}}</span>
+                </el-row>
+                <el-row>
+                  <div>
+                    <el-checkbox-group v-model="checkedTerms[term.index]">
+                      <div v-for="(gg,gidx) in term.groups" :key="gidx+'_G'">
+                        <el-checkbox
+                          :label="gg.name"
+                          :key="term.fieldName+''+gg.name"
+                        >{{gg.name}}({{gg.value}})</el-checkbox>
+                      </div>
+                    </el-checkbox-group>
+                  </div>
+                </el-row>
               </el-row>
-            </el-row>
+            </div>
           </div>
-        </div>
-      </el-aside>
-      <el-main>
-        <el-pagination
+        </el-aside>
+        </el-col>
+        <el-col :span="21">
+        <el-main>
+          <!-- <el-pagination
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -74,76 +100,80 @@
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="itemCount"
-        ></el-pagination>
-        <el-table
-          :data="dataList"
-          style="width: 100%;margin-bottom: 20px;"
-          row-key="ID"
-          border
-          default-expand-all
-        >
-          <el-table-column type="expand">
-            <template slot-scope="scope">
-              <el-table :data="scope.row.childrens" border style="width: 100%" :show-header="false">
-               
-                <el-table-column>
-                  <template slot-scope="scope">
-                    <div v-html="scope.row.highlightText"></div>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </template>
-          </el-table-column>
-          <el-table-column :label="$t('field.indexNumber')" width="60">
-            <template slot-scope="scope">
-              <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column width="40">
-            <template slot-scope="scope">
-              <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0" />
-            </template>
-          </el-table-column>
-          <div v-for="(citem,idx) in gridList" :key="idx+'_C'">
-            <div v-if="citem.visibleType==1">
-              <div v-if="(citem.width+'').indexOf('%')>0">
-                <el-table-column
-                  :label="citem.label"
-                  :prop="citem.attrName"
-                  :min-width="citem.width"
-                  :sortable="citem.allowOrderby"
+          ></el-pagination>-->
+          <el-table
+            :data="dataList"
+            style="width: 100%;margin-bottom: 20px;"
+            row-key="ID"
+            border
+            default-expand-all
+          >
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-table
+                  :data="scope.row.childrens"
+                  border
+                  style="width: 100%"
+                  :show-header="false"
                 >
-                  <template slot-scope="scope">
-                    <div v-if="citem.attrName.indexOf('DATE')>0">
-                      <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                    </div>
-                    <div v-else>
-                      <span>{{scope.row[citem.attrName]}}</span>
-                    </div>
-                  </template>
-                </el-table-column>
-              </div>
-              <div v-else>
-                <el-table-column
-                  :label="citem.label"
-                  :width="citem.width"
-                  :prop="citem.attrName"
-                  :sortable="citem.allowOrderby"
-                >
-                  <template slot-scope="scope">
-                    <div v-if="citem.attrName.indexOf('_DATE')>0">
-                      <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                    </div>
-                    <div v-else>
-                      <span>{{scope.row[citem.attrName]}}</span>
-                    </div>
-                    <!--span>{{scope.row[citem.attrName]}}</span-->
-                  </template>
-                </el-table-column>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <div style="color : #CCCCCC;" v-html="'摘要：'+scope.row.highlightText"></div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('field.indexNumber')" width="60">
+              <template slot-scope="scope">
+                <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column width="40">
+              <template slot-scope="scope">
+                <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0" />
+              </template>
+            </el-table-column>
+            <div v-for="(citem,idx) in gridList" :key="idx+'_C'">
+              <div v-if="citem.visibleType==1">
+                <div v-if="(citem.width+'').indexOf('%')>0">
+                  <el-table-column
+                    :label="citem.label"
+                    :prop="citem.attrName"
+                    :min-width="citem.width"
+                    :sortable="citem.allowOrderby"
+                  >
+                    <template slot-scope="scope">
+                      <div v-if="citem.attrName.indexOf('DATE')>0">
+                        <span>{{dateFormat(scope.row[citem.attrName])}}</span>
+                      </div>
+                      <div v-else>
+                        <span>{{scope.row[citem.attrName]}}</span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </div>
+                <div v-else>
+                  <el-table-column
+                    :label="citem.label"
+                    :width="citem.width"
+                    :prop="citem.attrName"
+                    :sortable="citem.allowOrderby"
+                  >
+                    <template slot-scope="scope">
+                      <div v-if="citem.attrName.indexOf('_DATE')>0">
+                        <span>{{dateFormat(scope.row[citem.attrName])}}</span>
+                      </div>
+                      <div v-else>
+                        <span>{{scope.row[citem.attrName]}}</span>
+                      </div>
+                      <!--span>{{scope.row[citem.attrName]}}</span-->
+                    </template>
+                  </el-table-column>
+                </div>
               </div>
             </div>
-          </div>
-          <!--
+            <!--
           <el-table-column
             :label="$t('application.content')"
             minWidth="100%"
@@ -152,46 +182,47 @@
                 <span>{{scope.row['filecontent']}}</span>
               </template>
           </el-table-column>
-          -->
-          <el-table-column :label="$t('application.operation')" width="157">
-            <template slot-scope="scope">
-              <el-button
-                type="primary"
-                plain
-                size="small"
-                :title="$t('application.viewProperty')"
-                icon="el-icon-info"
-                @click="showItemProperty(scope.row)"
-              ></el-button>
-              <el-button
-                type="primary"
-                plain
-                size="small"
-                :title="$t('application.viewContent')"
-                icon="el-icon-picture-outline"
-                @click="showItemContent(scope.row)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 100, 200]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="itemCount"
-        ></el-pagination>
-      </el-main>
-    </el-container>
+            -->
+            <el-table-column :label="$t('application.operation')" width="157">
+              <template slot-scope="scope">
+                <el-button
+                  type="primary"
+                  plain
+                  size="small"
+                  :title="$t('application.viewContent')"
+                  icon="el-icon-picture-outline"
+                  @click="showItemContent(scope.row)"
+                ></el-button>
+                <el-button
+                  type="primary"
+                  plain
+                  size="small"
+                  :title="$t('application.viewProperty')"
+                  icon="el-icon-info"
+                  @click="showItemProperty(scope.row)"
+                ></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 50, 100, 200]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="itemCount"
+          ></el-pagination>
+        </el-main>
+        </el-col>
+      </el-container>
     </div>
   </div>
 </template>
 
 <script type="text/javascript">
-import ShowProperty from '@/components/ShowProperty'
+import ShowProperty from "@/components/ShowProperty";
 export default {
   name: "FullTextSearch",
   components: {
@@ -200,7 +231,7 @@ export default {
   permit: 1,
   data() {
     return {
-      imageFormat: 'jpg,jpeg,bmp,gif,png',
+      imageFormat: "jpg,jpeg,bmp,gif,png",
       currentData: [],
       dataList: [],
       dataListFull: [],
@@ -219,7 +250,7 @@ export default {
       isIndeterminate: false,
       imageViewVisible: false,
       imageViewer: Object,
-      imageArray:[],
+      imageArray: [],
       propertyOnly: false,
       searchTime: "",
       pageSize: 20,
@@ -237,11 +268,19 @@ export default {
   },
   created() {
     let _self = this;
-    console.log(this.$route.params.map)
     var psize = localStorage.getItem("FTSearchPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);
     }
+    var getMap = _self.$route.params.map;
+    if (getMap != null) {
+      _self.inputkey = getMap.get("inputkey");
+      _self.checkedCards = getMap.get("checkedCards");
+      _self.propertyOnly = getMap.get("propertyOnly");
+      _self.cardsLabel = getMap.get("checkedCards");
+      _self.enterDown();
+    }
+    _self.checkedCards = [];
     _self.loadCards();
     _self.loadGridInfo();
   },
@@ -250,56 +289,59 @@ export default {
       this.currentPage = 1;
       this.search(false);
     },
-    handleCheckAllChange(val){
-      
+    handleCheckAllChange(val) {
       this.checkedCards = val ? this.cardsLabel : [];
       this.isIndeterminate = false;
+      this.enterDown();
     },
-    handleCheckedTypeChange(value){
+    handleCheckedTypeChange(value) {
       //console.log(JSON.stringify(value));
       let checkedCount = this.checkedCards.length;
       this.checkAll = checkedCount === this.cardsLabel.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.cards.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.cards.length;
+      this.enterDown();
     },
     // 查看属性
-    showItemProperty(indata){
+    showItemProperty(indata) {
       let _self = this;
       _self.currentItem = indata;
-      _self.selectedItemId = indata.ID ;
+      _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
-      if(_self.$refs.ShowProperty){
-        _self.$refs.ShowProperty.myItemId = indata.ID ;
+      if (_self.$refs.ShowProperty) {
+        _self.$refs.ShowProperty.myItemId = indata.ID;
         _self.$refs.ShowProperty.loadFormInfo();
       }
     },
     // 查看内容
-    showItemContent(indata){
+    showItemContent(indata) {
       let condition = indata.ID;
       let href = this.$router.resolve({
-        path: '/viewdoc',
+        path: "/viewdoc",
         query: {
           id: condition
           //token: sessionStorage.getItem('access-token')
         }
       });
       //console.log(href);
-      window.open(href.href, '_blank');
+      window.open(href.href, "_blank");
     },
     querySearch(queryString, cb) {
       let _self = this;
-      _self
-        axios.post("/search/getSuggestion",JSON.stringify(_self.inputkey))
+      _self;
+      axios
+        .post("/search/getSuggestion", JSON.stringify(_self.inputkey))
         .then(function(response) {
           _self.keywords = response.data.data;
-          if(_self.keywords){
-             var list = [{}];
-             var i;
-             for(i=0;i<_self.keywords.length;i++){
-               var item = new Object();
-               item.value = _self.keywords[i];
-               list[i] = item;
-             }
-             _self.keywords = list;
+          if (_self.keywords) {
+            var list = [{}];
+            var i;
+            for (i = 0; i < _self.keywords.length; i++) {
+              var item = new Object();
+              item.value = _self.keywords[i];
+              list[i] = item;
+            }
+            _self.keywords = list;
           }
           cb(_self.keywords);
           //console.log(JSON.stringify(_self.taskList));
@@ -317,7 +359,7 @@ export default {
       this.inputkey = item.value;
       this.search(false);
     },
-     handleScendSearch() {
+    handleScendSearch() {
       //console.log(item);
       this.currentPage = 1;
       this.search(true);
@@ -332,8 +374,9 @@ export default {
     // 分页 页数改变
     handleSizeChange(val) {
       this.pageSize = val;
-      var maxPage = Math.floor(this.itemCount /val)+1;
-      this.currentPage = this.currentPage>maxPage?maxPage:this.currentPage;
+      var maxPage = Math.floor(this.itemCount / val) + 1;
+      this.currentPage =
+        this.currentPage > maxPage ? maxPage : this.currentPage;
       localStorage.setItem("FTSearchPageSize", val);
       this.search(this.isScend);
       //console.log('handleSizeChange', val);
@@ -343,15 +386,16 @@ export default {
       this.currentPage = val;
       this.search(this.isScend);
     },
-    loadCards() {
+    loadCards(indata) {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      axios.post("/search/getCardSearchs",_self.getLang())
+      axios
+        .post("/search/getCardSearchs", _self.getLang())
         .then(function(response) {
           _self.cards = response.data.data;
-          var i=0;
-          for(i=0;i<_self.cards.length;i++){
+          var i = 0;
+          for (i = 0; i < _self.cards.length; i++) {
             _self.cardsLabel[i] = _self.cards[i].label;
           }
           _self.loading = false;
@@ -368,7 +412,8 @@ export default {
       var m = new Map();
       m.set("gridName", "FullTextGrid");
       m.set("lang", _self.getLang());
-      axios.post("/dc/getGridViewInfo",JSON.stringify(m))
+      axios
+        .post("/dc/getGridViewInfo", JSON.stringify(m))
         .then(function(response) {
           _self.gridList = response.data.data;
           _self.loading = false;
@@ -378,85 +423,101 @@ export default {
           _self.loading = false;
         });
     },
-    saveItem(){},
-    onSaved(){},
+    saveItem() {},
+    onSaved() {},
     search(isScend) {
+      window.addEventListener("scroll", this.handleScroll);
       let _self = this;
       _self.isScend = isScend;
       //console.log(JSON.stringify(_self.checkedCards));
       var m = new Map();
-      m.set("keyword",  _self.inputkey);
+      // +++++
+      m.set("keyword", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", _self.currentPage - 1);
       m.set("typeNames", _self.checkedCards);
       m.set("attrOnly", _self.propertyOnly);
-      if(isScend){
+      if (isScend) {
         var i;
         var terms = [];
         var len = 0;
-        for( i=0;i<_self.terms.length;i++){
-            let term = _self.terms[i];
-            let cterm = _self.checkedTerms[i];
-            if(cterm.length>0){
-              var obj = new Object();
-              obj.fieldName = term.fieldName;
-              obj.values = cterm;
-              terms[len] = obj;
-              len ++;
-            }
+        for (i = 0; i < _self.terms.length; i++) {
+          let term = _self.terms[i];
+          let cterm = _self.checkedTerms[i];
+          if (cterm.length > 0) {
+            var obj = new Object();
+            obj.fieldName = term.fieldName;
+            obj.values = cterm;
+            terms[len] = obj;
+            len++;
+          }
         }
-        if(len>0){
+        if (len > 0) {
           m.set("terms", terms);
         }
       }
-      axios.post("/search/searchByKeyword",JSON.stringify(m))
+      console.log(JSON.stringify(m));
+      axios
+        .post("/search/searchByKeyword", JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data.list;
           _self.searchTime = response.data.data.searchTime;
           _self.itemCount = response.data.total;
           let myterms = response.data.data.aggregations;
-
           //console.log(JSON.stringify(_self.dataList));
-          _self.dataList.map(x=>{
-              var child = new Object();
-              child.highlightText = x.highlightText;
-              child.parentId = x.ID;
-              x.childrens = new Array(child);
+          _self.dataList.map(x => {
+            var child = new Object();
+            child.highlightText = x.highlightText;
+            child.parentId = x.ID;
+            x.childrens = new Array(child);
           });
           var i;
           _self.checkedTerms = [];
           // for(term in _self.terms){
-          for( i=0;i<myterms.length;i++){
+          for (i = 0; i < myterms.length; i++) {
             let term = myterms[i];
             term.index = i;
-            _self.checkedTerms[i]=[];
+            _self.checkedTerms[i] = [];
             var gg = JSON.stringify(term.groups);
             //console.log(gg);
-            gg = gg.replace("{","");
-            gg = gg.replace("}","");
+            gg = gg.replace("{", "");
+            gg = gg.replace("}", "");
             //console.log(gg);
             var items = gg.split(",");
             var gitem;
             var newGroup = [];
             var j;
-            for(j=0;j<items.length;j++){
+            for (j = 0; j < items.length; j++) {
               var val = items[j].split(":");
               gitem = new Object();
-              gitem.name = val[0].replace("\"","").replace("\"","");
+              gitem.name = val[0].replace('"', "").replace('"', "");
               gitem.value = val[1];
               newGroup[j] = gitem;
             }
             term.groups = newGroup;
           }
-           _self.terms = myterms;
+          _self.terms = myterms;
           _self.searched = true;
-          console.log(JSON.stringify(_self.checkedTerms));
+          // console.log(JSON.stringify(_self.checkedTerms));
           _self.loading = false;
         })
         .catch(function(error) {
           console.log(error);
           _self.loading = false;
         });
+    },
+    handleScroll() {
+      var scrollTop =
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop;
+      var offsetTop = document.querySelector('#searchBar').offsetTop;
+      if(scrollTop<=200){
+      offsetTop = 300 - Number(scrollTop);
+      document.querySelector('#searchBar').style.top = offsetTop+'px';
+      }else{
+        document.querySelector('#searchBar').style.top = '100px';
+      }
     }
   }
 };
@@ -490,7 +551,7 @@ a {
   background-color: rgb(196, 225, 255);
 }
 .el-aside {
-    background-color: rgb(231, 236, 241);
+  background-color: rgb(231, 236, 241);
+  position:fixed;
 }
-
 </style>
