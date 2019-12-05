@@ -30,15 +30,7 @@ export const dcRouter = [
 				}
 			]
 		},
-		{
-			meta: {
-				requireAuth: true,
-				permit: 1
-			},
-			path: '/dc/shoppingcart',
-			component: () => import('@/views/dc/ShoppingCart.vue'),
-			name: '购物车'
-		},
+		 
 		{
 			meta: {
 				requireAuth: true,
