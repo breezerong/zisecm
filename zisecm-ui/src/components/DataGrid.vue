@@ -1,7 +1,7 @@
 <template>
     <div>
            <div>
-                <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+                <el-dialog :append-to-body="true" :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
                   <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
                   <div slot="footer" class="dialog-footer">
                     <el-button @click="saveItem()">{{$t('application.save')}}</el-button> 
