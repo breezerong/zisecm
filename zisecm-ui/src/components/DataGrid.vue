@@ -20,8 +20,9 @@
                         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
                     </div>
                 </el-dialog>
+                <div :style="'background:#FFFFFF;height:'+tableHeight+'px'">
                     <el-table
-                        :height="tableHeight"
+                        :max-height="tableHeight"
                         :data="itemDataList"
                         border
                         @selection-change="selectChange"
@@ -82,6 +83,7 @@
                           </template>
                         </el-table-column>
                       </el-table>
+                </div>
                       <el-pagination v-if="isshowPage"
                         background
                         @size-change="handleSizeChange"
