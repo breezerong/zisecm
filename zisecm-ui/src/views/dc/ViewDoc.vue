@@ -27,6 +27,7 @@
              <ImageViewer v-else-if="viewerType==2" v-bind:id="doc.id" v-bind:format="doc.format"></ImageViewer>
              <VideoPlayer v-else-if="viewerType==3" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
              <AudioPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
+             <InnerItemViewer v-else-if="viewerType==100" v-bind:id = "doc.id"></InnerItemViewer>
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
                 当前文件没有电子文件。
               </div>
@@ -46,7 +47,8 @@
               <el-button type="primary" plain @click="menuClick('关联文档')">关联文档</el-button><br/>
               <el-button type="primary" plain @click="menuClick('文档版本')">文档版本</el-button><br/>
               <el-button type="primary" plain @click="menuClick('格式副本')">格式副本</el-button><br/>
-              <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button>
+              <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button><br/>
+              <el-button v-if="doc.typeName=='图纸文件'" type="primary" plain @click="menuClick('变更信息')">变更( {{doc.changeCount}} )</el-button>
               </template>
             </div>
         </el-col>
@@ -69,8 +71,8 @@
       <template v-if="dialog.title=='利用信息'">
         <UseInfo :docId="docId"></UseInfo>
       </template>
-      <template v-if="dialog.title=='借阅'">
-        借阅
+       <template v-if="dialog.title=='变更信息'">
+        <ChangeDocViewer :coding="doc.code" :revision="doc.revision"></ChangeDocViewer>
       </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog.visible = false">取 消</el-button>
@@ -94,6 +96,8 @@ import OfficeDocViewer from './OfficeDocViewer.vue'
 import ImageViewer from './ImageViewer.vue'
 import VideoPlayer from './VideoPlayer.vue'
 import AudioPlayer from './AudioPlayer.vue'
+import InnerItemViewer from "./InnerItemViewer.vue"
+import ChangeDocViewer from "./ChangeDocViewer.vue"
 
 export default {
   components:{
@@ -106,7 +110,9 @@ export default {
     OfficeDocViewer:OfficeDocViewer,
     ImageViewer:ImageViewer,
     VideoPlayer:VideoPlayer,
-    AudioPlayer:AudioPlayer
+    AudioPlayer:AudioPlayer,
+    InnerItemViewer:InnerItemViewer,
+    ChangeDocViewer:ChangeDocViewer
   },
   data(){
     return {
@@ -127,6 +133,7 @@ export default {
         permit:0,
         contentSize:0,
         hasPdf:false,
+        changeCount:0
       },
       message:"加载中。。。",
       watermarkText:"",
@@ -157,7 +164,8 @@ export default {
         _self.docObj=response.data.data;
         _self.doc.permit = response.data.permit;
         _self.doc.hasPdf = response.data.hasPdf;
-        console.log(_self.docObj);
+        _self.doc.changeCount = response.data.changeCount;
+        // console.log(_self.docObj);
         _self.doc.id=_self.docObj.ID;
         _self.doc.code=_self.docObj.CODING;
         _self.doc.revision=_self.docObj.REVISION;
@@ -165,20 +173,22 @@ export default {
         _self.doc.contentSize = _self.docObj.CONTENT_SIZE;
         _self.doc.folderId=_self.docObj.FOLDER_ID;
         if(!_self.doc.hasPdf){
-          _self.doc.typeName=_self.docObj.TYPE_NAME;
+          _self.doc.format=_self.docObj.FORMAT_NAME;
         }else{
-          _self.doc.typeName="pdf";
+          _self.doc.format ="pdf";
         }
-        _self.doc.format = _self.docObj.FORMAT_NAME;
+        _self.doc.typeName= _self.docObj.TYPE_NAME;
         _self.initViewerType();
+        if(_self.viewerType>0 && _self.viewerType<100){
+          _self.watermarkText =  sessionStorage.getItem("access-userName");
+          var showText = _self.watermarkText +' '+ _self.ip
+            +' '+ _self.datetimeFormat(new Date());
+          Watermark.set(showText);
+        }
       }).catch(function(error) {
         console.log(error);
     });
-    _self.watermarkText =  sessionStorage.getItem("access-userName");
-		var showText = _self.watermarkText +' '+ _self.ip
-				+' '+ _self.datetimeFormat(new Date());
-    Watermark.set(showText);
-    console.log(showText);
+
 		// setInterval(function() {
 		// 	var showText1 = _self.watermarkText +' '+ _self.ip
 		// 		+' '+ _self.datetimeFormat(new Date());
@@ -190,7 +200,10 @@ export default {
     initViewerType(){
       let _self = this;
       if(_self.doc){
-        if(_self.doc.format == "doc" || _self.doc.format == "docx" ||
+        console.log("typename:"+_self.doc.typeName);
+        if(_self.doc.typeName == "卷盒" || _self.doc.typeName=="图册"){
+          _self.viewerType = 100;
+        } else if(_self.doc.format == "doc" || _self.doc.format == "docx" ||
         _self.doc.format == "ppt" ||_self.doc.format == "pptx" ||
         _self.doc.format == "xls" ||_self.doc.format == "xlsx"||_self.doc.format == "pdf"){
           _self.viewerType = 1;
