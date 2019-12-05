@@ -1,7 +1,7 @@
 <template>
     <div>
            <div>
-                <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+                <el-dialog :append-to-body="true" :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
                   <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
                   <div slot="footer" class="dialog-footer">
                     <el-button @click="saveItem()">{{$t('application.save')}}</el-button> 
@@ -20,8 +20,9 @@
                         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
                     </div>
                 </el-dialog>
+                <div :style="'background:#FFFFFF;height:'+tableHeight+'px'">
                     <el-table
-                        :height="tableHeight"
+                        :max-height="tableHeight"
                         :data="itemDataList"
                         border
                         @selection-change="selectChange"
@@ -77,12 +78,12 @@
                             <!-- <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button> -->
-                            
-                              <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                               <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
+                              <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                           </template>
                         </el-table-column>
                       </el-table>
+                </div>
                       <el-pagination v-if="isshowPage"
                         background
                         @size-change="handleSizeChange"
@@ -182,6 +183,7 @@ export default {
        if(indata=='update')
       {
         this.$message(this.$t("message.saveSuccess"));
+        this.$emit('refreshdatagrid');
       }
       else
       {

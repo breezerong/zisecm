@@ -9,20 +9,20 @@
       <template v-for="(item,itemIndex) in dataList">
         <el-col :span="showCellValue(item)" v-bind:key="itemIndex">
           <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:'必填',trigger:'blur'}]">
-                <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue"></el-input>
-                <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue"></el-input>
-                <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue"></el-input>
-                <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue"></el-checkbox>
-                <el-date-picker v-else-if="item.controlType=='Date'" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;"></el-date-picker>
+                <el-input v-if="item.controlType=='TextBox' && (!item.readOnly || (item.readOnly && itemId))" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                <el-input v-if="item.controlType=='TextArea' && (!item.readOnly || (item.readOnly && itemId))" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                <el-input v-else-if="item.controlType=='Integer' && (!item.readOnly || (item.readOnly && itemId))" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                <el-checkbox v-else-if="item.controlType=='Boolean' && (!item.readOnly || (item.readOnly && itemId))"  :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-checkbox>
+                <el-date-picker v-else-if="item.controlType=='Date' && (!item.readOnly || (item.readOnly && itemId))" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;" :disabled="item.readOnly"></el-date-picker>
                 <el-select  :name="item.attrName"
-                v-else-if="item.controlType=='Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
+                v-else-if="item.controlType==('Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect') && (!item.readOnly || (item.readOnly && itemId))" 
                 v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" :multiple="item.isRepeat" style="display:block;"
-                @change="((val)=>{onSelectChange(val, item)})">
+                @change="((val)=>{onSelectChange(val, item)})" >
                       <div v-for="(name,nameIndex) in item.validValues" :key="nameIndex+'N'">
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>
                   </el-select>
-                <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue" v-bind:isRepeat="item.isRepeat"></UserSelectInput>
+                <UserSelectInput v-else-if="item.controlType=='UserSelect' && (!item.readOnly || (item.readOnly && itemId))" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue" v-bind:isRepeat="item.isRepeat"></UserSelectInput>
                 <!-- <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput> -->
           </el-form-item>
         </el-col>
@@ -103,6 +103,7 @@ export default {
        // console.log(fileList);
     },
     onSelectChange(val, item){
+      //console.log(item);
       if(item.enableChange){
         let i =0;
         for(i in this.dataList){
@@ -122,6 +123,7 @@ export default {
       _self.loading = true;
       axios.post("/dc/getSelectList",JSON.stringify(m))
         .then(function(response) {
+          //console.log(response.data);
           if(response.data.code == 1){
             item.validValues = response.data.data;
           }
@@ -147,7 +149,7 @@ export default {
       //console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
       axios.post("/dc/getFormItem",JSON.stringify(m))
         .then(function(response) {
-
+          //console.log(JSON.stringify(response.data.data));
           _self.bindData(response.data.data);
           _self.fileList = [];
           //console.log(JSON.stringify(response.data.data));
