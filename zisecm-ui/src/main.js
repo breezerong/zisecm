@@ -6,13 +6,13 @@ import i18n from './assets/locales'
 import './plugins/element.js'
 import './plugins/axios.js'
 import './plugins/formatter.js'
-import './assets/styles/main.css'
 import echarts from 'echarts'
 import './assets/icons/iconfont.css'
 import ImgViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 import Video from 'video.js'
 import 'video.js/dist/video-js.css'
+import './assets/styles/main.css'
 
 Vue.prototype.$video = Video
 Vue.use(ImgViewer)

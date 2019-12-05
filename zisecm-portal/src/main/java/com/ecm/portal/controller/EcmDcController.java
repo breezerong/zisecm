@@ -585,22 +585,29 @@ public class EcmDcController extends ControllerAbstract{
 		String lang = args.get("lang").toString();
 		EcmDocument en = null;
 		List<EcmFormItem> list = null;
+		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			en = documentService.getObjectById(getToken(),itemInfo);
 			EcmForm frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_EDIT");
 			if (frm == null) {
 				frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_1");
 			}
-			list = frm.getEcmFormItems(lang);
+			list = frm.getEcmFormItems(documentService.getSession(getToken()),lang);
+			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
 			EcmForm frm = CacheManagerOper.getEcmForms().get(itemInfo + "_NEW");
 			if (frm == null) {
 				frm = CacheManagerOper.getEcmForms().get(itemInfo + "_1");
 			}
-			list = frm.getEcmFormItems(lang);
+			try {
+				list = frm.getEcmFormItems(documentService.getSession(getToken()),lang);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				mp.put("code", ActionContext.TIME_OUT);
+			}
+			
 		}
-		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
 		mp.put("data", list);
 		return mp;
 	}

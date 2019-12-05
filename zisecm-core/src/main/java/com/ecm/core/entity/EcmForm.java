@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.ecm.common.util.DateUtils;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
+import com.ecm.icore.service.IEcmSession;
 
 public class EcmForm extends EcmSysObject {
 
@@ -86,24 +88,33 @@ public class EcmForm extends EcmSysObject {
 		return ecmFormItems;
 	}
 	
-	public List<EcmFormItem> getEcmFormItems(String langKey) {
+	public List<EcmFormItem> getEcmFormItems(IEcmSession session,String langKey) {
 		// TODO Auto-generated method stub
 		List<EcmFormItem> list = new ArrayList<EcmFormItem>();
-		if(ecmFormItems != null && !StringUtils.isEmpty(langKey)) {
+		if(ecmFormItems != null ) {
 			
 			for(EcmFormItem item : ecmFormItems) {
-				String label = CacheManagerLanguage.getLanguage(langKey, typeName, item.getAttrName());
-				//如果类型属性未定义，获取默认标签
-				if(StringUtils.isEmpty(label) && !StringUtils.isEmpty(typeName)) {
-					label = CacheManagerLanguage.getLanguage(langKey, item.getAttrName());
+				String label = item.getLabel();
+				if(!StringUtils.isEmpty(langKey)) {
+					label = CacheManagerLanguage.getLanguage(langKey, typeName, item.getAttrName());
+					//如果类型属性未定义，获取默认标签
+					if(StringUtils.isEmpty(label) && !StringUtils.isEmpty(typeName)) {
+						label = CacheManagerLanguage.getLanguage(langKey, item.getAttrName());
+					}
 				}
+				EcmFormItem itemc = item.clone();
 				if(!StringUtils.isEmpty(label)) {
-					EcmFormItem itemc = item.clone();
 					itemc.setLabel(label);
-					list.add(itemc);
-				} else {
-					list.add(item);
 				}
+				String defaultValue = itemc.getDefaultValue();
+				if("{now}".equalsIgnoreCase(defaultValue)) {
+					itemc.setDefaultValue(DateUtils.currentDate("yyyy-MM-dd"));
+				}else if("{username}".equalsIgnoreCase(defaultValue)) {
+					itemc.setDefaultValue(session.getCurrentUser().getUserName());
+				}else if("{department}".equalsIgnoreCase(defaultValue)) {
+					itemc.setDefaultValue(session.getCurrentUser().getDepartment());
+				}
+				list.add(itemc);
 			}
 		}else {
 			list = ecmFormItems;
