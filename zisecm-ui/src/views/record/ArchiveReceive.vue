@@ -32,14 +32,14 @@
         <DataGrid
           ref="transferDataGrid"
           key="transfer"
-          v-bind:isshowPage="false"
+          v-bind:isshowPage="true"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
           @pagechange="handleCurrentChange"
           v-bind:itemCount="transferCount"
           v-bind:tableHeight="leftTableHeight"
-          @rowclick="loadGridData"  :isshowOption="true"
+          @rowclick="loadGridData"
           @selectchange="transferselectChange"
         ></DataGrid>
       </el-col>
@@ -54,7 +54,7 @@
           @pagechange="pageChange"
           v-bind:isshowOption="true"
           v-bind:itemCount="itemCount"
-          @rowclick="showInnerFile"  :isshowOption="true"
+          @rowclick="showInnerFile"
           v-bind:tableHeight="rightTableHeight"
           @selectchange="selectChange"
         ></DataGrid>
@@ -70,7 +70,7 @@
             v-bind:tableHeight="rightTableHeight"
             v-bind:loading="loading"
             @pagesizechange="innerPageSizeChange"
-            @rowclick="selectOneFile"  :isshowOption="true"
+            @rowclick="selectOneFile"  
             @pagechange="innerPageChange"
             @selectchange="selectInnerChange"
           ></DataGrid>
@@ -703,7 +703,9 @@ export default {
     // 加载表格数据
     loadGridData(row) {
       let _self = this;
+      _self.innerDataList=[];
       _self.loadGridInfo();
+
       if (row != null) {
         _self.selectTransferRow = row;
       }

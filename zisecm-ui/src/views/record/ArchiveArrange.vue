@@ -7,11 +7,19 @@
       <PrintVolumes ref='printVolumes' v-bind:archiveId="this.archiveId" v-bind:currentFolderId="this.currentFolder.id"></PrintVolumes>
     </el-dialog>
     
-    <el-dialog :title="dialogName+$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
+    <el-dialog width="80%" :title="dialogName+$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false">
       <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="560" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog title="打印背脊" width="43%" :visible="printRidgeVisible" @close="printRidgeVisible=false">
+      <div style="height:900px;">
+        <PrintRidge ref="printRidge"></PrintRidge>
+      </div>
+      
+      
     </el-dialog>
 
     <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
@@ -50,7 +58,7 @@
           </el-form-item>
       </el-form>
        <div slot="footer" class="dialog-footer">
-          <el-button @click="childrenTypeSelectVisible=false;newArchiveFileItem(selectedChildrenType,selectRow)">{{$t('application.ok')}}</el-button>
+          <el-button @click="childrenTypeSelectVisible=false;newArchiveFileItem(selectedChildrenType,selectedItems)">{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
 
@@ -102,6 +110,8 @@
           size="small" icon="el-icon-s-order"  @click="takeNumbers">{{$t('application.takeNumbers')}}</el-button>
                     <el-button type="primary" plain
           size="small" icon="el-icon-notebook-2"  @click="fetchInformation">{{$t('application.fetchInformation')}}</el-button>
+          <el-button type="primary" plain
+          size="small" icon="el-icon-printer"  @click="beforePrintRidge(selectedItems,'printRidgeGrid','打印背脊')">打印</el-button>
                     <el-button type="primary" plain
           size="small" icon="el-icon-sell"  @click="putInStorage">{{$t('application.warehousing')}}</el-button>
             </el-col>
@@ -121,7 +131,7 @@
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button> -->
-                      <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">著录</el-button>
+                      <el-button type="primary" plain size="small"  @click="beforeCreateFile">著录</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       
@@ -167,6 +177,7 @@ import 'url-search-params-polyfill'
 
 import PrintPage from '@/views/record/PrintPage'
 import PrintVolumes from '@/views/record/PrintVolumes'
+import PrintRidge from '@/views/record/PrintRidge'
 export default {
   name: "FolderClassification",
   components: {
@@ -174,7 +185,8 @@ export default {
     // PDFViewer: PDFViewer,
     DataGrid:DataGrid,
     PrintPage:PrintPage,
-    PrintVolumes:PrintVolumes
+    PrintVolumes:PrintVolumes,
+    PrintRidge:PrintRidge
     //Prints:Prints
   },
   data() {
@@ -222,7 +234,6 @@ export default {
       selectedChildrenType:"",
       selectRow:[],
       importdialogVisible:false,
-      selectedItems: [],
       selectedFileId:"",
       selectedOutItems: [],
       selectedInnerItems:[],
@@ -237,6 +248,7 @@ export default {
       imageViewer: Object,
       currentType:"",
       orderBy:"",
+      printRidgeVisible:false,
       folderForm: {
         id: 0,
         name: "",
@@ -299,6 +311,43 @@ export default {
       });
   },
   methods: {
+    //著录文件
+    beforeCreateFile(){
+      let _self=this;
+      
+      if(_self.selectedItems.length!=1){
+        _self.$message('请选择一条数据！')
+        return;
+      }
+       _self.selectedChildrenType=[];
+      if(_self.selectedItems[0].TYPE_NAME=='图册'){
+        _self.getTypeNamesByMainList("图册");
+      }else{
+        _self.getTypeNamesByMainList(_self.selectedItems[0].SUB_TYPE);
+      }
+      _self.childrenTypeSelectVisible=true;
+      
+
+    },
+  ///打印背脊
+    beforePrintRidge(selectedRow,gridName,vtitle){
+      let _self=this;
+      if(selectedRow.length!=1){
+        _self.$message('请选择一条数据进行打印');
+        return;
+      }
+      _self.printRidgeVisible = true;
+
+      setTimeout(()=>{
+        _self.$refs.printRidge.dialogQrcodeVisible = false
+        _self.$refs.printRidge.getArchiveObj(selectedRow[0].ID,
+        gridName,
+        vtitle); 
+      },10);
+
+      _self.printGridName=gridName;
+      _self.printObjId=selectedRow[0].ID;
+    },
     ///上架
     putInStorage(){
       let _self=this;
@@ -582,7 +631,12 @@ export default {
         _self.selectRow=row;
       }
       _self.selectedChildrenType=[];
-      _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
+      if(_self.typeName=='图册'){
+        _self.getTypeNamesByMainList("图册");
+      }else{
+        _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
+      }
+      
       
       _self.loadInnerGridInfo();
       var m = new Map();
@@ -997,13 +1051,16 @@ export default {
       if(_self.currentFolder.id ){
         _self.selectedItemId = "";
         _self.propertyVisible = true; 
-        if(_self.$refs.ShowProperty){
-          _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName=typeName;
-          _self.$refs.ShowProperty.myTypeName = typeName;
-          _self.$refs.ShowProperty.myFolderId = _self.currentFolder.id;
-          _self.$refs.ShowProperty.loadFormInfo();
-        }
+        setTimeout(()=>{
+            if(_self.$refs.ShowProperty){
+            _self.$refs.ShowProperty.myItemId = "";
+            _self.dialogName=typeName;
+            _self.$refs.ShowProperty.myTypeName = typeName;
+            _self.$refs.ShowProperty.myFolderId = _self.currentFolder.id;
+            _self.$refs.ShowProperty.loadFormInfo();
+          }
+        },10);
+        
       }
       else{
         _self.$message(_self.$t("message.pleaseSelectFolder"));
@@ -1012,19 +1069,22 @@ export default {
     newArchiveFileItem(typeName,selectedRow)
     {
       let _self = this;
-      if(selectedRow.ID ){
+      if(selectedRow.length==1 ){
         _self.selectedItemId = "";
-        _self.propertyVisible = true; 
-        if(_self.$refs.ShowProperty){
-          _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName=typeName;
-          _self.$refs.ShowProperty.myTypeName =typeName;
-          _self.typeName=typeName;
-          _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
-          _self.$refs.ShowProperty.folderId = _self.currentFolder.id;
-          // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
-          _self.$refs.ShowProperty.loadFormInfo();
-        }
+        _self.propertyVisible = true;
+        setTimeout(()=>{
+          if(_self.$refs.ShowProperty){
+            _self.$refs.ShowProperty.myItemId = "";
+            _self.dialogName=typeName;
+            _self.$refs.ShowProperty.myTypeName =typeName;
+            _self.typeName=typeName;
+            _self.$refs.ShowProperty.parentDocId=selectedRow[0].ID;
+            _self.$refs.ShowProperty.folderId = _self.currentFolder.id;
+            // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
+            _self.$refs.ShowProperty.loadFormInfo();
+          }
+        },10);
+        
       }
       else{
         _self.$message(_self.$t("message.pleaseSelectFolder"));

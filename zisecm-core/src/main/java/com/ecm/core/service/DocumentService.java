@@ -77,6 +77,42 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	private EcmLifeCycleMapper lifeCycleMapper;
 	@Autowired
 	private EcmLifeCycleItemMapper lifeCycleItemMapper;
+	
+	public List<Map<String, Object>> getObjects(String token, String gridName, Object folderId, Pager pager,
+			Object condition, Object orderBy) {
+		String currentUser="";
+		try {
+			currentUser = getSession(token).getCurrentUser().getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(condition!=null&&condition.toString().contains("@currentuser")) {
+    		
+			condition=condition.toString().replaceAll("@currentuser", currentUser);
+    	}
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		String gvCondition=gv.getCondition();
+		if(gvCondition!=null&&gvCondition.contains("@currentuser")) {
+			gvCondition=gvCondition.replaceAll("@currentuser", currentUser);
+		}
+		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
+				+ gvCondition;
+		if (folderId!=null&&!StringUtils.isEmpty(folderId.toString())) {
+			sql += " and folder_id='" + folderId.toString() + "'";
+		}
+		if (condition!=null&&!EcmStringUtils.isEmpty(condition.toString())) {
+			sql += " and (" + condition.toString() + ")";
+		}
+		if (orderBy!=null&&!EcmStringUtils.isEmpty(orderBy.toString())) {
+			sql += " order by " + orderBy.toString();
+		} else {
+			sql += " " + gv.getOrderBy();
+		}
+		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
+		// TODO Auto-generated method stub
+		return list;
+	}
 
 	@Override
 	public List<Map<String, Object>> getObjects(String token, String gridName, String folderId, Pager pager,

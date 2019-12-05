@@ -156,7 +156,38 @@
                   </template>
                 </el-table-column>
               </el-table> -->
-          
+          <div class="table" v-if="showSingle">
+            <div class="table-tr">
+              <!-- <div style='position:absolute;left:120px;width:20%;'> -->
+              <div class="table-td" style="width:140px;">
+              移交责任人(签字)：
+              </div>
+              <!-- <div style="position:absolute;left:280px;border-bottom:1px solid #030002;width:200px;"> -->
+               <div class="table-td" style="border-bottom:1px solid #030002;width:200px;">
+                &nbsp;
+              </div>
+              <div class="table-td" style="width:140px;">
+                归档部门领导(签字)：
+              </div>
+              <div class="table-td" style="border-bottom:1px solid #030002;width:200px;">
+                &nbsp;
+              </div>
+            </div>
+            <div class="table-tr">
+              <div class="table-td" style="width:100px;">
+                接收人(签字)：
+              </div>
+              <div class="table-td" style="border-bottom:1px solid #030002;width:200px;">
+                &nbsp;
+              </div>
+              <div class="table-td" style="width:90px;">
+                交接日期：
+              </div>
+              <div class="table-td" style="border-bottom:1px solid #030002;width:200px;">
+                &nbsp;
+              </div>
+            </div>
+          </div>
   　　　　</div>
 
   　　　　<button @click="printCode" v-print="'#print'">打印</button>
@@ -180,7 +211,8 @@ export default {
       dialogQrcodeVisible: true,
       currentLanguage: "zh-cn",
       gridList:[],
-      volumeTitle:""
+      volumeTitle:"",
+      showSingle:true
     };
   },
   mounted() {
@@ -256,6 +288,7 @@ export default {
     },
     getArchiveObj(id,gridName,volumeTitle){
       let _self=this;
+      _self.showSingle=gridName=='PrintDelivery';
       _self.volumeTitle=volumeTitle;
       var m = new Map();
       m.set('itemInfo',id);//ID 或类型

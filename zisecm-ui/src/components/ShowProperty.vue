@@ -16,7 +16,8 @@
                 <el-date-picker v-else-if="item.controlType=='Date'" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;"></el-date-picker>
                 <el-select  :name="item.attrName"
                 v-else-if="item.controlType=='Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
-                v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" style="display:block;">
+                v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" :multiple="item.isRepeat" style="display:block;"
+                @change="((val)=>{onSelectChange(val, item)})">
                       <div v-for="(name,nameIndex) in item.validValues" :key="nameIndex+'N'">
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>
@@ -101,6 +102,36 @@ export default {
         //console.log(file);
        // console.log(fileList);
     },
+    onSelectChange(val, item){
+      if(item.enableChange){
+        let i =0;
+        for(i in this.dataList){
+          let row = this.dataList[i];
+          if(row.dependName == item.attrName){
+            row.defaultValue = "";
+            this.loadChildList(row, item.defaultValue);
+          }
+        }
+      }
+    },
+    loadChildList(item, val){
+      let _self = this;
+      var m = new Map();
+      m.set("queryName", item.queryName);
+      m.set("dependValue", val);
+      _self.loading = true;
+      axios.post("/dc/getSelectList",JSON.stringify(m))
+        .then(function(response) {
+          if(response.data.code == 1){
+            item.validValues = response.data.data;
+          }
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
     // 加载表单
     loadFormInfo()
     {
@@ -118,6 +149,7 @@ export default {
         .then(function(response) {
 
           _self.bindData(response.data.data);
+          _self.fileList = [];
           //console.log(JSON.stringify(response.data.data));
           _self.loading = false;
         })
@@ -161,7 +193,19 @@ export default {
         {
           if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
           {
-            m.set(dataRows[i].attrName, dataRows[i].defaultValue);
+            var val = dataRows[i].defaultValue;
+            if(val && dataRows[i].isRepeat){
+              var temp = "";
+             // console.log(val);
+              for(let j=0,len=val.length;j<len;j++){
+                temp = temp + val[j]+";";
+                //console.log(temp);
+              }
+              temp = temp.substring(0,temp.length-1);
+              val = temp;
+              console.log(val);
+            }
+            m.set(dataRows[i].attrName, val);
           }
         }
       }
@@ -247,7 +291,11 @@ export default {
             let frmItems = indata;
             var i;
             for (i in frmItems) {
-              frmItems[i].defaultValue = tab[frmItems[i].attrName];
+              let val = tab[frmItems[i].attrName];
+              if(val && frmItems[i].isRepeat){
+                val = val.split(";");
+              }
+              frmItems[i].defaultValue = val;
               //console.log(JSON.stringify(frmItems[i].attrName)+":"+frmItems[i].defaultValue);
             }
             _self.dataList = frmItems;

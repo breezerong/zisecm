@@ -24,7 +24,7 @@
                 <el-form-item label="通过类型" :label-width="formLabelWidth" style="float:left">
                   <el-radio-group  v-model="form.result"  >
                       <el-radio-button label="通过"   >通过</el-radio-button>
-                      <el-radio-button label="驳回" aria-checked="true"   >驳回</el-radio-button>
+                      <el-radio-button label="驳回"  >驳回</el-radio-button>
                    </el-radio-group>
 
                 </el-form-item>

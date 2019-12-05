@@ -1,6 +1,22 @@
 <template>
   <div>
-    <el-dialog
+
+       <el-dialog
+      :title="$t('application.borrow')"
+      :visible.sync="borrowDialogVisible"
+      @close="propertyVisible = false"
+      width="80%"
+      style="width:100%"
+      custom-class="customWidth"
+    >
+      <ShowBorrowForm
+        ref="ShowBorrowForm"
+        @onSaved="onSaved"
+        width="100%"
+        v-bind:borrowForm="borrowForm"
+      ></ShowBorrowForm>
+       </el-dialog>
+     <el-dialog
       :title="$t('application.property')"
       :visible.sync="propertyVisible"
       @close="propertyVisible = false"
@@ -214,9 +230,11 @@
 </template>
 <script>
 import ShowProperty from "@/components/ShowProperty";
+import ShowBorrowForm from "@/components/form/Borrow";
 export default {
   components: {
-    ShowProperty: ShowProperty
+    ShowProperty: ShowProperty,
+    ShowBorrowForm:ShowBorrowForm
   },
   data() {
     return {
@@ -253,8 +271,18 @@ export default {
       },
       selectedItemList: [],
       disable: true,
-      exportAble: false
-    };
+      exportAble: false,
+      formLabelWidth: "100px",
+      borrowData: [],
+      dialogTitle:"借阅",
+       borrowDialogVisible: false,
+      borrowForm: {
+        taskId: 0,
+        result: "在线浏览",
+        message: ""
+      },
+     
+  };
   },
   created() {
     var username = sessionStorage.getItem("access-userName");
@@ -483,7 +511,16 @@ export default {
       }
     },
     //借阅
-    borrowItem() {},
+    borrowItem() {
+      let _self = this;
+      var obtainItemId = [];
+      if (this.selectedItemList.length > 0) {
+        for (var i = 0; i < this.selectedItemList.length; i++) {
+          obtainItemId.push(this.selectedItemList[i].ID);
+        }
+      }
+       _self.borrowDialogVisible = true;
+    },
     //导出Excel
     exportExcel() {
       var url = "/dc/getExportExcel";
@@ -649,7 +686,33 @@ export default {
       } else {
         _self.loadGridData(this.currentFolder);
       }
+    },
+    // on save todo
+    onSaved(val) {
+      let _self = this;
+      this.currentPage = val;
+      _self.loadGridInfo(this.currentFolder);
+      if (_self.showBox) {
+        _self.loadAllGridData(this.currentFolder);
+      } else {
+        _self.loadGridData(this.currentFolder);
+      }
+    },
+        startWorkflow(indata) {
+      let _self = this;
+
+      axios.post('/workflow/startWorkflow',JSON.stringify(_self.borrowForm))
+      .then(function(response) {
+        _self.dialogVisible = false;
+        _self.refreshData();
+        _self.$message("完成任务成功!");
+        _self.$emit('refreshcount');
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
     }
+
   }
 };
 </script>
@@ -657,4 +720,5 @@ export default {
 .el-container {
   height: 100%;
 }
+
 </style>

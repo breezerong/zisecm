@@ -181,6 +181,7 @@ export default {
        if(indata=='update')
       {
         this.$message(this.$t("message.saveSuccess"));
+        this.$emit('refreshdatagrid');
       }
       else
       {
