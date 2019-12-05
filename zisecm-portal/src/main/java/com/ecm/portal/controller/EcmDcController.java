@@ -469,7 +469,7 @@ public class EcmDcController extends ControllerAbstract{
 		}
 		
 		try {
-			excelUtil.makeStreamExcel("filelist.xls","EXPORT",titleName,datalist,response,true);
+			excelUtil.makeStreamExcel("filelist.xlsx","EXPORT",titleName,datalist,response,true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
