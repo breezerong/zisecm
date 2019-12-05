@@ -14,7 +14,7 @@
          </div>
       </el-dialog>
     <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
-      <el-form size="mini" :label-width="formLabelWidth">
+      <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
         <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
           <el-upload
             :limit="100"
@@ -229,6 +229,7 @@
           v-bind:propertyComponent="this.$refs.ShowProperty"
           @rowclick="showInnerFile"
           @selectchange="selectChange"
+          @refreshdatagrid="refreshMain"
         ></DataGrid>
 
         <el-row>
@@ -245,7 +246,7 @@
             plain
             size="small"
             :title="$t('application.addReuseFile')"
-            @click="reuseVisible=true"
+            @click="beforeAddreuse()"
           >{{$t('application.addReuseFile')}}</el-button>
           
           <el-button type="primary" plain size="small" title="删除" @click="onDeleleFileItem()">删除</el-button>
@@ -254,14 +255,14 @@
             plain
             size="small"
             title="挂载文件"
-            @click="importdialogVisible=true;uploadUrl='/dc/mountFile'"
+            @click="beforeUploadFile('/dc/mountFile')"
           >挂载文件</el-button>
           <el-button
             type="primary"
             plain
             size="small"
             :title="$t('application.viewRedition')"
-            @click="importdialogVisible=true;uploadUrl='/dc/addRendition'"
+            @click="beforeUploadFile('/dc/addRendition')"
           >格式副本</el-button>
           <el-button type="primary" plain size="small" title="上移" @click="onMoveUp()">上移</el-button>
           <el-button type="primary" plain size="small" title="下移" @click="onMoveDown()">下移</el-button>
@@ -273,12 +274,14 @@
           v-bind:itemDataList="innerDataList"
           v-bind:columnList="innerGridList"
           v-bind:itemCount="innerCount"
+          v-bind:loading="uploadFileLoding"
           v-bind:tableHeight="rightTableHeight"
           :isshowOption="true"
           @pagesizechange="innerPageSizeChange"
           @rowclick="selectOneFile"
           @pagechange="innerPageChange"
           @selectchange="selectInnerChange"
+          @refreshdatagrid="refreshLeft"
         ></DataGrid>
       </el-col>
     </el-row>
@@ -325,6 +328,7 @@ export default {
       printGridName:"",
       transferCount: 0,
       reuseVisible: false,
+      uploadFileLoding:false,
       typeName: "卷盒",
       folderPath: "/表单/移交单",
       selectTransferRow: [],
@@ -337,6 +341,7 @@ export default {
       inputkey: "",
       typeNames: [],
       loading: false,
+      uploading:false,
       dialogName: "",
       outerCurrentPage: 1,
       outerPageSize: 20,
@@ -444,6 +449,20 @@ export default {
     this.loadTransferGridData();
   },
   methods: {
+    refreshMain(){
+      this.loadGridData();
+    },
+    refreshLeft(){
+      this.showInnerFile();
+    },
+    beforeAddreuse(){
+      let _self=this;
+       if(_self.selectedItems.length!=1){
+        _self.$message('请选择一条数据！')
+        return;
+      }
+      _self.reuseVisible=true;
+    },
     //著录文件
     beforeCreateFile(){
       let _self=this;
@@ -461,6 +480,17 @@ export default {
       _self.childrenTypeSelectVisible=true;
       
 
+    },
+    beforeUploadFile(uploadpath){
+      let _self=this;
+      if(_self.selectedInnerItems.length!=1){
+        _self.$message('请选择一条文件数据');
+        return;
+      }
+      _self.uploadUrl=uploadpath;
+      _self.fileList=[];
+      _self.importdialogVisible=true;
+      
     },
     beforePrint(selectedRow,gridName,vtitle){
       let _self=this;
@@ -482,7 +512,7 @@ export default {
     },
     //批量导入完成
     onBatchImported(){
-      this.this.loadGridData();
+      this.loadGridData();
     },
     addReuseToVolume() {
       let _self = this;
@@ -1234,7 +1264,7 @@ export default {
           _self.dialogName=typeName;
           _self.$refs.ShowProperty.myTypeName =typeName;
           _self.typeName=typeName;
-          _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
+          _self.$refs.ShowProperty.parentDocId=selectedRow[0].ID;
           _self.$refs.ShowProperty.folderPath = '/表单/移交单';
           // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
           _self.$refs.ShowProperty.loadFormInfo();
@@ -1782,7 +1812,7 @@ export default {
       let _self = this;
       let formdata = new FormData();
       var data = {};
-      data["ID"] = _self.selectedFileId;
+      data["ID"] = _self.selectedInnerItems[0].ID;//_self.selectedFileId;
       formdata.append("metaData", JSON.stringify(data));
       _self.fileList.forEach(function(file) {
         //console.log(file.name);
@@ -1796,6 +1826,7 @@ export default {
       let formdata = _self.getFormData();
       console.log("UploadData getData");
       console.log(formdata);
+      _self.uploading=true;
       _self
         .axios({
           headers: {
@@ -1809,9 +1840,11 @@ export default {
         .then(function(response) {
           _self.importdialogVisible = false;
           // _self.refreshData();
+          _self.uploading=false;
           _self.$message("导入成功!");
         })
         .catch(function(error) {
+          _self.uploading=false;
           console.log(error);
         });
     },
