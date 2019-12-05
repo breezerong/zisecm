@@ -48,6 +48,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.entity.UserEntity;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.MessageException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
@@ -1069,6 +1070,54 @@ public class EcmDcController extends ControllerAbstract{
 				//e.printStackTrace();
 				mp.put("code", ActionContext.FAILURE);
 				mp.put("message", e.getMessage());
+			}
+			return mp;
+		}
+		/**
+		 * 公共文档查询方法，在缓存中配置查询语句
+		 * 将查询语句的name传递进此方法
+		 * 条件使用‘@’开头例如
+		 * select * from ecm_document where id='@id'
+		 * 在页面中需要传递一个名为‘id’的参数传递给controller
+		 * 
+		 *使用configName名称来传递缓存中配置的语句名称
+		 * 
+		 * @param argStr
+		 * @return
+		 */
+		@RequestMapping(value = "/dc/getObjectsByConfigclause", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String,Object> getObjectsByConfigclause(@RequestBody String argStr) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				int pageSize = Integer.parseInt(args.get("pageSize").toString());
+				int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+				Pager pager = new Pager();
+				pager.setPageIndex(pageIndex);
+				pager.setPageSize(pageSize);
+				if(args.get("configName")==null) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", "configName没有传递");
+					return mp;
+				}
+				String configName=args.get("configName").toString();
+				
+				List<Map<String, Object>> list;
+				try {
+					list = documentService.getObjectsConfigclause(getToken(), pager, configName, args);
+				} catch (MessageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", e.getMessage());
+					return mp;
+				}
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				mp.put("code", ActionContext.TIME_OUT);
 			}
 			return mp;
 		}
