@@ -2,29 +2,30 @@ package com.ecm.core.entity;
 
 import java.util.Date;
 
-public class EcmShopingCart {
-    private String id;
+public class EcmShopingCart  extends EcmObject{
 
-    private String docuemnt_id;
-    private Date add_date;
-	public String getId() {
-		return id;
+    private String documentId;
+    private Date addDate;
+    private String userName;
+	public String getUserName() {
+		return userName;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
-	public String getDocuemnt_id() {
-		return docuemnt_id;
+	public String getDocumentId() {
+		return documentId;
 	}
-	public void setDocuemnt_id(String docuemnt_id) {
-		this.docuemnt_id = docuemnt_id;
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
 	}
-	public Date getAdd_date() {
-		return add_date;
+	public Date getAddDate() {
+		return addDate;
 	}
-	public void setAdd_date(Date add_date) {
-		this.add_date = add_date;
+	public void setAddDate(Date addDate) {
+		this.addDate = addDate;
 	}
-
+     
+ 
  
 }
