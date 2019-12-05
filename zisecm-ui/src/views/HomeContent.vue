@@ -21,7 +21,9 @@
               <el-row style="padding-top:5px;padding-bottom:5px;">
                 <el-autocomplete
                   class="inline-input"
+                  v-loading="loading"
                   prefix-icon="el-icon-search"
+                  :fetch-suggestions="querySearch"
                   :placeholder="$t('application.placeholderSearch')"
                   :trigger-on-focus="false"
                   @keyup.enter.native="jumpToFullSearch"
@@ -131,8 +133,8 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '350px' }">
-            <div id="collectionChart" style="height: 100%;width: 100%;float: right;"></div>
+          <el-card :body-style="{ height: '350px',width:'100%' }">
+            <div id="collectionChart" style="height: 100%;width: 100%;"></div>
           </el-card>
         </el-col>
       </el-row>
@@ -159,6 +161,7 @@ export default {
         notiData: []
       },
       inputkey: "",
+      loading:false,
       loadingTodoData: false,
       loadingNewDocData :false,
       loadingNoticeData:false,
@@ -168,6 +171,7 @@ export default {
       propertyOnly: false,
       cards: [],
       cardsLabel: [],
+      keywords: [],
       totalCount:0,
       groupData: [],
       collectionChart: Object,
@@ -272,8 +276,16 @@ export default {
           tooltip: {},
           xAxis: {},
           yAxis: {
-            data: _self.collectionChartData.xAxisData.reverse()
-          },
+            data: _self.collectionChartData.xAxisData.reverse(), 
+            axisLabel: {
+                        show: true,
+                        textStyle: {
+                            color: '#000000',
+                            // fontSize: '38',//字体大小
+                        },
+                        fontSize: 9,//字体大小
+                    }
+            },
           series: [
             {
               name: "数量",
@@ -291,7 +303,7 @@ export default {
                   },
                   label: {
                     show: true, //开启显示
-                    position: "right", //在上方显示
+                    position: "right", //在右侧显示
                     textStyle: {
                       //数值样式
                       color: "black",
@@ -338,7 +350,6 @@ export default {
         })
         .catch(function(error) {
           console.log(error);
-          _self.loading = false;
         });
     },
     //点击checkbox的事件
@@ -361,7 +372,7 @@ export default {
       _self.$router.push({
         name: "全文搜索",
         params: {
-          map: map
+          map: map 
         }
       });
     },
@@ -384,6 +395,32 @@ export default {
       axios.post("/user/getGroupByUserName",userName).then(function(response){
         _self.groupData = response.data.data
       })
+    },
+    querySearch(queryString, cb){
+      let _self = this;
+      _self.loading = true;
+       _self
+        axios.post("/search/getSuggestion",JSON.stringify(_self.inputkey))
+        .then(function(response) {
+          _self.keywords = response.data.data;
+          if(_self.keywords){
+             var list = [{}];
+             var i;
+             for(i=0;i<_self.keywords.length;i++){
+               var item = new Object();
+               item.value = _self.keywords[i];
+               list[i] = item;
+             }
+             _self.keywords = list;
+          }
+          cb(_self.keywords);
+          //console.log(JSON.stringify(_self.taskList));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     }
   }
 };

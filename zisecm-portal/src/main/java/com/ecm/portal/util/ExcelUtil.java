@@ -13,11 +13,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -26,6 +21,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
  public class ExcelUtil {
 
@@ -147,7 +147,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
  	public void makeExcel(String sheetName, String[] fieldName, List<Object[]> data) throws IOException {
 		// 在内存中生成工作薄
-		HSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data,false);
+		XSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data,false);
 		// 截取文件夹路径
 		String filePath = path.substring(0, path.lastIndexOf("\\"));
 		// 如果路径不存在，创建路径
@@ -169,26 +169,27 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 				"attachment; filename=" + new String(excelName.getBytes(), "ISO-8859-1")); // 设定输出文件头
 		response.setContentType("application/msexcel"); // 定义输出类型
 		// 在内存中生成工作薄
-		HSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data , hideFirstRow);
+		XSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data , hideFirstRow);
 		os.flush();
 		workbook.write(os);
+		workbook.close();
 	}
 
- 	private HSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,boolean hideFirstRow) {
+ 	private XSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,boolean hideFirstRow) {
 		// 用来记录最大列宽,自动调整列宽。
 		Integer collength[] = new Integer[fieldName.length];
 
 		// 产生工作薄对象
-		HSSFWorkbook workbook = new HSSFWorkbook();
+		XSSFWorkbook workbook = new XSSFWorkbook();
 		// 产生工作表对象
-		HSSFSheet sheet = workbook.createSheet();
+		XSSFSheet sheet = workbook.createSheet();
 		// 为了工作表能支持中文,设置字符集为UTF_16
 		workbook.setSheetName(0, sheetName);
 		// 产生一行
-		HSSFRow row = sheet.createRow(0);
+		XSSFRow row = sheet.createRow(0);
 		row.setZeroHeight(hideFirstRow);
 		// 产生单元格
-		HSSFCell cell;
+		XSSFCell cell;
 		// 写入各个字段的名称
 		for (int i = 0; i < fieldName.length; i++) {
 			// 创建第一行各个字段名称的单元格
@@ -198,7 +199,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 			// 为了能在单元格中输入中文,设置字符集为UTF_16
 			// cell.setEncoding(HSSFCell.ENCODING_UTF_16);
 			// 给单元格内容赋值
-			cell.setCellValue(new HSSFRichTextString(fieldName[i]));
+			cell.setCellValue(new XSSFRichTextString(fieldName[i]));
 			// 初始化列宽
 			collength[i] = fieldName[i].getBytes().length;
 		}
@@ -214,7 +215,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 				// 设置单元格字符类型为String
 				cell.setCellType(CellType.STRING);
 				tempCellContent = (tmp[j] == null) ? "" : tmp[j].toString();
-				cell.setCellValue(new HSSFRichTextString(tempCellContent));
+				cell.setCellValue(new XSSFRichTextString(tempCellContent));
 
 				// 如果自动调整列宽度。
 				if (autoColumnWidth) {
@@ -243,5 +244,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  	public void setAutoColumnWidth(boolean autoColumnWidth) {
 		this.autoColumnWidth = autoColumnWidth;
 	}
+ 	
 
 }
