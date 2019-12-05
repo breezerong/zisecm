@@ -632,7 +632,11 @@ export default {
           _self.innerDataList = response.data.data;
           _self.innerDataListFull = response.data.data;
           _self.innerCount = response.data.pager.total;
-          console.log(JSON.stringify(response.data.data));
+          setTimeout(() => {
+            _self.rightTableHeight = (window.innerHeight - 200)/2;
+            //this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop;
+          },100);
+          //console.log(JSON.stringify(response.data.data));
           _self.loading = false;
         })
         .catch(function(error) {

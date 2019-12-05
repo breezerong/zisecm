@@ -13,7 +13,7 @@
                 <el-input v-if="item.controlType=='TextArea' && (!item.readOnly || (item.readOnly && itemId))" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                 <el-input v-else-if="item.controlType=='Integer' && (!item.readOnly || (item.readOnly && itemId))" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                 <el-checkbox v-else-if="item.controlType=='Boolean' && (!item.readOnly || (item.readOnly && itemId))"  :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-checkbox>
-                <el-date-picker v-else-if="item.controlType=='Date' && (!item.readOnly || (item.readOnly && itemId))" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期"  :disabled="item.readOnly"></el-date-picker>
+                <el-date-picker v-else-if="item.controlType=='Date' && (!item.readOnly || (item.readOnly && itemId))" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;" :disabled="item.readOnly"></el-date-picker>
                 <el-select  :name="item.attrName"
                 v-else-if="item.controlType==('Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect') && (!item.readOnly || (item.readOnly && itemId))" 
                 v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" :multiple="item.isRepeat" style="display:block;"
@@ -103,6 +103,7 @@ export default {
        // console.log(fileList);
     },
     onSelectChange(val, item){
+      //console.log(item);
       if(item.enableChange){
         let i =0;
         for(i in this.dataList){
@@ -122,6 +123,7 @@ export default {
       _self.loading = true;
       axios.post("/dc/getSelectList",JSON.stringify(m))
         .then(function(response) {
+          //console.log(response.data);
           if(response.data.code == 1){
             item.validValues = response.data.data;
           }
@@ -147,7 +149,7 @@ export default {
       //console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
       axios.post("/dc/getFormItem",JSON.stringify(m))
         .then(function(response) {
-
+          //console.log(JSON.stringify(response.data.data));
           _self.bindData(response.data.data);
           _self.fileList = [];
           //console.log(JSON.stringify(response.data.data));
