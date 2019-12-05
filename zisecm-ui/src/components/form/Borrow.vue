@@ -210,6 +210,7 @@
         axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
           console.log(response);  
           _self.loading = false;
+          _self.cancel();
         }).catch(function(error){
           console.log(error);
           _self.loading = false;
