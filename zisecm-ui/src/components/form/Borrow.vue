@@ -89,8 +89,8 @@
 
 
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="cancel()">取 消</el-button>
-            <el-button  @click="startWorkflow(form)">启动流程</el-button>
+            <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
+            <el-button ref="borrowStartwf" @click="startWorkflow(form)">启动流程</el-button>
           </div>
         </div>
 </template>
@@ -124,14 +124,16 @@
             C_COMMENT:"",
             C_CREATION_UNIT:"编制部门"
 
-      }
+      },
+      formId:""
 
     };
   },
    created() {
     let _self = this;
+     _self.formId=_self.$route.query.borrowFormId;
      _self.loadGridView()
-  },
+  }, 
  methods: {
        loadGridView(){
         let _self = this;
@@ -141,15 +143,17 @@
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
          
           _self.gridList = response.data.data;
+          if(_self.formId==""){
             _self.tabledata=_self.$route.query.tabledata;
-  //_self.loadData();
+          }else{
+            _self.loadData();
+          }
         });
       },
       loadData(){
           let _self = this;
-          axios.post("/dc/getRelations",this.docId).then(function(response) {
+          axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
             let result = response.data;
-            
             if(result.code==1){
               _self.tabledata = result.data;
             }
@@ -175,7 +179,6 @@
       let m = new  Map();
       m.set("formData",_self.borrowForm);
 
-      let formId="";
       let documentIds="";
       let fileTopestSecurityLevel="内部公开";
       let drawingNumber=_self.tabledata.length;
