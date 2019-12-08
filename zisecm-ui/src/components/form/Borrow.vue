@@ -2,13 +2,13 @@
      <div>
           <el-form :model="borrowForm" style="width:100%">
             <el-row style="width:100%">
-              <div v-if="1==1">
+              <div v-if="istask==false">
               <el-col >
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
-                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off"></el-input>
+                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off"  readonly="true"></el-input>
                 </el-form-item>
                  <el-form-item label="电话" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.TITLE" auto-complete="off"></el-input>
+                  <el-input   v-model="borrowForm.TITLE" auto-complete="off" disabled="true"></el-input>
                 </el-form-item>
                  <el-form-item label="用户部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
@@ -25,9 +25,9 @@
                </el-col>
              <el-col>
                 <el-form-item label="借阅类型" :label-width="formLabelWidth" style="float:left">
-                  <el-radio-group  v-model="borrowForm.SUB_TYPE"  >
-                      <el-radio-button label="在线浏览" aria-checked="true">在线浏览</el-radio-button>
-                      <el-radio-button label="纸质借阅" >纸质借阅</el-radio-button>
+                  <el-radio-group  v-model="borrowForm.SUB_TYPE"   >
+                      <el-radio-button label="在线浏览">在线浏览</el-radio-button>
+                      <el-radio-button label="纸质借阅">纸质借阅</el-radio-button>
                       <el-radio-button label="下载">下载</el-radio-button>
                    </el-radio-group>
                 </el-form-item>
@@ -78,17 +78,93 @@
 
               </el-col>
                <el-col>
-                <el-form-item label="借阅目的" :label-width="formLabelWidth">
+                <el-form-item label="借阅目的" :label-width="formLabelWidth"  style="text-align:left">
                   <el-input type="textarea" :autosize="{minRows:3}" v-model="borrowForm.C_COMMENT" auto-complete="off"></el-input>
                 </el-form-item>
               </el-col>
              </div>
+             <div v-if="istask==true">
+              <el-col>
+                <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
+                  {{borrowForm.C_DRAFTER}}
+                </el-form-item>
+                 <el-form-item label="电话" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.TITLE}}
+                </el-form-item>
+                 <el-form-item label="用户部门" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.C_DESC1}}
+                </el-form-item>
+                 <el-form-item label="编制部门" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.C_CREATION_UNIT}}
+                </el-form-item>
+                <!-- <el-form-item label="日期" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm." :formatter="dateFormatter" auto-complete="off"></el-input> 
+                </el-form-item>
+                  <el-form-item label="文件归档部门" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.cCreationUnit" auto-complete="off"></el-input>
+                </el-form-item>-->
+               </el-col>
+             <el-col>
+                <el-form-item label="借阅类型" :label-width="formLabelWidth" style="float:left">
+                   {{borrowForm.SUB_TYPE}}
+                </el-form-item>
+              </el-col>
+             <el-col>
+            <el-form-item label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.C_START_DATE}}
+                </el-form-item>
+                 <el-form-item label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
+                   {{borrowForm.C_START_DATE}}
+                </el-form-item>
+               </el-col>
+             <el-col>
+                <el-table :data="tabledata">
+               <el-table-column type="index" label="#" width="50">
+                </el-table-column>
+                <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
+                </el-table-column>
+                  <template  v-for="item in gridList">
+                    <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
+                      <template slot-scope="scope">
+                          <template v-if="item.attrName=='C_DOC_DATE'">
+                            {{dateFormat(scope.row.C_DOC_DATE)}}
+                          </template>
+                          <template v-else>
+                            {{scope.row[item.attrName]}}  
+                          </template>            
+                      </template>        
+                    </el-table-column>
+                  </template>
+                  <el-table-column align="right">
+                    <template slot-scope="scope">
+                      <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+            </el-col>
+            <el-col>
+                <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.C_REVIEWER1}}
+                </el-form-item>
+                 <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.C_REVIEWER2}}
+                </el-form-item>
+                 <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
+                  {{borrowForm.C_REVIEWER3}}
+                </el-form-item>
 
+              </el-col>
+               <el-col>
+                <el-form-item label="借阅目的" :label-width="formLabelWidth" style="text-align:left">
+                  {{borrowForm.C_COMMENT}}
+                </el-form-item>
+              </el-col>
+             </div>
             </el-row>
           </el-form>
 
 
-          <div slot="footer" class="dialog-footer">
+          <div slot="footer" class="dialog-footer" v-if="istask==false">
             <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
             <el-button ref="borrowStartwf" @click="startWorkflow(form)">启动流程</el-button>
           </div>
@@ -107,7 +183,7 @@
               tabledata: [],
      dataList: [],
       loading: false,
-      formLabelWidth: "100px",
+      formLabelWidth: "120px",
       borrowData: [],
       dialogTitle:"借阅",
       borrowDialogVisible: false,
@@ -125,13 +201,17 @@
             C_CREATION_UNIT:"编制部门"
 
       },
-      formId:""
+      formId:"",
+      istask:false
 
     };
   },
    created() {
     let _self = this;
      _self.formId=_self.$route.query.borrowFormId;
+     if(typeof(_self.$route.query.istask)!="undefined"){
+      _self.istask=_self.$route.query.istask;
+     }   
      _self.loadGridView()
   }, 
  methods: {
@@ -140,10 +220,10 @@
         var m = new Map();
         m.set("gridName", _self.gridviewName);
         m.set("lang", _self.currentLanguage);
-        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
+       axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
          
           _self.gridList = response.data.data;
-          if(_self.formId==""){
+          if(typeof(_self.$route.query.borrowFormId)=="undefined"){
             _self.tabledata=_self.$route.query.tabledata;
           }else{
             _self.loadData();
