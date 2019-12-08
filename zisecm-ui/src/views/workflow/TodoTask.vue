@@ -4,11 +4,7 @@
         <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="dialogVisible"     width="95%"
       style="width:100%"
       custom-class="customWidth">
-           <router-view  ></router-view>
-          <el-form :model="form">
-            <el-row>
-              <div v-if="!isCompleteSelected">
-              <el-col >
+      <el-form style="padding-bottom:30px">
                 <el-form-item label="任务名称" :label-width="formLabelWidth" style="float:left">
                   {{currentData.name}}
                 </el-form-item>
@@ -18,6 +14,13 @@
                 <el-form-item label="到达时间" :label-width="formLabelWidth" style="float:left">
                   {{dateFormat(currentData.createTime,'')}}
                 </el-form-item>
+          </el-form>
+          <el-divider content-position="left">表单</el-divider>
+           <router-view  ></router-view>
+         <el-form :model="form">
+            <el-row>
+              <div v-if="!isCompleteSelected">
+              <el-col >
                 <el-form-item label="通过类型" :label-width="formLabelWidth" style="float:left">
                   <el-radio-group  v-model="form.result"  >
                       <el-radio-button label="通过"   >通过</el-radio-button>

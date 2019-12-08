@@ -133,7 +133,6 @@
    created() {
     let _self = this;
      _self.formId=_self.$route.query.borrowFormId;
-     alert(_self.$route.query.istask);
      if(typeof(_self.$route.query.istask)!="undefined"){
       _self.istask=_self.$route.query.istask;
      }   
