@@ -1,7 +1,7 @@
 <template>
   <div>
 
-       <el-dialog
+       <!-- <el-dialog
       :title="$t('application.borrow')"
       :visible.sync="borrowDialogVisible"
       @close="propertyVisible = false"
@@ -15,7 +15,28 @@
         width="100%"
         v-bind:borrowForm="borrowForm"
       ></ShowBorrowForm>
-       </el-dialog>
+   </el-dialog> -->
+       <el-dialog
+      :title="$t('application.openShopingCart')"
+      :visible.sync="shopingCartDialogVisible"
+      @close="shopingCartDialogVisible = false"
+      width="95%"
+      style="width:100%"
+      custom-class="customWidth"
+    >
+      <!-- <ShopingCart
+        ref="ShopingCart"
+        @onSaved="onSaved"
+        width="100%"
+        v-bind:shopingCartForm="shopingCartForm"
+      ></ShopingCart> -->
+      
+        <router-view @showOrHiden="showOrHiden"></router-view>
+            <!-- <div slot="footer" class="dialog-footer">
+        <router-link  to="/borroworder"   >借阅</router-link>
+        </div>       -->
+                <!-- <router-link  to="/borroworder"></router-link> -->
+     </el-dialog>
      <el-dialog
       :title="$t('application.property')"
       :visible.sync="propertyVisible"
@@ -89,13 +110,13 @@
             </el-col>
             <el-col :span="20" style="text-align: left">
               &nbsp;&nbsp;&nbsp;
-              <el-button
+              <!-- <el-button
                 type="primary"
                 plain
                 size="medium"
                 icon="el-icon-document"
                 @click="borrowItem()"
-              >{{$t('application.borrow')}}</el-button>
+              >{{$t('application.borrow')}}</el-button> -->
               <el-button
                 type="primary"
                 plain
@@ -117,6 +138,20 @@
                 icon="el-icon-document-delete"
                 @click="destroyItem()"
               >{{$t('application.destroy')}}</el-button>&nbsp;&nbsp;&nbsp;
+              <el-button
+                type="primary"
+                plain
+                size="medium"
+                icon="el-icon-document-delete"
+                @click="addToShopingCart()"
+              >{{$t('application.addToShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
+              <el-button
+                type="primary"
+                plain
+                size="medium"
+                icon="el-icon-document-delete"
+                @click="openShopingCart()"
+              >{{$t('application.openShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
                 <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
                 <el-checkbox
@@ -190,7 +225,7 @@
                 </div>
               </div>
               <el-table-column align="left" width="140">
-                <template slot="header" slot-scope="scope">
+                <template slot="header" >
                   <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                 </template>
                 <template slot-scope="scope">
@@ -231,10 +266,12 @@
 <script>
 import ShowProperty from "@/components/ShowProperty";
 import ShowBorrowForm from "@/components/form/Borrow";
+import ShopingCart from "@/components/form/ShopingCart";
 export default {
   components: {
     ShowProperty: ShowProperty,
-    ShowBorrowForm:ShowBorrowForm
+    ShowBorrowForm:ShowBorrowForm,
+    ShopingCart:ShopingCart
   },
   data() {
     return {
@@ -276,6 +313,7 @@ export default {
       borrowData: [],
       dialogTitle:"借阅",
        borrowDialogVisible: false,
+       shopingCartDialogVisible:false,
       borrowForm: {
         taskId: 0,
         result: "在线浏览",
@@ -373,6 +411,9 @@ export default {
       } else {
         _self.loadGridData(indata);
       }
+    },
+    showOrHiden(b){
+      this.shopingCartDialogVisible=b;
     },
     sortchange(column) {
       this.orderBy =
@@ -633,7 +674,7 @@ export default {
             } else {
               _self.$message({
                 showClose: true,
-                message: "销毁成功!",
+                message: "销毁失败!",
                 duration: 2000,
                 type: "warning"
               });
@@ -646,6 +687,74 @@ export default {
           duration: 2000
         });
       }
+    },
+    //添加到购物车
+    addToShopingCart() {
+      let _self = this;
+      var deletItemId = [];
+      if (this.selectedItemList.length > 0) {
+        for (var i = 0; i < this.selectedItemList.length; i++) {
+          deletItemId.push(this.selectedItemList[i].ID);
+        }
+        axios
+          .post("/dc/addToShopingCart", JSON.stringify(deletItemId))
+          .then(function(response) {
+            if (response.data.code) {
+              if (_self.showBox) {
+                _self.loadAllGridData(_self.currentFolder);
+              } else {
+                _self.loadGridData(_self.currentFolder);
+              }
+              _self.$message({
+                showClose: true,
+                message: "添加成功!",
+                duration: 2000,
+                type: "success"
+              });
+            } else {
+              _self.$message({
+                showClose: true,
+                message: "添加失败!",
+                duration: 2000,
+                type: "warning"
+              });
+            }
+          });
+      } else {
+        this.$message({
+          showClose: true,
+          message: "请勾选待添加文件!",
+          duration: 2000
+        });
+      }
+    },
+       //添加到购物车
+    openShopingCart() {
+      let _self = this;
+      var deletItemId = [];
+        axios
+          .post("/dc/openShopingCart", JSON.stringify(deletItemId))
+          .then(function(response) {
+            if (response.data.code) {
+              _self.shopingCartDialogVisible = true;
+              setTimeout(()=>{
+                // _self.$refs.ShopingCart.dataList = response.data.data;
+                _self.$router.push({
+                  path:'/ShopingCart',
+                   query: { tabledata: response.data.data }
+                });
+              },10);
+              
+              
+            } else {
+              _self.$message({
+                showClose: true,
+                message: "打开失败!",
+                duration: 2000,
+                type: "warning"
+              });
+            }
+          });
     },
     //查看属性
     showItemProperty(indata) {

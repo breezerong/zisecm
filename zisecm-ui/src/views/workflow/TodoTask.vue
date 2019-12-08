@@ -1,26 +1,23 @@
 <template>
   <div>
-        <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
+
+        <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="dialogVisible"     width="95%"
+      style="width:100%"
+      custom-class="customWidth">
+           <router-view  ></router-view>
           <el-form :model="form">
             <el-row>
               <div v-if="!isCompleteSelected">
-              <el-col :span="12">
+              <el-col >
                 <el-form-item label="任务名称" :label-width="formLabelWidth" style="float:left">
                   {{currentData.name}}
                 </el-form-item>
-              </el-col>
-              <el-col :span="12">
                 <el-form-item label="发起人" :label-width="formLabelWidth" style="float:left">
                   {{currentData.startUser}}
                 </el-form-item>
-              </el-col>
-              <el-col>
                 <el-form-item label="到达时间" :label-width="formLabelWidth" style="float:left">
                   {{dateFormat(currentData.createTime,'')}}
                 </el-form-item>
-              </el-col>
-              </div>
-              <el-col>
                 <el-form-item label="通过类型" :label-width="formLabelWidth" style="float:left">
                   <el-radio-group  v-model="form.result"  >
                       <el-radio-button label="通过"   >通过</el-radio-button>
@@ -34,6 +31,7 @@
                   <el-input type="textarea" :autosize="{minRows:3}" v-model="form.message" auto-complete="off"></el-input>
                 </el-form-item>
               </el-col>
+              </div>
             </el-row>
           </el-form>
   
@@ -79,6 +77,8 @@
                 </el-table-column>
                 <el-table-column prop="name" label="任务名称" min-width="15%" sortable>
                 </el-table-column>
+                <el-table-column prop="formId" label="表单Id" v-if="1==2" min-width="15%" sortable>
+                </el-table-column>
                 <el-table-column prop="startUser" label="发起人" min-width="15%" sortable>
                 </el-table-column>
                 <el-table-column prop="createTime" label="到达时间" :formatter="dateFormatter" min-width="10%" sortable>
@@ -115,6 +115,7 @@ export default {
   data() {
     return {
       currentData: [],
+      taskTableData: [],
       dataList: [],
       dataListFull: [],
       inputkey: "",
@@ -194,6 +195,7 @@ export default {
       let _self = this;
       if(_self.isCompleteSelected) {
         _self.form.taskId = [];
+        _self.form.fromId = [];
         for (let i = 0;i < _self.selectedItems.length;i++) {
           _self.form.taskId[i] = _self.selectedItems[i].id;
         }
@@ -227,8 +229,38 @@ export default {
       _self.isCompleteSelected = false;
       _self.currentData=indata;
       _self.form.taskId = indata.id;
+      _self.form.formId = indata.formId;
       _self.dialogVisible = true;
-    },
+      _self.taskTableData=[];
+      _self.$router.replace({
+      path:'/borrow1',
+      query: { 
+      tabledata: _self.taskTableData,
+      borrowFormId:_self.form.formId
+      }
+    });
+
+    },  
+    loadGridView(){
+        let _self = this;
+        var m = new Map();
+        m.set("gridName", _self.gridviewName);
+        m.set("lang", _self.currentLanguage);
+        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
+            _self.tabledata=_self.$route.query.tabledata;
+  //_self.loadData();
+        });
+      },
+      loadData(){
+          let _self = this;
+          axios.post("/dc/getRelations",this.docId).then(function(response) {
+            let result = response.data;
+            
+            if(result.code==1){
+              _self.tabledata = result.data;
+            }
+          });
+      },
     dateFormatter(row, column) {
       let datetime = row[column.property];
       return this.datetimeFormat(datetime);

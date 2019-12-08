@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.test.flowable.TODOApplication;
 
@@ -59,7 +60,7 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
     	IEcmSession ecmSession=null;
     	try {
     		 ecmSession=authService.login("workflow",workflowSpecialUserName,"admin");
-			EcmDocument  ecmObject = documentService.getObjectById(token, formId);
+			EcmDocument  ecmObject = documentService.getObjectById(ecmSession.getToken(), formId);
  
     	
     	

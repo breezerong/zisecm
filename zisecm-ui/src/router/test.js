@@ -16,5 +16,15 @@ export const testRouter =  [
         path: '/test/test2',
         name: '测试2',
         component: () => import('@/views/test/TestComp2.vue')
-    }
+    },
+    // {
+    //     meta: {
+    //         requireAuth: true,
+    //         permit: 1
+    //     },
+    //     path: '/borroworder',
+    //     name: '测试2',
+    //     component: () => import('@/components/form/Borrow.vue')
+        
+    // }
 ]

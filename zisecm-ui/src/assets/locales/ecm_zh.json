@@ -130,7 +130,9 @@
     "destroy":"销毁",
     "show":"显示",
     "fileBox":"卷盒",
-    "warehousing":"上架"
+    "warehousing":"上架",
+    "addToShopingCart":"添加到购物车",
+    "openShopingCart":"购物车"
 },
 "menu": {
     "home":"首页",
