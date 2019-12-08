@@ -88,7 +88,7 @@
           </el-form>
 
 
-          <div slot="footer" class="dialog-footer">
+          <div slot="footer" class="dialog-footer" v-if="istask==false">
             <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
             <el-button ref="borrowStartwf" @click="startWorkflow(form)">启动流程</el-button>
           </div>
@@ -125,13 +125,18 @@
             C_CREATION_UNIT:"编制部门"
 
       },
-      formId:""
+      formId:"",
+      istask:false
 
     };
   },
    created() {
     let _self = this;
      _self.formId=_self.$route.query.borrowFormId;
+     alert(_self.$route.query.istask);
+     if(typeof(_self.$route.query.istask)!="undefined"){
+      _self.istask=_self.$route.query.istask;
+     }   
      _self.loadGridView()
   }, 
  methods: {
@@ -140,10 +145,10 @@
         var m = new Map();
         m.set("gridName", _self.gridviewName);
         m.set("lang", _self.currentLanguage);
-        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
+       axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
          
           _self.gridList = response.data.data;
-          if(_self.formId==""){
+          if(typeof(_self.$route.query.borrowFormId)=="undefined"){
             _self.tabledata=_self.$route.query.tabledata;
           }else{
             _self.loadData();

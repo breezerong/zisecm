@@ -236,7 +236,8 @@ export default {
       path:'/borrow1',
       query: { 
       tabledata: _self.taskTableData,
-      borrowFormId:_self.form.formId
+      borrowFormId:_self.form.formId,
+      istask:true
       }
     });
 
