@@ -857,7 +857,7 @@ export default {
           _self.transferDataList = response.data.data;
           _self.transferDataListFull = response.data.data;
           _self.transferCount = response.data.pager.total;
-          //console.log(JSON.stringify(response.data.datalist));
+          
           _self.loading = false;
         })
         .catch(function(error) {
