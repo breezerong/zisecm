@@ -3,6 +3,7 @@ package com.ecm.icore.bpm;
 import java.util.List;
 
 import com.ecm.core.entity.EcmQueueItem;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 /**
  * 队列服务
@@ -47,5 +48,11 @@ public interface IQueueItemService {
 	 * @throws AccessDeniedException 
 	 */
 	List<EcmQueueItem> getMyTodoObjects(String token, int pageSize, int startIndex, String condition) throws AccessDeniedException;
+
+	List<EcmQueueItem> getObjects(String token, Pager pager, String condition);
+
+	void updateQueueItemStatus(String token, String id, int status, String message);
+
+	boolean deleteObjectById(String token, String id);
 
 }

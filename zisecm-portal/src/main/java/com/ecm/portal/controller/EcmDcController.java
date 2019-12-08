@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -709,7 +710,7 @@ public class EcmDcController extends ControllerAbstract{
 	 */
 	@RequestMapping(value = "/dc/removeRendition", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addRendition(@RequestBody String id) {
+	public Map<String, Object> removeRendition(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			documentService.removeRendition(getToken(), id);
@@ -1287,6 +1288,32 @@ public class EcmDcController extends ControllerAbstract{
 				mp.put("code", ActionContext.SUCESS);
 			} catch (AccessDeniedException e) {
 				mp.put("code", ActionContext.TIME_OUT);
+			}
+			return mp;
+		}
+		
+		@RequestMapping(value = "/dc/updateContent", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> updateConent(String id,@RequestParam("uploadFile")MultipartFile uploadFile) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				if (uploadFile != null) {
+					EcmContent en = contentService.getObject(getToken(), id, 0, FileUtils.getExtention(uploadFile.getOriginalFilename()));
+					en.setContentSize(uploadFile.getSize());
+					en.setInputStream(uploadFile.getInputStream());
+					en.setDescription("OCR");
+					contentService.updateObject(getToken(), en);
+					//主格式更新内容大小
+					if(en.getContentType()==1) {
+						contentService.updatePrimaryContentSize(getToken(), id, en.getContentSize());
+					}
+					documentService.queue(getToken(), id, "ecm_full_index", "ecm_full_index", null);
+					mp.put("code", ActionContext.SUCESS);
+				}
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
 			}
 			return mp;
 		}

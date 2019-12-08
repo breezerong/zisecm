@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.ecm.core.entity.EcmQueueItem;
+import com.ecm.core.entity.Pager;
 
 public interface EcmQueueItemMapper {
 	
@@ -13,6 +14,8 @@ public interface EcmQueueItemMapper {
 	List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
 	
 	List<EcmQueueItem> selectByCondition(@Param(value="condition")String condition);
+	
+	List<EcmQueueItem> selectByCondition(Pager pager, @Param(value="condition")String condition);
 	
 	int getCountByCondition(@Param(value="condition") String condition);
 	

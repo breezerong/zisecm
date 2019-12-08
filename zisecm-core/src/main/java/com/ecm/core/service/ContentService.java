@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmQueueItem;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IContentService;
@@ -39,6 +41,8 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	@Autowired
 	private EcmContentMapper contentMapper;
 
+	@Autowired
+	private QueueItemService queueItemService;
 
 	
 	@Override
@@ -89,6 +93,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			en.setModifiedDate(en.getCreationDate());
 			en.setModifier(en.getCreator());
 			contentMapper.insert(en);
+			createPdfOcrEvent(token, en);
 			logger.info("Insert content:{}",en.getId());
 			return en.getId();
 		}catch(Exception ex) {
@@ -101,6 +106,10 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	public boolean updateObject(String token, Object obj) throws EcmException {
 		try {
 			EcmContent en = (EcmContent)obj;
+			boolean ocrUpdate = "OCR".equalsIgnoreCase(en.getDescription());
+			if(ocrUpdate) {
+				en.setDescription("");
+			}
 			// TODO Auto-generated method stub
 			if(en.getInputStream()!=null&&en.getContentType()==1&&en.getFilePath().length()>0)
 			{
@@ -130,6 +139,9 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			en.setModifiedDate(new Date());
 			en.setModifier(getSession(token).getCurrentUser().getUserName());
 			contentMapper.updateByPrimaryKey(en);
+			if(!ocrUpdate) {
+				createPdfOcrEvent(token, en);
+			}
 			return true;
 		}
 		catch(Exception ex) {
@@ -263,5 +275,53 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	public boolean deleteObject(String token, String id) {
 		return contentMapper.deleteByDocument(id)>0;
 	}
+	/**
+	 * 是否启用PDF OCR
+	 * @return
+	 */
+	private boolean pdfOcrEnabled() {
+		boolean ret = false;
+		try {
+			ret = Boolean.parseBoolean(CacheManagerOper.getEcmParameters().get("PdfOcrEnabled").getValue());
+		}
+		catch(Exception ex) {
+			
+		}
+		return ret;
+	}
+	/**
+	 * PDF OCR 最大文件大小
+	 * @return
+	 */
+	private int pdfOcrMaxSize() {
+		//默认50MB
+		int maxSize = 50485760;
+		try {
+			maxSize = Integer.parseInt(CacheManagerOper.getEcmParameters().get("MaxIndexSize").getValue());
+		}
+		catch(Exception ex) {
+			
+		}
+		return maxSize;
+	}
 
+	private void createPdfOcrEvent(String token, EcmContent en) throws EcmException, AccessDeniedException {
+		if(pdfOcrEnabled()&& en!= null && en.getFormatName().equals("pdf") && en.getContentSize()<=pdfOcrMaxSize()) {
+			queue(token, en.getId(), "ecm_pdf_ocr", "ecm_pdf_ocr", en.getParentId(),null);
+		}
+	}
+	
+	public void queue(String token, String id, String name, String eventName, String parentId,String message)
+			throws EcmException, AccessDeniedException {
+		EcmQueueItem queueItem = new EcmQueueItem();
+		queueItem.createId();
+		queueItem.setObjectId(id);
+		queueItem.setName(name);
+		queueItem.setEventName(eventName);
+		queueItem.setRouterId(parentId);
+		queueItem.setMessage(message);
+		queueItem.setDelectFlag(false);
+		queueItem.setStatus(0);
+		queueItemService.newObject(token, queueItem);
+	}
 }

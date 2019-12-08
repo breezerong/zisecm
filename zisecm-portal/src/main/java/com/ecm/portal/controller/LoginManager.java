@@ -90,9 +90,9 @@ public class LoginManager extends ControllerAbstract{
 
 	@ResponseBody
 	@RequestMapping(value = "/userLogout", method = RequestMethod.POST)
-	public Map<String, Object> userLogout(HttpSession session) {
+	public Map<String, Object> userLogout(@RequestBody String token) {
 		Map<String, Object> mp = new HashMap<String, Object>();
-		session.removeAttribute("ECMUserSession");
+		authService.logout(token);
 		mp.put("code", ActionContext.SUCESS);
 		return mp;
 	}
