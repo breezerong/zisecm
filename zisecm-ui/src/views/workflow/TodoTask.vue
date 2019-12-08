@@ -16,7 +16,7 @@
                 </el-form-item>
           </el-form>
           <el-divider content-position="left">表单</el-divider>
-           <router-view  ></router-view>
+           <router-view></router-view>
          <el-form :model="form">
             <el-row>
               <div v-if="!isCompleteSelected">
@@ -39,8 +39,8 @@
           </el-form>
   
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="completetask(form)">完成任务</el-button>
+            <el-button type="primary" @click="dialogVisible = false">取 消</el-button>
+            <el-button @click="completetask(form)">完成任务</el-button>
           </div>
         </el-dialog>
       <table border="0" width="100%">
