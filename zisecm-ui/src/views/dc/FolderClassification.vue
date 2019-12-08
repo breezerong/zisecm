@@ -32,6 +32,9 @@
             <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
           </div>
         </el-dialog>
+     <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="80%"  @close="itemDialogVisible = false">  
+      <InnerItemViewer v-bind:id = "currentId"></InnerItemViewer>
+     </el-dialog>
       <table border="0" width="100%" >
           <tr>
             <td class="navbar">
@@ -79,6 +82,7 @@
                       :render-content="renderContent"
                       default-expand-all
                       highlight-current
+                      
                       @node-click="handleNodeClick">
                     </el-tree>
                   </td>
@@ -90,6 +94,7 @@
                       v-loading="loading"
                       @selection-change="selectChange"
                       @sort-change="sortchange"
+                      @row-click="rowClick"
                       style="width: 100%">
                       <el-table-column type="selection" width="40" @selection-change="selectChange">
                       </el-table-column>
@@ -162,7 +167,7 @@
 
 <script type="text/javascript">
 import ShowProperty from '@/components/ShowProperty'
-
+import InnerItemViewer from "./InnerItemViewer.vue"
 
 import 'url-search-params-polyfill'
 
@@ -170,10 +175,13 @@ export default {
   name: "FolderClassification",
   
   components: {
-    ShowProperty: ShowProperty
+    ShowProperty: ShowProperty,
+    InnerItemViewer:InnerItemViewer
   },
   data() {
     return {
+      itemDialogVisible:false,
+      currentId:"",
       columnsInfo:{
         checkAll: true,
         checkedCities:[],
@@ -263,6 +271,12 @@ export default {
       });
   },
   methods: {
+     rowClick(row) {
+      this.currentId = row.ID;
+      if(row.TYPE_NAME=='卷盒' || row.TYPE_NAME=='图册'){
+        this.itemDialogVisible = true;
+      }
+    },
     renderContent: function (h, {node, data, store}) {
       //console.log(data);
       if(data.extended){
