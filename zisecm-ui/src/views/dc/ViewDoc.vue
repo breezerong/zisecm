@@ -17,6 +17,7 @@
            <template v-if="docObj==null">
              {{message}}
            </template>
+           <InnerItemViewer v-else-if="viewerType==100" v-bind:id = "doc.id"></InnerItemViewer>
            <template v-else-if="doc.permit<3">
              <div style="padding-top:40px;">
               您没有查看当前文档内容权限，如果需要查看，请点击右上角借阅按钮进行申请授权。
@@ -27,7 +28,7 @@
              <ImageViewer v-else-if="viewerType==2" v-bind:id="doc.id" v-bind:format="doc.format"></ImageViewer>
              <VideoPlayer v-else-if="viewerType==3" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
              <AudioPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
-             <InnerItemViewer v-else-if="viewerType==100" v-bind:id = "doc.id"></InnerItemViewer>
+             
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
                 当前文件没有电子文件。
               </div>

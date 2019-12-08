@@ -37,6 +37,9 @@
         </div>       -->
                 <!-- <router-link  to="/borroworder"></router-link> -->
      </el-dialog>
+     <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="80%"  @close="itemDialogVisible = false">  
+      <InnerItemViewer v-bind:id = "currentId"></InnerItemViewer>
+     </el-dialog>
      <el-dialog
       :title="$t('application.property')"
       :visible.sync="propertyVisible"
@@ -170,6 +173,7 @@
               v-loading="loading"
               @selection-change="selectChange"
               @sort-change="sortchange"
+              @row-click="rowClick"
               style="width: 100%"
               fit
             >
@@ -267,11 +271,13 @@
 import ShowProperty from "@/components/ShowProperty";
 import ShowBorrowForm from "@/components/form/Borrow";
 import ShopingCart from "@/components/form/ShopingCart";
+import InnerItemViewer from "./InnerItemViewer.vue"
 export default {
   components: {
     ShowProperty: ShowProperty,
     ShowBorrowForm:ShowBorrowForm,
-    ShopingCart:ShopingCart
+    ShopingCart:ShopingCart,
+    InnerItemViewer:InnerItemViewer
   },
   data() {
     return {
@@ -307,6 +313,8 @@ export default {
         label: "name"
       },
       selectedItemList: [],
+      itemDialogVisible:false,
+      currentId:"",
       disable: true,
       exportAble: false,
       formLabelWidth: "100px",
@@ -355,6 +363,12 @@ export default {
       });
   },
   methods: {
+    rowClick(row) {
+      this.currentId = row.ID;
+      if(row.TYPE_NAME=='卷盒' || row.TYPE_NAME=='图册'){
+        this.itemDialogVisible = true;
+      }
+    },
     renderContent: function(h, { node, data, store }) {
       if (data.extended) {
         return (
