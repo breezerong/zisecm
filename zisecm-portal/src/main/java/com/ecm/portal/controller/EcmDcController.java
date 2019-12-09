@@ -1108,6 +1108,23 @@ public class EcmDcController extends ControllerAbstract{
 			return mp;
 		}
 
+		@RequestMapping(value = "/dc/getDocumentById", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> getDocumentById(@RequestBody String id) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			Map<String,Object>  objectMap=null;
+			try {
+				objectMap = documentService.getObjectMapById(getToken(), id);
+				mp.put("data", objectMap);
+				mp.put("code", ActionContext.SUCESS);
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
+
 	 
 	//下架文件，更改文件状态为“整编”
 		@RequestMapping(value = "/dc/obtainDocuments", method = RequestMethod.POST)

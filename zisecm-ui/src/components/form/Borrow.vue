@@ -5,10 +5,10 @@
               <div v-if="istask==false">
               <el-col >
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
-                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off"  readonly="true"></el-input>
+                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off"></el-input>
                 </el-form-item>
                  <el-form-item label="电话" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.TITLE" auto-complete="off" disabled="true"></el-input>
+                  <el-input   v-model="borrowForm.TITLE" auto-complete="off"></el-input>
                 </el-form-item>
                  <el-form-item label="用户部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
@@ -111,10 +111,10 @@
               </el-col>
              <el-col>
             <el-form-item label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
-                  {{borrowForm.C_START_DATE}}
+                  {{dateFormat(borrowForm.C_START_DATE)}}
                 </el-form-item>
                  <el-form-item label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
-                   {{borrowForm.C_START_DATE}}
+                   {{dateFormat(borrowForm.C_START_DATE)}}
                 </el-form-item>
                </el-col>
              <el-col>
@@ -166,7 +166,7 @@
 
           <div slot="footer" class="dialog-footer" v-if="istask==false">
             <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
-            <el-button ref="borrowStartwf" @click="startWorkflow(form)">启动流程</el-button>
+            <el-button ref="borrowStartwf" @click="startWorkflow(borrowForm)">启动流程</el-button>
           </div>
         </div>
 </template>
@@ -232,6 +232,12 @@
       },
       loadData(){
           let _self = this;
+          axios.post("/dc/getDocumentById",_self.formId).then(function(response) {
+            let result = response.data;
+            if(result.code==1){
+              _self.borrowForm = result.data;
+            }
+          });
           axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
             let result = response.data;
             if(result.code==1){
@@ -282,11 +288,11 @@
       }
       m.set("documentIds",documentIds);
       axios.post("/dc/saveBorrowForm",JSON.stringify(m)).then(function(response){
-        formId=response.data.data;
+        _self.formId=response.data.data;
         console.log(response);  
         _self.loading = false;
         m= new Map();
-        m.set("formId",formId);
+        m.set("formId",_self.formId);
         m.set("fileTopestSecurityLevel",fileTopestSecurityLevel);
         m.set("drawingNumber",drawingNumber);
         

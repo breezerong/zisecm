@@ -24,12 +24,11 @@
                     </div>
                   </template>
                  </el-table-column>
+                <el-table-column prop="taskName" label="名称" min-width="20%" sortable>
                 </el-table-column>
-                <el-table-column prop="name" label="名称" min-width="20%" sortable>
+                <el-table-column prop="assignee" label="用户" width="120" >
                 </el-table-column>
-                <el-table-column prop="startUser" label="用户" width="120" >
-                </el-table-column>
-                <el-table-column prop="startTime" label="开始时间" :formatter="dateFormatter"  width="160" sortable>
+                <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter"  width="160" sortable>
                 </el-table-column>
                 <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"  width="160" sortable>
                 </el-table-column>
