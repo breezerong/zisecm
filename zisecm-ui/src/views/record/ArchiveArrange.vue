@@ -1408,7 +1408,7 @@ export default {
           _self.loadGridData(_self.currentFolder);
            
             _self.showInnerFile(null);
-          _self.$message(_self.$t("message.takeNumberSuccess"));
+          _self.$message(response.data.data.message);
         })
         .catch(function(error) {
           _self.$message(_self.$t("message.takeNumberFaild"));
@@ -1698,7 +1698,7 @@ export default {
     //查询文档
     searchItem() {
      this.loadGridData(this.currentFolder);
-     this. loadPageInfo(this.currentFolder);
+    //  this. loadPageInfo(this.currentFolder);
     }
   }
 };

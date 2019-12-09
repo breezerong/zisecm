@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 
 import com.ecm.core.dao.EcmQueueItemMapper;
 import com.ecm.core.entity.EcmQueueItem;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.util.DBUtils;
 import com.ecm.icore.bpm.IQueueItemService;
 /**
  * 消息队列服务
@@ -27,6 +29,12 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 	public List<EcmQueueItem> getObjects(String token,String condition){
 		return ecmQueueItemMapper.selectByCondition(condition);
 	}
+	
+	@Override
+	public List<EcmQueueItem> getObjects(String token,Pager pager, String condition){
+		return ecmQueueItemMapper.selectByCondition(pager,condition);
+	}
+	
 	@Override
 	public List<EcmQueueItem> getTodoObjects(String token,String userName){
 		String cond = " NAME='"+userName+"' and STATUS<3 and EVENT_NAME='ecm_start_workitem' order by SEND_DATE DESC";
@@ -77,6 +85,11 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 	}
 	
 	@Override
+	public boolean deleteObjectById(String token,String id) {
+		return ecmQueueItemMapper.deleteByPrimaryKey(id)>0;
+	}
+	
+	@Override
 	public String newObject(String token,Object obj) {
 		EcmQueueItem item = (EcmQueueItem)obj;
 		if(StringUtils.isEmpty(item.getId())) {
@@ -84,5 +97,11 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 		}
 		ecmQueueItemMapper.insert(item);
 		return item.getId();
+	}
+	@Override
+	public void updateQueueItemStatus(String token,String id, int status,String message) {
+		String sql = "update ecm_queue_item set STATUS="+status+" , MESSAGE='"+DBUtils.getString(message)+"'"
+				+ " where ID='"+id+"'";
+		ecmQueueItemMapper.executeSQL(sql);
 	}
 }

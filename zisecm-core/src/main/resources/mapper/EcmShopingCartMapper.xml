@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ecm.core.dao.EcmShopingCart">
+<mapper namespace="com.ecm.core.dao.EcmShopingCartMapper">
   <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmShopingCart">
     <id column="ID" jdbcType="VARCHAR" property="id" />
-    <result column="DOCUMENT_ID" jdbcType="VARCHAR" property="document_id" />
-    <result column="ADD_DATE" jdbcType="TIMESTAMP" property="add_date" />
+    <result column="DOCUMENT_ID" jdbcType="VARCHAR" property="documentId" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ADD_DATE" jdbcType="TIMESTAMP" property="addDate" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, DOCUMENT_ID, ADD_DATE
+    ID, DOCUMENT_ID, USER_NAME, ADD_DATE
   </sql>
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -24,9 +28,9 @@
     delete from ecm_shoping_cart
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.ecm.core.entity.EcmSystemEvent">
-    insert into ecm_shoping_cart (ID, DOCUMENT_ID, ADD_DATE)
-    values (#{id,jdbcType=VARCHAR}, #{document_id,jdbcType=VARCHAR}, #{add_date,jdbcType=TIMESTAMP})
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmShopingCart">
+    insert into ecm_shoping_cart (ID, DOCUMENT_ID,USER_NAME, ADD_DATE)
+    values (#{id,jdbcType=VARCHAR}, #{documentId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{addDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmShopingCart">
     insert into ecm_shoping_cart
@@ -34,10 +38,13 @@
       <if test="id != null">
         ID,
       </if>
-      <if test="document_id != null">
+      <if test="documentId != null">
         DOCUMENT_ID,
       </if>
-      <if test="add_date != null">
+      <if test="userName != null">
+        USER_NAME,
+      </if>
+      <if test="addDate != null">
         ADD_DATE,
       </if>
     </trim>
@@ -45,30 +52,22 @@
       <if test="id != null">
         #{id,jdbcType=VARCHAR},
       </if>
-      <if test="document_id != null">
-        #{document_id,jdbcType=VARCHAR},
+      <if test="documentId != null">
+        #{documentId,jdbcType=VARCHAR},
       </if>
-      <if test="add_date != null">
-        #{add_date,jdbcType=TIMESTAMP},
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="addDate != null">
+        #{addDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmShopingCart">
-    update ecm_shoping_cart
-    <set>
-      <if test="document_id != null">
-        #{document_id,jdbcType=VARCHAR},
-      </if>
-      <if test="add_date != null">
-        #{add_date,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where ID = #{id,jdbcType=VARCHAR}
-  </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmShopingCart">
     update ecm_shoping_cart
-    set DOCUMENT_ID = #{document_id,jdbcType=VARCHAR},
-      ADD_DATE = #{add_date,jdbcType=TIMESTAMP}
+    set DOCUMENT_ID = #{documentId,jdbcType=VARCHAR},
+     USER_NAME = #{userName,jdbcType=VARCHAR},
+      ADD_DATE = #{addDate,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

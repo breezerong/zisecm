@@ -1,6 +1,9 @@
 package com.ecm.services.indexagent;
 
+import java.io.IOException;
+
 import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,17 +85,27 @@ public class IndexAgentService{
 			}
 		}
 			isRunning = true;
-			if("1".endsWith(runType))
-			{
-				System.out.println("Reindex start......");
-				indexService.reindexAll(token, ESClient.getInstance().getClient());				
-				System.out.println("Reindex completed......");
-				runType = "2";
-			}else {
+			RestHighLevelClient indexClient = ESClient.getInstance().getClient();
+			try {
+				if("1".endsWith(runType))
+				{
+					System.out.println("Reindex start......");
+					indexService.reindexAll(token, indexClient);				
+					System.out.println("Reindex completed......");
+					runType = "2";
+				}else {
+					try {
+						indexService.indexFromQueue(token, indexClient);					
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}finally {
 				try {
-					indexService.indexFromQueue(token, ESClient.getInstance().getClient());					
-				}catch(Exception ex) {
-					ex.printStackTrace();
+					indexClient.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		isRunning = false;

@@ -6,7 +6,29 @@ export const dcRouter = [
 			},
 			path: '/dc/companydoc',
 			component: () => import('@/views/dc/CompanyDoc.vue'),
-			name: '公司文档'
+			name: '公司文档',
+			children:[
+				{
+					meta: {
+						requireAuth: true,
+						permit: 1
+					},
+					path: '/borrow',
+					name: '测试2',
+					component: () => import('@/components/form/Borrow.vue')
+					
+				},
+				{
+					meta: {
+						requireAuth: true,
+						permit: 1
+					},
+					path: '/ShopingCart',
+					name: '测试2',
+					component: () => import('@/components/form/ShopingCart.vue')
+					
+				}
+			]
 		},
 		{
 			meta: {

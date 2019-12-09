@@ -4,8 +4,10 @@ import java.io.Console;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,7 @@ import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.MessageException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IDocumentService;
@@ -77,9 +80,19 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	private EcmLifeCycleMapper lifeCycleMapper;
 	@Autowired
 	private EcmLifeCycleItemMapper lifeCycleItemMapper;
-	
-	public List<Map<String, Object>> getObjects(String token, String gridName, Object folderId, Pager pager,
-			Object condition, Object orderBy) {
+	/**
+	 * 通过配置子句查询对象
+	 * @param token
+	 * @param gridName
+	 * @param parentId
+	 * @param pager
+	 * @param condition
+	 * @param orderBy
+	 * @return
+	 * @throws MessageException 
+	 */
+	public List<Map<String, Object>> getObjectsConfigclause(String token, Pager pager,String configName,
+			Map<String,Object> params) throws MessageException {
 		String currentUser="";
 		try {
 			currentUser = getSession(token).getCurrentUser().getUserName();
@@ -87,31 +100,55 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(condition!=null&&condition.toString().contains("@currentuser")) {
-    		
-			condition=condition.toString().replaceAll("@currentuser", currentUser);
-    	}
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-		String gvCondition=gv.getCondition();
-		if(gvCondition!=null&&gvCondition.contains("@currentuser")) {
-			gvCondition=gvCondition.replaceAll("@currentuser", currentUser);
+		
+		String clauseSql = CacheManagerOper.getEcmParameters().get(configName).getValue();
+		if(clauseSql==null) {
+			throw new MessageException(configName+"没有配置，请先配置查询语句,如果已配置请刷新缓存！");
 		}
-		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
-				+ gvCondition;
-		if (folderId!=null&&!StringUtils.isEmpty(folderId.toString())) {
-			sql += " and folder_id='" + folderId.toString() + "'";
+		if(clauseSql.contains("@currentuser")) {
+			clauseSql=clauseSql.replace("@currentuser", currentUser);
 		}
-		if (condition!=null&&!EcmStringUtils.isEmpty(condition.toString())) {
-			sql += " and (" + condition.toString() + ")";
+		
+		if(clauseSql.contains("@condition")) {
+			if(params!=null&&params.containsKey("condition")) {
+				clauseSql=clauseSql.replace("@condition", params.get("condition").toString());
+			}else {
+				clauseSql=clauseSql.replace("@condition", "");
+			}
 		}
-		if (orderBy!=null&&!EcmStringUtils.isEmpty(orderBy.toString())) {
-			sql += " order by " + orderBy.toString();
-		} else {
-			sql += " " + gv.getOrderBy();
+		
+		if(clauseSql.contains("@")) {
+			Set<String> items= params.keySet();
+			Iterator<String> keys= items.iterator();
+			
+			while(keys.hasNext()) {
+				String key=keys.next();
+				
+				
+				clauseSql=clauseSql.replaceAll("@"+key, params.get(key).toString());
+			}
 		}
-		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
+		
+		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, clauseSql);
 		// TODO Auto-generated method stub
 		return list;
+	}
+	/**
+	 * getObjects的升级版
+	 * @param token
+	 * @param gridName
+	 * @param folderId
+	 * @param pager
+	 * @param condition
+	 * @param orderBy
+	 * @return
+	 */
+	public List<Map<String, Object>> getObjectsByObj(String token, Object gridName, Object folderId, Pager pager,
+			Object condition, Object orderBy) {
+		
+		
+		return getObjects(token,gridName==null?"":gridName.toString(),folderId==null?"":folderId.toString(),
+				pager,condition==null?"":condition.toString(),orderBy==null?"":orderBy.toString());
 	}
 
 	@Override
@@ -1362,6 +1399,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		EcmDocument doc = getObjectById(token, docId);
 		if(doc!=null&&content!=null) {
 			if (primary != null) {
+				primary.setFormatName(null);
 				primary.setName(content.getName());
 				
 				primary.setInputStream(content.getInputStream());

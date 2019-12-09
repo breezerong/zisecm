@@ -40,9 +40,18 @@ export const recordRouter =  [
                     requireAuth: true,
                     permit: 1
                 },
-                path: '/record/archiveoutgoing/archivepending',
+                path: '/record/archiveoutgoing/archivependingout',
+                name: '待出库',
+                component: () => import('@/views/record/ArchivePendingOut.vue')
+            },
+            {
+                meta: {
+                    requireAuth: true,
+                    permit: 1
+                },
+                path: '/record/archiveoutgoing/archivependingin',
                 name: '待入库',
-                component: () => import('@/views/record/ArchivePending.vue')
+                component: () => import('@/views/record/ArchivePendingIn.vue')
             }
         ]
     }

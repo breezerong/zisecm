@@ -14,8 +14,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +33,7 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.dao.EcmShopingCartMapper;
 import com.ecm.core.entity.ChartBean;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
@@ -44,10 +44,11 @@ import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.entity.EcmRelation;
+import com.ecm.core.entity.EcmShopingCart;
 import com.ecm.core.entity.Pager;
-import com.ecm.core.entity.UserEntity;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.MessageException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
@@ -67,6 +68,11 @@ public class EcmDcController extends ControllerAbstract{
 
 	@Autowired
 	private DocumentService documentService;
+	@Autowired
+	private RelationService relationService;
+	
+	@Autowired
+	private EcmShopingCartMapper shopingCartService;
 
 	@Autowired
 	private ContentService contentService;
@@ -289,6 +295,20 @@ public class EcmDcController extends ControllerAbstract{
 					}
 				}
 			}
+			long changeCount =0; 
+			String typeName = data.get("TYPE_NAME").toString();
+			if(typeName.equals("图纸文件")) {
+				try {
+					String coding = data.get("CODING").toString();
+					String revision = data.get("REVISION").toString();
+					String cond = " TYPE_NAME='变更文件' and CODING='"+coding+"' and REVISION='"+revision+"'";
+					changeCount = documentService.getObjectCount(getToken(), null, null, cond);
+				}
+				catch(Exception ex) {
+					
+				}
+			}
+			mp.put("changeCount", changeCount);
 			mp.put("data", data);
 			mp.put("permit", permit);
 			mp.put("hasPdf", hasPdf);
@@ -570,22 +590,29 @@ public class EcmDcController extends ControllerAbstract{
 		String lang = args.get("lang").toString();
 		EcmDocument en = null;
 		List<EcmFormItem> list = null;
+		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			en = documentService.getObjectById(getToken(),itemInfo);
 			EcmForm frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_EDIT");
 			if (frm == null) {
 				frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_1");
 			}
-			list = frm.getEcmFormItems(lang);
+			list = frm.getEcmFormItems(documentService.getSession(getToken()),lang);
+			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
 			EcmForm frm = CacheManagerOper.getEcmForms().get(itemInfo + "_NEW");
 			if (frm == null) {
 				frm = CacheManagerOper.getEcmForms().get(itemInfo + "_1");
 			}
-			list = frm.getEcmFormItems(lang);
+			try {
+				list = frm.getEcmFormItems(documentService.getSession(getToken()),lang);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				mp.put("code", ActionContext.TIME_OUT);
+			}
+			
 		}
-		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
 		mp.put("data", list);
 		return mp;
 	}
@@ -683,7 +710,7 @@ public class EcmDcController extends ControllerAbstract{
 	 */
 	@RequestMapping(value = "/dc/removeRendition", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addRendition(@RequestBody String id) {
+	public Map<String, Object> removeRendition(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			documentService.removeRendition(getToken(), id);
@@ -938,6 +965,150 @@ public class EcmDcController extends ControllerAbstract{
 	  return mp;
 	 }
 	
+	 //添加到购物车
+	 @RequestMapping(value = "/dc/addToShopingCart", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> addToShopingCart(@RequestBody String argStr) {
+	  List<String> list = JSONUtils.stringToArray(argStr);
+	  Map<String, Object> mp = new HashMap<String, Object>();
+	  try {
+		  for (String id : list) {
+			  EcmDocument ecmDocument = documentService.getObjectById(getToken(), id);
+			  EcmShopingCart  shopingCart= new EcmShopingCart();
+			  shopingCart.setDocumentId(id);
+			  String userName=this.getSession().getCurrentUser().getUserName();
+			  shopingCart.setUserName(userName);
+			  shopingCart.createId();
+
+			   List<Map<String, Object>> shopingObjectList=shopingCartService.executeSQL("select id  from ecm_shoping_cart where document_id='"+id+"' and user_name='"+userName+"'");
+			  if(shopingObjectList.size()==0) {
+				  shopingCartService.insertSelective(shopingCart);
+			  }
+			}
+	  }
+	  catch(Exception ex) {
+	   mp.put("code", ActionContext.FAILURE);
+	   mp.put("message", ex.getMessage());
+	   ex.printStackTrace();
+	  }
+	  return mp;
+	 }
+
+		String baseColumns = "ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT";
+	 //添加到购物车
+	 @RequestMapping(value = "/dc/openShopingCart", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> openShopingCart(@RequestBody String argStr) {
+	  List<String> list = JSONUtils.stringToArray(argStr);
+	  Map<String, Object> mp = new HashMap<String, Object>();
+	  List<Map<String, Object>> shopingCartList1 = null;
+ 	  List<Map<String, Object>> shopingCartList2=null;
+	try {
+		shopingCartList1 = shopingCartService.executeSQL("select DOCUMENT_ID from ecm_shoping_cart where user_name='"+getSession().getCurrentUser().getUserName()+"'");
+	  
+	  EcmDocument docObj;
+	  StringBuffer sb= new StringBuffer();
+	  for (int i = 0; i < shopingCartList1.size(); i++) {
+		  if(i==0) {
+			  sb.append("'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");		  
+		  }else {
+			  sb.append(",'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");
+		  }
+	  }
+ 			String gridName="shopingCartGrid";
+ 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+ 			String sql = "select " + baseColumns + getGridColumn(gv, gridName) + "  from ecm_document where ID in("+sb.toString()+")";
+ 			 shopingCartList2 = documentService.getMapList(getToken(), sql);
+ 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+	  mp.put("data", shopingCartList2);
+	  mp.put("code", ActionContext.SUCESS);
+	  return mp;
+	 }
+		private String getGridColumn(EcmGridView gv, String gridName) {
+			String col = "";
+			String cols = "," + baseColumns.replace(" ", "") + ",";
+			if (gv != null) {
+				for (EcmGridViewItem item : gv.getGridViewItems()) {
+					if (cols.indexOf("," + item.getAttrName() + ",") > -1) {
+						continue;
+					}
+					col += "," + item.getAttrName();
+				}
+			}
+			return col;
+		}
+
+	 //添加到购物车
+	 @RequestMapping(value = "/dc/saveBorrowForm", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> saveBorrowForm(@RequestBody String argStr) {
+		 List<String> argMap= JSONUtils.stringToArray(argStr);
+		 String argName=null;
+		 Map<String,Object> formDataMap=null;
+		 String[] documentIdArray=null;
+	    Map<String, Object> mp = new HashMap<String, Object>();
+	    for (int i = 0; i < argMap.size(); i++) {
+			 List<String> argMap2= JSONUtils.stringToArray(argMap.get(i).toString());
+			 for (int j = 0; j < argMap2.size(); j++) {
+				 argName= argMap2.get(0);
+				 if("formData".equals(argName)&&argMap2.get(1)!=null) {
+					 formDataMap=JSONUtils.stringToMap(argMap2.get(1));
+				 }else  if("documentIds".equals(argName)&&argMap2.get(1)!=null) {
+					 documentIdArray=argMap2.get(1).split(",");
+				 }
+			}
+		}
+  
+		 String formId="";
+		 formDataMap.put("TYPE_NAME", "借阅单");
+		 try {
+			   formId=documentService.newObject(getToken(), formDataMap);
+			   for(int i=0;i<documentIdArray.length;i++) {
+				EcmRelation en=new EcmRelation();
+				en.setParentId(formId);
+				en.setChildId(documentIdArray[i]);
+				en.setName("irel_borrow");
+				en.setCreationDate(new Date());
+				en.setCreator(this.getSession().getCurrentUser().getUserName());
+				relationService.newObject(getToken(), en);
+			   }
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			  mp.put("code", ActionContext.SUCESS);
+		} 
+	
+	  mp.put("data", formId);
+	  mp.put("code", ActionContext.SUCESS);
+	  return mp;
+	 }
+
+		@RequestMapping(value = "/dc/getFormRelateDocument", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> getFormRelateDocument(@RequestBody String id) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			List<Map<String, Object>>  childList=null;
+			try {
+				  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
+						     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+						     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
+				  childList = documentService.getMapList(getToken(), sql);
+				mp.put("data", childList);
+				mp.put("code", ActionContext.SUCESS);
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
+
+	 
 	//下架文件，更改文件状态为“整编”
 		@RequestMapping(value = "/dc/obtainDocuments", method = RequestMethod.POST)
 		 @ResponseBody
@@ -1069,6 +1240,80 @@ public class EcmDcController extends ControllerAbstract{
 				//e.printStackTrace();
 				mp.put("code", ActionContext.FAILURE);
 				mp.put("message", e.getMessage());
+			}
+			return mp;
+		}
+		/**
+		 * 公共文档查询方法，在缓存中配置查询语句
+		 * 将查询语句的name传递进此方法
+		 * 条件使用‘@’开头例如
+		 * select * from ecm_document where id='@id'
+		 * 在页面中需要传递一个名为‘id’的参数传递给controller
+		 * 
+		 *使用configName名称来传递缓存中配置的语句名称
+		 * 
+		 * @param argStr
+		 * @return
+		 */
+		@RequestMapping(value = "/dc/getObjectsByConfigclause", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String,Object> getObjectsByConfigclause(@RequestBody String argStr) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				int pageSize = Integer.parseInt(args.get("pageSize").toString());
+				int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+				Pager pager = new Pager();
+				pager.setPageIndex(pageIndex);
+				pager.setPageSize(pageSize);
+				if(args.get("configName")==null) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", "configName没有传递");
+					return mp;
+				}
+				String configName=args.get("configName").toString();
+				
+				List<Map<String, Object>> list;
+				try {
+					list = documentService.getObjectsConfigclause(getToken(), pager, configName, args);
+				} catch (MessageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", e.getMessage());
+					return mp;
+				}
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				mp.put("code", ActionContext.TIME_OUT);
+			}
+			return mp;
+		}
+		
+		@RequestMapping(value = "/dc/updateContent", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> updateConent(String id,@RequestParam("uploadFile")MultipartFile uploadFile) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				if (uploadFile != null) {
+					EcmContent en = contentService.getObject(getToken(), id, 0, FileUtils.getExtention(uploadFile.getOriginalFilename()));
+					en.setContentSize(uploadFile.getSize());
+					en.setInputStream(uploadFile.getInputStream());
+					en.setDescription("OCR");
+					contentService.updateObject(getToken(), en);
+					//主格式更新内容大小
+					if(en.getContentType()==1) {
+						contentService.updatePrimaryContentSize(getToken(), id, en.getContentSize());
+					}
+					documentService.queue(getToken(), id, "ecm_full_index", "ecm_full_index", null);
+					mp.put("code", ActionContext.SUCESS);
+				}
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
 			}
 			return mp;
 		}
