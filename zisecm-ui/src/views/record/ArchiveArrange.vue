@@ -1698,7 +1698,7 @@ export default {
     //查询文档
     searchItem() {
      this.loadGridData(this.currentFolder);
-     this. loadPageInfo(this.currentFolder);
+    //  this. loadPageInfo(this.currentFolder);
     }
   }
 };

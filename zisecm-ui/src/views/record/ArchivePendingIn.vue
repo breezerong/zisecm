@@ -13,7 +13,7 @@
                 <el-button type="primary" plain
                 size="small" icon="el-icon-printer" >打印出库单</el-button>
                 <el-button type="primary" plain
-                size="small" icon="el-icon-check" @click="outboundOrder">出库完成</el-button>
+                size="small" icon="el-icon-check" @click="putInOrder">入库完成</el-button>
             </el-col>
             
         </el-row>
@@ -40,10 +40,18 @@
             </el-col>
             <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
                <el-button type="primary" plain
-                size="small" icon="el-icon-check" @click="outboundFile">出库</el-button>
+                size="small" icon="el-icon-check" @click="putInstoreFile">入库</el-button>
             </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+                <DataGrid ref="outFileGrid" key="outFileGrid" v-bind:itemDataList="gridListOutFileData"
+                      v-bind:columnList="gridListOutFile" @pagesizechange="outFilePageSizeChange"
+                      @pagechange="outFilePageChange" v-bind:itemCount="outFileItemCount"
+                      v-bind:tableHeight="rightOutTableHeight" :isshowOption="true"
+                      :loading="outFileLoading"
+                       @selectchange="selectOutChange"></DataGrid>
+            </el-col>
             <el-col :span="12">
                 <DataGrid ref="fileGrid" key="fileGrid" v-bind:itemDataList="gridListFileData"
                       v-bind:columnList="gridListFile" @pagesizechange="filePageSizeChange"
@@ -52,14 +60,7 @@
                       :loading="fileLoading"
                        @selectchange="selectChange"></DataGrid>
             </el-col>
-            <el-col :span="12">
-                <DataGrid ref="outFileGrid" key="outFileGrid" v-bind:itemDataList="gridListOutFileData"
-                      v-bind:columnList="gridListOutFile" @pagesizechange="outFilePageSizeChange"
-                      @pagechange="outFilePageChange" v-bind:itemCount="outFileItemCount"
-                      v-bind:tableHeight="rightOutTableHeight" :isshowOption="true"
-                      :loading="outFileLoading"
-                       @selectchange="selectOutChange"></DataGrid>
-            </el-col>
+            
         </el-row>
     </div>
 </template>
@@ -161,13 +162,14 @@ export default {
         show(){
 
         },
-        outboundFile(){
+        //入库
+        putInstoreFile(){
           let _self=this;
-          if(_self.seletedFile.length<1){
-             _self.$message("请选择待出库文件数据！");
+          if(_self.seletedOutFile.length<1){
+             _self.$message("请选择待入库文件数据！");
             return;
           }
-          let tab=_self.seletedFile;
+          let tab=_self.seletedOutFile;
           let p=new Map();
           let m = [];
           let i;
@@ -182,10 +184,10 @@ export default {
               },
               method: "post",
               data: JSON.stringify(p),
-              url: "/dc/outboundfile"
+              url: "/dc/putInstoreFile"
             })
             .then(function(response) {
-              _self.loadGridData();
+               _self.loadGridData();
               _self.loadFileGridData();
               _self.loadOutFileGridData();
               // _self.innerDataList=[];
@@ -197,7 +199,7 @@ export default {
               console.log(error);
           });
         },
-        outboundOrder(){
+        putInOrder(){
           let _self=this;
           if(_self.selectedOrder.length<1){
             _self.$message("请选择借阅单数据！");
@@ -216,7 +218,7 @@ export default {
               },
               method: "post",
               data: JSON.stringify(m),
-              url: "/dc/outboundorder"
+              url: "/dc/putInStorage"
             })
             .then(function(response) {
               _self.loadGridData();
@@ -348,9 +350,9 @@ export default {
           _self.orderLoading=true;
           var key = _self.orderInputkey;
           if (key != "") {
-            key = "coding like '%" + key + "%' or title like '%" + key + "%' and STATUS='待出库'";
+            key = "coding like '%" + key + "%' or title like '%" + key + "%' and STATUS='待入库'";
           }else{
-              key=" STATUS='待出库' "
+              key=" STATUS='待入库' "
           }
         
           var m = new Map();

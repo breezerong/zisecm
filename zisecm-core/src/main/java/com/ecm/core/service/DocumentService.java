@@ -108,11 +108,23 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(clauseSql.contains("@currentuser")) {
 			clauseSql=clauseSql.replace("@currentuser", currentUser);
 		}
+		
+		if(clauseSql.contains("@condition")) {
+			if(params!=null&&params.containsKey("condition")) {
+				clauseSql=clauseSql.replace("@condition", params.get("condition").toString());
+			}else {
+				clauseSql=clauseSql.replace("@condition", "");
+			}
+		}
+		
 		if(clauseSql.contains("@")) {
 			Set<String> items= params.keySet();
 			Iterator<String> keys= items.iterator();
+			
 			while(keys.hasNext()) {
 				String key=keys.next();
+				
+				
 				clauseSql=clauseSql.replaceAll("@"+key, params.get(key).toString());
 			}
 		}
