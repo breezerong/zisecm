@@ -934,9 +934,9 @@ public class EcmDcController extends ControllerAbstract{
 	}
 	
 	//销毁文件，更改文件状态为“注销”
-	@RequestMapping(value = "/dc/destroyDocuments", method = RequestMethod.POST)
+	 @RequestMapping(value = "/dc/destroyDocuments", method = RequestMethod.POST)
 	 @ResponseBody
-	 public Map<String,Object> getDocumentByRelationParentId(@RequestBody String argStr) {
+	 public Map<String,Object> destroyDocuments(@RequestBody String argStr) {
 	  List<String> list = JSONUtils.stringToArray(argStr);
 	  Map<String, Object> mp = new HashMap<String, Object>();
 	  try {
