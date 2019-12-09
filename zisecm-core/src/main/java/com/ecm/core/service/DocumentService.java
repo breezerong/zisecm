@@ -1399,6 +1399,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		EcmDocument doc = getObjectById(token, docId);
 		if(doc!=null&&content!=null) {
 			if (primary != null) {
+				primary.setFormatName(null);
 				primary.setName(content.getName());
 				
 				primary.setInputStream(content.getInputStream());

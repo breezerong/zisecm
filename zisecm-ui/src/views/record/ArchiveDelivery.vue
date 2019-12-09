@@ -215,7 +215,7 @@
         ></DataGrid>
       </el-col>
 
-      <el-col :span="18">
+      <el-col :span="18">   
         <DataGrid
           ref="mainDataGrid"
           key="main"
@@ -231,7 +231,6 @@
           @selectchange="selectChange"
           @refreshdatagrid="refreshMain"
         ></DataGrid>
-
         <el-row>
           <span style="float:left;text-align:left;">文件列表</span>
           <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
@@ -417,33 +416,8 @@ export default {
       });
     }
   },
-  created() {
-    console.log("档案移交");
-    // let _self = this;
-    // var psize = localStorage.getItem("docPageSize");
-    // if(psize)
-    // {
-    //   _self.pageSize = parseInt(psize);
-    // }
-    // _self.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
-    // _self.loading = true;
-    // _self.axios({
-    //     headers: {
-    //       "Content-Type": "application/json;charset=UTF-8"
-    //     },
-    //     method: "post",
-    //     data: 'ArchiveCollatedID',
-    //     url: "/folder/getArchiveFolderByConfige"
-    //   })
-    //   .then(function(response) {
-    //     _self.dataList = response.data.data;
-    //     console.log(JSON.stringify(_self.dataList));
-    //     _self.loading = false;
-    //   })
-    //   .catch(function(error) {
-    //     console.log(error);
-    //     _self.loading = false;
-    //   });
+  mounted() {
+    let _self=this;
     this.getTypeNames("innerTransferDocType");
     this.loadTransferGridInfo();
     this.loadTransferGridData();
@@ -632,7 +606,8 @@ export default {
           _self.innerDataList = response.data.data;
           _self.innerDataListFull = response.data.data;
           _self.innerCount = response.data.pager.total;
-          console.log(JSON.stringify(response.data.data));
+         
+          //console.log(JSON.stringify(response.data.data));
           _self.loading = false;
         })
         .catch(function(error) {
@@ -882,7 +857,7 @@ export default {
           _self.transferDataList = response.data.data;
           _self.transferDataListFull = response.data.data;
           _self.transferCount = response.data.pager.total;
-          //console.log(JSON.stringify(response.data.datalist));
+          
           _self.loading = false;
         })
         .catch(function(error) {

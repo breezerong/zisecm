@@ -16,7 +16,20 @@ export const workflowRouter =
           },
           path: '/workflow/todotask',
           name: '待办工作',
-          component: () => import('@/views/workflow/TodoTask.vue')
+          component: () => import('@/views/workflow/TodoTask.vue'),
+          children:[
+            {
+              meta: {
+                requireAuth: true,
+                permit: 1
+              },
+              path: '/borrow1',
+              name: '测试2',
+              component: () => import('@/components/form/Borrow.vue')
+              
+            }
+          ]
+    
         },
         {
           meta: {

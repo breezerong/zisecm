@@ -32,7 +32,9 @@
         <DataGrid
           ref="transferDataGrid"
           key="transfer"
-          v-bind:isshowPage="true"
+          v-bind:isshowPage="false"
+          v-bind:isshowOption="true"
+          v-bind:isshowicon="false"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
@@ -110,7 +112,7 @@ export default {
       innerDataListFull: [],
       outerDataList: [],
       outerDataListFull: [],
-      transferPageSize: 20,
+      transferPageSize: 200,
       transferCurrentPage: 1,
       transferDataList: [],
       transferDataListFull: [],

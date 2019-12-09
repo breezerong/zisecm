@@ -95,7 +95,7 @@ public class IndexAgentService{
 					runType = "2";
 				}else {
 					try {
-						indexService.indexFromQueue(token, ESClient.getInstance().getClient());					
+						indexService.indexFromQueue(token, indexClient);					
 					}catch(Exception ex) {
 						ex.printStackTrace();
 					}

@@ -235,6 +235,8 @@ public class EcmFormItem extends EcmObject{
 		item.setValidValues(this.getValidValues());
 		item.setValueList(valueList);
 		item.setWidthType(widthType);
+		item.setEnableChange(enableChange);
+		item.setDependName(dependName);
 		return item;
 	}
 }

@@ -214,6 +214,7 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("id", task.getId());
 		        map.put("name", task.getName());
 		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
+		        map.put("formId", runtimeService.getVariable(task.getProcessInstanceId(), "formId"));
 		        map.put("createTime", task.getCreateTime());
 		        resultList.add(map);
 	        }
