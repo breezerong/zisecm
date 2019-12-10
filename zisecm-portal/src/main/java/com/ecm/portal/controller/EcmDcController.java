@@ -985,6 +985,7 @@ public class EcmDcController extends ControllerAbstract{
 				  shopingCartService.insertSelective(shopingCart);
 			  }
 			}
+		   mp.put("code", ActionContext.SUCESS);
 	  }
 	  catch(Exception ex) {
 	   mp.put("code", ActionContext.FAILURE);

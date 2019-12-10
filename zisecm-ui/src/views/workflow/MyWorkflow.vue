@@ -12,7 +12,7 @@
               style="width: 100%">
                 <el-table-column label="序号" width="65">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.endTime==''">
+                    <div v-if="scope.row.endTime==null||scope.row.endTime==''">
                       <el-tooltip class="item" effect="light" content="未完成" placement="right">
                         <el-button type="success" round>{{scope.$index+1}}</el-button>
                       </el-tooltip>
@@ -24,7 +24,7 @@
                     </div>
                   </template>
                  </el-table-column>
-                <el-table-column prop="taskName" label="名称" min-width="20%" sortable>
+                <el-table-column prop="name" label="名称" min-width="20%" sortable>
                 </el-table-column>
                 <el-table-column prop="assignee" label="用户" width="120" >
                 </el-table-column>
