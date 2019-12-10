@@ -56,7 +56,7 @@
           @pagechange="pageChange"
           v-bind:isshowOption="true"
           v-bind:itemCount="itemCount"
-          @rowclick="showInnerFile"
+          @rowclick="beforeShowInnerFile"
           v-bind:tableHeight="rightTableHeight"
           @selectchange="selectChange"
         ></DataGrid>
@@ -290,6 +290,10 @@ export default {
       if (_self.selectRow) {
         _self.selectedFileId = row.ID;
       }
+    },
+    beforeShowInnerFile(row){
+      this.innerCurrentPage=1;
+      this.showInnerFile(row);
     },
     showInnerFile(row) {
       let _self = this;

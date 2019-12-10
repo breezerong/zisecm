@@ -1,5 +1,12 @@
 <template>
     <div>
+      <el-dialog :visible.sync="printVolumesVisible" width="80%">
+            <PrintBorrowOrder
+                ref="printVolumes"
+                v-bind:archiveId="this.printObjId"
+                v-bind:gridName="printGridName"
+            ></PrintBorrowOrder>
+        </el-dialog>
         <el-row>
             <el-col :span="5" style="float:left;text-align:left;">
                 <el-input
@@ -11,7 +18,7 @@
             </el-col>
             <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
                 <el-button type="primary" plain
-                size="small" icon="el-icon-printer" >打印出库单</el-button>
+                size="small" icon="el-icon-printer" @click="beforePrint(selectedOrder,'PrintInBorrowOrderFile','借阅单打印')">打印出库单</el-button>
                 <el-button type="primary" plain
                 size="small" icon="el-icon-check" @click="outboundOrder">出库完成</el-button>
             </el-col>
@@ -65,13 +72,15 @@
 </template>
 <script type="text/javascript">
 import DataGrid from'@/components/DataGrid'
-
+import PrintBorrowOrder from "@/views/record/PrintBorrowOrder";
 export default {
     name:'archivepending',
     permit:1,
     data(){
         return{
-             a:[],
+             printObjId:"",
+             printGridName:"",
+             printVolumesVisible: false,
              gridList:[],
              innerDataList:[],
              itemDataList:[],
@@ -111,9 +120,26 @@ export default {
         this.loadOutFileGridInfo();
     },
     components:{
-        DataGrid:DataGrid
+        DataGrid:DataGrid,
+        PrintBorrowOrder:PrintBorrowOrder,
     },
     methods:{
+      beforePrint(selectedRow,gridName,vtitle){
+            let _self=this;
+            if(selectedRow.length!=1){
+                _self.$message('请选择一条数据进行打印');
+                return;
+            }
+            _self.printObjId=selectedRow[0].ID;
+            _self.printGridName=gridName;
+            _self.printVolumesVisible = true;
+            setTimeout(()=>{
+                _self.$refs.printVolumes.dialogQrcodeVisible = false
+                _self.$refs.printVolumes.getArchiveObj(_self.$refs.printVolumes.archiveId,
+                _self.$refs.printVolumes.gridName,
+                vtitle); 
+            },10);
+        },
         orderclick(row){
           this.loadFileGridData(row);
           this.loadOutFileGridData(row);
@@ -127,6 +153,11 @@ export default {
         outFilePageChange(){
           this.fileCurrentPage = val;
           this.loadOutFileGridData();
+        },
+        filePageSizeChange(val){
+          this.filePageSize = val;
+            localStorage.setItem("docPageSize",val);
+            this.loadFileGridData();
         },
         pageSizeChange(val){
             this.pageSize = val;
