@@ -50,6 +50,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
@@ -1115,22 +1116,27 @@ public class EcmDcController extends ControllerAbstract{
 	  
 			 String formId="";
 			 formDataMap.put("TYPE_NAME", "借阅单");
-			 try {
-				   formId=documentService.newObject(getToken(), formDataMap);
-				   for(int i=0;i<documentIdArray.length;i++) {
-					EcmRelation en=new EcmRelation();
-					en.setParentId(formId);
-					en.setChildId(documentIdArray[i]);
-					en.setName("irel_borrow");
-					en.setCreationDate(new Date());
-					en.setCreator(this.getSession().getCurrentUser().getUserName());
-					relationService.newObject(getToken(), en);
-				   }
-			} catch (Exception e1) {
+			try {
+				formId=documentService.newObject(getToken(), formDataMap);
+			} catch  (Exception e) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				  mp.put("code", ActionContext.SUCESS);
-			} 
+				e.printStackTrace();
+			}
+		   for(int i=0;i<documentIdArray.length;i++) {
+				 try {
+			EcmRelation en=new EcmRelation();
+			en.setParentId(formId);
+			en.setChildId(documentIdArray[i]);
+			en.setName("irel_borrow");
+			en.setCreationDate(new Date());
+			en.setCreator(this.getSession().getCurrentUser().getUserName());
+			relationService.newObject(getToken(), en);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						  mp.put("code", ActionContext.SUCESS);
+					} 
+		   }
 		
 		  mp.put("data", formId);
 		  mp.put("code", ActionContext.SUCESS);
@@ -1158,21 +1164,21 @@ public class EcmDcController extends ControllerAbstract{
 				}
 			}
 	  
-			 try {
 				   for(int i=0;i<documentIdArray.size();i++) {
-					EcmRelation en=new EcmRelation();
-					en.setParentId(formId);
-					en.setChildId(documentIdArray.get(i));
-					en.setName("irel_borrow");
-					en.setCreationDate(new Date());
-					en.setCreator(this.getSession().getCurrentUser().getUserName());
-					relationService.newObject(getToken(), en);
-				   }
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				  mp.put("code", ActionContext.SUCESS);
-			} 
+						 try {
+							 EcmRelation en=new EcmRelation();
+							en.setParentId(formId);
+							en.setChildId(documentIdArray.get(i));
+							en.setName("irel_borrow");
+							en.setCreationDate(new Date());
+							en.setCreator(this.getSession().getCurrentUser().getUserName());
+							relationService.newObject(getToken(), en);
+						 } catch (Exception e1) {
+								e1.printStackTrace();
+								  mp.put("code", ActionContext.SUCESS);
+							} 
+						 }
+			
 		
 		  mp.put("data", formId);
 		  mp.put("code", ActionContext.SUCESS);

@@ -33,7 +33,7 @@
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
                   <template  v-for="item in gridList">
-                    <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
+                    <el-table-column :key="item.id" :label="item.label" :prop="item.attrName" sortable>
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='ADD_DATE'">
                             {{dateFormat(scope.row.ADD_DATE)}}
