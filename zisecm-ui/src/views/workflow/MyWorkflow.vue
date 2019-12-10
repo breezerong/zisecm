@@ -37,9 +37,13 @@
                 <el-table-column prop="message" label="审批意见" min-width="20%">
                 </el-table-column>
             </el-table>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">关闭</el-button>
-          </div>
+             <div v-if="workflowPicVisible=='显示流程图'"  >{{workflowPicVisible}}
+             <img style="width:100%;height:100%" :src="_self.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
+            </div>
+         <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="dialogVisible = false">关闭</el-button>
+            <el-button @click="workflowPicVisible ='显示流程图'">显示流程图</el-button>
+         </div>
         </el-dialog>
       <table border="0" width="100%">
           <tr>
@@ -135,7 +139,9 @@ export default {
       loading: false,
       dialogVisible: false,
       tableHeight: window.innerHeight - 190,
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
+      currentProcessId:"",
+      workflowPicVisible:""
     };
   },
   created(){ 
@@ -212,6 +218,7 @@ export default {
       _self.refreshProcess(indata.id);
        var m = new Map();
       m.set("processInstanceId",indata.id);
+      _self.currentProcessId=indata.id;
      axios.post("/workflow/getWorkflowTask",JSON.stringify(m))
         .then(function(response) {
           _self.taskList = response.data;
