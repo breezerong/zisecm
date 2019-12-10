@@ -127,6 +127,7 @@
                 icon="el-icon-upload2"
                 @click="exportExcel()"
               >{{$t('application.export')+'Excel'}}</el-button>
+              <template v-if="isFileAdmin">
               <el-button
                 type="primary"
                 plain
@@ -140,7 +141,9 @@
                 size="medium"
                 icon="el-icon-document-delete"
                 @click="destroyItem()"
-              >{{$t('application.destroy')}}</el-button>&nbsp;&nbsp;&nbsp;
+              >{{$t('application.destroy')}}</el-button>
+              </template>
+              &nbsp;&nbsp;&nbsp;
               <el-button
                 type="primary"
                 plain
