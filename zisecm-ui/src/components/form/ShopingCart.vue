@@ -58,12 +58,11 @@
             </el-row>
           </el-form>
 
-          <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="cancel(false)">取 消</el-button>
-            <router-link  ref="borrowRouteLink" to="/borroworder"></router-link>
+          <div slot="footer" class="dialog-footer" style="padding-top:10px">
+             <router-link  ref="borrowRouteLink" to="/borroworder"></router-link>
+           <el-button type="primary" @click="cancel(false)">取 消</el-button>
             <el-button @click="cleanShopingCart()">清空购物车</el-button>
             <el-button @click="removeShopingCart()">移除所选</el-button>
-
             <el-button @click="borrowItem()">借 阅</el-button>
           </div>
              <router-view></router-view>
