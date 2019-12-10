@@ -44,7 +44,7 @@
                       </template>        
                     </el-table-column>
                   </template>
-                  <el-table-column align="right">
+                  <el-table-column align="right" width="80">
                     <template slot-scope="scope">
                       <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
                     </template>

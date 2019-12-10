@@ -81,7 +81,7 @@
               </div>
             </el-col>
           
-         <el-col>
+         <el-col style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_REVIEWER1" auto-complete="off"></el-input>
                 </el-form-item>
