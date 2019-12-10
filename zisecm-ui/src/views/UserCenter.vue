@@ -16,7 +16,13 @@
 	              <router-link to="/user/userinfo">{{$t('menu.userInfo')}}</router-link>
 	            </span>
 	          </el-menu-item>
-	          <el-menu-item index="32">
+			  <el-menu-item index="32">
+	            <i class="el-icon-ecm-group"></i>
+	            <span slot="title">
+	              <router-link to="/user/userroleinfo">{{$t('menu.userRoleInfo')}}</router-link>
+	            </span>
+	          </el-menu-item>
+	          <el-menu-item index="33">
 	            <i class="el-icon-lock"></i>
 	            <span slot="title">
 	              <router-link to="/user/changepassword">{{$t('menu.changePassword')}}</router-link>
@@ -45,21 +51,8 @@ export default {
     };
   },
    mounted(){
-	   console.log(this.$route.name);
-	   var routes = {
-			children: this.$router.options.routes
-	   };
-	   console.log(routes);
-       var route = this.$route.matched;
- 
-      for(var i=0; i<route.length-1; i++){
-		routes = routes.children.find((e) => (e.name == route[i].name));
-		
-      }
-     
-
-    this.$router.push({ path: "/user/userinfo" });
-    },
+    //this.$router.push({ path: "/user/userinfo" });
+  },
   methods: {
   }
 }

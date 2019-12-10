@@ -31,6 +31,35 @@ export const recordRouter =  [
             requireAuth: true,
             permit: 1
         },
+        path: '/record/archivetool',
+        name: '档案工具',
+        component: () => import('@/views/record/ArchiveTool.vue'),
+        children:[
+            {
+                meta: {
+                    requireAuth: true,
+                    permit: 1
+                },
+                path: '/record/batchupdate',
+                name: '批量更新',
+                component: () => import('@/views/record/BatchUpdate.vue')
+            },
+            {
+                meta: {
+                    requireAuth: true,
+                    permit: 1
+                },
+                path: '/record/batchmount',
+                name: '批量挂载',
+                component: () => import('@/views/record/BatchMount.vue')
+            }
+        ]
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1
+        },
         path: '/record/archiveoutgoing',
         name: '出入库管理',
         component: () => import('@/views/record/ArchiveOutgoing.vue'),

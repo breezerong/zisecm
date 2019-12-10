@@ -31,7 +31,7 @@
         v-bind:shopingCartForm="shopingCartForm"
       ></ShopingCart> -->
       
-        <router-view @showOrHiden="showOrHiden"></router-view>
+        <router-view @showOrHiden="showOrHiden" ref="ShowShopingCart"></router-view>
             <!-- <div slot="footer" class="dialog-footer">
         <router-link  to="/borroworder"   >借阅</router-link>
         </div>       -->
@@ -145,14 +145,14 @@
                 type="primary"
                 plain
                 size="medium"
-                icon="el-icon-document-delete"
+                icon="el-icon-folder-add"
                 @click="addToShopingCart()"
               >{{$t('application.addToShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
               <el-button
                 type="primary"
                 plain
                 size="medium"
-                icon="el-icon-document-delete"
+                icon="el-icon-shopping-cart-2"
                 @click="openShopingCart()"
               >{{$t('application.openShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
@@ -270,13 +270,13 @@
 <script>
 import ShowProperty from "@/components/ShowProperty";
 import ShowBorrowForm from "@/components/form/Borrow";
-import ShopingCart from "@/components/form/ShopingCart";
+import ShowShopingCart from "@/components/form/ShopingCart";
 import InnerItemViewer from "./InnerItemViewer.vue"
 export default {
   components: {
     ShowProperty: ShowProperty,
     ShowBorrowForm:ShowBorrowForm,
-    ShopingCart:ShopingCart,
+    ShowShopingCart:ShowShopingCart,
     InnerItemViewer:InnerItemViewer
   },
   data() {
@@ -705,13 +705,18 @@ export default {
     //添加到购物车
     addToShopingCart() {
       let _self = this;
-      var deletItemId = [];
+      var m = new Map();
+      var addItemId ="";
+      if (this.selectedItemList.length > 0) {
+      var addItemId = [];
       if (this.selectedItemList.length > 0) {
         for (var i = 0; i < this.selectedItemList.length; i++) {
-          deletItemId.push(this.selectedItemList[i].ID);
+          addItemId.push(this.selectedItemList[i].ID);
         }
+      }
+
         axios
-          .post("/dc/addToShopingCart", JSON.stringify(deletItemId))
+          .post("/dc/addToShopingCart", JSON.stringify(addItemId))
           .then(function(response) {
             if (response.data.code) {
               if (_self.showBox) {
@@ -757,6 +762,9 @@ export default {
                   path:'/ShopingCart',
                    query: { tabledata: response.data.data }
                 });
+                if(_self.$refs.ShowShopingCart){
+                   _self.$refs.ShowShopingCart.openShopingCart();
+                }
               },10);
               
               
