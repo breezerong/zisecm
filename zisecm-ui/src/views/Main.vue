@@ -40,7 +40,7 @@
           <div class="container-top-right">
             <img :src="'../static/img/head128.jpg'" class="img-head" />
             <span>
-              <router-link to="/usercenter" style="color:#fff;">{{userName}}</router-link>&nbsp;
+              <router-link to="/user/userinfo" style="color:#fff;">{{userName}}</router-link>&nbsp;
             </span>
             <i class="el-icon-switch-button" @click="logout" :title="$t('application.logout')"></i>
           </div>

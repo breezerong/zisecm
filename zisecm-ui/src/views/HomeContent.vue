@@ -110,7 +110,7 @@
             </el-col>
             <el-col :span="12">
               <i style="font-size : 32px" class="el-icon-s-claim"></i>
-              <el-link :underline="false" @click="getMyGroup()">我的授权</el-link>
+              <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
             </el-col>
           </el-card>
           <el-card :body-style="{ height: '200px' }">

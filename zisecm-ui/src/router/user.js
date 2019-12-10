@@ -19,6 +19,15 @@ export const userRouter = {
 			requireAuth: true,
 			permit: 1
 		},
+		path: '/user/userroleinfo',
+		name: '我的授权',
+		component: () => import('@/views/user/UserRoleInfo.vue')
+	},
+	{
+		meta: {
+			requireAuth: true,
+			permit: 1
+		},
 		path: '/user/changepassword',
 		name: '修改密码',
 		component: () => import( /* webpackChunkName: "changepassword" */ '@/views/user/ChangePassword.vue')

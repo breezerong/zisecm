@@ -15,9 +15,43 @@
                   {{dateFormat(currentData.createTime,'')}}
                 </el-form-item>
           </el-form>
-          <el-divider content-position="left">表单</el-divider>
+          <el-divider content-position="left">表单信息</el-divider>
            <router-view></router-view>
-         <el-form :model="form">
+          <el-divider content-position="left">流转意见</el-divider>
+           <el-table
+              :data="taskList"
+              border
+              v-loading="loading"
+              style="width: 100%">
+                <el-table-column label="序号" width="65">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.id==null||scope.row.id==''">
+                      <el-tooltip class="item" effect="light" content="未完成" placement="right">
+                        <el-button type="success" round>{{scope.$index+1}}</el-button>
+                      </el-tooltip>
+                    </div>
+                    <div v-else>
+                      <el-tooltip class="item" effect="light" content="已完成" placement="right">
+                        <el-button type="info" round>{{scope.$index+1}}</el-button>
+                      </el-tooltip>
+                    </div>
+                  </template>
+                 </el-table-column>
+                <el-table-column prop="taskName" label="名称" width="160" >
+                </el-table-column>
+                <el-table-column prop="assignee" label="用户" width="100" >
+                </el-table-column>
+                <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter"  width="180">
+                </el-table-column>
+                <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  width="180">
+                </el-table-column>
+                <el-table-column prop="result" label="完成结果" width="100">
+                </el-table-column>
+                <el-table-column prop="message" label="审批意见" min-width="15%">
+                </el-table-column>
+            </el-table>
+          <el-divider content-position="left">批注意见</el-divider>
+         <el-form :model="form" >
             <el-row>
               <div v-if="!isCompleteSelected">
               <el-col >
@@ -137,7 +171,8 @@ export default {
         result: "通过",
         message: ""
       },
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
+      taskList:[]
     };
   },
   created(){ 
@@ -243,6 +278,19 @@ export default {
       istask:true
       }
     });
+          var m = new Map();
+          m.set("processInstanceId",indata.processInstanceId);
+          axios.post("/workflow/getWorkflowTask",JSON.stringify(m))
+          .then(function(response) {
+            _self.taskList = response.data;
+            //console.log(JSON.stringify(_self.taskList));
+            _self.dialogVisible = true;
+            _self.loading = false;
+          })
+          .catch(function(error) {
+            console.log(error);
+            _self.loading = false;
+          });
 
     },  
     loadGridView(){
