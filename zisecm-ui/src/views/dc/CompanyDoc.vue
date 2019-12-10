@@ -145,14 +145,14 @@
                 type="primary"
                 plain
                 size="medium"
-                icon="el-icon-document-delete"
+                icon="el-icon-folder-add"
                 @click="addToShopingCart()"
               >{{$t('application.addToShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
               <el-button
                 type="primary"
                 plain
                 size="medium"
-                icon="el-icon-document-delete"
+                icon="el-icon-shopping-cart-2"
                 @click="openShopingCart()"
               >{{$t('application.openShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
