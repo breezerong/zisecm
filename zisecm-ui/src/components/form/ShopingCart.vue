@@ -33,7 +33,7 @@
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
                   <template  v-for="item in gridList">
-                    <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
+                    <el-table-column :key="item.id" :label="item.label" :prop="item.attrName" sortable>
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='ADD_DATE'">
                             {{dateFormat(scope.row.ADD_DATE)}}
@@ -58,13 +58,15 @@
             </el-row>
           </el-form>
 
-          <div slot="footer" class="dialog-footer">
+          <div slot="footer" class="dialog-footer" style="padding-top:10px">
+             <router-link  ref="borrowRouteLink" to="/borroworder"></router-link>
+           <!-- <el-button  v-if="formId!=''" @click="addToFormFromShopingCart()" style="float:left">添加到表单</el-button> -->
+           <div v-if="formId==''">
             <el-button type="primary" @click="cancel(false)">取 消</el-button>
-            <router-link  ref="borrowRouteLink" to="/borroworder"></router-link>
             <el-button @click="cleanShopingCart()">清空购物车</el-button>
             <el-button @click="removeShopingCart()">移除所选</el-button>
-
             <el-button @click="borrowItem()">借 阅</el-button>
+           </div>
           </div>
              <router-view></router-view>
  </div>
@@ -98,6 +100,7 @@ export default {
         },
       borrowData: [],
        borrowDialogVisible: false,
+       componentName:"shopingCart",
       borrowForm: {
         taskId: 0,
         result: "在线浏览",
@@ -106,41 +109,15 @@ export default {
 
     };
   },
+  props: {
+    formId: { type: String, default: "" },
+  },
   created() {
-     this.loadGridView()
+    let _self = this;
+    _self.loadGridView();
   },
   methods: {
-       loadGridView(){
-        let _self = this;
-        var m = new Map();
-        m.set("gridName", _self.gridviewName);
-        m.set("lang", _self.currentLanguage);
-        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
-         
-          _self.gridList = response.data.data;
-            _self.tabledata=_self.$route.query.tabledata;
-  //_self.loadData();
-        });
-      },
-      loadData(){
-          let _self = this;
-          axios.post("/dc/getRelations",this.docId).then(function(response) {
-            let result = response.data;
-            
-            if(result.code==1){
-              _self.tabledata = result.data;
-            }
-          });
-      },
-      selectChange(selection) {
-          this.selectedItemList = [];
-          if (selection.length > 0) {
-            for (var i = 0; i < selection.length; i++) {
-              this.selectedItemList.push(selection[i]);
-            }
-          }
-       },
-    //获取待办任务列表，最多五条
+     //获取待办任务列表，最多五条
     openShopingCart() {
       let _self = this;
       var m = new Map();
@@ -167,6 +144,28 @@ export default {
     cancel(b){
       this.$emit('showOrHiden',b)
     },
+      loadGridView(){
+        let _self = this;
+        var m = new Map();
+        m.set("gridName", _self.gridviewName);
+        m.set("lang", _self.currentLanguage);
+       
+        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
+          _self.gridList = response.data.data;
+          _self.openShopingCart();
+        }).catch(function(error) {
+          console.log(error);
+        });
+
+     },
+      selectChange(selection) {
+          this.selectedItemList = [];
+          if (selection.length > 0) {
+            for (var i = 0; i < selection.length; i++) {
+              this.selectedItemList.push(selection[i]);
+            }
+          }
+       },
     //借阅
     borrowItem() {
       let _self = this;
@@ -216,9 +215,9 @@ export default {
        let _self = this;
       var m = new Map();
       var addItemId = [];
-      if (this.selectedItemList.length > 0) {
-        for (var i = 0; i < this.selectedItemList.length; i++) {
-          addItemId.push(this.selectedItemList[i].ID);
+      if (_self.selectedItemList.length > 0) {
+        for (var i = 0; i < _self.selectedItemList.length; i++) {
+          addItemId.push(_self.selectedItemList[i].ID);
         }
       }
      axios
@@ -250,8 +249,34 @@ export default {
         .catch(function(error) {
           console.log(error);
         });      
-    }
-  }
+    },
+     addToFormFromShopingCart(){
+    let _self = this;
+      var m = new Map();
+      var addItemId = [];
+      if (_self.selectedItemList.length > 0) {
+        for (var i = 0; i < _self.selectedItemList.length; i++) {
+          addItemId.push(_self.selectedItemList[i].ID);
+        }
+      }
+      m.set("documentIds",addItemId);
+      m.set("formId",_self.formId);
+       axios.post("/dc/addItemToForm",JSON.stringify(m)).then(function(response){
+      _self.formId=response.data.data;
+      _self.$message({
+        showClose: true,
+        message: "添加成功!",
+        duration: 2000,
+        type: "success"
+      });
+
+        })
+        .catch(function(error) {
+          console.log(error);
+        }); 
+  },
+  },
+  
 };
 
 </script>

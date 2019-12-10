@@ -124,12 +124,22 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			while(keys.hasNext()) {
 				String key=keys.next();
 				
+				Object obj= params.get(key);
+				if(obj==null) {
+					clauseSql=clauseSql.replaceAll("@"+key, "");
+				}else {
+					clauseSql=clauseSql.replaceAll("@"+key, obj.toString());
+				}
 				
-				clauseSql=clauseSql.replaceAll("@"+key, params.get(key).toString());
 			}
 		}
+		List<Map<String, Object>> list=null;
+		if(pager==null) {
+			list = ecmDocument.executeSQL(clauseSql);
+		}else {
+			list = ecmDocument.executeSQL(pager, clauseSql);
+		}
 		
-		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, clauseSql);
 		// TODO Auto-generated method stub
 		return list;
 	}

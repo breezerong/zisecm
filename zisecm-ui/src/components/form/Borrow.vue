@@ -2,7 +2,7 @@
      <div>
           <el-form :model="borrowForm" style="width:100%">
             <el-row style="width:100%">
-              <div v-if="istask==false">
+              <div  v-if="(istask==1 && formEditPermision==1)||istask==0">
               <el-col >
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
                   <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off"></el-input>
@@ -41,7 +41,12 @@
                 </el-form-item>
                </el-col>
              <el-col>
-                <el-table :data="tabledata">
+                <el-table :data="tabledata" 
+                border
+              v-loading="loading"
+              @selection-change="selectChange">
+                 <el-table-column type="selection" width="40">
+                </el-table-column> 
                <el-table-column type="index" label="#" width="50">
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
@@ -49,8 +54,8 @@
                   <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
-                          <template v-if="item.attrName=='ADD_DATE'">
-                            {{dateFormat(scope.row.ADD_DATE)}}
+                          <template v-if="item.attrName=='C_ARCHIVE_DATE'">
+                            {{dateFormat(scope.row.C_ARCHIVE_DATE)}}
                           </template>
                           <template v-else>
                             {{scope.row[item.attrName]}}  
@@ -61,11 +66,22 @@
                   <el-table-column align="right">
                     <template slot-scope="scope">
                       <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
-                    </template>
+                       <el-button size="mini" @click="removeItemFromForm(scope.row['RELATE_ID'])">移除</el-button>
+                     </template>
                   </el-table-column>
                 </el-table>
             </el-col>
-            <el-col>
+           <el-col v-if="istask==1 && formEditPermision==1" slot="footer"  style="float:left;padding-top:10px;padding-bottom:10px;width:100%;height:100%">
+              <el-button @click="showOrCloseShopingCart()" style="" >{{showOrCloseShopingCartLabel}}</el-button>
+              <div v-if="vshowShopingCart==true">
+              <ShowShopingCart
+                ref="ShowShopingCart"
+                width="100%"  v-bind:formId="formId"></ShowShopingCart>           
+                <el-button ref="add" style="float:left"  @click="addToFormFromShopingCart()">添加到表单</el-button>
+              </div>
+            </el-col>
+          
+         <el-col>
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_REVIEWER1" auto-complete="off"></el-input>
                 </el-form-item>
@@ -83,7 +99,7 @@
                 </el-form-item>
               </el-col>
              </div>
-             <div v-if="istask==true">
+             <div v-if="istask==1 && formEditPermision==0">
               <el-col>
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
                   {{borrowForm.C_DRAFTER}}
@@ -126,8 +142,8 @@
                   <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
-                          <template v-if="item.attrName=='ADD_DATE'">
-                            {{dateFormat(scope.row.ADD_DATE)}}
+                          <template v-if="item.attrName=='C_ARCHIVE_DATE'">
+                            {{dateFormat(scope.row.C_ARCHIVE_DATE)}}
                           </template>
                           <template v-else>
                             {{scope.row[item.attrName]}}  
@@ -173,11 +189,15 @@
 
 
 <script type="text/javascript">
- export default {
-  name: "ShowProperty",
+ import ShowShopingCart from "@/components/form/ShopingCart";
+export default {
+   components: {
+     ShowShopingCart:ShowShopingCart
+    },
+    name: "ShowProperty",
   data() {
     return {  
-              gridviewName:'shopingCartGrid',
+              gridviewName:'borrowGrid',
             gridList: [],
             currentLanguage: "zh-cn",
               tabledata: [],
@@ -187,6 +207,7 @@
       borrowData: [],
       dialogTitle:"借阅",
       borrowDialogVisible: false,
+      componentName:"borrow",
       borrowForm: {
             C_DRAFTER:"Admin",
             C_DESC1:"用户部门",
@@ -202,17 +223,21 @@
 
       },
       formId:"",
-      istask:false
+      istask:0,
+      formEditPermision:0,
+      vshowShopingCart:false,
+      showOrCloseShopingCartLabel:"从购物车添加",
 
     };
   },
    created() {
     let _self = this;
-     _self.formId=_self.$route.query.borrowFormId;
-     if(typeof(_self.$route.query.istask)!="undefined"){
+    _self.formId=_self.$route.query.borrowFormId;
+    if(typeof(_self.$route.query.istask)!="undefined"){
+      _self.formEditPermision=_self.$route.query.formEditPermision;
       _self.istask=_self.$route.query.istask;
-     }   
-     _self.loadGridView()
+    }   
+    _self.loadGridView()
   }, 
  methods: {
        loadGridView(){
@@ -309,6 +334,91 @@
         _self.loading = false;
       });
     },
+    addFromShopingCart(){
+       let _self = this;
+      var arg = [];
+        axios
+          .post("/dc/openShopingCart", JSON.stringify(arg))
+          .then(function(response) {
+            if (response.data.code) {
+              // _self.shopingCartDialogVisible = true;
+              // setTimeout(()=>{
+                // _self.$refs.ShopingCart.dataList = response.data.data;
+                // _self.$refs.ShopingCart.dataList = response.data.data;
+                // _self.$router.push({
+                //   path:'/ShopingCart',
+                //    query: { tabledata: response.data.data }
+                // });
+                if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
+                   _self.$refs.ShowShopingCart.openShopingCart();
+                }
+              // },10);
+              
+              
+            } else {
+              _self.$message({
+                showClose: true,
+                message: "打开失败!",
+                duration: 2000,
+                type: "warning"
+              });
+            }
+          });
+    },
+    showOrCloseShopingCart(){
+      let _self=this;
+      if(_self.vshowShopingCart==true){
+        _self.vshowShopingCart=false;
+        _self.showOrCloseShopingCartLabel="从购物车添加";
+        }else{
+          _self.vshowShopingCart=true;
+          _self.showOrCloseShopingCartLabel="关闭购物车"
+          if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
+            _self.$refs.ShowShopingCart.openShopingCart();
+          }      
+        
+        }
+    },
+    addToFormFromShopingCart(){
+      let _self=this;
+      _self.$refs.ShowShopingCart.addToFormFromShopingCart();
+      setTimeout(()=>{
+        axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
+            let result = response.data;
+            if(result.code==1){
+              _self.tabledata = result.data;
+            }
+      });
+      },2500);
+      },
+      
+        removeItemFromForm(varArg){
+          let _self=this;
+          let m = new Map();
+          m.set("relateId",varArg);
+          axios.post("/dc/removeItemFromForm",m).then(function(response) {
+            let result = response.data;
+            if(result.code==1){
+              _self.$message({
+                showClose: true,
+                message: "操作成功!",
+                duration: 2000,
+                type: "success"
+              });
+            }
+      });
+          setTimeout(()=>{
+        axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
+            let result = response.data;
+            if(result.code==1){
+              _self.tabledata = result.data;
+            }
+      });
+      },1000);
+
+  }
+
+
 
   }
 };

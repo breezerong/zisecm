@@ -325,6 +325,7 @@ public class WorkflowController  extends ControllerAbstract{
 	     * @param processId 任务ID
 	     */
 	    @RequestMapping(value = "processDiagram")
+	    @ResponseBody
 	    public void genProcessDiagram(HttpServletResponse httpServletResponse, String processId) throws Exception {
 	        ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
 

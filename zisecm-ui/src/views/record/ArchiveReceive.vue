@@ -56,7 +56,7 @@
           @pagechange="pageChange"
           v-bind:isshowOption="true"
           v-bind:itemCount="itemCount"
-          @rowclick="showInnerFile"
+          @rowclick="beforeShowInnerFile"
           v-bind:tableHeight="rightTableHeight"
           @selectchange="selectChange"
         ></DataGrid>
@@ -155,6 +155,7 @@ export default {
       childrenTypes: [],
       uploadUrl: "",
       selectedChildrenType: "",
+      selectTransferOneRow:[],
       childrenTypeSelectVisible: false,
       folderAction: "",
       folderDialogVisible: false,
@@ -290,6 +291,10 @@ export default {
       if (_self.selectRow) {
         _self.selectedFileId = row.ID;
       }
+    },
+    beforeShowInnerFile(row){
+      this.innerCurrentPage=1;
+      this.showInnerFile(row);
     },
     showInnerFile(row) {
       let _self = this;
@@ -709,7 +714,7 @@ export default {
       _self.loadGridInfo();
 
       if (row != null) {
-        _self.selectTransferRow = row;
+        _self.selectTransferOneRow = row;
       }
       var key = _self.inputkey;
       if (key != "") {
@@ -719,7 +724,7 @@ export default {
       m.set("gridName", "ArchiveGrid");
       // m.set('folderId',indata.id);
       m.set("condition", key);
-      m.set("id", _self.selectTransferRow.ID);
+      m.set("id", _self.selectTransferOneRow.ID);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "");

@@ -121,7 +121,7 @@
                       v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
                       @pagechange="pageChange" v-bind:itemCount="itemCount"
                       v-bind:tableHeight="rightTableHeight" :isshowOption="true"
-                      @rowclick="showInnerFile" @selectchange="selectChange"></DataGrid>
+                      @rowclick="beforeShowInnerFile" @selectchange="selectChange"></DataGrid>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
                       <!-- <el-button type="primary" plain size="small" title="自动组卷"  @click="autoPaper()">自动组卷</el-button> -->
@@ -625,19 +625,23 @@ export default {
         
       });
     },
+    beforeShowInnerFile(row){
+      this.innerCurrentPage=1;
+      this.showInnerFile(row);
+    },
     showInnerFile(row){
       let _self = this;
       if(row!=null){
         _self.selectRow=row;
       }
       _self.selectedChildrenType=[];
-      if(_self.typeName=='图册'){
+      if(_self.selectRow.TYPE_NAME=='图册'){
         _self.getTypeNamesByMainList("图册");
       }else{
         _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
       }
       
-      
+      _self.outerCurrentPage=1;
       _self.loadInnerGridInfo();
       var m = new Map();
       m.set('gridName','ArchiveGrid');
@@ -1004,7 +1008,7 @@ export default {
       _self.loading = true;
       let whereSql='';
       for(let i=0;i<_self.childrenTypes.length;i++){
-        whereSql+=" TYPE_NAME='"+_self.childrenTypes[i]+"' ";
+        whereSql+=" TYPE_NAME='"+_self.childrenTypes[i]+"' and id!='"+_self.selectRow.ID+"'";
         if(i!=_self.childrenTypes.length-1){
           whereSql+=" or "
         }
@@ -1019,8 +1023,8 @@ export default {
       }
       
       m.set('folderId',indata.id);
-      m.set('pageSize',_self.pageSize);
-      m.set('pageIndex', (_self.currentPage-1)*_self.pageSize);
+      m.set('pageSize',_self.outerPageSize);
+      m.set('pageIndex', (_self.outerCurrentPage-1)*_self.outerPageSize);
       m.set('orderBy','');
       // console.log('pagesize:', _self.pageSize);
       _self
