@@ -170,8 +170,8 @@ export default {
     };
   },
   props: {
-    itemDataList: { type: Array, default: false },
-    columnList: { type: Array, default: false },
+    itemDataList: { type: Array, default: null },
+    columnList: { type: Array, default: null },
     isshowicon: { type: Boolean, default: true },
     isshowOption: { type: Boolean, default: false },
     tableHeight: { type: [String, Number], default: window.innerHeight - 408 },

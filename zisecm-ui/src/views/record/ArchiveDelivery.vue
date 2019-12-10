@@ -227,7 +227,7 @@
           v-bind:tableHeight="rightTableHeight"
           v-bind:isshowOption="true"
           v-bind:propertyComponent="this.$refs.ShowProperty"
-          @rowclick="showInnerFile"
+          @rowclick="beforeShowInnerFile"
           @selectchange="selectChange"
           @refreshdatagrid="refreshMain"
         ></DataGrid>
@@ -568,6 +568,10 @@ export default {
       if (_self.selectRow) {
         _self.selectedFileId = row.ID;
       }
+    },
+    beforeShowInnerFile(row){
+      this.innerCurrentPage=1;
+      this.showInnerFile(row);
     },
     showInnerFile(row) {
       let _self = this;

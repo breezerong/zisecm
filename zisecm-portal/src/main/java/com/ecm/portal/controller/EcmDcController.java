@@ -1371,6 +1371,46 @@ public class EcmDcController extends ControllerAbstract{
 			return mp;
 		}
 		/**
+		 * 不带分页查询
+		 * @param argStr
+		 * @return
+		 */
+		@RequestMapping(value = "/dc/getObjectsByConfigClauseNoPage", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String,Object> getObjectsByConfigClauseNoPage(@RequestBody String argStr) 
+		{
+
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				
+				if(args.get("configName")==null) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", "configName没有传递");
+					return mp;
+				}
+				String configName=args.get("configName").toString();
+				
+				List<Map<String, Object>> list;
+				try {
+					list = documentService.getObjectsConfigclause(getToken(), null, configName, args);
+				} catch (MessageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", e.getMessage());
+					return mp;
+				}
+				mp.put("data", list);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				mp.put("code", ActionContext.TIME_OUT);
+			}
+			return mp;
+		
+		}
+		
+		/**
 		 * 公共文档查询方法，在缓存中配置查询语句
 		 * 将查询语句的name传递进此方法
 		 * 条件使用‘@’开头例如

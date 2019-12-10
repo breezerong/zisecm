@@ -1,13 +1,8 @@
 <template>
     <div>
-      <el-dialog :visible.sync="printVolumesVisible" width="80%">
-            <PrintBorrowOrder
-                ref="printVolumes"
-                v-bind:archiveId="this.printObjId"
-                v-bind:gridName="printGridName"
-            ></PrintBorrowOrder>
-        </el-dialog>
+        
         <el-row>
+            <el-col :span="2">借阅人</el-col>
             <el-col :span="5" style="float:left;text-align:left;">
                 <el-input
                 v-model="orderInputkey"
@@ -16,11 +11,20 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
+            <el-col :span="2">创建日期(开始)</el-col>
+            <el-col :span="5">
+                <el-date-picker v-model="startDate" 
+                type="date" placeholder="选择日期" style="display:block;">
+                </el-date-picker></el-col>
+            <el-col :span="2">创建日期(结束)</el-col>
+            <el-col :span="5">
+                <el-date-picker v-model="endDate" 
+                type="date" placeholder="选择日期" style="display:block;">
+                </el-date-picker></el-col>
+            <el-col :span="2" style="padding-top:4px;float:left;text-align:left;">
                 <el-button type="primary" plain
-                size="small" icon="el-icon-printer" @click="beforePrint(selectedOrder,'PrintInBorrowOrderFile','借阅单打印')">打印出库单</el-button>
-                <el-button type="primary" plain
-                size="small" icon="el-icon-check" @click="putInOrder">入库完成</el-button>
+                size="small" icon="el-icon-search" @click="loadGridData">搜索</el-button>
+                
             </el-col>
             
         </el-row>
@@ -36,30 +40,9 @@
             </el-col>
 
         </el-row>
+        
         <el-row>
-         <el-col :span="6" style="float:left;text-align:left;">
-                <el-input
-                v-model="inputkey"
-                :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
-                @change="searchItem"
-                prefix-icon="el-icon-search"
-                ></el-input>
-            </el-col>
-            <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
-               <el-button type="primary" plain
-                size="small" icon="el-icon-check" @click="putInstoreFile">入库</el-button>
-            </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-                <DataGrid ref="outFileGrid" key="outFileGrid" v-bind:itemDataList="gridListOutFileData"
-                      v-bind:columnList="gridListOutFile" @pagesizechange="outFilePageSizeChange"
-                      @pagechange="outFilePageChange" v-bind:itemCount="outFileItemCount"
-                      v-bind:tableHeight="rightOutTableHeight" :isshowOption="true"
-                      :loading="outFileLoading"
-                       @selectchange="selectOutChange"></DataGrid>
-            </el-col>
-            <el-col :span="12">
+            <el-col>
                 <DataGrid ref="fileGrid" key="fileGrid" v-bind:itemDataList="gridListFileData"
                       v-bind:columnList="gridListFile" @pagesizechange="filePageSizeChange"
                       @pagechange="filePageChange" v-bind:itemCount="fileItemCount"
@@ -72,17 +55,14 @@
     </div>
 </template>
 <script type="text/javascript">
-import DataGrid from'@/components/DataGrid'
-import PrintBorrowOrder from "@/views/record/PrintBorrowOrder";
+import DataGrid from'@/components/DataGrid';
 
 export default {
     name:'archivepending',
     permit:1,
     data(){
         return{
-             printObjId:"",
-             printGridName:"",
-             printVolumesVisible: false,
+             
              gridList:[],
              innerDataList:[],
              itemDataList:[],
@@ -110,6 +90,8 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
+             startDate:"",
+             endDate:"",
              rightTableHeight: (window.innerHeight - 200)/2,
              rightOutTableHeight:(window.innerHeight - 200)/2
         }
@@ -119,57 +101,34 @@ export default {
         this.loadGridInfo();
         this.loadGridData();
         this.loadGridInfoFile();
-        this.loadOutFileGridInfo();
     },
     components:{
         DataGrid:DataGrid,
-        PrintBorrowOrder:PrintBorrowOrder,
+        
     },
     methods:{
-      beforePrint(selectedRow,gridName,vtitle){
-            let _self=this;
-            if(selectedRow.length!=1){
-                _self.$message('请选择一条数据进行打印');
-                return;
-            }
-            _self.printObjId=selectedRow[0].ID;
-            _self.printGridName=gridName;
-            _self.printVolumesVisible = true;
-            setTimeout(()=>{
-                _self.$refs.printVolumes.dialogQrcodeVisible = false
-                _self.$refs.printVolumes.getArchiveObj(_self.$refs.printVolumes.archiveId,
-                _self.$refs.printVolumes.gridName,
-                vtitle); 
-            },10);
-
-            
-            
-        },
-        orderclick(row){
-          this.loadFileGridData(row);
-          this.loadOutFileGridData(row);
-        },
-        selectOutChange(val){
-          this.seletedOutFile=val;
-        },
-        outFilePageSizeChange(val){
-          this.outFilePageSize = val;
-            localStorage.setItem("docPageSize",val);
-            this.loadOutFileGridData();
-        },
         filePageSizeChange(val){
           this.filePageSize = val;
             localStorage.setItem("docPageSize",val);
             this.loadFileGridData();
         },
-        outFilePageChange(val){
+        orderclick(row){
+          this.loadFileGridData(row);
+        },
+        selectOutChange(val){
+          this.seletedOutFile=val;
+        },
+        outFilePageSizeChange(){
+
+        },
+        outFilePageChange(){
           this.fileCurrentPage = val;
           this.loadOutFileGridData();
         },
         pageSizeChange(val){
             this.pageSize = val;
             localStorage.setItem("docPageSize",val);
-            _self.loadGridData();
+            this.loadGridData();
         },
         //查询文档
         searchOrderItem() {
@@ -196,14 +155,13 @@ export default {
             this.loadGridData();
             //console.log('handleCurrentChange', val);
         },
-        //入库
-        putInstoreFile(){
+        outboundFile(){
           let _self=this;
-          if(_self.seletedOutFile.length<1){
-             _self.$message("请选择待入库文件数据！");
+          if(_self.seletedFile.length<1){
+             _self.$message("请选择待出库文件数据！");
             return;
           }
-          let tab=_self.seletedOutFile;
+          let tab=_self.seletedFile;
           let p=new Map();
           let m = [];
           let i;
@@ -218,10 +176,10 @@ export default {
               },
               method: "post",
               data: JSON.stringify(p),
-              url: "/dc/putInstoreFile"
+              url: "/dc/outboundfile"
             })
             .then(function(response) {
-               _self.loadGridData();
+              _self.loadGridData();
               _self.loadFileGridData();
               _self.loadOutFileGridData();
               // _self.innerDataList=[];
@@ -233,7 +191,7 @@ export default {
               console.log(error);
           });
         },
-        putInOrder(){
+        outboundOrder(){
           let _self=this;
           if(_self.selectedOrder.length<1){
             _self.$message("请选择借阅单数据！");
@@ -252,7 +210,7 @@ export default {
               },
               method: "post",
               data: JSON.stringify(m),
-              url: "/dc/putInStorageBorrow"
+              url: "/dc/outboundorder"
             })
             .then(function(response) {
               _self.loadGridData();
@@ -378,22 +336,32 @@ export default {
         },
             // 加载借阅单表格数据
         loadGridData() {
-          let _self = this;
+
+
+           let _self = this;
           _self.gridListFileData=[];
           _self.gridListOutFileData=[];
           _self.orderLoading=true;
           var key = _self.orderInputkey;
-          if (key != "") {
-            key = "coding like '%" + key + "%' or title like '%" + key + "%' and STATUS='待入库'";
-          }else{
-              key=" STATUS='待入库' "
-          }
-        
+          let startd=_self.startDate;
+          let endd=_self.endDate;
           var m = new Map();
-          m.set("gridName", "BorrowFormGrid");
-          // m.set('folderId',indata.id);
-          m.set("condition", key);
+          if (key != "") {
+            key = " and C_DRAFTER like '%" + key + "%' ";
+            m.set("condition", key);
+          }
+          if(startd!=null&&startd!=""){
+              key=key+" and creation_date>='"+_self.dateFormat(startd)+"'";
+              m.set("condition", key);
+          }
           
+          if(endd!=null&&endd!=""){
+              key=key+" and creation_date<='"+_self.dateFormat(endd)+"'";
+              m.set("condition", key);
+          }
+          m.set("configName", "BorrowOrderCompleted");
+          // m.set('folderId',indata.id);
+          // m.set("condition", key);
           m.set("pageSize", _self.pageSize);
           m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
           m.set("orderBy", "");
@@ -405,7 +373,7 @@ export default {
               },
               method: "post",
               data: JSON.stringify(m),
-              url: "/dc/getBorrowOrder"
+              url: "/dc/getObjectsByConfigclause"
             })
             .then(function(response) {
               _self.itemDataList = response.data.data;
@@ -418,6 +386,8 @@ export default {
               console.log(error);
               _self.orderLoading = false;
             });
+
+          
         },
         loadGridInfoFile(){
           let _self = this;

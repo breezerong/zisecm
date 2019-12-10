@@ -5,3 +5,5 @@
 ## [组件继承](./extends/index.md)
 
 ## [动态组件](./dynamic/index.md)
+
+## [动态路由](./router/README.md)

@@ -20,7 +20,7 @@
                     </el-menu-item>
                     <el-menu-item index="203">
                       <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/menumanager">已完成</router-link></span>
+                      <span slot="title"><router-link to="/record/archiveoutgoing/archiveborrowcompleted">已完成</router-link></span>
                     </el-menu-item>
                     
                   </el-submenu>

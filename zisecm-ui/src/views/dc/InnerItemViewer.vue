@@ -21,7 +21,6 @@ export default {
   },
   data() {
     return {
-      tableHeight: window.innerHeight - 200,
       dataList:[],
       columnList:[],
       itemCount:0,
@@ -30,7 +29,8 @@ export default {
     };
   },
   props: {
-    id:{type:String}
+    id:{type:String},
+    tableHeight:{type:Number,String}
   },
   mounted() {
    let _self = this
