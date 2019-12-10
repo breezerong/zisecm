@@ -325,6 +325,7 @@ public class WorkflowController  extends ControllerAbstract{
 	     * @param processId 任务ID
 	     */
 	    @RequestMapping(value = "processDiagram")
+	    @ResponseBody
 	    public void genProcessDiagram(HttpServletResponse httpServletResponse, String processId) throws Exception {
 	        ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
 
@@ -475,17 +476,32 @@ public class WorkflowController  extends ControllerAbstract{
 	     */
 	    @ResponseBody
 	    @RequestMapping(value = "getWorkflowTask")
-	    public List<EcmAuditWorkitem>  getWorkflowTask(@RequestBody String argStr) {
+	    public List<Map>  getWorkflowTask(@RequestBody String argStr) {
 				Map<String, Object> args = JSONUtils.stringToMap(argStr);
 				String processInstanceId=args.get("processInstanceId").toString();
 				List<Map> resultList = new ArrayList<Map>();
-	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+//	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+//	        List<EcmAuditWorkitem> auditList=null;
 	        try {
-				return workitemAuditService.getObjects(getToken(), "process_instance_id='"+processInstanceId+"'");
-			} catch (AccessDeniedException e) {
+	        	//auditList=workitemAuditService.getObjects(getToken(), "process_instance_id='"+processInstanceId+"'");
+				List<HistoricTaskInstance> tasks = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).orderByTaskCreateTime().asc().list();
+		        for (HistoricTaskInstance task : tasks) {
+			        HashMap<String, Object> map = new HashMap<>();
+			        map.put("id", task.getId());
+			        map.put("name", task.getName());
+			        map.put("assignee", task.getAssignee());
+			        getTaskApprovalResult(task.getId(), map);
+			        map.put("createTime", task.getCreateTime());
+			        map.put("endTime", task.getEndTime());
+			        map.put("processInstanceId", task.getProcessInstanceId());
+			        
+			        resultList.add(map);
+		        }
+		        return resultList;
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-         	return  new ArrayList<EcmAuditWorkitem>();
+         	return  new ArrayList<Map>();
 	    }
 	    
 	    /**

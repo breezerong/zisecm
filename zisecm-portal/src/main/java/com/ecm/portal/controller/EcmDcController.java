@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -985,6 +986,7 @@ public class EcmDcController extends ControllerAbstract{
 				  shopingCartService.insertSelective(shopingCart);
 			  }
 			}
+		   mp.put("code", ActionContext.SUCESS);
 	  }
 	  catch(Exception ex) {
 	   mp.put("code", ActionContext.FAILURE);
@@ -992,6 +994,53 @@ public class EcmDcController extends ControllerAbstract{
 	   ex.printStackTrace();
 	  }
 	  return mp;
+	 }
+
+	 //清空购物车
+	 @RequestMapping(value = "/dc/cleanShopingCart", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> cleanShopingCart(@RequestBody String argStr) {
+		  List<String> list = JSONUtils.stringToArray(argStr);
+		  Map<String, Object> mp = new HashMap<String, Object>();
+		  try {
+				  String userName=this.getSession().getCurrentUser().getUserName();
+				   List<Map<String, Object>> shopingObjectList=shopingCartService.executeSQL("delete from ecm_shoping_cart where  user_name='"+userName+"'");
+			   mp.put("code", ActionContext.SUCESS);
+		  }
+		  catch(Exception ex) {
+		   mp.put("code", ActionContext.FAILURE);
+		   mp.put("message", ex.getMessage());
+		   ex.printStackTrace();
+		  }
+		  return mp;
+	 }
+
+	 //清空购物车
+	 @RequestMapping(value = "/dc/removeShopingCart", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> removeShopingCart(@RequestBody String argStr) {
+		  List<String> list = JSONUtils.stringToArray(argStr);
+		  StringBuilder documentIds= new StringBuilder();
+		  for (int i = 0; i < list.size(); i++) {
+			  if(i!=0) {
+				  documentIds.append(",");
+			  }
+			  documentIds.append("'").append(list.get(i).toString()).append("'");		  
+		  }
+		  Map<String, Object> mp = new HashMap<String, Object>();
+		  try {
+			  if(documentIds.length()>0) {
+				  String userName=this.getSession().getCurrentUser().getUserName();
+				   List<Map<String, Object>> shopingObjectList=shopingCartService.executeSQL("delete from ecm_shoping_cart where  user_name='"+userName+"' and document_id in ("+documentIds.toString()+")");
+			  	}
+		  mp.put("code", ActionContext.SUCESS);
+		  }
+		  catch(Exception ex) {
+		   mp.put("code", ActionContext.FAILURE);
+		   mp.put("message", ex.getMessage());
+		   ex.printStackTrace();
+		  }
+		  return mp;
 	 }
 
 	 //添加到购物车
@@ -1016,7 +1065,7 @@ public class EcmDcController extends ControllerAbstract{
 	  }
  			String gridName="shopingCartGrid";
  			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
- 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+")";
+ 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"'";
  			 shopingCartList2 = documentService.getMapList(getToken(), sql);
  
 		} catch (Exception e) {
@@ -1028,6 +1077,7 @@ public class EcmDcController extends ControllerAbstract{
 	  mp.put("code", ActionContext.SUCESS);
 	  return mp;
 	 }
+	 
 		private String getGridColumn(EcmGridView gv, String gridName) {
 			String col = "";
 			String cols = "," ;
@@ -1259,6 +1309,46 @@ public class EcmDcController extends ControllerAbstract{
 			}
 			return mp;
 		}
+		/**
+		 * 不带分页查询
+		 * @param argStr
+		 * @return
+		 */
+		@RequestMapping(value = "/dc/getObjectsByConfigClauseNoPage", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String,Object> getObjectsByConfigClauseNoPage(@RequestBody String argStr) 
+		{
+
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				
+				if(args.get("configName")==null) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", "configName没有传递");
+					return mp;
+				}
+				String configName=args.get("configName").toString();
+				
+				List<Map<String, Object>> list;
+				try {
+					list = documentService.getObjectsConfigclause(getToken(), null, configName, args);
+				} catch (MessageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", e.getMessage());
+					return mp;
+				}
+				mp.put("data", list);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				mp.put("code", ActionContext.TIME_OUT);
+			}
+			return mp;
+		
+		}
+		
 		/**
 		 * 公共文档查询方法，在缓存中配置查询语句
 		 * 将查询语句的name传递进此方法
