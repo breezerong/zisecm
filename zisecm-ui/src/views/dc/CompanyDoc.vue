@@ -38,7 +38,7 @@
                 <!-- <router-link  to="/borroworder"></router-link> -->
      </el-dialog>
      <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="80%"  @close="itemDialogVisible = false">  
-      <InnerItemViewer v-bind:id = "currentId"></InnerItemViewer>
+      <InnerItemViewer v-bind:id = "currentId" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
      </el-dialog>
      <el-dialog
       :title="$t('application.property')"
@@ -176,7 +176,7 @@
               v-loading="loading"
               @selection-change="selectChange"
               @sort-change="sortchange"
-              @row-click="rowClick"
+              
               style="width: 100%"
               fit
             >
@@ -188,7 +188,17 @@
               </el-table-column>
               <el-table-column width="40">
                 <template slot-scope="scope">
-                  <img
+                  <img v-if="scope.row.TYPE_NAME=='图册'"
+                    :src="'./static/img/drawing.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                  <img v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                    :src="'./static/img/box.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                  <img v-else
                     :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
                     :title="scope.row.FORMAT_NAME"
                     border="0"
@@ -209,7 +219,7 @@
                         <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                       </div>
                       <div v-else>
-                        <span>{{scope.row[citem.attrName]}}</span>
+                        <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                       </div>
                     </template>
                   </el-table-column>
@@ -225,7 +235,7 @@
                         <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                       </div>
                       <div v-else>
-                        <span>{{scope.row[citem.attrName]}}</span>
+                        <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                       </div>
                     </template>
                   </el-table-column>
@@ -293,6 +303,7 @@ export default {
         dialogFormVisible: false,
         isIndeterminate: false
       },
+      innerTableHeight:window.innerHeight - 360,
       tableHeight: window.innerHeight - 125,
       currentLanguage: "zh-cn",
       propertyVisible: false,
@@ -786,6 +797,7 @@ export default {
       let _self = this;
       _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
+      _self.itemDialogVisible = false;
       if (_self.$refs.ShowProperty) {
         _self.$refs.ShowProperty.myItemId = indata.ID;
         _self.$refs.ShowProperty.loadFormInfo();

@@ -17,7 +17,7 @@
            <template v-if="docObj==null">
              {{message}}
            </template>
-           <InnerItemViewer v-else-if="viewerType==100" v-bind:id = "doc.id"></InnerItemViewer>
+           <InnerItemViewer v-else-if="viewerType==100" v-bind:id = "doc.id" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
            <template v-else-if="doc.permit<3">
              <div style="padding-top:40px;">
               您没有查看当前文档内容权限，如果需要查看，请点击右上角借阅按钮进行申请授权。
@@ -138,6 +138,7 @@ export default {
       },
       message:"加载中。。。",
       watermarkText:"",
+      innerTableHeight:window.innerHeight - 75,
       dialog:{
         title:"",
         visible:false
