@@ -154,8 +154,11 @@
     "type":"Type",
     "fileManage":"FileManage",
     "recycleBin":"RecycleBin",
-    "companyDoc":"CompanyDoc"
-
+    "companyDoc":"CompanyDoc",
+    "userRoleInfo":"MyRoles",
+    "archiveTool":"ArchiveTool",
+    "batchUpdate":"BatchUpdate",
+    "batchMount":"BatchMount"
 },
 "message": {
     "saveSuccess":"Save Success",
