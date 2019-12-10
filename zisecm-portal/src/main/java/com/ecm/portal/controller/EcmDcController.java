@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -1005,6 +1006,34 @@ public class EcmDcController extends ControllerAbstract{
 				  String userName=this.getSession().getCurrentUser().getUserName();
 				   List<Map<String, Object>> shopingObjectList=shopingCartService.executeSQL("delete from ecm_shoping_cart where  user_name='"+userName+"'");
 			   mp.put("code", ActionContext.SUCESS);
+		  }
+		  catch(Exception ex) {
+		   mp.put("code", ActionContext.FAILURE);
+		   mp.put("message", ex.getMessage());
+		   ex.printStackTrace();
+		  }
+		  return mp;
+	 }
+
+	 //清空购物车
+	 @RequestMapping(value = "/dc/removeShopingCart", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> removeShopingCart(@RequestBody String argStr) {
+		  List<String> list = JSONUtils.stringToArray(argStr);
+		  StringBuilder documentIds= new StringBuilder();
+		  for (int i = 0; i < list.size(); i++) {
+			  if(i!=0) {
+				  documentIds.append(",");
+			  }
+			  documentIds.append("'").append(list.get(i).toString()).append("'");		  
+		  }
+		  Map<String, Object> mp = new HashMap<String, Object>();
+		  try {
+			  if(documentIds.length()>0) {
+				  String userName=this.getSession().getCurrentUser().getUserName();
+				   List<Map<String, Object>> shopingObjectList=shopingCartService.executeSQL("delete from ecm_shoping_cart where  user_name='"+userName+"' and document_id in ("+documentIds.toString()+")");
+			  	}
+		  mp.put("code", ActionContext.SUCESS);
 		  }
 		  catch(Exception ex) {
 		   mp.put("code", ActionContext.FAILURE);

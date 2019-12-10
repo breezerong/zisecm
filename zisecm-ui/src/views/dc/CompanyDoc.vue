@@ -31,7 +31,7 @@
         v-bind:shopingCartForm="shopingCartForm"
       ></ShopingCart> -->
       
-        <router-view @showOrHiden="showOrHiden"></router-view>
+        <router-view @showOrHiden="showOrHiden" ref="ShowShopingCart"></router-view>
             <!-- <div slot="footer" class="dialog-footer">
         <router-link  to="/borroworder"   >借阅</router-link>
         </div>       -->
@@ -270,13 +270,13 @@
 <script>
 import ShowProperty from "@/components/ShowProperty";
 import ShowBorrowForm from "@/components/form/Borrow";
-import ShopingCart from "@/components/form/ShopingCart";
+import ShowShopingCart from "@/components/form/ShopingCart";
 import InnerItemViewer from "./InnerItemViewer.vue"
 export default {
   components: {
     ShowProperty: ShowProperty,
     ShowBorrowForm:ShowBorrowForm,
-    ShopingCart:ShopingCart,
+    ShowShopingCart:ShowShopingCart,
     InnerItemViewer:InnerItemViewer
   },
   data() {
@@ -705,11 +705,16 @@ export default {
     //添加到购物车
     addToShopingCart() {
       let _self = this;
+      var m = new Map();
+      var addItemId ="";
+      if (this.selectedItemList.length > 0) {
       var addItemId = [];
       if (this.selectedItemList.length > 0) {
         for (var i = 0; i < this.selectedItemList.length; i++) {
           addItemId.push(this.selectedItemList[i].ID);
         }
+      }
+
         axios
           .post("/dc/addToShopingCart", JSON.stringify(addItemId))
           .then(function(response) {
@@ -757,6 +762,9 @@ export default {
                   path:'/ShopingCart',
                    query: { tabledata: response.data.data }
                 });
+                if(_self.$refs.ShowShopingCart){
+                   _self.$refs.ShowShopingCart.openShopingCart();
+                }
               },10);
               
               
