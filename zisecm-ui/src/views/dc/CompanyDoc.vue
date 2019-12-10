@@ -705,13 +705,13 @@ export default {
     //添加到购物车
     addToShopingCart() {
       let _self = this;
-      var deletItemId = [];
+      var addItemId = [];
       if (this.selectedItemList.length > 0) {
         for (var i = 0; i < this.selectedItemList.length; i++) {
-          deletItemId.push(this.selectedItemList[i].ID);
+          addItemId.push(this.selectedItemList[i].ID);
         }
         axios
-          .post("/dc/addToShopingCart", JSON.stringify(deletItemId))
+          .post("/dc/addToShopingCart", JSON.stringify(addItemId))
           .then(function(response) {
             if (response.data.code) {
               if (_self.showBox) {
