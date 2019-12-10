@@ -635,7 +635,7 @@ export default {
         _self.selectRow=row;
       }
       _self.selectedChildrenType=[];
-      if(_self.selectRow.typeName=='图册'){
+      if(_self.selectRow.TYPE_NAME=='图册'){
         _self.getTypeNamesByMainList("图册");
       }else{
         _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
@@ -1008,7 +1008,7 @@ export default {
       _self.loading = true;
       let whereSql='';
       for(let i=0;i<_self.childrenTypes.length;i++){
-        whereSql+=" TYPE_NAME='"+_self.childrenTypes[i]+"' ";
+        whereSql+=" TYPE_NAME='"+_self.childrenTypes[i]+"' and id!='"+_self.selectRow.ID+"'";
         if(i!=_self.childrenTypes.length-1){
           whereSql+=" or "
         }

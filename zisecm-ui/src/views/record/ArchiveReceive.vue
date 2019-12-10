@@ -155,6 +155,7 @@ export default {
       childrenTypes: [],
       uploadUrl: "",
       selectedChildrenType: "",
+      selectTransferOneRow:[],
       childrenTypeSelectVisible: false,
       folderAction: "",
       folderDialogVisible: false,
@@ -713,7 +714,7 @@ export default {
       _self.loadGridInfo();
 
       if (row != null) {
-        _self.selectTransferRow = row;
+        _self.selectTransferOneRow = row;
       }
       var key = _self.inputkey;
       if (key != "") {
@@ -723,7 +724,7 @@ export default {
       m.set("gridName", "ArchiveGrid");
       // m.set('folderId',indata.id);
       m.set("condition", key);
-      m.set("id", _self.selectTransferRow.ID);
+      m.set("id", _self.selectTransferOneRow.ID);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", "");
