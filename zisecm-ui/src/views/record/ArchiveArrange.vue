@@ -84,7 +84,7 @@
                       :data="dataList"
                       node-key="id"
                       :render-content="renderContent"
-                      default-expand-all
+                      :default-expand-all="isExpand"
                       highlight-current
                       @node-click="handleNodeClick">
                     </el-tree>
@@ -191,6 +191,7 @@ export default {
   },
   data() {
     return {
+      isExpand:false,
       rightTableHeight: (window.innerHeight - 200)/2,
       currentLanguage: this.getLang(),
       printsVisible:false,
@@ -302,7 +303,10 @@ export default {
       })
       .then(function(response) {
         _self.dataList = response.data.data;
-        console.log(JSON.stringify(_self.dataList));
+        
+        _self.handleNodeClick(_self.dataList[0]);
+        _self.isExpand = true;
+        //console.log(JSON.stringify(_self.dataList));
         _self.loading = false;
       })
       .catch(function(error) {
@@ -672,7 +676,7 @@ export default {
       });
     },
     renderContent: function (h, {node, data, store}) {
-      console.log(data);
+      //console.log(data);
       if(data.extended){
         return (<span><i class='el-icon-folder-opened'></i><span style="padding-left: 4px;">{node.label}</span></span>);
       }else{
@@ -962,7 +966,7 @@ export default {
       })
       .then(function(response) {
         _self.dataList = response.data.data;
-        console.log(_self.dataList);
+       
         _self.loading = false;
       })
       .catch(function(error) {
@@ -1412,7 +1416,7 @@ export default {
           _self.loadGridData(_self.currentFolder);
            
             _self.showInnerFile(null);
-          _self.$message(response.data.data.message);
+          _self.$message("取号成功！");
         })
         .catch(function(error) {
           _self.$message(_self.$t("message.takeNumberFaild"));

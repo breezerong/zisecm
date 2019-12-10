@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -46,7 +47,6 @@ import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Service
 @Scope("prototype")
@@ -57,7 +57,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	private String baseColumns = "ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR";
-	private String systemColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
+	private String filterColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
 
@@ -234,7 +234,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Override
 	public List<Map<String, Object>> getObjectMap(String token, String condition) {
 
-		String sql = "select * from ecm_document where " + condition;
+		String sql = "select "+getDocumentAllColumns()+" from ecm_document where " + condition;
 
 		return ecmDocument.executeSQL(sql);
 	}
@@ -242,7 +242,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Override
 	public EcmDocument getObjectById(String token, String id) {
 
-		String sql = "select * from ecm_document where ID='" + id + "'";
+		String sql = "select "+getDocumentAllColumns()+" from ecm_document where ID='" + id + "'";
 
 		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
 
@@ -540,14 +540,14 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		// String typeName = args.get("TYPE_NAME").toString();
 		String sql = "update ecm_document set ";
 		boolean isFirst = true;
-		String filterColums = systemColumns.replace("FORMAT_NAME,CONTENT_SIZE,", "");
+		String filter = filterColumns.replace("FORMAT_NAME,CONTENT_SIZE,", "");
 
 		for (Object key : args.keySet().toArray()) {
 			EcmAttribute en = CacheManagerOper.getEcmAttributes().get(key);
 			String attrName = key.toString();
 			// filter system columns
 
-			if (filterColums.indexOf("," + attrName + ",") > -1) {
+			if (filter.indexOf("," + attrName + ",") > -1) {
 				continue;
 			}
 			if (en == null) {
@@ -1435,6 +1435,21 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		
 		
+	}
+	/**
+	 * 获取文档所有列
+	 * @return
+	 */
+	private String getDocumentAllColumns() {
+		String cols = "";
+		for(Entry<String, EcmAttribute> attr :CacheManagerOper.getEcmAttributes().entrySet()) {
+			if(cols.length()==0) {
+				cols = attr.getValue().getName();
+			}else {
+				cols += ","+attr.getValue().getName();
+			}
+		}
+		return cols;
 	}
 	
 	
