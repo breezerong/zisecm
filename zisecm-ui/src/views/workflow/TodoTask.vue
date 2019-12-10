@@ -263,6 +263,7 @@ export default {
     },
     showitem(indata) {
       let _self = this;
+      var formEditPermision=0;
       _self.dialogTitle = "查看任务";
       _self.isCompleteSelected = false;
       _self.currentData=indata;
@@ -270,12 +271,16 @@ export default {
       _self.form.formId = indata.formId;
       _self.dialogVisible = true;
       _self.taskTableData=[];
+      if("借阅驳回"==indata.name){
+        formEditPermision=1;
+      };
       _self.$router.replace({
       path:'/borrow1',
       query: { 
       tabledata: _self.taskTableData,
       borrowFormId:_self.form.formId,
-      istask:true
+      istask:1,
+      formEditPermision:formEditPermision
       }
     });
           var m = new Map();

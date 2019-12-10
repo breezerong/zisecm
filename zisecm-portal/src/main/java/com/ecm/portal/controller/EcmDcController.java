@@ -50,6 +50,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
@@ -1015,7 +1016,7 @@ public class EcmDcController extends ControllerAbstract{
 		  return mp;
 	 }
 
-	 //清空购物车
+	 //从购物车删除
 	 @RequestMapping(value = "/dc/removeShopingCart", method = RequestMethod.POST)
 	 @ResponseBody
 	 public Map<String,Object> removeShopingCart(@RequestBody String argStr) {
@@ -1092,50 +1093,116 @@ public class EcmDcController extends ControllerAbstract{
 			return col;
 		}
 
-	 //添加到购物车
-	 @RequestMapping(value = "/dc/saveBorrowForm", method = RequestMethod.POST)
-	 @ResponseBody
-	 public Map<String,Object> saveBorrowForm(@RequestBody String argStr) {
-		 List<String> argMap= JSONUtils.stringToArray(argStr);
-		 String argName=null;
-		 Map<String,Object> formDataMap=null;
-		 String[] documentIdArray=null;
-	    Map<String, Object> mp = new HashMap<String, Object>();
-	    for (int i = 0; i < argMap.size(); i++) {
-			 List<String> argMap2= JSONUtils.stringToArray(argMap.get(i).toString());
-			 for (int j = 0; j < argMap2.size(); j++) {
-				 argName= argMap2.get(0);
-				 if("formData".equals(argName)&&argMap2.get(1)!=null) {
-					 formDataMap=JSONUtils.stringToMap(argMap2.get(1));
-				 }else  if("documentIds".equals(argName)&&argMap2.get(1)!=null) {
-					 documentIdArray=argMap2.get(1).split(",");
-				 }
+		 //添加到购物车
+		 @RequestMapping(value = "/dc/saveBorrowForm", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> saveBorrowForm(@RequestBody String argStr) {
+			 List<String> argMap= JSONUtils.stringToArray(argStr);
+			 String argName=null;
+			 Map<String,Object> formDataMap=null;
+			 String[] documentIdArray=null;
+		    Map<String, Object> mp = new HashMap<String, Object>();
+		    for (int i = 0; i < argMap.size(); i++) {
+				 List<String> argMap2= JSONUtils.stringToArray(argMap.get(i).toString());
+				 for (int j = 0; j < argMap2.size(); j++) {
+					 argName= argMap2.get(0);
+					 if("formData".equals(argName)&&argMap2.get(1)!=null) {
+						 formDataMap=JSONUtils.stringToMap(argMap2.get(1));
+					 }else  if("documentIds".equals(argName)&&argMap2.get(1)!=null) {
+						 documentIdArray=argMap2.get(1).split(",");
+					 }
+				}
 			}
-		}
-  
-		 String formId="";
-		 formDataMap.put("TYPE_NAME", "借阅单");
-		 try {
-			   formId=documentService.newObject(getToken(), formDataMap);
-			   for(int i=0;i<documentIdArray.length;i++) {
-				EcmRelation en=new EcmRelation();
-				en.setParentId(formId);
-				en.setChildId(documentIdArray[i]);
-				en.setName("irel_borrow");
-				en.setCreationDate(new Date());
-				en.setCreator(this.getSession().getCurrentUser().getUserName());
-				relationService.newObject(getToken(), en);
-			   }
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			  mp.put("code", ActionContext.SUCESS);
-		} 
-	
-	  mp.put("data", formId);
-	  mp.put("code", ActionContext.SUCESS);
-	  return mp;
-	 }
+	  
+			 String formId="";
+			 formDataMap.put("TYPE_NAME", "借阅单");
+			try {
+				formId=documentService.newObject(getToken(), formDataMap);
+			} catch  (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   for(int i=0;i<documentIdArray.length;i++) {
+				 try {
+			EcmRelation en=new EcmRelation();
+			en.setParentId(formId);
+			en.setChildId(documentIdArray[i]);
+			en.setName("irel_borrow");
+			en.setCreationDate(new Date());
+			en.setCreator(this.getSession().getCurrentUser().getUserName());
+			relationService.newObject(getToken(), en);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						  mp.put("code", ActionContext.SUCESS);
+					} 
+		   }
+		
+		  mp.put("data", formId);
+		  mp.put("code", ActionContext.SUCESS);
+		  return mp;
+		 }
+
+		 //添加文档到已存在表单
+		 @RequestMapping(value = "/dc/addItemToForm", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> addItemToForm(@RequestBody String argStr) {
+			 List<String> argMap= JSONUtils.stringToArray(argStr);
+			 String argName=null;
+			 String formId="";
+			 List<String> documentIdArray=null;
+		    Map<String, Object> mp = new HashMap<String, Object>();
+		    for (int i = 0; i < argMap.size(); i++) {
+				 List<String> argMap2= JSONUtils.stringToArray(argMap.get(i).toString());
+				 for (int j = 0; j < argMap2.size(); j++) {
+					 argName= argMap2.get(0);
+					 if("formId".equals(argName)&&argMap2.get(1)!=null) {
+						 formId=argMap2.get(1);
+					 }else  if("documentIds".equals(argName)&&argMap2.get(1)!=null) {
+						 documentIdArray=JSONUtils.stringToArray( argMap2.get(1));
+					 }
+				}
+			}
+	  
+				   for(int i=0;i<documentIdArray.size();i++) {
+						 try {
+							 EcmRelation en=new EcmRelation();
+							en.setParentId(formId);
+							en.setChildId(documentIdArray.get(i));
+							en.setName("irel_borrow");
+							en.setCreationDate(new Date());
+							en.setCreator(this.getSession().getCurrentUser().getUserName());
+							relationService.newObject(getToken(), en);
+						 } catch (Exception e1) {
+								e1.printStackTrace();
+								  mp.put("code", ActionContext.SUCESS);
+							} 
+						 }
+			
+		
+		  mp.put("data", formId);
+		  mp.put("code", ActionContext.SUCESS);
+		  return mp;
+		 }
+		 //表单中移除文档
+		 @RequestMapping(value = "/dc/removeItemFromForm", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> removeItemFromForm(@RequestBody String argStr) {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				Map<String, Object> mp = JSONUtils.stringToMap(argStr);
+			 String relateId=args.get("relateId").toString();
+ 			 try {
+					relationService.deleteObject(relateId);
+
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				  mp.put("code", ActionContext.SUCESS);
+			} 
+		
+		  mp.put("code", ActionContext.SUCESS);
+		  return mp;
+		 }
 
 		@RequestMapping(value = "/dc/getFormRelateDocument", method = RequestMethod.POST)
 		@ResponseBody
@@ -1143,7 +1210,7 @@ public class EcmDcController extends ControllerAbstract{
 			Map<String, Object> mp = new HashMap<String, Object>();
 			List<Map<String, Object>>  childList=null;
 			try {
-				  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
+				  String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
 						     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
 						     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
 				  childList = documentService.getMapList(getToken(), sql);

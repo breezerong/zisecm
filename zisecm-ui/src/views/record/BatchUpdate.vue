@@ -32,7 +32,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" plain icon="el-icon-upload2" @click="batchUpdate()">开始更新</el-button>
+            <el-button type="primary" plain  icon="el-icon-upload2" @click="batchUpdate()">开始更新</el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -51,7 +51,8 @@ export default {
   data() {
     return {
       fileList:[],
-      importMessage:""
+      importMessage:"",
+      loading: false
     };
   },
   methods: {

@@ -38,7 +38,7 @@
                 <!-- <router-link  to="/borroworder"></router-link> -->
      </el-dialog>
      <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="80%"  @close="itemDialogVisible = false">  
-      <InnerItemViewer v-bind:id = "currentId"></InnerItemViewer>
+      <InnerItemViewer v-bind:id = "currentId" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
      </el-dialog>
      <el-dialog
       :title="$t('application.property')"
@@ -127,6 +127,7 @@
                 icon="el-icon-upload2"
                 @click="exportExcel()"
               >{{$t('application.export')+'Excel'}}</el-button>
+              <template v-if="isFileAdmin">
               <el-button
                 type="primary"
                 plain
@@ -140,7 +141,9 @@
                 size="medium"
                 icon="el-icon-document-delete"
                 @click="destroyItem()"
-              >{{$t('application.destroy')}}</el-button>&nbsp;&nbsp;&nbsp;
+              >{{$t('application.destroy')}}</el-button>
+              </template>
+              &nbsp;&nbsp;&nbsp;
               <el-button
                 type="primary"
                 plain
@@ -173,7 +176,7 @@
               v-loading="loading"
               @selection-change="selectChange"
               @sort-change="sortchange"
-              @row-click="rowClick"
+              
               style="width: 100%"
               fit
             >
@@ -185,7 +188,17 @@
               </el-table-column>
               <el-table-column width="40">
                 <template slot-scope="scope">
-                  <img
+                  <img v-if="scope.row.TYPE_NAME=='图册'"
+                    :src="'./static/img/drawing.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                  <img v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                    :src="'./static/img/box.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                  <img v-else
                     :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
                     :title="scope.row.FORMAT_NAME"
                     border="0"
@@ -206,7 +219,7 @@
                         <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                       </div>
                       <div v-else>
-                        <span>{{scope.row[citem.attrName]}}</span>
+                        <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                       </div>
                     </template>
                   </el-table-column>
@@ -222,7 +235,7 @@
                         <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                       </div>
                       <div v-else>
-                        <span>{{scope.row[citem.attrName]}}</span>
+                        <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                       </div>
                     </template>
                   </el-table-column>
@@ -270,13 +283,11 @@
 <script>
 import ShowProperty from "@/components/ShowProperty";
 import ShowBorrowForm from "@/components/form/Borrow";
-import ShowShopingCart from "@/components/form/ShopingCart";
 import InnerItemViewer from "./InnerItemViewer.vue"
 export default {
   components: {
     ShowProperty: ShowProperty,
     ShowBorrowForm:ShowBorrowForm,
-    ShowShopingCart:ShowShopingCart,
     InnerItemViewer:InnerItemViewer
   },
   data() {
@@ -290,6 +301,7 @@ export default {
         dialogFormVisible: false,
         isIndeterminate: false
       },
+      innerTableHeight:window.innerHeight - 360,
       tableHeight: window.innerHeight - 125,
       currentLanguage: "zh-cn",
       propertyVisible: false,
@@ -750,39 +762,47 @@ export default {
        //添加到购物车
     openShopingCart() {
       let _self = this;
-      var deletItemId = [];
-        axios
-          .post("/dc/openShopingCart", JSON.stringify(deletItemId))
-          .then(function(response) {
-            if (response.data.code) {
               _self.shopingCartDialogVisible = true;
-              setTimeout(()=>{
-                // _self.$refs.ShopingCart.dataList = response.data.data;
                 _self.$router.push({
-                  path:'/ShopingCart',
-                   query: { tabledata: response.data.data }
+                  path:'/ShopingCart'
                 });
-                if(_self.$refs.ShowShopingCart){
+                if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
                    _self.$refs.ShowShopingCart.openShopingCart();
                 }
-              },10);
+      // var arg = [];
+      //   axios
+      //     .post("/dc/openShopingCart", JSON.stringify(arg))
+      //     .then(function(response) {
+      //       if (response.data.code) {
+      //         _self.shopingCartDialogVisible = true;
+      //         // setTimeout(()=>{
+      //           // _self.$refs.ShopingCart.dataList = response.data.data;
+      //           _self.$router.push({
+      //             path:'/ShopingCart',
+      //              query: { tabledata: response.data.data }
+      //           });
+      //           if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
+      //              _self.$refs.ShowShopingCart.openShopingCart();
+      //           }
+      //         // },10);
               
               
-            } else {
-              _self.$message({
-                showClose: true,
-                message: "打开失败!",
-                duration: 2000,
-                type: "warning"
-              });
-            }
-          });
+      //       } else {
+      //         _self.$message({
+      //           showClose: true,
+      //           message: "打开失败!",
+      //           duration: 2000,
+      //           type: "warning"
+      //         });
+      //       }
+      //     });
     },
     //查看属性
     showItemProperty(indata) {
       let _self = this;
       _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
+      _self.itemDialogVisible = false;
       if (_self.$refs.ShowProperty) {
         _self.$refs.ShowProperty.myItemId = indata.ID;
         _self.$refs.ShowProperty.loadFormInfo();
