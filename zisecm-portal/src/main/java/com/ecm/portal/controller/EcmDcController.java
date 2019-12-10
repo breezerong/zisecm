@@ -934,9 +934,9 @@ public class EcmDcController extends ControllerAbstract{
 	}
 	
 	//销毁文件，更改文件状态为“注销”
-	@RequestMapping(value = "/dc/destroyDocuments", method = RequestMethod.POST)
+	 @RequestMapping(value = "/dc/destroyDocuments", method = RequestMethod.POST)
 	 @ResponseBody
-	 public Map<String,Object> getDocumentByRelationParentId(@RequestBody String argStr) {
+	 public Map<String,Object> destroyDocuments(@RequestBody String argStr) {
 	  List<String> list = JSONUtils.stringToArray(argStr);
 	  Map<String, Object> mp = new HashMap<String, Object>();
 	  try {
@@ -994,7 +994,6 @@ public class EcmDcController extends ControllerAbstract{
 	  return mp;
 	 }
 
-		String baseColumns = "ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT";
 	 //添加到购物车
 	 @RequestMapping(value = "/dc/openShopingCart", method = RequestMethod.POST)
 	 @ResponseBody
@@ -1017,7 +1016,7 @@ public class EcmDcController extends ControllerAbstract{
 	  }
  			String gridName="shopingCartGrid";
  			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
- 			String sql = "select " + baseColumns + getGridColumn(gv, gridName) + "  from ecm_document where ID in("+sb.toString()+")";
+ 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+")";
  			 shopingCartList2 = documentService.getMapList(getToken(), sql);
  
 		} catch (Exception e) {
@@ -1031,7 +1030,7 @@ public class EcmDcController extends ControllerAbstract{
 	 }
 		private String getGridColumn(EcmGridView gv, String gridName) {
 			String col = "";
-			String cols = "," + baseColumns.replace(" ", "") + ",";
+			String cols = "," ;
 			if (gv != null) {
 				for (EcmGridViewItem item : gv.getGridViewItems()) {
 					if (cols.indexOf("," + item.getAttrName() + ",") > -1) {
@@ -1099,6 +1098,23 @@ public class EcmDcController extends ControllerAbstract{
 						     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
 				  childList = documentService.getMapList(getToken(), sql);
 				mp.put("data", childList);
+				mp.put("code", ActionContext.SUCESS);
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
+
+		@RequestMapping(value = "/dc/getDocumentById", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> getDocumentById(@RequestBody String id) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			Map<String,Object>  objectMap=null;
+			try {
+				objectMap = documentService.getObjectMapById(getToken(), id);
+				mp.put("data", objectMap);
 				mp.put("code", ActionContext.SUCESS);
 			}
 			catch(Exception ex) {

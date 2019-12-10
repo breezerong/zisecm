@@ -216,6 +216,8 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
 		        map.put("formId", runtimeService.getVariable(task.getProcessInstanceId(), "formId"));
 		        map.put("createTime", task.getCreateTime());
+		        map.put("processInstanceId", task.getProcessInstanceId());
+		        
 		        resultList.add(map);
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();

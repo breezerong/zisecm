@@ -59,7 +59,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR";
 	private String systemColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
-			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,LIFECYCLE_DIR,";
+			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
 
 	@Autowired
 	private EcmDocumentMapper ecmDocument;
@@ -108,11 +108,23 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(clauseSql.contains("@currentuser")) {
 			clauseSql=clauseSql.replace("@currentuser", currentUser);
 		}
+		
+		if(clauseSql.contains("@condition")) {
+			if(params!=null&&params.containsKey("condition")) {
+				clauseSql=clauseSql.replace("@condition", params.get("condition").toString());
+			}else {
+				clauseSql=clauseSql.replace("@condition", "");
+			}
+		}
+		
 		if(clauseSql.contains("@")) {
 			Set<String> items= params.keySet();
 			Iterator<String> keys= items.iterator();
+			
 			while(keys.hasNext()) {
 				String key=keys.next();
+				
+				
 				clauseSql=clauseSql.replaceAll("@"+key, params.get(key).toString());
 			}
 		}

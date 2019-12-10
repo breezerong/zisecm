@@ -16,7 +16,7 @@
                     </el-menu-item>
                     <el-menu-item index="202">
                       <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/actionmanager">待入库</router-link></span>
+                      <span slot="title"><router-link to="/record/archiveoutgoing/archivependingin">待入库</router-link></span>
                     </el-menu-item>
                     <el-menu-item index="203">
                       <i class="el-icon-caret-right"></i>

@@ -21,17 +21,17 @@
                     </div>
                   </template>
                  </el-table-column>
-                <el-table-column prop="name" label="名称" min-width="10%" >
+                <el-table-column prop="taskName" label="名称" width="160" >
                 </el-table-column>
-                <el-table-column prop="assignee" label="用户" width="120" >
+                <el-table-column prop="assignee" label="用户" width="100" >
                 </el-table-column>
-                <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter"  width="160">
+                <el-table-column prop="createTime" label="开始时间" sortable :formatter="dateFormatter"  width="180">
                 </el-table-column>
-                <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  width="160">
+                <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  width="180">
                 </el-table-column>
                 <el-table-column prop="result" label="完成结果" width="100">
                 </el-table-column>
-                <el-table-column prop="message" label="审批意见" min-width="30%">
+                <el-table-column prop="message" label="审批意见" min-width="15%">
                 </el-table-column>
             </el-table>
           <div slot="footer" class="dialog-footer">

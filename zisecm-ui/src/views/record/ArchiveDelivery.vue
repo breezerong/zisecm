@@ -1879,7 +1879,7 @@ export default {
     //查询文档
     searchItem() {
       this.loadGridData();
-      this.loadPageInfo();
+      // this.loadPageInfo();
     }
   },
   components: {
