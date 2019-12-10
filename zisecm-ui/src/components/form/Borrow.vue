@@ -54,8 +54,8 @@
                   <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
-                          <template v-if="item.attrName=='ADD_DATE'">
-                            {{dateFormat(scope.row.ADD_DATE)}}
+                          <template v-if="item.attrName=='C_ARCHIVE_DATE'">
+                            {{dateFormat(scope.row.C_ARCHIVE_DATE)}}
                           </template>
                           <template v-else>
                             {{scope.row[item.attrName]}}  
@@ -142,8 +142,8 @@
                   <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
-                          <template v-if="item.attrName=='ADD_DATE'">
-                            {{dateFormat(scope.row.ADD_DATE)}}
+                          <template v-if="item.attrName=='C_ARCHIVE_DATE'">
+                            {{dateFormat(scope.row.C_ARCHIVE_DATE)}}
                           </template>
                           <template v-else>
                             {{scope.row[item.attrName]}}  
@@ -197,7 +197,7 @@ export default {
     name: "ShowProperty",
   data() {
     return {  
-              gridviewName:'shopingCartGrid',
+              gridviewName:'borrowGrid',
             gridList: [],
             currentLanguage: "zh-cn",
               tabledata: [],
