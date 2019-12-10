@@ -272,13 +272,17 @@ export default {
     if (psize) {
       _self.pageSize = parseInt(psize);
     }
-    var getMap = _self.$route.params.map;
-    if (getMap != null) {
-      _self.inputkey = getMap.get("inputkey");
-      _self.checkedCards = getMap.get("checkedCards");
-      _self.propertyOnly = getMap.get("propertyOnly");
-      _self.cardsLabel = getMap.get("checkedCards");
-      _self.enterDown();
+    try{
+      var getMap = _self.$route.params.map;
+      if (getMap != null) {
+        _self.inputkey = getMap.get("inputkey");
+        _self.checkedCards = getMap.get("checkedCards");
+        _self.propertyOnly = getMap.get("propertyOnly");
+        _self.cardsLabel = getMap.get("checkedCards");
+        _self.enterDown();
+      }
+    }catch(error){
+      console.log(error)
     }
     _self.checkedCards = [];
     _self.loadCards();
