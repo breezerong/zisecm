@@ -61,6 +61,7 @@
           <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="cancel(false)">取 消</el-button>
             <router-link  ref="borrowRouteLink" to="/borroworder"></router-link>
+            <el-button type="primary" @click="cleanShopingCart()">清空购物车</el-button>
 
             <el-button @click="borrowItem()">借 阅</el-button>
           </div>
@@ -151,7 +152,7 @@ export default {
       axios
         .post("/dc/openShopingCart", JSON.stringify(m))
         .then(function(response) {
-          _self.dataList.todoData = response.data.data;
+          _self.tabledata= response.data.data;
           _self.totalCount = response.data.totalCount;
           _self.loadingTodoData = false
         })
@@ -176,6 +177,39 @@ export default {
           });
         },10);
 
+    },
+    cleanShopingCart(){
+       let _self = this;
+      var m = new Map();
+     axios
+        .post("/dc/cleanShopingCart", JSON.stringify(m))
+        .then(function(response) {
+          if( response.data.code==1){
+            m = new Map();
+              axios.post("/dc/openShopingCart", JSON.stringify(m))
+              .then(function(response) {
+                _self.tabledata= response.data.data;
+                _self.totalCount = response.data.totalCount;
+                _self.loadingTodoData = false
+              })
+              .catch(function(error) {
+                console.log(error);
+              });
+
+             _self.$message({
+                showClose: true,
+                message: "清空成功!",
+                duration: 2000,
+                type: "success"
+              });
+
+          }
+          _self.totalCount = response.data.totalCount;
+          _self.loadingTodoData = false
+        })
+        .catch(function(error) {
+          console.log(error);
+        });      
     }
   }
 };

@@ -995,6 +995,25 @@ public class EcmDcController extends ControllerAbstract{
 	  return mp;
 	 }
 
+	 //清空购物车
+	 @RequestMapping(value = "/dc/cleanShopingCart", method = RequestMethod.POST)
+	 @ResponseBody
+	 public Map<String,Object> cleanShopingCart(@RequestBody String argStr) {
+		  List<String> list = JSONUtils.stringToArray(argStr);
+		  Map<String, Object> mp = new HashMap<String, Object>();
+		  try {
+				  String userName=this.getSession().getCurrentUser().getUserName();
+				   List<Map<String, Object>> shopingObjectList=shopingCartService.executeSQL("delete from ecm_shoping_cart where  user_name='"+userName+"'");
+			   mp.put("code", ActionContext.SUCESS);
+		  }
+		  catch(Exception ex) {
+		   mp.put("code", ActionContext.FAILURE);
+		   mp.put("message", ex.getMessage());
+		   ex.printStackTrace();
+		  }
+		  return mp;
+	 }
+
 	 //添加到购物车
 	 @RequestMapping(value = "/dc/openShopingCart", method = RequestMethod.POST)
 	 @ResponseBody
@@ -1017,7 +1036,7 @@ public class EcmDcController extends ControllerAbstract{
 	  }
  			String gridName="shopingCartGrid";
  			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
- 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+")";
+ 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"'";
  			 shopingCartList2 = documentService.getMapList(getToken(), sql);
  
 		} catch (Exception e) {
@@ -1029,6 +1048,7 @@ public class EcmDcController extends ControllerAbstract{
 	  mp.put("code", ActionContext.SUCESS);
 	  return mp;
 	 }
+	 
 		private String getGridColumn(EcmGridView gv, String gridName) {
 			String col = "";
 			String cols = "," ;

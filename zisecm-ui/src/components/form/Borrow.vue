@@ -49,8 +49,8 @@
                   <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
-                          <template v-if="item.attrName=='C_DOC_DATE'">
-                            {{dateFormat(scope.row.C_DOC_DATE)}}
+                          <template v-if="item.attrName=='ADD_DATE'">
+                            {{dateFormat(scope.row.ADD_DATE)}}
                           </template>
                           <template v-else>
                             {{scope.row[item.attrName]}}  
