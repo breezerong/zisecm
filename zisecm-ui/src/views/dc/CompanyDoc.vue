@@ -270,13 +270,11 @@
 <script>
 import ShowProperty from "@/components/ShowProperty";
 import ShowBorrowForm from "@/components/form/Borrow";
-import ShowShopingCart from "@/components/form/ShopingCart";
 import InnerItemViewer from "./InnerItemViewer.vue"
 export default {
   components: {
     ShowProperty: ShowProperty,
     ShowBorrowForm:ShowBorrowForm,
-    ShowShopingCart:ShowShopingCart,
     InnerItemViewer:InnerItemViewer
   },
   data() {
@@ -750,33 +748,40 @@ export default {
        //添加到购物车
     openShopingCart() {
       let _self = this;
-      var deletItemId = [];
-        axios
-          .post("/dc/openShopingCart", JSON.stringify(deletItemId))
-          .then(function(response) {
-            if (response.data.code) {
               _self.shopingCartDialogVisible = true;
-              setTimeout(()=>{
-                // _self.$refs.ShopingCart.dataList = response.data.data;
                 _self.$router.push({
-                  path:'/ShopingCart',
-                   query: { tabledata: response.data.data }
+                  path:'/ShopingCart'
                 });
-                if(_self.$refs.ShowShopingCart){
+                if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
                    _self.$refs.ShowShopingCart.openShopingCart();
                 }
-              },10);
+      // var arg = [];
+      //   axios
+      //     .post("/dc/openShopingCart", JSON.stringify(arg))
+      //     .then(function(response) {
+      //       if (response.data.code) {
+      //         _self.shopingCartDialogVisible = true;
+      //         // setTimeout(()=>{
+      //           // _self.$refs.ShopingCart.dataList = response.data.data;
+      //           _self.$router.push({
+      //             path:'/ShopingCart',
+      //              query: { tabledata: response.data.data }
+      //           });
+      //           if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
+      //              _self.$refs.ShowShopingCart.openShopingCart();
+      //           }
+      //         // },10);
               
               
-            } else {
-              _self.$message({
-                showClose: true,
-                message: "打开失败!",
-                duration: 2000,
-                type: "warning"
-              });
-            }
-          });
+      //       } else {
+      //         _self.$message({
+      //           showClose: true,
+      //           message: "打开失败!",
+      //           duration: 2000,
+      //           type: "warning"
+      //         });
+      //       }
+      //     });
     },
     //查看属性
     showItemProperty(indata) {
