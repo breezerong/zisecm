@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="AccountFrom" :model="account" :rules="rules" class="login-container">
+  <el-form ref="AccountFrom" v-loading="loading" :model="account" :rules="rules" class="login-container">
     <el-form-item>
       <h2 class="title"><img src="../assets/logo.png" border="0">{{$t("application.user")+$t("application.login")}}</h2>
     </el-form-item>
@@ -64,12 +64,13 @@ export default {
     },
     loginSSO(loginName){
       let _self = this;
+       _self.loading = true;
       var tocomp = _self.$route.query.redirect;
       if(!tocomp){
         tocomp = "/";
       }
       _self.account.username = loginName;
-          _self.loading = true;
+         
           axios.post('/ssoLogin',loginName)
           .then(function(response) {
             console.log(response.data);

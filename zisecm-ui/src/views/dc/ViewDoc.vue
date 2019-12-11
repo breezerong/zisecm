@@ -24,10 +24,11 @@
              </div>
            </template>
            <template v-else>
-             <OfficeDocViewer v-if="viewerType==1" v-bind:id="doc.id" v-bind:format="doc.format"></OfficeDocViewer>
-             <ImageViewer v-else-if="viewerType==2" v-bind:id="doc.id" v-bind:format="doc.format"></ImageViewer>
-             <VideoPlayer v-else-if="viewerType==3" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
-             <AudioPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
+             <PdfViewer v-if="viewerType==1" v-bind:id="doc.id" v-bind:format="doc.format"></PdfViewer>
+             <OfficeDocViewer v-if="viewerType==2" v-bind:id="doc.id" v-bind:format="doc.format"></OfficeDocViewer>
+             <ImageViewer v-else-if="viewerType==3" v-bind:id="doc.id" v-bind:format="doc.format"></ImageViewer>
+             <VideoPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
+             <AudioPlayer v-else-if="viewerType==5" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
              
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
                 当前文件没有电子文件。
@@ -93,6 +94,7 @@ import DocVersion from './DocVersion.vue'
 import UseInfo from './UseInfo.vue'
 import ViewRedition from './ViewRedition.vue'
 
+import PdfViewer from './PdfViewer.vue'
 import OfficeDocViewer from './OfficeDocViewer.vue'
 import ImageViewer from './ImageViewer.vue'
 import VideoPlayer from './VideoPlayer.vue'
@@ -113,7 +115,8 @@ export default {
     VideoPlayer:VideoPlayer,
     AudioPlayer:AudioPlayer,
     InnerItemViewer:InnerItemViewer,
-    ChangeDocViewer:ChangeDocViewer
+    ChangeDocViewer:ChangeDocViewer,
+    PdfViewer:PdfViewer
   },
   data(){
     return {
@@ -205,19 +208,21 @@ export default {
         console.log("typename:"+_self.doc.typeName);
         if(_self.doc.typeName == "卷盒" || _self.doc.typeName=="图册"){
           _self.viewerType = 100;
-        } else if(_self.doc.format == "doc" || _self.doc.format == "docx" ||
+        } else if(_self.doc.format == "pdf"){
+          _self.viewerType = 1; 
+        }else if(_self.doc.format == "doc" || _self.doc.format == "docx" ||
         _self.doc.format == "ppt" ||_self.doc.format == "pptx" ||
-        _self.doc.format == "xls" ||_self.doc.format == "xlsx"||_self.doc.format == "pdf"){
-          _self.viewerType = 1;
+        _self.doc.format == "xls" ||_self.doc.format == "xlsx"){
+          _self.viewerType = 2;
         }else if(_self.doc.format == "jpg"||_self.doc.format == "png"||
         _self.doc.format == "gif" || _self.doc.format == "bpm" ||
         _self.doc.format == "jpeg"
         ){
-          _self.viewerType = 2;
-        }else if(_self.doc.format == "mp4" || _self.doc.format == "ogg" ||_self.doc.format == "webm"){
           _self.viewerType = 3;
-        }else if(_self.doc.format == "mp3" || _self.doc.format == "wav"){
+        }else if(_self.doc.format == "mp4" || _self.doc.format == "ogg" ||_self.doc.format == "webm"){
           _self.viewerType = 4;
+        }else if(_self.doc.format == "mp3" || _self.doc.format == "wav"){
+          _self.viewerType = 5;
         }
       }
       //console.log(_self.viewerType);
