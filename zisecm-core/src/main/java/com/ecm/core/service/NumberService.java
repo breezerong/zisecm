@@ -204,9 +204,12 @@ public class NumberService extends EcmService {
 	 * @return
 	 * @throws EcmException
 	 */
-	private String getDesignPhase(String token, String subType,String phase) throws EcmException {
+	private String getDesignPhase(String token, String subType,String phase) throws EcmException,Exception {
 		String path = "/系统配置/设计阶段/"+subType;
 		EcmFolder folder = folderService.getObjectByPath(token, path);
+		if(folder==null) {
+			throw new Exception(path+"为空!");
+		}
 		String condition = "FOLDER_ID='"+folder.getId()+"' and NAME='"+phase+"'";
 		List<Map<String,Object>> docList = documentService.getObjectMap(token, condition);
 		if(docList.size()>0) {
