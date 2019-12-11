@@ -41,7 +41,14 @@ export default {
       checked: true
     };
   },
+  created(){
+    let loginName = this.getValue(window.location.href,'LoginName');
+    if(loginName){
+      this.loginSSO(loginName);
+    }
+  },
   mounted(){
+    
     var reinfo = localStorage.getItem("ziecm-rememberInfo");
     if(reinfo)
     {
@@ -51,6 +58,40 @@ export default {
     }
   },
   methods: {
+    getValue(str,name){
+      var reg = new RegExp("(^|&|\\?)"+ name +"=([^#]*)(&|$|#)"), r;
+      if (r=str.match(reg)) return unescape(r[2]); return null;
+    },
+    loginSSO(loginName){
+      let _self = this;
+      var tocomp = _self.$route.query.redirect;
+      if(!tocomp){
+        tocomp = "/";
+      }
+      _self.account.username = loginName;
+          _self.loading = true;
+          axios.post('/ssoLogin',loginName)
+          .then(function(response) {
+            console.log(response.data);
+            if(response.data.code==1)
+            {
+              sessionStorage.setItem('access-user',JSON.stringify(_self.account));
+              sessionStorage.setItem('access-userName',response.data.userName);
+              sessionStorage.setItem('access-token',response.data.token);
+              sessionStorage.setItem('access-clientPermission',response.data.clientPermission);
+              sessionStorage.setItem('access-systemPermission',response.data.systemPermission);
+              localStorage.setItem("ziecm-rememberInfo","1");
+              localStorage.setItem("ziecm-ass12bn",loginName);
+              _self.$router.push({path: tocomp});
+            }
+            _self.loading = false;
+          })
+          .catch(function(error) {
+            console.log(error);
+            _self.$message(_self.$t("message.loginFailured"));
+            _self.loading = false;
+          });
+    },
     handleLogin() {
       let _self = this;
       var tocomp = _self.$route.query.redirect;
