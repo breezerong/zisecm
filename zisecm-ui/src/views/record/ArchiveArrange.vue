@@ -1351,6 +1351,7 @@ export default {
           // });          
         });
     },
+    //提取信息
     fetchInformation(){
       let _self=this;
       if(_self.radio=='卷盒'&&_self.selectedItems.length<1){
@@ -1359,16 +1360,67 @@ export default {
       }
       let tab=_self.selectedItems;
       let m = [];
+      let p=[];
       let i;
       for(i in tab){
-        if(tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")
+        if((tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")&&tab[i]["SUB_TYPE"]!="盒")
         {
           _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
           return;
         }
+        if(tab[i]["SUB_TYPE"]!="盒"){
+          p.push(tab[i]["ID"]);
+        }
         m.push(tab[i]["ID"]);
       }
-      _self.axios({
+
+      if(p.length>0){
+        p=p.join("','");
+        let pm = new Map();
+        pm.set("configName", "ValidataHasArchiveCode");
+        pm.set("parentId","'"+p+"'");
+         _self
+            .axios({
+              headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+              },
+              method: "post",
+              data: JSON.stringify(pm),
+              url: "/dc/getObjectsByConfigClauseNoPage"
+            })
+            .then(function(response) {
+              let sdata = response.data.data;
+              if(sdata.length>0){
+                _self.$message("盒内文件"+sdata[0].CODING+"未取号！");
+                return;
+              }else{
+                _self.axios({
+                      headers: {
+                        "Content-Type": "application/json;charset=UTF-8"
+                      },
+                      method: "post",
+                      data: JSON.stringify(m),
+                      url: "/dc/fetchInformation"
+                    })
+                    .then(function(response) {
+                      _self.loadGridData(_self.currentFolder);
+                      
+                        _self.showInnerFile(null);
+                      _self.$message(_self.$t("message.fetchInformationSuccess"));
+                    })
+                    .catch(function(error) {
+                      _self.$message(_self.$t("message.fetchInformationFailed"));
+                      console.log(error);
+                  });
+              }
+              
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+
+      }else{
+        _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
@@ -1386,6 +1438,8 @@ export default {
           _self.$message(_self.$t("message.fetchInformationFailed"));
           console.log(error);
       });
+      }
+      
     },
     takeNumbers(){
       let _self =this;

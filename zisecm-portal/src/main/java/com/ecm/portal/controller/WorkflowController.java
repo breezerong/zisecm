@@ -23,6 +23,7 @@ import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.history.HistoricProcessInstanceQuery;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -476,10 +477,12 @@ public class WorkflowController  extends ControllerAbstract{
 	     */
 	    @ResponseBody
 	    @RequestMapping(value = "getWorkflowTask")
-	    public List<Map>  getWorkflowTask(@RequestBody String argStr) {
-				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+	    public Map<String, Object>  getWorkflowTask(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			Map<String, Object> mp =  new HashMap();
 				String processInstanceId=args.get("processInstanceId").toString();
 				List<Map> resultList = new ArrayList<Map>();
+				String isPocessFinished="0";
 //	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
 //	        List<EcmAuditWorkitem> auditList=null;
 	        try {
@@ -494,14 +497,19 @@ public class WorkflowController  extends ControllerAbstract{
 			        map.put("createTime", task.getCreateTime());
 			        map.put("endTime", task.getEndTime());
 			        map.put("processInstanceId", task.getProcessInstanceId());
-			        
-			        resultList.add(map);
+ 			        resultList.add(map);
 		        }
-		        return resultList;
-			} catch (Exception e) {
+		         HistoricProcessInstance   hiProcessInstance  = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).unfinished().singleResult();
+		           if(hiProcessInstance==null) {
+		        	   isPocessFinished="1";
+		           }
+ 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-         	return  new ArrayList<Map>();
+	        mp.put("data", resultList);
+	        mp.put("isPocessFinished", isPocessFinished);
+
+         	return  mp;
 	    }
 	    
 	    /**

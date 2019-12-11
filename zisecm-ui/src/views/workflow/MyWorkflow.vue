@@ -7,7 +7,6 @@
           <el-table
               :data="taskList"
               border
-              :height="tableHeight-200"
               v-loading="loading"
               style="width: 100%">
                 <el-table-column label="序号" width="65">
@@ -37,12 +36,12 @@
                 <el-table-column prop="message" label="审批意见" min-width="20%">
                 </el-table-column>
             </el-table>
-             <div v-if="workflowPicVisible=='显示流程图'"  >{{workflowPicVisible}}
-             <img style="width:100%;height:100%" :src="_self.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
+             <div v-if="workflowPicVisible=='显示流程图'"  >{{workflowPicVisible}}              
+                <img ref="processDiagram" style="width:100%;height:100%" :src="_self.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
             </div>
          <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="dialogVisible = false">关闭</el-button>
-            <el-button @click="workflowPicVisible ='显示流程图'">显示流程图</el-button>
+            <el-button @click="showprocessDiagram()">显示流程图</el-button>
          </div>
         </el-dialog>
       <table border="0" width="100%">
@@ -141,7 +140,8 @@ export default {
       tableHeight: window.innerHeight - 190,
       formLabelWidth: "120px",
       currentProcessId:"",
-      workflowPicVisible:""
+      workflowPicVisible:"",
+      isPocessFinished:"0",
     };
   },
   created(){ 
@@ -221,7 +221,11 @@ export default {
       _self.currentProcessId=indata.id;
      axios.post("/workflow/getWorkflowTask",JSON.stringify(m))
         .then(function(response) {
-          _self.taskList = response.data;
+          _self.taskList = response.data.data;
+          _self.isPocessFinished=response.data.isPocessFinished;
+          if(_self.isPocessFinished=="1"){
+              _self.workflowPicVisible="";
+          }
           var k=-1;
           for(var i in _self.taskList){
             if(_self.taskList[i].completeDate==null){
@@ -257,7 +261,25 @@ export default {
           return item.workflowName.match(_self.inputkey) || item.description.match(_self.inputkey);
         }
       );
-    }
+    },
+    showprocessDiagram(){
+       let _self = this;
+       if(_self.isPocessFinished=="1"){
+         _self.workflowPicVisible ="";
+              _self.$message({
+                showClose: true,
+                message: "流程已结束，过程流程图不可查看!",
+                duration: 2000,
+                type: "success"
+              });
+        }else{
+          if(_self.workflowPicVisible=="显示流程图"){
+          _self.workflowPicVisible="";
+          }else{
+           _self.workflowPicVisible="显示流程图";
+         }
+        }
+    },
   }
 };
 </script>
