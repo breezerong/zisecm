@@ -58,4 +58,6 @@ public interface IUserService {
 	boolean updatePassword(String token, String userName, String password, String newPassword)
 			throws EcmException, AccessDeniedException, NoPermissionException;
 
+	List<EcmUser> getUsersByGroupName(String token, Pager pager, String noGroup, String groupName, String condition);
+
 }
