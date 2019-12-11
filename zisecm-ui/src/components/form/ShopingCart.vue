@@ -111,6 +111,7 @@ export default {
   },
   props: {
     formId: { type: String, default: "" },
+    excludeRows: { type: String, default: "" },
   },
   created() {
     let _self = this;
@@ -126,11 +127,20 @@ export default {
       m.set("pageSize", 7);
       m.set("pageIndex", 0);
       m.set("userId", sessionStorage.getItem("access-userName"));
+      //let i=0;
       axios
         .post("/dc/openShopingCart", JSON.stringify(m))
         .then(function(response) {
-          _self.tabledata= response.data.data;
-          _self.totalCount = response.data.totalCount;
+           _self.tabledata = response.data.data.filter(function(item){
+              let goodData=true;
+            for ( let i = 0; i < _self.excludeRows.length; i++) {
+               if(item.ID==_self.excludeRows[i].ID){
+                 goodData=false;
+               }
+              }
+              return goodData;
+             });
+         _self.totalCount = response.data.totalCount;
           _self.loadingTodoData = false
         })
         .catch(function(error) {
@@ -189,6 +199,8 @@ export default {
               axios.post("/dc/openShopingCart", JSON.stringify(m))
               .then(function(response) {
                 _self.tabledata= response.data.data;
+
+                //_self.tabledata=excludeRows;
                 _self.totalCount = response.data.totalCount;
                 _self.loadingTodoData = false
               })
