@@ -75,13 +75,6 @@
                 icon="el-icon-delete"
                 @click="deleleItem()"
               >{{$t('application.completely')+$t('application.delete')}}</el-button>
-              <el-button
-                type="primary"
-                plain
-                size="medium"
-                icon="el-icon-upload2"
-                @click="exportItem()"
-              >{{$t('application.export')+$t('application.document')}}</el-button>
               &nbsp;&nbsp;&nbsp;
               <template v-if="isFileAdmin">
                 <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
@@ -518,14 +511,6 @@ export default {
           duration: 2000
         });
       }
-    },
-    //导出文档
-    exportItem() {
-      var m = new Map();
-      m.set("id","23d8527efc32481a969643dc8e6f1fd4");
-      axios.post("/dc/getContent",JSON.stringify(m)).then(function(response){
-        console.log(response.data)
-      })
     },
     //显示卷盒在内的删除文件
     showFileBox(){
