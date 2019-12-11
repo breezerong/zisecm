@@ -139,6 +139,38 @@ public class UserManager extends ControllerAbstract {
 		}
 		return mp;
 	}
+	/**
+	 * 获取角色所有用户
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/admin/getUsersByGroupName", method = RequestMethod.POST)
+	public Map<String, Object> getUsersByGroupName(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String noGroup = "";
+			if (args.get("noGroup") != null) {
+				noGroup = args.get("noGroup").toString();
+			}
+			String roleName = "";
+			if (args.get("roleName") != null) {
+				roleName = args.get("roleName").toString();
+			}
+			Pager pager = new Pager();
+			pager.setPageIndex(Integer.parseInt(args.get("pageIndex").toString()));
+			pager.setPageSize(Integer.parseInt(args.get("pageSize").toString()));
+			List<EcmUser> list = userService.getUsersByGroupName(getToken(), pager, noGroup,roleName,
+					args.get("condition").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
 
 //	@RequestMapping(value = "/admin/getRoleUserCount", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 //	@ResponseBody

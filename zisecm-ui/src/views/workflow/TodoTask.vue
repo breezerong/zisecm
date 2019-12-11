@@ -197,6 +197,17 @@ export default {
       .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
+        if(_self.$route.query.openTaskFromMainPage=="1"&&_self.$route.query.taskId!=""){
+          for (let index = 0; index < _self.dataList.length; index++) {
+            if(_self.dataList[index].id==_self.$route.query.taskId){
+              _self.showitem(_self.dataList[index]);
+              break;
+            }
+            
+          }   
+        }
+        
+
         _self.loading = false;
         _self.loadPageInfo(response.data.totalCount);
       })

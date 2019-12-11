@@ -287,6 +287,19 @@ export default {
           console.log(error);
         }); 
   },
+      viewdoc(indata){
+        let condition = indata.ID;
+     let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
+    },
+
   },
   
 };

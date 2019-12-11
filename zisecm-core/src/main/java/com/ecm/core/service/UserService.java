@@ -471,6 +471,13 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	@Override
+	public List<EcmUser> getUsersByGroupName(String token,Pager pager, String noGroup,String groupName, String condition) {
+		EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
+		String groupId=groupObj.getId();
+		return getRoleUsers( token, pager,  noGroup, groupId,  condition);
+	}
+	
+	@Override
 	public long getRoleUserCount(String token,boolean noRole,String groupId,String condition) {
 		String sql = "select count(*) as objcount from ecm_user a ";
 		if(!EcmStringUtils.isEmpty(condition))

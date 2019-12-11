@@ -66,7 +66,7 @@
                   <el-table-column align="right">
                     <template slot-scope="scope">
                       <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
-                       <el-button size="mini" @click="removeItemFromForm(scope.row['RELATE_ID'])">移除</el-button>
+                      <el-button size="mini"  @click="removeItemFromForm(scope.row)">移除</el-button>
                      </template>
                   </el-table-column>
                 </el-table>
@@ -83,13 +83,13 @@
           
          <el-col style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.C_REVIEWER1" auto-complete="off"></el-input>
-                </el-form-item>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="系统管理员"></UserSelectInput>
+               </el-form-item>
                  <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.C_REVIEWER2" auto-complete="off"></el-input>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="系统管理员"></UserSelectInput>
                 </el-form-item>
                  <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.C_REVIEWER3" auto-complete="off"></el-input>
+                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="系统管理员"></UserSelectInput>
                 </el-form-item>
 
               </el-col>
@@ -189,12 +189,14 @@
 
 
 <script type="text/javascript">
- import ShowShopingCart from "@/components/form/ShopingCart";
+import ShowShopingCart from "@/components/form/ShopingCart";
+import UserSelectInput from '@/components/controls/UserSelectInput';
 export default {
    components: {
-     ShowShopingCart:ShowShopingCart
+     ShowShopingCart:ShowShopingCart,
+     UserSelectInput:UserSelectInput
     },
-    name: "ShowProperty",
+    name: "BorrwoForm",
   data() {
     return {  
               gridviewName:'borrowGrid',
@@ -248,7 +250,7 @@ export default {
        axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
          
           _self.gridList = response.data.data;
-          if(typeof(_self.$route.query.borrowFormId)=="undefined"){
+          if(typeof(_self.formId)=="undefined"){
             _self.tabledata=_self.$route.query.tabledata;
           }else{
             _self.loadData();
@@ -393,31 +395,55 @@ export default {
       },2500);
       },
       
-        removeItemFromForm(varArg){
+      removeItemFromForm(varArg){
           let _self=this;
-          let m = new Map();
-          m.set("relateId",varArg);
-          axios.post("/dc/removeItemFromForm",m).then(function(response) {
-            let result = response.data;
-            if(result.code==1){
-              _self.$message({
-                showClose: true,
-                message: "操作成功!",
-                duration: 2000,
-                type: "success"
-              });
-            }
-      });
-          setTimeout(()=>{
-        axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
-            let result = response.data;
-            if(result.code==1){
-              _self.tabledata = result.data;
-            }
-      });
-      },1000);
+        if(typeof(_self.formId)=="undefined"   ||_self.formId==""){
+          let a=[];
+           a = _self.tabledata.filter(function(item){
+              return item.ID!=varArg.ID;
+             });
+           _self.tabledata=a;
 
-  }
+        }else{
+            let _self=this;
+            let m = new Map();
+            m.set("relateId",varArg.RELATE_ID);
+            axios.post("/dc/removeItemFromForm",m).then(function(response) {
+              let result = response.data;
+              if(result.code==1){
+                _self.$message({
+                  showClose: true,
+                  message: "操作成功!",
+                  duration: 2000,
+                  type: "success"
+                });
+              }
+        });
+            setTimeout(()=>{
+          axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
+              let result = response.data;
+              if(result.code==1){
+                _self.tabledata = result.data;
+              }
+        });
+        },1000);
+
+      }
+
+  },
+      viewdoc(indata){
+        let condition = indata.ID;
+     let href = this.$router.resolve({
+        path: '/viewdoc',
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, '_blank');
+    },
+
 
 
 
