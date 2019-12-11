@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,6 +34,8 @@ import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.variable.api.history.HistoricVariableInstance;
+import org.flowable.variable.api.persistence.entity.VariableInstance;
+import org.flowable.variable.service.VariableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -159,15 +163,19 @@ public class WorkflowController  extends ControllerAbstract{
 			int pageIndex= Integer.parseInt(args.get("pageIndex").toString());
 	    	List<HistoricTaskInstance> tasks =  historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().orderByTaskCreateTime().desc().listPage(pageIndex,pageSize);
  	        List<HashMap> resultList = new ArrayList<HashMap>();
+ 	        List<HashMap> resultListTemp = new ArrayList<HashMap>();
+ 	        Set<String> processIdSet = new HashSet<String>();
+ 	        HashMap<String, Object> map=null;
 	        for (HistoricTaskInstance task : tasks) {
-		        HashMap<String, Object> map = new HashMap<>();
+		        map = new HashMap<>();
+		        List<String> processInstanceIdsList=new ArrayList<String>();
 		        map.put("id", task.getId());
 		        map.put("processInstanceId", task.getProcessInstanceId());
+		        processIdSet.add(map.get("processInstanceId").toString());
 		        map.put("name", task.getName());
-		        map.put("startUser", historyService.createHistoricProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult().getStartUserId());
 		        map.put("createTime", task.getCreateTime());
 		        map.put("endTime", task.getEndTime());
-		        getTaskApprovalResult(task.getId(), map);
+//		        getTaskApprovalResult(task.getId(), map);
 
 //		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
 //		        String taskComments="";
@@ -175,10 +183,21 @@ public class WorkflowController  extends ControllerAbstract{
 //	        	
 //		        	taskComments=taskComments+commentsList.get(0).getFullMessage()+"; ";
 //				}
- 		        resultList.add(map);
+ 		        resultListTemp.add(map);
 	        }
+	        List<HistoricProcessInstance> processInstanceList=  historyService.createHistoricProcessInstanceQuery().processInstanceIds(processIdSet).list();
+	        for (int i = 0; i < resultListTemp.size(); i++) {
+	        	map=resultListTemp.get(i);
+	        	for (int j = 0; j < processInstanceList.size(); j++) {
+	        		if(map.get("processInstanceId").equals(processInstanceList.get(j).getId())){
+			        	map.put("startUser", processInstanceList.get(j).getStartUserId());
+	        		}
+				}
+	        	resultList.add(map);
+			}
+ 
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
-	        resultMap.put("data",  resultList);
+	        resultMap.put("data",  resultListTemp);
 	        resultMap.put("totalCount", historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().count());
 	        return resultMap;
 	    }
@@ -204,21 +223,22 @@ public class WorkflowController  extends ControllerAbstract{
 	    public HashMap<String,Object> todoTask(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String userId= args.get("userId").toString();
-			String condition= args.get("condition").toString();
 			int pageSize= Integer.parseInt(args.get("pageSize").toString()) ;
 			int pageIndex= Integer.parseInt(args.get("pageIndex").toString());
  
 			List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().listPage(pageIndex, pageSize);
 	        List<HashMap> resultList = new ArrayList<HashMap>();
+	        Map<String, VariableInstance> varMap=null;
+	        HashMap<String, Object> map=null;
 	        for (Task task : tasks) {
-		        HashMap<String, Object> map = new HashMap<>();
+		        map = new HashMap<>();
+		        map.put("processInstanceId", task.getProcessInstanceId());
+		        varMap=runtimeService.getVariableInstances(map.get("processInstanceId").toString());
 		        map.put("id", task.getId());
 		        map.put("name", task.getName());
-		        map.put("startUser", runtimeService.getVariable(task.getProcessInstanceId(), "startUser"));
-		        map.put("formId", runtimeService.getVariable(task.getProcessInstanceId(), "formId"));
+		        map.put("startUser", varMap.get("startUser").getValue());
+		        map.put("formId", varMap.get("formId").getValue());
 		        map.put("createTime", task.getCreateTime());
-		        map.put("processInstanceId", task.getProcessInstanceId());
-		        
 		        resultList.add(map);
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();

@@ -81,6 +81,14 @@ const router = new Router({
 })
 router.beforeEach((to, from, next) => {
 	var user = sessionStorage.getItem('access-token')
+	try{
+		console.log(window.location.href);
+		//console.log(JSON.stringify(from))
+		//console.log(JSON.stringify(to))
+		//console.log(JSON.stringify(next))
+	}catch(e){
+		console.log(e)
+	}
 	if (!user && to.path !== '/login') {
 		sessionStorage.removeItem('access-user')
 		sessionStorage.removeItem('access-token')

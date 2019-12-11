@@ -60,4 +60,6 @@ public interface IUserService {
 
 	List<EcmUser> getUsersByGroupName(String token, Pager pager, String noGroup, String groupName, String condition);
 
+	LoginUser authenticationSSO(EcmUser ecmUser) throws Exception;
+
 }
