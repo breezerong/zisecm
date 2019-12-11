@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,9 +49,9 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
-import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
@@ -87,7 +86,9 @@ public class EcmDcController extends ControllerAbstract{
 
 	@Autowired
 	private QueryService queryService;
-
+	
+	@Autowired
+	private FolderPathService folderPathService;
 
 
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
@@ -1273,6 +1274,67 @@ public class EcmDcController extends ControllerAbstract{
 		  }
 		  return mp;
 		 }
+		
+		/**
+		 * 下架文件
+		 * @param argStr
+		 * @return
+		 * @throws Exception 
+		 */
+		 @RequestMapping(value = "/dc/obtainDocument", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> obtainDocuments(@RequestBody String argStr) throws Exception{
+			Map<String, Object> mp = new HashMap<String, Object>();
+			List<String> list = JSONUtils.stringToArray(argStr);
+			StringBuffer responseFile = null;
+			StringBuffer responseFox = null;
+			for (String docId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), docId);
+				if(doc.getTypeName().equals("卷盒")||doc.getTypeName().equals("图册")) {
+					String sql1="select child_id from ecm_relation where parent_id ='"+docId+"' and name='irel_children'";
+					List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql1);
+					int count = 0;
+					for(int i=0;childrenId!=null&&i<childrenId.size();i++) {
+						Map<String,Object> first= childrenId.get(i);
+						EcmDocument childDoc= documentService.getObjectById(getToken(), (String) first.get("child_id"));
+						if (childDoc.getStatus().equals("注销")) {
+							count = count+1;
+						}
+					}
+					if(count>0) {
+						responseFox.append(doc.getName());
+					}else {
+						Map<String,Object> docAttr=doc.getAttributes();
+						String boxFolderPathId= folderPathService.getArrangeFolderId(getToken() , docAttr);
+						doc.setFolderId(boxFolderPathId);
+						doc.setStatus("整编");
+						documentService.updateObject(getToken(), doc, null);
+						for(int i=0;childrenId!=null&&i<childrenId.size();i++) {
+							Map<String,Object> first= childrenId.get(i);
+							EcmDocument childDoc= documentService.getObjectById(getToken(), (String) first.get("child_id"));
+							Map<String,Object> childAtt=childDoc.getAttributes();
+							String folderPathId= folderPathService.getArrangeFolderId(getToken(),childAtt);
+							childDoc.setFolderId(folderPathId);
+							childDoc.setStatus("整编");
+							documentService.updateObject(getToken(), childDoc, null);
+						}
+					}
+					
+				}else {
+						responseFile.append(doc.getName()+" ");
+				}
+			}
+			mp.put("code", ActionContext.SUCESS);
+			String mess = "下架";
+			if (responseFile!=null) {
+				mess = mess+" "+responseFile.toString()+"为非卷盒文件;";
+			}if(responseFox!=null) {
+				mess = mess+""+responseFox.toString()+"的子文件已经被删除，请恢复后操作";
+			}
+			mp.put("msg", mess);
+			return mp;
+		}
+		
 		//在回收站恢复文档
 		@RequestMapping(value = "/dc/restoreDocuments", method = RequestMethod.POST)
 		 @ResponseBody

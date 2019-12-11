@@ -643,7 +643,7 @@ export default {
           obtainItemId.push(this.selectedItemList[i].ID);
         }
         axios
-          .post("/dc/obtainDocuments", JSON.stringify(obtainItemId))
+          .post("/dc/obtainDocument", JSON.stringify(obtainItemId))
           .then(function(response) {
             if (response.data.code) {
               if (_self.showBox) {
