@@ -88,6 +88,9 @@ public class NumberService extends EcmService {
 		for(String str:strs) {
 			if(str.startsWith("{")) {
 				String attrName = str.replace("{", "").replace("}", "");
+				if(values.get(attrName)==null) {
+					throw new Exception(attrName+"为空！");
+				}
 				prefix +=  (String)values.get(attrName);
 			}
 			else if(str.startsWith("Date(")) {
@@ -105,6 +108,9 @@ public class NumberService extends EcmService {
 						dt=formatter.parse((String) values.get(attrName));
 					}
 				}
+				if(dt==null) {
+					throw new Exception(attrName+"为空！");
+				}
 				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				prefix +=  sdf.format(dt);
 			}
@@ -118,10 +124,20 @@ public class NumberService extends EcmService {
 				String[] temps = tempStr.split(",");
 				String attrName = temps[0];
 				String queryName = temps[1];
+				if(values.get(attrName)==null) {
+					throw new Exception(attrName+"为空！");
+				}
 				String val = (String)values.get(attrName);
+				
 				prefix += getCoding( val,queryName);
 			}
 			else if(str.startsWith("FUN_DesignPhase")) {
+				if(values.get("OBJECT_TYPE")==null) {
+					throw new Exception("OBJECT_TYPE为空！");
+				}
+				if(values.get("C_PHASE")==null) {
+					throw new Exception("C_PHASE为空！");
+				}
 				String subType = (String)values.get("OBJECT_TYPE");
 				String phase = (String)values.get("C_PHASE");
 				prefix += getDesignPhase(token, subType, phase);

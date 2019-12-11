@@ -1413,10 +1413,17 @@ export default {
           url: "/dc/takeNumbers"
         })
         .then(function(response) {
-          _self.loadGridData(_self.currentFolder);
-           
-            _self.showInnerFile(null);
-          _self.$message("取号成功！");
+            _self.loadGridData(_self.currentFolder);
+            // _self.showInnerFile(null);
+            _self.innerDataList =[];
+            _self.outerDataList=[];
+            let code=response.data.code;
+            if(code==1){
+               _self.$message("取号成功！");
+            }else{
+              _self.$message(response.data.message);
+            }
+         
         })
         .catch(function(error) {
           _self.$message(_self.$t("message.takeNumberFaild"));
