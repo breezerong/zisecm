@@ -1,5 +1,8 @@
 package com.ecm.flowable.listener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.flowable.engine.RuntimeService;
@@ -11,6 +14,8 @@ import org.flowable.task.service.delegate.DelegateTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ecm.core.ActionContext;
+import com.ecm.core.PermissionContext;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
@@ -31,6 +36,8 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
   	@Autowired
    private DocumentService documentService;
   	@Autowired
+   private RelationService relationService;
+  	@Autowired
    private AuthService authService;
   	private String token;
 	 
@@ -43,11 +50,23 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
     		arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
     		arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
     	}
-    	extracted(arg0); 
+    	IEcmSession ecmSession=null;
+    	String workflowSpecialUserName="admin";
+    	try {
+    		ecmSession=authService.login("workflow",workflowSpecialUserName,"admin");
+        	extracted(ecmSession,arg0); 
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			  if(ecmSession!=null) {
+				  authService.logout(workflowSpecialUserName);
+			  }
+		}
 		System.out.println("DelegateExecution_notify");
     }
 
-	private void extracted(org.flowable.variable.api.delegate.VariableScope arg0) {
+	private Map<String, Object> extracted(IEcmSession ecmSession,org.flowable.variable.api.delegate.VariableScope arg0) {
 		//查询借阅流程中的表单变量
     	//添加业务逻辑解析表单或变量，执行判断操作
     	//如果纸质节约且内部公开，设置input=纸质借阅&内部公开 否则设置 input= 否
@@ -56,10 +75,7 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
 
     	Map<String, Object>  varMap = arg0.getVariables();
     	String formId= varMap.get("formId").toString();
-    	String workflowSpecialUserName="admin";
-    	IEcmSession ecmSession=null;
     	try {
-    		 ecmSession=authService.login("workflow",workflowSpecialUserName,"admin");
 			EcmDocument  ecmObject = documentService.getObjectById(ecmSession.getToken(), formId);
  
     	
@@ -121,11 +137,8 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
             arg0.setTransientVariables(varMap);
     	} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			  if(ecmSession!=null) {
-				  authService.logout(workflowSpecialUserName);
-			  }
-		}
+		} 
+    	return varMap;
 	}
 
 	/**
@@ -137,11 +150,39 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
     		arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
     		arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
     	}
-        if("automaticAuthorization".equals(arg0.getCurrentFlowElement().getId())) {
-            TODOApplication.getNeedTOChange();
-            //写出文档授权逻辑
-        }
-    	extracted(arg0); 
+    	IEcmSession ecmSession=null;
+    	String workflowSpecialUserName="admin";
+    	try {
+    		ecmSession=authService.login("workflow",workflowSpecialUserName,"admin");
+        	extracted(ecmSession,arg0); 
+            if("automaticAuthorization".equals(arg0.getCurrentFlowElement().getId())) {
+        		Map<String, Object> varMap = extracted(ecmSession,arg0); 
+        		String formId=varMap.get("formId").toString();
+        		
+    			List<Map<String, Object>>  childList=null;
+ 
+    				  String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
+    						     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+    						     + " and a.PARENT_ID='"+formId+"' order by a.ORDER_INDEX,b.CREATION_DATE";
+    				  childList = documentService.getMapList(ecmSession.getToken(), sql);
+					  Map<String, Object> formObj=documentService.getObjectMapById(ecmSession.getToken(),formId);
+    				  for (int i = 0; i < childList.size(); i++) {
+	   					  EcmDocument docObj=documentService.getObjectById(ecmSession.getToken(), childList.get(i).get("CHILD_ID").toString());
+	   					  documentService.grantUser(ecmSession.getToken(), docObj, varMap.get("startUser").toString(), PermissionContext.ObjectPermission.READ, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(formObj.get("C_END_DATE").toString()), true);
+    				  }
+
+                
+                //写出文档授权逻辑
+            }
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}finally {
+			  if(ecmSession!=null) {
+				  authService.logout(workflowSpecialUserName);
+			  }
+		}
 		System.out.println("DelegateExecution_execute");
  	}
 
@@ -154,7 +195,18 @@ public class StartExecutorListener  implements ExecutionListener ,JavaDelegate,T
     		arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
     		arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
     	}
-    	extracted(arg0); 
+    	IEcmSession ecmSession=null;
+    	String workflowSpecialUserName="admin";
+    	try {
+    		ecmSession=authService.login("workflow",workflowSpecialUserName,"admin");
+        	extracted(ecmSession,arg0); 
+    	} catch (Exception e) {
+			// TODO: handle exception
+		}finally {
+			  if(ecmSession!=null) {
+				  authService.logout(workflowSpecialUserName);
+			  }
+		}
 		System.out.println("DelegateTask_notify");
 		
 	}
