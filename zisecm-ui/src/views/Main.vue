@@ -71,8 +71,10 @@ export default {
     };
   },
   beforeCreate() {
+    
     var user = sessionStorage.getItem("access-user");
     if (!user) {
+      console.log("go to login.................");
       this.$router.push({ name: "login" });
     }
   },

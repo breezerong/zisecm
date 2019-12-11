@@ -16,9 +16,12 @@
       <el-col :span="4">
         <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始导入</el-button>
       </el-col>
+      <el-col :span="4">
+         <el-button plain size="small" type="primary" @click="cleanFiles()">清除所有文件</el-button>
+      </el-col>
     </el-row>
     <el-row>
-      <el-col :span="8">
+      <el-col :span="12">
         <el-form-item label="Excel文件" style="float: left;">
           <el-upload
             :limit="1"
@@ -32,7 +35,7 @@
           </el-upload>
         </el-form-item>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="12">
         <el-form-item label="电子文件" style="float: left;">
           <el-upload
             :limit="100"
@@ -41,7 +44,6 @@
             :on-change="handleChange2"
             :auto-upload="false"
             :multiple="true"
-            
           >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             
@@ -49,9 +51,7 @@
          
         </el-form-item>
       </el-col>
-      <el-col :span="4">
-         <el-button plain size="small" type="primary" @click="cleanFiles()">清除所有文件</el-button>
-      </el-col>
+      
     </el-row>
 
     <el-row>
@@ -142,7 +142,9 @@ export default {
           _self.importMessage = response.data.data;
           _self.loading = false;
           _self.$message("导入成功!");
+          _self.cleanFiles();
           _self.$emit("onImported");
+          
         })
         .catch(function(error) {
           _self.$message("导入失败!");

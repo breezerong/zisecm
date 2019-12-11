@@ -26,4 +26,5 @@ public interface IAuthService {
 	 * @param token
 	 */
 	void logout(String token);
+	IEcmSession loginSSO(String appName, String loginName) throws Exception;
 }

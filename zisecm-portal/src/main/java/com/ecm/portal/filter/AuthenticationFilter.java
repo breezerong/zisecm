@@ -56,6 +56,7 @@ public class AuthenticationFilter implements Filter {
         response.setCharacterEncoding("UTF-8");
         
     	if(SysConfig.getLoginPath().equalsIgnoreCase(req.getServletPath())
+    			||req.getServletPath().indexOf("ssoLogin")>=0
          		||req.getServletPath().indexOf("newDocument")>=0
          		||req.getServletPath().indexOf("getContent")>=0
          		||req.getServletPath().indexOf("getUserImage")>=0
