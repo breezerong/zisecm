@@ -72,7 +72,7 @@
         </el-footer>
       </div>
     </el-dialog>
-    <el-col :span="19">
+    <el-col :span="16">
       <el-input type="text" :placeholder="$t('application.selectUser')" readonly="readonly" v-model="inputValue"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
@@ -135,7 +135,7 @@ export default {
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
       let _self = this;
-      axios.post("/zisecm/admin/getUsers",m)
+      axios.post("/admin/getUsers",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           if(_self.inputValue ){
@@ -169,7 +169,7 @@ export default {
       m.set("condition", "name like '%" + this.findValue + "%'");
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
-      axios.post("/zisecm/admin/getUsers",m)
+      axios.post("/admin/getUsers",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           for (var i = 0; i < _self.rightListId.length; i++) {
