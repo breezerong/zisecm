@@ -132,13 +132,13 @@ public class NumberService extends EcmService {
 				prefix += getCoding( val,queryName);
 			}
 			else if(str.startsWith("FUN_DesignPhase")) {
-				if(values.get("OBJECT_TYPE")==null) {
-					throw new Exception("OBJECT_TYPE为空！");
+				if(values.get("SUB_TYPE")==null) {
+					throw new Exception("SUB_TYPE为空！");
 				}
 				if(values.get("C_PHASE")==null) {
 					throw new Exception("C_PHASE为空！");
 				}
-				String subType = (String)values.get("OBJECT_TYPE");
+				String subType = (String)values.get("SUB_TYPE");
 				String phase = (String)values.get("C_PHASE");
 				prefix += getDesignPhase(token, subType, phase);
 			}
