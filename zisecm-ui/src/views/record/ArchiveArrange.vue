@@ -1368,7 +1368,7 @@ export default {
           _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
           return;
         }
-        if(tab[i]["SUB_TYPE"]!="盒"){
+        if(tab[i]["SUB_TYPE"]=="盒"){
           p.push(tab[i]["ID"]);
         }
         m.push(tab[i]["ID"]);
