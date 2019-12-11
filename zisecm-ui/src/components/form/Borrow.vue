@@ -76,7 +76,7 @@
               <div v-if="vshowShopingCart==true">
               <ShowShopingCart
                 ref="ShowShopingCart"
-                width="100%"  v-bind:formId="formId"></ShowShopingCart>           
+                width="100%"  v-bind:formId="formId" v-bind:excludeRows="tabledata"></ShowShopingCart>           
                 <el-button ref="add" style="float:left"  @click="addToFormFromShopingCart()">添加到表单</el-button>
               </div>
             </el-col>
@@ -374,6 +374,7 @@ export default {
           _self.vshowShopingCart=true;
           _self.showOrCloseShopingCartLabel="关闭购物车"
           if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
+             
             _self.$refs.ShowShopingCart.openShopingCart();
           }      
         
