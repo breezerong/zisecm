@@ -56,6 +56,9 @@ public class NumberService extends EcmService {
 		 + typeName +"' and TYPE_NAME='取号规则' order by C_ORDER_INDEX ASC";
 		
 		List<Map<String, Object>> policyList = ecmQuery.executeSQL(sql);
+		if(policyList==null||policyList.size()==0) {
+			throw new Exception("没有取号规则，请检查！");
+		}
 		for(Map<String, Object> policy: policyList) {
 			String cond = (String)policy.get("TITLE");
 			String numPolicy = (String)policy.get("C_COMMENT");
