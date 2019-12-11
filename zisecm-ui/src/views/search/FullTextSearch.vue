@@ -239,6 +239,7 @@ export default {
       terms: [],
       inputkey: "",
       checkedCards: [],
+      checkedFromRouter:[],
       cards: [],
       currentType: "",
       currentItem: "",
@@ -279,6 +280,7 @@ export default {
         _self.checkedCards = getMap.get("checkedCards");
         _self.propertyOnly = getMap.get("propertyOnly");
         _self.cardsLabel = getMap.get("checkedCards");
+        _self.checkedFromRouter = getMap.get("checkedCards");
         _self.enterDown();
       }
     }catch(error){
@@ -390,11 +392,12 @@ export default {
       this.currentPage = val;
       this.search(this.isScend);
     },
-    loadCards(indata) {
+    async loadCards(indata) {
       let _self = this;
       _self.loading = true;
+      console.log("方法内"+_self.checkedFromRouter)
       var m = new Map();
-      axios
+      await axios
         .post("/search/getCardSearchs", _self.getLang())
         .then(function(response) {
           _self.cards = response.data.data;
@@ -408,6 +411,19 @@ export default {
           console.log(error);
           _self.loading = false;
         });
+        // if(_self.checkedFromRouter.length>0){
+        //   for(var i = 0; i <_self.checkedFromRouter.length;i++){
+        //     var item = _self.checkedFromRouter[i]
+        //     console.log(item)
+        //       for(var j = 0;j<_self.cards.length;j++){
+        //         if(item == _self.cards[j].label){
+        //           _self.cards[j].description = true
+        //           break;
+        //         }
+        //       }
+        //   }
+        //   console.log(_self.cards)
+        // }
     },
     // 加载表格样式
     loadGridInfo() {
@@ -435,7 +451,6 @@ export default {
       _self.isScend = isScend;
       //console.log(JSON.stringify(_self.checkedCards));
       var m = new Map();
-      // +++++
       m.set("keyword", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", _self.currentPage - 1);
@@ -460,7 +475,6 @@ export default {
           m.set("terms", terms);
         }
       }
-      console.log(JSON.stringify(m));
       axios
         .post("/search/searchByKeyword", JSON.stringify(m))
         .then(function(response) {
