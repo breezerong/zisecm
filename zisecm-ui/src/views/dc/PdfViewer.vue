@@ -29,7 +29,8 @@ export default {
   methods: {
     loadUrl() {
       let _self = this;
-      _self.pdfUrl =  _self.axios.defaults.baseURL+"/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token')+"&format=pdf";
+      let getfileUrl =  _self.axios.defaults.baseURL+"/dc/getContent?id="+_self.id+"&token="+sessionStorage.getItem('access-token')+"&format=pdf";
+      _self.pdfUrl = "./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(getfileUrl)+"&.pdf"
     }
   }
 };
