@@ -103,7 +103,7 @@ public class FolderPathService extends EcmService {
 					id = createFolder(token, values, folderPolicy);
 					break;
 				}
-			}else if(policyList.size()==1){
+			}else if(policyList.size()==1 || StringUtils.isEmpty(cond)){
 				id = createFolder(token, values, folderPolicy);
 				break;
 			}
