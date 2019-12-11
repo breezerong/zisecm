@@ -515,7 +515,7 @@ public class EcmDocument extends EcmSysObject{
 	    	
 			break;
 		default:
-			attributes.get(key.toUpperCase());
+			result=attributes.get(key.toUpperCase());
 			break;
 		}
 		return result;

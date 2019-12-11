@@ -73,14 +73,16 @@
                 </el-table-column>
                 <el-table-column prop="name" label="名称"  min-width="20%" sortable>
                 </el-table-column>
+                <el-table-column prop="startUser" label="发起人" min-width="12%" sortable>
+                </el-table-column>
                 <el-table-column prop="createTime" label="开始时间" :formatter="dateFormatter" min-width="12%" sortable>
                 </el-table-column>
                 <el-table-column prop="endTime" label="完成时间" :formatter="dateFormatter"   min-width="12%" sortable>
                 </el-table-column>
-                <el-table-column prop="result" label="完成结果"  min-width="10%">
+                <!-- <el-table-column prop="result" label="完成结果"  min-width="10%">
                 </el-table-column>
                 <el-table-column prop="message" label="审批意见"  min-width="15%">
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column label="操作"  width="80">
                   <template slot-scope="scope">
                     <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>

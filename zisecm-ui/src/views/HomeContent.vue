@@ -68,7 +68,7 @@
             </div>
             <el-table :data="dataList.todoData" v-loading="loadingTodoData" style="width:100%;" :show-header="false">
               <el-table-column label="任务名称">
-                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row.id)">{{(scope.row.name)}}</el-link>
+                <el-link slot-scope="scope" type="primary" @click="openTask(scope.row.id)">{{(scope.row.name)}}</el-link>
              </el-table-column>
               <el-table-column prop="startUser" label="发送人"></el-table-column>
               <el-table-column label="发送时间" align="right">
@@ -420,6 +420,17 @@ export default {
         .catch(function(error) {
           console.log(error);
           _self.loading = false;
+        });
+    },
+    openTask(taskId){
+      let _self=this;
+      _self.$router.push(
+        {
+            path:_self.jumpPath.todolist,
+            query: { 
+              openTaskFromMainPage: 1,
+              taskId:taskId
+             }
         });
     }
   }

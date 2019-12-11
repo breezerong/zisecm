@@ -6,7 +6,7 @@
       :close-on-click-modal="false"
       @open="refreshData"
       @close="closeDialog"
-      :title="$t('application.selectUser')+'('+isRepeat?$t('application.multSelector'):$t('application.singleSelector')+')'"
+      :title="$t('application.selectUser')"
       width="60%"
     >
       <div>
@@ -72,7 +72,7 @@
         </el-footer>
       </div>
     </el-dialog>
-    <el-col :span="19">
+    <el-col :span="16">
       <el-input type="text" :placeholder="$t('application.selectUser')" readonly="readonly" v-model="inputValue"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
@@ -113,6 +113,10 @@ export default {
     maxCount: {
       type: Number,
       default: 50
+    },
+    roleName: {
+      type: String,
+      default: ""
     }
   },
   // computed:{
@@ -129,13 +133,14 @@ export default {
   // },
   methods: {
     refreshData() {
+      let _self = this;
       var m = new Map();
       m.set("noGroup", "");
       m.set("condition", "name like '%" + this.findValue + "%'");
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
-      let _self = this;
-      axios.post("/zisecm/admin/getUsers",m)
+      m.set("roleName", _self.roleName);    
+      axios.post("/admin/getUsersByGroupName",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           if(_self.inputValue ){
@@ -169,7 +174,8 @@ export default {
       m.set("condition", "name like '%" + this.findValue + "%'");
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
-      axios.post("/zisecm/admin/getUsers",m)
+      m.set("roleName", _self.roleName);
+      axios.post("/admin/getUsersByGroupName",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           for (var i = 0; i < _self.rightListId.length; i++) {

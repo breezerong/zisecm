@@ -48,7 +48,7 @@
               </el-col>
               <el-col :span="8" style="float: left;text-align:left;">
                 <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始挂载</el-button>
-                <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
+                <el-button plain type="primary" @click="cleanFiles1()">清除所有文件</el-button>
               </el-col>
             </el-row>
           </el-tab-pane>
@@ -77,7 +77,7 @@
               </el-col>
               <el-col :span="8" style="float: left;text-align:left;">
                 <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始挂载</el-button>
-                <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
+                <el-button plain type="primary" @click="cleanFiles2()">清除所有文件</el-button>
               </el-col>
             </el-row>
           </el-tab-pane>
@@ -98,10 +98,79 @@ export default {
   data() {
     return {
       activeName: "first",
+      fileList1:[],
+      fileList2:[],
+      fileList3:[],
       loading:false
     };
   },
-  methods: {}
+  methods: {
+    handleChange1(file, fileList) {
+      this.fileList1 = fileList;
+    },
+    handleChange2(file, fileList) {
+      this.fileList2 = fileList;
+    },
+    handleChange3(file, fileList) {
+      this.fileList3 = fileList;
+    },
+    cleanFiles1(){
+      this.fileList1 = [];
+      this.fileList2 = [];
+    },
+    cleanFiles2(){
+      this.fileList3 = [];
+    },
+    batchMount1() {
+      let _self = this;
+      if (_self.fileList1 == null || _self.fileList1.length == 0||_self.fileList1[0].raw==null) {
+        _self.$message("请选择挂载Excel文件!");
+        return;
+      }
+      let formdata = new FormData();
+      formdata.append("excel", _self.fileList1[0].raw);
+      _self.fileList2.forEach(function(file) {
+        formdata.append("files", file.raw, file.name);
+      });
+      _self.loading = true;
+      axios
+        .post("/tools/mountByExcel", formdata, {
+          "Content-Type": "multipart/form-data"
+        })
+        .then(function(response) {
+          _self.importMessage = response.data.data;
+          _self.loading = false;
+          _self.$message("挂载成功!");
+          _self.cleanFiles1();
+        })
+        .catch(function(error) {
+          _self.$message("挂载失败!");
+          console.log(error);
+        });
+    },
+    batchMount2() {
+      let _self = this;
+      let formdata = new FormData();
+      _self.fileList3.forEach(function(file) {
+        formdata.append("files", file.raw, file.name);
+      });
+      _self.loading = true;
+      axios
+        .post("/tools/mountByFile", formdata, {
+          "Content-Type": "multipart/form-data"
+        })
+        .then(function(response) {
+          _self.importMessage = response.data.data;
+          _self.loading = false;
+          _self.$message("挂载成功!");
+          _self.cleanFiles2();
+        })
+        .catch(function(error) {
+          _self.$message("挂载失败!");
+          console.log(error);
+        });
+    }
+  }
 };
 </script>
 <style scoped>

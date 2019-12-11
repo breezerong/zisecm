@@ -22,6 +22,7 @@ import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.SecureUtils;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.PermissionContext.ObjectPermission;
+import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmGroupItemMapper;
@@ -471,6 +472,13 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	@Override
+	public List<EcmUser> getUsersByGroupName(String token,Pager pager, String noGroup,String groupName, String condition) {
+		EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
+		String groupId=groupObj.getId();
+		return getRoleUsers( token, pager,  noGroup, groupId,  condition);
+	}
+	
+	@Override
 	public long getRoleUserCount(String token,boolean noRole,String groupId,String condition) {
 		String sql = "select count(*) as objcount from ecm_user a ";
 		if(!EcmStringUtils.isEmpty(condition))
@@ -574,4 +582,43 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		List<Map<String, Object>> list =  ecmUserMapper.searchToMap(sql);
 		return list.size()>0;
 	}
+	
+	@Override
+	public LoginUser authenticationSSO(EcmUser ecmUser) throws Exception {
+		
+		EcmUser loginUser = ecmUserMapper.selectByLoginName(ecmUser.getLoginName());
+		if(loginUser==null)
+		{
+			throw new Exception("User :"+ecmUser.getLoginName()+" is not exists.");
+		}
+		String password = loginUser.getPassword();
+		String loginPassword = ecmUser.getPassword();
+		
+		if(loginUser.getSystemPermission()<SystemPermission.SUPER_USER) {
+			logger.debug("User :"+ecmUser.getLoginName()+" login by sso");
+		}
+		else {
+			if(password.length()>30) {
+				loginPassword = SecureUtils.shaEncode(loginPassword);
+			}
+			if(!password.equals(loginPassword))
+			{
+				throw new Exception("Password wrong.");
+			}
+		}
+		if(!loginUser.getIsActived()) {
+			throw new Exception("The status of user is inactive.");
+		}
+		//设置登录用户信息
+		LoginUser cuser = new LoginUser();
+		cuser.setUserId(loginUser.getId());
+		cuser.setUserName(loginUser.getName());
+		cuser.setLoginName(loginUser.getLoginName());
+		cuser.setClientPermission(loginUser.getClientPermission());
+		cuser.setSystemPermission(loginUser.getSystemPermission());
+		cuser.setLoginTime(new Date());
+		cuser.setDepartment(loginUser.getGroupName());
+		return cuser;
+	}
+	
 }
