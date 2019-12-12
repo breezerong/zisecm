@@ -150,6 +150,7 @@ export default {
         .then(function(response) {
 
           _self.bindData(response.data.data);
+          _self.file=[];
           _self.fileList = [];
           //console.log(JSON.stringify(response.data.data));
           _self.loading = false;

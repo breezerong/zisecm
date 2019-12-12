@@ -312,7 +312,7 @@ export default {
                     textStyle: {
                       //数值样式
                       color: "black",
-                      fontSize: 16
+                      fontSize: 10
                     }
                   }
                 }

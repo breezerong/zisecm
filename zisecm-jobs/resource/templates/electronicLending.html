@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="gbk">
+		<title></title>
+	</head>
+<style type="text/css">
+table {
+	width: 600px;
+	border: 1px solid;
+	text-align: center; border-collapse: collapse;
+	margin-left: 100px;
+}
+
+tr {
+	width: 100%;
+	height: 30px;
+	border: 1px solid;
+}
+th,td{
+	
+	height: 30px;
+	line-height: 30px;
+	border: 1px solid;
+}
+</style>	
+	<body>
+		
+		
+<pre>
+	尊敬的用户，
+	
+		您好！
+		
+		您发起的借阅申请<span th:text="${id}"></span>,<span th:text="${userName}"></span>已经完成，请通过下面链接查看文档：
+		
+	<table cellspacing="0" cellpadding="0">
+		<tr >
+			<th>序号</th>
+			<th colspan="2">编码</th>
+			<th>版本</th>
+			<th colspan="3">文件名</th>
+		</tr>
+		<tr>
+			<td><span th:text="${id}"></span></td>
+			<td colspan="2"><span th:text="${account}"></span></td>
+			<td><span th:text="${name}"></span></td>
+			<td colspan="3"><span th:text="${accountType}"></span></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td colspan="2"></td>
+			<td></td>
+			<td colspan="3"></td>
+		</tr>
+
+		
+	</table>
+		
+		此邮件由档案管理系统自动发送，请不要回复。
+</pre>		
+	</body>
+</html>
