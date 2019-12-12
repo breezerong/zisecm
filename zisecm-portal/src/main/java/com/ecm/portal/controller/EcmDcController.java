@@ -1286,8 +1286,8 @@ public class EcmDcController extends ControllerAbstract{
 		 public Map<String,Object> obtainDocuments(@RequestBody String argStr) throws Exception{
 			Map<String, Object> mp = new HashMap<String, Object>();
 			List<String> list = JSONUtils.stringToArray(argStr);
-			StringBuffer responseFile = null;
-			StringBuffer responseFox = null;
+			StringBuffer responseFile = new StringBuffer();
+			StringBuffer responseFox = new StringBuffer();
 			for (String docId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), docId);
 				if(doc.getTypeName().equals("卷盒")||doc.getTypeName().equals("图册")) {
@@ -1302,7 +1302,7 @@ public class EcmDcController extends ControllerAbstract{
 						}
 					}
 					if(count>0) {
-						responseFox.append(doc.getName());
+						responseFox.append(doc.getName()+"; ");
 					}else {
 						Map<String,Object> docAttr=doc.getAttributes();
 						String boxFolderPathId= folderPathService.getArrangeFolderId(getToken() , docAttr);
@@ -1321,17 +1321,24 @@ public class EcmDcController extends ControllerAbstract{
 					}
 					
 				}else {
-						responseFile.append(doc.getName()+" ");
+						responseFile.append(doc.getName()+", ");
 				}
 			}
-			mp.put("code", ActionContext.SUCESS);
-			String mess = "下架";
-			if (responseFile!=null) {
-				mess = mess+" "+responseFile.toString()+"为非卷盒文件;";
-			}if(responseFox!=null) {
-				mess = mess+""+responseFox.toString()+"的子文件已经被删除，请恢复后操作";
+			
+			String mess = "下架文件:";
+			if (responseFile!=null&&!responseFile.toString().equals("")) {
+				mess = mess+" "+responseFile.toString().trim().substring(0,responseFile.toString().length()-2)+"为非卷盒文件; ";
 			}
-			mp.put("msg", mess);
+			if(responseFox!=null&&!responseFox.toString().equals("")) {
+				mess = mess+""+responseFox.toString().trim().substring(0,responseFox.toString().length()-2)+"的子文件存在删除项，请恢复后操作;";
+			}
+			if (mess.equals("下架文件:")) {
+				mp.put("code", ActionContext.SUCESS);
+				mp.put("msg", "下架成功");
+			}else {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("msg", mess);
+			}
 			return mp;
 		}
 		

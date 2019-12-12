@@ -653,14 +653,14 @@ export default {
               }
               _self.$message({
                 showClose: true,
-                message: "下架成功!",
+                message: response.data.msg,
                 duration: 2000,
                 type: "success"
               });
             } else {
               _self.$message({
                 showClose: true,
-                message: "下架失败!",
+                message: response.data.msg,
                 duration: 2000,
                 type: "warning"
               });
