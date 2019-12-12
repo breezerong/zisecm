@@ -314,10 +314,10 @@ export default {
         fileTopestSecurityLevel="内部公开";
       }
       m.set("documentIds",documentIds);
-      axios.post("/dc/saveBorrowForm",JSON.stringify(m)).then(function(response){
+     _self.loading = true;
+     axios.post("/dc/saveBorrowForm",JSON.stringify(m)).then(function(response){
         _self.formId=response.data.data;
         console.log(response);  
-        _self.loading = false;
         m= new Map();
         m.set("formId",_self.formId);
         m.set("fileTopestSecurityLevel",fileTopestSecurityLevel);
