@@ -66,7 +66,6 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.AuditService;
 import com.ecm.flowable.listener.JobListener;
-import com.ecm.flowable.mapper.VarQueryMapper;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.portal.test.flowable.TODOApplication;
 
