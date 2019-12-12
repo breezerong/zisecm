@@ -298,7 +298,7 @@ export default {
           m.set("processInstanceId",indata.processInstanceId);
           axios.post("/workflow/getWorkflowTask",JSON.stringify(m))
           .then(function(response) {
-            _self.taskList = response.data;
+            _self.taskList = response.data.data;
             //console.log(JSON.stringify(_self.taskList));
             _self.dialogVisible = true;
             _self.loading = false;
