@@ -1241,39 +1241,6 @@ public class EcmDcController extends ControllerAbstract{
 			}
 			return mp;
 		}
-
-	 
-	//下架文件，更改文件状态为“整编”
-		@RequestMapping(value = "/dc/obtainDocuments", method = RequestMethod.POST)
-		 @ResponseBody
-		 public Map<String,Object> obtainDocument(@RequestBody String argStr) {
-		  List<String> list = JSONUtils.stringToArray(argStr);
-		  Map<String, Object> mp = new HashMap<String, Object>();
-		  try {
-			  for (String id : list) {
-				  EcmDocument ecmDocument = documentService.getObjectById(getToken(), id);
-				  if(ecmDocument.getTypeName().equals("卷盒")||ecmDocument.getTypeName().equals("图册")) {
-					  documentService.updateStatus(getToken(), id, "整编");
-					  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
-							     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
-							     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
-					  List<Map<String, Object>>  childList = documentService.getMapList(getToken(), sql);
-					  for (Map<String, Object> child : childList) {
-						String childId = (String) child.get("CHILD_ID");
-						documentService.updateStatus(getToken(), childId, "整编");
-					}
-				  }else {
-					documentService.updateStatus(getToken(), id, "整编");
-				}
-			  }
-			  mp.put("code", ActionContext.SUCESS);
-		  }
-		  catch(Exception ex) {
-		   mp.put("code", ActionContext.FAILURE);
-		   mp.put("message", ex.getMessage());
-		  }
-		  return mp;
-		 }
 		
 		/**
 		 * 下架文件
@@ -1290,7 +1257,7 @@ public class EcmDcController extends ControllerAbstract{
 			StringBuffer responseFox = new StringBuffer();
 			for (String docId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), docId);
-				if(doc.getTypeName().equals("卷盒")||doc.getTypeName().equals("图册")) {
+				if(doc.getTypeName().equals("卷盒")) {
 					String sql1="select child_id from ecm_relation where parent_id ='"+docId+"' and name='irel_children'";
 					List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql1);
 					int count = 0;

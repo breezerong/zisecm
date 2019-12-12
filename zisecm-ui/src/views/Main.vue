@@ -1,13 +1,13 @@
 <template>
   <el-container>
-    <el-header style="height:44px">
+    <el-header style="height:44px;width:100%">
       <div class="navbar-top">
         <div class="navbar-top-inner">
           <div class="container-top">
-            <img :src="'../static/img/logo.png'" border="0" />
+            <img :src="'../static/img/logo.png'" border="0" @click="$router.push(homePath)"/>
           </div>
           <div class="container-top">
-            <span style="font-size: 18px;color: #fff;">{{$t('application.name')}}</span>
+            <span style="font-size: 18px;color: #fff;" @click="$router.push(homePath)">{{$t('application.name')}}</span>
           </div>
           <div class="container-top">
             <el-menu default-lactive="1" mode="horizontal">
@@ -37,7 +37,7 @@
               <el-option label="English" value="en" key="en"></el-option>
             </el-select>
           </div>
-          <div class="container-top-right">
+          <div class="container-top-right" style="padding-right:8px">
             <img :src="'../static/img/head128.jpg'" class="img-head" />
             <span>
               <router-link to="/user/userinfo" style="color:#fff;">{{userName}}</router-link>&nbsp;
@@ -67,7 +67,8 @@ export default {
       currentLanguage: "",
       userName: "",
       clientPermission: 0,
-      defaultColor: "#409EFF"
+      defaultColor: "#409EFF",
+      homePath : "/home"
     };
   },
   beforeCreate() {
