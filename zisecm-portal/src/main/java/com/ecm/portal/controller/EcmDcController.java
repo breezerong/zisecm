@@ -1052,24 +1052,25 @@ public class EcmDcController extends ControllerAbstract{
 	  List<String> list = JSONUtils.stringToArray(argStr);
 	  Map<String, Object> mp = new HashMap<String, Object>();
 	  List<Map<String, Object>> shopingCartList1 = null;
- 	  List<Map<String, Object>> shopingCartList2=null;
+ 	  List<Map<String, Object>> shopingCartList2= new ArrayList<Map<String,Object>>();
 	try {
 		shopingCartList1 = shopingCartService.executeSQL("select DOCUMENT_ID from ecm_shoping_cart where user_name='"+getSession().getCurrentUser().getUserName()+"'");
 	  
-	  EcmDocument docObj;
-	  StringBuffer sb= new StringBuffer();
-	  for (int i = 0; i < shopingCartList1.size(); i++) {
-		  if(i==0) {
-			  sb.append("'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");		  
-		  }else {
-			  sb.append(",'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");
+		  EcmDocument docObj;
+		  StringBuffer sb= new StringBuffer("");
+		  for (int i = 0; i < shopingCartList1.size(); i++) {
+			  if(i==0) {
+				  sb.append("'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");		  
+			  }else {
+				  sb.append(",'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");
+			  }
 		  }
-	  }
- 			String gridName="shopingCartGrid";
- 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
- 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"'";
- 			 shopingCartList2 = documentService.getMapList(getToken(), sql);
- 
+		  if(!"".equals(sb.toString())) {
+	 			String gridName="shopingCartGrid";
+	 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+	 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"'";
+	 			shopingCartList2 = documentService.getMapList(getToken(), sql);
+		  }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
