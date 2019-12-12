@@ -4,6 +4,7 @@
         <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="dialogVisible"     width="95%"
       style="width:100%"
       custom-class="customWidth">
+      
       <el-form style="padding-bottom:30px">
                 <el-form-item label="任务名称" :label-width="formLabelWidth" style="float:left">
                   {{currentData.name}}
@@ -249,9 +250,10 @@ export default {
           _self.form.taskId[i] = _self.selectedItems[i].id;
         }
       }
-      
+      _self.loading=true;
       axios.post('/workflow/completeTask',JSON.stringify(_self.form))
       .then(function(response) {
+        _self.loading=false;
         _self.dialogVisible = false;
         _self.refreshData();
         _self.$message("完成任务成功!");
