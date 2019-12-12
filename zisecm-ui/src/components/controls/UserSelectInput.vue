@@ -140,7 +140,7 @@ export default {
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
       m.set("roleName", _self.roleName);    
-      axios.post("/admin/getUsersByGroupName",m)
+      axios.post("/admin/getUsers",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           if(_self.inputValue ){
@@ -171,11 +171,11 @@ export default {
       }
       var m = new Map();
       m.set("noGroup", "");
-      m.set("condition", "name like '%" + this.findValue + "%'");
+      m.set("condition", "name like '%" + this.findValue + "%' or login_name like '%" + this.findValue + "%'");
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
       m.set("roleName", _self.roleName);
-      axios.post("/admin/getUsersByGroupName",m)
+      axios.post("/admin/getUsers",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           for (var i = 0; i < _self.rightListId.length; i++) {

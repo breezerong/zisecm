@@ -13,7 +13,7 @@ public class EcmGroup extends EcmSysObject{
 
     private String groupType;
 
-    private Long parentId;
+    private String parentId;
     
     private boolean extended = false;
     
@@ -43,11 +43,11 @@ public class EcmGroup extends EcmSysObject{
         this.groupType = groupType == null ? null : groupType.trim();
     }
 
-    public Long getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Long parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

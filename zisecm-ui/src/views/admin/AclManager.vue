@@ -256,7 +256,7 @@ export default {
     },
     addItem(indata) {
       let _self = this;
-      axios.poset("/acl/newAcl",JSON.stringify(indata))
+      axios.post("/acl/newAcl",JSON.stringify(indata))
         .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();

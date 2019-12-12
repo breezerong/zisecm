@@ -185,10 +185,10 @@ export default {
     },
     loadAcl(){
       let _self = this;
-      let aclUrl = "/zisecm/acl/getAclById";
+      let aclUrl = "/acl/getAclById";
       let pdata = _self.id;
       if( !_self.id && _self.name){
-        aclUrl = "/zisecm/acl/getAclByName";
+        aclUrl = "/acl/getAclByName";
         pdata = _self.name;
       }
       
@@ -237,7 +237,7 @@ export default {
         },
         method: "post",
         data: inData,
-        url: "/zisecm/acl/grantPermit"
+        url: "/acl/grantPermit"
       }).then(function(response){
         if(response.data.code == 1){
           _self.dialogVisible = false;
@@ -257,7 +257,7 @@ export default {
         },
         method: "post",
         data: inData,
-        url: "/zisecm/acl/revokePermit"
+        url: "/acl/revokePermit"
       }).then(function(response){
         if(response.data.code == 1){
           _self.refreshData();
@@ -279,7 +279,7 @@ export default {
         },
         method: "post",
         data: _self.aclData.id,
-        url: "/zisecm/acl/getPermitsById"
+        url: "/acl/getPermitsById"
       }).then(function(response){
         console.log(JSON.stringify(response.data.data));
         _self.permitList = response.data.data;

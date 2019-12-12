@@ -202,7 +202,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		return list;
 	}
 	@Override
-	public List<EcmUser> getGroupUsers(String token,long groupId) {
+	public List<EcmUser> getGroupUsers(String token,String groupId) {
 		String sql = "select a.* from ecm_user a, ecm_group_item b";
 		
 			sql += " where a.ID=b.CHILD_ID and b.ITEM_TYPE='2' and b.PARENT_ID='"+groupId;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row v-loading="loading">
       <el-col :span="6" style="padding-top:4px;float:left;text-align:left;">
         <el-button
           type="primary"
@@ -35,6 +35,7 @@
           v-bind:isshowPage="false"
           v-bind:isshowOption="true"
           v-bind:isshowicon="false"
+     
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
@@ -51,7 +52,6 @@
           key="main"
           v-bind:itemDataList="itemDataList"
           v-bind:columnList="gridList"
-          v-bind:loading="loading"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
           v-bind:isshowOption="true"
@@ -70,7 +70,6 @@
             v-bind:columnList="innerGridList"
             v-bind:itemCount="innerCount"
             v-bind:tableHeight="rightTableHeight"
-            v-bind:loading="loading"
             @pagesizechange="innerPageSizeChange"
             @rowclick="selectOneFile"  
             @pagechange="innerPageChange"
@@ -99,7 +98,7 @@ export default {
   data() {
     return {
       leftTableHeight: window.innerHeight - 124,
-      rightTableHeight: (window.innerHeight - 200)/2,
+      rightTableHeight: (window.innerHeight - 180)/2,
       printsVisible: false,
       printVolumesVisible: false,
       archiveId: "",
@@ -124,7 +123,6 @@ export default {
       selectTransferRow: [],
       gridList: [],
       innerGridList: [],
-      outerGridList: [],
       currentFolder: [],
       dataListFull: "",
       inputkey: "",
@@ -505,7 +503,7 @@ export default {
         })
         .then(function(response) {
           _self.innerGridList = response.data.data;
-
+          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -617,6 +615,7 @@ export default {
               _self.showFields.push(element.attrName);
             }
           });
+          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -840,155 +839,7 @@ export default {
       this.loadGridData();
       //console.log('handleCurrentChange', val);
     },
-    //刷新文件夹数据
-    refreshFolderData() {
-      let _self = this;
-      _self.loading = true;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: 0,
-          url: "/admin/getFolder"
-        })
-        .then(function(response) {
-          _self.dataList = response.data.data;
-          console.log(_self.dataList);
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
-    // 文件夹节点点击事件
-    handleNodeClick(indata) {
-      let _self = this;
-      _self.currentFolder = indata;
-      //console.log(JSON.stringify(indata));
-      // 没有加载，逐级加载
-      if (indata.extended == false) {
-        _self.loading = true;
-        _self
-          .axios({
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            },
-            method: "post",
-            data: indata.id,
-            url: "/admin/getFolder"
-          })
-          .then(function(response) {
-            indata.children = response.data.data;
-            //console.log(JSON.stringify(indata));
-            indata.extended = true;
-            _self.loading = false;
-          })
-          .catch(function(error) {
-            console.log(error);
-            _self.loading = false;
-          });
-      }
-      _self.loadGridInfo();
-      _self.loadGridData();
-      _self.loadOutGridInfo();
-      _self.loadGridOutData();
-    },
-    // 加载表格样式
-    loadOutGridInfo() {
-      let _self = this;
-      _self.loading = true;
-      var m = new Map();
-      m.set("gridName", "ArchiveGrid");
-      m.set("lang", _self.getLang());
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/getGridViewInfo"
-        })
-        .then(function(response) {
-          _self.outerGridList = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
-    loadGridOutData() {
-      let _self = this;
-      _self.loading = true;
-      var m = new Map();
-      m.set("gridName", "ArchiveGrid");
-      m.set("condition", "TYPE_NAME='技术文件'");
-      // m.set('folderId',indata.id);
-      m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", (_self.outerCurrentPage - 1) * _self.outerPageSize);
-      m.set("orderBy", "");
-      // console.log('pagesize:', _self.pageSize);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/getOutDocuments"
-        })
-        .then(function(response) {
-          _self.outerDataList = response.data.data;
-          _self.outerDataListFull = response.data.data;
-          _self.outerCount = response.data.pager.total;
-          //console.log(JSON.stringify(response.data.datalist));
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
-    newArchiveItem(typeName, selectedRow) {
-      let _self = this;
-      if (selectedRow.ID) {
-        _self.selectedItemId = "";
-        _self.propertyVisible = true;
-        if (_self.$refs.ShowProperty) {
-          _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName = typeName;
-          _self.$refs.ShowProperty.myTypeName = typeName;
-          _self.typeName = typeName;
-          _self.$refs.ShowProperty.parentDocId = selectedRow.ID;
-          _self.$refs.ShowProperty.folderPath = "/表单/移交单";
-          // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
-          _self.$refs.ShowProperty.loadFormInfo();
-        }
-      } else {
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
-      }
-    },
-    // 新建文档
-    newItem() {
-      let _self = this;
-      if (_self.currentFolder.id) {
-        _self.selectedItemId = "";
-        _self.propertyVisible = true;
-        if (_self.$refs.ShowProperty) {
-          _self.$refs.ShowProperty.myItemId = "";
-          _self.dialogName = _self.currentFolder.description;
-          _self.$refs.ShowProperty.myTypeName = _self.currentFolder.description;
-          _self.$refs.ShowProperty.myFolderId = _self.currentFolder.id;
-          _self.$refs.ShowProperty.loadFormInfo();
-        }
-      } else {
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
-      }
-    },
+    
     // 保存文档
     saveItem() {
       if (!this.$refs.ShowProperty.validFormValue()) {
@@ -1090,73 +941,6 @@ export default {
       this.loadGridData();
       this.loadGridOutData();
     },
-    //开卷
-    onOpenPage() {
-      let _self = this;
-      var m = new Map();
-      let tab = _self.selectedItems;
-      if (tab.length < 1) {
-        _self.$message("请选择一条或多条案卷数据！");
-        return;
-      }
-      m.set("files", tab);
-      console.log(JSON.stringify(m));
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/openPage"
-        })
-        .then(function(response) {
-          _self.loadGridData();
-          _self.$message(
-            _self.$t("message.openPage") + _self.$t("message.success")
-          );
-        })
-        .catch(function(error) {
-          _self.$message(
-            _self.$t("message.openPage") + _self.$t("message.failured")
-          );
-          console.log(error);
-        });
-    },
-
-    //封卷
-    onClosePage() {
-      let _self = this;
-      var m = new Map();
-      let tab = _self.selectedItems;
-      if (tab.length < 1) {
-        _self.$message("请选择一条或多条案卷数据！");
-        return;
-      }
-      m.set("files", tab);
-      console.log(JSON.stringify(m));
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/closePage"
-        })
-        .then(function(response) {
-          _self.loadGridData();
-          _self.$message(
-            _self.$t("message.closePage") + _self.$t("message.success")
-          );
-        })
-        .catch(function(error) {
-          _self.$message(
-            _self.$t("message.closePage") + _self.$t("message.failured")
-          );
-          console.log(error);
-        });
-    },
     // 删除文档事件
     onDeleleItem() {
       let _self = this;
@@ -1232,32 +1016,7 @@ export default {
           // });
         });
     },
-    // 自动组卷
-    autoPaper() {
-      let _self = this;
-      var m = new Map();
-      let tab = _self.selectedOutItems;
-      m.set("files", tab);
-      console.log(JSON.stringify(m));
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/autoPaper"
-        })
-        .then(function(response) {
-          _self.loadGridOutData();
-          _self.loadGridData();
-          _self.$message(_self.$t("message.paper"));
-        })
-        .catch(function(error) {
-          _self.$message(_self.$t("message.paperFaild"));
-          console.log(error);
-        });
-    },
+    
     // 删除文档
     deleleFileItem() {
       let _self = this;
@@ -1328,31 +1087,7 @@ export default {
         _self.newFolder(indata);
       }
     },
-    // 删除文件夹
-    delFolder() {
-      let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(_self.currentFolder),
-          url: "/admin/deleteFolder"
-        })
-        .then(function(response) {
-          if (response.data.code == 1) {
-            _self.$message(_self.$t("message.deleteSuccess"));
-            _self.refreshFolderData();
-          } else {
-            _self.$message(response.data.msg);
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
+    
     onUpdateStatus(statusStep) {
       let _self = this;
       if (
@@ -1568,59 +1303,6 @@ export default {
           _self.importdialogVisible = false;
           // _self.refreshData();
           _self.$message("导入成功!");
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    // 新建文件夹
-    newFolder(indata) {
-      let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/dc/newTransfer"
-        })
-        .then(function(response) {
-          let code = response.data.code;
-          if (code == "1") {
-            _self.$message("创建成功!");
-            _self.folderDialogVisible = false;
-
-            _self.loadTransferGridData();
-            _self.loadGridData(null);
-            _self.showInnerFile(null);
-          } else {
-            _self.$message("新建失败!");
-          }
-          //_self.refreshFolderData();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    //复制文档
-    copyItem(indata) {
-      let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/copyFolder"
-        })
-        .then(function(response) {
-          _self.$message(_self.$t("message.copySuccess"));
-          _self.dialogVisible = false;
-          _self.refreshFolderData();
         })
         .catch(function(error) {
           console.log(error);

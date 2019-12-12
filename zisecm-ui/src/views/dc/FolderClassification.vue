@@ -12,7 +12,7 @@
         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="80%">
+    <el-dialog :title="$t('application.property')" :visible.sync="propertyVisible" @close="propertyVisible = false" width="96%">
       <ShowProperty ref="ShowProperty"  @onSaved="onSaved" width="100%" v-bind:itemId="selectedItemId" v-bind:folderId="currentFolder.id" v-bind:typeName="currentFolder.typeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button> <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
@@ -94,7 +94,7 @@
                       v-loading="loading"
                       @selection-change="selectChange"
                       @sort-change="sortchange"
-                      @row-click="rowClick"
+                     
                       style="width: 100%">
                       <el-table-column type="selection" width="40" @selection-change="selectChange">
                       </el-table-column>
@@ -117,7 +117,7 @@
                                   <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                                 </div>
                                 <div v-else>
-                                  <span>{{scope.row[citem.attrName]}}</span>
+                                  <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                                 </div>
                               </template>
                             </el-table-column>
@@ -129,7 +129,7 @@
                                   <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                                 </div>
                                 <div v-else>
-                                  <span>{{scope.row[citem.attrName]}}</span>
+                                  <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                                 </div>
                               </template>
                             </el-table-column>

@@ -44,7 +44,7 @@
       :title="$t('application.property')"
       :visible.sync="propertyVisible"
       @close="propertyVisible = false"
-      width="80%"
+      width="90%"
     >
       <ShowProperty
         ref="ShowProperty"

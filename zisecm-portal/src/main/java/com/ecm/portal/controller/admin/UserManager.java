@@ -85,7 +85,7 @@ public class UserManager extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
-			List<EcmUser> list = userService.getGroupUsers(getToken(), Integer.parseInt(args.get("deptId").toString()));
+			List<EcmUser> list = userService.getGroupUsers(getToken(), args.get("deptId").toString());
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {

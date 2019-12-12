@@ -1,7 +1,7 @@
 <template>
   <el-form label-width="120px" v-loading="loading" @submit.native.prevent>
     <el-row>
-      <el-col :span="12">
+      <el-col :span="8">
         <el-form-item label="导入模板">
           <el-select v-model="selectedTemplate">
             <div v-for="(item,idx) in templateData" :key="idx">
@@ -10,18 +10,19 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="8" style="text-align:left">
         <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">下载模板</el-button>
-      </el-col>
-      <el-col :span="4">
+      
         <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始导入</el-button>
+        &nbsp; &nbsp;
+         <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
       </el-col>
       <el-col :span="4">
-         <el-button plain size="small" type="primary" @click="cleanFiles()">清除所有文件</el-button>
+         &nbsp;
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12">
+      <el-col :span="10">
         <el-form-item label="Excel文件" style="float: left;">
           <el-upload
             :limit="1"
@@ -31,11 +32,12 @@
             :auto-upload="false"
             :multiple="false"
           >
+          &nbsp; &nbsp;
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
           </el-upload>
         </el-form-item>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="14">
         <el-form-item label="电子文件" style="float: left;">
           <el-upload
             :limit="100"
@@ -45,8 +47,8 @@
             :auto-upload="false"
             :multiple="true"
           >
+          &nbsp; &nbsp;
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            
           </el-upload>
          
         </el-form-item>

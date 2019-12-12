@@ -34,8 +34,6 @@ public interface IUserService {
 
 	long getUserCount(String token,boolean noGroup, String condition);
 
-	List<EcmUser> getGroupUsers(String token, long groupId);
-
 	List<EcmUser> updateUserDepartment(String token, String userId, String deptId, String deptName) throws EcmException, AccessDeniedException, NoPermissionException;
 
 	boolean moveUserDepartment(String token,EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException;
@@ -61,5 +59,7 @@ public interface IUserService {
 	List<EcmUser> getUsersByGroupName(String token, Pager pager, String noGroup, String groupName, String condition);
 
 	LoginUser authenticationSSO(EcmUser ecmUser) throws Exception;
+
+	List<EcmUser> getGroupUsers(String token, String groupId);
 
 }
