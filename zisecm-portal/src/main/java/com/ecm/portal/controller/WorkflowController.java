@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,8 +18,10 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.common.engine.impl.cmd.CustomSqlExecution;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
+import org.flowable.engine.ManagementService;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.RepositoryService;
@@ -26,6 +29,7 @@ import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
+import org.flowable.engine.impl.cmd.AbstractCustomSqlExecution;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -62,6 +66,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.AuditService;
 import com.ecm.flowable.listener.JobListener;
+import com.ecm.flowable.mapper.VarQueryMapper;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.portal.test.flowable.TODOApplication;
 
@@ -78,6 +83,7 @@ public class WorkflowController  extends ControllerAbstract{
 	    private ProcessEngine processEngine;
 	    @Autowired
 	    private HistoryService historyService;
+	    
 	    
 		@Autowired
 		private WorkflowAuditService workflowAuditService;
@@ -228,18 +234,56 @@ public class WorkflowController  extends ControllerAbstract{
  
 			List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().listPage(pageIndex, pageSize);
 	        List<HashMap> resultList = new ArrayList<HashMap>();
-	        Map<String, VariableInstance> varMap=null;
+//	        Map<String, VariableInstance> varMap=null;
 	        HashMap<String, Object> map=null;
+ 	        List<HashMap> resultListTemp = new ArrayList<HashMap>();
+ 	        Set<String> executionIdSet = new HashSet<String>();
 	        for (Task task : tasks) {
 		        map = new HashMap<>();
 		        map.put("processInstanceId", task.getProcessInstanceId());
-		        varMap=runtimeService.getVariableInstances(map.get("processInstanceId").toString());
+		        executionIdSet.add(task.getProcessInstanceId());
 		        map.put("id", task.getId());
 		        map.put("name", task.getName());
-		        map.put("startUser", varMap.get("startUser").getValue());
-		        map.put("formId", varMap.get("formId").getValue());
+//		        varMap=runtimeService.getVariableInstances(map.get("processInstanceId").toString());
+//		        map.put("startUser", varMap.get("startUser").getValue());
+//		        map.put("formId", varMap.get("formId").getValue());
 		        map.put("createTime", task.getCreateTime());
-		        resultList.add(map);
+		        resultListTemp.add(map);
+	        }
+//		    CustomSqlExecution<VarQueryMapper, List<Map<String, Object>>> customSqlExecution = new AbstractCustomSqlExecution<VarQueryMapper, List<Map<String, Object>>>(VarQueryMapper.class) {
+//	            @Override
+//	            public List<Map<String, Object>> execute(VarQueryMapper customMapper) {
+//	                return customMapper.selectVarWithProcessIds("");
+//	            }
+//	        };
+//	        List<Map<String, Object>> varInstanceList = managementService.executeCustomSql(customSqlExecution);	 
+//	        
+	        if(tasks.size()>0) {
+		        StringBuilder sql = new StringBuilder("select * from  ACT_HI_VARINST  where  PROC_INST_ID_ in(");
+		        int temp=0;
+		        for (Iterator iterator = executionIdSet.iterator(); iterator.hasNext();) {
+		        	if(temp!=0) {
+		        		sql.append(",");
+		        	}
+		        	sql.append("'").append(iterator.next()).append("'");
+		        	temp++;
+				} 
+		        sql.append(")");
+		        
+	  	        List<HistoricVariableInstance>  varInstanceList=  historyService.createNativeHistoricVariableInstanceQuery().sql(sql.toString()).list();
+		        for (int i = 0; i < resultListTemp.size(); i++) {
+		        	map=resultListTemp.get(i);
+		        	for (int j = 0; j < varInstanceList.size(); j++) {
+		        		if(map.get("processInstanceId").equals(varInstanceList.get(j).getProcessInstanceId())){
+		        			if("startUser".equals(varInstanceList.get(j).getVariableName())) {
+					        	map.put("startUser", varInstanceList.get(j).getValue());
+		        			}else if("formId".equals(varInstanceList.get(j).getVariableName())) {
+		        				map.put("formId", varInstanceList.get(j).getValue());
+		        			}
+		        		}
+					}
+		        	resultList.add(map);
+				} 	
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
@@ -248,9 +292,7 @@ public class WorkflowController  extends ControllerAbstract{
 	        return resultMap;
 	    }
 
-	    /**
-	     * 获取我发起的流程
-	     */
+ 
 	    @RequestMapping(value = "myWorkflow")
 	    @ResponseBody
 	    public HashMap<String,Object> myWorkflow(@RequestBody String argStr) {
