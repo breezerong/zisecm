@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -44,6 +45,15 @@ public class EmailService implements Ijobs {
 				 throw new Exception("发送邮件测试发生异常！");
 			}
 	}
+	/**
+	 * 启动服务
+	 * @throws Exception 
+	 */
+	@Scheduled(cron = "0/10 * * * * *")
+	public synchronized void runJobs() throws Exception {
+		sendMail();
+	}
+	
 	@Override
 	public void run() throws Exception {
 		// TODO Auto-generated method stub

@@ -1,6 +1,7 @@
 package com.ecm.core.service;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,11 +35,12 @@ public class MailService {
 		MimeMessage message = mailSender.createMimeMessage();
 	    try {
 	        //true表示需要创建一个multipart message
-	        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+	        MimeMessageHelper helper = new MimeMessageHelper(message, true,"utf-8");
 	        helper.setFrom(from);
 	        helper.setTo(to);
 	        helper.setSubject(subject);
 	        helper.setText(content, true);
+			
 	        mailSender.send(message);
 	        logger.info("一份html邮件已成功");
 	    } catch (MessagingException e) {
