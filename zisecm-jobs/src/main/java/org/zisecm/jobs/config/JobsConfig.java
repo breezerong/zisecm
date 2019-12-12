@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,7 +17,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.thymeleaf.spring5.ISpringWebFluxTemplateEngine;
+import org.thymeleaf.spring5.SpringWebFluxTemplateEngine;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
@@ -66,4 +70,21 @@ public class JobsConfig {
         sqlSessionFactoryBean.setMapperLocations(mybatisConfigXml);
         return sqlSessionFactoryBean.getObject();
     }
+	@Bean 
+	public JavaMailSenderImpl JavaMailSender(){ 
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl(); 
+		mailSender.setHost(env.getProperty("spring.mail.host")); 
+		mailSender.setUsername(env.getProperty("spring.mail.username"));
+		mailSender.setPassword(env.getProperty("spring.mail.password")); 
+		return mailSender; 
+	} 
+//	@Bean
+//	public SpringWebFluxTemplateEngine templateEngine() {
+//		SpringWebFluxTemplateEngine engine = new SpringWebFluxTemplateEngine();
+//		engine.setEnableSpringELCompiler(this.properties.isEnableSpringElCompiler());
+//		engine.setRenderHiddenMarkersBeforeCheckboxes(this.properties.isRenderHiddenMarkersBeforeCheckboxes());
+//		this.templateResolvers.forEach(engine::addTemplateResolver);
+//		this.dialects.orderedStream().forEach(engine::addDialect);
+//		return engine;
+//	}
 }

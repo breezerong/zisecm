@@ -1052,24 +1052,25 @@ public class EcmDcController extends ControllerAbstract{
 	  List<String> list = JSONUtils.stringToArray(argStr);
 	  Map<String, Object> mp = new HashMap<String, Object>();
 	  List<Map<String, Object>> shopingCartList1 = null;
- 	  List<Map<String, Object>> shopingCartList2=null;
+ 	  List<Map<String, Object>> shopingCartList2= new ArrayList<Map<String,Object>>();
 	try {
 		shopingCartList1 = shopingCartService.executeSQL("select DOCUMENT_ID from ecm_shoping_cart where user_name='"+getSession().getCurrentUser().getUserName()+"'");
 	  
-	  EcmDocument docObj;
-	  StringBuffer sb= new StringBuffer();
-	  for (int i = 0; i < shopingCartList1.size(); i++) {
-		  if(i==0) {
-			  sb.append("'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");		  
-		  }else {
-			  sb.append(",'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");
+		  EcmDocument docObj;
+		  StringBuffer sb= new StringBuffer("");
+		  for (int i = 0; i < shopingCartList1.size(); i++) {
+			  if(i==0) {
+				  sb.append("'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");		  
+			  }else {
+				  sb.append(",'").append(shopingCartList1.get(i).get("DOCUMENT_ID").toString()).append("'");
+			  }
 		  }
-	  }
- 			String gridName="shopingCartGrid";
- 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
- 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"'";
- 			 shopingCartList2 = documentService.getMapList(getToken(), sql);
- 
+		  if(!"".equals(sb.toString())) {
+	 			String gridName="shopingCartGrid";
+	 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+	 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"'";
+	 			shopingCartList2 = documentService.getMapList(getToken(), sql);
+		  }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1103,46 +1104,112 @@ public class EcmDcController extends ControllerAbstract{
 			 Map<String,Object> formDataMap=null;
 			 String[] documentIdArray=null;
 		    Map<String, Object> mp = new HashMap<String, Object>();
-		    for (int i = 0; i < argMap.size(); i++) {
-				 List<String> argMap2= JSONUtils.stringToArray(argMap.get(i).toString());
-				 for (int j = 0; j < argMap2.size(); j++) {
-					 argName= argMap2.get(0);
-					 if("formData".equals(argName)&&argMap2.get(1)!=null) {
-						 formDataMap=JSONUtils.stringToMap(argMap2.get(1));
-					 }else  if("documentIds".equals(argName)&&argMap2.get(1)!=null) {
-						 documentIdArray=argMap2.get(1).split(",");
-					 }
-				}
-			}
-	  
 			 String formId="";
-			 formDataMap.put("TYPE_NAME", "借阅单");
-			try {
-				formId=documentService.newObject(getToken(), formDataMap);
-			} catch  (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		   for(int i=0;i<documentIdArray.length;i++) {
-				 try {
-			EcmRelation en=new EcmRelation();
-			en.setParentId(formId);
-			en.setChildId(documentIdArray[i]);
-			en.setName("irel_borrow");
-			en.setCreationDate(new Date());
-			en.setCreator(this.getSession().getCurrentUser().getUserName());
-			relationService.newObject(getToken(), en);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-						  mp.put("code", ActionContext.SUCESS);
-					} 
-		   }
-		
-		  mp.put("data", formId);
-		  mp.put("code", ActionContext.SUCESS);
-		  return mp;
-		 }
+			    for (int i = 0; i < argMap.size(); i++) {
+					 List<String> argMap2= JSONUtils.stringToArray(argMap.get(i).toString());
+					 for (int j = 0; j < argMap2.size(); j++) {
+						 argName= argMap2.get(0);
+						 if("formData".equals(argName)&&argMap2.get(1)!=null) {
+							 formDataMap=JSONUtils.stringToMap(argMap2.get(1));
+						 }else  if("documentIds".equals(argName)&&argMap2.get(1)!=null) {
+							 documentIdArray=argMap2.get(1).split(",");
+						 }else if("formId".equals(argName)&&argMap2.get(1)!=null) {
+							 formId=argMap2.get(1);
+						 }
+					}
+				}
+	  
+				try {
+					if("".equals(formId)) {
+						formDataMap.put("TYPE_NAME", "借阅单");
+						formId=documentService.newObject(getToken(), formDataMap);
+						for(int i=0;i<documentIdArray.length;i++) {
+							EcmRelation en=new EcmRelation();
+							en.setParentId(formId);
+							en.setChildId(documentIdArray[i]);
+							en.setName("irel_borrow");
+							en.setCreationDate(new Date());
+							en.setCreator(this.getSession().getCurrentUser().getUserName());
+							relationService.newObject(getToken(), en);
+						}
+					}else {
+						Map<String,Object> goodFormDataMap=new HashMap<String, Object>();
+						if(formDataMap.containsKey("ID"))					
+							goodFormDataMap.put("ID",formDataMap.get("ID"));
+						if(formDataMap.containsKey("CODING"))					
+							goodFormDataMap.put("CODING",formDataMap.get("CODING"));
+						if(formDataMap.containsKey("C_DRAFTER"))					
+							goodFormDataMap.put("C_DRAFTER",formDataMap.get("C_DRAFTER"));
+						if(formDataMap.containsKey("C_DESC1"))					
+							goodFormDataMap.put("C_DESC1",formDataMap.get("C_DESC1"));
+						if(formDataMap.containsKey("TITLE"))					
+							goodFormDataMap.put("TITLE",formDataMap.get("TITLE"));
+						if(formDataMap.containsKey("C_CREATION_UNIT"))					
+							goodFormDataMap.put("C_CREATION_UNIT",formDataMap.get("C_CREATION_UNIT"));
+						if(formDataMap.containsKey("SUB_TYPE"))					
+							goodFormDataMap.put("SUB_TYPE",formDataMap.get("SUB_TYPE"));
+						if(formDataMap.containsKey("C_START_DATE"))					
+							goodFormDataMap.put("C_START_DATE",formDataMap.get("C_START_DATE"));
+						if(formDataMap.containsKey("C_END_DATE"))					
+							goodFormDataMap.put("C_END_DATE",formDataMap.get("C_END_DATE"));
+						if(formDataMap.containsKey("C_COMMENT"))					
+							goodFormDataMap.put("C_COMMENT",formDataMap.get("C_COMMENT"));
+						if(formDataMap.containsKey("C_REVIEWER1"))					
+							goodFormDataMap.put("C_REVIEWER1",formDataMap.get("C_REVIEWER1"));
+						if(formDataMap.containsKey("C_REVIEWER2"))					
+							goodFormDataMap.put("C_REVIEWER2",formDataMap.get("C_REVIEWER2"));
+						if(formDataMap.containsKey("C_REVIEWER3"))					
+							goodFormDataMap.put("C_REVIEWER3",formDataMap.get("C_REVIEWER3"));
+						if(formDataMap.containsKey("C_SECURITY_LEVEL"))					
+							goodFormDataMap.put("C_SECURITY_LEVEL",formDataMap.get("C_SECURITY_LEVEL"));
+						if(formDataMap.containsKey("STATUS"))					
+							goodFormDataMap.put("STATUS",formDataMap.get("STATUS"));
+	 
+						EcmDocument doc=new EcmDocument();
+						doc.setAttributes(goodFormDataMap);
+						documentService.updateObject(getToken(), doc, null);
+					}
+				} catch  (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//				Map<String,String> relIDMap=new HashMap<String,String>();
+//				try {
+//					List<Map<String, Object>> existRelList= relationService.getMapList(getToken(), "select ID,PARENT_ID,CHILD_ID from ecm_relation where NAME='irel_borrow' and PARENT_ID=''");
+//					for (int i = 0; i < existRelList.size(); i++) {
+//						String relParentChildID=""+existRelList.get(i).get("PARENT_ID")+existRelList.get(i).get("CHILD_ID");
+//						relIDMap.put(relParentChildID,existRelList.get(i).get("ID").toString());
+//					}
+//				   for(int i=0;i<documentIdArray.length;i++) {
+//					   String formId_documentId=formId+documentIdArray[i];
+//					 if(relIDMap.containsKey(formId_documentId)) {
+//						 relIDMap.remove(formId_documentId);
+//					 }else {
+//							EcmRelation en=new EcmRelation();
+//							en.setParentId(formId);
+//							en.setChildId(documentIdArray[i]);
+//							en.setName("irel_borrow");
+//							en.setCreationDate(new Date());
+//							en.setCreator(this.getSession().getCurrentUser().getUserName());
+//							relationService.newObject(getToken(), en);						 				 
+//					 }
+//				   }
+				   
+//				   Object[] needToDeleteRelObjects=relIDMap.values().toArray();
+//				   for (int i = 0; i < needToDeleteRelObjects.length; i++) {
+//					   relationService.deleteObject(needToDeleteRelObjects[i].toString());
+//				   }
+				   
+//	 			} catch (Exception e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//					  mp.put("code", ActionContext.SUCESS);
+//			} 
+			  mp.put("data", formId);
+			  mp.put("code", ActionContext.SUCESS);
+			  return mp;
+			 }
+
 
 		 //添加文档到已存在表单
 		 @RequestMapping(value = "/dc/addItemToForm", method = RequestMethod.POST)
@@ -1241,39 +1308,6 @@ public class EcmDcController extends ControllerAbstract{
 			}
 			return mp;
 		}
-
-	 
-	//下架文件，更改文件状态为“整编”
-		@RequestMapping(value = "/dc/obtainDocuments", method = RequestMethod.POST)
-		 @ResponseBody
-		 public Map<String,Object> obtainDocument(@RequestBody String argStr) {
-		  List<String> list = JSONUtils.stringToArray(argStr);
-		  Map<String, Object> mp = new HashMap<String, Object>();
-		  try {
-			  for (String id : list) {
-				  EcmDocument ecmDocument = documentService.getObjectById(getToken(), id);
-				  if(ecmDocument.getTypeName().equals("卷盒")||ecmDocument.getTypeName().equals("图册")) {
-					  documentService.updateStatus(getToken(), id, "整编");
-					  String sql = "select b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
-							     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
-							     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
-					  List<Map<String, Object>>  childList = documentService.getMapList(getToken(), sql);
-					  for (Map<String, Object> child : childList) {
-						String childId = (String) child.get("CHILD_ID");
-						documentService.updateStatus(getToken(), childId, "整编");
-					}
-				  }else {
-					documentService.updateStatus(getToken(), id, "整编");
-				}
-			  }
-			  mp.put("code", ActionContext.SUCESS);
-		  }
-		  catch(Exception ex) {
-		   mp.put("code", ActionContext.FAILURE);
-		   mp.put("message", ex.getMessage());
-		  }
-		  return mp;
-		 }
 		
 		/**
 		 * 下架文件
@@ -1290,7 +1324,7 @@ public class EcmDcController extends ControllerAbstract{
 			StringBuffer responseFox = new StringBuffer();
 			for (String docId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), docId);
-				if(doc.getTypeName().equals("卷盒")||doc.getTypeName().equals("图册")) {
+				if(doc.getTypeName().equals("卷盒")) {
 					String sql1="select child_id from ecm_relation where parent_id ='"+docId+"' and name='irel_children'";
 					List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql1);
 					int count = 0;
@@ -1330,7 +1364,7 @@ public class EcmDcController extends ControllerAbstract{
 				mess = mess+" "+responseFile.toString().trim().substring(0,responseFile.toString().length()-2)+"为非卷盒文件; ";
 			}
 			if(responseFox!=null&&!responseFox.toString().equals("")) {
-				mess = mess+""+responseFox.toString().trim().substring(0,responseFox.toString().length()-2)+"的子文件存在删除项，请恢复后操作;";
+				mess = mess+""+responseFox.toString().trim().substring(0,responseFox.toString().length()-2)+"的子文件存在销毁项，请恢复后重试;";
 			}
 			if (mess.equals("下架文件:")) {
 				mp.put("code", ActionContext.SUCESS);

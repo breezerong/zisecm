@@ -133,8 +133,11 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '350px',width:'100%' }">
-            <div id="collectionChart" style="height: 100%;width: 100%;"></div>
+          <el-card :body-style="{ height: '310px',width:'100%' }">
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
+              <span style="float: left;" class="ecmtitle">馆藏状态</span>
+            </div>
+            <div id="collectionChart" style="height: 100%;width: 100%;padding-bottom:20px;"></div>
           </el-card>
         </el-col>
       </el-row>
@@ -272,7 +275,10 @@ export default {
         _self.collectionChartData = response.data.data;
         //绘制图表
         _self.collectionChart.setOption({
-          title: { text: "馆藏", textStyle:{display:'none'} },
+          grid:{
+            y:20,
+            y2:70
+          },
           tooltip: {},
           xAxis: {
             type : 'category',
@@ -312,7 +318,7 @@ export default {
                     textStyle: {
                       //数值样式
                       color: "black",
-                      fontSize: 16
+                      fontSize: 10
                     }
                   }
                 }
@@ -461,5 +467,11 @@ export default {
 }
 .search {
   padding-right: 20%;
+}
+</style>
+
+<style>
+.el-card__header{
+  background-color: rgb(235, 235, 235);
 }
 </style>

@@ -539,7 +539,7 @@ export default {
         window.pageYOffset ||
         document.documentElement.scrollTop ||
         document.body.scrollTop;
-      var offsetTop = document.querySelector('#searchBar').offsetTop;
+      var offsetTop = document.querySelector('#searchBar');
       if(scrollTop<=200){
       offsetTop = 300 - Number(scrollTop);
       document.querySelector('#searchBar').style.top = offsetTop+'px';
