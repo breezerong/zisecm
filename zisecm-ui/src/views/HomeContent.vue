@@ -274,24 +274,28 @@ export default {
         _self.collectionChart.setOption({
           title: { text: "馆藏", textStyle:{display:'none'} },
           tooltip: {},
-          xAxis: {},
+          xAxis: {
+            type : 'category',
+            data :_self.collectionChartData.xAxisData,
+            axisLabel:{
+              show:true,
+              textStyle:{
+                color: '#000000',
+              },
+              fontSize:12,
+              formatter:function(val){
+                  return val.split("").join("\n");
+              }
+            }
+          },
           yAxis: {
-            data: _self.collectionChartData.xAxisData.reverse(), 
-            axisLabel: {
-                        show: true,
-                        textStyle: {
-                            color: '#000000',
-                            width:180,
-                            // fontSize: '38',//字体大小
-                        },
-                        fontSize: 9,//字体大小
-                    }
+            
             },
           series: [
             {
               name: "数量",
               type: "bar",
-              data: _self.collectionChartData.yAxisData.reverse(),
+              data: _self.collectionChartData.yAxisData,
               itemStyle: {
                 normal: {
                   color: function(d) {
@@ -304,7 +308,7 @@ export default {
                   },
                   label: {
                     show: true, //开启显示
-                    position: "right", //在右侧显示
+                    position: "top", //在右侧显示
                     textStyle: {
                       //数值样式
                       color: "black",
@@ -458,5 +462,4 @@ export default {
 .search {
   padding-right: 20%;
 }
-
 </style>
