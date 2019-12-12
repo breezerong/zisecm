@@ -1330,7 +1330,7 @@ public class EcmDcController extends ControllerAbstract{
 				mess = mess+" "+responseFile.toString().trim().substring(0,responseFile.toString().length()-2)+"为非卷盒文件; ";
 			}
 			if(responseFox!=null&&!responseFox.toString().equals("")) {
-				mess = mess+""+responseFox.toString().trim().substring(0,responseFox.toString().length()-2)+"的子文件存在删除项，请恢复后操作;";
+				mess = mess+""+responseFox.toString().trim().substring(0,responseFox.toString().length()-2)+"的子文件存在销毁项，请恢复后重试;";
 			}
 			if (mess.equals("下架文件:")) {
 				mp.put("code", ActionContext.SUCESS);
