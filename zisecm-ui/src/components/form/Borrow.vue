@@ -130,7 +130,7 @@
                   {{dateFormat(borrowForm.C_START_DATE)}}
                 </el-form-item>
                  <el-form-item label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
-                   {{dateFormat(borrowForm.C_START_DATE)}}
+                   {{dateFormat(borrowForm.C_END_DATE)}}
                 </el-form-item>
                </el-col>
              <el-col>
@@ -336,6 +336,49 @@ export default {
         _self.loading = false;
       });
     },
+    getFormdataMap(){
+        
+       let _self = this;
+      let m = new  Map();
+       m.set("formData",_self.borrowForm);
+
+      let documentIds="";
+      let fileTopestSecurityLevel="内部公开";
+      let drawingNumber=_self.tabledata.length;
+      for (let index = 0; index < _self.tabledata.length; index++) {
+        let element = _self.tabledata[index];
+        fileTopestSecurityLevel=fileTopestSecurityLevel+element.C_SECURITY_LEVEL;
+        if(index==0){
+         documentIds=documentIds+element.ID;
+        }else{
+         documentIds=documentIds+","+element.ID;     
+         }
+      }
+      if(fileTopestSecurityLevel.indexOf("核心商密")>0){
+        fileTopestSecurityLevel="核心商密";
+      }else if(fileTopestSecurityLevel.indexOf("普通商密")>0){
+        fileTopestSecurityLevel="普通商密";
+      }else if(fileTopestSecurityLevel.indexOf("受限")>0){
+        fileTopestSecurityLevel="受限";
+      }else{
+        fileTopestSecurityLevel="内部公开";
+      }
+      m.set("documentIds",documentIds);
+      m.set("formId",_self.formId);
+      return m;
+    },
+     saveCurrentForm(m){
+      let _self = this;
+      m=_self.getFormdataMap();
+     _self.loading = true;
+     axios.post("/dc/saveBorrowForm",m).then(function(response){    
+          console.log(response.data.data);  
+    }).catch(function(error){
+        console.log(error);
+        _self.loading = false;
+      }); 
+    },
+
     addFromShopingCart(){
        let _self = this;
       var arg = [];
