@@ -150,7 +150,7 @@
                     <el-input  v-model="inputkey" placeholder="请输入属性名关键字" @change="search" prefix-icon="el-icon-search"></el-input>
                   </td>
                   <td width="40px">
-                    <el-button type="primary" icon="el-icon-plus" @click="newitem()">添加用户</el-button>
+                    <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建用户</el-button>
                   </td>
                   <td>
                    
@@ -191,11 +191,6 @@
             <el-table-column label="电话" min-width="10%">
               <template slot-scope="scope">
                 <span>{{scope.row.phone}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="签名图片" width="150" :formatter="imageFormat">
-              <template slot-scope="scope">
-                <img :src="_self.axios.defaults.baseURL+'/admin/getUserImage?id='+scope.row.id+'&token='+token" >
               </template>
             </el-table-column>
             <el-table-column label="说明" min-width="15%">
