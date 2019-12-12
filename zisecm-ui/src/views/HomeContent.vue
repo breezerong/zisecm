@@ -230,7 +230,7 @@ export default {
       var m = new Map();
       _self.loadingTodoData = true
       m.set("condition", "");
-      m.set("pageSize", 7);
+      m.set("pageSize", 5);
       m.set("pageIndex", 0);
       m.set("userId", sessionStorage.getItem("access-userName"));
       axios
