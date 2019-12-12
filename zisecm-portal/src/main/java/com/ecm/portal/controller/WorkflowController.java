@@ -65,6 +65,7 @@ import com.ecm.core.entity.EcmWorkflow;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.AuditService;
+import com.ecm.flowable.controller.StartProcessNameProcessInstanceCmd;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.portal.test.flowable.TODOApplication;
@@ -82,6 +83,8 @@ public class WorkflowController  extends ControllerAbstract{
 	    private ProcessEngine processEngine;
 	    @Autowired
 	    private HistoryService historyService;
+	    @Autowired
+	    private ManagementService managementService;
 	    
 	    
 		@Autowired
@@ -132,13 +135,17 @@ public class WorkflowController  extends ControllerAbstract{
 		    		Authentication.setAuthenticatedUserId(userName);
 		    		args.put("startUser", userName);
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
- 			        runtimeService.setProcessInstanceName(processInstance.getId(),  "借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-  			        //创建流程日志
+					String processName="借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+ 			        try { 			        
+						runtimeService.setProcessInstanceName(processInstance.getId(), processName);
+					}catch(Exception e) {
+					}
+ 			        //创建流程日志
 					EcmAuditWorkflow audit = new EcmAuditWorkflow();
 					audit.createId();
 					audit.setProcessInstanceId(processInstance.getId());
 					audit.setProcessName(processInstance.getProcessDefinitionName());
-					audit.setProcessInstanceName(processInstance.getName());
+					audit.setProcessInstanceName(processName);
 					audit.setCreator(userName);
 					audit.setStartTime(processInstance.getStartTime());
 					audit.setFormId("formId");
@@ -322,8 +329,13 @@ public class WorkflowController  extends ControllerAbstract{
 			        }
 			        map.put("currentTaskName", currentTaskName);
 			        map.put("currentAssignee",  currentTaskName+":"+currentAssignee);
-			    }else {		        
-			        map.put("currentTaskName", "已结束");
+			    }else {		 
+//			    	try {
+//						map.put("name", workflowAuditService.(getToken(), "PROCESS_INSTANCE_ID='"+process.getId()+"'"));
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+			    	map.put("currentTaskName", "已结束");
 			        map.put("currentAssignee",  "已结束");
 			    }
 		        resultList.add(map);
