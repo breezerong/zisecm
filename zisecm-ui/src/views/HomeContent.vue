@@ -15,7 +15,7 @@
         <el-col :span="16">
           <el-card :body-style="{ height: '120px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;">{{$t('menu.fullTextSearch')}}</span>
+              <span style="float: left;" class="ecmtitle">{{$t('menu.fullTextSearch')}}</span>
             </div>
             <div>
               <el-row style="padding-top:5px;padding-bottom:5px;">
@@ -34,7 +34,7 @@
               </el-row>
               <el-row>
                 <el-row style="padding-top:5px;padding-bottom:5px;float:left;text-align:left;">
-                  <span>{{$t('application.docTypeName')}}</span>
+                  <span class="ecmcontent">{{$t('application.docTypeName')}}</span>
                   <el-checkbox
                     :indeterminate="isIndeterminate"
                     v-model="checkAll"
@@ -55,9 +55,9 @@
               </el-row>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '200px' }">
+          <el-card :body-style="{ height: '180px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;">待办任务<el-badge :value="totalCount" class="item"></el-badge>
+              <span style="float: left;" class="ecmtitle">待办任务<el-badge :value="totalCount" class="item"></el-badge>
               </span>
               <el-link
                 :underline="false"
@@ -70,15 +70,15 @@
               <el-table-column label="任务名称">
                 <el-link slot-scope="scope" type="primary" @click="openTask(scope.row.id)">{{(scope.row.name)}}</el-link>
              </el-table-column>
-              <el-table-column prop="startUser" label="发送人"></el-table-column>
-              <el-table-column label="发送时间" align="right">
+              <el-table-column prop="startUser" label="发送人" class="ecmcontent"></el-table-column>
+              <el-table-column label="发送时间" align="right" class="ecmcontent">
                 <template slot-scope="scope">{{dateFormat(scope.row.createTime)}}</template>
               </el-table-column>
             </el-table>
           </el-card>
           <el-card :body-style="{ height: '220px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;">最新文档</span>
+              <span style="float: left;" class="ecmtitle">最新文档</span>
             </div>
             <el-table
               v-loading="loadingNewDocData"
@@ -86,36 +86,36 @@
               style="width:100%;"
               :show-header="false"
             >
-              <el-table-column prop="CODING" label="编码" width="200"></el-table-column>
-              <el-table-column width="60" prop="REVISION" label="版本"></el-table-column>
+              <el-table-column prop="CODING" label="编码" width="200" class="ecmcontent"></el-table-column>
+              <el-table-column width="60" prop="REVISION" label="版本" class="ecmcontent"></el-table-column>
               <el-table-column label="题名" min-width="20%" :show-overflow-tooltip="true">
                 <template slot-scope="scope">
                   <el-link  type="primary" @click="showFile(scope.row)">{{scope.row.NAME}}</el-link>
                 </template>
               </el-table-column>
-              <el-table-column label="编制日期" align="right" width="120">
+              <el-table-column label="编制日期" align="right" width="120" class="ecmcontent">
                 <template slot-scope="scope">{{dateFormat(scope.row.C_DOC_DATE)}}</template>
               </el-table-column>
             </el-table>
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card :body-style="{ height: '40px' }">
+          <el-card :body-style="{ height: '32px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;">个人中心</span>
+              <span style="float: left;" class="ecmtitle">个人中心</span>
             </div>
             <el-col :span="12">
-              <i style="font-size : 32px" class="el-icon-user"></i>
+              <i style="font-size : 28px" class="el-icon-user"></i>
               <el-link :underline="false" @click="$router.push(jumpPath.userCenter)">我的信息</el-link>
             </el-col>
             <el-col :span="12">
-              <i style="font-size : 32px" class="el-icon-s-claim"></i>
+              <i style="font-size : 28px" class="el-icon-s-claim"></i>
               <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
             </el-col>
           </el-card>
-          <el-card :body-style="{ height: '200px' }">
+          <el-card :body-style="{ height: '180px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;">通知公告</span>
+              <span style="float: left;" class="ecmtitle">通知公告</span>
               <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
@@ -281,6 +281,7 @@ export default {
                         show: true,
                         textStyle: {
                             color: '#000000',
+                            width:180,
                             // fontSize: '38',//字体大小
                         },
                         fontSize: 9,//字体大小
@@ -447,9 +448,6 @@ export default {
 .el-table {
   width: 100%;
 }
-.el-link {
-  font-size: 16px;
-}
 .searchInput {
   display: inline;
 }
@@ -460,4 +458,5 @@ export default {
 .search {
   padding-right: 20%;
 }
+
 </style>

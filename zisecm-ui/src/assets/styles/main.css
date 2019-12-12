@@ -195,3 +195,10 @@ body .el-table th.gutter{
   height: 100%;
   padding-top: 0;
 }
+.ecmcontent{
+  font-size: 14px;
+}
+
+.ecmtitle{
+  font-size: 16px;
+}
