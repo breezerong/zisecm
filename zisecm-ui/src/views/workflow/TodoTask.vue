@@ -17,7 +17,7 @@
                 </el-form-item>
           </el-form>
           <el-divider content-position="left">表单信息</el-divider>
-           <router-view></router-view>
+           <router-view ref="formRouter"></router-view>
           <el-divider content-position="left">流转意见</el-divider>
            <el-table
               :data="taskList"
@@ -58,8 +58,8 @@
               <el-col >
                 <el-form-item label="通过类型" :label-width="formLabelWidth" style="float:left">
                   <el-radio-group  v-model="form.result"  >
-                      <el-radio-button label="通过"   >通过</el-radio-button>
-                      <el-radio-button label="驳回"  >驳回</el-radio-button>
+                      <el-radio-button label="通过"  >通过</el-radio-button>
+                      <el-radio-button label="驳回"  >{{rejectButton}}</el-radio-button>
                    </el-radio-group>
 
                 </el-form-item>
@@ -173,7 +173,9 @@ export default {
         message: ""
       },
       formLabelWidth: "120px",
-      taskList:[]
+      taskList:[],
+      formEditPermision:0,
+      rejectButton:'驳回',
     };
   },
   created(){ 
@@ -241,7 +243,7 @@ export default {
       _self.itemCount = val;
       _self.loading = false;
      },
-    completetask(indata) {
+   async completetask(indata) {
       let _self = this;
       if(_self.isCompleteSelected) {
         _self.form.taskId = [];
@@ -251,18 +253,40 @@ export default {
         }
       }
       _self.loading=true;
-      axios.post('/workflow/completeTask',JSON.stringify(_self.form))
-      .then(function(response) {
-        _self.loading=false;
-        _self.dialogVisible = false;
-        _self.refreshData();
-        _self.$message("完成任务成功!");
-        _self.$emit('refreshcount');
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+      let a=_self.$refs.formRouter.getFormdataMap();
+      if(_self.formEditPermision==1){
+        axios.post("/dc/saveBorrowForm",a).then(function(response){    
+            axios.post('/workflow/completeTask',JSON.stringify(_self.form))
+            .then(function(response) {
+              _self.loading=false;
+              _self.dialogVisible = false;
+              _self.refreshData();
+              _self.$message("完成任务成功!");
+              _self.$emit('refreshcount');
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+      }).catch(function(error){
+          console.log(error);
+          _self.loading = false;
+      }); 
+    }else{
+        axios.post('/workflow/completeTask',JSON.stringify(_self.form))
+        .then(function(response) {
+          _self.loading=false;
+          _self.dialogVisible = false;
+          _self.refreshData();
+          _self.$message("完成任务成功!");
+          _self.$emit('refreshcount');
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+    }
     },
+
     completeselected(){
       let _self = this;
       if(_self.selectedItems.length==0){
@@ -276,7 +300,6 @@ export default {
     },
     showitem(indata) {
       let _self = this;
-      var formEditPermision=0;
       _self.dialogTitle = "查看任务";
       _self.isCompleteSelected = false;
       _self.currentData=indata;
@@ -284,8 +307,12 @@ export default {
       _self.form.formId = indata.formId;
       _self.dialogVisible = true;
       _self.taskTableData=[];
-      if("借阅驳回"==indata.name){
-        formEditPermision=1;
+     if("借阅驳回"==indata.name){
+        _self.formEditPermision=1;
+        _self.rejectButton='结束';
+      }else{
+      _self.formEditPermision=0;
+        _self.rejectButton='驳回';
       };
       _self.$router.replace({
       path:'/borrow1',
@@ -293,7 +320,7 @@ export default {
       tabledata: _self.taskTableData,
       borrowFormId:_self.form.formId,
       istask:1,
-      formEditPermision:formEditPermision
+      formEditPermision:_self.formEditPermision
       }
     });
           var m = new Map();
