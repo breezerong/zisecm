@@ -57,7 +57,7 @@
       </el-row>
     </el-main>
 
-    <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="80%" :before-close="handleClose">      
+    <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="90%" :before-close="handleClose">      
       <template v-if="dialog.title=='文档属性'">
         <ShowProperty ref="ShowProperty" :itemId="doc.id" :typeName="doc.typeName" :folderId="doc.folderId"></ShowProperty>
       </template>

@@ -193,16 +193,6 @@
                           <span>{{scope.row.email}}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column label="电话" width="150">
-                        <template slot-scope="scope">
-                          <span>{{scope.row.phone}}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="用户类型" width="90">
-                        <template slot-scope="scope">
-                          <span>{{scope.row.userPermit}}</span>
-                        </template>
-                      </el-table-column>
                       <el-table-column label="是否启用" width="90">
                         <template slot-scope="scope">
                           <span>{{scope.row.isActived}}</span>

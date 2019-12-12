@@ -90,7 +90,7 @@
                     </el-tree>
         </el-col>
         <el-col :span="20">
-          <el-row>
+          <el-row v-loading="loading">
             <el-col :span="3">
               
                     <el-input  v-model="inputkey" :placeholder="$t('message.pleaseInput')+$t('application.keyword')" @change="searchItem" prefix-icon="el-icon-search"></el-input>
@@ -144,7 +144,13 @@
                       @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
                     </div>
                     <div class="middle" style="verticle-align:middle">
+                      <br>
+                      <br>
+                      <br>
+                      <br>
+                      <br>
                       <el-button  v-show="showButton" type="primary" plain size="small" title="移除案卷"  @click="removeFromArchive()">&gt;</el-button>
+                      <br>
                       <br>
                       <el-button  v-show="showButton" type="primary" plain size="small" title="添加到案卷"  @click="addToArchive()">&lt;</el-button>
                       
@@ -192,7 +198,7 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 200)/2,
+      rightTableHeight: (window.innerHeight - 182)/2,
       currentLanguage: this.getLang(),
       printsVisible:false,
       printVolumesVisible:false,
@@ -471,8 +477,8 @@ export default {
     uploadData(selId){
       let _self = this;
       let formdata = _self.getFormData(selId);
-      console.log("UploadData getData");
-      console.log(formdata);
+      //console.log("UploadData getData");
+      //console.log(formdata);
       _self.axios({
         headers: {
           "Content-Type": "application/json;charset=UTF-8"
@@ -542,7 +548,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
+      m.set('gridName','ArrangeInnerGrid');
       m.set('lang',_self.currentLanguage);
       _self.axios({
         headers: {
@@ -555,6 +561,7 @@ export default {
         .then(function(response) {
           
           _self.outerGridList = response.data.data;
+          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -566,7 +573,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
+      m.set('gridName','ArrangeInnerGrid');
       m.set('lang',_self.currentLanguage);
       _self.axios({
         headers: {
@@ -579,7 +586,7 @@ export default {
         .then(function(response) {
           
           _self.innerGridList = response.data.data;
-          
+          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -648,7 +655,7 @@ export default {
       _self.outerCurrentPage=1;
       _self.loadInnerGridInfo();
       var m = new Map();
-      m.set('gridName','ArchiveGrid');
+      m.set('gridName','ArrangeInnerGrid');
       m.set('condition',"");
       if(_self.selectRow)
       {
@@ -715,32 +722,7 @@ export default {
     onImageClick(){
       this.imageViewVisible = false;
     },
-    formatImage(indata){
-      var url = './static/img/format/f_'+indata+'_16.gif';
-      return url;
-    },
-    dateFtt(fmt, date)
-    {
-      var o = {   
-        "M+" : date.getMonth()+1,                 //月份   
-        "d+" : date.getDate(),                    //日   
-        "h+" : date.getHours(),                   //小时   
-        "m+" : date.getMinutes(),                 //分   
-        "s+" : date.getSeconds(),                 //秒   
-        "q+" : Math.floor((date.getMonth()+3)/3), //季度   
-        "S"  : date.getMilliseconds()             //毫秒   
-      };   
-      if(/(y+)/.test(fmt))   
-          fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
-      for(var k in o)   
-          if(new RegExp("("+ k +")").test(fmt))   
-              fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-      return fmt;   
-    },
-    dateFormat(value){
-      var crtTime = new Date(value);
-      return this.dateFtt("yyyy-MM-dd",crtTime);
-    },
+       
     // 表格行选择
     selectChange(val) 
     {
@@ -1005,6 +987,8 @@ export default {
       }
       _self.loadGridInfo(indata);
       _self.loadGridData(indata);
+      _self.loadOutGridInfo();
+      _self.loadGridOutData(_self.currentFolder);
       
     },
     loadGridOutData(indata){
@@ -1019,7 +1003,7 @@ export default {
       }
       
       var m = new Map();
-      m.set('gridName',indata.gridView);
+      m.set('gridName',"ArrangeInnerGrid");
       if(whereSql==''){
         m.set('condition'," folder_id='"+indata.id+"' ");
       }else{
@@ -1585,33 +1569,7 @@ export default {
           console.log(error);
       });
     },
-    // 查看属性
-    showItemProperty(indata){
-      let _self = this;
-      _self.selectedItemId = indata.ID ;
-      _self.propertyVisible = true;
-      if(_self.$refs.ShowProperty){
-        _self.dialogName=indata.TYPE_NAME;
-        _self.$refs.ShowProperty.myItemId = indata.ID ;
-        _self.$refs.ShowProperty.loadFormInfo();
-      }
-    },
-    // 查看内容
-    showItemContent(indata){
-      let _self = this;
-      _self.imageArray = [];
-      _self.currentType = indata.FORMAT_NAME;
-      // 拦截器会自动替换成目标url
-      _self.imageArray[0] =  "/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      if(_self.currentType == "pdf"){
-         window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
-      }else{
-         _self.imageViewVisible =true;
-      }
-    },
-    closepdf(){
-      this.imageViewVisible=false
-    },
+    
     // 保存文件夹
     saveFolder(indata) {
       let _self = this;
@@ -1638,131 +1596,6 @@ export default {
           console.log(error);
         });
       }
-    },
-    // 删除文件夹
-    delFolder() {
-      let _self = this;
-      _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(_self.currentFolder),
-          url: "/admin/deleteFolder"
-        })
-        .then(function(response) {
-          if(response.data.code==1)
-          {
-            _self.$message(_self.$t("message.deleteSuccess"));
-            _self.refreshFolderData();
-          }
-          else
-          {
-            _self.$message(response.data.msg);
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    // 新建文件夹事件
-    onNewFolder()
-    {
-      if(!this.currentFolder||!this.currentFolder.id)
-      {
-        this.$message(_self.$t("message.cannotCreateRoot"));
-        return;
-      }
-      this.folderAction = _self.$t("application.newFolder");
-      this.folderForm ={
-        id: null,
-        name: "",
-        description: "",
-        parentId: this.currentFolder.id,
-        typeName: this.currentFolder.typeName,
-        gridView: this.currentFolder.gridView,
-        aclName: this.currentFolder.aclName
-      };
-      this.folderDialogVisible = true;
-    },
-    // 编辑文件夹事件
-    onEditFolder()
-    {
-      if(!this.currentFolder||!this.currentFolder.id)
-      {
-        this.$message(this.$t("message.pleaseSelectFolder"));
-        return;
-      }
-      this.folderAction = this.$t("application.edit")+this.$t("application.folder");
-      this.folderForm = this.currentFolder;
-      this.folderDialogVisible = true;
-    },
-    onDeleleFolder()
-    {
-      let _self = this;
-      if(!_self.currentFolder||!_self.currentFolder.id)
-      {
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
-        return;
-      }
-      _self.$confirm(_self.$t("message.deleteInfo"), _self.$t("application.info"), {
-          confirmButtonText: _self.$t("application.ok"),
-          cancelButtonText: _self.$t("application.cancel"),
-          type: 'warning'
-        }).then(() => {
-          _self.delFolder();
-        }).catch(() => {
-          // this.$message({
-          //   type: 'info',
-          //   message: '已取消删除'
-          // });          
-        });
-    },
-    // 新建文件夹
-    newFolder(indata) {
-      let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/newFolder"
-        })
-        .then(function(response) {
-          _self.folderDialogVisible = false;
-          _self.currentFolder.children = [];
-          _self.currentFolder.extended = false;
-          //_self.refreshFolderData();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    //复制文档
-    copyItem(indata) {
-      let _self = this;
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          datatype: "json",
-          method: "post",
-          data: JSON.stringify(indata),
-          url: "/admin/copyFolder"
-        })
-        .then(function(response) {
-          _self.$message(_self.$t("message.copySuccess"));
-          _self.dialogVisible = false;
-          _self.refreshFolderData();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
     },
     //查询文档
     searchItem() {

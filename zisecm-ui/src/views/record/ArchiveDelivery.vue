@@ -7,7 +7,7 @@
         <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="60%" >
+    <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
         <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectedOneTransfer.ID"></BatchImport>
         <div slot="footer" class="dialog-footer">
           <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
@@ -43,7 +43,7 @@
             placeholder="'请选择文件类型'"
             style="display:block;"
           >
-            <div v-for="(name,nameIndex) in typeNames">
+            <div v-for="(name,nameIndex) in typeNames" :key="'T_'+nameIndex">
               <el-option :label="name" :value="name" :key="nameIndex"></el-option>
             </div>
           </el-select>
@@ -65,7 +65,7 @@
             placeholder="'请选择文件类型'"
             style="display:block;"
           >
-            <div v-for="(name,nameIndex) in childrenTypes">
+            <div v-for="(name,nameIndex) in childrenTypes" :key="'T2_'+nameIndex">
               <el-option :label="name" :value="name" :key="nameIndex"></el-option>
             </div>
           </el-select>
@@ -124,7 +124,7 @@
         <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <el-row>
+    <el-row v-loading="loading">
       <el-col :span="7" style="padding-top:4px;float:left;text-align:left;">
           <el-button type="primary" icon="el-icon-circle-plus" 
           plain
@@ -594,7 +594,7 @@ export default {
       // }
       _self.loadInnerGridInfo();
       var m = new Map();
-      m.set("gridName", "ArchiveGrid");
+      m.set("gridName", "DeliveryInnerGrid");
       m.set("condition", "");
       if (_self.selectRow) {
         _self.archiveId = _self.selectRow.ID;
@@ -769,7 +769,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set("gridName", "ArchiveGrid");
+      m.set("gridName", "DeliveryInnerGrid");
       m.set("lang", _self.currentLanguage);
       _self
         .axios({
@@ -782,7 +782,7 @@ export default {
         })
         .then(function(response) {
           _self.innerGridList = response.data.data;
-
+          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -825,6 +825,7 @@ export default {
               _self.showFields.push(element.attrName);
             }
           });
+          //_self.leftTableHeight = "98%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -893,6 +894,7 @@ export default {
               _self.showFields.push(element.attrName);
             }
           });
+          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -931,7 +933,7 @@ export default {
         })
         .then(function(response) {
           _self.showInnerFile(null);
-          _self.loadGridOutData();
+          
 
           //console.log(JSON.stringify(response.data.datalist));
           _self.loading = false;
@@ -973,7 +975,7 @@ export default {
         })
         .then(function(response) {
           _self.showInnerFile(null);
-          _self.loadGridOutData();
+          
 
           //console.log(JSON.stringify(response.data.datalist));
           _self.loading = false;
@@ -1037,13 +1039,13 @@ export default {
     // 分页 当前页改变
     outerPageChange(val) {
       this.outerCurrentPage = val;
-      this.loadGridOutData();
+      
       //console.log('handleCurrentChange', val);
     },
     outerPageSizeChange(val) {
       this.outerPageSize = val;
       localStorage.setItem("docPageSize", val);
-      this.loadGridOutData();
+      
     },
     // 分页 当前页改变
     innerPageChange(val) {
@@ -1068,7 +1070,7 @@ export default {
       // }
       _self.loadGridInfo();
       var m = new Map();
-      m.set("gridName", "ArchiveGrid");
+      m.set("gridName", "DeliveryInnerGrid");
       m.set("condition", "");
       if (_self.selectRow) {
         _self.archiveId = _self.selectRow.ID;
@@ -1139,96 +1141,7 @@ export default {
           _self.loading = false;
         });
     },
-    // 文件夹节点点击事件
-    handleNodeClick(indata) {
-      let _self = this;
-      _self.currentFolder = indata;
-      //console.log(JSON.stringify(indata));
-      // 没有加载，逐级加载
-      if (indata.extended == false) {
-        _self.loading = true;
-        _self
-          .axios({
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            },
-            method: "post",
-            data: indata.id,
-            url: "/admin/getFolder"
-          })
-          .then(function(response) {
-            indata.children = response.data.data;
-            //console.log(JSON.stringify(indata));
-            indata.extended = true;
-            _self.loading = false;
-          })
-          .catch(function(error) {
-            console.log(error);
-            _self.loading = false;
-          });
-      }
-      _self.loadGridInfo();
-      _self.loadGridData();
-      _self.loadOutGridInfo();
-      _self.loadGridOutData();
-    },
-    // 加载表格样式
-    loadOutGridInfo() {
-      let _self = this;
-      _self.loading = true;
-      var m = new Map();
-      m.set("gridName", "ArchiveGrid");
-      m.set("lang", _self.currentLanguage);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/getGridViewInfo"
-        })
-        .then(function(response) {
-          _self.outerGridList = response.data.data;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
-    loadGridOutData() {
-      let _self = this;
-      _self.loading = true;
-      var m = new Map();
-      m.set("gridName", "ArchiveGrid");
-      m.set("condition", "TYPE_NAME='技术文件'");
-      // m.set('folderId',indata.id);
-      m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", (_self.outerCurrentPage - 1) * _self.outerPageSize);
-      m.set("orderBy", "");
-      // console.log('pagesize:', _self.pageSize);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/getOutDocuments"
-        })
-        .then(function(response) {
-          _self.outerDataList = response.data.data;
-          _self.outerDataListFull = response.data.data;
-          _self.outerCount = response.data.pager.total;
-          //console.log(JSON.stringify(response.data.datalist));
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
+    
     newArchiveItem(typeName, selectedRow) {
       let _self = this;
       if (selectedRow.length==1) {
@@ -1370,74 +1283,7 @@ export default {
       }
       this.propertyVisible = false;
       this.loadGridData();
-      this.loadGridOutData();
-    },
-    //开卷
-    onOpenPage() {
-      let _self = this;
-      var m = new Map();
-      let tab = _self.selectedItems;
-      if (tab.length < 1) {
-        _self.$message("请选择一条或多条案卷数据！");
-        return;
-      }
-      m.set("files", tab);
-      console.log(JSON.stringify(m));
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/openPage"
-        })
-        .then(function(response) {
-          _self.loadGridData();
-          _self.$message(
-            _self.$t("message.openPage") + _self.$t("message.success")
-          );
-        })
-        .catch(function(error) {
-          _self.$message(
-            _self.$t("message.openPage") + _self.$t("message.failured")
-          );
-          console.log(error);
-        });
-    },
-
-    //封卷
-    onClosePage() {
-      let _self = this;
-      var m = new Map();
-      let tab = _self.selectedItems;
-      if (tab.length < 1) {
-        _self.$message("请选择一条或多条案卷数据！");
-        return;
-      }
-      m.set("files", tab);
-      console.log(JSON.stringify(m));
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/closePage"
-        })
-        .then(function(response) {
-          _self.loadGridData();
-          _self.$message(
-            _self.$t("message.closePage") + _self.$t("message.success")
-          );
-        })
-        .catch(function(error) {
-          _self.$message(
-            _self.$t("message.closePage") + _self.$t("message.failured")
-          );
-          console.log(error);
-        });
+      
     },
     // 删除文档事件
     onDeleleItem() {
@@ -1514,32 +1360,7 @@ export default {
           // });
         });
     },
-    // 自动组卷
-    autoPaper() {
-      let _self = this;
-      var m = new Map();
-      let tab = _self.selectedOutItems;
-      m.set("files", tab);
-      console.log(JSON.stringify(m));
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/autoPaper"
-        })
-        .then(function(response) {
-          _self.loadGridOutData();
-          _self.loadGridData();
-          _self.$message(_self.$t("message.paper"));
-        })
-        .catch(function(error) {
-          _self.$message(_self.$t("message.paperFaild"));
-          console.log(error);
-        });
-    },
+    
     // 删除文档
     deleleFileItem() {
       let _self = this;

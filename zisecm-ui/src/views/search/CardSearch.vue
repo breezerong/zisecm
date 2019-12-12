@@ -106,7 +106,17 @@
         </el-table-column>
         <el-table-column width="40">
           <template slot-scope="scope">
-            <img :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0" />
+             <img v-if="scope.row.TYPE_NAME=='图册'"
+                    :src="'./static/img/drawing.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                  <img v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                    :src="'./static/img/box.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                  <img v-else :title="scope.row.FORMAT_NAME" :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0" />
           </template>
         </el-table-column>
         <div v-for="(citem,idx) in gridList" :key="idx+'_C'">
@@ -214,7 +224,7 @@ export default {
       dialogVisible: false,
       selectedItemId: "",
       propertyVisible: false,
-      tableHeight: window.innerHeight - 225,
+      tableHeight: window.innerHeight - 235,
       formLabelWidth: "120px"
     };
   },
@@ -280,6 +290,7 @@ export default {
           //console.log(JSON.stringify(_self.currentCard));
           _self.loadFormItem();
           _self.loadGridInfo(_self.currentCard.gridView);
+          _self.tableHeight = '98%';
           _self.loading = false;
         })
         .catch(function(error) {
