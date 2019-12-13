@@ -310,11 +310,11 @@ public class WorkflowController  extends ControllerAbstract{
 	    	List<HistoricProcessInstance> processes = null;
 	    	long processTotalCount=0;
 	    	if("all".equals(userId) ) {
-	    		processes = historyService.createHistoricProcessInstanceQuery().startedBy(userId).orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
-	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().startedBy(userId).count();
-	    	}else {
 	    		processes = historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
 	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().count();
+	    	}else {
+	    		processes = historyService.createHistoricProcessInstanceQuery().startedBy(userId).orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
+	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().startedBy(userId).count();
 	    	}
  	        List<HashMap> resultList = new ArrayList<HashMap>();
 	        for (HistoricProcessInstance process : processes) {

@@ -90,6 +90,8 @@
                  </el-table-column>
               <el-table-column prop="name" label="名称" min-width="12%" >
               </el-table-column>
+              <el-table-column v-if="showAllWorkflow=='1'" prop="startUser" label="发起者" min-width="12%" >
+              </el-table-column>
               <el-table-column prop="startTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
               </el-table-column>
               <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
