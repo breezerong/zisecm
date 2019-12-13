@@ -18,7 +18,7 @@
       </el-breadcrumb>
     </div>
     <div class="searchInput">
-      <el-autocomplete
+      <!-- <el-autocomplete
         class="inline-input"
         prefix-icon="el-icon-search"
         v-model="inputkey"
@@ -28,7 +28,9 @@
         @select="handleSelect"
         @keyup.enter.native="enterDown"
         style="width:60%"
-      ></el-autocomplete>
+      ></el-autocomplete> -->
+      <el-input prefix-icon="el-icon-search" v-model="inputkey" :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="enterDown"
+        style="width:60%"></el-input>
       <el-checkbox :label="$t('application.propertyOnly')" v-model="propertyOnly"></el-checkbox>
     </div>
     <div>
@@ -107,6 +109,7 @@
             row-key="ID"
             border
             default-expand-all
+            v-loading="loadData"
           >
             <el-table-column type="expand">
               <template slot-scope="scope">
@@ -274,7 +277,8 @@ export default {
       keywords: [],
       dialogVisible: false,
       tableHeight: window.innerHeight - 170,
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
+      loadData:false
     };
   },
   created() {
@@ -458,6 +462,7 @@ export default {
     search(isScend) {
       window.addEventListener("scroll", this.handleScroll);
       let _self = this;
+      _self.loadData = true;
       _self.isScend = isScend;
       //console.log(JSON.stringify(_self.checkedCards));
       var m = new Map();
@@ -528,6 +533,7 @@ export default {
           _self.searched = true;
           // console.log(JSON.stringify(_self.checkedTerms));
           _self.loading = false;
+          _self.loadData = false;
         })
         .catch(function(error) {
           console.log(error);
