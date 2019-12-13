@@ -1,19 +1,19 @@
      <template>
      <div>
-          <el-form :model="borrowForm" style="width:100%">
+          <el-form ref="borrowForm" :model="borrowForm" style="width:100%"  :rules="rules">
             <el-row style="width:100%">
               <div  v-if="(istask==1 && formEditPermision==1)||istask==0">
               <el-col >
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
-                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off" readonly="true"></el-input>
+                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off" readonly></el-input>
                 </el-form-item>
                  <el-form-item label="电话" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.TITLE" auto-complete="off"></el-input>
                 </el-form-item>
-                 <el-form-item label="用户部门" :label-width="formLabelWidth" style="float:left">
+                 <el-form-item  prop="C_DESC1" label="用户部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
                 </el-form-item>
-                 <el-form-item label="编制部门" :label-width="formLabelWidth" style="float:left">
+                 <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off"></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="日期" :label-width="formLabelWidth" style="float:left">
@@ -33,10 +33,10 @@
                 </el-form-item>
               </el-col>
              <el-col>
-            <el-form-item label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
+            <el-form-item prop="C_START_DATE" label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
                   <el-date-picker   v-model="borrowForm.C_START_DATE" auto-complete="off"></el-date-picker >
                 </el-form-item>
-                 <el-form-item label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
+                 <el-form-item prop="C_END_DATE" label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
                   <el-date-picker    v-model="borrowForm.C_END_DATE" auto-complete="off"></el-date-picker >
                 </el-form-item>
                </el-col>
@@ -224,6 +224,24 @@ export default {
             C_CREATION_UNIT:""
 
       },
+      rules: {
+        C_DESC1: [
+          {required: true, message: this.$t("message.pleaseInput")+"用户部门", trigger: 'blur'},
+            // { validator: validaePass }
+        ],
+        C_CREATION_UNIT: [
+          {required: true, message: this.$t("message.pleaseInput")+"编制部门", trigger: 'blur'},
+            // { validator: validaePass2 }
+        ],
+        C_START_DATE: [
+          {required: true, message: this.$t("message.pleaseInput")+"借阅开始时间", trigger: 'blur'},
+            // { validator: validaePass2 }
+        ],
+        C_END_DATE: [
+          {required: true, message: this.$t("message.pleaseInput")+"借阅结束时间", trigger: 'blur'},
+            // { validator: validaePass2 }
+        ]
+      },      
       formId:"",
       istask:0,
       formEditPermision:0,
@@ -232,6 +250,7 @@ export default {
 
     };
   },
+  
    created() {
     let _self = this;
     _self.formId=_self.$route.query.borrowFormId;
@@ -288,53 +307,118 @@ export default {
       this.$emit('showOrHiden',false)
     },
     startWorkflow() {
-      let _self = this;
-      let m = new  Map();
-      m.set("formData",_self.borrowForm);
+       let _self = this;
+       let drawingNumber=0;
+       let fileNumber=0;
+       let beyondLeaderPermision=false;
+       let isValidedForm=false;
+      _self.$refs.borrowForm.validate((valid) => {
+        if (valid) {
+            let m = new  Map();
+            m.set("formData",_self.borrowForm);
 
-      let documentIds="";
-      let fileTopestSecurityLevel="内部公开";
-      let drawingNumber=_self.tabledata.length;
-      for (let index = 0; index < _self.tabledata.length; index++) {
-        let element = _self.tabledata[index];
-        fileTopestSecurityLevel=fileTopestSecurityLevel+element.C_SECURITY_LEVEL;
-        if(index==0){
-         documentIds=documentIds+element.ID;
-        }else{
-         documentIds=documentIds+","+element.ID;     
-         }
+            let documentIds="";
+            let fileTopestSecurityLevel="内部公开";
+            for (let index = 0; index < _self.tabledata.length; index++) {
+              let element = _self.tabledata[index];
+              fileTopestSecurityLevel=fileTopestSecurityLevel+element.C_SECURITY_LEVEL;
+              if(index==0){
+                documentIds=documentIds+element.ID;
+              }else{
+                documentIds=documentIds+","+element.ID;     
+              }
+              if(_self.tabledata.TYPE_NAME=='图册'){
+                drawingNumber++;
+              }else{
+                fileNumber++;
+              }
+            }
+
+
+            if(fileTopestSecurityLevel.indexOf("核心商密")>0){
+              fileTopestSecurityLevel="核心商密";
+            }else if(fileTopestSecurityLevel.indexOf("普通商密")>0){
+              fileTopestSecurityLevel="普通商密";
+            }else if(fileTopestSecurityLevel.indexOf("受限")>0){
+              fileTopestSecurityLevel="受限";
+            }else{
+              fileTopestSecurityLevel="内部公开";
+            }
+
+
+           switch (fileTopestSecurityLevel) {
+          case "普通商密":
+          case "核心商密":
+            // 20个图册或100个文件以上
+            if (drawingNumber > 20 || fileNumber > 100) {
+              beyondLeaderPermision=true;
+            }
+            break;
+
+          case "受限":
+            // 30个图册或150个文件以上
+            if (drawingNumber > 30 || fileNumber > 150) {
+              beyondLeaderPermision=true;
+            }
+            break;
+
+          default:
+              beyondLeaderPermision=false;
+            break;
+          }
+
+          if(!(_self.borrowForm.SUB_TYPE=="纸质借阅" &&fileTopestSecurityLevel=="内部公开")){
+              let  alertStr="申请人领导";
+              if(_self.borrowForm.C_CREATION_UNIT!=_self.borrowForm.C_DESC1){
+                  alertStr=alertStr+",形成部门领导";
+              }
+              if(beyondLeaderPermision){
+               isValidedForm=true;
+                alertStr=alertStr+",分管领导";
+              }
+              
+              _self.$message({
+                showClose: true,
+                message: "根据您借阅档案的信息："+alertStr+"  必填",
+                duration: 5000,
+                type: "warning"
+              });
+
+              return;
+
+          }
+
+
+
+            m.set("documentIds",documentIds);
+          _self.loading = true;
+          axios.post("/dc/saveBorrowForm",JSON.stringify(m)).then(function(response){
+              _self.formId=response.data.data;
+              console.log(response);  
+              m= new Map();
+              m.set("formId",_self.formId);
+              m.set("fileTopestSecurityLevel",fileTopestSecurityLevel);
+              m.set("drawingNumber",drawingNumber);
+              m.set("fileNumber",fileNumber);
+              
+              axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
+                console.log(response);  
+                _self.loading = false;
+                _self.cancel();
+              }).catch(function(error){
+                console.log(error);
+                _self.loading = false;
+              });
+            }).catch(function(error){
+              console.log(error);
+              _self.loading = false;
+            });
+      
+          }
+      });    
+      if(isValidedForm){
+        alert (1);
       }
-      if(fileTopestSecurityLevel.indexOf("核心商密")>0){
-        fileTopestSecurityLevel="核心商密";
-      }else if(fileTopestSecurityLevel.indexOf("普通商密")>0){
-        fileTopestSecurityLevel="普通商密";
-      }else if(fileTopestSecurityLevel.indexOf("受限")>0){
-        fileTopestSecurityLevel="受限";
-      }else{
-        fileTopestSecurityLevel="内部公开";
-      }
-      m.set("documentIds",documentIds);
-     _self.loading = true;
-     axios.post("/dc/saveBorrowForm",JSON.stringify(m)).then(function(response){
-        _self.formId=response.data.data;
-        console.log(response);  
-        m= new Map();
-        m.set("formId",_self.formId);
-        m.set("fileTopestSecurityLevel",fileTopestSecurityLevel);
-        m.set("drawingNumber",drawingNumber);
-        
-        axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
-          console.log(response);  
-          _self.loading = false;
-          _self.cancel();
-        }).catch(function(error){
-          console.log(error);
-          _self.loading = false;
-        });
-      }).catch(function(error){
-        console.log(error);
-        _self.loading = false;
-      });
     },
     getFormdataMap(){
         
