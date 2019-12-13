@@ -228,14 +228,22 @@ export const adminRouter = {
       meta: {
         requireAuth: true,
         permit: 2,
-        showAllWorkflow: 1
       },
       path: '/workflow/allWorkflow',
-      query:{
-        showAllWorkflow:1
-      },
       component: () => import('@/views/workflow/MyWorkflow.vue'),
-      name: '所有工作流'
+      name: '所有工作流',
+      children:[
+        {
+          meta: {
+            requireAuth: true,
+            permit: 1
+          },
+          path: '/admin_borrow',
+          name: '测试3',
+          component: () => import('@/components/form/Borrow.vue')
+          
+        }
+      ]
     }
   ]
 }

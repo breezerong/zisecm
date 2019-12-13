@@ -134,7 +134,7 @@
                     </template>
                     <el-menu-item index="501">
                       <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/workflow/allWorkflow">流程查看</router-link></span>
+                      <span slot="title"><router-link :to="{ path: '/workflow/allWorkflow', query: { showAllWorkflow: 1}}">流程查看</router-link></span>
                     </el-menu-item>
                   </el-submenu>
               </div>
