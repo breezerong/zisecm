@@ -18,6 +18,10 @@
                       <i class="el-icon-caret-right"></i>
                       <span slot="title"><router-link to="/record/batchmount">{{$t('menu.batchMount')}}</router-link></span>
                     </el-menu-item>
+                    <el-menu-item index="202">
+                      <i class="el-icon-caret-right"></i>
+                      <span slot="title"><router-link to="/record/batchserverimport">服务端批量导入</router-link></span>
+                    </el-menu-item>
                   </el-submenu>
                 </div>
           </el-menu>

@@ -10,15 +10,12 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="8" style="text-align:left">
+      <el-col :span="16" style="text-align:left">
         <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">下载模板</el-button>
       
         <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始导入</el-button>
         &nbsp; &nbsp;
          <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
-      </el-col>
-      <el-col :span="4">
-         &nbsp;
       </el-col>
     </el-row>
     <el-row>

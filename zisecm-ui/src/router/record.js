@@ -52,7 +52,17 @@ export const recordRouter =  [
                 path: '/record/batchmount',
                 name: '批量挂载',
                 component: () => import('@/views/record/BatchMount.vue')
+            },
+            {
+                meta: {
+                    requireAuth: true,
+                    permit: 1
+                },
+                path: '/record/batchserverimport',
+                name: '服务器批量导入',
+                component: () => import('@/views/record/BatchServerImport.vue')
             }
+            
         ]
     },
     {
