@@ -751,7 +751,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
-      m.set('gridName',indata.gridView);
+      m.set('gridName',"ArrangeGrid");
       m.set('lang',_self.currentLanguage);
       _self.axios({
         headers: {
@@ -1387,10 +1387,16 @@ export default {
                       url: "/dc/fetchInformation"
                     })
                     .then(function(response) {
-                      _self.loadGridData(_self.currentFolder);
+                      if(response.data.code=='1'){
+                        _self.loadGridData(_self.currentFolder);
                       
                         _self.showInnerFile(null);
-                      _self.$message(_self.$t("message.fetchInformationSuccess"));
+                        _self.$message(_self.$t("message.fetchInformationSuccess"));
+                      }else{
+                        _self.$message(response.data.message);
+                      }
+                      
+                      
                     })
                     .catch(function(error) {
                       _self.$message(_self.$t("message.fetchInformationFailed"));

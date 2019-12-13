@@ -1,7 +1,10 @@
 <template>
   <div>
     <el-dialog title="查看" :visible.sync="dialogVisible" width="70%">
-          <el-table
+           <el-divider content-position="left">表单信息</el-divider>
+           <router-view ref="formRouter"></router-view>
+          <el-divider content-position="left">流转意见</el-divider>
+         <el-table
               :data="taskList"
               border
               v-loading="loading"
@@ -206,6 +209,7 @@ export default {
         //   console.log(error);
         //   _self.loading = false;
         // });
+        
        axios.post("/workflow/getWorkflowTask",JSON.stringify(m))
         .then(function(response) {
           _self.taskList = response.data.data;
@@ -220,6 +224,16 @@ export default {
           console.log(error);
           _self.loading = false;
         });
+      ;
+      _self.$router.replace({
+        path:'/borrow2',
+        query: { 
+        tabledata: [],
+        borrowFormId:indata.formId,
+        istask:1,
+        formEditPermision:0
+        }
+      });
     },
     search() {
       let _self = this;
