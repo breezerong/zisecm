@@ -79,17 +79,14 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			varMap.put("borrowType", ecmObject.getSubType());
 
 			// 是否本部门文档
-			TODOApplication.getNeedTOChange();
 			varMap.put("departmentDoc",
 					ecmObject.getAttributes().get("C_CREATION_UNIT").equals(ecmObject.getAttributes().get("C_DESC1")));
 
 			// 批次文件是否有商密文件
-			TODOApplication.getNeedTOChange();
 			String fileTopestSecurityLevel = varMap.get("fileTopestSecurityLevel") == null ? ""
 					: varMap.get("fileTopestSecurityLevel").toString();
 
 			// 图纸或文件借阅数量
-			TODOApplication.getNeedTOChange();
 			int drawingNumber = varMap.get("drawingNumber") == null ? 0
 					: Integer.valueOf(varMap.get("drawingNumber").toString());
 			int fileNumber = varMap.get("fileNumber") == null ? 0
