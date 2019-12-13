@@ -310,11 +310,11 @@ public class WorkflowController  extends ControllerAbstract{
 	    	List<HistoricProcessInstance> processes = null;
 	    	long processTotalCount=0;
 	    	if("all".equals(userId) ) {
-	    		processes = historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
-	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().count();
-	    	}else {
 	    		processes = historyService.createHistoricProcessInstanceQuery().startedBy(userId).orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
 	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().startedBy(userId).count();
+	    	}else {
+	    		processes = historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
+	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().count();
 	    	}
  	        List<HashMap> resultList = new ArrayList<HashMap>();
 	        for (HistoricProcessInstance process : processes) {
@@ -324,27 +324,28 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("startUser", process.getStartUserId());
 		        map.put("startTime", process.getStartTime());
 		        map.put("endTime", process.getEndTime()==null?"":process.getEndTime());
-		        String currentAssignee="";
-		        String currentTaskName="";
-		        if(process.getEndTime()==null) {
-		        	List<HistoricTaskInstance>  tasks= historyService.createHistoricTaskInstanceQuery().processInstanceId( process.getId()).orderByHistoricTaskInstanceStartTime().desc().list();
-
-			        if(tasks.size()>0)
-			        {
-			        	currentAssignee=tasks.get(0).getAssignee();
-			        	currentTaskName=tasks.get(0).getName();
-			        }
-			        map.put("currentTaskName", currentTaskName);
-			        map.put("currentAssignee",  currentTaskName+":"+currentAssignee);
-			    }else {		 
-//			    	try {
-//						map.put("name", workflowAuditService.(getToken(), "PROCESS_INSTANCE_ID='"+process.getId()+"'"));
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-			    	map.put("currentTaskName", "已结束");
-			        map.put("currentAssignee",  "已结束");
-			    }
+		        //如下设置当前执行者
+//		        String currentAssignee="";
+//		        String currentTaskName="";
+//		        if(process.getEndTime()==null) {
+//		        	List<HistoricTaskInstance>  tasks= historyService.createHistoricTaskInstanceQuery().processInstanceId( process.getId()).orderByHistoricTaskInstanceStartTime().desc().list();
+//
+//			        if(tasks.size()>0)
+//			        {
+//			        	currentAssignee=tasks.get(0).getAssignee();
+//			        	currentTaskName=tasks.get(0).getName();
+//			        }
+//			        map.put("currentTaskName", currentTaskName);
+//			        map.put("currentAssignee",  currentTaskName+":"+currentAssignee);
+//			    }else {		 
+////			    	try {
+////						map.put("name", workflowAuditService.(getToken(), "PROCESS_INSTANCE_ID='"+process.getId()+"'"));
+////					} catch (Exception e) {
+////						e.printStackTrace();
+////					}
+//			    	map.put("currentTaskName", "已结束");
+//			        map.put("currentAssignee",  "已结束");
+//			    }
 		        resultList.add(map);
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();

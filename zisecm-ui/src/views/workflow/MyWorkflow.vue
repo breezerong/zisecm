@@ -88,14 +88,14 @@
                     </div>
                   </template>
                  </el-table-column>
-              <el-table-column prop="name" label="名称" min-width="20%" >
+              <el-table-column prop="name" label="名称" min-width="12%" >
               </el-table-column>
               <el-table-column prop="startTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
               </el-table-column>
               <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
               </el-table-column>
-              <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
-              </el-table-column>
+              <!-- <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
+              </el-table-column> -->
               <el-table-column label="操作"  width="80">
                 <template slot-scope="scope">
                   <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
