@@ -328,4 +328,7 @@ li {
 a {
   color: #42b983;
 }
+.el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width: 140px;
+}
 </style>

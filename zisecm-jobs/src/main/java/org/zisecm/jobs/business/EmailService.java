@@ -1,6 +1,7 @@
 package org.zisecm.jobs.business;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -35,18 +36,18 @@ public class EmailService implements Ijobs {
     
     @Autowired
     private SpringTemplateEngine templateEngine;
-	public void sendMail() throws Exception {
+	public void sendMail(List<Map<String,Object>> row) throws Exception {
 		try {
 			   System.out.println("发送邮件测试!");
 			  
 			 //创建邮件正文
 			   Map<String,Object> map=new HashMap<String,Object>();
-			   map.put("id", "006");
-			   map.put("userName", "吴先生");
-			   map.put("account", "163.com");
-			   map.put("name", "张三");
-			   map.put("accountType", "Email");
-			   
+//			   map.put("id", row.get("ID").toString());
+//			   map.put("userName", row.get("C_DRAFTER").toString());
+//			   map.put("account", "163.com");
+//			   map.put("name",row.get("C_DRAFTER").toString());
+//			   map.put("accountType", "Email");
+			   map.put("docList", row);
 			   
 			   Context context = new Context();
 			   context.setVariables(map);
@@ -66,9 +67,21 @@ public class EmailService implements Ijobs {
 	@Scheduled(cron = "0/10 * * * * *")
 	public synchronized void runJobs() throws Exception {
 		
-		String sql="select "+getDocumentAllColumns()+" from ecm_document where ";
-		documentService.executeSQL(getToken(), "");
-		sendMail();
+		String sql="select "+getDocumentAllColumns()
+		+" from ecm_document where TYPE_NAME='借阅单'  and STATUS='待入库'  "
+		+ " and date_add(date_format(now(),'%Y-%m-%d'),interval 5 day)>=C_END_DATE";
+		List<Map<String,Object>> result= documentService.getMapList(getToken(), sql);
+		if(result==null||result.size()<1) {
+			return;
+		}
+		for(Map<String,Object> row : result) {
+			String borrowDocsSql="select "+getDocumentAllColumns()+" from ecm_document a,"
+					+ "ecm_relation b where a.id=b.child_id and b.name='irel_borrow' and"
+					+ " b.parent_id='"+row.get("ID").toString()+"' and a.status='待入库'";
+			List<Map<String,Object>> docs= documentService.getMapList(getToken(), borrowDocsSql);
+			sendMail(docs);
+		}
+		
 	}
 	
 	/**
@@ -77,12 +90,15 @@ public class EmailService implements Ijobs {
 	 */
 	private String getDocumentAllColumns() {
 		String cols = "";
-		for(Entry<String, EcmAttribute> attr :CacheManagerOper.getEcmAttributes().entrySet()) {
+		for(String attr :CacheManagerOper.getEcmAttributes().keySet()) {
 			if(cols.length()==0) {
-				cols = attr.getValue().getName();
+				cols = attr;
 			}else {
-				cols += ","+attr.getValue().getName();
+				cols += ","+attr;
 			}
+		}
+		if("".equals(cols)) {
+			cols=" * ";
 		}
 		return cols;
 	}
@@ -122,6 +138,6 @@ public class EmailService implements Ijobs {
 	@Override
 	public void run() throws Exception {
 		// TODO Auto-generated method stub
-		sendMail();
+//		sendMail();
 	}
 }

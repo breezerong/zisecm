@@ -32,8 +32,8 @@ th,td{
 	
 		您好！
 		
-		您发起的借阅申请<span th:text="${id}"></span>,<span th:text="${userName}"></span>已经完成，请通过下面链接查看文档：
-		
+		<!-- 您发起的借阅申请<span th:text="${id}"></span>,<span th:text="${userName}"></span>已经完成，请通过下面链接查看文档： -->
+		您借阅的文件已到期请及时归还，文件列表如下：
 	<table cellspacing="0" cellpadding="0">
 		<tr >
 			<th>序号</th>
@@ -41,11 +41,11 @@ th,td{
 			<th>版本</th>
 			<th colspan="3">文件名</th>
 		</tr>
-		<tr>
-			<td><span th:text="${id}"></span></td>
-			<td colspan="2"><span th:text="${account}"></span></td>
-			<td><span th:text="${name}"></span></td>
-			<td colspan="3"><span th:text="${accountType}"></span></td>
+		<tr th:each="doc,docStat : ${docList}">
+			<td><span th:text="${docStat.count}"></span></td>
+			<td colspan="2"><span th:text="${doc.CODING}"></span></td>
+			<td><span th:if="${doc[REVISION]!=null}" th:text="${doc[REVISION]}"></span></td>
+			<td colspan="3"><span th:if="${doc[TITLE]!=null}" th:text="${doc[TITLE]}"></span></span></td>
 		</tr>
 		<tr>
 			<td></td>
