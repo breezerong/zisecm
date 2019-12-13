@@ -2,7 +2,7 @@
   <el-container>
     <div>
        <el-dialog
-      :title="借阅"
+      title="借阅"
       :visible.sync="borrowDialogVisible"
       @close="borrowDialogVisible = false"
       width="95%"
@@ -18,7 +18,7 @@
       </el-col>
       <el-col :span="4" style="float:right; text-align:right;">
         <template v-if="docObj!=null">
-          <el-button size="mini" icon="el-icon-shopping-cart-2" @click="borrowItem(doc)">借阅</el-button>
+          <el-button size="mini" icon="el-icon-shopping-cart-2" @click="borrowItem(docObj)">借阅</el-button>
           <el-button v-if="doc.permit>=4" size="mini" icon="el-icon-download" @click="download()">下载</el-button>
         </template>
       </el-col>
@@ -113,6 +113,7 @@ import VideoPlayer from './VideoPlayer.vue'
 import AudioPlayer from './AudioPlayer.vue'
 import InnerItemViewer from "./InnerItemViewer.vue"
 import ChangeDocViewer from "./ChangeDocViewer.vue"
+import { timeout } from 'q'
 
 export default {
   components:{
@@ -291,12 +292,21 @@ export default {
       },
       borrowItem(obj) {
         let _self = this;
+        let rowData=[];
         _self.borrowDialogVisible=true;
-          // _self.$router.replace({
-          //   path:'/borrow',
-          //   query: { tabledata: _self.selectedItemList }
-          // });
-      }
+        rowData.push(obj);
+        setTimeout(() => {
+          _self.$router.replace({
+            path:'/viewDoc_borrow',
+            query: { tabledata: rowData  }
+          });
+    
+        }, 100);
+      },
+    showOrHiden(b){
+      this.borrowDialogVisible=b;
+    },
+
   }
 }
 </script>
@@ -313,7 +323,6 @@ export default {
 }
 .el-header{
   color: white;
-  text-align: left;
   padding-top: 15px;
   padding-left: 15px;
 }

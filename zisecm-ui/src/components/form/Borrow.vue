@@ -180,7 +180,7 @@
           </el-form>
 
 
-          <div slot="footer" class="dialog-footer" v-if="istask==false">
+          <div slot="footer" class="dialog-footer" style="text-align:center" v-if="istask==false">
             <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
             <el-button ref="borrowStartwf" @click="startWorkflow(borrowForm)">启动流程</el-button>
           </div>
@@ -406,10 +406,23 @@ export default {
               m.set("fileNumber",fileNumber);
               
               axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
-                console.log(response);  
+                console.log(response);
+               _self.$message({
+                showClose: true,
+                message: "流程发起成功!",
+                duration: 1000,
+                type: "success"
+              });
+  
                 _self.loading = false;
                 _self.cancel();
               }).catch(function(error){
+               _self.$message({
+                showClose: true,
+                message: "流程发起失败!",
+                duration: 1000,
+                type: "warning"
+              });
                 console.log(error);
                 _self.loading = false;
               });
