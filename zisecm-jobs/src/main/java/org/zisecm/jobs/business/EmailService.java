@@ -64,7 +64,7 @@ public class EmailService implements Ijobs {
 	 * 启动服务
 	 * @throws Exception 
 	 */
-	@Scheduled(cron = "0/10 * * * * *")
+	@Scheduled(cron = "0 0 14 * * * *")
 	public synchronized void runJobs() throws Exception {
 		
 		String sql="select "+getDocumentAllColumns()
