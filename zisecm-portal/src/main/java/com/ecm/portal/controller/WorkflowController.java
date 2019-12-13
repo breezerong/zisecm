@@ -313,7 +313,7 @@ public class WorkflowController  extends ControllerAbstract{
 	        for (HistoricProcessInstance process : processes) {
 		        HashMap<String, Object> map = new HashMap<>();
 		        map.put("id", process.getId());
-		        map.put("name", process.getName());
+		        map.put("name", process.getProcessDefinitionName());
 		        map.put("startUser", userId);
 		        map.put("startTime", process.getStartTime());
 		        map.put("endTime", process.getEndTime()==null?"":process.getEndTime());
