@@ -59,6 +59,28 @@
     <el-form label-width="120px" @submit.native.prevent>
        <el-row>
          <el-col :span="8">
+           文件夹创建测试
+         </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="路径">
+            <el-input type="text"  v-model="fullPathData.path" ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="结果">
+            <el-input type="text" v-model="fullPathData.result"></el-input>
+          </el-form-item>
+        </el-col>
+         <el-col :span="6">
+           <el-button type="primary" plain icon="save" @click="buildFullPath()">创建路径</el-button> 
+         </el-col>
+      </el-row>
+    </el-form>
+    <el-form label-width="120px" @submit.native.prevent>
+       <el-row>
+         <el-col :span="8">
            重建fullpath
          </el-col>
       </el-row>
@@ -216,6 +238,7 @@ export default {
   permit: 1,
   data() {
     return {
+      loading:false,
       imageId:"e99fda050aca4142b627cc4e7969586a",
       videoData:{
         id:"69c746af4cb1454486aff87a586b1275",
@@ -242,6 +265,10 @@ export default {
         id:"",
         result:""
       },
+      fullPathData:{
+        path:"/移交文档/2019/12/12/01",
+        result:""
+      },
       fileList1:[],
       fileList2:[],
       importMessage:"",
@@ -257,6 +284,20 @@ export default {
       axios.get("/test/newNumber/"+_self.numData.id).then(function(response){
         console.log(response);
         _self.numData.number = response.data.data;	   
+        _self.loading = false;
+      }).catch(function(error){
+        console.log(error);
+        _self.loading = false;
+      });
+    },
+    buildFullPath(){
+      let _self = this;
+      _self.loading =true;
+      let formdata = new FormData();
+      formdata.append("folderPath", _self.fullPathData.path);
+      axios.post("/test/createFolder",formdata).then(function(response){
+        console.log(response);
+        _self.fullPathData.path = response.data.data;	   
         _self.loading = false;
       }).catch(function(error){
         console.log(error);

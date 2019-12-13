@@ -91,9 +91,7 @@
                   <td align="left" width="200px">
                     <el-input v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
                   </td>
-                  <!-- <td width="220px">
-                    <el-button type="primary" icon="el-icon-finished" @click="completeselected()">批量完成</el-button>
-                  </td> -->
+
                   <td>
                   </td>
                 </tr>

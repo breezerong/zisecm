@@ -126,7 +126,20 @@
                     <span slot="title"><router-link to="/managercenter/foldermanager">文件夹设置</router-link></span>
                   </el-menu-item>
                 </div>
+              <div v-if="systemPermission>=4">
+                <el-submenu index="500">
+                    <template slot="title">
+                      <i class="el-icon-menu"></i>
+                      <span>工作流管理</span>
+                    </template>
+                    <el-menu-item index="501">
+                      <i class="el-icon-caret-right"></i>
+                      <span slot="title"><router-link :to="{ path: '/workflow/allWorkflow', query: { showAllWorkflow: 1}}">流程查看</router-link></span>
+                    </el-menu-item>
+                  </el-submenu>
+              </div>
               </el-submenu>
+              
             </div>
           </el-menu>
           </div>

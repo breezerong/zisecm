@@ -69,13 +69,25 @@ const router = new Router({
 			},
 			path: '/viewdoc',
 			name: 'viewdoc',
-			component: () => import( /* webpackChunkName: "home1" */ '@/views/dc/ViewDoc.vue')
+			component: () => import( /* webpackChunkName: "home1" */ '@/views/dc/ViewDoc.vue'),
+			children:[
+					{
+						meta: {
+							requireAuth: true,
+							permit: 1
+						},
+						path: '/viewDoc_borrow',
+						name: '测试2',
+						component: () => import('@/components/form/Borrow.vue')
+						
+					}
+			]
 		},
 		{
 			path: '/login',
 			name: 'login',
 			component: () => import( /* webpackChunkName: "Login" */ '@/views/Login.vue')
-		},
+		}
 		
 	]
 })

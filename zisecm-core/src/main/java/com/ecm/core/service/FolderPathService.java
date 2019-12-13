@@ -110,6 +110,31 @@ public class FolderPathService extends EcmService {
 		}
 		return id;
 	}
+	@Transactional
+	public String getFolderByPath(String token,String folderPath) {
+		EcmFolder fld = folderService.getObjectByPath(token, folderPath);
+		String fldId = "";
+		if(fld!=null) {
+			fldId = fld.getId();
+		}else {
+			String[] names = folderPath.split("/");
+			String fullPath ="";
+			String parentId ="0";
+			for(int i=1;i<names.length;i++) {
+				fullPath += "/"+names[i];
+				fld = folderService.getObjectByPath(token, fullPath);
+				if(fld == null) {
+					fld = new EcmFolder();
+					fld.setName(names[i]);
+					fld.setParentId(parentId);
+					parentId = folderService.newObject(token, fld);
+				}
+				parentId = fld.getId();
+			}
+			fldId = parentId;
+		}
+		return fldId;
+	}
 	
 	private String createFolder(String token,Map<String, Object> values, String policy) {
 		String[] strs = policy.split(";");

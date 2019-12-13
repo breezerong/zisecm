@@ -88,14 +88,16 @@
                     </div>
                   </template>
                  </el-table-column>
-              <el-table-column prop="name" label="名称" min-width="20%" >
+              <el-table-column prop="name" label="名称" min-width="12%" >
+              </el-table-column>
+              <el-table-column v-if="showAllWorkflow=='1'" prop="startUser" label="发起者" min-width="12%" >
               </el-table-column>
               <el-table-column prop="startTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
               </el-table-column>
               <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
               </el-table-column>
-              <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
-              </el-table-column>
+              <!-- <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
+              </el-table-column> -->
               <el-table-column label="操作"  width="80">
                 <template slot-scope="scope">
                   <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
@@ -145,6 +147,8 @@ export default {
       currentProcessId:"",
       workflowPicVisible:"",
       isPocessFinished:"0",
+      currentUserName:"",
+      showAllWorkflow:"0",
     };
   },
   created(){ 
@@ -153,7 +157,12 @@ export default {
     if (psize) {
       _self.pageSize = parseInt(psize);
     }
-    _self.refreshData();
+     _self.currentUserName=sessionStorage.getItem("access-userName");
+     _self.showAllWorkflow=_self.$route.query.showAllWorkflow;
+    if(_self.showAllWorkflow=='1'){
+      _self.currentUserName="all";
+    }   _self.refreshData();
+
   },
   methods: {
     dateFormatter(row, column) {
@@ -180,7 +189,7 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      m.set("userId", sessionStorage.getItem("access-userName"));
+      m.set("userId", _self.currentUserName);
      axios.post('/workflow/myWorkflow',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;
@@ -256,8 +265,12 @@ export default {
           console.log(error);
           _self.loading = false;
         });
+        let routeBorrowPathName="/borrow3";
+        if(_self.showAllWorkflow=="1"){
+            routeBorrowPathName="/admin_borrow3";
+        }
         _self.$router.replace({
-        path:'/borrow3',
+        path:routeBorrowPathName,
         query: { 
         tabledata: [],
         borrowFormId:indata.formId,

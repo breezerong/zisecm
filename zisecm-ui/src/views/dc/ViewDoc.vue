@@ -1,12 +1,24 @@
 <template>
   <el-container>
+    <div>
+       <el-dialog
+      title="借阅"
+      :visible.sync="borrowDialogVisible"
+      @close="borrowDialogVisible = false"
+      width="95%"
+      style="width:100%"
+      custom-class="customWidth"
+    >
+         <router-view @showOrHiden="showOrHiden" ref="ShowShopingCart"></router-view>
+     </el-dialog>
+</div>
     <el-header style="height: 40px;padding-top:8px;">
       <el-col :span="20">
         {{doc.code}} &nbsp;&nbsp;{{doc.revision}}&nbsp;&nbsp;{{doc.title}}
       </el-col>
       <el-col :span="4" style="float:right; text-align:right;">
         <template v-if="docObj!=null">
-          <el-button size="mini" icon="el-icon-shopping-cart-2" @click="menuClick('借阅')">借阅</el-button>
+          <el-button size="mini" icon="el-icon-shopping-cart-2" @click="borrowItem(docObj)">借阅</el-button>
           <el-button v-if="doc.permit>=4" size="mini" icon="el-icon-download" @click="download()">下载</el-button>
         </template>
       </el-col>
@@ -101,6 +113,7 @@ import VideoPlayer from './VideoPlayer.vue'
 import AudioPlayer from './AudioPlayer.vue'
 import InnerItemViewer from "./InnerItemViewer.vue"
 import ChangeDocViewer from "./ChangeDocViewer.vue"
+import { timeout } from 'q'
 
 export default {
   components:{
@@ -145,7 +158,8 @@ export default {
       dialog:{
         title:"",
         visible:false
-      }
+      },
+      borrowDialogVisible:false,
     }
   },
   created(){
@@ -275,7 +289,24 @@ export default {
           if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
           ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
         };
-      }
+      },
+      borrowItem(obj) {
+        let _self = this;
+        let rowData=[];
+        _self.borrowDialogVisible=true;
+        rowData.push(obj);
+        setTimeout(() => {
+          _self.$router.replace({
+            path:'/viewDoc_borrow',
+            query: { tabledata: rowData  }
+          });
+    
+        }, 100);
+      },
+    showOrHiden(b){
+      this.borrowDialogVisible=b;
+    },
+
   }
 }
 </script>
@@ -292,7 +323,6 @@ export default {
 }
 .el-header{
   color: white;
-  text-align: left;
   padding-top: 15px;
   padding-left: 15px;
 }

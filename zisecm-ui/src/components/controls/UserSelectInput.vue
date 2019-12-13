@@ -140,7 +140,7 @@ export default {
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
       m.set("roleName", _self.roleName);    
-      axios.post("/admin/getUsers",m)
+      axios.post("/admin/getUsersByGroupName",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           if(_self.inputValue ){
@@ -175,7 +175,7 @@ export default {
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
       m.set("roleName", _self.roleName);
-      axios.post("/admin/getUsers",m)
+      axios.post("/admin/getUsersByGroupName",m)
         .then(function(response) {
           _self.dataList = response.data.data;
           for (var i = 0; i < _self.rightListId.length; i++) {
