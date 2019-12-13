@@ -207,6 +207,9 @@ export default {
     this.getTypeNames("innerTransferDocType");
     this.loadTransferGridInfo();
     this.loadTransferGridData();
+    this.loadInnerGridInfo();
+
+    this.loadGridInfo();
   },
   methods: {
     addReuseToVolume() {
@@ -1120,9 +1123,11 @@ export default {
         .then(function(response) {
           _self.loading=false;
           _self.loadTransferGridData();
-          _self.loadGridData(null);
+          // _self.loadGridData(null);
 
-          _self.showInnerFile(null);
+          // _self.showInnerFile(null);
+          _self.itemDataList=[];
+          _self.innerDataList=[];
           _self.$message("操作成功");
         })
         .catch(function(error) {
