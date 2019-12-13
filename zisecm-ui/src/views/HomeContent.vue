@@ -19,7 +19,7 @@
             </div>
             <div>
               <el-row style="padding-top:5px;padding-bottom:5px;">
-                <el-autocomplete
+                <!-- <el-autocomplete
                   class="inline-input"
                   v-loading="loading"
                   prefix-icon="el-icon-search"
@@ -29,7 +29,10 @@
                   @keyup.enter.native="jumpToFullSearch"
                   style="width:80%;"
                   v-model="inputkey"
-                ></el-autocomplete>
+                ></el-autocomplete> -->
+                <el-input prefix-icon="el-icon-search" @keyup.enter.native="jumpToFullSearch"
+                  style="width:80%;"
+                  v-model="inputkey" :placeholder="$t('application.placeholderSearch')"></el-input>
                 <el-checkbox :label="$t('application.propertyOnly')" v-model="propertyOnly"></el-checkbox>
               </el-row>
               <el-row>
