@@ -238,7 +238,7 @@ export const adminRouter = {
             requireAuth: true,
             permit: 1
           },
-          path: '/admin_borrow',
+          path: '/admin_borrow3',
           name: '测试3',
           component: () => import('@/components/form/Borrow.vue')
           

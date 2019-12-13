@@ -156,7 +156,8 @@ export default {
       _self.pageSize = parseInt(psize);
     }
      _self.currentUserName=sessionStorage.getItem("access-userName");
-    if(_self.$route.query.showAllWorkflow=='1'){
+     _self.showAllWorkflow=_self.$route.query.showAllWorkflow;
+    if(_self.showAllWorkflow=='1'){
       _self.currentUserName="all";
     }   _self.refreshData();
 
@@ -262,8 +263,12 @@ export default {
           console.log(error);
           _self.loading = false;
         });
+        let routeBorrowPathName="/borrow3";
+        if(_self.showAllWorkflow=="1"){
+            routeBorrowPathName="/admin_borrow3";
+        }
         _self.$router.replace({
-        path:'/borrow3',
+        path:routeBorrowPathName,
         query: { 
         tabledata: [],
         borrowFormId:indata.formId,
