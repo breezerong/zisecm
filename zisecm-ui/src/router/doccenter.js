@@ -37,7 +37,7 @@ export const dcRouter = [
 			},
 			path: '/dc/shoppingcart',
 			component: () => import('@/views/dc/ShoppingCart.vue'),
-			name: '购物车'
+			name: '借阅单'
 		},
 		{
 			meta: {

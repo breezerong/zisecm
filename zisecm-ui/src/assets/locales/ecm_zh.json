@@ -131,8 +131,8 @@
     "show":"显示",
     "fileBox":"卷盒",
     "warehousing":"上架",
-    "addToShopingCart":"添加到购物车",
-    "openShopingCart":"购物车"
+    "addToShopingCart":"添加到借阅单",
+    "openShopingCart":"借阅单"
 },
 "menu": {
     "home":"首页",

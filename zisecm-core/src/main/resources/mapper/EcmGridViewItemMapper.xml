@@ -17,7 +17,7 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ecm_gridview_item order by ID
+    from ecm_gridview_item order by ORDER_INDEX
   </select>
   <select id="selectByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select

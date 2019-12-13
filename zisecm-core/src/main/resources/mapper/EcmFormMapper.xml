@@ -16,7 +16,7 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ecm_form order by ID
+    from ecm_form order by TYPE_NAME
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select

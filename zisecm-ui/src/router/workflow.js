@@ -24,7 +24,7 @@ export const workflowRouter =
                 permit: 1
               },
               path: '/borrow1',
-              name: '测试2',
+              name: '测试1',
               component: () => import('@/components/form/Borrow.vue')
               
             }
@@ -38,7 +38,20 @@ export const workflowRouter =
           },
           path: '/workflow/donetask',
           name: '已办工作',
-          component: () => import('@/views/workflow/DoneTask.vue')
+          component: () => import('@/views/workflow/DoneTask.vue'),
+          children:[
+            {
+              meta: {
+                requireAuth: true,
+                permit: 1
+              },
+              path: '/borrow2',
+              name: '测试2',
+              component: () => import('@/components/form/Borrow.vue')
+              
+            }
+          ]
+
         },
         {
           meta: {
@@ -47,7 +60,19 @@ export const workflowRouter =
           },
           path: '/workflow/myworkflow',
           name: '我的流程',
-          component: () => import('@/views/workflow/MyWorkflow.vue')
+          component: () => import('@/views/workflow/MyWorkflow.vue'),
+          children:[
+            {
+              meta: {
+                requireAuth: true,
+                permit: 1
+              },
+              path: '/borrow3',
+              name: '测试3',
+              component: () => import('@/components/form/Borrow.vue')
+              
+            }
+          ]
         }
     ]
   }

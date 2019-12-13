@@ -137,14 +137,10 @@
                     <el-input  v-model="inputkey" placeholder="请输入属性名关键字" @change="search" prefix-icon="el-icon-search"></el-input>
                   </td>
                   <td width="40px">
-                    <el-tooltip  class="item" effect="dark" content="新增用户" placement="top">
-                      <el-button type="primary" icon="el-icon-edit" circle @click="newUser()"></el-button>
-                    </el-tooltip> 
+                      <el-button type="primary" plain icon="el-icon-edit"  @click="newUser()">创建用户</el-button>
                   </td>
                   <td width="40px">
-                    <el-tooltip  class="item" effect="dark" content="添加已有用户" placement="top">
-                      <el-button type="primary" icon="el-icon-circle-plus-outline" circle @click="onUserSelector()"></el-button>
-                    </el-tooltip>
+                      <el-button type="primary" plain icon="el-icon-circle-plus-outline" @click="onUserSelector()">添加用户</el-button>
                   </td>
                   <td>
                   </td>
@@ -178,22 +174,22 @@
                           <span>{{ scope.$index+1}}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column label="用户名" min-width="20%">
+                      <el-table-column label="用户名" width="140">
                         <template slot-scope="scope">
                           <span>{{scope.row.name}}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column label="登录名" min-width="15%">
+                      <el-table-column label="登录名" width="140">
                         <template slot-scope="scope">
                           <span>{{scope.row.loginName}}</span>
                         </template>
                       </el-table-column> 
-                      <el-table-column label="邮件" width="240">
+                      <el-table-column label="邮件" min-width="20%">
                         <template slot-scope="scope">
                           <span>{{scope.row.email}}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column label="是否启用" width="90">
+                      <el-table-column label="启用" width="60">
                         <template slot-scope="scope">
                           <span>{{scope.row.isActived}}</span>
                         </template>
