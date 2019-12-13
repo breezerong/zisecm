@@ -5,7 +5,7 @@
               <div  v-if="(istask==1 && formEditPermision==1)||istask==0">
               <el-col >
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
-                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off"></el-input>
+                  <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off" readonly="true"></el-input>
                 </el-form-item>
                  <el-form-item label="电话" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.TITLE" auto-complete="off"></el-input>
@@ -211,24 +211,24 @@ export default {
       borrowDialogVisible: false,
       componentName:"borrow",
       borrowForm: {
-            C_DRAFTER:"Admin",
-            C_DESC1:"用户部门",
-            TITLE:"13983",
+            C_DRAFTER:sessionStorage.getItem("access-userName"),
+            C_DESC1:"",
+            TITLE:"",
             SUB_TYPE:"在线浏览",
-            C_START_DATE:"2019-12-05",
-            C_END_DATE:"2019-12-05",
-            C_REVIEWER1:"Admin",
-            C_REVIEWER2:"Admin",
-            C_REVIEWER3:"Admin",
+            C_START_DATE:new Date(),
+            C_END_DATE:new Date(),
+            C_REVIEWER1:"",
+            C_REVIEWER2:"",
+            C_REVIEWER3:"",
             C_COMMENT:"",
-            C_CREATION_UNIT:"编制部门"
+            C_CREATION_UNIT:""
 
       },
       formId:"",
       istask:0,
       formEditPermision:0,
       vshowShopingCart:false,
-      showOrCloseShopingCartLabel:"从购物车添加",
+      showOrCloseShopingCartLabel:"从借阅单添加",
 
     };
   },
@@ -414,10 +414,10 @@ export default {
       let _self=this;
       if(_self.vshowShopingCart==true){
         _self.vshowShopingCart=false;
-        _self.showOrCloseShopingCartLabel="从购物车添加";
+        _self.showOrCloseShopingCartLabel="从借阅单添加";
         }else{
           _self.vshowShopingCart=true;
-          _self.showOrCloseShopingCartLabel="关闭购物车"
+          _self.showOrCloseShopingCartLabel="关闭借阅单"
           if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
              
             _self.$refs.ShowShopingCart.openShopingCart();

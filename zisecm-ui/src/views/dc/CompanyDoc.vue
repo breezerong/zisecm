@@ -714,7 +714,7 @@ export default {
         });
       }
     },
-    //添加到购物车
+    //添加到借阅单
     addToShopingCart() {
       let _self = this;
       var m = new Map();
@@ -759,7 +759,7 @@ export default {
         });
       }
     },
-       //添加到购物车
+       //添加到借阅单
     openShopingCart() {
       let _self = this;
               _self.shopingCartDialogVisible = true;
