@@ -83,13 +83,13 @@
           
          <el-col style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="审批领导"></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="部门负责人"></UserSelectInput>
                </el-form-item>
                  <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="审批领导"></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="部门负责人"></UserSelectInput>
                 </el-form-item>
                  <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
-                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="审批领导"></UserSelectInput>
+                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="分公司领导"></UserSelectInput>
                 </el-form-item>
 
               </el-col>
@@ -368,23 +368,27 @@ export default {
           }
 
           if(!(_self.borrowForm.SUB_TYPE=="纸质借阅" &&fileTopestSecurityLevel=="内部公开")){
-              let  alertStr="申请人领导";
+              let  alertStr="";
+              if(_self.borrowForm.C_REVIEWER1=="")alertStr="'申请人领导' ";
               if(_self.borrowForm.C_CREATION_UNIT!=_self.borrowForm.C_DESC1){
-                  alertStr=alertStr+",形成部门领导";
+                  if(_self.borrowForm.C_REVIEWER2=="")alertStr=alertStr +"'形成部门领导' ";
               }
               if(beyondLeaderPermision){
-               isValidedForm=true;
-                alertStr=alertStr+",分管领导";
+                  if(_self.borrowForm.C_REVIEWER3=="")alertStr=alertStr +"'分管领导' ";
               }
               
-              _self.$message({
-                showClose: true,
-                message: "根据您借阅档案的信息："+alertStr+"  必填",
-                duration: 5000,
-                type: "warning"
-              });
-
-              return;
+              if(alertStr==""){
+                isValidedForm=true;
+              }else{
+                _self.$message({
+                  showClose: true,
+                  message: "根据您借阅档案的信息："+alertStr+"  必填",
+                  duration: 5000,
+                  type: "warning"
+                });
+                return;
+              }
+              
 
           }
 
@@ -417,7 +421,7 @@ export default {
           }
       });    
       if(isValidedForm){
-        alert (1);
+              console.log(isValidedForm);
       }
     },
     getFormdataMap(){

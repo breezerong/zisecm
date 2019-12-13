@@ -145,6 +145,8 @@ export default {
       currentProcessId:"",
       workflowPicVisible:"",
       isPocessFinished:"0",
+      currentUserName:"",
+      showAllWorkflow:"0",
     };
   },
   created(){ 
@@ -153,7 +155,11 @@ export default {
     if (psize) {
       _self.pageSize = parseInt(psize);
     }
-    _self.refreshData();
+     _self.currentUserName=sessionStorage.getItem("access-userName");
+    if(_self.$route.query.showAllWorkflow=='1'){
+      _self.currentUserName="all";
+    }   _self.refreshData();
+
   },
   methods: {
     dateFormatter(row, column) {
@@ -180,7 +186,7 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      m.set("userId", sessionStorage.getItem("access-userName"));
+      m.set("userId", _self.currentUserName);
      axios.post('/workflow/myWorkflow',JSON.stringify(m))
       .then(function(response) {
         _self.dataList = response.data.data;

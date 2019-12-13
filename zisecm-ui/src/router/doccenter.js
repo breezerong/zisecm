@@ -35,15 +35,6 @@ export const dcRouter = [
 				requireAuth: true,
 				permit: 1
 			},
-			path: '/dc/shoppingcart',
-			component: () => import('@/views/dc/ShoppingCart.vue'),
-			name: '借阅单'
-		},
-		{
-			meta: {
-				requireAuth: true,
-				permit: 1
-			},
 			path: '/dc/folderviewer',
 			component: () => import('@/views/dc/FolderViewer.vue'),
 			name: '查看文件夹'

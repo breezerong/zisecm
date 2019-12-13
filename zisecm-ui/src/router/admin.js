@@ -223,6 +223,19 @@ export const adminRouter = {
       path: '/managercenter/foldermanager',
       component: () => import('@/views/admin/FolderManager.vue'),
       name: '文件夹管理'
+    },
+    {
+      meta: {
+        requireAuth: true,
+        permit: 2,
+        showAllWorkflow: 1
+      },
+      path: '/workflow/allWorkflow',
+      query:{
+        showAllWorkflow:1
+      },
+      component: () => import('@/views/workflow/MyWorkflow.vue'),
+      name: '所有工作流'
     }
   ]
 }
