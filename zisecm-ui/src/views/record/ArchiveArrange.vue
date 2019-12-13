@@ -1360,8 +1360,8 @@ export default {
 
       if(p.length>0){
         p=p.join("','");
-        let pm = new Map();
-        pm.set("configName", "ValidataHasArchiveCode");
+        var pm = new Map();
+        pm.set("configName","ValidataHasArchiveCode");
         pm.set("parentId","'"+p+"'");
          _self
             .axios({
