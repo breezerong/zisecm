@@ -179,6 +179,25 @@ export default {
     //借阅
     borrowItem() {
       let _self = this;
+      var addItemId = [];
+      var C_ARCHIVE_UNIT="";
+      if (_self.selectedItemList.length > 0) {
+        for (var i = 0; i < _self.selectedItemList.length; i++) {
+          if(i==0){
+          C_ARCHIVE_UNIT=_self.selectedItemList[i].C_ARCHIVE_UNIT
+          }else{
+            if(C_ARCHIVE_UNIT!=_self.selectedItemList[i].C_ARCHIVE_UNIT){
+              _self.$message({
+                showClose: true,
+                message: "所借阅档案，归档部门只能是同一个!",
+                duration: 5000,
+                type: "warning"
+              });
+              return;
+            }
+          }
+        }
+      }
       setTimeout(()=>{
             _self.$router.replace({
             path:'/borrow',
