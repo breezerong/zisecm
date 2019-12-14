@@ -84,7 +84,7 @@
               /工作流/待办工作
             </td>
           </tr>
-          <tr>
+          <!-- <tr>
             <td>
               <table border="0" width="100%" class="topbar">
                 <tr>
@@ -97,7 +97,7 @@
                 </tr>
               </table>
             </td>
-          </tr>
+          </tr> -->
         <tr>
           <td>
             <el-table
@@ -106,7 +106,7 @@
               :height="tableHeight"
               v-loading="loading"
               @selection-change="selectChange"
-              style="width: 100%">
+              style="width: 99.8%">
                 <el-table-column type="selection" width="40">
                 </el-table-column> 
                 <el-table-column type="index" width="50">
