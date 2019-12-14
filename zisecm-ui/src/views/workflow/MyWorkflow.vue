@@ -196,7 +196,6 @@ export default {
       let _self = this;
       _self.loading = true;
       _self.refreshData("1");
-      _self.loading = false;
     },
     dateFormatter(row, column) {
       let datetime = row[column.property];

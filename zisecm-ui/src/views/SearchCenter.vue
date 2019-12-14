@@ -17,7 +17,7 @@
                 <span>{{$t('menu.cardSearch')}}</span>
               </template>
               <div v-for="(item,index) in cardList">
-                <el-menu-item :index="(index+100)+''">
+                <el-menu-item :index="(index+100)+''" @click="clickRouter(item.id)">
                   <i class="el-icon-tickets"></i>
                   <span slot="title">
                     <router-link :to="{path:'/search/cardSearch',query:{id:item.id}}">{{item.label}}</router-link>
@@ -74,6 +74,14 @@ export default {
     _self.loadCards();
   },
   methods: {
+  clickRouter(val){
+    let _self = this;
+    _self.$router.push({ 
+      path: "/search/cardSearch",
+      query:{id:val}
+    });
+
+  },
     loadCards()
     {
       let _self = this;
