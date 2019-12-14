@@ -260,6 +260,15 @@ export default {
           addItemId.push(_self.selectedItemList[i].ID);
         }
       }
+      if(addItemId.length==0){
+             _self.$message({
+                showClose: true,
+                message: "请选择需要移除的档案",
+                duration: 2000,
+                type: "warning"
+              });
+              return;
+      }
      axios
         .post("/dc/removeShopingCart", JSON.stringify(addItemId))
         .then(function(response) {
@@ -277,7 +286,7 @@ export default {
 
              _self.$message({
                 showClose: true,
-                message: "清空成功!",
+                message: "移除成功!",
                 duration: 2000,
                 type: "success"
               });

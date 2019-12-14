@@ -241,7 +241,7 @@ export default {
       _self.itemCount = val;
       _self.loading = false;
      },
-   async completetask(indata) {
+   completetask(indata) {
       let _self = this;
       if(_self.isCompleteSelected) {
         _self.form.taskId = [];
@@ -250,10 +250,21 @@ export default {
           _self.form.taskId[i] = _self.selectedItems[i].id;
         }
       }
-      _self.loading=true;
       let a=_self.$refs.formRouter.getFormdataMap();
+      a.get("formData").C_START_DATE
       if(_self.formEditPermision==1){
-        axios.post("/dc/saveBorrowForm",a).then(function(response){    
+       if(new Date(a.get("formData").C_START_DATE).getTime() >= new Date(a.get("formData").C_END_DATE).getTime())
+      {
+         _self.$message({
+            showClose: true,
+            message: "结束日期不能小于开始日期！",
+            duration: 5000,
+            type: "error"
+          });
+          return;
+     }
+       _self.loading=true;
+      axios.post("/dc/saveBorrowForm",a).then(function(response){    
             axios.post('/workflow/completeTask',JSON.stringify(_self.form))
             .then(function(response) {
               _self.loading=false;

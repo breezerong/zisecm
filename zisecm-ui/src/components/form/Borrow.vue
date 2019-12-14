@@ -34,10 +34,10 @@
               </el-col>
              <el-col>
             <el-form-item prop="C_START_DATE" label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker   v-model="borrowForm.C_START_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption" value-format="yyyy-MM-dd"  v-model="borrowForm.C_START_DATE" auto-complete="off"></el-date-picker >
                 </el-form-item>
                  <el-form-item prop="C_END_DATE" label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker    v-model="borrowForm.C_END_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption" value-format="yyyy-MM-dd"    v-model="borrowForm.C_END_DATE" auto-complete="off"></el-date-picker >
                 </el-form-item>
                </el-col>
              <el-col>
@@ -247,10 +247,11 @@ export default {
       formEditPermision:0,
       vshowShopingCart:false,
       showOrCloseShopingCartLabel:"从借阅单添加",
+      expireTimeOption:this.dateCheck(),
 
     };
   },
-  
+
    created() {
     let _self = this;
     _self.formId=_self.$route.query.borrowFormId;
@@ -261,6 +262,15 @@ export default {
     _self.loadGridView()
   }, 
  methods: {
+         dateCheck() {
+           let _self=this;
+           return{
+          disabledDate(date) {
+              return date.getTime()+86400000 < Date.now();
+          }
+        }
+      },
+
        loadGridView(){
         let _self = this;
         var m = new Map();
@@ -376,7 +386,18 @@ export default {
               if(beyondLeaderPermision){
                   if(_self.borrowForm.C_REVIEWER3=="")alertStr=alertStr +"'分管领导' ";
               }
-              
+
+            if(new Date(_self.borrowForm.C_START_DATE).getTime() >= new Date(_self.borrowForm.C_END_DATE).getTime())
+            {
+                 _self.$message({
+                  showClose: true,
+                  message: "结束日期不能小于开始日期！",
+                  duration: 5000,
+                  type: "error"
+                });
+               return;
+            }
+ 
               if(alertStr==""){
                 isValidedForm=true;
               }else{
@@ -471,7 +492,8 @@ export default {
      saveCurrentForm(m){
       let _self = this;
       m=_self.getFormdataMap();
-     _self.loading = true;
+      _self.loading = true;
+
      axios.post("/dc/saveBorrowForm",m).then(function(response){    
           console.log(response.data.data);  
     }).catch(function(error){
