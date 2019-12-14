@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-dialog
       :title="$t('application.property')"
       :visible.sync="propertyVisible"
       @close="propertyVisible = false"
-      width="80%"
+      width="90%"
     >
       <ShowProperty ref="ShowProperty" width="100%" v-bind:itemId="selectedItemId"></ShowProperty>
       <div slot="footer" class="dialog-footer">
@@ -17,7 +17,7 @@
         <el-breadcrumb-item>{{$t('menu.fullTextSearch')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="searchInput">
+    <div class="searchInput" >
       <!-- <el-autocomplete
         class="inline-input"
         prefix-icon="el-icon-search"
@@ -109,7 +109,7 @@
             row-key="ID"
             border
             default-expand-all
-            v-loading="loadData"
+            
           >
             <el-table-column type="expand">
               <template slot-scope="scope">
@@ -348,7 +348,7 @@ export default {
     },
     querySearch(queryString, cb) {
       let _self = this;
-      _self;
+      
       axios
         .post("/search/getSuggestion", JSON.stringify(_self.inputkey))
         .then(function(response) {
@@ -464,6 +464,7 @@ export default {
       let _self = this;
       _self.loadData = true;
       _self.isScend = isScend;
+      _self.loading = true;
       //console.log(JSON.stringify(_self.checkedCards));
       var m = new Map();
       m.set("keyword", _self.inputkey);

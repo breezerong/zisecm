@@ -78,12 +78,16 @@ export default {
       myItemId: this.itemId,
       myTypeName: this.typeName,
       myFolderId: this.folderId,
-      parentDocId:''
+      parentDocId:'',
+      clientPermission: 1
     };
   },
   mounted() {
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     this.loadFormInfo();
+    this.clientPermission = sessionStorage.getItem(
+        "access-clientPermission"
+      );
   },
   props: {
     itemId: {type:String},
@@ -255,9 +259,11 @@ export default {
           _self.$message("您没有修改当前文件属性的权限!");
           return ;
         }
-        if(m.get("STATUS")&&(m.get("STATUS")=="利用"||m.get("STATUS")=="销毁")){
-          _self.$message("请先下架后再修改属性!");
-          return ;
+        if(_self.clientPermission && _self.clientPermission<4){
+          if(m.get("STATUS")&&(m.get("STATUS")=="利用"||m.get("STATUS")=="销毁")){
+            _self.$message("请先下架后再修改属性!");
+            return ;
+          }
         }
         axios.post("/dc/saveDocument",JSON.stringify(m))
         .then(function(response) {

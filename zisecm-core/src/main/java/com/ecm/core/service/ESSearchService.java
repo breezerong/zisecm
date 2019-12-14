@@ -402,6 +402,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 						if (highlightText.length() < ESClient.getInstance().getHeightTextLen()) {
 							highlightText += " " + str.string().replace("\n", " ");
 						} else {
+							highlightText += "...";
 							break;
 						}
 						// System.out.println(str.string());

@@ -117,7 +117,7 @@
           </div>
           <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="140">
             <template slot="header">
-              <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
+              <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
             </template>
             <template slot-scope="scope">
               <!-- <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
