@@ -331,7 +331,7 @@ export default {
         // 加载表格数据
         loadFileGridData(row) {
           let _self = this;
-          if (row != null) {
+          if (row!=undefined&&row != null) {
             _self.selectedOrderRow = row;
             
           }
