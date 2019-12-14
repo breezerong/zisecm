@@ -212,14 +212,7 @@ export default {
           }
           p.set("ids",m);
           p.set("pid",_self.selectedOrderRow.ID)
-          _self.axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(p),
-              url: "/dc/putInstoreFile"
-            })
+          axios.post("/dc/putInstoreFile",JSON.stringify(p))
             .then(function(response) {
                _self.loadGridData();
               _self.loadFileGridData();
@@ -246,14 +239,7 @@ export default {
           for(i in tab){
             m.push(tab[i]["ID"]);
           }
-          _self.axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/putInStorageBorrow"
-            })
+          axios.post("/dc/putInStorageBorrow",JSON.stringify(m))
             .then(function(response) {
               _self.loadGridData();
               _self.loadFileGridData();
@@ -273,15 +259,7 @@ export default {
           var m = new Map();
           m.set("gridName", "BorrowOutFileGrid");
           m.set("lang", _self.getLang());
-          _self
-            .axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/getGridViewInfo"
-            })
+          axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListOutFile = response.data.data;
               
@@ -313,15 +291,7 @@ export default {
           m.set("pageIndex", (_self.outFileCurrentPage - 1) * _self.outFilePageSize);
           m.set("orderBy", "");
           // console.log('pagesize:', _self.pageSize);
-          _self
-            .axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/getObjectsByConfigclause"
-            })
+          axios.post("/dc/getObjectsByConfigclause",JSON.stringify(m))
             .then(function(response) {
               _self.gridListOutFileData = response.data.data;
               _self.outFileItemCount = response.data.pager.total;
@@ -342,10 +312,10 @@ export default {
           }
           _self.fileLoading=true;
           var m = new Map();
-          var key = _self.inputkey;
-          if (key != "") {
-            key = " and( a.coding like '%" + key + "%' or a.C_DRAFTER like '%" + key + "%' )";
-            m.set("condition", key);
+          var key0 = _self.inputkey;
+          if (key0 && key0 != "") {
+            key0 = " and( a.coding like '%" + key0 + "%' or a.C_DRAFTER like '%" + key0 + "%' )";
+            m.set("condition", key0);
           }
         
           m.set("configName", "InBorrowOrderFile");
@@ -356,15 +326,7 @@ export default {
           m.set("pageIndex", (_self.fileCurrentPage - 1) * _self.filePageSize);
           m.set("orderBy", "");
           // console.log('pagesize:', _self.pageSize);
-          _self
-            .axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/getObjectsByConfigclause"
-            })
+          axios.post("/dc/getObjectsByConfigclause",JSON.stringify(m))
             .then(function(response) {
               _self.gridListFileData = response.data.data;
               _self.fileItemCount = response.data.pager.total;
@@ -382,31 +344,23 @@ export default {
           _self.gridListFileData=[];
           _self.gridListOutFileData=[];
           _self.orderLoading=true;
-          var key = _self.orderInputkey;
-          if (key != "") {
-            key = " (coding like '%" + key + "%' or C_DRAFTER like '%" + key + "%') and STATUS='待入库' ";
+          var key0 = _self.orderInputkey;
+          if (key0 && key0 != "") {
+            key0 = " (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') and STATUS='待入库' ";
           }else{
-              key=" STATUS='待入库' "
+              key0=" STATUS='待入库' "
           }
         
           var m = new Map();
           m.set("gridName", "BorrowFormGrid");
           // m.set('folderId',indata.id);
-          m.set("condition", key);
+          m.set("condition", key0);
           
           m.set("pageSize", _self.pageSize);
           m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
           m.set("orderBy", "");
           // console.log('pagesize:', _self.pageSize);
-          _self
-            .axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/getBorrowOrder"
-            })
+          axios.post("/dc/getBorrowOrder",JSON.stringify(m))
             .then(function(response) {
               _self.itemDataList = response.data.data;
               _self.itemDataListFull = response.data.data;
@@ -424,15 +378,7 @@ export default {
           var m = new Map();
           m.set("gridName", "BorrowFileGrid");
           m.set("lang", _self.getLang());
-          _self
-            .axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/getGridViewInfo"
-            })
+          axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListFile = response.data.data;
               
@@ -448,15 +394,7 @@ export default {
           var m = new Map();
           m.set("gridName", "BorrowFormGrid");
           m.set("lang", _self.getLang());
-          _self
-            .axios({
-              headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-              },
-              method: "post",
-              data: JSON.stringify(m),
-              url: "/dc/getGridViewInfo"
-            })
+          axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridList = response.data.data;
               
