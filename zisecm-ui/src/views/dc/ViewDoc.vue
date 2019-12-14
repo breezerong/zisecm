@@ -254,8 +254,9 @@ export default {
     },
     dialogSubmit(){
       if(this.dialog.title=='文档属性'){
-        this.$message("文档属性");
+        
         this.$refs.ShowProperty.saveItem();
+        
         this.dialog.visible = false
       }else if(this.dialog.title=='借阅'){
         this.$message("借阅");

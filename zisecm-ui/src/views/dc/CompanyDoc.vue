@@ -243,7 +243,7 @@
               </div>
               <el-table-column align="left" width="140">
                 <template slot="header" >
-                  <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
+                  <el-button icon="el-icon-s-grid" size="small"  @click="dialogFormShow" title="选择展示字段"></el-button>
                 </template>
                 <template slot-scope="scope">
                   <el-button
@@ -332,14 +332,16 @@ export default {
       formLabelWidth: "100px",
       borrowData: [],
       dialogTitle:"借阅",
-       borrowDialogVisible: false,
-       shopingCartDialogVisible:false,
+      borrowDialogVisible: false,
+      shopingCartDialogVisible:false,
+      defaultData:{
+        gridView:"GeneralGrid"
+      },
       borrowForm: {
         taskId: 0,
         result: "在线浏览",
         message: ""
-      },
-     
+      }
   };
   },
   created() {
@@ -353,6 +355,7 @@ export default {
         }
       });
     });
+    
   },
   mounted() {
     let _self = this;
@@ -373,6 +376,7 @@ export default {
         console.log(error);
         _self.loading = false;
       });
+      _self.loadGridInfo(_self.defaultData);
   },
   methods: {
     rowClick(row) {
