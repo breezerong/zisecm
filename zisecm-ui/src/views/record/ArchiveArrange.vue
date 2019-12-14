@@ -646,6 +646,7 @@ export default {
     },
     beforeShowInnerFile(row){
       this.innerCurrentPage=1;
+      this.innerSelectedOne=[];
       this.showInnerFile(row);
     },
     showInnerFile(row){
@@ -1319,12 +1320,14 @@ export default {
       //   m.push(tab[i]["ID"]);
       // }
       // console.log(JSON.stringify(m));
+      var m=[];
+      m.push(_self.selectRow.ID);
       _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
           method: "post",
-          data: _self.selectRow.ID,//JSON.stringify(m),
+          data: JSON.stringify(m),//_self.selectRow.ID,//JSON.stringify(m),
           url: "/dc/delDocumentAndRelation"
         })
         .then(function(response) {

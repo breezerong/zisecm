@@ -469,7 +469,7 @@ export default {
     },
     beforeUploadFile(uploadpath){
       let _self=this;
-      if(_self.selectedInnerItems.length!=1){
+      if(_self.selectedFileItem.ID==undefined){
         _self.$message('请选择一条文件数据');
         return;
       }
@@ -1345,7 +1345,8 @@ export default {
         _self.$message("请选择一条要删除的图册或卷盒数据！");
         return;
       }
-
+      var m = [];
+      m.push(_self.selectRow.ID);
       // console.log(JSON.stringify(m));
       _self
         .axios({
@@ -1353,7 +1354,7 @@ export default {
             "Content-Type": "application/json;charset=UTF-8"
           },
           method: "post",
-          data: _self.selectRow.ID,//JSON.stringify(_self.selectRow.ID),
+          data: JSON.stringify(m),
           url: "/dc/delDocumentAndRelation"
         })
         .then(function(response) {
@@ -1403,11 +1404,12 @@ export default {
       // for (i in tab) {
       //   m.push(tab[i]["ID"]);
       // }
-      
+      var m = [];
       if(_self.selectedFileItem.ID==undefined){
         _self.$message("请选择一条要删除的文件数据！")
         return;
       }
+      m.push(_self.selectedFileItem.ID);
       // console.log(JSON.stringify(m));
       _self
         .axios({
@@ -1415,7 +1417,7 @@ export default {
             "Content-Type": "application/json;charset=UTF-8"
           },
           method: "post",
-          data: _self.selectedFileItem.ID,//JSON.stringify(_self.selectedFileItem.ID),
+          data:JSON.stringify(m),
           url: "/dc/delDocumentAndRelation"
         })
         .then(function(response) {
@@ -1527,13 +1529,15 @@ export default {
       //   m.push(tab[i]["ID"]);
       // }
       // console.log(JSON.stringify(m));
+      var m = [];
+      m.push(_self.selectedOneTransfer.ID);
       _self
         .axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
           method: "post",
-          data: _self.selectedOneTransfer.ID,//JSON.stringify(m),
+          data: JSON.stringify(m),
           url: "/dc/archived"
         })
         .then(function(response) {
@@ -1582,7 +1586,7 @@ export default {
           }
         )
         .then(() => {
-          let tab = _self.selectTransferRow;
+          // let tab = _self.selectTransferRow;
           // var m = [];
           // var i;
           // for (i in tab) {
@@ -1593,13 +1597,15 @@ export default {
           //   m.push(tab[i]["ID"]);
           // }
           // console.log(JSON.stringify(m));
+          var m = [];
+          m.push(_self.selectedOneTransfer.ID);
           _self
             .axios({
               headers: {
                 "Content-Type": "application/json;charset=UTF-8"
               },
               method: "post",
-              data:_self.selectedOneTransfer.ID, //JSON.stringify(_self.selectedOneTransfer.ID),
+              data:JSON.stringify(m),
               url: "/dc/delDocumentAndRelation"
             })
             .then(function(response) {
@@ -1654,7 +1660,7 @@ export default {
       let _self = this;
       let formdata = new FormData();
       var data = {};
-      data["ID"] = _self.selectedInnerItems[0].ID;//_self.selectedFileId;
+      data["ID"] = _self.selectedFileItem.ID;//_self.selectedInnerItems[0].ID;//_self.selectedFileId;
       formdata.append("metaData", JSON.stringify(data));
       _self.fileList.forEach(function(file) {
         //console.log(file.name);
