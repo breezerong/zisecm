@@ -69,9 +69,15 @@ public class SearchController extends ControllerAbstract{
 		
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			mp.put("data", searchService.findByContentScroll(getToken(), pager, typeNames, keyword,termCondition, onlyProperty));
-			mp.put("total", pager.getTotal());
-			mp.put("code", ActionContext.SUCESS);
+			if(typeNames.size()==0) {
+				mp.put("data", "");
+				mp.put("total", 0);
+				mp.put("code", ActionContext.SUCESS);
+			}else {
+				mp.put("data", searchService.findByContentScroll(getToken(), pager, typeNames, keyword,termCondition, onlyProperty));
+				mp.put("total", pager.getTotal());
+				mp.put("code", ActionContext.SUCESS);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
