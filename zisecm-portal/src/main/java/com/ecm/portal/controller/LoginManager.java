@@ -64,6 +64,7 @@ public class LoginManager extends ControllerAbstract{
 				
 				mp.put("code", ActionContext.SUCESS);
 				mp.put("token", s.getToken());
+				mp.put("department", s.getCurrentUser().getDepartment());
 				mp.put("clientPermission", s.getCurrentUser().getClientPermission());
 				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
 				mp.put("loginName", s.getCurrentUser().getLoginName());
@@ -101,6 +102,7 @@ public class LoginManager extends ControllerAbstract{
 				IEcmSession s = authService.loginSSO("portal",loginName.replace("\"", ""));
 				mp.put("code", ActionContext.SUCESS);
 				mp.put("token", s.getToken());
+				mp.put("department", s.getCurrentUser().getDepartment());
 				mp.put("clientPermission", s.getCurrentUser().getClientPermission());
 				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
 				mp.put("loginName", s.getCurrentUser().getLoginName());

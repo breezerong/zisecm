@@ -78,6 +78,7 @@ export default {
             {
               sessionStorage.setItem('access-user',JSON.stringify(_self.account));
               sessionStorage.setItem('access-userName',response.data.userName);
+              sessionStorage.setItem('access-department',response.data.department);
               sessionStorage.setItem('access-token',response.data.token);
               sessionStorage.setItem('access-clientPermission',response.data.clientPermission);
               sessionStorage.setItem('access-systemPermission',response.data.systemPermission);
@@ -109,6 +110,7 @@ export default {
             {
               sessionStorage.setItem('access-user',JSON.stringify(_self.account));
               sessionStorage.setItem('access-userName',response.data.userName);
+              sessionStorage.setItem('access-department',response.data.department);
               sessionStorage.setItem('access-token',response.data.token);
               sessionStorage.setItem('access-clientPermission',response.data.clientPermission);
               sessionStorage.setItem('access-systemPermission',response.data.systemPermission);

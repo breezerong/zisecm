@@ -212,7 +212,7 @@ export default {
       componentName:"borrow",
       borrowForm: {
             C_DRAFTER:sessionStorage.getItem("access-userName"),
-            C_DESC1:"",
+            C_DESC1:sessionStorage.getItem("access-department"),
             TITLE:"",
             SUB_TYPE:"在线浏览",
             C_START_DATE:new Date(),
