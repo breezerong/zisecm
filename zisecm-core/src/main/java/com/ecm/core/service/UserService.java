@@ -474,7 +474,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public List<EcmUser> getUsersByGroupName(String token,Pager pager, String noGroup,String groupName, String condition) {
 		EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
-		String groupId=groupObj.getId();
+		String groupId=groupObj==null?null:groupObj.getId();
 		return getRoleUsers( token, pager,  noGroup, groupId,  condition);
 	}
 	

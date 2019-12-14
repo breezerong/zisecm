@@ -106,7 +106,7 @@
               :height="tableHeight"
               v-loading="loading"
               @selection-change="selectChange"
-              style="width: 100%">
+              style="width: 99.8%">
                 <el-table-column type="selection" width="40">
                 </el-table-column> 
                 <el-table-column type="index" width="50">

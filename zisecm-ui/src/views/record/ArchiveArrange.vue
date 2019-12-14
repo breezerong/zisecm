@@ -58,7 +58,7 @@
           </el-form-item>
       </el-form>
        <div slot="footer" class="dialog-footer">
-          <el-button @click="childrenTypeSelectVisible=false;newArchiveFileItem(selectedChildrenType,selectedItems)">{{$t('application.ok')}}</el-button>
+          <el-button @click="childrenTypeSelectVisible=false;newArchiveFileItem(selectedChildrenType,selectRow)">{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
 
@@ -111,7 +111,7 @@
                     <el-button type="primary" plain
           size="small" icon="el-icon-notebook-2"  @click="fetchInformation">{{$t('application.fetchInformation')}}</el-button>
           <el-button type="primary" plain
-          size="small" icon="el-icon-printer"  @click="beforePrintRidge(selectedItems,'printRidgeGrid','打印背脊')">打印</el-button>
+          size="small" icon="el-icon-printer"  @click="beforePrintRidge(selectRow,'printRidgeGrid','打印背脊')">打印</el-button>
                     <el-button type="primary" plain
           size="small" icon="el-icon-sell"  @click="putInStorage">{{$t('application.warehousing')}}</el-button>
             </el-col>
@@ -132,8 +132,8 @@
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button> -->
                       <el-button type="primary" plain size="small"  @click="beforeCreateFile">著录</el-button>
-                      <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/mountFile'">挂载文件</el-button>
-                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedInnerItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(innerSelectedOne);uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(innerSelectedOne);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       
                       <el-button type="primary" plain size="small" title="上移"  @click="onMoveUp()">上移</el-button>
                       <el-button type="primary" plain size="small" title="下移"  @click="onMoveDown()">下移</el-button>
@@ -158,13 +158,13 @@
                     <div class="right">
                       <span style="float:left;text-align:left;">未组卷列表</span>
                       
-                      <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedOutItems);uploadUrl='/dc/mountFile'">挂载文件</el-button>
-                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedOutItems);uploadUrl='/dc/addRendition'">格式副本</el-button>
+                      <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedOneOutItem);uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedOneOutItem);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
                       v-bind:columnList="outerGridList" v-bind:itemCount="outerCount" :isshowOption="true"
                        @pagesizechange="outerPageSizeChange" v-bind:tableHeight="rightTableHeight"
-                      @pagechange="outerPageChange" @selectchange="selectOutChange"></DataGrid>
+                      @pagechange="outerPageChange" @selectchange="selectOutChange" @rowclick="selectOneOutFile"></DataGrid>
                        
                     </div>
           </el-row>
@@ -216,6 +216,7 @@ export default {
       innerGridList:[],
       radio:"卷盒",
       outerGridList:[],
+      innerSelectedOne:[],
       currentFolder: [],
       dataListFull: "",
       uploadID:"",
@@ -242,8 +243,7 @@ export default {
       selectRow:[],
       importdialogVisible:false,
       selectedFileId:"",
-      selectedOutItems: [],
-      selectedInnerItems:[],
+      selectedOneOutItem:[],
       fileList:[],
       childrenTypes:[],
       childrenTypeSelectVisible:false,
@@ -291,7 +291,9 @@ export default {
   },
   
   created() {
+
     let _self = this;
+    _self.loadInnerGridInfo();
     var psize = localStorage.getItem("docPageSize");
     if(psize)
     {
@@ -321,19 +323,22 @@ export default {
       });
   },
   methods: {
+    selectOneOutFile(row){
+      this.selectedOneOutItem=row;
+    },
     //著录文件
     beforeCreateFile(){
       let _self=this;
       
-      if(_self.selectedItems.length!=1){
+      if(_self.selectRow.ID==undefined){
         _self.$message('请选择一条数据！')
         return;
       }
        _self.selectedChildrenType=[];
-      if(_self.selectedItems[0].TYPE_NAME=='图册'){
+      if(_self.selectRow.TYPE_NAME=='图册'){
         _self.getTypeNamesByMainList("图册");
       }else{
-        _self.getTypeNamesByMainList(_self.selectedItems[0].SUB_TYPE);
+        _self.getTypeNamesByMainList(_self.selectRow.SUB_TYPE);
       }
       _self.childrenTypeSelectVisible=true;
       
@@ -342,7 +347,7 @@ export default {
   ///打印背脊
     beforePrintRidge(selectedRow,gridName,vtitle){
       let _self=this;
-      if(selectedRow.length!=1){
+      if(selectedRow.ID==undefined){
         _self.$message('请选择一条数据进行打印');
         return;
       }
@@ -350,13 +355,13 @@ export default {
 
       setTimeout(()=>{
         _self.$refs.printRidge.dialogQrcodeVisible = false
-        _self.$refs.printRidge.getArchiveObj(selectedRow[0].ID,
+        _self.$refs.printRidge.getArchiveObj(selectedRow.ID,
         gridName,
         vtitle); 
       },10);
 
       _self.printGridName=gridName;
-      _self.printObjId=selectedRow[0].ID;
+      _self.printObjId=selectedRow.ID;
     },
     ///上架
     putInStorage(){
@@ -365,22 +370,23 @@ export default {
           _self.$message('请选择卷盒数据！');
           return;
       }
-      if(_self.selectedItems.length===0){
+      if(_self.selectRow.ID==undefined){
          _self.$message('请选择一条或多条卷盒数据！');
           return;
       }
 
-      let tab=_self.selectedItems;
+      // let tab=_self.selectedItems;
       let m = [];
-      let i;
-      for(i in tab){
-        if(tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")
-        {
-          _self.$message("所选卷盒中有未取号的数据，请先对其进行取号并提取信息！");
-          return;
-        }
-        m.push(tab[i]["ID"]);
-      }
+      // let i;
+      // for(i in tab){
+      //   if(tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")
+      //   {
+      //     _self.$message("所选卷盒中有未取号的数据，请先对其进行取号并提取信息！");
+      //     return;
+      //   }
+      //   m.push(tab[i]["ID"]);
+      // }
+      m.push(_self.selectRow.ID);
       _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
@@ -403,8 +409,9 @@ export default {
     },
     selectOneFile(row){
       let _self = this;
-      if(_self.selectRow)
+      if(row!=null)
       {
+        _self.innerSelectedOne=row;
         _self.selectedFileId=row.ID;
       }
     },
@@ -417,13 +424,13 @@ export default {
     //上移
     onMoveUp(){
       let _self=this;
-      if(_self.selectedInnerItems.length!=1){
+      if(_self.innerSelectedOne.ID==undefined){
          _self.$message("请选择一条数据！");
         return;
       }
       var m = new Map();
       m.set('parentId',_self.archiveId);
-      m.set('childId',_self.selectedInnerItems[0].ID);
+      m.set('childId',_self.innerSelectedOne.ID);
        _self.axios({
         headers: {
           "Content-Type": "application/json;charset=UTF-8"
@@ -453,11 +460,11 @@ export default {
       
       let _self=this;
       _self.fileList=[];
-      if(selrow.length!=1){
+      if(selrow.ID==undefined){
          _self.$message("请选择一条数据！");
         return;
       }
-      _self.uploadID=selrow[0].ID;
+      _self.uploadID=selrow.ID;
       _self.importdialogVisible=true;
       
     },
@@ -491,6 +498,7 @@ export default {
       .then(function(response) {
         _self.importdialogVisible = false;
         // _self.refreshData();
+        _self.showInnerFile(null);
         _self.$message("导入成功!");
       })
       .catch(function(error) {
@@ -500,13 +508,13 @@ export default {
     //下移
     onMoveDown(){
       let _self=this;
-      if(_self.selectedInnerItems.length!=1){
+      if(_self.innerSelectedOne.ID==undefined){
          _self.$message("请选择一条数据！");
         return;
       }
       var m = new Map();
       m.set('parentId',_self.archiveId);
-      m.set('childId',_self.selectedInnerItems[0].ID);
+      m.set('childId',_self.innerSelectedOne.ID);
        _self.axios({
         headers: {
           "Content-Type": "application/json;charset=UTF-8"
@@ -638,6 +646,7 @@ export default {
     },
     beforeShowInnerFile(row){
       this.innerCurrentPage=1;
+      this.innerSelectedOne=[];
       this.showInnerFile(row);
     },
     showInnerFile(row){
@@ -785,7 +794,7 @@ export default {
         return;
       }
 
-      if(_self.selectedInnerItems.length===0)
+      if(_self.innerSelectedOne.ID==undefined)
       {
         alert('请选择一条或多条未组卷文件！');
         return;
@@ -793,10 +802,10 @@ export default {
       var m = new Map();
       m.set('archiveId',_self.archiveId);
       let innerIds=new Array();
-      for(let i=0;i<_self.selectedInnerItems.length;i++)
-      {
-        innerIds.push(_self.selectedInnerItems[i].ID);
-      }
+      // for(let i=0;i<_self.selectedInnerItems.length;i++)
+      // {
+        innerIds.push(_self.innerSelectedOne.ID);
+      // }
       m.set('fileIds',innerIds);
 
       // console.log('pagesize:', _self.pageSize);
@@ -832,7 +841,7 @@ export default {
         return;
       }
 
-      if(_self.selectedOutItems.length===0)
+      if(_self.selectedOneOutItem.ID==undefined)
       {
         alert('请选择一条或多条未组卷文件！');
         return;
@@ -840,10 +849,10 @@ export default {
       var m = new Map();
       m.set('archiveId',_self.archiveId);
       let outIds=new Array();
-      for(let i=0;i<_self.selectedOutItems.length;i++)
-      {
-        outIds.push(_self.selectedOutItems[i].ID);
-      }
+      // for(let i=0;i<_self.selectedOutItems.length;i++)
+      // {
+        outIds.push(_self.selectedOneOutItem.ID);
+      // }
       m.set('fileIds',outIds);
 
       // console.log('pagesize:', _self.pageSize);
@@ -872,6 +881,7 @@ export default {
     loadGridData(indata) 
     {
       let _self = this;
+      
       var key =_self.inputkey;
       var m = new Map();
       if(key!=""){
@@ -959,6 +969,13 @@ export default {
     // 文件夹节点点击事件
     handleNodeClick(indata) {
       let _self = this;
+      _self.selectRow=[];
+      _self.selectedOneOutItem=[];
+      _self.selectedFileId="";
+      _self.itemDataList=[];
+      _self.innerDataList=[];
+      _self.outerDataList=[];
+
       _self.currentFolder = indata;
       //console.log(JSON.stringify(indata));
       // 没有加载，逐级加载
@@ -1061,7 +1078,7 @@ export default {
     newArchiveFileItem(typeName,selectedRow)
     {
       let _self = this;
-      if(selectedRow.length==1 ){
+      if(selectedRow.ID ){
         _self.selectedItemId = "";
         _self.propertyVisible = true;
         setTimeout(()=>{
@@ -1070,7 +1087,7 @@ export default {
             _self.dialogName=typeName;
             _self.$refs.ShowProperty.myTypeName =typeName;
             _self.typeName=typeName;
-            _self.$refs.ShowProperty.parentDocId=selectedRow[0].ID;
+            _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
             _self.$refs.ShowProperty.folderId = _self.currentFolder.id;
             // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
             _self.$refs.ShowProperty.loadFormInfo();
@@ -1274,6 +1291,10 @@ export default {
     // 删除文档事件
     onDeleleArchiveItem() {
       let _self = this;
+      if(_self.selectRow.ID==undefined){
+        _self.$message("请选择一条卷盒或图册数据！");
+        return;
+      }
       this.$confirm(_self.$t("message.deleteInfo"),_self.$t("application.info"), {
           confirmButtonText: _self.$t("application.ok"),
           cancelButtonText: _self.$t("application.cancel"),
@@ -1290,21 +1311,23 @@ export default {
     // 删除文档
     deleleInnerItem() {
       let _self = this;
-      var m = [];
-      let tab = _self.selectedItems;
+      // var m = [];
+      // let tab = _self.selectedItems;
       
-      var i;
-      for(i in tab){
+      // var i;
+      // for(i in tab){
         
-        m.push(tab[i]["ID"]);
-      }
-      console.log(JSON.stringify(m));
+      //   m.push(tab[i]["ID"]);
+      // }
+      // console.log(JSON.stringify(m));
+      var m=[];
+      m.push(_self.selectRow.ID);
       _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
           method: "post",
-          data: JSON.stringify(m),
+          data: JSON.stringify(m),//_self.selectRow.ID,//JSON.stringify(m),
           url: "/dc/delDocumentAndRelation"
         })
         .then(function(response) {
@@ -1338,31 +1361,38 @@ export default {
     //提取信息
     fetchInformation(){
       let _self=this;
-      if(_self.radio=='卷盒'&&_self.selectedItems.length<1){
+      if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
          _self.$message("请选择一条或多条卷盒数据！");
           return;
       }
-      let tab=_self.selectedItems;
-      let m = [];
-      let p=[];
-      let i;
-      for(i in tab){
-        if((tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")&&tab[i]["SUB_TYPE"]!="盒")
-        {
-          _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
-          return;
-        }
-        if(tab[i]["SUB_TYPE"]=="盒"){
-          p.push(tab[i]["ID"]);
-        }
-        m.push(tab[i]["ID"]);
+      // let tab=_self.selectedItems;
+      // let m = [];
+      // let p=[];
+      // let i;
+      // for(i in tab){
+      //   if((tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")&&tab[i]["SUB_TYPE"]!="盒")
+      //   {
+      //     _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
+      //     return;
+      //   }
+      //   if(tab[i]["SUB_TYPE"]=="盒"){
+      //     p.push(tab[i]["ID"]);
+      //   }
+      //   m.push(tab[i]["ID"]);
+      // }
+      if((_self.selectRow.CODING==undefined ||_self.selectRow.CODING=="")&&tab[i]["SUB_TYPE"]!="盒"){
+        _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
+        return;
       }
-
-      if(p.length>0){
-        p=p.join("','");
-        var pm = new Map();
-        pm.set("configName","ValidataHasArchiveCode");
-        pm.set("parentId","'"+p+"'");
+      let m = [];
+      m.push(_self.selectRow.ID);
+      // if(p.length>0){
+        if(_self.selectRow.SUB_TYPE=='盒'){
+        // p=p.join("','");
+        let pm = new Map();
+        pm.set('configName', 'ValidataHasArchiveCode');
+        // pm.set('parentId',"'"+p+"'");
+        pm.set('parentId',"'"+_self.selectRow.ID+"'");
          _self
             .axios({
               headers: {
@@ -1433,27 +1463,27 @@ export default {
     },
     takeNumbers(){
       let _self =this;
-      if(_self.radio=='卷盒'&&_self.selectedItems.length<1){
+      if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
          _self.$message("请选择一条或多条卷盒数据！");
           return;
       }
-      let tab=_self.selectedItems;
-      let m = [];
-      let i;
-      for(i in tab){
-        if(tab[i]["CODING"]!=undefined &&tab[i]["CODING"]!=="")
-        {
-          _self.$message("卷盒"+tab[i]["CODING"]+"已取过号不需要再取号!");
-          return;
-        }
-        m.push(tab[i]["ID"]);
-      }
+      // let tab=_self.selectedItems;
+      // let m = [];
+      // let i;
+      // for(i in tab){
+      //   if(tab[i]["CODING"]!=undefined &&tab[i]["CODING"]!=="")
+      //   {
+      //     _self.$message("卷盒"+tab[i]["CODING"]+"已取过号不需要再取号!");
+      //     return;
+      //   }
+      //   m.push(tab[i]["ID"]);
+      // }
       _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
           method: "post",
-          data: JSON.stringify(m),
+          data: _self.selectRow.ID,//JSON.stringify(m),
           url: "/dc/takeNumbers"
         })
         .then(function(response) {
@@ -1510,6 +1540,10 @@ export default {
     // 删除文档事件
     onDeleleFileItem() {
       let _self = this;
+      if(_self.selectedOneOutItem.ID==undefined){
+         _self.$message("请选择一条要删除的文件！");
+         return;
+      }
       this.$confirm(_self.$t("message.deleteInfo"),_self.$t("application.info"), {
           confirmButtonText: _self.$t("application.ok"),
           cancelButtonText: _self.$t("application.cancel"),
@@ -1552,11 +1586,12 @@ export default {
     deleleFileItem() {
       let _self = this;
       var m = [];
-      let tab = _self.selectedOutItems;
-      var i;
-      for(i in tab){
-        m.push(tab[i]["ID"]);
-      }
+      // let tab = _self.selectedOutItems;
+      // var i;
+      // for(i in tab){
+      //   m.push(tab[i]["ID"]);
+      // }
+      m.push(_self.selectedOneOutItem.ID);
       console.log(JSON.stringify(m));
       _self.axios({
           headers: {

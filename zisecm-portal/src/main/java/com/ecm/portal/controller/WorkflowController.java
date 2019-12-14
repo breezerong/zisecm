@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
@@ -176,14 +178,14 @@ public class WorkflowController  extends ControllerAbstract{
 	    	List<HistoricTaskInstance> tasks =  historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().orderByTaskCreateTime().desc().listPage(pageIndex,pageSize);
  	        List<HashMap> resultList = new ArrayList<HashMap>();
  	        List<HashMap> resultListTemp = new ArrayList<HashMap>();
- 	        Set<String> processIdSet = new HashSet<String>();
  	        HashMap<String, Object> map=null;
+ 	        Set<String> processInstanceIdSet = new HashSet<String>();
 	        for (HistoricTaskInstance task : tasks) {
 		        map = new HashMap<>();
 		        List<String> processInstanceIdsList=new ArrayList<String>();
 		        map.put("id", task.getId());
 		        map.put("processInstanceId", task.getProcessInstanceId());
-		        processIdSet.add(map.get("processInstanceId").toString());
+		        processInstanceIdSet.add(map.get("processInstanceId").toString());
 		        map.put("name", task.getName());
 		        map.put("createTime", task.getCreateTime());
 		        map.put("endTime", task.getEndTime());
@@ -197,19 +199,12 @@ public class WorkflowController  extends ControllerAbstract{
 //				}
  		        resultListTemp.add(map);
 	        }
-	        List<HistoricProcessInstance> processInstanceList=  historyService.createHistoricProcessInstanceQuery().processInstanceIds(processIdSet).list();
-	        for (int i = 0; i < resultListTemp.size(); i++) {
-	        	map=resultListTemp.get(i);
-	        	for (int j = 0; j < processInstanceList.size(); j++) {
-	        		if(map.get("processInstanceId").equals(processInstanceList.get(j).getId())){
-			        	map.put("startUser", processInstanceList.get(j).getStartUserId());
-	        		}
-				}
-	        	resultList.add(map);
-			}
- 
+	        if(tasks.size()>0) {
+		        getProcessVars(resultList, resultListTemp, processInstanceIdSet); 	
+	        }
+
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
-	        resultMap.put("data",  resultListTemp);
+	        resultMap.put("data",  resultList);
 	        resultMap.put("totalCount", historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().count());
 	        return resultMap;
 	    }
@@ -243,11 +238,11 @@ public class WorkflowController  extends ControllerAbstract{
 //	        Map<String, VariableInstance> varMap=null;
 	        HashMap<String, Object> map=null;
  	        List<HashMap> resultListTemp = new ArrayList<HashMap>();
- 	        Set<String> executionIdSet = new HashSet<String>();
+ 	        Set<String> processInstanceIdSet = new HashSet<String>();
 	        for (Task task : tasks) {
 		        map = new HashMap<>();
 		        map.put("processInstanceId", task.getProcessInstanceId());
-		        executionIdSet.add(task.getProcessInstanceId());
+		        processInstanceIdSet.add(task.getProcessInstanceId());
 		        map.put("id", task.getId());
 		        map.put("name", task.getName());
 //		        varMap=runtimeService.getVariableInstances(map.get("processInstanceId").toString());
@@ -265,31 +260,7 @@ public class WorkflowController  extends ControllerAbstract{
 //	        List<Map<String, Object>> varInstanceList = managementService.executeCustomSql(customSqlExecution);	 
 //	        
 	        if(tasks.size()>0) {
-		        StringBuilder sql = new StringBuilder("select * from  ACT_HI_VARINST  where  PROC_INST_ID_ in(");
-		        int temp=0;
-		        for (Iterator iterator = executionIdSet.iterator(); iterator.hasNext();) {
-		        	if(temp!=0) {
-		        		sql.append(",");
-		        	}
-		        	sql.append("'").append(iterator.next()).append("'");
-		        	temp++;
-				} 
-		        sql.append(")");
-		        
-	  	        List<HistoricVariableInstance>  varInstanceList=  historyService.createNativeHistoricVariableInstanceQuery().sql(sql.toString()).list();
-		        for (int i = 0; i < resultListTemp.size(); i++) {
-		        	map=resultListTemp.get(i);
-		        	for (int j = 0; j < varInstanceList.size(); j++) {
-		        		if(map.get("processInstanceId").equals(varInstanceList.get(j).getProcessInstanceId())){
-		        			if("startUser".equals(varInstanceList.get(j).getVariableName())) {
-					        	map.put("startUser", varInstanceList.get(j).getValue());
-		        			}else if("formId".equals(varInstanceList.get(j).getVariableName())) {
-		        				map.put("formId", varInstanceList.get(j).getValue());
-		        			}
-		        		}
-					}
-		        	resultList.add(map);
-				} 	
+		        getProcessVars(resultList, resultListTemp, processInstanceIdSet); 	
 	        }
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
@@ -298,6 +269,36 @@ public class WorkflowController  extends ControllerAbstract{
 	        return resultMap;
 	    }
 
+		private void getProcessVars(List<HashMap> resultList, List<HashMap> resultListTemp,
+				Set<String> processInstanceIdSet) {
+			HashMap<String, Object> map;
+			StringBuffer  sql = new StringBuffer ("select * from  ACT_HI_VARINST  where  PROC_INST_ID_ in(");
+			int temp=0;
+			for (Iterator iterator = processInstanceIdSet.iterator(); iterator.hasNext();) {
+				if(temp!=0) {
+					sql.append(",");
+				}
+				sql.append("'").append(iterator.next()).append("'");
+				temp++;
+			} 
+			sql.append(")");
+			
+			List<HistoricVariableInstance>  varInstanceList=  historyService.createNativeHistoricVariableInstanceQuery().sql(sql.toString()).list();
+			for (int i = 0; i < resultListTemp.size(); i++) {
+				map=resultListTemp.get(i);
+				for (int j = 0; j < varInstanceList.size(); j++) {
+					if(map.get("processInstanceId").equals(varInstanceList.get(j).getProcessInstanceId())){
+						if("startUser".equals(varInstanceList.get(j).getVariableName())) {
+				        	map.put("startUser", varInstanceList.get(j).getValue());
+						}else if("formId".equals(varInstanceList.get(j).getVariableName())) {
+							map.put("formId", varInstanceList.get(j).getValue());
+						}
+					}
+				}
+				resultList.add(map);
+			}
+		}
+
  
 	    @RequestMapping(value = "myWorkflow")
 	    @ResponseBody
@@ -305,22 +306,52 @@ public class WorkflowController  extends ControllerAbstract{
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String userId= args.get("userId").toString();
 			String condition= args.get("condition").toString();
+			 
 			int pageSize= Integer.parseInt(args.get("pageSize").toString()) ;
 			int pageIndex= Integer.parseInt(args.get("pageIndex").toString());
 	    	List<HistoricProcessInstance> processes = null;
 	    	long processTotalCount=0;
-	    	if("all".equals(userId) ) {
-	    		processes = historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
-	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().count();
-	    	}else {
-	    		processes = historyService.createHistoricProcessInstanceQuery().startedBy(userId).orderByProcessInstanceStartTime().desc().listPage(pageIndex,pageSize);
-	    		processTotalCount = historyService.createHistoricProcessInstanceQuery().startedBy(userId).count();
+			Map workflowForm=  args.get("workflowForm")==null?null:JSONUtils.stringToMap(args.get("workflowForm").toString());
+			StringBuffer  sql0= new StringBuffer ("SELECT a.ID_, a.START_TIME_, a.END_TIME_,  a.START_USER_ID_, b.NAME_ " + 
+	    			" FROM ACT_HI_PROCINST  a, ACT_RE_PROCDEF b where a.PROC_DEF_ID_ = b.ID_ ");
+			StringBuffer  sqlCount0= new StringBuffer ("SELECT count(*) " + 
+	    			" FROM ACT_HI_PROCINST a " + 
+	    			" where 1=1 ");
+			StringBuffer  sql1= new StringBuffer ("");
+	    	if(workflowForm!=null) {
+	    	        if(!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startTimeAfter"))) {
+	    	    		sql1.append(" and START_TIME_ >= '").append(workflowForm.get("startTimeAfter")).append("' ");
+	    	        }
+	    	        if(!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startTimeBefore"))) {
+	    	    		sql1.append(" and START_TIME_ < '").append(workflowForm.get("startTimeBefore")).append("' ");
+	    	        }	    	        
+	    	        if(!org.springframework.util.StringUtils.isEmpty(workflowForm.get("endTimeAfter"))) {
+	    	    		sql1.append(" and END_TIME_ > '").append(workflowForm.get("endTimeAfter")).append("' ");
+	    	        }
+	    	        if(!org.springframework.util.StringUtils.isEmpty(workflowForm.get("endTimeBefore"))) {
+	    	    		sql1.append(" and END_TIME_ < '").append(workflowForm.get("endTimeBefore")).append("' ");
+	    	        }
+	    	        if(!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startUser"))) {
+	    	    		sql1.append(" and START_USER_ID_ = '").append(workflowForm.get("startUser")).append("' ");
+	    	        }
 	    	}
- 	        List<HashMap> resultList = new ArrayList<HashMap>();
+	    	
+	    	if(!"all".equals(userId) ) {
+	    		sql1.append(" and a.START_USER_ID_='").append(userId).append("' ");
+	    	}
+    		processes = historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).append(" order by a.START_TIME_ desc").toString()).listPage(pageIndex,pageSize);
+    		processTotalCount = historyService.createNativeHistoricProcessInstanceQuery().sql(sqlCount0.append(sql1).toString()).count();
+	        List<HashMap> resultList = new ArrayList<HashMap>();
+//	        Map<String, VariableInstance> varMap=null;
+	        HashMap<String, Object> map=null;
+ 	        List<HashMap> resultListTemp = new ArrayList<HashMap>();
+ 	        Set<String> processInstanceIdSet = new HashSet<String>();
 	        for (HistoricProcessInstance process : processes) {
-		        HashMap<String, Object> map = new HashMap<>();
+		        map = new HashMap<>();
 		        map.put("id", process.getId());
-		        map.put("name", process.getProcessDefinitionName());
+		        map.put("processInstanceId", process.getId());
+		        processInstanceIdSet.add(process.getId());
+		        map.put("name", process.getName());
 		        map.put("startUser", process.getStartUserId());
 		        map.put("startTime", process.getStartTime());
 		        map.put("endTime", process.getEndTime()==null?"":process.getEndTime());
@@ -346,14 +377,27 @@ public class WorkflowController  extends ControllerAbstract{
 //			    	map.put("currentTaskName", "已结束");
 //			        map.put("currentAssignee",  "已结束");
 //			    }
-		        resultList.add(map);
+		        resultListTemp.add(map);
 	        }
+	        if(processes.size()>0) {
+		        getProcessVars(resultList, resultListTemp, processInstanceIdSet); 	
+	        }
+
 	        HashMap<String,Object> resultMap = new HashMap<String,Object>();
 	        resultMap.put("data",  resultList);
 	        resultMap.put("totalCount",processTotalCount);
 	        return resultMap;
 	    }
 
+	    private Date formatDate(String date) {
+	    	try {
+				return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	return null;
+	    }
 	    /**
 	     * 批准
 	     *

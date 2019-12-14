@@ -71,7 +71,7 @@
                 border
                 :height="tableHeight"
                 v-loading="loading"
-                style="width: 100%">
+                style="width: 99.8%">
                 <el-table-column type="index" width="50">
                 </el-table-column>
                 <el-table-column prop="name" label="名称"  min-width="20%" sortable>
