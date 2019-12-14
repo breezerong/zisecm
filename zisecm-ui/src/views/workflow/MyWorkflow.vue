@@ -54,28 +54,43 @@
             </td>
           </tr>
           <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="200px">
-                    <el-input v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td>
-                   
-                  </td>
-                </tr>
-              </table>
+            <td >
+
+          <el-form ref="workflowForm"   :model="workflowForm"   >
+            <el-row  >
+              <el-col   style="width:100%;" >
+                <el-form-item  v-if="currentUserName=='all'"  label="发起人"   :label-width="formLabelWidth" style="float:left">
+                  <UserSelectInput  v-model="workflowForm.startUser" v-bind:inputValue="workflowForm.startUser" roleName=""></UserSelectInput>
+                </el-form-item>
+                </el-col >
+               <el-col   style="width:100%;" >
+              <el-form-item   label="开始时间" :label-width="formLabelWidth"  style="float:left">
+                  <el-date-picker     v-model="workflowForm.startTimeAfter" auto-complete="off"></el-date-picker >
+                  <el-date-picker     v-model="workflowForm.startTimeBefore" auto-complete="off"></el-date-picker >
+                </el-form-item>
+                <el-form-item   label="完成时间" :label-width="formLabelWidth"  style="float:left">
+                  <el-date-picker     v-model="workflowForm.endTimeAfter" auto-complete="off"></el-date-picker >
+                  <el-date-picker     v-model="workflowForm.endTimeBefore" auto-complete="off"></el-date-picker >
+                </el-form-item>
+                 <el-form-item style="float:left;padding-left:3px">
+                   <el-button  type="primary" @click="search()">查询</el-button>
+                 </el-form-item>
+               </el-col >
+           </el-row>
+            </el-form>                   
+
             </td>
           </tr>
         <tr>
           <td>
-            <el-table
+               <div>
+           <el-table
               :data="dataList"
               border
               :height="tableHeight"
               v-loading="loading"
-              style="width: 100%">
-                <el-table-column label="序号" width="80">
+              style="width: 99.8%">
+                <el-table-column label="序号" width="80px">
                   <template slot-scope="scope">
                     <div v-if="scope.row.endTime==''">
                      <el-tooltip class="item" effect="light" content="未完成" placement="right">
@@ -88,22 +103,23 @@
                     </div>
                   </template>
                  </el-table-column>
-              <el-table-column prop="name" label="名称" min-width="12%" >
+              <el-table-column prop="name" label="名称" min-width="10%" >
               </el-table-column>
-              <el-table-column v-if="showAllWorkflow=='1'" prop="startUser" label="发起者" min-width="12%" >
+              <el-table-column v-if="showAllWorkflow=='1'" prop="startUser" label="发起者" min-width="20%" >
               </el-table-column>
-              <el-table-column prop="startTime" label="开始时间" sortable :formatter="dateFormatter" min-width="12%">
+              <el-table-column prop="startTime" label="开始时间" sortable :formatter="dateFormatter" min-width="20%">
               </el-table-column>
-              <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  min-width="12%">
+              <el-table-column prop="endTime" label="完成时间" sortable :formatter="dateFormatter"  min-width="20%">
               </el-table-column>
               <!-- <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
               </el-table-column> -->
-              <el-table-column label="操作"  width="80">
+              <el-table-column label="操作"  width="80px">
                 <template slot-scope="scope">
                   <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
                 </template>
               </el-table-column>
             </el-table>
+              </div>
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -124,9 +140,13 @@
 //   contentType: "application/json"
 // });
 
+import UserSelectInput from '@/components/controls/UserSelectInput';
 export default {
   name: "MyWorkflow",
   permit: 1,
+   components: {
+     UserSelectInput:UserSelectInput
+    },
   data() {
     return {
       currentData: [],
@@ -149,7 +169,14 @@ export default {
       isPocessFinished:"0",
       currentUserName:"",
       showAllWorkflow:"0",
-    };
+      workflowForm:{
+        startUser:"",
+        startTimeAfter:"",
+        endTimeAfter:"",
+        startTimeBefore:"",
+        endTimeBefore:"",
+      },
+    }
   },
   created(){ 
     let _self = this;
@@ -165,6 +192,12 @@ export default {
 
   },
   methods: {
+    search(){
+      let _self = this;
+      _self.loading = true;
+      _self.refreshData("1");
+      _self.loading = false;
+    },
     dateFormatter(row, column) {
       let datetime = row[column.property];
       return this.datetimeFormat(datetime);
@@ -182,13 +215,51 @@ export default {
       //   _self.loading = false;
       // });
     },
-    refreshData() {
+    //格式化时间
+    dateFtt(fmt, date) {
+      var o = {
+        "M+": date.getMonth() + 1, //月份
+        "d+": date.getDate(), //日
+        "h+": date.getHours(), //小时
+        "m+": date.getMinutes(), //分
+        "s+": date.getSeconds(), //秒
+        "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+        S: date.getMilliseconds() //毫秒
+      };
+      if (/(y+)/.test(fmt))
+        fmt = fmt.replace(
+          RegExp.$1,
+          (date.getFullYear() + "").substr(4 - RegExp.$1.length)
+        );
+      for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+          fmt = fmt.replace(
+            RegExp.$1,
+            RegExp.$1.length == 1
+              ? o[k]
+              : ("00" + o[k]).substr(("" + o[k]).length)
+          );
+      return fmt;
+    },
+           dateFormat(value) {
+      var crtTime = new Date(value);
+      return this.dateFtt("yyyy-MM-dd", crtTime);
+    },
+
+    refreshData(obj) {
       let _self = this;
       _self.loading = true;
       var m = new Map();
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
+      if(obj=="1"){
+        // _self.workflowForm.startTimeAfter=_self.workflowForm.startTimeAfter==""?"":_self.dateFormat(_self.workflowForm.startTimeAfter);
+        // _self.workflowForm.startTimeBefore==_self.workflowForm.startTimeBefore==""?"":_self.dateFormat(_self.workflowForm.startTimeBefore);
+        // _self.workflowForm.endTimeAfter==_self.workflowForm.endTimeAfter==""?"":_self.dateFormat(_self.workflowForm.endTimeAfter);
+        // _self.workflowForm.endTimeBefore==_self.workflowForm.endTimeBefore==""?"":_self.dateFormat(_self.workflowForm.endTimeBefore);
+        m.set("workflowForm", _self.workflowForm);
+      }
       m.set("userId", _self.currentUserName);
      axios.post('/workflow/myWorkflow',JSON.stringify(m))
       .then(function(response) {
@@ -280,13 +351,6 @@ export default {
       });
 
       
-    },
-    search() {
-      let _self = this;
-      _self.dataList = _self.dataListFull.filter(function(item){
-          return item.workflowName.match(_self.inputkey) || item.description.match(_self.inputkey);
-        }
-      );
     },
     showprocessDiagram(){
        let _self = this;

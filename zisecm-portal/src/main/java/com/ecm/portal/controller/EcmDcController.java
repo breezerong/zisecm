@@ -325,7 +325,7 @@ public class EcmDcController extends ControllerAbstract{
 
 	private String getRequestData(HttpServletRequest req)
 	{
-		StringBuilder sb = new StringBuilder();
+		StringBuffer  sb = new StringBuffer ();
 		try
 		{
 			BufferedReader reader = req.getReader();
@@ -1022,7 +1022,7 @@ public class EcmDcController extends ControllerAbstract{
 	 @ResponseBody
 	 public Map<String,Object> removeShopingCart(@RequestBody String argStr) {
 		  List<String> list = JSONUtils.stringToArray(argStr);
-		  StringBuilder documentIds= new StringBuilder();
+		  StringBuffer  documentIds= new StringBuffer ();
 		  for (int i = 0; i < list.size(); i++) {
 			  if(i!=0) {
 				  documentIds.append(",");
