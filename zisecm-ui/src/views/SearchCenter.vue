@@ -25,12 +25,12 @@
                 </el-menu-item>
               </div>
             </el-submenu>
-            <el-menu-item index="3">
+            <!-- <el-menu-item index="3">
               <i class="el-icon-s-grid"></i>
               <span slot="title">
                 <router-link to="/search/advsearch">{{$t('menu.advSearch')}}</router-link>
               </span>
-            </el-menu-item>
+            </el-menu-item> -->
             <!--
             <el-menu-item index="4">
               <i class="el-icon-user"></i>

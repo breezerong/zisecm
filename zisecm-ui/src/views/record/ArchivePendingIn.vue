@@ -384,7 +384,7 @@ export default {
           _self.orderLoading=true;
           var key = _self.orderInputkey;
           if (key != "") {
-            key = "coding like '%" + key + "%' or title like '%" + key + "%' and STATUS='待入库'";
+            key = " (coding like '%" + key + "%' or C_DRAFTER like '%" + key + "%') and STATUS='待入库' ";
           }else{
               key=" STATUS='待入库' "
           }

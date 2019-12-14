@@ -11,13 +11,13 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col :span="2">创建日期(开始)</el-col>
-            <el-col :span="5">
+            <el-col :span="3">创建日期(开始)</el-col>
+            <el-col :span="3">
                 <el-date-picker v-model="startDate" 
                 type="date" placeholder="选择日期" style="display:block;">
                 </el-date-picker></el-col>
-            <el-col :span="2">创建日期(结束)</el-col>
-            <el-col :span="5">
+            <el-col :span="3">创建日期(结束)</el-col>
+            <el-col :span="3">
                 <el-date-picker v-model="endDate" 
                 type="date" placeholder="选择日期" style="display:block;">
                 </el-date-picker></el-col>
