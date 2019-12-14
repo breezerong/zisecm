@@ -193,7 +193,7 @@ export default {
       //普通的watch监听
       //console.log("a: "+val, oldVal);
       let _self = this;
-      _self.gridList.forEach(element => {
+      _self.columnList.forEach(element => {
         element.visibleType = 2;
       });
       val.forEach(element => {

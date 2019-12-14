@@ -356,6 +356,7 @@ export default {
   },
   mounted() {
     let _self = this;
+    
     var psize = localStorage.getItem("docPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);
@@ -373,8 +374,33 @@ export default {
         console.log(error);
         _self.loading = false;
       });
+      _self.initGridInfo();
   },
   methods: {
+    // 加载表格样式
+    initGridInfo() {
+      let _self = this;
+      _self.loading = true;
+      var m = new Map();
+      m.set("gridName", "OfficialGrid");
+      m.set("lang", _self.currentLanguage);
+      axios
+        .post("/dc/getGridViewInfo", JSON.stringify(m))
+        .then(function(response) {
+          _self.showFields = [];
+          _self.gridList = response.data.data;
+          _self.gridList.forEach(element => {
+            if (element.visibleType == 1) {
+              _self.showFields.push(element.attrName);
+            }
+          });
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
     rowClick(row) {
       this.currentId = row.ID;
       if(row.TYPE_NAME=='卷盒' || row.TYPE_NAME=='图册'){

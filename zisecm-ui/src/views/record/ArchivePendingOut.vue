@@ -339,7 +339,7 @@ export default {
           var m = new Map();
           var key = _self.inputkey;
           if (key != "") {
-            key = " and( a.coding like '%" + key + "%' or a.C_DRAFTER like '%" + key + "%' )";
+            key = " and(a.coding like '%" + key + "%' or a.C_DRAFTER like '%" + key + "%' )";
             m.set("condition", key);
           }
         
@@ -379,7 +379,7 @@ export default {
           _self.orderLoading=true;
           var key = _self.orderInputkey;
           if (key != "") {
-            key = "coding like '%" + key + "%' or title like '%" + key + "%' and STATUS='待出库'";
+            key = " (coding like '%" + key + "%' or C_DRAFTER like '%" + key + "%') and STATUS='待出库' ";
           }else{
               key=" STATUS='待出库' "
           }

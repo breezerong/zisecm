@@ -417,6 +417,7 @@ export default {
     },
     changeRadio(val){
       let _self=this;
+      _self.itemDataList=[];
        _self.loadGridData(_self.currentFolder);
        _self.innerDataList=[];
        _self.outerDataList=[];
@@ -885,7 +886,7 @@ export default {
       var key =_self.inputkey;
       var m = new Map();
       if(key!=""){
-        key = "coding like '%"+key+"%' or title like '%"+key+"%'"; 
+        key = " (coding like '%"+key+"%' or title like '%"+key+"%') "; 
         if(_self.radio=='卷盒'){
           m.set('condition',key+" and TYPE_NAME='卷盒' ");
         }else{

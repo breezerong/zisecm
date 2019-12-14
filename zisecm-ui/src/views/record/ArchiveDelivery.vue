@@ -1014,9 +1014,13 @@ export default {
         _self.selectedOneTransfer = row;
         
       }
+      if(_self.selectedOneTransfer.ID==undefined){
+        _self.$message("请选择一条移交单数据！");
+        return;
+      }
       var key = _self.inputkey;
       if (key != "") {
-        key = "coding like '%" + key + "%' or title like '%" + key + "%'";
+        key = " and (b.coding like '%" + key + "%' or b.name like '%" + key + "%')";
       }
       _self.archiveId=_self.selectedOneTransfer.ID;
       var m = new Map();

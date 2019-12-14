@@ -32,33 +32,33 @@
             <el-form-item :label="subitem.label">
               <div v-if="subitem.controlType === 'TextBox'">
                 <el-input
-                  style="width:20em"
+                  style="width:18em"
                   v-model="subitem.defaultValue"
                 ></el-input>
               </div>
               <div v-if="subitem.controlType=='Integer'">
                 <el-input
-                  style="width:20em"
+                  style="width:18em"
                   type="number"
                   v-model.number="subitem.defaultValue"
                 ></el-input>
               </div>
               <div v-if="subitem.controlType=='Boolean'">
                 <el-checkbox
-                  style="width:20em"
+                  style="width:18em"
                   v-model="subitem.defaultValue"
                 ></el-checkbox>
               </div>
               <div v-else-if="subitem.controlType === 'TextArea'">
                 <el-input
-                  style="width:20em"
+                  style="width:18em"
                   type="textarea"
                   v-model="subitem.defaultValue"
                 ></el-input>
               </div>
               <div v-else-if="subitem.controlType ==='Date'">
                 <el-date-picker
-                  style="width:20em"
+                  style="width:18em"
                   v-model="subitem.defaultValue"
                   type="date"
                   :placeholder="$t('application.selectDate')"
@@ -69,7 +69,7 @@
                       || subitem.controlType=='SQLSelect'"
               >
                 <el-select
-                  style="width:20em"
+                  style="width:18em"
                   v-model="subitem.defaultValue"
                 >
                   <el-option label value></el-option>
