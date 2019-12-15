@@ -13,7 +13,10 @@
                  <el-form-item  prop="C_DESC1" label="用户部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
                 </el-form-item>
-                <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
+                 <!-- <el-form-item  :label-width="formLabelWidth"  style="float:left">
+                  <el-button  @click="viewdoc(scope.row)">借阅流程参考查看</el-button>
+                </el-form-item> -->
+               <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly></el-input>
                     <el-tree v-if="showDepartMentList==1"
                       :props="defaultProps"
