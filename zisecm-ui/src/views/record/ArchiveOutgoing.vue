@@ -46,7 +46,7 @@ export default {
         
     },
     mounted(){
-      this.$router.push({
+      this.$router.replace({
         path:"/record/archiveoutgoing/archivependingout"
       });
     },

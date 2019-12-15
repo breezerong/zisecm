@@ -139,7 +139,6 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}else {
 			list = ecmDocument.executeSQL(pager, clauseSql);
 		}
-		
 		// TODO Auto-generated method stub
 		return list;
 	}

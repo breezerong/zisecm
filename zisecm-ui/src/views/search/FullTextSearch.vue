@@ -196,7 +196,7 @@
               </template>
           </el-table-column>
             -->
-            <el-table-column :label="$t('application.operation')" width="157">
+            <el-table-column :label="$t('application.operation')" width="140">
               <template slot-scope="scope">
                 <el-button
                   type="primary"
@@ -588,5 +588,10 @@ a {
 .el-aside {
   background-color: rgb(231, 236, 241);
   position:fixed;
+}
+</style>
+<style>
+.el-button+.el-button {
+    margin-left: 1px;
 }
 </style>

@@ -288,7 +288,7 @@ export default {
         // 加载未入库表格数据
         loadOutFileGridData(row){
           let _self = this;
-          if (row != null) {
+          if (row!=undefined &&row != null) {
             _self.selectedOutFileRow = row;
             
           }

@@ -1564,6 +1564,7 @@ public class EcmDcController extends ControllerAbstract{
 				mp.put("code", ActionContext.SUCESS);
 			} catch (AccessDeniedException e) {
 				mp.put("code", ActionContext.TIME_OUT);
+				e.printStackTrace();
 			}
 			return mp;
 		}
