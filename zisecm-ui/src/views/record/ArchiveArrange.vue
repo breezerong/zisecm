@@ -331,7 +331,13 @@ export default {
       let _self=this;
       
       if(_self.selectRow.ID==undefined){
-        _self.$message('请选择一条数据！')
+        // _self.$message('请选择一条数据！')
+        _self.$message({
+                showClose: true,
+                message: '请选择一条数据！',
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
        _self.selectedChildrenType=[];
@@ -348,7 +354,13 @@ export default {
     beforePrintRidge(selectedRow,gridName,vtitle){
       let _self=this;
       if(selectedRow.ID==undefined){
-        _self.$message('请选择一条数据进行打印');
+        // _self.$message('请选择一条数据进行打印');
+        _self.$message({
+                showClose: true,
+                message: '请选择一条数据进行打印',
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
       _self.printRidgeVisible = true;
@@ -367,11 +379,23 @@ export default {
     putInStorage(){
       let _self=this;
       if(_self.radio!='卷盒'){
-          _self.$message('请选择卷盒数据！');
+          // _self.$message('请选择卷盒数据！');
+          _self.$message({
+                showClose: true,
+                message: '请选择卷盒数据！',
+                duration: 2000,
+                type: "warning"
+              });
           return;
       }
       if(_self.selectRow.ID==undefined){
-         _self.$message('请选择一条或多条卷盒数据！');
+        //  _self.$message('请选择一条或多条卷盒数据！');
+         _self.$message({
+                showClose: true,
+                message: '请选择一条卷盒数据！',
+                duration: 2000,
+                type: "warning"
+              });
           return;
       }
 
@@ -399,10 +423,22 @@ export default {
           _self.loadGridData(_self.currentFolder);
           _self.innerDataList=[];
             // _self.showInnerFile(null);
-          _self.$message(_self.$t("message.warehousingSuccess"));
+          // _self.$message(_self.$t("message.warehousingSuccess"));
+          _self.$message({
+              showClose: true,
+              message: _self.$t("message.warehousingSuccess"),
+              duration: 2000,
+              type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.warehousingFail"));
+          // _self.$message(_self.$t("message.warehousingFail"));
+          _self.$message({
+                  showClose: true,
+                  message: _self.$t("message.warehousingFail"),
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
       });
 
@@ -426,7 +462,13 @@ export default {
     onMoveUp(){
       let _self=this;
       if(_self.innerSelectedOne.ID==undefined){
-         _self.$message("请选择一条数据！");
+        //  _self.$message("请选择一条数据！");
+         _self.$message({
+                showClose: true,
+                message: "请选择一条数据！",
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
       var m = new Map();
@@ -448,7 +490,13 @@ export default {
             _self.showInnerFile(null);
           }
           else{
-             _self.$message( response.data.message);
+            //  _self.$message( response.data.message);
+             _self.$message({
+                  showClose: true,
+                  message: response.data.message,
+                  duration: 5000,
+                  type: "error"
+                });
           }
         })
         .catch(function(error) {
@@ -462,7 +510,13 @@ export default {
       let _self=this;
       _self.fileList=[];
       if(selrow.ID==undefined){
-         _self.$message("请选择一条数据！");
+        //  _self.$message("请选择一条数据！");
+         _self.$message({
+                showClose: true,
+                message: "请选择一条数据！",
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
       _self.uploadID=selrow.ID;
@@ -500,7 +554,13 @@ export default {
         _self.importdialogVisible = false;
         // _self.refreshData();
         _self.showInnerFile(null);
-        _self.$message("导入成功!");
+        // _self.$message("导入成功!");
+        _self.$message({
+              showClose: true,
+              message: "导入成功!",
+              duration: 2000,
+              type: 'success'
+            });
       })
       .catch(function(error) {
         console.log(error);
@@ -510,7 +570,13 @@ export default {
     onMoveDown(){
       let _self=this;
       if(_self.innerSelectedOne.ID==undefined){
-         _self.$message("请选择一条数据！");
+        //  _self.$message("请选择一条数据！");
+         _self.$message({
+                showClose: true,
+                message: "请选择一条数据！",
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
       var m = new Map();
@@ -532,7 +598,13 @@ export default {
             _self.showInnerFile(null);
           }
           else{
-             _self.$message( response.data.message);
+            //  _self.$message( response.data.message);
+             _self.$message({
+                showClose: true,
+                message: response.data.message,
+                duration: 2000,
+                type: "warning"
+              });
           }
         })
         .catch(function(error) {
@@ -1073,7 +1145,13 @@ export default {
         
       }
       else{
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
+        // _self.$message(_self.$t("message.pleaseSelectFolder"));
+        _self.$message({
+                showClose: true,
+                message: _self.$t("message.pleaseSelectFolder"),
+                duration: 2000,
+                type: "warning"
+              });
       }
     },
     newArchiveFileItem(typeName,selectedRow)
@@ -1097,7 +1175,13 @@ export default {
         
       }
       else{
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
+        // _self.$message(_self.$t("message.pleaseSelectFolder"));
+        _self.$message({
+                showClose: true,
+                message: _self.$t("message.pleaseSelectFolder"),
+                duration: 2000,
+                type: "warning"
+              });
       }
     },
     // 新建文档
@@ -1116,7 +1200,13 @@ export default {
         }
       }
       else{
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
+        // _self.$message(_self.$t("message.pleaseSelectFolder"));
+        _self.$message({
+                showClose: true,
+                message: _self.$t("message.pleaseSelectFolder"),
+                duration: 2000,
+                type: "warning"
+              });
       }
     },
     // 保存文档
@@ -1173,7 +1263,13 @@ export default {
           let code = response.data.code;
           //console.log(JSON.stringify(response));
           if(code==1){
-            _self.$message("创建成功!");
+            // _self.$message("创建成功!");
+            _self.$message({
+              showClose: true,
+              message: "创建成功!",
+              duration: 2000,
+              type: 'success'
+            });
             _self.propertyVisible=false;
             
             _self.loadGridData(_self.currentFolder);
@@ -1182,11 +1278,23 @@ export default {
             _self.outerDataList=[];
           }
           else{
-             _self.$message("新建失败!");
+            //  _self.$message("新建失败!");
+             _self.$message({
+                  showClose: true,
+                  message: "新建失败!",
+                  duration: 5000,
+                  type: "error"
+                });
           }
         })
         .catch(function(error) {
-          _self.$message("新建失败!");
+          // _self.$message("新建失败!");
+          _self.$message({
+                  showClose: true,
+                  message: "新建失败!",
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
         });
       }
@@ -1207,28 +1315,54 @@ export default {
             _self.$emit('onSaved','update');
           }
           else{
-             _self.$message("保存失败!");
+            //  _self.$message("保存失败!");
+             _self.$message({
+                  showClose: true,
+                  message: "保存失败!",
+                  duration: 5000,
+                  type: "error"
+                });
           }
         })
         .catch(function(error) {
-          _self.$message("保存失败!");
+          // _self.$message("保存失败!");
+          _self.$message({
+                  showClose: true,
+                  message: "保存失败!",
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
         });
       }
     },
     // 保存结果事件
     onSaved(indata){
+      let _self=this;
       if(indata=='update')
       {
-        this.$message(this.$t("message.saveSuccess"));
+        // this.$message(this.$t("message.saveSuccess"));
+        
+        _self.$message({
+          showClose: true,
+          message: _self.$t("message.saveSuccess"),
+          duration: 2000,
+          type: 'success'
+            });
       }
       else
       {
-        this.$message("新建成功!");
+        // this.$message("新建成功!");
+        _self.$message({
+          showClose: true,
+          message: "新建成功!",
+          duration: 2000,
+          type: 'success'
+            });
       }
-      this.propertyVisible = false;
-      this.loadGridData(this.currentFolder);
-      this.loadGridOutData(this.currentFolder);
+      _self.propertyVisible = false;
+      _self.loadGridData(_self.currentFolder);
+      _self.loadGridOutData(_self.currentFolder);
     },
     //开卷
     onOpenPage(){
@@ -1293,7 +1427,13 @@ export default {
     onDeleleArchiveItem() {
       let _self = this;
       if(_self.selectRow.ID==undefined){
-        _self.$message("请选择一条卷盒或图册数据！");
+        // _self.$message("请选择一条卷盒或图册数据！");
+        _self.$message({
+                showClose: true,
+                message: "请选择一条卷盒或图册数据！",
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
       this.$confirm(_self.$t("message.deleteInfo"),_self.$t("application.info"), {
@@ -1335,10 +1475,22 @@ export default {
           _self.loadGridData(_self.currentFolder);
            
             _self.showInnerFile(null);
-          _self.$message(_self.$t("message.deleteSuccess"));
+          // _self.$message(_self.$t("message.deleteSuccess"));
+          _self.$message({
+              showClose: true,
+              message: _self.$t("message.deleteSuccess"),
+              duration: 2000,
+              type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.deleteFailured"));
+          // _self.$message(_self.$t("message.deleteFailured"));
+          _self.$message({
+                  showClose: true,
+                  message: _self.$t("message.deleteFailured"),
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
       });
     },
@@ -1363,7 +1515,13 @@ export default {
     fetchInformation(){
       let _self=this;
       if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
-         _self.$message("请选择一条或多条卷盒数据！");
+        //  _self.$message("请选择一条卷盒数据！");
+         _self.$message({
+                showClose: true,
+                message: "请选择一条卷盒数据！",
+                duration: 2000,
+                type: "warning"
+              });
           return;
       }
       // let tab=_self.selectedItems;
@@ -1381,8 +1539,15 @@ export default {
       //   }
       //   m.push(tab[i]["ID"]);
       // }
-      if((_self.selectRow.CODING==undefined ||_self.selectRow.CODING=="")&&tab[i]["SUB_TYPE"]!="盒"){
-        _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
+      if((_self.selectRow.CODING==undefined ||_self.selectRow.CODING=="")
+      &&_self.selectRow.SUB_TYPE!="盒"){
+        _self.$message({
+                showClose: true,
+                message: "所选卷盒中有未取号的数据，请先对其进行取号！",
+                duration: 2000,
+                type: "warning"
+              });
+        // _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
         return;
       }
       let m = [];
@@ -1406,7 +1571,13 @@ export default {
             .then(function(response) {
               let sdata = response.data.data;
               if(sdata.length>0){
-                _self.$message("盒内文件"+sdata[0].CODING+"未取号！");
+                 _self.$message({
+                  showClose: true,
+                  message: "盒内文件"+sdata[0].CODING+"未取号！",
+                  duration: 2000,
+                  type: "warning"
+                });
+                // _self.$message("盒内文件"+sdata[0].CODING+"未取号！");
                 return;
               }else{
                 _self.axios({
@@ -1422,15 +1593,33 @@ export default {
                         _self.loadGridData(_self.currentFolder);
                       
                         _self.showInnerFile(null);
-                        _self.$message(_self.$t("message.fetchInformationSuccess"));
+                        // _self.$message(_self.$t("message.fetchInformationSuccess"));
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t("message.fetchInformationSuccess"),
+                            duration: 2000,
+                            type: 'success'
+                          });
                       }else{
-                        _self.$message(response.data.message);
+                        // _self.$message(response.data.message);
+                         _self.$message({
+                          showClose: true,
+                          message: response.data.message,
+                          duration: 5000,
+                          type: "error"
+                        });
                       }
                       
                       
                     })
                     .catch(function(error) {
-                      _self.$message(_self.$t("message.fetchInformationFailed"));
+                      // _self.$message(_self.$t("message.fetchInformationFailed"));
+                      _self.$message({
+                          showClose: true,
+                          message: _self.$t("message.fetchInformationFailed"),
+                          duration: 5000,
+                          type: "error"
+                        });
                       console.log(error);
                   });
               }
@@ -1453,10 +1642,22 @@ export default {
           _self.loadGridData(_self.currentFolder);
            
             _self.showInnerFile(null);
-          _self.$message(_self.$t("message.fetchInformationSuccess"));
+          // _self.$message(_self.$t("message.fetchInformationSuccess"));
+          _self.$message({
+              showClose: true,
+              message: self.$t("message.fetchInformationSuccess"),
+              duration: 2000,
+              type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.fetchInformationFailed"));
+          // _self.$message(_self.$t("message.fetchInformationFailed"));
+          _self.$message({
+                  showClose: true,
+                  message: _self.$t("message.fetchInformationFailed"),
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
       });
       }
@@ -1465,7 +1666,13 @@ export default {
     takeNumbers(){
       let _self =this;
       if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
-         _self.$message("请选择一条或多条卷盒数据！");
+        //  _self.$message("请选择一条或多条卷盒数据！");
+        _self.$message({
+                showClose: true,
+                message: "请选择一条或多条卷盒数据！",
+                duration: 2000,
+                type: "warning"
+              });
           return;
       }
       // let tab=_self.selectedItems;
@@ -1494,14 +1701,32 @@ export default {
             _self.outerDataList=[];
             let code=response.data.code;
             if(code==1){
-               _self.$message("取号成功！");
+              //  _self.$message("取号成功！");
+              _self.$message({
+                  showClose: true,
+                  message: "取号成功！",
+                  duration: 2000,
+                  type: 'success'
+                });
             }else{
-              _self.$message(response.data.message);
+              // _self.$message(response.data.message);
+              _self.$message({
+                showClose: true,
+                message: response.data.message,
+                duration: 2000,
+                type: "warning"
+              });
             }
          
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.takeNumberFaild"));
+          // _self.$message(_self.$t("message.takeNumberFaild"));
+          _self.$message({
+                  showClose: true,
+                  message: _self.$t("message.takeNumberFaild"),
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
       });
     },
@@ -1515,7 +1740,13 @@ export default {
       for(i in tab){
         if(tab[i]["C_LOCK_STATUS"]==="已封卷")
         {
-          _self.$message("案卷："+tab[i]["CODING"]+"已封卷不允许删除！");
+          // _self.$message("案卷："+tab[i]["CODING"]+"已封卷不允许删除！");
+          _self.$message({
+                showClose: true,
+                message: "案卷："+tab[i]["CODING"]+"已封卷不允许删除！",
+                duration: 2000,
+                type: "warning"
+              });
           return;
         }
         m.push(tab[i]["ID"]);
@@ -1531,10 +1762,22 @@ export default {
         })
         .then(function(response) {
           _self.loadGridData(_self.currentFolder);
-          _self.$message(_self.$t("message.deleteSuccess"));
+          // _self.$message(_self.$t("message.deleteSuccess"));
+          _self.$message({
+              showClose: true,
+              message: _self.$t("message.deleteSuccess"),
+              duration: 2000,
+              type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.deleteFailured"));
+          // _self.$message(_self.$t("message.deleteFailured"));
+          _self.$message({
+                  showClose: true,
+                  message: _self.$t("message.deleteFailured"),
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
       });
     },
@@ -1542,7 +1785,13 @@ export default {
     onDeleleFileItem() {
       let _self = this;
       if(_self.selectedOneOutItem.ID==undefined){
-         _self.$message("请选择一条要删除的文件！");
+        //  _self.$message("请选择一条要删除的文件！");
+         _self.$message({
+                showClose: true,
+                message: "请选择一条要删除的文件！",
+                duration: 2000,
+                type: "warning"
+              });
          return;
       }
       this.$confirm(_self.$t("message.deleteInfo"),_self.$t("application.info"), {
@@ -1576,10 +1825,22 @@ export default {
         .then(function(response) {
           _self.loadGridOutData(_self.currentFolder);
           _self.loadGridData(_self.currentFolder);
-          _self.$message(_self.$t("message.paper"));
+          // _self.$message(_self.$t("message.paper"));
+          _self.$message({
+            showClose: true,
+            message: _self.$t("message.paper"),
+            duration: 2000,
+            type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.paperFaild"));
+          // _self.$message(_self.$t("message.paperFaild"));
+          _self.$message({
+                  showClose: true,
+                  message: _self.$t("message.paperFaild"),
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
       });
     },
@@ -1604,10 +1865,22 @@ export default {
         })
         .then(function(response) {
           _self.loadGridOutData(_self.currentFolder);
-          _self.$message(_self.$t("message.deleteSuccess"));
+          // _self.$message(_self.$t("message.deleteSuccess"));
+          _self.$message({
+            showClose: true,
+            message: _self.$t("message.deleteSuccess"),
+            duration: 2000,
+            type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message(_self.$t("message.deleteFailured"));
+          // _self.$message(_self.$t("message.deleteFailured"));
+          _self.$message({
+                  showClose: true,
+                  message: _self.$t("message.deleteFailured"),
+                  duration: 5000,
+                  type: "error"
+                });
           console.log(error);
       });
     },
@@ -1631,7 +1904,13 @@ export default {
           url: "/admin/updateFolder"
         })
         .then(function(response) {
-          _self.$message(_self.$t("message.saveSuccess"));
+          // _self.$message(_self.$t("message.saveSuccess"));
+          _self.$message({
+              showClose: true,
+              message: _self.$t("message.saveSuccess"),
+              duration: 2000,
+              type: 'success'
+            });
           _self.folderDialogVisible = false;
         })
         .catch(function(error) {
