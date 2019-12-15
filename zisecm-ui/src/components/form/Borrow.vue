@@ -14,7 +14,15 @@
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
                 </el-form-item>
                  <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off"></el-input>
+                  <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly</el-input>
+                    <el-tree v-if="showDepartMentList==1"
+                      :props="defaultProps"
+                      :data="deptList"
+                      node-key="id"
+                      lazy
+                      @node-click="handleNodeClick">
+                    </el-tree>
+
                 </el-form-item>
                 <!-- <el-form-item label="日期" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm." :formatter="dateFormatter" auto-complete="off"></el-input> 
@@ -22,6 +30,10 @@
                   <el-form-item label="文件归档部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.cCreationUnit" auto-complete="off"></el-input>
                 </el-form-item>-->
+                 <!-- <el-form-item style="float:left;padding-left:3px">
+                   <el-button  type="primary" @click="handleNodeClick()">选择编制部门</el-button>
+                </el-form-item> -->
+
                </el-col>
              <el-col>
                 <el-form-item label="借阅类型" :label-width="formLabelWidth" style="float:left">
@@ -248,6 +260,15 @@ export default {
       vshowShopingCart:false,
       showOrCloseShopingCartLabel:"从借阅单添加",
       expireTimeOption:this.dateCheck(),
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
+      deptList: [],
+      showDepartMentList:0,
+      currentGroupData:"",
+      selectedGroupItemId:"",
+      currentRootGroupData:"",
 
     };
   },
@@ -261,6 +282,11 @@ export default {
     }   
     _self.loadGridView()
   }, 
+    mounted() {
+    let _self = this;
+    _self.bindDepartment();
+  },
+
  methods: {
          dateCheck() {
            let _self=this;
@@ -609,8 +635,53 @@ export default {
       //console.log(href);
       window.open(href.href, '_blank');
     },
-
-
+    // 绑定部门
+    bindDepartment() {
+      let _self = this;
+      _self.showDepartMentList=1;
+      var m = new Map();
+      m.set("id", 0);
+      m.set("groupType", 1);
+      axios.post("/admin/getGroups",JSON.stringify(m))
+        .then(function(response) {
+          _self.deptList = response.data.data;
+         _self.currentRootGroupData = response.data.data;
+        //_self.handleNodeClick(_self.deptList[0]);
+          //console.log(JSON.stringify(_self.deptList));
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    addCreationUnit(){
+        let _self = this;
+       _self.borrowForm.C_CREATION_UNIT=_self.currentGroupData.name;
+    },
+   // 部门点击事件
+    handleNodeClick(indata) {
+      let _self = this;
+      _self.currentGroupData = indata;
+      if( _self.currentRootGroupData[0].name!=_self.currentGroupData.name){
+        _self.borrowForm.C_CREATION_UNIT=_self.currentGroupData.name;
+      }
+     _self.selectedGroupItemId = indata.id;
+      var m = new Map();
+      m.set("id", indata.id);
+      m.set("groupType", 1);
+      if(indata.extended == false)
+      {
+        axios.post("/admin/getGroups",JSON.stringify(m))
+        .then(function(response) {
+          // _self.$message("获取子节点成功!");
+          indata.children = response.data.data;
+          indata.extended = true;
+          //console.log(JSON.stringify(indata));
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      }
+    },
 
 
   }

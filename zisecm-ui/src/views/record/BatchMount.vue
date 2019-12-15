@@ -12,7 +12,7 @@
           <el-tab-pane label="根据Excel挂载" name="first">
             <el-row>
               <div style="float: left;text-align:left;">
-                &nbsp; &nbsp; 批量挂载的Excel文件为公司文档Excel导出结果，第二列填写挂载电子文件名。
+                &nbsp; &nbsp; 批量挂载的Excel文件为库存档案Excel导出结果，第二列填写挂载电子文件名。
                 <br />
                 <br />
               </div>
