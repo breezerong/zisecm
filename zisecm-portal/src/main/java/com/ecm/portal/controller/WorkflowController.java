@@ -334,6 +334,14 @@ public class WorkflowController  extends ControllerAbstract{
 	    	        if(!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startUser"))) {
 	    	    		sql1.append(" and START_USER_ID_ = '").append(workflowForm.get("startUser")).append("' ");
 	    	        }
+	    	        String isFinished = org.springframework.util.StringUtils.isEmpty(workflowForm.get("isFinished"))?"":workflowForm.get("isFinished").toString();
+					if("未完成".equals(isFinished)) {
+	    	    		sql1.append(" and END_ACT_ID_  is  NULL ");
+	    	        }
+	    	        if("已完成".equals(isFinished)) {
+	    	    		sql1.append(" and END_ACT_ID_  is not NULL ");
+	    	        }
+	    	        
 	    	}
 	    	
 	    	if(!"all".equals(userId) ) {

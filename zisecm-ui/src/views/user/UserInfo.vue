@@ -68,23 +68,23 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <!-- <el-row>
         <el-col :span="2">
           <el-form-item :label="$t('application.signImage')">
             <img v-if="userData.id" :src="_self.axios.defaults.baseURL+'/user/getUserImage?id='+userData.id+'&token='+token+'&ticket='+ticket" >
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row> 
         <el-col>
           &nbsp;
         </el-col>
-      </el-row>
+      </el-row>-->
       <el-row>
-        <el-col :span="8">
+        <el-col :span="14">
           <el-button type="primary" plain icon="save" @click="saveUserInfo()" >{{$t('application.save')}}</el-button> 
-          &nbsp; &nbsp; 
-          <el-button type="primary" plain icon="save" @click="sdialogVisible=true" >{{$t('application.updateSignImage')}}</el-button> 
+          <!-- &nbsp; &nbsp; 
+          <el-button type="primary" plain icon="save" @click="sdialogVisible=true" >{{$t('application.updateSignImage')}}</el-button>  -->
         </el-col>
       </el-row>
       

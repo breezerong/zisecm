@@ -11,15 +11,15 @@
                       <span>借阅单状态</span>
                     </template>
                     <el-menu-item index="201">
-                      <i class="el-icon-caret-right"></i>
+                      <i class="el-icon-bottom"></i>
                       <span slot="title"><router-link to="/record/archiveoutgoing/archivependingout">待出库</router-link></span>
                     </el-menu-item>
                     <el-menu-item index="202">
-                      <i class="el-icon-caret-right"></i>
+                      <i class="el-icon-top"></i>
                       <span slot="title"><router-link to="/record/archiveoutgoing/archivependingin">待入库</router-link></span>
                     </el-menu-item>
                     <el-menu-item index="203">
-                      <i class="el-icon-caret-right"></i>
+                      <i class="el-icon-finished"></i>
                       <span slot="title"><router-link to="/record/archiveoutgoing/archiveborrowcompleted">已完成</router-link></span>
                     </el-menu-item>
                     

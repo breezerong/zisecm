@@ -72,9 +72,9 @@
                   style="width:18em"
                   v-model="subitem.defaultValue"
                 >
-                  <el-option label value></el-option>
+                  <el-option label value style="width:230px"></el-option>
                   <div v-for="(name,vidx) in subitem.validValues" :key="vidx+'_V'">
-                    <el-option :label="name" :value="name"></el-option>
+                    <el-option :label="name" :value="name" style="width:230px"></el-option>
                   </div>
                 </el-select>
               </div>
