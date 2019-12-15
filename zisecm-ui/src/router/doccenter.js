@@ -6,7 +6,7 @@ export const dcRouter = [
 			},
 			path: '/dc/companydoc',
 			component: () => import('@/views/dc/CompanyDoc.vue'),
-			name: '公司文档',
+			name: '库存档案',
 			children:[
 				{
 					meta: {

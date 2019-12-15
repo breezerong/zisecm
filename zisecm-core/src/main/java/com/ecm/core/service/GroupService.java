@@ -226,10 +226,10 @@ public class GroupService implements IGroupService {
 		EcmGroup group = ecmGroupMapper.selectByPrimaryKey(groupId);
 		if(group==null)
 			throw new Exception("Group :"+groupId+" is not exists.");
-		String sql = "delete from ecm_group_item where item_type='2' and PARENT_ID="+groupId+" and CHILD_ID="+userId;
+		String sql = "delete from ecm_group_item where item_type='2' and PARENT_ID='"+groupId+"' and CHILD_ID='"+userId+"'";
 		ecmGroupItemMapper.executeSql(sql);
 		//从所有用户中移除，嵌套组后续处理
-		sql = "delete from ecm_group_user where GROUP_ID="+groupId+" and USER_ID="+userId;
+		sql = "delete from ecm_group_user where GROUP_ID='"+groupId+"' and USER_ID='"+userId+"'";
 		ecmGroupUserMapper.executeSql(sql);
 		//移除上级组、角色用户
 		removeUserFromParent( groupId, userId);
@@ -248,8 +248,8 @@ public class GroupService implements IGroupService {
 	private void removeUserFromParent(String groupId,String userId) {
 		List<EcmGroupItem> list = ecmGroupItemMapper.selectParent(groupId);
 		for(EcmGroupItem item:list) {
-			String sql = "delete from ecm_group_user where GROUP_ID="+item.getId()+" and USER_ID="+userId;
-			sql += " and not exits(select 1 from ecm_group_item where ITEM_TYPE='2' and PARENT_ID="+item.getId()+" and CHILD_ID="+userId+")";
+			String sql = "delete from ecm_group_user where GROUP_ID='"+item.getId()+"' and USER_ID='"+userId+"'";
+			sql += " and not exits(select 1 from ecm_group_item where ITEM_TYPE='2' and PARENT_ID='"+item.getId()+"' and CHILD_ID='"+userId+"')";
 			ecmGroupUserMapper.executeSql(sql);
 			removeUserFromParent(item.getId(),userId);
 		}
@@ -357,7 +357,7 @@ public class GroupService implements IGroupService {
 	@Override
 	public List<EcmUser> getAllUser(String token,String id) {
 		// TODO Auto-generated method stub
-		String sql ="select a.* from ecm_user a, ecm_group_user b where b.GROUP_ID="+id+" and a.ID=b.USER_ID";
+		String sql ="select a.* from ecm_user a, ecm_group_user b where b.GROUP_ID='"+id+"' and a.ID=b.USER_ID";
 		return ecmUserMapper.searchToEntity(sql);
 	}
 	

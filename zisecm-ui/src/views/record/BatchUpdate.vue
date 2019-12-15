@@ -11,7 +11,7 @@
         <el-row > 
           <el-col :span="24" style="float: left;text-align:left;">
             <br>
-            &nbsp; &nbsp; 批量更新的Excel文件为公司文档Excel导出结果，修改需要更新属性值，删除不需要修改属性列（ID列不能删除）。
+            &nbsp; &nbsp; 批量更新的Excel文件为库存档案Excel导出结果，修改需要更新属性值，删除不需要修改属性列（ID列不能删除）。
             <br>
             <br>
           </el-col>
