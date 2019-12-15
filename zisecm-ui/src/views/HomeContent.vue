@@ -116,7 +116,7 @@
               <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
             </el-col>
           </el-card>
-          <el-card :body-style="{ height: '180px' }">
+          <el-card :body-style="{ height: '580px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">通知公告</span>
               <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
@@ -136,12 +136,12 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '310px',width:'100%' }">
+          <!-- <el-card :body-style="{ height: '310px',width:'100%' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">馆藏状态</span>
             </div>
             <div id="collectionChart" style="height: 100%;width: 100%;padding-bottom:20px;"></div>
-          </el-card>
+          </el-card> -->
         </el-col>
       </el-row>
     </el-main>
