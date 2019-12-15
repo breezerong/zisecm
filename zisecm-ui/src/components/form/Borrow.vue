@@ -457,7 +457,7 @@ export default {
                _self.$message({
                 showClose: true,
                 message: "流程发起成功!",
-                duration: 1000,
+                duration: 2000,
                 type: "success"
               });
   
@@ -467,7 +467,7 @@ export default {
                _self.$message({
                 showClose: true,
                 message: "流程发起失败!",
-                duration: 1000,
+                duration: 2000,
                 type: "warning"
               });
                 console.log(error);
