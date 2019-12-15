@@ -181,21 +181,34 @@ export default {
       let _self = this;
       var addItemId = [];
       var C_ARCHIVE_UNIT="";
+
+
+ 
+
       if (_self.selectedItemList.length > 0) {
         for (var i = 0; i < _self.selectedItemList.length; i++) {
           if(i==0){
-          C_ARCHIVE_UNIT=_self.selectedItemList[i].C_ARCHIVE_UNIT
+              if(typeof(_self.selectedItemList[i].C_ARCHIVE_UNIT)=="undefined"){
+              _self.$message({
+                showClose: true,
+                message: "所借阅档案，归档单位为空，不能外借!",
+                duration: 5000,
+                type: "warning"
+              });
+              return;
+              }
           }else{
             if(C_ARCHIVE_UNIT!=_self.selectedItemList[i].C_ARCHIVE_UNIT){
               _self.$message({
                 showClose: true,
-                message: "所借阅档案，归档部门只能是同一个!",
+                message: "所借阅档案，归档单位只能是同一个!",
                 duration: 5000,
                 type: "warning"
               });
               return;
             }
           }
+
         }
       }else{
                _self.$message({
@@ -299,7 +312,7 @@ export default {
           console.log(error);
         });      
     },
-     addToFormFromShopingCart(){
+    addToFormFromShopingCart(){
     let _self = this;
       var m = new Map();
       var addItemId = [];
@@ -311,13 +324,13 @@ export default {
       m.set("documentIds",addItemId);
       m.set("formId",_self.formId);
        axios.post("/dc/addItemToForm",JSON.stringify(m)).then(function(response){
-      _self.formId=response.data.data;
-      _self.$message({
-        showClose: true,
-        message: "添加成功!",
-        duration: 2000,
-        type: "success"
-      });
+          _self.formId=response.data.data;
+          _self.$message({
+          showClose: true,
+          message: "添加成功!",
+          duration: 2000,
+          type: "success"
+          });
 
         })
         .catch(function(error) {

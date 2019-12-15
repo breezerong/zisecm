@@ -13,8 +13,8 @@
                  <el-form-item  prop="C_DESC1" label="用户部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
                 </el-form-item>
-                 <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly</el-input>
+                <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
+                  <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly></el-input>
                     <el-tree v-if="showDepartMentList==1"
                       :props="defaultProps"
                       :data="deptList"
@@ -23,11 +23,11 @@
                       @node-click="handleNodeClick">
                     </el-tree>
 
-                </el-form-item>
+                </el-form-item> -->
                 <!-- <el-form-item label="日期" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm." :formatter="dateFormatter" auto-complete="off"></el-input> 
                 </el-form-item>
-                  <el-form-item label="文件归档部门" :label-width="formLabelWidth" style="float:left">
+                  <el-form-item label="文件归档单位" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.cCreationUnit" auto-complete="off"></el-input>
                 </el-form-item>-->
                  <!-- <el-form-item style="float:left;padding-left:3px">
@@ -128,7 +128,7 @@
                 <!-- <el-form-item label="日期" :label-width="formLabelWidth" style="float:left">
                   {{borrowForm." :formatter="dateFormatter" auto-complete="off"></el-input> 
                 </el-form-item>
-                  <el-form-item label="文件归档部门" :label-width="formLabelWidth" style="float:left">
+                  <el-form-item label="文件归档单位" :label-width="formLabelWidth" style="float:left">
                   {{borrowForm.cCreationUnit" auto-complete="off"></el-input>
                 </el-form-item>-->
                </el-col>
@@ -241,16 +241,16 @@ export default {
           {required: true, message: this.$t("message.pleaseInput")+"用户部门", trigger: 'blur'},
             // { validator: validaePass }
         ],
-        C_CREATION_UNIT: [
-          {required: true, message: this.$t("message.pleaseInput")+"编制部门", trigger: 'blur'},
-            // { validator: validaePass2 }
-        ],
+        // C_CREATION_UNIT: [
+        //   {required: true, message: this.$t("message.pleaseInput")+"编制部门", trigger: 'blur'},
+        //     // { validator: validaePass2 }
+        // ],
         C_START_DATE: [
           {required: true, message: this.$t("message.pleaseInput")+"借阅开始时间", trigger: 'blur'},
             // { validator: validaePass2 }
         ],
         C_END_DATE: [
-          {required: true, message: this.$t("message.pleaseInput")+"借阅结束时间", trigger: 'blur'},
+          {required: true, message: this.$t("message.pleaseSelect")+"借阅结束时间", trigger: 'blur'},
             // { validator: validaePass2 }
         ]
       },      
@@ -348,16 +348,20 @@ export default {
        let fileNumber=0;
        let beyondLeaderPermision=false;
        let isValidedForm=false;
-      _self.$refs.borrowForm.validate((valid) => {
+       let isStoreStatus="在库";
+       _self.$refs.borrowForm.validate((valid) => {
         if (valid) {
             let m = new  Map();
-            m.set("formData",_self.borrowForm);
 
             let documentIds="";
             let fileTopestSecurityLevel="内部公开";
             for (let index = 0; index < _self.tabledata.length; index++) {
+              if(typeof(_self.tabledata[index].C_STORE_STATUS)=="undefined"||(typeof(_self.tabledata[index].C_STORE_STATUS)!="undefined" && _self.tabledata[index].C_STORE_STATUS!=isStoreStatus)){
+                  isStoreStatus="不在库";
+              }
+              _self.borrowForm.C_CREATION_UNIT=_self.tabledata[index].C_ARCHIVE_UNIT;
               let element = _self.tabledata[index];
-              fileTopestSecurityLevel=fileTopestSecurityLevel+element.C_SECURITY_LEVEL;
+                fileTopestSecurityLevel=fileTopestSecurityLevel+element.C_SECURITY_LEVEL;
               if(index==0){
                 documentIds=documentIds+element.ID;
               }else{
@@ -439,9 +443,20 @@ export default {
 
           }
 
+              if(isStoreStatus!='在库'&&_self.borrowForm.SUB_TYPE=='纸质借阅'){
+                _self.$message({
+                  showClose: true,
+                  message: "所借阅文件包含不在库文件，不能发起借阅流程",
+                  duration: 5000,
+                  type: "warning"
+                });
+                return;
+
+              }
 
 
-            m.set("documentIds",documentIds);
+           m.set("formData",_self.borrowForm);
+           m.set("documentIds",documentIds);
           _self.loading = true;
           axios.post("/dc/saveBorrowForm",JSON.stringify(m)).then(function(response){
               _self.formId=response.data.data;
@@ -488,7 +503,6 @@ export default {
         
        let _self = this;
       let m = new  Map();
-       m.set("formData",_self.borrowForm);
 
       let documentIds="";
       let fileTopestSecurityLevel="内部公开";
@@ -497,6 +511,7 @@ export default {
         let element = _self.tabledata[index];
         fileTopestSecurityLevel=fileTopestSecurityLevel+element.C_SECURITY_LEVEL;
         if(index==0){
+         _self.borrowForm.C_CREATION_UNIT=_self.tabledata[index].C_ARCHIVE_UNIT;
          documentIds=documentIds+element.ID;
         }else{
          documentIds=documentIds+","+element.ID;     
@@ -511,7 +526,9 @@ export default {
       }else{
         fileTopestSecurityLevel="内部公开";
       }
-      m.set("documentIds",documentIds);
+      m.set("formData",_self.borrowForm);
+      m.set("documentIds",_self.tabledata);
+      m.set("tabledata",documentIds);
       m.set("formId",_self.formId);
       return m;
     },
@@ -575,8 +592,48 @@ export default {
         }
     },
     addToFormFromShopingCart(){
-      let _self=this;
-      _self.$refs.ShowShopingCart.addToFormFromShopingCart();
+       let _self=this;
+     let allTableData=[];
+      allTableData=allTableData.concat(_self.tabledata).concat(_self.$refs.ShowShopingCart.selectedItemList);
+     var C_ARCHIVE_UNIT="";
+      if (allTableData.length > 0) {
+        for (var i = 0; i < allTableData.length; i++) {
+          if(i==0){
+            if(typeof(allTableData[i].C_ARCHIVE_UNIT)=="undefined"){
+              _self.$message({
+                showClose: true,
+                message: "所借阅档案，归档单位为空，不能外借!",
+                duration: 5000,
+                type: "warning"
+              });
+              return;
+            }
+            C_ARCHIVE_UNIT=allTableData[i].C_ARCHIVE_UNIT;
+          }else{
+            if(C_ARCHIVE_UNIT!=allTableData[i].C_ARCHIVE_UNIT){
+              _self.$message({
+                showClose: true,
+                message: "所借阅档案，归档单位只能是同一个!",
+                duration: 5000,
+                type: "warning"
+              });
+              return;
+            }
+          }
+        }
+      }else{
+        _self.$message({
+          showClose: true,
+          message: "请选择需要借阅的档案",
+          duration: 5000,
+          type: "warning"
+        });
+        return;
+      } 
+    
+
+      
+      _self.$refs.ShowShopingCart.addToFormFromShopingCart(_self.tabledata);
       setTimeout(()=>{
         axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
             let result = response.data;
