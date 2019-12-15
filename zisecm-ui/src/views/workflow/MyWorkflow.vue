@@ -62,8 +62,15 @@
                 <el-form-item  v-if="currentUserName=='all'"  label="发起人"   :label-width="formLabelWidth" style="float:left">
                   <UserSelectInput  v-model="workflowForm.startUser" v-bind:inputValue="workflowForm.startUser" roleName=""></UserSelectInput>
                 </el-form-item>
-                </el-col >
+              </el-col >
                <el-col   style="width:100%;" >
+              <el-form-item   label="完成状态" :label-width="formLabelWidth"  style="float:left">
+                  <el-select style="width:12em"  v-model="workflowForm.isFinished">
+                       <el-option label="全部"  value="全部"></el-option>
+                       <el-option label="未完成"  value="未完成"></el-option>
+                      <el-option label="已完成"  value="已完成"></el-option>
+                  </el-select>
+              </el-form-item>              
               <el-form-item   label="开始时间" :label-width="formLabelWidth"  style="float:left">
                   <el-date-picker     v-model="workflowForm.startTimeAfter" auto-complete="off"></el-date-picker >
                   <el-date-picker     v-model="workflowForm.startTimeBefore" auto-complete="off"></el-date-picker >
@@ -163,7 +170,7 @@ export default {
       loading: false,
       dialogVisible: false,
       tableHeight: window.innerHeight - 190,
-      formLabelWidth: "120px",
+      formLabelWidth: "80px",
       currentProcessId:"",
       workflowPicVisible:"",
       isPocessFinished:"0",
@@ -175,6 +182,7 @@ export default {
         endTimeAfter:"",
         startTimeBefore:"",
         endTimeBefore:"",
+        isFinished:"全部",
       },
     }
   },
