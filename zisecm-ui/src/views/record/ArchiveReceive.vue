@@ -241,10 +241,22 @@ export default {
 
           _self.showInnerFile(null);
           _self.reuseVisible = false;
-          _self.$message("添加成功！");
+          // _self.$message("添加成功！");
+          _self.$message({
+              showClose: true,
+              message: "添加成功！",
+              duration: 2000,
+              type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message("添加失败！");
+          // _self.$message("添加失败！");
+          _self.$message({
+              showClose: true,
+              message: "添加失败！",
+              duration: 5000,
+              type: 'error'
+            });
           console.log(error);
         });
     },
@@ -419,7 +431,13 @@ export default {
     onMoveUp() {
       let _self = this;
       if (_self.selectedInnerItems.length != 1) {
-        _self.$message("请选择一条数据！");
+        // _self.$message("请选择一条数据！");
+        _self.$message({
+              showClose: true,
+              message: "请选择一条数据！",
+              duration: 2000,
+              type: 'warning'
+            });
         return;
       }
       var m = new Map();
@@ -440,7 +458,13 @@ export default {
           if (code == 1) {
             _self.showInnerFile(null);
           } else {
-            _self.$message(response.data.message);
+            // _self.$message(response.data.message);
+            _self.$message({
+              showClose: true,
+              message: response.data.message,
+              duration: 5000,
+              type: 'error'
+            });
           }
         })
         .catch(function(error) {
@@ -451,7 +475,13 @@ export default {
     onMoveDown() {
       let _self = this;
       if (_self.selectedInnerItems.length != 1) {
-        _self.$message("请选择一条数据！");
+        // _self.$message("请选择一条数据！");
+        _self.$message({
+              showClose: true,
+              message: "请选择一条数据！",
+              duration: 2000,
+              type: 'warning'
+            });
         return;
       }
       var m = new Map();
@@ -472,7 +502,13 @@ export default {
           if (code == 1) {
             _self.showInnerFile(null);
           } else {
-            _self.$message(response.data.message);
+            // _self.$message(response.data.message);
+            _self.$message({
+              showClose: true,
+              message: response.data.message,
+              duration: 5000,
+              type: 'error'
+            });
           }
         })
         .catch(function(error) {
@@ -1097,7 +1133,13 @@ export default {
         _self.selectTransferRow == null ||
         _self.selectTransferRow.length == 0
       ) {
-        _self.$message("请选择数据！");
+        // _self.$message("请选择数据！");
+        _self.$message({
+              showClose: true,
+              message: "请选择数据！",
+              duration: 2000,
+              type: 'warning'
+            });
         return;
       }
       let tab = _self.selectTransferRow;
@@ -1128,10 +1170,22 @@ export default {
           // _self.showInnerFile(null);
           _self.itemDataList=[];
           _self.innerDataList=[];
-          _self.$message("操作成功");
+          // _self.$message("操作成功");
+           _self.$message({
+              showClose: true,
+              message: "操作成功！",
+              duration: 2000,
+              type: 'success'
+            });
         })
         .catch(function(error) {
-          _self.$message("操作失败");
+          // _self.$message("操作失败");
+          _self.$message({
+              showClose: true,
+              message: "操作失败",
+              duration: 5000,
+              type: 'error'
+            });
           console.log(error);
         });
     },
@@ -1193,7 +1247,13 @@ export default {
     onDeleteTransfer() {
       let _self = this;
       if (!_self.selectTransferRow) {
-        _self.$message(_self.$t("message.pleaseSelectTransfer"));
+        // _self.$message(_self.$t("message.pleaseSelectTransfer"));
+        _self.$message({
+                showClose: true,
+                message: _self.$t("message.pleaseSelectTransfer"),
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
 
@@ -1213,7 +1273,13 @@ export default {
           var i;
           for (i in tab) {
             if (tab[i]["STATUS"] != "产生") {
-              _self.$message("移交单" + tab[i]["CODING"] + "已提交不能删除！");
+              // _self.$message("移交单" + tab[i]["CODING"] + "已提交不能删除！");
+              _self.$message({
+                showClose: true,
+                message: "移交单" + tab[i]["CODING"] + "已提交不能删除！",
+                duration: 2000,
+                type: "warning"
+              });
               return;
             }
             m.push(tab[i]["ID"]);
@@ -1233,10 +1299,22 @@ export default {
               _self.loadGridData(null);
 
               _self.showInnerFile(null);
-              _self.$message(_self.$t("message.deleteSuccess"));
+              // _self.$message(_self.$t("message.deleteSuccess"));
+              _self.$message({
+                showClose: true,
+                message: _self.$t("message.deleteSuccess"),
+                duration: 2000,
+                type: "success"
+              });
             })
             .catch(function(error) {
-              _self.$message(_self.$t("message.deleteFailured"));
+              // _self.$message(_self.$t("message.deleteFailured"));
+              _self.$message({
+                showClose: true,
+                message: _self.$t("message.deleteFailured"),
+                duration: 5000,
+                type: "error"
+              });
               console.log(error);
             });
         })
@@ -1250,7 +1328,13 @@ export default {
     onDeleleFolder() {
       let _self = this;
       if (!_self.currentFolder || !_self.currentFolder.id) {
-        _self.$message(_self.$t("message.pleaseSelectFolder"));
+        // _self.$message(_self.$t("message.pleaseSelectFolder"));
+        _self.$message({
+                showClose: true,
+                message: _self.$t("message.pleaseSelectFolder"),
+                duration: 2000,
+                type: "warning"
+              });
         return;
       }
       _self
@@ -1307,7 +1391,13 @@ export default {
         .then(function(response) {
           _self.importdialogVisible = false;
           // _self.refreshData();
-          _self.$message("导入成功!");
+          // _self.$message("导入成功!");
+          _self.$message({
+              showClose: true,
+              message: "导入成功!",
+              duration: 2000,
+              type: 'success'
+            });
         })
         .catch(function(error) {
           console.log(error);
