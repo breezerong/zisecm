@@ -3,11 +3,11 @@
     <el-header style="height:44px;width:100%">
       <div class="navbar-top">
         <div class="navbar-top-inner">
-          <div class="container-top">
-            <img :src="'../static/img/logo.png'" border="0" @click="$router.push(homePath)"/>
+          <div class="container-top"  @click="$router.push(homePath)" style="cursor:pointer">
+            <img :src="'../static/img/logo.png'" border="0" />
           </div>
-          <div class="container-top">
-            <span style="font-size: 18px;color: #fff;" @click="$router.push(homePath)">{{$t('application.name')}}</span>
+          <div class="container-top" @click="$router.push(homePath)" style="cursor:pointer">
+            <span style="font-size: 18px;color: #fff;"  >{{$t('application.name')}}</span>
           </div>
           <div class="container-top">
             <el-menu default-lactive="1" mode="horizontal">
