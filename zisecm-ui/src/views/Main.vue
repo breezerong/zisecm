@@ -10,13 +10,13 @@
             <span style="font-size: 18px;color: #fff;"  >{{$t('application.name')}}</span>
           </div>
           <div class="container-top">
-            <el-menu default-lactive="1" mode="horizontal">
+            <el-menu default-active="1"  mode="horizontal">
               <template v-for="item in dataList.menuItems">
                 <template v-if="item.submenus && item.url==null">
                   <el-submenu :index="item.id+''" :key="item.id">
                     <template slot="title">{{item.label}}</template>
                     <template v-for="sitem in item.submenus">
-                      <el-menu-item :index="sitem.id+''" :key="sitem.id">
+                      <el-menu-item :index="sitem.id+''" :key="sitem.id" @click="clickRouter(sitem.url)">
                         <i v-if="sitem.icon!=null" :class="sitem.icon"></i>
                         <router-link :to="sitem.url">{{sitem.label}}</router-link>
                       </el-menu-item>
@@ -24,7 +24,7 @@
                   </el-submenu>
                 </template>
                 <template v-else>
-                  <el-menu-item :index="item.id+''" :key="item.id+'_e'">
+                  <el-menu-item :index="item.id+''" :key="item.id+'_e'" @click="clickRouter(item.url)">
                     <router-link :to="item.url">{{item.label}}</router-link>
                   </el-menu-item>
                 </template>
@@ -38,7 +38,7 @@
             </el-select>
           </div>
           <div class="container-top-right" style="padding-right:8px">
-            <img :src="'../static/img/head128.jpg'" class="img-head" />
+            <img :src="'../static/img/head128.jpg'" class="img-head" style="cursor:pointer" @click="clickRouter('/user/userinfo')"/>
             <span>
               <router-link to="/user/userinfo" style="color:#fff;">{{userName}}</router-link>&nbsp;
             </span>
@@ -138,7 +138,15 @@ export default {
         localStorage.setItem("localeLanguage", val);
         this.$router.go(0);
       }
-    }
+    },
+    clickRouter(pathVal){
+    let _self = this;
+    _self.$router.push({ 
+      path: pathVal,
+    });
+
+  },
+
   }
 };
 </script>

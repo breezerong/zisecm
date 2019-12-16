@@ -4,6 +4,7 @@
     <documentation>借阅流程 说明 ：^_^</documentation>
     <userTask id="usertask2" name="申请部门领导审批" default="flow29" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner_leader}">
       <extensionElements>
+        <flowable:taskListener event="create" delegateExpression="${startExecutorListener}"></flowable:taskListener>
         <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
     </userTask>

@@ -194,21 +194,28 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	 */
 	@Override
 	public void notify(DelegateTask arg0) {
-		if (arg0.getVariable("processInstanceID") == null) {
-			arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
-			arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
-		}
-		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = "admin";
-		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
-			extracted(ecmSession, arg0);
-		} catch (Exception e) {
-			// TODO: handle exception
-		} finally {
-			if (ecmSession != null) {
-				authService.logout(workflowSpecialUserName);
+		if("create".equals(arg0.getEventName())){
+			String assignee=arg0.getAssignee();//ecm_user.Name
+			//发邮件
+			TODOApplication.getNeedTOChange();
+		}else {
+			if (arg0.getVariable("processInstanceID") == null) {
+				arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
+				arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 			}
+			IEcmSession ecmSession = null;
+			String workflowSpecialUserName = "admin";
+			try {
+				ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
+				extracted(ecmSession, arg0);
+			} catch (Exception e) {
+				// TODO: handle exception
+			} finally {
+				if (ecmSession != null) {
+					authService.logout(workflowSpecialUserName);
+				}
+			}
+
 		}
 		System.out.println("DelegateTask_notify");
 

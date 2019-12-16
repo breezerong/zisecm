@@ -452,7 +452,8 @@ export default {
 </script>
 <style scoped>
 .el-col {
-  padding-right: 10px;
+  padding-right: 5px;  
+  padding-left: 5px;  
 }
 .el-card {
   /* padding-bottom: 30px; */

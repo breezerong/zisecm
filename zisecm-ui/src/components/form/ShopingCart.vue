@@ -188,6 +188,7 @@ export default {
       if (_self.selectedItemList.length > 0) {
         for (var i = 0; i < _self.selectedItemList.length; i++) {
           if(i==0){
+            C_ARCHIVE_UNIT=_self.selectedItemList[i].C_ARCHIVE_UNIT;
               if(typeof(_self.selectedItemList[i].C_ARCHIVE_UNIT)=="undefined"){
               _self.$message({
                 showClose: true,

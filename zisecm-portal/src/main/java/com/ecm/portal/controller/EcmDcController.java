@@ -1104,7 +1104,7 @@ public class EcmDcController extends ControllerAbstract{
 		  if(!"".equals(sb.toString())) {
 	 			String gridName="shopingCartGrid";
 	 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-	 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"'";
+	 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"' order by b.ADD_DATE desc";
 	 			shopingCartList2 = documentService.getMapList(getToken(), sql);
 		  }
 		} catch (Exception e) {
@@ -1336,6 +1336,22 @@ public class EcmDcController extends ControllerAbstract{
 			try {
 				objectMap = documentService.getObjectMapById(getToken(), id);
 				mp.put("data", objectMap);
+				mp.put("code", ActionContext.SUCESS);
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
+		@RequestMapping(value = "/dc/getBorrowHelpDoc", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> getBorrowHelpDoc(@RequestBody String id) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			List<Map<String, Object>>  mapList=null;
+			try {
+				mapList = documentService.getObjectMap(getToken(), " type_name='帮助'  and name='借阅流程图'");
+				mp.put("data", mapList.get(0).get("ID"));
 				mp.put("code", ActionContext.SUCESS);
 			}
 			catch(Exception ex) {

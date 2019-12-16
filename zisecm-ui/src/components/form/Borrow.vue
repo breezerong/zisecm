@@ -14,7 +14,7 @@
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
                 </el-form-item>
                  <el-form-item  :label-width="formLabelWidth"  style="float:left">
-                  <el-button  @click="viewdoc('71029046d8734528ae08c0cc3067df12')">帮助</el-button>
+                  <el-button  @click="getBorrowHelpDoc()">帮助</el-button>
                 </el-form-item>
                <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly></el-input>
@@ -98,13 +98,13 @@
           
          <el-col style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_dept" ></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_" ></UserSelectInput>
                </el-form-item>
                  <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="leaderManage_dept"></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="leaderManage_"></UserSelectInput>
                 </el-form-item>
                  <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
-                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="leaderManage_分公司领导" ></UserSelectInput>
+                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="分公司领导" ></UserSelectInput>
                 </el-form-item>
 
               </el-col>
@@ -586,7 +586,7 @@ export default {
         _self.showOrCloseShopingCartLabel="从借阅单添加";
         }else{
           _self.vshowShopingCart=true;
-          _self.showOrCloseShopingCartLabel="关闭借阅单"
+          _self.showOrCloseShopingCartLabel="收起借阅单"
           if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
              
             _self.$refs.ShowShopingCart.openShopingCart();
@@ -683,7 +683,19 @@ export default {
       }
 
   },
-      viewdoc(indata){
+  getBorrowHelpDoc(){
+      let _self=this;
+      axios.post("/dc/getBorrowHelpDoc",new Map()).then(function(response) {
+      let href = _self.$router.resolve({
+            path: '/viewdoc',
+            query: {
+              id: response.data.data
+            }
+          });
+      window.open(href.href, '_blank');
+       });
+  },
+  viewdoc(indata){
         let condition = indata.ID;
      let href = this.$router.resolve({
         path: '/viewdoc',
