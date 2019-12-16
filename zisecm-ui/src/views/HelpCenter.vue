@@ -164,13 +164,13 @@ export default {
         indata.ID +
         "&token=" +
         sessionStorage.getItem("access-token");
-      if (_self.currentType == "pdf") {
-        window.open(
-          "./static/pdfviewer/web/viewer.html?file=" +
-            encodeURIComponent(_self.imageArray[0]) +
-            "&.pdf"
-        );
-      } else {
+      // if (_self.currentType == "pdf") {
+      //   window.open(
+      //     "./static/pdfviewer/web/viewer.html?file=" +
+      //       encodeURIComponent(_self.imageArray[0]) +
+      //       "&.pdf"
+      //   );
+      // } else {
         let condition = indata.ID;
         let href = this.$router.resolve({
           path: '/viewdoc',
@@ -180,7 +180,7 @@ export default {
           }
         });
         window.open(href.href, '_blank');
-      }
+      // }
     },
     selectChange(val) 
     {

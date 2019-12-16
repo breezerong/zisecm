@@ -586,7 +586,7 @@ export default {
         _self.showOrCloseShopingCartLabel="从借阅单添加";
         }else{
           _self.vshowShopingCart=true;
-          _self.showOrCloseShopingCartLabel="关闭借阅单"
+          _self.showOrCloseShopingCartLabel="收起借阅单"
           if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
              
             _self.$refs.ShowShopingCart.openShopingCart();

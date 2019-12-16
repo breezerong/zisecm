@@ -1645,7 +1645,7 @@ export default {
           // _self.$message(_self.$t("message.fetchInformationSuccess"));
           _self.$message({
               showClose: true,
-              message: self.$t("message.fetchInformationSuccess"),
+              message: _self.$t("message.fetchInformationSuccess"),
               duration: 2000,
               type: 'success'
             });
