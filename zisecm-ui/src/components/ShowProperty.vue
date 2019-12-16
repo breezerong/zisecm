@@ -44,7 +44,7 @@
         </el-upload>
         
       </div>
-      <el-form-item style="float:left"  label="类型" >{{typeName}}</el-form-item>
+      <el-form-item style="float:left"  label="文件类型" >{{typeName}}</el-form-item>
     </el-form>
   </div>
 </template>
