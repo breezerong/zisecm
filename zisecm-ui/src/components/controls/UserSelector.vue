@@ -99,7 +99,7 @@ export default {
       let _self = this;
       // console.log("_self.noGroup:"+_self.noGroup);
       var m = new Map();
-      m.set("condition", _self.inputkey);
+      m.set("condition", _self.inputkey==""?"":" NAME like '%"+_self.inputkey+"%' ");
       m.set("noGroup",_self.noGroup);
       m.set("groupId",_self.groupId);
       m.set("pageSize", _self.pageSize);

@@ -17,13 +17,13 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from ecm_card_search order by ORDER_INDEX
+    from ecm_card_search where enabled=0  order by ORDER_INDEX
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from ecm_card_search
-    where ID = #{id,jdbcType=VARCHAR}
+    where enabled=0 and ID = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from ecm_card_search
