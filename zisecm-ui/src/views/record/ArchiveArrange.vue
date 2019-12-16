@@ -1686,12 +1686,14 @@ export default {
       //   }
       //   m.push(tab[i]["ID"]);
       // }
+      let m=[];
+      m.push(_self.selectRow.ID);
       _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
           },
           method: "post",
-          data: _self.selectRow.ID,//JSON.stringify(m),
+          data: JSON.stringify(m),//JSON.stringify(m),
           url: "/dc/takeNumbers"
         })
         .then(function(response) {
