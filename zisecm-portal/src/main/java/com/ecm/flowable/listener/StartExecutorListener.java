@@ -194,9 +194,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	 */
 	@Override
 	public void notify(DelegateTask arg0) {
-		//发邮件
 		if("create".equals(arg0.getEventName())){
 			String assignee=arg0.getAssignee();//ecm_user.Name
+			//发邮件
 			TODOApplication.getNeedTOChange();
 		}else {
 			if (arg0.getVariable("processInstanceID") == null) {
