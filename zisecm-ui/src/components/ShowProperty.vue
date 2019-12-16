@@ -7,6 +7,9 @@
       </div>
       -->
       <el-row>
+        <!-- <el-col style="padding:3px;text-align:left">
+          <el-form-item>{{typeName}}</el-form-item></el-col> -->
+        
       <template v-for="(item,itemIndex) in dataList">
         <el-col :span="showCellValue(item)" v-bind:key="itemIndex">
           <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:'必填',trigger:'blur'}]">
@@ -41,6 +44,7 @@
         </el-upload>
         
       </div>
+      <el-form-item style="float:left"  label="类型" >{{typeName}}</el-form-item>
     </el-form>
   </div>
 </template>
@@ -304,6 +308,9 @@ export default {
                 val = val.split(";");
               }
               frmItems[i].defaultValue = val;
+              // if("TYPE_NAME"==frmItems[i].attrName){
+              //   _self.typeName=frmItems[i].attrName；
+              // }
               //console.log(JSON.stringify(frmItems[i].attrName)+":"+frmItems[i].defaultValue);
             }
             _self.dataList = frmItems;
