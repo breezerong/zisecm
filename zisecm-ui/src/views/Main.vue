@@ -10,7 +10,7 @@
             <span style="font-size: 18px;color: #fff;"  >{{$t('application.name')}}</span>
           </div>
           <div class="container-top">
-            <el-menu default-lactive="1" mode="horizontal">
+            <el-menu active-text-color="AliceBlue"  default-active="1" mode="horizontal">
               <template v-for="item in dataList.menuItems">
                 <template v-if="item.submenus && item.url==null">
                   <el-submenu :index="item.id+''" :key="item.id">
