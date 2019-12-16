@@ -98,13 +98,13 @@
           
          <el-col style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_dept" ></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_" ></UserSelectInput>
                </el-form-item>
                  <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="leaderManage_dept"></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="leaderManage_"></UserSelectInput>
                 </el-form-item>
                  <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
-                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="leaderManage_分公司领导" ></UserSelectInput>
+                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="分公司领导" ></UserSelectInput>
                 </el-form-item>
 
               </el-col>
