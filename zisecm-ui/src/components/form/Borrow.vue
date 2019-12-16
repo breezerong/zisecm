@@ -13,9 +13,9 @@
                  <el-form-item  prop="C_DESC1" label="用户部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
                 </el-form-item>
-                 <!-- <el-form-item  :label-width="formLabelWidth"  style="float:left">
-                  <el-button  @click="viewdoc(scope.row)">借阅流程参考查看</el-button>
-                </el-form-item> -->
+                 <el-form-item  :label-width="formLabelWidth"  style="float:left">
+                  <el-button  @click="viewdoc('71029046d8734528ae08c0cc3067df12')">帮助</el-button>
+                </el-form-item>
                <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly></el-input>
                     <el-tree v-if="showDepartMentList==1"
@@ -98,13 +98,13 @@
           
          <el-col style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="部门负责人"></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_dept" ></UserSelectInput>
                </el-form-item>
                  <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="部门负责人"></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="leaderManage_dept"></UserSelectInput>
                 </el-form-item>
                  <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
-                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="分公司领导"></UserSelectInput>
+                  <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="leaderManage_分公司领导" ></UserSelectInput>
                 </el-form-item>
 
               </el-col>

@@ -117,6 +117,10 @@ export default {
     roleName: {
       type: String,
       default: ""
+    },
+    noGroup: {
+      type: String,
+      noGroup: "0"
     }
   },
   // computed:{
@@ -135,7 +139,7 @@ export default {
     refreshData() {
       let _self = this;
       var m = new Map();
-      m.set("noGroup", "");
+      m.set("noGroup", _self.noGroup);
       m.set("condition", "name like '%" + this.findValue + "%'");
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
@@ -170,7 +174,7 @@ export default {
         _self.rightListId[i] = _self.rightList[i].id;
       }
       var m = new Map();
-      m.set("noGroup", "");
+      m.set("noGroup", _self.noGroup);
       m.set("condition", "name like '%" + this.findValue + "%' or login_name like '%" + this.findValue + "%'");
       m.set("pageIndex", 0);
       m.set("pageSize", 50);
