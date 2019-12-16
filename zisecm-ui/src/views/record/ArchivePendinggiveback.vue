@@ -37,14 +37,7 @@
                       :loading="fileLoading"
                        @selectchange="selectChange"></DataGrid>
             </el-col>
-            <el-col :span="12">
-                <DataGrid ref="outFileGrid" key="outFileGrid" v-bind:itemDataList="gridListOutFileData"
-                      v-bind:columnList="gridListOutFile" @pagesizechange="outFilePageSizeChange"
-                      @pagechange="outFilePageChange" v-bind:itemCount="outFileItemCount"
-                      v-bind:tableHeight="rightOutTableHeight" :isshowOption="true"
-                      :loading="outFileLoading"
-                       @selectchange="selectOutChange"></DataGrid>
-            </el-col>
+            
         </el-row>
     </div>
 </template>
