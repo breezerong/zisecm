@@ -38,12 +38,31 @@
               {{getSelectedIds()}}
             </el-form-item>
             <el-form-item label="目标文件夹ID" :label-width="formLabelWidth">
-            <FolderSelector v-bind:inputValue="targetFolderId"></FolderSelector>
+            <FolderSelector v-model="targetFolderId" v-bind:inputValue="targetFolderId"></FolderSelector>
             </el-form-item>
             </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="handleMoveItem()">{{$t('application.ok')}}</el-button>
             <el-button @click="moveDialogVisible = false">{{$t('application.cancel')}}</el-button>
+          </div>
+        </el-dialog>
+     <el-dialog :title="uploadType==0?'更新主文件':'更新格式副本'" :visible.sync="udialogVisible" v-loading='uploading'>
+          <el-form :model="form" label-position="right" label-width="120px">
+                <el-form-item label="文件" :label-width="formLabelWidth">
+                  <el-upload
+                    :limit="1"
+                    :file-list="newFileList" 
+                    action=""
+                    :on-change="handleFileChange"
+                    :auto-upload="false"
+                    :multiple="false">
+                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                  </el-upload>
+                </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="udialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="updateNewFile()">确 定</el-button>
           </div>
         </el-dialog>
      <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="80%"  @close="itemDialogVisible = false">  
@@ -81,6 +100,8 @@
                     <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
                     <el-button type="primary" icon="el-icon-top-right"  @click="moveItem()">移动文件</el-button>
                     <el-button type="primary" icon="el-icon-document-copy"  @click="copyItem()">复制文件</el-button>
+                    <el-button type="primary" icon="el-icon-upload2"  @click="showUpdateFile(0)">更新文件</el-button>
+                    <el-button type="primary" icon="el-icon-upload2"  @click="showUpdateFile(1)">更新副本</el-button>
                   </td>
                 </tr>
               </table>
@@ -157,8 +178,9 @@
                          <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                         </template>
                         <template slot-scope="scope">
-                          <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
+                          
                           <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>
+                          <el-button type="primary" plain size="small" :title="$t('application.property')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -200,7 +222,9 @@ export default {
     return {
       targetFolderId:"",
       moveDialogVisible:false,
+      udialogVisible:false,
       itemDialogVisible:false,
+      newFileList:[],
       currentId:"",
       columnsInfo:{
         checkAll: true,
@@ -219,6 +243,8 @@ export default {
       dataListFull: "",
       inputkey: "",
       loading: false,
+      uploading: false,
+      uploadType : 0,//0：主格式，1：格式副本
       pageSize: 20,
       itemCount: 0,
       selectedItemId: 0,
@@ -245,6 +271,9 @@ export default {
         aclName: ""
       },
       formLabelWidth: "120px",
+      defaultData:{
+        gridView:"GeneralGrid"
+      },
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -287,8 +316,77 @@ export default {
         console.log(error);
         _self.loading = false;
       });
+      _self.loadGridInfo(_self.defaultData);
   },
   methods: {
+    showUpdateFile(indata){
+      if(this.selectedItems && this.selectedItems.length>0){
+        this.uploadFile = [];
+        this.uploadType = indata;
+        this.udialogVisible = true;
+      }
+    },
+     handleFileChange(file, fileList){
+      this.uploadFile = file;
+    },
+    updateNewFile() {
+      let _self = this;
+      if(_self.selectedItems && _self.selectedItems.length>0){
+        if(_self.uploadType ==0 ){
+          _self.uploadPrimry();
+        }else{
+          _self.uploadRendition();
+        }
+      }
+    },
+    uploadPrimry(){
+      let _self = this;
+      _self.uploading = true;
+        let formdata = new FormData();
+        formdata.append("id",_self.selectedItems[0].ID);
+        if(_self.uploadFile!="")
+        {
+          formdata.append("uploadFile",_self.uploadFile.raw);
+        }
+        axios.post("/dc/updatePrimaryContent",formdata,{
+              'Content-Type': 'multipart/form-data'
+            })
+          .then(function(response) {
+            _self.udialogVisible = false;
+            _self.loadGridData(_self.currentFolder);
+            _self.$message("更新成功!");
+            _self.uploading = false;
+          })
+          .catch(function(error) {
+            console.log(error);
+            _self.uploading = false;
+          });
+    },
+    uploadRendition(){
+      let _self = this;
+      _self.uploading = true;
+      let formdata = new FormData();
+      var data = {};
+      data["ID"] = _self.selectedItems[0].ID;//_self.selectedInnerItems[0].ID;//_self.selectedFileId;
+      formdata.append("metaData", JSON.stringify(data));
+      
+        if(_self.uploadFile!="")
+        {
+          formdata.append("uploadFile",_self.uploadFile.raw);
+        }
+        axios.post("/dc/addRendition",formdata,{
+              'Content-Type': 'multipart/form-data'
+            })
+          .then(function(response) {
+            _self.udialogVisible = false;
+            _self.$message("更新成功!");
+            _self.uploading = false;
+          })
+          .catch(function(error) {
+            console.log(error);
+            _self.uploading = false;
+          });
+    },
     moveItem(){
       if(this.selectedItems && this.selectedItems.length>0){
         this.moveDialogVisible = true;
@@ -704,17 +802,22 @@ export default {
         });
     },
     //复制文档
-    copyItem(indata) {
+    copyItem() {
       let _self = this;
-      axios.post("/admin/copyFolder",JSON.stringify(indata))
-        .then(function(response) {
-          _self.$message(_self.$t("message.copySuccess"));
-          _self.dialogVisible = false;
-          _self.refreshFolderData();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+      if(_self.selectedItems && _self.selectedItems.length>0){
+        var m = new Map();
+        m.set('ids',_self.getSelectedIds());
+        m.set('folderId',"");
+        axios.post("/dc/copyDocument",JSON.stringify(m))
+          .then(function(response) {
+            _self.$message(_self.$t("message.copySuccess"));
+            _self.dialogVisible = false;
+            _self.loadGridData(_self.currentFolder);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      }
     },
     //查询文档
     searchItem() {

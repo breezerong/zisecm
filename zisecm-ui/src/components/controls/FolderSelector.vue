@@ -6,7 +6,7 @@
       :close-on-click-modal="false"
       @close="closeDialog"
       title="文件夹选择"
-      width="50%"
+      width="70%"
     >
       <div>
         <el-main>
@@ -128,7 +128,7 @@ export default {
     addToFather() {
       let _self = this;
       _self.$emit("change", _self.currentFolder.id);
-      _self.inputValue = _self.currentFolder.id;
+      //_self.inputValue = _self.currentFolder.id;
       _self.visible = false;
     },
     clickShowDialog() {

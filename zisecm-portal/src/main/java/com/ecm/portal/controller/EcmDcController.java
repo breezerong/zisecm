@@ -1661,7 +1661,7 @@ public class EcmDcController extends ControllerAbstract{
 							EcmDocument doc = documentService.getObjectById(getToken(), id);
 							if(doc != null) {
 								doc.setFolderId(folderId);
-								documentService.updateObject(getToken(), doc);
+								documentService.updateObject(getToken(),doc, null);
 							}
 						}
 					}
@@ -1686,7 +1686,7 @@ public class EcmDcController extends ControllerAbstract{
 		 */
 		@RequestMapping(value = "/dc/copyDocument", method = RequestMethod.POST)
 		@ResponseBody
-		public Map<String, Object> copyDocument(String argStr) {
+		public Map<String, Object> copyDocument(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			Map<String, Object> mp = new HashMap<String, Object>();
 			try {
@@ -1705,9 +1705,8 @@ public class EcmDcController extends ControllerAbstract{
 								
 								doc.setContentSize((long) 0);
 								doc.setFormatName("");
-								doc.setOwnerName(documentService.getCurrentUser(getToken()).getUserName());
 								doc.setModifiedDate(new Date());
-								doc.setModifier(doc.getOwnerName());
+								doc.setModifier(documentService.getCurrentUser(getToken()).getUserName());
 								documentService.newObject(getToken(), doc, null);
 							}
 						}
