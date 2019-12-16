@@ -32,6 +32,20 @@
             <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
           </div>
         </el-dialog>
+        <el-dialog title="移动文件" :visible.sync="moveDialogVisible"  @close="moveDialogVisible = false">
+          <el-form>
+            <el-form-item label="当前文件夹ID" :label-width="formLabelWidth">
+              {{getSelectedIds()}}
+            </el-form-item>
+            <el-form-item label="目标文件夹ID" :label-width="formLabelWidth">
+            <FolderSelector v-bind:inputValue="targetFolderId"></FolderSelector>
+            </el-form-item>
+            </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="handleMoveItem()">{{$t('application.ok')}}</el-button>
+            <el-button @click="moveDialogVisible = false">{{$t('application.cancel')}}</el-button>
+          </div>
+        </el-dialog>
      <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="80%"  @close="itemDialogVisible = false">  
       <InnerItemViewer v-bind:id = "currentId"></InnerItemViewer>
      </el-dialog>
@@ -65,6 +79,8 @@
                   <td>
                     <el-button type="primary" icon="el-icon-edit"  @click="newItem()">{{$t('application.newDocument')}}</el-button>
                     <el-button type="primary" icon="el-icon-delete"  @click="onDeleleItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
+                    <el-button type="primary" icon="el-icon-top-right"  @click="moveItem()">移动文件</el-button>
+                    <el-button type="primary" icon="el-icon-document-copy"  @click="copyItem()">复制文件</el-button>
                   </td>
                 </tr>
               </table>
@@ -167,6 +183,7 @@
 
 <script type="text/javascript">
 import ShowProperty from '@/components/ShowProperty'
+import FolderSelector from '@/components/controls/FolderSelector'
 import InnerItemViewer from "./InnerItemViewer.vue"
 
 import 'url-search-params-polyfill'
@@ -176,10 +193,13 @@ export default {
   
   components: {
     ShowProperty: ShowProperty,
-    InnerItemViewer:InnerItemViewer
+    InnerItemViewer:InnerItemViewer,
+    FolderSelector: FolderSelector
   },
   data() {
     return {
+      targetFolderId:"",
+      moveDialogVisible:false,
       itemDialogVisible:false,
       currentId:"",
       columnsInfo:{
@@ -189,8 +209,6 @@ export default {
         dialogFormVisible:false,
         isIndeterminate:false
       },
-      imageFormat: 'jpg,jpeg,bmp,gif,png',
-      baseServerUrl: this.baseURL,
       currentLanguage: "zh-cn",
       dataList: [],
       showFields: [],
@@ -271,6 +289,40 @@ export default {
       });
   },
   methods: {
+    moveItem(){
+      if(this.selectedItems && this.selectedItems.length>0){
+        this.moveDialogVisible = true;
+      }
+    },
+    handleMoveItem(){
+      let _self = this;
+      _self.loading = true;
+      var m = new Map();
+      m.set('ids',_self.getSelectedIds());
+      m.set('folderId',_self.targetFolderId);
+      axios.post("/dc/moveDocument",JSON.stringify(m))
+        .then(function(response) {
+          if(response.data.code == 1){
+            _self.$message("目录移动成功。");
+            _self.loadGridData(_self.currentFolder);
+          }else{
+            _self.$message("目录移动失败。<br>"+response.data.message);
+          }
+         _self.moveDialogVisible = false;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    getSelectedIds(){
+      var str = "";
+       this.selectedItems.forEach(function(val) {
+         str += val.ID +";"
+       });
+      return str;
+    },
      rowClick(row) {
       this.currentId = row.ID;
       if(row.TYPE_NAME=='卷盒' || row.TYPE_NAME=='图册'){
@@ -321,29 +373,6 @@ export default {
       var url = './static/img/format/f_'+indata+'_16.gif';
       return url;
     },
-    dateFtt(fmt, date)
-    {
-      var o = {   
-        "M+" : date.getMonth()+1,                 //月份   
-        "d+" : date.getDate(),                    //日   
-        "h+" : date.getHours(),                   //小时   
-        "m+" : date.getMinutes(),                 //分   
-        "s+" : date.getSeconds(),                 //秒   
-        "q+" : Math.floor((date.getMonth()+3)/3), //季度   
-        "S"  : date.getMilliseconds()             //毫秒   
-      };   
-      if(/(y+)/.test(fmt))   
-          fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
-      for(var k in o)   
-          if(new RegExp("("+ k +")").test(fmt))   
-              fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-      return fmt;   
-    },
-    dateFormat(value){
-      var crtTime = new Date(value);
-      return this.dateFtt("yyyy-MM-dd",crtTime);
-    },
-  
     // 表格行选择
     selectChange(val) 
     {
