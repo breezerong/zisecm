@@ -276,6 +276,7 @@ export default {
                   duration: 5000,
                   type: "warning"
                 });
+                 _self.loading=false;
                 return;
 
               }
