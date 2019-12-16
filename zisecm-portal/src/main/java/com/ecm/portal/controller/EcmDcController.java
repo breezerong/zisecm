@@ -1308,6 +1308,23 @@ public class EcmDcController extends ControllerAbstract{
 			}
 			return mp;
 		}
+		@RequestMapping(value = "/dc/getBorrowHelpDoc", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> getBorrowHelpDoc(@RequestBody String id) {
+			Map<String, Object> mp = new HashMap<String, Object>();
+			List<Map<String, Object>>  mapList=null;
+			String   helpDocId="";
+			try {
+				mapList = documentService.getObjectMap(getToken(), " type_name='帮助'  and name='借阅流程图'");
+				mp.put("data", mapList.get(0).get("ID"));
+				mp.put("code", ActionContext.SUCESS);
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
 		
 		/**
 		 * 下架文件

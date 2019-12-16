@@ -14,7 +14,7 @@
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
                 </el-form-item>
                  <el-form-item  :label-width="formLabelWidth"  style="float:left">
-                  <el-button  @click="viewdoc('71029046d8734528ae08c0cc3067df12')">帮助</el-button>
+                  <el-button  @click="getBorrowHelpDoc()">帮助</el-button>
                 </el-form-item>
                <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly></el-input>
@@ -683,7 +683,19 @@ export default {
       }
 
   },
-      viewdoc(indata){
+  getBorrowHelpDoc(){
+      let _self=this;
+      axios.post("/dc/getBorrowHelpDoc",new Map()).then(function(response) {
+      let href = _self.$router.resolve({
+            path: '/viewdoc',
+            query: {
+              id: response.data.data
+            }
+          });
+      window.open(href.href, '_blank');
+       });
+  },
+  viewdoc(indata){
         let condition = indata.ID;
      let href = this.$router.resolve({
         path: '/viewdoc',
