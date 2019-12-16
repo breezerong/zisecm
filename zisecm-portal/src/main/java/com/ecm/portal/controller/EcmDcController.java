@@ -176,21 +176,30 @@ public class EcmDcController extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String folderId = (String) args.get("folderId");
+			EcmFolder ecmFolder =  folderService.getObjectById(getToken(), folderId);
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
 			StringBuffer condition = new StringBuffer("("+gv.getCondition()+"or TYPE_NAME = '卷盒' )  and STATUS='利用'");
 			String newCondition = args.get("condition").toString();
 			if (!EcmStringUtils.isEmpty(newCondition)) {
-				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"+ecmFolder.getFolderPath()+"%')");
 			}
 			int pageSize = Integer.parseInt(args.get("pageSize").toString());
 			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
 			Pager pager = new Pager();
 			pager.setPageIndex(pageIndex);
 			pager.setPageSize(pageSize);
-			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
-			mp.put("data", list);
-			mp.put("pager", pager);
-			mp.put("code", ActionContext.SUCESS);
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), null, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}else {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), folderId, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
@@ -203,6 +212,8 @@ public class EcmDcController extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String folderId = (String) args.get("folderId");
+			EcmFolder ecmFolder =  folderService.getObjectById(getToken(), folderId);
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
 			StringBuffer condition = new StringBuffer("("+gv.getCondition()+" and TYPE_NAME<>'卷盒' )  and STATUS='利用'");
 			int pageSize = Integer.parseInt(args.get("pageSize").toString());
@@ -212,12 +223,19 @@ public class EcmDcController extends ControllerAbstract{
 			pager.setPageSize(pageSize);
 			String newCondition = args.get("condition").toString();
 			if (!EcmStringUtils.isEmpty(newCondition)) {
-				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"+ecmFolder.getFolderPath()+"%')");
 			}
-			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
-			mp.put("data", list);
-			mp.put("pager", pager);
-			mp.put("code", ActionContext.SUCESS);
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), null, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}else {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), folderId, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
@@ -230,6 +248,8 @@ public class EcmDcController extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String folderId = (String) args.get("folderId");
+			EcmFolder ecmFolder =  folderService.getObjectById(getToken(), folderId);
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
 			StringBuffer condition = new StringBuffer("("+gv.getCondition()+" and TYPE_NAME<>'卷盒' )  and STATUS='注销'  ");
 			int pageSize = Integer.parseInt(args.get("pageSize").toString());
@@ -239,12 +259,19 @@ public class EcmDcController extends ControllerAbstract{
 			pager.setPageSize(pageSize);
 			String newCondition = args.get("condition").toString();
 			if (!EcmStringUtils.isEmpty(newCondition)) {
-				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"+ecmFolder.getFolderPath()+"%')");
 			}
-			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
-			mp.put("data", list);
-			mp.put("pager", pager);
-			mp.put("code", ActionContext.SUCESS);
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), null, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}else {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), folderId, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
@@ -257,6 +284,8 @@ public class EcmDcController extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String folderId = (String) args.get("folderId");
+			EcmFolder ecmFolder =  folderService.getObjectById(getToken(), folderId);
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
 			StringBuffer condition = new StringBuffer("("+gv.getCondition()+" or TYPE_NAME = '卷盒' )  and STATUS='注销' ");
 			int pageSize = Integer.parseInt(args.get("pageSize").toString());
@@ -266,12 +295,19 @@ public class EcmDcController extends ControllerAbstract{
 			pager.setPageSize(pageSize);
 			String newCondition = args.get("condition").toString();
 			if (!EcmStringUtils.isEmpty(newCondition)) {
-				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%')");
+				condition.append(" and (NAME like '%"+newCondition+"%' or CODING like '%"+newCondition+"%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"+ecmFolder.getFolderPath()+"%')");
 			}
-			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), args.get("folderId").toString(), pager, condition.toString(), args.get("orderBy").toString());
-			mp.put("data", list);
-			mp.put("pager", pager);
-			mp.put("code", ActionContext.SUCESS);
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), null, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}else {
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(), args.get("gridName").toString(), folderId, pager, condition.toString(), args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
