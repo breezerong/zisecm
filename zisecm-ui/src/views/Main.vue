@@ -38,7 +38,7 @@
             </el-select>
           </div>
           <div class="container-top-right" style="padding-right:8px">
-            <img :src="'../static/img/head128.jpg'" class="img-head" />
+            <img :src="'../static/img/head128.jpg'" class="img-head" style="cursor:pointer" @click="clickRouter('/user/userinfo')"/>
             <span>
               <router-link to="/user/userinfo" style="color:#fff;">{{userName}}</router-link>&nbsp;
             </span>
@@ -138,7 +138,15 @@ export default {
         localStorage.setItem("localeLanguage", val);
         this.$router.go(0);
       }
-    }
+    },
+    clickRouter(pathVal){
+    let _self = this;
+    _self.$router.push({ 
+      path: pathVal,
+    });
+
+  },
+
   }
 };
 </script>
