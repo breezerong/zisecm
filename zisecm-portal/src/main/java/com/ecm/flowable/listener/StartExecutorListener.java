@@ -154,13 +154,13 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			if ("process_borrow".equals(processName)) {
 				String flowElementId = arg0.getCurrentFlowElement().getId();
 				String formId = varMap.get("formId").toString();
+				List<Map<String, Object>> childList = null;
+				String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
+						+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='"
+						+ formId + "' order by a.ORDER_INDEX,b.CREATION_DATE";
+				childList = documentService.getMapList(ecmSession.getToken(), sql);
+				Map<String, Object> formObj = documentService.getObjectMapById(ecmSession.getToken(), formId);
 				if ("automaticAuthorization".equals(flowElementId)) {
-					List<Map<String, Object>> childList = null;
-					String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
-							+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='"
-							+ formId + "' order by a.ORDER_INDEX,b.CREATION_DATE";
-					childList = documentService.getMapList(ecmSession.getToken(), sql);
-					Map<String, Object> formObj = documentService.getObjectMapById(ecmSession.getToken(), formId);
 					for (int i = 0; i < childList.size(); i++) {
 						EcmDocument docObj = documentService.getObjectById(ecmSession.getToken(),
 								childList.get(i).get("CHILD_ID").toString());
@@ -171,7 +171,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 					}
 					documentService.updateStatus(ecmSession.getToken(), formId, "已完成");
 				} else if ("updateStatus".equals(flowElementId)) {
-					documentService.updateStatus(ecmSession.getToken(), formId, "待出库");
+					for (int i = 0; i < childList.size(); i++) {
+						documentService.updateStatus(ecmSession.getToken(), formId, "待出库");
+						documentService.updateStatus(ecmSession.getToken(), childList.get(i).get("CHILD_ID").toString(), "待出库");
+					}
 				}
 
 			}
