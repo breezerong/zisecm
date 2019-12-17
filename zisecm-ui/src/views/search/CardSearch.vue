@@ -159,6 +159,14 @@
         </div>
         <el-table-column :label="$t('application.operation')" width="160">
           <template slot-scope="scope">
+             <el-button
+              type="primary"
+              plain
+              size="small"
+              :title="$t('application.viewContent')"
+              icon="el-icon-picture-outline"
+              @click="showItemContent(scope.row)"
+            ></el-button>
             <el-button
               type="primary"
               plain
@@ -167,14 +175,7 @@
               icon="el-icon-info"
               @click="showItemProperty(scope.row)"
             ></el-button>
-            <el-button
-              type="primary"
-              plain
-              size="small"
-              :title="$t('application.viewContent')"
-              icon="el-icon-picture-outline"
-              @click="showItemContent(scope.row)"
-            ></el-button>
+           
           </template>
         </el-table-column>
       </el-table>
@@ -224,7 +225,7 @@ export default {
       dialogVisible: false,
       selectedItemId: "",
       propertyVisible: false,
-      tableHeight: window.innerHeight - 235,
+      tableHeight: window.innerHeight - 245,
       formLabelWidth: "120px"
     };
   },

@@ -32,7 +32,7 @@
       </div>
     </el-dialog>
       <el-container>
-        <el-aside width="160px">
+        <el-aside width="200px">
           
           <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
             
@@ -552,6 +552,6 @@ export default {
   height: 100%;
 }
 .el-aside {
-  height: 645px;
+  height: 680px;
 }
 </style>

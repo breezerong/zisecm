@@ -18,7 +18,7 @@
         <el-button @click="queryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-        <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible">
+        <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" width="70%">
           <el-form :model="form">
             <el-form-item label="父Id" :label-width="formLabelWidth">
               <el-input v-model="form.parentId" auto-complete="off"></el-input>

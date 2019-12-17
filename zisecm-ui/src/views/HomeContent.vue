@@ -89,7 +89,7 @@
               style="width:100%;"
               :show-header="false"
             >
-              <el-table-column prop="CODING" label="编码" width="200" class="ecmcontent"></el-table-column>
+              <el-table-column prop="CODING" label="编码" width="240" class="ecmcontent"></el-table-column>
               <el-table-column width="60" prop="REVISION" label="版本" class="ecmcontent"></el-table-column>
               <el-table-column label="题名" min-width="20%" :show-overflow-tooltip="true">
                 <template slot-scope="scope">
