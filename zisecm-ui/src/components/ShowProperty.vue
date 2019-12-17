@@ -32,6 +32,7 @@
         </el-col>
       </template>
     </el-row>
+      <el-form-item style="float:left"  label="文件类型" >{{typeName}}</el-form-item>
       <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;">
         <el-upload
         :limit="1"
@@ -44,7 +45,6 @@
         </el-upload>
         
       </div>
-      <el-form-item style="float:left"  label="文件类型" >{{typeName}}</el-form-item>
     </el-form>
   </div>
 </template>
