@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -428,9 +429,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		valueStr = "'" + id + "',";
 		for (Object key : args.keySet().toArray()) {
 			if (key.toString().equalsIgnoreCase("ID")
-					||key.toString().equalsIgnoreCase("transferId")
-					||key.toString().equalsIgnoreCase("folderPath")
-					||key.toString().equalsIgnoreCase("folderId")) {
+					||key.toString().equalsIgnoreCase("CREATION_DATE")
+					||key.toString().equalsIgnoreCase("CREATOR")
+					||key.toString().equalsIgnoreCase("VERSION_ID")
+					||key.toString().equalsIgnoreCase("owner_name")) {
 				continue;
 			}
 			if (args.get(key) == null) {
@@ -445,7 +447,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			case 5:// 日期
 			{
 				String date = args.get(key).toString();
-				date = DBUtils.getDBDateString(date);
+				if(args.get(key) instanceof Date) {
+					date = DateUtils.formatDate((Date)args.get(key),"yyyy-MM-dd HH:mm:ss");
+					date = "'"+date+"'";
+				}else {
+					date = DBUtils.getDBDateString(date);
+				}
 				if (date == null || date.length() < 1)
 					continue;
 				fieldStr += key.toString() + ",";
@@ -565,11 +572,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					String date = "";
 					if (args.get(key) instanceof Timestamp) {
 						date = DBUtils.getDBDateString(((Timestamp) args.get(key)));
-					} else {
+					}else if(args.get(key) instanceof Date) {
+						date = DateUtils.formatDate((Date)args.get(key),"yyyy-MM-dd HH:mm:ss");
+						date = "'"+date+"'";
+					}else {
 						date = (String) args.get(key);
 						date = DBUtils.getDBDateString(date);
 					}
-
 					if (date == null || date.length() < 1)
 						continue;
 					sql += " " + key.toString() + "= " + date + " ";

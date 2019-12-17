@@ -10,27 +10,26 @@
                 <i class="el-icon-news"></i>
                 <span>任务中心</span>
               </template>
-              <el-menu-item index="11">
+              <el-menu-item index="11" @click="clickRouter('/workflow/todotask')" >
                 <i class="el-icon-time"></i>
                 <span slot="title">
                   <router-link to="/workflow/todotask">待办工作</router-link>
                   <!-- <el-badge :value="todoCount" class="item"></el-badge> -->
                 </span>
               </el-menu-item>
-              
-              <el-menu-item index="12">
+              <el-menu-item index="12"  @click="clickRouter('/workflow/donetask')">
                 <i class="el-icon-circle-check"></i>
                 <span slot="title">
                   <router-link to="/workflow/donetask">已办工作</router-link>
                 </span>
               </el-menu-item>
-              <el-menu-item index="13">
+              <el-menu-item index="13"  @click="clickRouter('/workflow/myworkflow')">
                 <i class="el-icon-help"></i>
                 <span slot="title">
                   <router-link to="/workflow/myworkflow">我的流程</router-link>
                 </span>
               </el-menu-item>
-              <el-menu-item index="14">
+              <el-menu-item index="14"  @click="clickRouter('/record/archiveoutgoing/archivegivebackmine')">
                 <i class="el-icon-time"></i>
                 <span slot="title">
                   <router-link to="/record/archiveoutgoing/archivegivebackmine">待归还</router-link>
@@ -96,6 +95,13 @@ export default {
       //     _self.loading = false;
       //   });
     },
+          clickRouter(pathVal){
+    let _self = this;
+    _self.$router.push({ 
+      path: pathVal,
+    });
+
+  },
   }
 };
 </script>
