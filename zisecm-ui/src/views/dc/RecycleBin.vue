@@ -39,6 +39,7 @@
             <el-breadcrumb-item><i class="el-icon-delete-solid"></i>&nbsp; {{$t('menu.recycleBin')}}</el-breadcrumb-item>
           </el-breadcrumb>
           <el-tree
+            style="width:200%;"
             :props="defaultProps"
             :data="dataList"
             node-key="id"
@@ -549,5 +550,8 @@ export default {
 <style scoped>
 .el-container {
   height: 100%;
+}
+.el-aside {
+  height: 645px;
 }
 </style>

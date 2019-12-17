@@ -44,11 +44,11 @@
         <el-checkbox-group v-model="checkedCards">
           <el-checkbox
             v-for="card in cards"
-            :label="card.label"
+            :label="card.name"
             :key="card.id"
             checked
             @change="handleCheckedTypeChange"
-          >{{card.label}}</el-checkbox>
+          >{{card.name}}</el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
@@ -406,18 +406,17 @@ export default {
       this.currentPage = val;
       this.search(this.isScend);
     },
-    async loadCards(indata) {
+    loadCards(indata) {
       let _self = this;
       _self.loading = true;
-      console.log("方法内"+_self.checkedFromRouter)
       var m = new Map();
-      await axios
-        .post("/search/getCardSearchs", _self.getLang())
+       axios
+        .post("/admin/getArchivesFolder", 0)
         .then(function(response) {
           _self.cards = response.data.data;
           var i = 0;
           for (i = 0; i < _self.cards.length; i++) {
-            _self.cardsLabel[i] = _self.cards[i].label;
+            _self.cardsLabel[i] = _self.cards[i].name;
           }
           _self.loading = false;
         })

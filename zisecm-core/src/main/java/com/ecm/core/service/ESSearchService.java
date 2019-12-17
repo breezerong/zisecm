@@ -95,7 +95,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 			}
 		}
 		if (typeNames != null && typeNames.size() > 0) {
-			TermsQueryBuilder typeBuilder = QueryBuilders.termsQuery("type_name", typeNames);
+			TermsQueryBuilder typeBuilder = QueryBuilders.termsQuery("c_arc_classic", typeNames);
 			boolQueryBuilder1.must(typeBuilder);
 		}
 		if (boolQueryBuilder1 != null) {
@@ -322,7 +322,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 			}
 			
 			if (typeNames != null && typeNames.size() > 0) {
-				TermsQueryBuilder typeBuilder = QueryBuilders.termsQuery("type_name", typeNames);
+				TermsQueryBuilder typeBuilder = QueryBuilders.termsQuery("c_arc_classic", typeNames);
 				if (boolQueryBuilder1 == null) {
 					boolQueryBuilder1 = new BoolQueryBuilder().must(typeBuilder);
 				} else {
@@ -490,7 +490,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 					}
 				}
 				if (typeNames != null && typeNames.size() > 0) {
-					TermsQueryBuilder typeBuilder = QueryBuilders.termsQuery("type_name", typeNames);
+					TermsQueryBuilder typeBuilder = QueryBuilders.termsQuery("c_arc_classic", typeNames);
 					boolQueryBuilder1.must(typeBuilder);
 				}
 				if (boolQueryBuilder1 != null) {
