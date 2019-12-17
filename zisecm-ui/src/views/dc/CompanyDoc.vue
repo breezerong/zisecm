@@ -1,7 +1,6 @@
 <template>
   <div>
-
-       <!-- <el-dialog
+    <!-- <el-dialog
       :title="$t('application.borrow')"
       :visible.sync="borrowDialogVisible"
       @close="propertyVisible = false"
@@ -15,8 +14,8 @@
         width="100%"
         v-bind:borrowForm="borrowForm"
       ></ShowBorrowForm>
-   </el-dialog> -->
-       <el-dialog
+    </el-dialog>-->
+    <el-dialog
       :title="$t('application.openShopingCart')"
       :visible.sync="shopingCartDialogVisible"
       @close="shopingCartDialogVisible = false"
@@ -29,10 +28,10 @@
         @onSaved="onSaved"
         width="100%"
         v-bind:shopingCartForm="shopingCartForm"
-      ></ShopingCart> -->
-      
-        <router-view @showOrHiden="showOrHiden" ref="ShowShopingCart"></router-view>
-            <!-- <div slot="footer" class="dialog-footer">
+      ></ShopingCart>-->
+
+      <router-view @showOrHiden="showOrHiden" ref="ShowShopingCart"></router-view>
+      <!-- <div slot="footer" class="dialog-footer">
         <router-link  to="/borroworder"   >借阅</router-link>
         </div>       -->
                 <!-- <router-link  to="/borroworder"></router-link> -->
@@ -84,50 +83,55 @@
       </div>
     </el-dialog>
 
-      <el-container>
-        <el-aside width="160px">
-           
-           <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
-             
-            <el-breadcrumb-item><i class="el-icon-receiving"></i>&nbsp; {{$t('menu.companyDoc')}}</el-breadcrumb-item>
-          </el-breadcrumb>
+    <el-container>
+      <!-- <el-scrollbar> -->
+      <el-aside width="160px">
+        <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
+          <el-breadcrumb-item>
+            <i class="el-icon-receiving"></i>
+            &nbsp; {{$t('menu.companyDoc')}}
+          </el-breadcrumb-item>
+        </el-breadcrumb>
+        
           <el-tree
-            :props="defaultProps"
-            :data="dataList"
-            node-key="id"
-            :render-content="renderContent"
-            default-expand-all
-            highlight-current
-            @node-click="handleNodeClick"
-          ></el-tree>
-        </el-aside>
-        <el-main>
-          <el-row style="padding-top:4px;">
-            <el-col :span="4">
-              <el-input
-                v-model="inputkey"
-                :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
-                @change="searchItem"
-                prefix-icon="el-icon-search"
-              ></el-input>
-            </el-col>
-            <el-col :span="20" style="text-align: left">
-              &nbsp;&nbsp;&nbsp;
-              <!-- <el-button
+          style="width:200%;"
+          :props="defaultProps"
+          :data="dataList"
+          node-key="id"
+          :render-content="renderContent"
+          default-expand-all
+          highlight-current
+          @node-click="handleNodeClick"
+        ></el-tree>
+      </el-aside>
+      <!-- </el-scrollbar> -->
+      <el-main>
+        <el-row style="padding-top:4px;">
+          <el-col :span="4">
+            <el-input
+              v-model="inputkey"
+              :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
+              @change="searchItem"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="20" style="text-align: left">
+            &nbsp;&nbsp;&nbsp;
+            <!-- <el-button
                 type="primary"
                 plain
                 size="medium"
                 icon="el-icon-document"
                 @click="borrowItem()"
-              >{{$t('application.borrow')}}</el-button> -->
-              <el-button
-                type="primary"
-                plain
-                size="medium"
-                icon="el-icon-upload2"
-                @click="exportExcel()"
-              >{{$t('application.export')+'Excel'}}</el-button>
-              <template v-if="isFileAdmin">
+            >{{$t('application.borrow')}}</el-button>-->
+            <el-button
+              type="primary"
+              plain
+              size="medium"
+              icon="el-icon-upload2"
+              @click="exportExcel()"
+            >{{$t('application.export')+'Excel'}}</el-button>
+            <template v-if="isFileAdmin">
               <el-button
                 type="primary"
                 plain
@@ -142,132 +146,139 @@
                 icon="el-icon-document-delete"
                 @click="destroyItem()"
               >{{$t('application.destroy')}}</el-button>
+            </template>
+            &nbsp;&nbsp;&nbsp;
+            <el-button
+              type="primary"
+              plain
+              size="medium"
+              icon="el-icon-folder-add"
+              @click="addToShopingCart()"
+            >{{$t('application.addToShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
+            <el-button
+              type="primary"
+              plain
+              size="medium"
+              icon="el-icon-shopping-cart-2"
+              @click="openShopingCart()"
+            >{{$t('application.openShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
+            <template v-if="isFileAdmin">
+              <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
+              <el-checkbox
+                v-model="showBox"
+                :disabled="disable"
+                @change="showFileBox"
+              >{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
+            </template>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-table
+            :height="tableHeight"
+            :data="itemDataList"
+            border
+            v-loading="loading"
+            @selection-change="selectChange"
+            @sort-change="sortchange"
+            style="width: 100%"
+            fit
+          >
+            <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>
+            <el-table-column :label="$t('field.indexNumber')" width="60">
+              <template slot-scope="scope">
+                <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
               </template>
-              &nbsp;&nbsp;&nbsp;
-              <el-button
-                type="primary"
-                plain
-                size="medium"
-                icon="el-icon-folder-add"
-                @click="addToShopingCart()"
-              >{{$t('application.addToShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
-              <el-button
-                type="primary"
-                plain
-                size="medium"
-                icon="el-icon-shopping-cart-2"
-                @click="openShopingCart()"
-              >{{$t('application.openShopingCart')}}</el-button>&nbsp;&nbsp;&nbsp;
-              <template v-if="isFileAdmin">
-                <!-- `checked` 为 true显示卷宗 或 false不显示卷宗 -->
-                <el-checkbox
-                  v-model="showBox"
-                  :disabled="disable"
-                  @change="showFileBox"
-                >{{$t('application.show')+$t('application.fileBox')}}</el-checkbox>
+            </el-table-column>
+            <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
               </template>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-table
-              :height="tableHeight"
-              :data="itemDataList"
-              border
-              v-loading="loading"
-              @selection-change="selectChange"
-              @sort-change="sortchange"
-              
-              style="width: 100%"
-              fit
-            >
-              <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>
-              <el-table-column :label="$t('field.indexNumber')" width="60">
-                <template slot-scope="scope">
-                  <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                </template>
-              </el-table-column>
-              <el-table-column width="40">
-                <template slot-scope="scope">
-                  <img v-if="scope.row.TYPE_NAME=='图册'"
-                    :src="'./static/img/drawing.gif'"
-                    :title="scope.row.TYPE_NAME"
-                    border="0"
-                  />
-                  <img v-else-if="scope.row.TYPE_NAME=='卷盒'"
-                    :src="'./static/img/box.gif'"
-                    :title="scope.row.TYPE_NAME"
-                    border="0"
-                  />
-                  <img v-else
-                    :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
-                    :title="scope.row.FORMAT_NAME"
-                    border="0"
-                  />
-                </template>
-              </el-table-column>>
-              <div v-for="(citem,idx) in gridList" :key="idx">
-                <div v-if="citem.visibleType==1">
-                  <el-table-column
-                    v-if="(citem.width+'').indexOf('%')>0"
-                    :label="citem.label"
-                    :prop="citem.attrName"
-                    :min-width="citem.width"
-                    :sortable="citem.allowOrderby"
-                  >
-                    <template slot-scope="scope">
-                      <div v-if="citem.attrName.indexOf('DATE')>0">
-                        <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                      </div>
-                      <div v-else>
-                        <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    v-else
-                    :label="citem.label"
-                    :prop="citem.attrName"
-                    :width="citem.width"
-                    :sortable="citem.allowOrderby"
-                  >
-                    <template slot-scope="scope">
-                      <div v-if="citem.attrName.indexOf('DATE')>0">
-                        <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                      </div>
-                      <div v-else>
-                        <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
-                      </div>
-                    </template>
-                  </el-table-column>
-                </div>
+            </el-table-column>>
+            <div v-for="(citem,idx) in gridList" :key="idx">
+              <div v-if="citem.visibleType==1">
+                <el-table-column
+                  v-if="(citem.width+'').indexOf('%')>0"
+                  :label="citem.label"
+                  :prop="citem.attrName"
+                  :min-width="citem.width"
+                  :sortable="citem.allowOrderby"
+                >
+                  <template slot-scope="scope">
+                    <div v-if="citem.attrName.indexOf('DATE')>0">
+                      <span>{{dateFormat(scope.row[citem.attrName])}}</span>
+                    </div>
+                    <div v-else>
+                      <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  v-else
+                  :label="citem.label"
+                  :prop="citem.attrName"
+                  :width="citem.width"
+                  :sortable="citem.allowOrderby"
+                >
+                  <template slot-scope="scope">
+                    <div v-if="citem.attrName.indexOf('DATE')>0">
+                      <span>{{dateFormat(scope.row[citem.attrName])}}</span>
+                    </div>
+                    <div v-else>
+                      <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
+                    </div>
+                  </template>
+                </el-table-column>
               </div>
-              <el-table-column align="left" width="140">
-                <template slot="header" >
-                  <el-button icon="el-icon-s-grid" size="small"  @click="dialogFormShow" title="选择展示字段"></el-button>
-                </template>
-                <template slot-scope="scope">
-                  <el-button
-                    type="primary"
-                    plain
-                    size="small"
-                    :title="$t('application.viewContent')"
-                    icon="el-icon-picture-outline"
-                    @click="showItemContent(scope.row)"
-                  ></el-button>
-                  <el-button
-                    type="primary"
-                    plain
-                    size="small"
-                    :title="$t('application.property')"
-                    icon="el-icon-info"
-                    @click="showItemProperty(scope.row)"
-                  ></el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-row>
-        </el-main>
-      </el-container>
+            </div>
+            <el-table-column align="left" width="140">
+              <template slot="header">
+                <el-button
+                  icon="el-icon-s-grid"
+                  size="small"
+                  @click="dialogFormShow"
+                  title="选择展示字段"
+                ></el-button>
+              </template>
+              <template slot-scope="scope">
+                <el-button
+                  type="primary"
+                  plain
+                  size="small"
+                  :title="$t('application.viewContent')"
+                  icon="el-icon-picture-outline"
+                  @click="showItemContent(scope.row)"
+                ></el-button>
+                <el-button
+                  type="primary"
+                  plain
+                  size="small"
+                  :title="$t('application.property')"
+                  icon="el-icon-info"
+                  @click="showItemProperty(scope.row)"
+                ></el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+      </el-main>
+    </el-container>
     <el-pagination
       background
       @size-change="handleSizeChange"
@@ -283,12 +294,12 @@
 <script>
 import ShowProperty from "@/components/ShowProperty";
 import ShowBorrowForm from "@/components/form/Borrow";
-import InnerItemViewer from "./InnerItemViewer.vue"
+import InnerItemViewer from "./InnerItemViewer.vue";
 export default {
   components: {
     ShowProperty: ShowProperty,
-    ShowBorrowForm:ShowBorrowForm,
-    InnerItemViewer:InnerItemViewer
+    ShowBorrowForm: ShowBorrowForm,
+    InnerItemViewer: InnerItemViewer
   },
   data() {
     return {
@@ -301,7 +312,7 @@ export default {
         dialogFormVisible: false,
         isIndeterminate: false
       },
-      innerTableHeight:window.innerHeight - 360,
+      innerTableHeight: window.innerHeight - 360,
       tableHeight: window.innerHeight - 125,
       currentLanguage: "zh-cn",
       propertyVisible: false,
@@ -325,24 +336,24 @@ export default {
         label: "name"
       },
       selectedItemList: [],
-      itemDialogVisible:false,
-      currentId:"",
+      itemDialogVisible: false,
+      currentId: "",
       disable: true,
       exportAble: false,
       formLabelWidth: "100px",
       borrowData: [],
-      dialogTitle:"借阅",
+      dialogTitle: "借阅",
       borrowDialogVisible: false,
-      shopingCartDialogVisible:false,
-      defaultData:{
-        gridView:"GeneralGrid"
+      shopingCartDialogVisible: false,
+      defaultData: {
+        gridView: "GeneralGrid"
       },
       borrowForm: {
         taskId: 0,
         result: "在线浏览",
         message: ""
       }
-  };
+    };
   },
   created() {
     var username = sessionStorage.getItem("access-userName");
@@ -355,11 +366,10 @@ export default {
         }
       });
     });
-    
   },
   mounted() {
     let _self = this;
-    
+
     var psize = localStorage.getItem("docPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);
@@ -377,7 +387,7 @@ export default {
         console.log(error);
         _self.loading = false;
       });
-      _self.loadGridInfo(_self.defaultData);
+    _self.loadGridInfo(_self.defaultData);
   },
   methods: {
     // 加载表格样式
@@ -406,7 +416,7 @@ export default {
     },
     rowClick(row) {
       this.currentId = row.ID;
-      if(row.TYPE_NAME=='卷盒' || row.TYPE_NAME=='图册'){
+      if (row.TYPE_NAME == "卷盒" || row.TYPE_NAME == "图册") {
         this.itemDialogVisible = true;
       }
     },
@@ -467,8 +477,8 @@ export default {
         _self.loadGridData(indata);
       }
     },
-    showOrHiden(b){
-      this.shopingCartDialogVisible=b;
+    showOrHiden(b) {
+      this.shopingCartDialogVisible = b;
     },
     sortchange(column) {
       this.orderBy =
@@ -615,7 +625,7 @@ export default {
           obtainItemId.push(this.selectedItemList[i].ID);
         }
       }
-       _self.borrowDialogVisible = true;
+      _self.borrowDialogVisible = true;
     },
     //导出Excel
     exportExcel() {
@@ -747,14 +757,14 @@ export default {
     addToShopingCart() {
       let _self = this;
       var m = new Map();
-      var addItemId ="";
+      var addItemId = "";
       if (this.selectedItemList.length > 0) {
-      var addItemId = [];
-      if (this.selectedItemList.length > 0) {
-        for (var i = 0; i < this.selectedItemList.length; i++) {
-          addItemId.push(this.selectedItemList[i].ID);
+        var addItemId = [];
+        if (this.selectedItemList.length > 0) {
+          for (var i = 0; i < this.selectedItemList.length; i++) {
+            addItemId.push(this.selectedItemList[i].ID);
+          }
         }
-      }
 
         axios
           .post("/dc/addToShopingCart", JSON.stringify(addItemId))
@@ -788,16 +798,19 @@ export default {
         });
       }
     },
-       //添加到借阅单
+    //添加到借阅单
     openShopingCart() {
       let _self = this;
-              _self.shopingCartDialogVisible = true;
-                _self.$router.push({
-                  path:'/ShopingCart'
-                });
-                if(_self.$refs.ShowShopingCart && _self.$refs.ShowShopingCart.componentName=="shopingCart"){
-                   _self.$refs.ShowShopingCart.openShopingCart();
-                }
+      _self.shopingCartDialogVisible = true;
+      _self.$router.push({
+        path: "/ShopingCart"
+      });
+      if (
+        _self.$refs.ShowShopingCart &&
+        _self.$refs.ShowShopingCart.componentName == "shopingCart"
+      ) {
+        _self.$refs.ShowShopingCart.openShopingCart();
+      }
       // var arg = [];
       //   axios
       //     .post("/dc/openShopingCart", JSON.stringify(arg))
@@ -814,8 +827,7 @@ export default {
       //              _self.$refs.ShowShopingCart.openShopingCart();
       //           }
       //         // },10);
-              
-              
+
       //       } else {
       //         _self.$message({
       //           showClose: true,
@@ -878,21 +890,21 @@ export default {
         _self.loadGridData(this.currentFolder);
       }
     },
-        startWorkflow(indata) {
+    startWorkflow(indata) {
       let _self = this;
 
-      axios.post('/workflow/startWorkflow',JSON.stringify(_self.borrowForm))
-      .then(function(response) {
-        _self.dialogVisible = false;
-        _self.refreshData();
-        _self.$message("完成任务成功!");
-        _self.$emit('refreshcount');
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+      axios
+        .post("/workflow/startWorkflow", JSON.stringify(_self.borrowForm))
+        .then(function(response) {
+          _self.dialogVisible = false;
+          _self.refreshData();
+          _self.$message("完成任务成功!");
+          _self.$emit("refreshcount");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
-
   }
 };
 </script>
@@ -900,5 +912,13 @@ export default {
 .el-container {
   height: 100%;
 }
-
+.el-aside {
+  height: 645px;
+}
+</style>
+<style>
+.el-tree-node :nth-child(2) {
+    padding: 1px;
+    overflow: visible;
+  }
 </style>

@@ -78,16 +78,19 @@
           </div>
         </el-dialog>
       <el-row>
-        <el-col :span="4">
-              <el-tree
-                      :props="defaultProps"
-                      :data="dataList"
-                      node-key="id"
-                      :render-content="renderContent"
-                      :default-expand-all="isExpand"
-                      highlight-current
-                      @node-click="handleNodeClick">
-                    </el-tree>
+        <el-col :span="4" >
+          <el-aside width="100%" style="height:645px">
+            <el-tree
+              style="width:200%"
+              :props="defaultProps"
+              :data="dataList"
+              node-key="id"
+              :render-content="renderContent"
+              :default-expand-all="isExpand"
+              highlight-current
+              @node-click="handleNodeClick">
+            </el-tree>
+          </el-aside>
         </el-col>
         <el-col :span="20">
           <el-row v-loading="loading">

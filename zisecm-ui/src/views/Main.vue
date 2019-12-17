@@ -113,7 +113,17 @@ export default {
     logout() {
       sessionStorage.removeItem("access-user");
       sessionStorage.removeItem("access-userName");
-      this.$router.push({ path: "/login" });
+      var loca = window.location;
+      if(loca.search!=null&&loca.search!=""){
+        if(loca.search.substr(1,9) == "LoginName"){
+          var url = loca.origin+loca.pathname+"#/login"
+          window.location.href= url;
+        }else{
+          this.$router.push({ path: "/login" });
+        }
+      }else{
+        this.$router.push({ path: "/login" });
+      }        
     },
     checklogin() {
       var user = sessionStorage.getItem("access-userName");

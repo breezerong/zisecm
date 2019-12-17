@@ -48,11 +48,11 @@
                 <el-checkbox-group v-model="checkedCards">
                   <el-checkbox
                     v-for="card in cards"
-                    :label="card.label"
+                    :label="card.name"
                     :key="card.id"
                     checked
                     @change="handleCheckedTypeChange"
-                  >{{card.label}}</el-checkbox>
+                  >{{card.name}}</el-checkbox>
                 </el-checkbox-group>
                 </el-row>
               </el-row>
@@ -193,10 +193,10 @@ export default {
   },
   mounted() {
     let _self = this;
-    _self.collectionChart = _self.echarts.init(
-      document.getElementById("collectionChart")
-    );
-    _self.getCollectionData();
+    // _self.collectionChart = _self.echarts.init(
+    //   document.getElementById("collectionChart")
+    // );
+    // _self.getCollectionData();
   },
   methods: {
     //格式化时间
@@ -272,65 +272,65 @@ export default {
         });
     },
     //获取馆藏状态数据
-    getCollectionData() {
-      let _self = this;
-      axios.get("/dc/getCollectionData").then(function(response) {
-        _self.collectionChartData = response.data.data;
-        //绘制图表
-        _self.collectionChart.setOption({
-          grid:{
-            y:20,
-            y2:70
-          },
-          tooltip: {},
-          xAxis: {
-            type : 'category',
-            data :_self.collectionChartData.xAxisData,
-            axisLabel:{
-              show:true,
-              textStyle:{
-                color: '#000000',
-              },
-              fontSize:12,
-              formatter:function(val){
-                  return val.split("").join("\n");
-              }
-            }
-          },
-          yAxis: {
+    // getCollectionData() {
+    //   let _self = this;
+    //   axios.get("/dc/getCollectionData").then(function(response) {
+    //     _self.collectionChartData = response.data.data;
+    //     //绘制图表
+    //     _self.collectionChart.setOption({
+    //       grid:{
+    //         y:20,
+    //         y2:70
+    //       },
+    //       tooltip: {},
+    //       xAxis: {
+    //         type : 'category',
+    //         data :_self.collectionChartData.xAxisData,
+    //         axisLabel:{
+    //           show:true,
+    //           textStyle:{
+    //             color: '#000000',
+    //           },
+    //           fontSize:12,
+    //           formatter:function(val){
+    //               return val.split("").join("\n");
+    //           }
+    //         }
+    //       },
+    //       yAxis: {
             
-            },
-          series: [
-            {
-              name: "数量",
-              type: "bar",
-              data: _self.collectionChartData.yAxisData,
-              itemStyle: {
-                normal: {
-                  color: function(d) {
-                    return (
-                      "#" +
-                      Math.floor(
-                        Math.random() * (256 * 256 * 256 - 1)
-                      ).toString(16)
-                    );
-                  },
-                  label: {
-                    show: true, //开启显示
-                    position: "top", //在右侧显示
-                    textStyle: {
-                      //数值样式
-                      color: "black",
-                      fontSize: 10
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        });
-      });
-    },
+    //         },
+    //       series: [
+    //         {
+    //           name: "数量",
+    //           type: "bar",
+    //           data: _self.collectionChartData.yAxisData,
+    //           itemStyle: {
+    //             normal: {
+    //               color: function(d) {
+    //                 return (
+    //                   "#" +
+    //                   Math.floor(
+    //                     Math.random() * (256 * 256 * 256 - 1)
+    //                   ).toString(16)
+    //                 );
+    //               },
+    //               label: {
+    //                 show: true, //开启显示
+    //                 position: "top", //在右侧显示
+    //                 textStyle: {
+    //                   //数值样式
+    //                   color: "black",
+    //                   fontSize: 10
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         }
+    //       ]
+    //     });
+    //   });
+    // },
     //获取最新的5条新建文档
     getDocument() {
       let _self = this;
@@ -354,12 +354,12 @@ export default {
       let _self = this;
       var m = new Map();
       axios
-        .post("/search/getCardSearchs", _self.getLang())
+        .post("/admin/getArchivesFolder", 0)
         .then(function(response) {
           _self.cards = response.data.data;
           var i = 0;
           for (i = 0; i < _self.cards.length; i++) {
-            _self.cardsLabel[i] = _self.cards[i].label;
+            _self.cardsLabel[i] = _self.cards[i].name;
           }
         })
         .catch(function(error) {
@@ -383,6 +383,7 @@ export default {
       map.set("inputkey", _self.inputkey);
       map.set("propertyOnly", _self.propertyOnly);
       map.set("checkedCards", _self.checkedCards);
+      // console.log(_self.checkedCards)
       _self.$router.push({
         name: "全文搜索",
         params: {
