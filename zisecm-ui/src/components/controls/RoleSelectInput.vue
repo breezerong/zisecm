@@ -179,7 +179,7 @@ export default {
           },
           method: "post",
           data: m,
-          url: "/zisecm/group/getGroups"
+          url: "/group/getGroups"
         })
         .then(function(response) {
           _self.dataList = response.data.data;
@@ -230,7 +230,7 @@ export default {
           },
           method: "post",
           data: m,
-          url: "/zisecm/group/getGroups"
+          url: "/group/getGroups"
         })
         .then(function(response) {
           _self.dataList = response.data.data;

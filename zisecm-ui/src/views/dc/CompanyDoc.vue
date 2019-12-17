@@ -37,7 +37,7 @@
         </div>       -->
                 <!-- <router-link  to="/borroworder"></router-link> -->
      </el-dialog>
-     <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="80%"  @close="itemDialogVisible = false">  
+     <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="96%"  @close="itemDialogVisible = false">  
       <InnerItemViewer v-bind:id = "currentId" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
      </el-dialog>
      <el-dialog

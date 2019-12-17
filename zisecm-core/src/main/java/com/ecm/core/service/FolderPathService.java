@@ -142,7 +142,7 @@ public class FolderPathService extends EcmService {
 		for(String str:strs) {
 			if(str.startsWith("{")) {
 				String attrName = str.replace("{", "").replace("}", "");
-				folderPath +=  (String)values.get(attrName);
+				folderPath +=  ((String)values.get(attrName)).replace("/", "_");
 			}
 			else if(str.startsWith("Date(")) {
 				String tempStr = str.replace("Date(", "").replace(")", "");
