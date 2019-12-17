@@ -315,10 +315,20 @@ public class ESSearchService extends EcmService implements ISearchService {
 			}
 			//状态必须为“利用”
 			TermsQueryBuilder statusBuilder = QueryBuilders.termsQuery("status", SearchClient.getInstance().getReleaseStatus());
+			
 			if (boolQueryBuilder1 == null) {
 				boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder);
 			} else {
 				boolQueryBuilder1.must(statusBuilder);
+			}
+			
+			//状态必须为“利用”
+			TermsQueryBuilder noboxBuilder = QueryBuilders.termsQuery("type_name", "卷盒");
+			
+			if (boolQueryBuilder1 == null) {
+				boolQueryBuilder1 = new BoolQueryBuilder().mustNot(noboxBuilder);
+			} else {
+				boolQueryBuilder1.mustNot(noboxBuilder);
 			}
 			
 			if (typeNames != null && typeNames.size() > 0) {
