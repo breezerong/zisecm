@@ -466,7 +466,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			}
 		}
 		sql += " order by NAME ";//limit "+ startIndex + ","+pageSize;
-		
+		System.out.print(this.getClass().getName()+"===SQL getRoleUsers=="+sql);
 		List<EcmUser> list = ecmUserMapper.searchToEntity(pager,sql);
 		return list;
 	}
