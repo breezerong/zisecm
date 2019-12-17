@@ -481,7 +481,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 				e.printStackTrace();
 			}
 		}
-				
+		System.out.print(this.getClass().getName()+"===SQL getUsersByGroupName=="+groupName);
+		
 		EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
 		String groupId=groupObj==null?null:groupObj.getId();
 		return getRoleUsers( token, pager,  noGroup, groupId,  condition);
