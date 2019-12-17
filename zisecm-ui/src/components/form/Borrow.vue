@@ -4,6 +4,14 @@
             <el-row style="width:100%">
               <div  v-if="(istask==1 && formEditPermision==1)||istask==0">
               <el-col >
+                <el-form-item label="借阅单号" :label-width="formLabelWidth"  style="float:left">
+                  {{borrowForm.CODING}}
+                </el-form-item>
+                 <el-form-item  :label-width="formLabelWidth"  style="float:right">
+                  <el-button  @click="getBorrowHelpDoc()">帮助</el-button>
+                </el-form-item>
+              </el-col >
+              <el-col>
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
                   <el-input   v-model="borrowForm.C_DRAFTER" auto-complete="off" readonly></el-input>
                 </el-form-item>
@@ -12,9 +20,6 @@
                 </el-form-item>
                  <el-form-item  prop="C_DESC1" label="用户部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
-                </el-form-item>
-                 <el-form-item  :label-width="formLabelWidth"  style="float:left">
-                  <el-button  @click="getBorrowHelpDoc()">帮助</el-button>
                 </el-form-item>
                <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
                   <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly></el-input>
@@ -96,7 +101,7 @@
               </div>
             </el-col>
           
-         <el-col style="padding-top:3px;">
+               <el-col  style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
                  <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_auto" ></UserSelectInput>
                </el-form-item>
@@ -115,7 +120,12 @@
               </el-col>
              </div>
              <div v-if="istask==1 && formEditPermision==0">
-              <el-col>
+               <el-col>
+                <el-form-item label="借阅单号" :label-width="formLabelWidth"  style="float:left">
+                  {{borrowForm.CODING}}
+                </el-form-item>
+              </el-col >
+             <el-col>
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
                   {{borrowForm.C_DRAFTER}}
                 </el-form-item>
@@ -310,6 +320,8 @@ export default {
           _self.gridList = response.data.data;
           if(typeof(_self.formId)=="undefined"){
             _self.tabledata=_self.$route.query.tabledata;
+            _self.borrowForm.C_CREATION_UNIT=_self.$route.query.C_ARCHIVE_UNIT;
+            
           }else{
             _self.loadData();
           }
@@ -347,13 +359,58 @@ export default {
     },
     startWorkflow() {
        let _self = this;
+       let formMap = new Map();
+        _self.$refs.borrowForm.validate((valid) => {
+        if (valid) {
+           formMap=_self.validateBorrowForm(_self);
+          if(formMap==null){
+            return ;
+          }
+           _self.loading = true;
+          axios.post("/dc/saveBorrowForm",JSON.stringify(formMap)).then(function(response){
+              _self.formId=response.data.data;
+              console.log(response);  
+              let m= new Map();
+              m.set("formId",_self.formId);
+              m.set("fileTopestSecurityLevel",formMap.get("fileTopestSecurityLevel"));
+              m.set("drawingNumber",formMap.get("drawingNumber"));
+              m.set("fileNumber",formMap.get("fileNumber"));
+              
+              axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
+                console.log(response);
+               _self.$message({
+                showClose: true,
+                message: "流程发起成功!",
+                duration: 2000,
+                type: "success"
+              });
+  
+                _self.loading = false;
+                _self.cancel();
+              }).catch(function(error){
+               _self.$message({
+                showClose: true,
+                message: "流程发起失败!",
+                duration: 2000,
+                type: "warning"
+              });
+                console.log(error);
+                _self.loading = false;
+              });
+            }).catch(function(error){
+              console.log(error);
+              _self.loading = false;
+            });
+          }
+      });    
+    },
+    validateBorrowForm(gougou){
+       let _self = this;
        let drawingNumber=0;
        let fileNumber=0;
        let beyondLeaderPermision=false;
        let isValidedForm=false;
        let isStoreStatus="在库";
-       _self.$refs.borrowForm.validate((valid) => {
-        if (valid) {
             let m = new  Map();
 
             let documentIds="";
@@ -422,7 +479,7 @@ export default {
 
             if(new Date(_self.borrowForm.C_START_DATE).getTime() >= new Date(_self.borrowForm.C_END_DATE).getTime())
             {
-                 _self.$message({
+                 gougou.$message({
                   showClose: true,
                   message: "结束日期不能小于开始日期！",
                   duration: 5000,
@@ -434,7 +491,7 @@ export default {
               if(alertStr==""){
                 isValidedForm=true;
               }else{
-                _self.$message({
+                gougou.$message({
                   showClose: true,
                   message: "根据您借阅档案的信息："+alertStr+"  必填",
                   duration: 5000,
@@ -447,7 +504,7 @@ export default {
           }
 
               if(isStoreStatus!='在库'&&_self.borrowForm.SUB_TYPE=='纸质借阅'){
-                _self.$message({
+                gougou.$message({
                   showClose: true,
                   message: "所借阅文件包含不在库文件，不能发起借阅流程",
                   duration: 5000,
@@ -458,49 +515,16 @@ export default {
               }
 
 
-           m.set("formData",_self.borrowForm);
-           m.set("documentIds",documentIds);
-          _self.loading = true;
-          axios.post("/dc/saveBorrowForm",JSON.stringify(m)).then(function(response){
-              _self.formId=response.data.data;
-              console.log(response);  
-              m= new Map();
-              m.set("formId",_self.formId);
-              m.set("fileTopestSecurityLevel",fileTopestSecurityLevel);
-              m.set("drawingNumber",drawingNumber);
-              m.set("fileNumber",fileNumber);
-              
-              axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
-                console.log(response);
-               _self.$message({
-                showClose: true,
-                message: "流程发起成功!",
-                duration: 2000,
-                type: "success"
-              });
-  
-                _self.loading = false;
-                _self.cancel();
-              }).catch(function(error){
-               _self.$message({
-                showClose: true,
-                message: "流程发起失败!",
-                duration: 2000,
-                type: "warning"
-              });
-                console.log(error);
-                _self.loading = false;
-              });
-            }).catch(function(error){
-              console.log(error);
-              _self.loading = false;
-            });
+       m.set("fileTopestSecurityLevel",fileTopestSecurityLevel);
+       m.set("formId",_self.formId);
+      m.set("beyondLeaderPermision",beyondLeaderPermision);
+      m.set("drawingNumber",drawingNumber);
+      m.set("fileNumber",fileNumber);
+      m.set("formData",_self.borrowForm);
+      m.set("tabledata",documentIds);
+      m.set("documentIds",_self.tabledata);
+      return m;
       
-          }
-      });    
-      if(isValidedForm){
-              console.log(isValidedForm);
-      }
     },
     getFormdataMap(){
         
@@ -529,16 +553,16 @@ export default {
       }else{
         fileTopestSecurityLevel="内部公开";
       }
+      m.set("fileTopestSecurityLevel",fileTopestSecurityLevel);
       m.set("formData",_self.borrowForm);
-      m.set("documentIds",_self.tabledata);
       m.set("tabledata",documentIds);
+      m.set("documentIds",_self.tabledata);
       m.set("formId",_self.formId);
       return m;
     },
      saveCurrentForm(m){
       let _self = this;
       m=_self.getFormdataMap();
-      _self.loading = true;
 
      axios.post("/dc/saveBorrowForm",m).then(function(response){    
           console.log(response.data.data);  
@@ -639,11 +663,15 @@ export default {
       _self.$refs.ShowShopingCart.addToFormFromShopingCart(_self.tabledata);
       setTimeout(()=>{
         axios.post("/dc/getFormRelateDocument",_self.formId).then(function(response) {
-            let result = response.data;
-            if(result.code==1){
+              let result = response.data;
+           if(result.code==1){
               _self.tabledata = result.data;
-              _self.borrowForm.C_CREATION_UNIT = C_ARCHIVE_UNIT;
-            }
+               if(_self.borrowForm.C_CREATION_UNIT!=C_ARCHIVE_UNIT){
+                _self.borrowForm.C_CREATION_UNIT = C_ARCHIVE_UNIT;
+                _self.borrowForm.C_REVIEWER2 = "";
+                _self.saveCurrentForm();
+              }
+           }
       });
       },2500);
       },

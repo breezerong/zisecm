@@ -53,6 +53,7 @@ import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
+import com.ecm.core.service.NumberService;
 import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
 import com.ecm.portal.util.ExcelUtil;
@@ -90,6 +91,8 @@ public class EcmDcController extends ControllerAbstract{
 	@Autowired
 	private FolderPathService folderPathService;
 
+	@Autowired
+	private NumberService numberService;
 
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
 
@@ -1158,6 +1161,8 @@ public class EcmDcController extends ControllerAbstract{
 				try {
 					if("".equals(formId)) {
 						formDataMap.put("TYPE_NAME", "借阅单");
+						formDataMap.put("FOLDER_ID", folderService.getObjectByPath(getToken(), "/表单/借阅单").getId());
+						formDataMap.put("CODING", numberService.getNumber(getToken(), formDataMap));
 						formId=documentService.newObject(getToken(), formDataMap);
 						for(int i=0;i<documentIdArray.length;i++) {
 							EcmRelation en=new EcmRelation();

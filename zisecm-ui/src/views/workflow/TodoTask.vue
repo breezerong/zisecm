@@ -250,8 +250,8 @@ export default {
           _self.form.taskId[i] = _self.selectedItems[i].id;
         }
       }
-      let a=_self.$refs.formRouter.getFormdataMap();
-
+      let a=_self.$refs.formRouter.validateBorrowForm(_self);
+      if(typeof(a)=="undefined") return;
       _self.loading=true;
      if(_self.formEditPermision==1){
        if(new Date(a.get("formData").C_START_DATE).getTime() >= new Date(a.get("formData").C_END_DATE).getTime())
