@@ -296,10 +296,21 @@ export default {
         let rowData=[];
         _self.borrowDialogVisible=true;
         rowData.push(obj);
-        setTimeout(() => {
+        if(typeof(obj.C_ARCHIVE_UNIT)=="undefined"){
+              _self.$message({
+                showClose: true,
+                message: "所借阅档案，归档单位为空，不能外借!",
+                duration: 5000,
+                type: "warning"
+              });
+              return;
+        }
+          setTimeout(() => {
           _self.$router.replace({
             path:'/viewDoc_borrow',
-            query: { tabledata: rowData  }
+            query: { tabledata: rowData,
+            C_ARCHIVE_UNIT:obj.C_ARCHIVE_UNIT
+            }
           });
     
         }, 100);
