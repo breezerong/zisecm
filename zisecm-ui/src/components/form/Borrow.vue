@@ -54,10 +54,10 @@
               </el-col>
              <el-col>
             <el-form-item prop="C_START_DATE" label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker  :picker-options="expireTimeOption" value-format="yyyy-MM-dd"  v-model="borrowForm.C_START_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_START_DATE" auto-complete="off"></el-date-picker >
                 </el-form-item>
                  <el-form-item prop="C_END_DATE" label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker  :picker-options="expireTimeOption" value-format="yyyy-MM-dd"    v-model="borrowForm.C_END_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_END_DATE" auto-complete="off"></el-date-picker >
                 </el-form-item>
                </el-col>
              <el-col>
@@ -473,11 +473,11 @@ export default {
               if(_self.borrowForm.C_CREATION_UNIT!=_self.borrowForm.C_DESC1){
                   if(_self.borrowForm.C_REVIEWER2=="")alertStr=alertStr +"'形成部门领导' ";
               }
-              if(beyondLeaderPermision){
+              if(beyondLeaderPermision||_self.borrowForm.SUB_TYPE=="纸质借阅"){
                   if(_self.borrowForm.C_REVIEWER3=="")alertStr=alertStr +"'分管领导' ";
               }
 
-            if(new Date(_self.borrowForm.C_START_DATE).getTime() >= new Date(_self.borrowForm.C_END_DATE).getTime())
+            if(new Date(_self.borrowForm.C_START_DATE).getTime() > new Date(_self.borrowForm.C_END_DATE).getTime())
             {
                  gougou.$message({
                   showClose: true,

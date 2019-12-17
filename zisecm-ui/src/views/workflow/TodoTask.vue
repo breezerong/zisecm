@@ -250,38 +250,42 @@ export default {
           _self.form.taskId[i] = _self.selectedItems[i].id;
         }
       }
-      let a=_self.$refs.formRouter.validateBorrowForm(_self);
-      if(typeof(a)=="undefined") return;
+
       _self.loading=true;
      if(_self.formEditPermision==1){
-       if(new Date(a.get("formData").C_START_DATE).getTime() >= new Date(a.get("formData").C_END_DATE).getTime())
-      {
-         _self.$message({
-            showClose: true,
-            message: "结束日期不能小于开始日期！",
-            duration: 5000,
-            type: "error"
-          });
-          return;
-     }
-
-      let borrowTableData=a.get("tabledata");
-      let isStoreStatus="在库";
-      for (let index = 0; index < borrowTableData.length; index++) {
-        if(typeof(borrowTableData[index].C_STORE_STATUS)=="undefined"||(typeof(borrowTableData[index].C_STORE_STATUS)!="undefined" && borrowTableData[index].C_STORE_STATUS!=isStoreStatus)){
-              if(a.get("formData").SUB_TYPE=='纸质借阅'){
-                _self.$message({
-                  showClose: true,
-                  message: "所借阅文件包含不在库文件，不能发起借阅流程",
-                  duration: 5000,
-                  type: "warning"
-                });
-                 _self.loading=false;
-                return;
-
-              }
-        }
+       let a=_self.$refs.formRouter.validateBorrowForm(_self);
+      if(typeof(a)=="undefined") {
+         _self.loading=false;
+         return;
       }
+    //    if(new Date(a.get("formData").C_START_DATE).getTime() >= new Date(a.get("formData").C_END_DATE).getTime())
+    //   {
+    //      _self.$message({
+    //         showClose: true,
+    //         message: "结束日期不能小于开始日期！",
+    //         duration: 5000,
+    //         type: "error"
+    //       });
+    //       return;
+    //  }
+
+    //   let borrowTableData=a.get("tabledata");
+    //   let isStoreStatus="在库";
+    //   for (let index = 0; index < borrowTableData.length; index++) {
+    //     if(typeof(borrowTableData[index].C_STORE_STATUS)=="undefined"||(typeof(borrowTableData[index].C_STORE_STATUS)!="undefined" && borrowTableData[index].C_STORE_STATUS!=isStoreStatus)){
+    //           if(a.get("formData").SUB_TYPE=='纸质借阅'){
+    //             _self.$message({
+    //               showClose: true,
+    //               message: "所借阅文件包含不在库文件，不能发起借阅流程",
+    //               duration: 5000,
+    //               type: "warning"
+    //             });
+    //              _self.loading=false;
+    //             return;
+
+    //           }
+    //     }
+    //   }
 
        axios.post("/dc/saveBorrowForm",a).then(function(response){    
             axios.post('/workflow/completeTask',JSON.stringify(_self.form))

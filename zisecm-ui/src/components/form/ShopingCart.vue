@@ -111,7 +111,7 @@ export default {
   },
   props: {
     formId: { type: String, default: "" },
-    excludeRows: { type:Array, default: []},
+    excludeRows: { type:Array, default:()=>[]},
   },
   created() {
     let _self = this;
