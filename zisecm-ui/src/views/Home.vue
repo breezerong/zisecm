@@ -17,6 +17,7 @@
                   <!-- <el-badge :value="todoCount" class="item"></el-badge> -->
                 </span>
               </el-menu-item>
+              
               <el-menu-item index="12">
                 <i class="el-icon-circle-check"></i>
                 <span slot="title">
@@ -27,6 +28,13 @@
                 <i class="el-icon-help"></i>
                 <span slot="title">
                   <router-link to="/workflow/myworkflow">我的流程</router-link>
+                </span>
+              </el-menu-item>
+              <el-menu-item index="14">
+                <i class="el-icon-time"></i>
+                <span slot="title">
+                  <router-link to="/record/archiveoutgoing/archivegivebackmine">待归还</router-link>
+                  <!-- <el-badge :value="todoCount" class="item"></el-badge> -->
                 </span>
               </el-menu-item>
             </el-submenu>

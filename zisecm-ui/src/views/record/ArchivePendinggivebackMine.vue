@@ -1,6 +1,10 @@
 <template>
     <div>
-      
+      <el-row>
+            <el-button type="primary" plain
+                size="small" icon="el-icon-check" @click="giveback">归还</el-button>
+            
+        </el-row>
         
         <el-row>
             <el-col>
@@ -97,6 +101,34 @@ export default {
                 vtitle); 
             },10);
         },
+        giveback(){
+          let _self=this;
+          if(_self.selectedOrder.length<1){
+            _self.$message("请选择借阅单数据！");
+            return;
+          }
+
+          let tab=_self.selectedOrder;
+          let m = [];
+          let i;
+          for(i in tab){
+            m.push(tab[i]["ID"]);
+          }
+          axios.post("/dc/giveback",JSON.stringify(m))
+            .then(function(response) {
+              _self.loadGridData();
+              // _self.loadFileGridData();
+              _self.gridListFileData=[];
+              // _self.innerDataList=[];
+                // _self.showInnerFile(null);
+              _self.$message(response.data.message);
+            })
+            .catch(function(error) {
+              _self.$message(response.data.message);
+              console.log(error);
+          });
+
+        },
         orderclick(row){
           this.loadFileGridData(row);
         },
@@ -188,7 +220,7 @@ export default {
           }
         
           var m = new Map();
-          m.set("gridName", "BorrowFormGrid");
+          m.set("gridName", "MyBorrowFormGrid");
           // m.set('folderId',indata.id);
           m.set("condition", key0);
           

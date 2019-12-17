@@ -14,10 +14,10 @@
                       <i class="el-icon-bottom"></i>
                       <span slot="title"><router-link to="/record/archiveoutgoing/archivependingout">待出库</router-link></span>
                     </el-menu-item>
-                    <!-- <el-menu-item index="202">
-                      <i class="el-icon-finished"></i>
+                    <el-menu-item index="202">
+                      <i class="el-icon-sort-up"></i>
                       <span slot="title"><router-link to="/record/archiveoutgoing/archivegiveback">待归还</router-link></span>
-                    </el-menu-item> -->
+                    </el-menu-item>
                     <el-menu-item index="203">
                       <i class="el-icon-top"></i>
                       <span slot="title"><router-link to="/record/archiveoutgoing/archivependingin">待入库</router-link></span>

@@ -73,6 +73,15 @@ export const workflowRouter =
               
             }
           ]
+        },{
+          meta: {
+            requireAuth: true,
+            permit: 1
+          },
+          path: '/record/archiveoutgoing/archivegivebackmine',
+          name: '待归还',
+          component: () => import('@/views/record/ArchivePendinggivebackMine.vue')
+          
         }
     ]
   }

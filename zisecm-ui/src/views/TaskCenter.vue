@@ -22,6 +22,11 @@
                 <i class="el-icon-help"></i>
                 <span slot="title"><router-link to="/workflow/myworkflow">我的流程</router-link></span>
               </el-menu-item>
+              <el-menu-item index="14" @click="clickRouter('/record/archiveoutgoing/archivegivebackmine')">
+                <i class="el-icon-help"></i>
+                <span slot="title"><router-link to="/record/archiveoutgoing/archivegivebackmine">待归还</router-link></span>
+              </el-menu-item>
+              
             </el-submenu>
           </el-menu>
         </el-aside>
