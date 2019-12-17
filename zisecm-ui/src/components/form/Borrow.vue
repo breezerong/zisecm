@@ -521,8 +521,8 @@ export default {
       m.set("drawingNumber",drawingNumber);
       m.set("fileNumber",fileNumber);
       m.set("formData",_self.borrowForm);
-      m.set("tabledata",documentIds);
-      m.set("documentIds",_self.tabledata);
+      m.set("tabledata",_self.tabledata);
+      m.set("documentIds",documentIds);
       return m;
       
     },
