@@ -1646,4 +1646,77 @@ public class EcmDcController extends ControllerAbstract{
 			}
 			return mp;
 		}
+		
+		@RequestMapping(value = "/dc/moveDocument", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> moveDocument(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				String[] ids = args.get("ids").toString().split(";");
+				String folderId = args.get("folderId").toString();
+				if(!StringUtils.isEmpty(folderId)) {
+					for(String id: ids) {
+						if(!StringUtils.isEmpty(id)) {
+							EcmDocument doc = documentService.getObjectById(getToken(), id);
+							if(doc != null) {
+								doc.setFolderId(folderId);
+								documentService.updateObject(getToken(),doc, null);
+							}
+						}
+					}
+					mp.put("code", ActionContext.SUCESS);
+				}
+				else {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", "Folder id is null.");
+				}
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
+		
+		/**
+		 * 复制，不复制内容
+		 * @param argStr
+		 * @return
+		 */
+		@RequestMapping(value = "/dc/copyDocument", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> copyDocument(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				String[] ids = args.get("ids").toString().split(";");
+				String folderId = args.get("folderId").toString();
+				
+					for(String id: ids) {
+						if(!StringUtils.isEmpty(id)) {
+							EcmDocument doc = documentService.getObjectById(getToken(), id);
+							if(doc != null) {
+								doc.createId();
+								doc.setName(doc.getName()+" Copy");
+								if(!StringUtils.isEmpty(folderId)) {
+									doc.setFolderId(folderId);
+								}
+								
+								doc.setContentSize((long) 0);
+								doc.setFormatName("");
+								doc.setModifiedDate(new Date());
+								doc.setModifier(documentService.getCurrentUser(getToken()).getUserName());
+								documentService.newObject(getToken(), doc, null);
+							}
+						}
+					}
+					mp.put("code", ActionContext.SUCESS);
+			}
+			catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
 }

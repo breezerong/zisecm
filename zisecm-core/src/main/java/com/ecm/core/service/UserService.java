@@ -466,7 +466,6 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			}
 		}
 		sql += " order by NAME ";//limit "+ startIndex + ","+pageSize;
-		
 		List<EcmUser> list = ecmUserMapper.searchToEntity(pager,sql);
 		return list;
 	}
@@ -474,7 +473,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public List<EcmUser> getUsersByGroupName(String token,Pager pager, String noGroup,String groupName, String condition) {
 		
-		if(groupName.startsWith("leaderManage_")) {
+		if(groupName.startsWith("leaderManage_auto")) {
 			try {
 				groupName= "leaderManage_"+getSession(token).getCurrentUser().getDepartment();
 			} catch (AccessDeniedException e) {

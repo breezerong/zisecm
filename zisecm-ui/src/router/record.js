@@ -85,6 +85,16 @@ export const recordRouter =  [
             },
             {
                 meta: {
+                  requireAuth: true,
+                  permit: 1
+                },
+                path: '/record/archiveoutgoing/archivegiveback',
+                name: '待归还',
+                component: () => import('@/views/record/ArchivePendinggiveback.vue')
+                
+              },
+            {
+                meta: {
                     requireAuth: true,
                     permit: 1
                 },

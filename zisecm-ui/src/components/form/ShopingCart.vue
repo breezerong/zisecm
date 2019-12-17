@@ -111,7 +111,7 @@ export default {
   },
   props: {
     formId: { type: String, default: "" },
-    excludeRows: { type: String, default: "" },
+    excludeRows: { type:Array, default: []},
   },
   created() {
     let _self = this;
@@ -224,7 +224,10 @@ export default {
       setTimeout(()=>{
             _self.$router.replace({
             path:'/borrow',
-            query: { tabledata: _self.selectedItemList }
+            query: { 
+              tabledata: _self.selectedItemList,
+              C_ARCHIVE_UNIT:C_ARCHIVE_UNIT
+             }
           });
         },10);
 

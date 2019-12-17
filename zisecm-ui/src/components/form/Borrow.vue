@@ -98,10 +98,10 @@
           
          <el-col style="padding-top:3px;">
                 <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_" ></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER1" v-bind:inputValue="borrowForm.C_REVIEWER1" roleName="leaderManage_auto" ></UserSelectInput>
                </el-form-item>
                  <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
-                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" roleName="leaderManage_"></UserSelectInput>
+                 <UserSelectInput  v-model="borrowForm.C_REVIEWER2" v-bind:inputValue="borrowForm.C_REVIEWER2" :roleName="'leaderManage_'+[borrowForm.C_CREATION_UNIT]"></UserSelectInput>
                 </el-form-item>
                  <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
                   <UserSelectInput  v-model="borrowForm.C_REVIEWER3" v-bind:inputValue="borrowForm.C_REVIEWER3" roleName="分公司领导" ></UserSelectInput>
@@ -253,7 +253,7 @@ export default {
             // { validator: validaePass2 }
         ],
         C_END_DATE: [
-          {required: true, message: this.$t("message.pleaseSelect")+"借阅结束时间", trigger: 'blur'},
+          {required: true, message: this.$t("message.pleaseInput")+"借阅结束时间", trigger: 'blur'},
             // { validator: validaePass2 }
         ]
       },      
@@ -642,6 +642,7 @@ export default {
             let result = response.data;
             if(result.code==1){
               _self.tabledata = result.data;
+              _self.borrowForm.C_CREATION_UNIT = C_ARCHIVE_UNIT;
             }
       });
       },2500);
