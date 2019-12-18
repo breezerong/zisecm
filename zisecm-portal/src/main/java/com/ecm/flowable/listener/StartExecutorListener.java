@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.flowable.engine.HistoryService;
+import javax.sql.DataSource;
+
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.ExecutionListener;
@@ -13,8 +15,11 @@ import org.flowable.engine.delegate.TaskListener;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.service.delegate.DelegateTask;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmUser;
@@ -47,7 +52,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 
 	@Autowired
 	private ServiceDocMail serviceDocMail;
-	
+	@Autowired
+	private Environment env;
+
 	/**
 	 * 监听 for executionListener
 	 */
@@ -58,9 +65,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 		}
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = "admin";
+		String workflowSpecialUserName = env.getProperty("spring.datasource.username");
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
 			extracted(ecmSession, arg0);
 //			System.out.println("========name======="+arg0.getEventName()+"===isEnded==="+arg0.isEnded());
 			//流程结束发送邮件
@@ -181,9 +188,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 		
 		
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = "admin";
+		String workflowSpecialUserName = env.getProperty("spring.datasource.username");
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
 			Map<String, Object> varMap = extracted(ecmSession, arg0);
 			String processName = varMap.get("processName").toString();
 			if ("process_borrow".equals(processName)) {
@@ -233,10 +240,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			///////////////////////任务到达发送邮件//////////////
 			String assignee=arg0.getAssignee();//ecm_user.Name
 			IEcmSession ecmSession = null;
-			String workflowSpecialUserName = "admin";
+			String workflowSpecialUserName = env.getProperty("spring.datasource.username");
 			
 			try {
-				ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
+				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
 				EcmUser user= userService.getObjectByName(ecmSession.getToken(), assignee);
 				String email= user.getEmail();
 				if(email!=null&&!"".equals(email)) {
@@ -246,6 +253,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}finally {
+				if (ecmSession != null) {
+					authService.logout(workflowSpecialUserName);
+				}
 			}
 			////////////////////end/////////////////
 //			arg0.getName();
@@ -257,9 +268,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 			}
 			IEcmSession ecmSession = null;
-			String workflowSpecialUserName = "admin";
+			String workflowSpecialUserName = env.getProperty("spring.datasource.username");
 			try {
-				ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
+				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
 				extracted(ecmSession, arg0);
 			} catch (Exception e) {
 				// TODO: handle exception

@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-container>
-      <el-aside width="180px">
+      <el-aside width="180px" style="overflow-x:hidden;overflow-y:hidden">
         <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航-->
           <el-menu default-active="11" class="el-menu-vertical-ecm" :default-openeds="opens" style="background-color:#D3DCE6">
@@ -59,7 +59,7 @@ export default {
       opens: ["10", "20"],
       username: "",
       clientPermission: 0,
-      menuHeight: window.innerHeight - 100
+      menuHeight: window.innerHeight - 280
     };
   },
   created() {
