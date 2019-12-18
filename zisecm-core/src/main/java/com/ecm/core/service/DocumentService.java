@@ -429,6 +429,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		valueStr = "'" + id + "',";
 		for (Object key : args.keySet().toArray()) {
 			if (key.toString().equalsIgnoreCase("ID")
+					||key.toString().equalsIgnoreCase("transferId")
+					||key.toString().equalsIgnoreCase("folderPath")
+					||key.toString().equalsIgnoreCase("folderId")
 					||key.toString().equalsIgnoreCase("CREATION_DATE")
 					||key.toString().equalsIgnoreCase("CREATOR")
 					||key.toString().equalsIgnoreCase("VERSION_ID")
