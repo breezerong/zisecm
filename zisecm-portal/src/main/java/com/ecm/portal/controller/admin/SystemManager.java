@@ -22,6 +22,7 @@ import com.ecm.core.cache.manager.impl.CacheManagerEcmStore;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmSuggestion;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
 import com.ecm.core.search.ESClient;
+import com.ecm.core.search.SearchClient;
 import com.ecm.portal.controller.ControllerAbstract;
 
 @Controller
@@ -79,6 +80,7 @@ public class SystemManager extends ControllerAbstract{
 		 cacheManagerEcmCardSearch.initAllCaches();
 		 cacheManagerEcmSuggestion.initAllCaches();
 		 cacheManagerEcmDefType.initAllCaches();
+		 SearchClient.getInstance().refreshCache();
 		 
 		 ESClient.getInstance().refreshCache();
 		 
