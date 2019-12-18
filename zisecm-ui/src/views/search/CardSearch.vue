@@ -61,6 +61,7 @@
                   style="width:18em"
                   v-model="subitem.defaultValue"
                   type="date"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   :placeholder="$t('application.selectDate')"
                 ></el-date-picker>
               </div>

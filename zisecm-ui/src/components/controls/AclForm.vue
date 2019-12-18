@@ -39,7 +39,7 @@
             </el-col>
             <el-col :span="24">
               <el-form-item :label="$t('field.expireDate')" :label-width="formLabelWidth">
-                <el-date-picker v-model="form.expireDate" type="date" :placeholder="$t('application.selectDate')" style="display:block;"></el-date-picker>
+                <el-date-picker v-model="form.expireDate" type="date" :placeholder="$t('application.selectDate')" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
               </el-form-item>
             </el-col>
         </el-row>

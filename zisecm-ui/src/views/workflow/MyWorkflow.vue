@@ -72,12 +72,12 @@
                   </el-select>
               </el-form-item>              
               <el-form-item   label="开始时间" :label-width="formLabelWidth"  style="float:left">
-                  <el-date-picker     v-model="workflowForm.startTimeAfter" auto-complete="off"></el-date-picker >
-                  <el-date-picker     v-model="workflowForm.startTimeBefore" auto-complete="off"></el-date-picker >
+                  <el-date-picker     v-model="workflowForm.startTimeAfter" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
+                  <el-date-picker     v-model="workflowForm.startTimeBefore" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                 <el-form-item   label="完成时间" :label-width="formLabelWidth"  style="float:left">
-                  <el-date-picker     v-model="workflowForm.endTimeAfter" auto-complete="off"></el-date-picker >
-                  <el-date-picker     v-model="workflowForm.endTimeBefore" auto-complete="off"></el-date-picker >
+                  <el-date-picker     v-model="workflowForm.endTimeAfter" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
+                  <el-date-picker     v-model="workflowForm.endTimeBefore" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                  <el-form-item style="float:left;padding-left:3px">
                    <el-button  type="primary" @click="search()">查询</el-button>
