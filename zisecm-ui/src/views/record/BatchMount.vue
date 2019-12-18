@@ -47,7 +47,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8" style="float: left;text-align:left;">
-                <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始挂载</el-button>
+                <el-button type="primary" plain icon="el-icon-upload2" @click="batchMount1()">开始挂载</el-button>
                 <el-button plain type="primary" @click="cleanFiles1()">清除所有文件</el-button>
               </el-col>
             </el-row>
@@ -76,7 +76,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8" style="float: left;text-align:left;">
-                <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始挂载</el-button>
+                <el-button type="primary" plain icon="el-icon-upload2" @click="batchMount2()">开始挂载</el-button>
                 <el-button plain type="primary" @click="cleanFiles2()">清除所有文件</el-button>
               </el-col>
             </el-row>
@@ -101,6 +101,7 @@ export default {
       fileList1:[],
       fileList2:[],
       fileList3:[],
+      importMessage:"",
       loading:false
     };
   },
