@@ -85,7 +85,14 @@ public class DBUtils {
 				d = format.parse(date);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				try {
+					d = format.parse(date);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 		if ("mysql".equalsIgnoreCase(databaseType)) {
