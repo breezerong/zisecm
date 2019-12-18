@@ -208,15 +208,15 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				childList = documentService.getMapList(ecmSession.getToken(), sql);
 				Map<String, Object> formObj = documentService.getObjectMapById(ecmSession.getToken(), formId);
 				Date grantDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(formObj.get("C_END_DATE").toString());
-				String userName=varMap.get("startUser").toString();
-				int permit=PermissionContext.ObjectPermission.READ;
-				if ("在线浏览".equals(varMap.get("borrowType").toString())){
-					permit=PermissionContext.ObjectPermission.READ;
-				}else if("下载".equals(varMap.get("borrowType").toString())) {
-					permit=PermissionContext.ObjectPermission.DOWNLOAD;
-				}
 				
 				if ("automaticAuthorization".equals(flowElementId)) {
+					String userName=varMap.get("startUser").toString();
+					int permit=PermissionContext.ObjectPermission.READ;
+					if ("在线浏览".equals(varMap.get("borrowType").toString())){
+						permit=PermissionContext.ObjectPermission.READ;
+					}else if("下载".equals(varMap.get("borrowType").toString())) {
+						permit=PermissionContext.ObjectPermission.DOWNLOAD;
+					}
 					for (int i = 0; i < childList.size(); i++) {
 						EcmDocument docObj = documentService.getObjectById(ecmSession.getToken(),
 								childList.get(i).get("CHILD_ID").toString());
