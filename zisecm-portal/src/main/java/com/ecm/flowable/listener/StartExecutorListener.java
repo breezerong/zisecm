@@ -4,20 +4,25 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.ExecutionListener;
 import org.flowable.engine.delegate.JavaDelegate;
 import org.flowable.engine.delegate.TaskListener;
+import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.service.delegate.DelegateTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.PermissionContext;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmUser;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.UserService;
 import com.ecm.icore.service.IEcmSession;
+import com.ecm.portal.service.ServiceDocMail;
 import com.ecm.portal.test.flowable.TODOApplication;
 
 @Component(value = "startExecutorListener")
@@ -26,17 +31,23 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	@Autowired
+	private HistoryService historyService;
 	@Autowired
 	private RuntimeService runtimeService;
-
+	@Autowired
+	private UserService userService;
+	
 	@Autowired
 	private DocumentService documentService;
 
 	@Autowired
 	private AuthService authService;
 
-
+	@Autowired
+	private ServiceDocMail serviceDocMail;
+	
 	/**
 	 * 监听 for executionListener
 	 */
@@ -51,7 +62,27 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 		try {
 			ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
 			extracted(ecmSession, arg0);
-
+//			System.out.println("========name======="+arg0.getEventName()+"===isEnded==="+arg0.isEnded());
+			//流程结束发送邮件
+			if("end".equals(arg0.getEventName())) {
+				try {
+					HistoricProcessInstance hi = historyService.createHistoricProcessInstanceQuery()
+					        .processInstanceId(arg0.getProcessInstanceId())
+					        .singleResult();
+					String startUserId = hi.getStartUserId();
+//					System.out.println("userId===="+startUserId);
+					EcmUser user= userService.getObjectByName(ecmSession.getToken(), startUserId);
+					String email= user.getEmail();
+					if(email!=null&&!"".equals(email)) {
+						serviceDocMail.sendEndMail(email);
+					}
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			//end
 		} catch (Exception e) {
 			// TODO: handle exception
 		} finally {
@@ -145,6 +176,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
 			arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 		}
+		
+//		System.out.println("===isEnded==="+arg0.isEnded()+"===flowElement===="+arg0.getCurrentFlowElement()+"=====eventName==="+arg0.getEventName());
+		
+		
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = "admin";
 		try {
@@ -195,9 +230,27 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	@Override
 	public void notify(DelegateTask arg0) {
 		if("create".equals(arg0.getEventName())){
+			///////////////////////任务到达发送邮件//////////////
 			String assignee=arg0.getAssignee();//ecm_user.Name
+			IEcmSession ecmSession = null;
+			String workflowSpecialUserName = "admin";
+			
+			try {
+				ecmSession = authService.login("workflow", workflowSpecialUserName, "admin");
+				EcmUser user= userService.getObjectByName(ecmSession.getToken(), assignee);
+				String email= user.getEmail();
+				if(email!=null&&!"".equals(email)) {
+					serviceDocMail.sendTaskMail(email);
+				}
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			////////////////////end/////////////////
+//			arg0.getName();
 			//发邮件
-			TODOApplication.getNeedTOChange();
+//			TODOApplication.getNeedTOChange();
 		}else {
 			if (arg0.getVariable("processInstanceID") == null) {
 				arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
