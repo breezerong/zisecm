@@ -46,6 +46,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -647,21 +648,13 @@ public class WorkflowController  extends ControllerAbstract{
 	    
 	    /**
 	     * 待办任务数量
-	     * @param processInstanceId
+	     * @param LoginName
 	     */
 	    @ResponseBody
 	    @RequestMapping(value = "getMyAllTodoCount")
-	    public List<EcmAuditWorkitem>  getMyAllTodoCount(@RequestBody String argStr) {
-				Map<String, Object> args = JSONUtils.stringToMap(argStr);
-				String processInstanceId=args.get("processInstanceId").toString();
-				List<Map> resultList = new ArrayList<Map>();
-	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
-	        try {
-				return workitemAuditService.getObjects(getToken(), "workflow_id='"+processInstanceId+"'");
-			} catch (AccessDeniedException e) {
-				e.printStackTrace();
-			}
-         	return  new ArrayList<EcmAuditWorkitem>();
+	    public long  getMyAllTodoCount(@RequestParam String LoginName) {
+	        return  taskService.createTaskQuery().taskAssignee(LoginName).count() ;
+
 	    }
 	    
 }
