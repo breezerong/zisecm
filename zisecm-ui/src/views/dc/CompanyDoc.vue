@@ -276,19 +276,20 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 50, 100, 200]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="itemCount"
+          ></el-pagination>
         </el-row>
       </el-main>
     </el-container>
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[10, 20, 50, 100, 200]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="itemCount"
-    ></el-pagination>
+    
   </div>
 </template>
 <script>
