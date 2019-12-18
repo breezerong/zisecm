@@ -10,11 +10,16 @@
     </userTask>
     <userTask id="usertask3" name="文档形成领导审批" default="flow30" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_doc_leader}">
       <extensionElements>
+        <flowable:taskListener event="create" delegateExpression="${startExecutorListener}"></flowable:taskListener>
         <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow2" name="否" sourceRef="exclusivegateway4" targetRef="usertask3"></sequenceFlow>
-    <userTask id="usertask4" name="公司分管领导审批" default="flow31" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_leader_in_charge}"></userTask>
+    <userTask id="usertask4" name="公司分管领导审批" default="flow31" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_leader_in_charge}">
+      <extensionElements>
+        <flowable:taskListener event="create" delegateExpression="${startExecutorListener}"></flowable:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow3" name="纸质借阅" sourceRef="exclusivegateway5" targetRef="usertask4">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${borrowType=='纸质借阅'}]]></conditionExpression>
     </sequenceFlow>
