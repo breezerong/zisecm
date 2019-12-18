@@ -1,10 +1,19 @@
 import Vue from 'vue'
 Vue.prototype.dateFormat = function(val){
     let datetime = val;
-    // console.log(val);
+    //console.log(val);
     if (datetime){
       if(typeof datetime === 'string'){
-        datetime = new Date(datetime.replace(/-/g,'/').replace(/T|Z/g,' ').replace('.000+0000','').trim());
+        //console.log(datetime);
+        datetime = datetime.replace('+0000','').trim();
+        //console.log(datetime);
+        var regexp=new RegExp(/(\.\d{3})/g);
+        datetime = datetime.replace(regexp,"");
+        //console.log(datetime);
+        datetime = datetime.replace(/-/g,'/').replace(/T|Z/g,' ');
+       // console.log(datetime);
+        datetime = new Date(datetime);
+      
       }else if(typeof datetime === 'object'){
         datetime = new Date(datetime);
       }
@@ -20,10 +29,19 @@ Vue.prototype.dateFormat = function(val){
   }
   Vue.prototype.datetimeFormat = function(val){
     let datetime = val;
-    // console.log(val);
+    
     if (datetime){
       if(typeof datetime === 'string'){
-        datetime = new Date(datetime.replace(/-/g,'/').replace(/T|Z/g,' ').replace('.000+0000','').trim());
+        //console.log(datetime);
+        datetime = datetime.replace('+0000','').trim();
+        //console.log(datetime);
+        var regexp=new RegExp(/(\.\d{3})/g);
+        datetime = datetime.replace(regexp,"");
+        //console.log(datetime);
+        datetime = datetime.replace(/-/g,'/').replace(/T|Z/g,' ');
+        //console.log(datetime);
+        datetime = new Date(datetime);
+        
       }else if(typeof datetime === 'object'){
         datetime = new Date(datetime);
       }

@@ -13,6 +13,7 @@ import 'viewerjs/dist/viewer.css'
 import Video from 'video.js'
 import 'video.js/dist/video-js.css'
 import './assets/styles/main.css'
+import "babel-polyfill"
 
 Vue.prototype.$video = Video
 Vue.use(ImgViewer)
