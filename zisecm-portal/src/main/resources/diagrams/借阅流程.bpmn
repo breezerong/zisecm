@@ -95,7 +95,11 @@
     <sequenceFlow id="flow32" name="通过" sourceRef="usertask6" targetRef="usertask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='通过'}]]></conditionExpression>
     </sequenceFlow>
-    <endEvent id="endevent1" name="End"></endEvent>
+    <endEvent id="endevent" name="End">
+      <extensionElements>
+        <flowable:executionListener event="end" delegateExpression="${startExecutorListener}"></flowable:executionListener>
+      </extensionElements>    
+    </endEvent>
     <sequenceFlow id="flow36" name="结束" sourceRef="automaticAuthorization" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow38" name="结束" sourceRef="usertask6" targetRef="endevent1"></sequenceFlow>
     <sequenceFlow id="flow40" name="结束" sourceRef="updateStatus" targetRef="endevent1"></sequenceFlow>
