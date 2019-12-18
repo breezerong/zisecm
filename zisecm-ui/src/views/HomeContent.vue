@@ -58,7 +58,7 @@
               </el-row>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '180px' }">
+          <el-card :body-style="{ height: '395px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">待办任务<el-badge :value="totalCount" class="item"></el-badge>
               </span>
@@ -79,7 +79,7 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '220px' }">
+          <!-- <el-card :body-style="{ height: '220px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">最新文档</span>
             </div>
@@ -100,7 +100,7 @@
                 <template slot-scope="scope">{{dateFormat(scope.row.C_DOC_DATE)}}</template>
               </el-table-column>
             </el-table>
-          </el-card>
+          </el-card> -->
         </el-col>
         <el-col :span="8">
           <el-card :body-style="{ height: '32px' }">
@@ -116,7 +116,7 @@
               <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
             </el-col>
           </el-card>
-          <el-card :body-style="{ height: '580px' }">
+          <el-card :body-style="{ height: '480px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">通知公告</span>
               <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
@@ -236,7 +236,7 @@ export default {
       var m = new Map();
       _self.loadingTodoData = true
       m.set("condition", "");
-      m.set("pageSize", 5);
+      m.set("pageSize", 10);
       m.set("pageIndex", 0);
       m.set("userId", sessionStorage.getItem("access-userName"));
       axios
@@ -258,7 +258,7 @@ export default {
       m.set("gridName", "NewsGrid");
       m.set("folderId", "");
       m.set("condition", " type_name='通知公告' ");
-      m.set("pageSize", 5);
+      m.set("pageSize", 10);
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
