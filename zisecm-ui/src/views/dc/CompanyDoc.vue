@@ -220,12 +220,12 @@
                   :min-width="citem.width"
                   :sortable="citem.allowOrderby"
                 >
-                  <template slot-scope="scope" @click="rowClick(scope.row)">
+                  <template slot-scope="scope">
                     <div v-if="citem.attrName.indexOf('DATE')>0">
                       <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                     </div>
                     <div v-else>
-                      <span >{{scope.row[citem.attrName]}}</span>
+                      <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                     </div>
                   </template>
                 </el-table-column>
@@ -236,12 +236,12 @@
                   :width="citem.width"
                   :sortable="citem.allowOrderby"
                 >
-                  <template slot-scope="scope" @click="rowClick(scope.row)">
+                  <template slot-scope="scope">
                     <div v-if="citem.attrName.indexOf('DATE')>0">
                       <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                     </div>
                     <div v-else>
-                      <span >{{scope.row[citem.attrName]}}</span>
+                      <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                     </div>
                   </template>
                 </el-table-column>

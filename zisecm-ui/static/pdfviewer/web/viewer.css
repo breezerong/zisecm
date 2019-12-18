@@ -1293,6 +1293,38 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
   content: url(images/toolbarButton-pageDown-rtl.png);
 }
 
+html[dir='ltr'] .toolbarButton.rotateCcw::before {
+  content: url(images/secondaryToolbarButton-rotateCcw.png);
+}
+
+html[dir='rtl'] .toolbarButton.rotateCcw::before {
+  content: url(images/secondaryToolbarButton-rotateCcw-rtl.png);
+}
+
+html[dir='ltr'] .toolbarButton.rotateCw::before {
+  content: url(images/secondaryToolbarButton-rotateCw.png);
+}
+
+html[dir='rtl'] .toolbarButton.rotateCw::before {
+  content: url(images/secondaryToolbarButton-rotateCw-rtl.png);
+}
+
+html[dir='ltr'] .toolbarButton.selectTool::before {
+  content: url(images/secondaryToolbarButton-selectTool.png);
+}
+
+html[dir='rtl'] .toolbarButton.selectTool::before {
+  content: url(images/secondaryToolbarButton-selectTool-rtl.png);
+}
+
+html[dir='ltr'] .toolbarButton.handTool::before {
+  content: url(images/secondaryToolbarButton-handTool.png);
+}
+
+html[dir='rtl'] .toolbarButton.handTool::before {
+  content: url(images/secondaryToolbarButton-handTool-rtl.png);
+}
+
 .toolbarButton.zoomOut::before {
   content: url(images/toolbarButton-zoomOut.png);
 }
@@ -2149,8 +2181,24 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
   }
 
   .toolbarButton.bookmark::before,
-  .secondaryToolbarButton.bookmark::before {
+  .toolbarButton.bookmark::before {
     content: url(images/toolbarButton-bookmark@2x.png);
+  }
+
+  .toolbarButton.rotateCcw::before {
+    content: url(images/secondaryToolbarButton-rotateCcw.png);
+  }
+  
+  .toolbarButton.rotateCw::before {
+    content: url(images/secondaryToolbarButton-rotateCw.png);
+  }
+  
+  .toolbarButton.selectTool::before {
+    content: url(images/secondaryToolbarButton-selectTool.png);
+  }
+  
+  .toolbarButton.handTool::before {
+    content: url(images/secondaryToolbarButton-handTool.png);
   }
 
   #viewThumbnail.toolbarButton::before {
