@@ -70,9 +70,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 		}
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+		String workflowSpecialUserName = env.getProperty("spring.ecm.admin");
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.ecm.password"));
 			extracted(ecmSession, arg0);
 //			System.out.println("========name======="+arg0.getEventName()+"===isEnded==="+arg0.isEnded());
 			//流程结束发送邮件
@@ -193,9 +193,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 		
 		
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+		String workflowSpecialUserName = env.getProperty("spring.ecm.admin");
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.ecm.password"));
 			Map<String, Object> varMap = extracted(ecmSession, arg0);
 			String processName = varMap.get("processName").toString();
 			if ("process_borrow".equals(processName)) {
@@ -269,10 +269,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			///////////////////////任务到达发送邮件//////////////
 			String assignee=arg0.getAssignee();//ecm_user.Name
 			IEcmSession ecmSession = null;
-			String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+			String workflowSpecialUserName = env.getProperty("spring.ecm.admin");
 			
 			try {
-				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.ecm.password"));
 				EcmUser user= userService.getObjectByName(ecmSession.getToken(), assignee);
 				String email= user.getEmail();
 				if(email!=null&&!"".equals(email)) {
@@ -297,9 +297,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 			}
 			IEcmSession ecmSession = null;
-			String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+			String workflowSpecialUserName = env.getProperty("spring.ecm.admin");
 			try {
-				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.ecm.password"));
 				extracted(ecmSession, arg0);
 			} catch (Exception e) {
 				// TODO: handle exception

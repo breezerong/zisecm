@@ -473,7 +473,7 @@ export default {
               if(_self.borrowForm.C_CREATION_UNIT!=_self.borrowForm.C_DESC1){
                   if(_self.borrowForm.C_REVIEWER2=="")alertStr=alertStr +"'形成部门领导' ";
               }
-              if(beyondLeaderPermision||_self.borrowForm.SUB_TYPE=="纸质借阅"){
+              if(beyondLeaderPermision||_self.borrowForm.SUB_TYPE=="纸质借阅"||_self.borrowForm.SUB_TYPE=="下载"){
                   if(_self.borrowForm.C_REVIEWER3=="")alertStr=alertStr +"'分管领导' ";
               }
 
