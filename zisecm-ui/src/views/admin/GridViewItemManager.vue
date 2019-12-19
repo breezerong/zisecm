@@ -12,7 +12,7 @@
         <el-button @click="checkVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="添加" :visible.sync="dialogVisible">
+    <el-dialog title="添加" :visible.sync="dialogVisible" width="80%">
           <el-form :model="form">
             <el-form-item label="父Id" :label-width="formLabelWidth">
               <el-input v-model="form.parentId" auto-complete="off"></el-input>
@@ -86,14 +86,10 @@
                     <el-input  v-model="inputkey" placeholder="请输入属性名关键字" @change="search" prefix-icon="el-icon-search"></el-input>
                   </td>
                   <td width="40px">
-                    <el-tooltip class="item" effect="dark" content="新增" placement="top">
-                      <el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible =true"></el-button>
-                    </el-tooltip> 
+                      <el-button type="primary" icon="el-icon-edit" @click="dialogVisible =true">新建</el-button>
                   </td>
                   <td>
-                    <el-tooltip  class="item" effect="dark" content="表单验证" placement="top">
-                     <el-button type="primary" icon="el-icon-check" circle @click="startcheck()"></el-button>
-                    </el-tooltip>
+                     <el-button type="primary" icon="el-icon-check" @click="startcheck()">表单校验</el-button>
                   </td>
                 </tr>
               </table>
@@ -112,12 +108,12 @@
                 type="index"
                 width="60">
               </el-table-column>
-                <el-table-column label="属性名" width="180">
+                <el-table-column label="属性名" width="180" sortable>
                   <template slot-scope="scope">
                     <el-input  v-model="scope.row.attrName"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="标签" width="200">
+                <el-table-column label="标签" width="200" sortable>
                   <template slot-scope="scope">
                     <el-input  v-model="scope.row.label"></el-input>
                   </template>

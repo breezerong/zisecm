@@ -54,7 +54,7 @@
                     <el-input v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
                   </td>
                   <td>
-                    <el-button type="primary" icon="el-icon-edit" circle @click="newitem()"></el-button>
+                    <el-button type="primary" icon="el-icon-edit"  @click="newitem()">新建</el-button>
                   </td>
                 </tr>
               </table>

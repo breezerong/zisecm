@@ -316,7 +316,11 @@ export default {
     refreshData() {
       let _self = this;
       var m = new Map();
-      m.set("condition", _self.inputkey);
+      var cond = "";
+      if(_self.inputkey && _self.inputkey.length>0){
+        cond = "NAME like '%"+_self.inputkey+"%' or LOGIN_NAME like '%"+_self.inputkey+"%'";
+      }
+      m.set("condition", cond);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       // console.log('pagesize:', _self.pageSize);
@@ -478,24 +482,7 @@ export default {
           });
     },
     search() {
-      let _self = this;
-      let tab = _self.dataListFull;
-      _self.dataList = [];
-      var i;
-      if (_self.inputkey != "") {
-        for (i in tab) {
-          if (_self.inputkey != "") {
-            if (
-              tab[i].name.indexOf(_self.inputkey) >= 0 ||
-              tab[i].loginName.indexOf(_self.inputkey) >= 0
-            ) {
-              _self.dataList.push(tab[i]);
-            }
-          }
-        }
-      } else {
-        _self.dataList = _self.dataListFull;
-      }
+      this.refreshData();
     }
   }
 };

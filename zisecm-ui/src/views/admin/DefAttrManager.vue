@@ -181,12 +181,12 @@
             border
             :height="tableHeight"
             style="width: 100%">
-              <el-table-column label="属性名" width="150">
+              <el-table-column label="属性名" width="150" sortable>
                 <template slot-scope="scope">
                   <el-input  v-model="scope.row.attrName"></el-input>
                 </template>
               </el-table-column>
-              <el-table-column label="标签" width="120">
+              <el-table-column label="标签" width="120" sortable>
                 <template slot-scope="scope">
                   <el-input  v-model="scope.row.label"></el-input>
                 </template>

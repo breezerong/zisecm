@@ -91,7 +91,7 @@
                         <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column label="名称" min-width="30%">
+                    <el-table-column label="名称" min-width="30%" sortable>
                       <template slot-scope="scope">
                         <span>{{scope.row.name}}</span>
                       </template>
@@ -131,12 +131,12 @@
                           <span>{{ scope.$index+1}}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column label="用户名" width="150">
+                      <el-table-column label="用户名" width="150" sortable>
                         <template slot-scope="scope">
                           <span>{{scope.row.name}}</span>
                         </template>
                       </el-table-column>
-                      <el-table-column label="登录名" min-width="20%">
+                      <el-table-column label="登录名" min-width="20%" sortable>
                         <template slot-scope="scope">
                           <span>{{scope.row.loginName}}</span>
                         </template>
@@ -185,7 +185,7 @@ export default {
       dataListFull: [],
       userList:[],
       userListFull:[],
-      tableHeight: window.innerHeight - 180,
+      tableHeight: window.innerHeight - 200,
       inputkey: "",
       userInputkey:"",
       loading: false,
@@ -348,29 +348,6 @@ export default {
     loadUserPageInfo(pager) {
       let _self = this;
       _self.userCount = pager.total;
-      /*
-      
-      var m = new Map();
-      m.set("groupId", _self.selectedItemId);
-      m.set("condition", _self.userInputkey);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/admin/getRoleUserCount"
-        })
-        .then(function(response) {
-          _self.userCount = response.data.itemCount;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-        */
     },
     
     saveitem(indata) {
@@ -447,7 +424,7 @@ export default {
     searchUser() {
       let _self = this;
       _self.userList = _self.userListFull.filter(function(item){
-          return item.name.match(_self.inputkey) || item.loginName.match(_self.inputkey);
+          return item.name.match(_self.userInputkey) || item.loginName.match(_self.userInputkey);
         }
       );
     }

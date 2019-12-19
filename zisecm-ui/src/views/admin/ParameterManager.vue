@@ -8,7 +8,7 @@
     </el-dialog>
     <el-dialog title="添加" :visible.sync="dialogVisible">
           <el-form :model="form">
-            <el-form-item label="名称" :label-width="formLabelWidth">
+            <el-form-item label="名称" :label-width="formLabelWidth" sortable>
               <el-input v-model="form.name" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="说明" :label-width="formLabelWidth">
@@ -27,38 +27,28 @@
             <el-button type="primary" @click="additem(form)">确 定</el-button>
           </div>
         </el-dialog>
-        <table border="0" width="100%" >
-          <tr>
-            <td class="navbar">
-             <el-breadcrumb separator="/">
-               <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-               <el-breadcrumb-item>后台管理</el-breadcrumb-item>
+        <el-container>
+          <el-header>
+             <el-breadcrumb separator="/" class="navbar">
+               <el-breadcrumb-item>系统管理</el-breadcrumb-item>
                <el-breadcrumb-item>参数设置</el-breadcrumb-item>
              </el-breadcrumb>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="160px">
-                    <el-input  v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td>
-                    <el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible = true"></el-button>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
+            <el-row class="topbar">
+              <el-col :span="4">
+                <el-input  v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
+              </el-col>
+              <el-col :span="20" style="text-align:left;">
+                <el-button type="primary" icon="el-icon-edit" size="medium"  @click="dialogVisible = true">新建</el-button>
+              </el-col>
+            </el-row>
+          </el-header>
+          <el-main>
             <el-table
                         :data="dataList"
                         border
                         :height="tableHeight"
                         v-loading="loading"
-                        style="width: 100%">
+                        width="98%">
               <el-table-column
                 label="行号"
                 type="index"
@@ -81,20 +71,18 @@
                     <el-input  v-model="scope.row.itemType"></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="操作" width="240">
+                <el-table-column label="操作" width="170">
                   <template slot-scope="scope">
-                    <el-button :plain="true" type="primary" size="small" icon="edit" @click="showcategory(scope.row)">选择</el-button>
+                    
                     <el-button :plain="true" type="primary" size="small" icon="edit" @click="save(scope.row)">保存</el-button>
                     <el-button :plain="true" type="danger" size="small" icon="delete" @click="del(scope.row)">删除</el-button>
                   </template>
                 </el-table-column>
             </el-table>
-          </td>
-        </tr>
-    </table>
+          </el-main>
+        </el-container>
   </div>
 </template>
-
 <script type="text/javascript">
 export default {
   name: "ParameterManager",
@@ -109,7 +97,7 @@ export default {
       categoryVisible: false,
       currentIndex: -1,
       currentItem: "",
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 130,
       form: {
         name: "",
         description: "",
@@ -222,5 +210,11 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header, .el-footer {
+    background-color: #e8eaeb;
+}
+.el-row{
+  padding-bottom:10px;
 }
 </style>

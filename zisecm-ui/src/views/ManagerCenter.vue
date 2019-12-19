@@ -160,7 +160,7 @@ export default {
        username:'',
        clientPermission: 0,
        systemPermission: 0,
-       menuHeight: window.innerHeight -64
+       menuHeight: window.innerHeight -80
     };
   },
   created()
@@ -188,15 +188,15 @@ export default {
 }
 </script scoped>
 
-<style>
+<style scoped>
   body > .el-container {
     padding: 0px;
     margin-top: 0px;
     margin-left: 0px;
     margin-right: 0px;
     margin-bottom: 0px;
+    height: 100%;
   }
-
   
 element.style {
     padding-left: 60px;
@@ -207,4 +207,5 @@ element.style {
     padding: 0 36px;
     min-width: 200px;
 }
+
 </style>

@@ -118,4 +118,14 @@ body > .el-container {
   margin-right: 0px;
   margin-bottom: 0px;
 }
+.el-header, .el-footer {
+    background-color: #36a9e1;
+    color: #333;
+    text-align: center;
+    padding: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+  }
 </style>

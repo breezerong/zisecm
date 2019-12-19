@@ -66,12 +66,8 @@
         ></el-input>
       </el-col>
       <el-col :span="4">
-        <el-tooltip class="item" effect="dark" content="新增" placement="top">
-          <el-button type="primary" icon="el-icon-edit" circle @click="newItem()"></el-button>
-        </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="表单验证" placement="top">
-          <el-button type="primary" icon="el-icon-check" circle @click="startCheck()"></el-button>
-        </el-tooltip>
+          <el-button type="primary" icon="el-icon-edit" @click="newItem()">新建</el-button>
+          <el-button type="primary" icon="el-icon-check" @click="startCheck()">表单验证</el-button>
       </el-col>
     </div>
     <el-table

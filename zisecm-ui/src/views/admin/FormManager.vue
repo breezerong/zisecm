@@ -45,7 +45,7 @@
                     <el-input  v-model="inputkey" placeholder="请输入关键字" @change="searchform" prefix-icon="el-icon-search"></el-input>
                   </td>
                   <td>
-                    <el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible = true"></el-button>
+                    <el-button type="primary" icon="el-icon-edit"  @click="dialogVisible = true">新建</el-button>
                   </td>
                 </tr>
               </table>
@@ -66,7 +66,7 @@
                 type="index"
                 width="60">
               </el-table-column>
-        <el-table-column label="类型名"  min-width="20%" >
+        <el-table-column label="类型名"  min-width="20%" sortable>
            <template slot-scope="scope">
             <el-input  v-model="scope.row.typeName"></el-input>
           </template>
