@@ -71,7 +71,29 @@
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
-                  <template  v-for="item in gridList">
+                <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+              </template>
+            </el-table-column>>
+                             <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='C_ARCHIVE_DATE'">
@@ -164,7 +186,29 @@
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
-                  <template  v-for="item in gridList">
+               <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+              </template>
+            </el-table-column>>
+                              <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='C_ARCHIVE_DATE'">

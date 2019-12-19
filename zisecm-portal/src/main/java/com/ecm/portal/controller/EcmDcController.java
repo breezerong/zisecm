@@ -1117,7 +1117,7 @@ public class EcmDcController extends ControllerAbstract{
 		  if(!"".equals(sb.toString())) {
 	 			String gridName="shopingCartGrid";
 	 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-	 			String sql = "select a.ID as ID" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"' order by b.ADD_DATE desc";
+	 			String sql = "select a.ID as ID ,a.FORMAT_NAME as FORMAT_NAME" + getGridColumn(gv, gridName) + "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("+sb.toString()+") and user_name='"+getSession().getCurrentUser().getUserName()+"' order by b.ADD_DATE desc";
 	 			shopingCartList2 = documentService.getMapList(getToken(), sql);
 		  }
 		} catch (Exception e) {
@@ -1426,7 +1426,7 @@ public class EcmDcController extends ControllerAbstract{
 			Map<String, Object> mp = new HashMap<String, Object>();
 			List<Map<String, Object>>  childList=null;
 			try {
-				  String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT,b.C_STORE_STATUS "
+				  String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT,b.C_STORE_STATUS ,b.FORMAT_NAME as FORMAT_NAME "
 						     + " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
 						     + " and a.PARENT_ID='"+id+"' order by a.ORDER_INDEX,b.CREATION_DATE";
 				  childList = documentService.getMapList(getToken(), sql);
