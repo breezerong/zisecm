@@ -112,6 +112,35 @@ export const recordRouter =  [
                 component: () => import('@/views/record/ArchiveBorrowcompleted.vue')
             }
         ]
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1
+        },
+        path: '/record/showdrawing',
+        name: '出入库管理',
+        component: () => import('@/views/record/ShowDrawing.vue'),
+        children:[
+            {
+                meta: {
+                    requireAuth: true,
+                    permit: 1
+                },
+                path: '/record/showdrawing/showdrawingpendingout',
+                name: '待晒图',
+                component: () => import('@/views/record/ShowDrawingPendingOut.vue')
+            },
+            {
+                meta: {
+                    requireAuth: true,
+                    permit: 1
+                },
+                path: '/record/showdrawing/showdrawingfinish',
+                name: '已完成',
+                component: () => import('@/views/record/ShowDrawingFinish.vue')
+            }
+        ]
     }
     
 ]

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,7 @@ import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
+import com.ecm.core.PermissionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmShopingCartMapper;
 import com.ecm.core.entity.ChartBean;
@@ -49,6 +51,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
+import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderPathService;
@@ -56,6 +59,8 @@ import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
 import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
+import com.ecm.icore.service.IEcmSession;
+import com.ecm.portal.service.ServiceDocMail;
 import com.ecm.portal.util.ExcelUtil;
 
 /**
@@ -94,6 +99,11 @@ public class EcmDcController extends ControllerAbstract{
 	@Autowired
 	private NumberService numberService;
 
+	@Autowired
+	private AuthService authService;
+
+ 	@Autowired
+	private Environment env;
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
 
 	@RequestMapping(value = "/dc/getDocumentCount", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
@@ -1133,7 +1143,99 @@ public class EcmDcController extends ControllerAbstract{
 			}
 			return col;
 		}
+		
+		 //添加到购物车
+		 @RequestMapping(value = "/dc/SaveShowDrawing", method = RequestMethod.POST)
+		 @ResponseBody
+		 public Map<String,Object> SaveShowDrawing(@RequestBody String argStr) {
+			 List<String> argMap= JSONUtils.stringToArray(argStr);
+			 String argName=null;
+			 Map<String,Object> formDataMap=null;
+			 List<String> documentIdArray=null;
+		    Map<String, Object> mp = new HashMap<String, Object>();
+			 String formId="";
+			    for (int i = 0; i < argMap.size(); i++) {
+					 List<String> argMap2= JSONUtils.stringToArray(argMap.get(i).toString());
+					 for (int j = 0; j < argMap2.size(); j++) {
+						 argName= argMap2.get(0);
+						 if("formData".equals(argName)&&argMap2.get(1)!=null) {
+							 formDataMap=JSONUtils.stringToMap(argMap2.get(1));
+						 }else  if("documentIds".equals(argName)&&argMap2.get(1)!=null) {
+							 documentIdArray= JSONUtils.stringToArray(argMap2.get(1));
+						 }else if("formId".equals(argName)&&argMap2.get(1)!=null) {
+							 formId=argMap2.get(1);
+						 }
+					}
+				}
+	  
+				try {
+					if("".equals(formId)) {
+						formDataMap.put("TYPE_NAME", "晒图单");
+						formDataMap.put("FOLDER_ID", folderService.getObjectByPath(getToken(), "/表单/晒图单").getId());
+						formDataMap.put("CODING", numberService.getNumber(getToken(), formDataMap));
+						formId=documentService.newObject(getToken(), formDataMap);
+						for(int i=0;i<documentIdArray.size();i++) {
+							EcmRelation en=new EcmRelation();
+							en.setParentId(formId);
+							en.setChildId(documentIdArray.get(i));
+							en.setName("irel_showdrawing");
+							en.setCreationDate(new Date());
+							en.setCreator(this.getSession().getCurrentUser().getUserName());
+							relationService.newObject(getToken(), en);
+							IEcmSession ecmSession = null;
+							String workflowSpecialUserName = env.getProperty("ecm.username");
+							ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+							EcmDocument docObjSub = documentService.getObjectById(getToken(),documentIdArray.get(i));
+							documentService.grantGroup(ecmSession.getToken(), docObjSub, "showDrawing",PermissionContext.ObjectPermission.DOWNLOAD,null,true);
 
+						}
+					}else {
+						Map<String,Object> goodFormDataMap=new HashMap<String, Object>();
+						if(formDataMap.containsKey("ID"))					
+							goodFormDataMap.put("ID",formDataMap.get("ID"));
+						if(formDataMap.containsKey("CODING"))					
+							goodFormDataMap.put("CODING",formDataMap.get("CODING"));
+						if(formDataMap.containsKey("C_DRAFTER"))					
+							goodFormDataMap.put("C_DRAFTER",formDataMap.get("C_DRAFTER"));
+//						if(formDataMap.containsKey("C_DESC1"))					
+//							goodFormDataMap.put("C_DESC1",formDataMap.get("C_DESC1"));
+//						if(formDataMap.containsKey("TITLE"))					
+//							goodFormDataMap.put("TITLE",formDataMap.get("TITLE"));
+//						if(formDataMap.containsKey("C_CREATION_UNIT"))					
+//							goodFormDataMap.put("C_CREATION_UNIT",formDataMap.get("C_CREATION_UNIT"));
+//						if(formDataMap.containsKey("SUB_TYPE"))					
+//							goodFormDataMap.put("SUB_TYPE",formDataMap.get("SUB_TYPE"));
+//						if(formDataMap.containsKey("C_START_DATE"))					
+//							goodFormDataMap.put("C_START_DATE",formDataMap.get("C_START_DATE"));
+//						if(formDataMap.containsKey("C_END_DATE"))					
+//							goodFormDataMap.put("C_END_DATE",formDataMap.get("C_END_DATE"));
+//						if(formDataMap.containsKey("C_COMMENT"))					
+//							goodFormDataMap.put("C_COMMENT",formDataMap.get("C_COMMENT"));
+//						if(formDataMap.containsKey("C_REVIEWER1"))					
+//							goodFormDataMap.put("C_REVIEWER1",formDataMap.get("C_REVIEWER1"));
+//						if(formDataMap.containsKey("C_REVIEWER2"))					
+//							goodFormDataMap.put("C_REVIEWER2",formDataMap.get("C_REVIEWER2"));
+//						if(formDataMap.containsKey("C_REVIEWER3"))					
+//							goodFormDataMap.put("C_REVIEWER3",formDataMap.get("C_REVIEWER3"));
+//						if(formDataMap.containsKey("C_SECURITY_LEVEL"))					
+//							goodFormDataMap.put("C_SECURITY_LEVEL",formDataMap.get("C_SECURITY_LEVEL"));
+						if(formDataMap.containsKey("STATUS"))					
+							goodFormDataMap.put("STATUS",formDataMap.get("STATUS"));
+	 
+						EcmDocument doc=new EcmDocument();
+						doc.setAttributes(goodFormDataMap);
+						documentService.updateObject(getToken(), doc, null);
+					}
+				} catch  (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+
+			  mp.put("data", formId);
+			  mp.put("code", ActionContext.SUCESS);
+			  return mp;
+			 }
 		 //添加到购物车
 		 @RequestMapping(value = "/dc/saveBorrowForm", method = RequestMethod.POST)
 		 @ResponseBody
@@ -1214,6 +1316,7 @@ public class EcmDcController extends ControllerAbstract{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 //				Map<String,String> relIDMap=new HashMap<String,String>();
 //				try {
 //					List<Map<String, Object>> existRelList= relationService.getMapList(getToken(), "select ID,PARENT_ID,CHILD_ID from ecm_relation where NAME='irel_borrow' and PARENT_ID=''");

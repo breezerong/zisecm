@@ -65,7 +65,8 @@
             <el-button type="primary" @click="cancel(false)">取 消</el-button>
             <el-button @click="cleanShopingCart()">清空借阅单</el-button>
             <el-button @click="removeShopingCart()">移除所选</el-button>
-            <el-button @click="borrowItem()">借 阅</el-button>
+             <el-button @click="showDrawingItem()">调晒</el-button>
+           <el-button @click="borrowItem()">借阅</el-button>
            </div>
           </div>
              <router-view></router-view>
@@ -176,6 +177,64 @@ export default {
             }
           }
        },
+       showDrawingItem(){
+       let _self = this;
+       let m= new Map();
+       let C_ARCHIVE_UNIT=sessionStorage.getItem("access-department");
+                var addItemId = [];
+        if (_self.selectedItemList.length > 0) {
+          for (var i = 0; i < _self.selectedItemList.length; i++) {
+                addItemId.push(_self.selectedItemList[i].ID);
+                if(typeof(_self.selectedItemList[i].C_ARCHIVE_UNIT)=="undefined"||C_ARCHIVE_UNIT!=_self.selectedItemList[i].C_ARCHIVE_UNIT){
+                _self.$message({
+                  showClose: true,
+                  message: "只能晒本人所在部门的图纸!",
+                  duration: 5000,
+                  type: "warning"
+                });
+                return;
+                }
+          }
+          let showDrawingMap=new Map();
+          showDrawingMap.set("C_DRAFTER",sessionStorage.getItem("access-userName"));
+          showDrawingMap.set("STATUS","待晒图");
+          // showDrawingMap.set(C_DRAFTER,sessionStorage.getItem("access-userName"));
+          m.set("formData",showDrawingMap);
+          m.set("documentIds",addItemId);
+          m.set("formId","");
+            axios.post("/dc/SaveShowDrawing", JSON.stringify(m))
+          .then(function(response) {
+                _self.$message({
+                showClose: true,
+                message: "调晒成功",
+                duration: 5000,
+                type: "warning"
+              });
+
+          })
+          .catch(function(error) {
+              _self.$message({
+                showClose: true,
+                message: "晒图失败",
+                duration: 5000,
+                type: "warning"
+              });
+
+
+            console.log(error);
+          });
+
+        }else{
+               _self.$message({
+                showClose: true,
+                message: "请选择需要晒图的档案",
+                duration: 5000,
+                type: "warning"
+              });
+              return;
+
+      }
+    },
     //借阅
     borrowItem() {
       let _self = this;
