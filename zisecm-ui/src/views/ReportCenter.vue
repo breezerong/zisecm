@@ -16,6 +16,10 @@
                     <i class="el-icon-s-marketing"></i>
                     <span slot="title"><router-link to="/report/systemreport">系统报表</router-link></span>
                   </el-menu-item>
+                  <el-menu-item index="12">
+                    <i class="el-icon-data-analysis"></i>
+                    <span slot="title"><router-link to="/report/archivesreport">档案报表</router-link></span>
+                  </el-menu-item>
                 </el-submenu>
               </el-menu>
               </div>
