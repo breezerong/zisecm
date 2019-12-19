@@ -388,7 +388,7 @@ export default {
           let _self = this;
           _self.orderLoading = true;
           var m = new Map();
-          m.set("gridName", "ShowDrawingFormGrid");
+          m.set("gridName", "ShowDrawingGrid");
           m.set("lang", _self.getLang());
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {

@@ -197,6 +197,7 @@ export default {
           }
           let showDrawingMap=new Map();
           showDrawingMap.set("C_DRAFTER",sessionStorage.getItem("access-userName"));
+          showDrawingMap.set("C_DESC1",sessionStorage.getItem("access-department"));
           showDrawingMap.set("STATUS","待晒图");
           // showDrawingMap.set(C_DRAFTER,sessionStorage.getItem("access-userName"));
           m.set("formData",showDrawingMap);
