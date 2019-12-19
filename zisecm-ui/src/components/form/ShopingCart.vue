@@ -185,10 +185,10 @@ export default {
         if (_self.selectedItemList.length > 0) {
           for (var i = 0; i < _self.selectedItemList.length; i++) {
                 addItemId.push(_self.selectedItemList[i].ID);
-                if(typeof(_self.selectedItemList[i].C_ARCHIVE_UNIT)=="undefined"||C_ARCHIVE_UNIT!=_self.selectedItemList[i].C_ARCHIVE_UNIT){
+                if(typeof(_self.selectedItemList[i].C_ARCHIVE_UNIT)=="undefined"||C_ARCHIVE_UNIT!=_self.selectedItemList[i].C_ARCHIVE_UNIT||_self.selectedItemList[i].C_SECURITY_LEVEL!='内部公开'){
                 _self.$message({
                   showClose: true,
-                  message: "只能晒本人所在部门的图纸!",
+                  message: "只能晒本人所在部门且内部公开的图纸!",
                   duration: 5000,
                   type: "warning"
                 });
@@ -202,32 +202,33 @@ export default {
           m.set("formData",showDrawingMap);
           m.set("documentIds",addItemId);
           m.set("formId","");
+          _self.loading = true;
             axios.post("/dc/SaveShowDrawing", JSON.stringify(m))
           .then(function(response) {
                 _self.$message({
                 showClose: true,
                 message: "调晒成功",
-                duration: 5000,
+                duration: 2000,
                 type: "warning"
               });
-
+          _self.loading = false;
           })
           .catch(function(error) {
               _self.$message({
                 showClose: true,
                 message: "晒图失败",
-                duration: 5000,
+                duration: 2000,
                 type: "warning"
               });
 
-
+          _self.loading = false;
             console.log(error);
           });
 
         }else{
                _self.$message({
                 showClose: true,
-                message: "请选择需要晒图的档案",
+                message: "请选择需要调图的图纸",
                 duration: 5000,
                 type: "warning"
               });

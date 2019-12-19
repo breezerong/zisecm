@@ -1168,6 +1168,8 @@ public class EcmDcController extends ControllerAbstract{
 					}
 				}
 	  
+				IEcmSession ecmSession = null;
+				String specialUserName = env.getProperty("ecm.username");
 				try {
 					if("".equals(formId)) {
 						formDataMap.put("TYPE_NAME", "晒图单");
@@ -1182,11 +1184,9 @@ public class EcmDcController extends ControllerAbstract{
 							en.setCreationDate(new Date());
 							en.setCreator(this.getSession().getCurrentUser().getUserName());
 							relationService.newObject(getToken(), en);
-							IEcmSession ecmSession = null;
-							String workflowSpecialUserName = env.getProperty("ecm.username");
-							ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+							ecmSession = authService.login("workflow", specialUserName, env.getProperty("ecm.password"));
 							EcmDocument docObjSub = documentService.getObjectById(getToken(),documentIdArray.get(i));
-							documentService.grantGroup(ecmSession.getToken(), docObjSub, "showDrawing",PermissionContext.ObjectPermission.DOWNLOAD,null,true);
+							documentService.grantGroup(ecmSession.getToken(), docObjSub, "ST_文印中心",PermissionContext.ObjectPermission.DOWNLOAD,null,true);
 
 						}
 					}else {
@@ -1229,6 +1229,10 @@ public class EcmDcController extends ControllerAbstract{
 				} catch  (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}finally {
+					if (ecmSession != null) {
+						authService.logout(specialUserName);
+					}
 				}
 				
 
