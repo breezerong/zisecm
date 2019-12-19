@@ -482,7 +482,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		}
 				
 		EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
-		String groupId=groupObj==null?null:groupObj.getId();
+		String groupId=groupObj==null?"000000000000000000":groupObj.getId();
 		return getRoleUsers( token, pager,  noGroup, groupId,  condition);
 	}
 	

@@ -14,7 +14,7 @@
             <el-col :span="3">创建日期(开始)</el-col>
             <el-col :span="3">
                 <el-date-picker v-model="startDate" 
-                type="date" placeholder="选择日期" style="display:block;">
+                type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss">
                 </el-date-picker></el-col>
             <el-col :span="3">创建日期(结束)</el-col>
             <el-col :span="3">

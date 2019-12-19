@@ -54,10 +54,10 @@
               </el-col>
              <el-col>
             <el-form-item prop="C_START_DATE" label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_START_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_START_DATE" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                  <el-form-item prop="C_END_DATE" label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_END_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_END_DATE" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                </el-col>
              <el-col>
@@ -473,7 +473,7 @@ export default {
               if(_self.borrowForm.C_CREATION_UNIT!=_self.borrowForm.C_DESC1){
                   if(_self.borrowForm.C_REVIEWER2=="")alertStr=alertStr +"'形成部门领导' ";
               }
-              if(beyondLeaderPermision||_self.borrowForm.SUB_TYPE=="纸质借阅"){
+              if(beyondLeaderPermision||_self.borrowForm.SUB_TYPE=="纸质借阅"||_self.borrowForm.SUB_TYPE=="下载"){
                   if(_self.borrowForm.C_REVIEWER3=="")alertStr=alertStr +"'分管领导' ";
               }
 

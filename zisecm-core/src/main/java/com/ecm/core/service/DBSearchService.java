@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -110,6 +111,14 @@ public class DBSearchService  extends EcmService  implements ISearchService {
 	public Object findByCard(String token, String gridName,Pager pager, String typeName, List<EcmFormItem> conditions) {
 		// TODO Auto-generated method stub
 		String cond = " STATUS='"+SearchClient.getInstance().getReleaseStatus()+"' ";
+		if(!StringUtils.isEmpty(SearchClient.getInstance().getNotInTypeName()))
+		{
+			if(SearchClient.getInstance().getNotInTypeName().indexOf("'")>=0) {
+				cond += " and TYPE_NAME not in("+SearchClient.getInstance().getNotInTypeName()+")";
+			}else {
+				cond += " and TYPE_NAME not in('"+SearchClient.getInstance().getNotInTypeName().replace(",", "','")+"')";
+			}
+		}
 		if(!typeName.equalsIgnoreCase("all")&&!typeName.equals("所有")) {
 			cond += " and TYPE_NAME='"+typeName+"'";
 		}

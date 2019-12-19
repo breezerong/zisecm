@@ -3,15 +3,17 @@
     <div>
       <el-dialog
         :append-to-body="true"
-        :title="$t('application.property')"
+        :title="typeName+$t('application.property')"
         :visible.sync="propertyVisible"
         @close="propertyVisible = false"
         width="90%"
+        style="text-align:center"
       >
         <ShowProperty
           ref="ShowProperty"
           @onSaved="onSaved"
           width="100%"
+          :typeName="typeName"
           v-bind:itemId="selectedItemId"
         ></ShowProperty>
         <div slot="footer" class="dialog-footer">
@@ -174,7 +176,8 @@ export default {
       pageSize: 20,
       showFields: [],
       selectedItemId: "",
-      selectedRow:""
+      selectedRow:"",
+      typeName:""
     };
   },
   props: {
@@ -234,6 +237,7 @@ export default {
       setTimeout(() => {
         if (_self.$refs.ShowProperty) {
           _self.$refs.ShowProperty.myItemId = indata.ID;
+          _self.typeName=indata.TYPE_NAME;
           _self.$refs.ShowProperty.loadFormInfo();
         }
       }, 10);

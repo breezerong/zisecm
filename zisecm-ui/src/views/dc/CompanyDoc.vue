@@ -220,12 +220,12 @@
                   :min-width="citem.width"
                   :sortable="citem.allowOrderby"
                 >
-                  <template slot-scope="scope" @click="rowClick(scope.row)">
+                  <template slot-scope="scope">
                     <div v-if="citem.attrName.indexOf('DATE')>0">
                       <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                     </div>
                     <div v-else>
-                      <span >{{scope.row[citem.attrName]}}</span>
+                      <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                     </div>
                   </template>
                 </el-table-column>
@@ -236,12 +236,12 @@
                   :width="citem.width"
                   :sortable="citem.allowOrderby"
                 >
-                  <template slot-scope="scope" @click="rowClick(scope.row)">
+                  <template slot-scope="scope">
                     <div v-if="citem.attrName.indexOf('DATE')>0">
                       <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                     </div>
                     <div v-else>
-                      <span >{{scope.row[citem.attrName]}}</span>
+                      <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                     </div>
                   </template>
                 </el-table-column>
@@ -276,19 +276,20 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 50, 100, 200]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="itemCount"
+          ></el-pagination>
         </el-row>
       </el-main>
     </el-container>
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[10, 20, 50, 100, 200]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="itemCount"
-    ></el-pagination>
+    
   </div>
 </template>
 <script>
