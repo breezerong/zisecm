@@ -70,6 +70,10 @@ export default {
         "access-clientPermission"
       );
     }
+    var externalUser = sessionStorage.getItem('access-externalUser');
+    if(externalUser && externalUser=='true'){
+      _self.$router.push({path: '/record/showdrawing'});
+    }
     _self.refreshCount();
     //定时刷新数量
     // _self.$nextTick(function() {

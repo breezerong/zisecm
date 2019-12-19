@@ -71,7 +71,7 @@ export default {
       }
       _self.account.username = loginName;
          
-          axios.post('/ssoLogin',loginName)
+          axios.post('/userLoginEx',loginName)
           .then(function(response) {
             console.log(response.data);
             if(response.data.code==1)
@@ -84,7 +84,12 @@ export default {
               sessionStorage.setItem('access-systemPermission',response.data.systemPermission);
               localStorage.setItem("ziecm-rememberInfo","1");
               localStorage.setItem("ziecm-ass12bn",loginName);
-              _self.$router.push({path: tocomp});
+              sessionStorage.setItem('access-externalUser',response.data.externalUser);
+              if(response.data.externalUser && response.data.externalUser==true){
+                _self.$router.push({path: '/record/showdrawing'});
+              }else{
+                _self.$router.push({path: tocomp});
+              }
             }
             _self.loading = false;
           })
@@ -103,7 +108,7 @@ export default {
       _self.$refs.AccountFrom.validate((valid) => {
         if (valid) {
           _self.loading = true;
-          axios.post('/userLogin',JSON.stringify(_self.account))
+          axios.post('/userLoginEx',JSON.stringify(_self.account))
           .then(function(response) {
             //console.log(response.data);
             if(response.data.code==1)
@@ -123,7 +128,12 @@ export default {
                 localStorage.removeItem("ziecm-ass12bn");
                 localStorage.removeItem("ziecm-ass12bp");
               }
-              _self.$router.push({path: tocomp});
+              sessionStorage.setItem('access-externalUser',response.data.externalUser);
+              if(response.data.externalUser && response.data.externalUser==true){
+                _self.$router.push({path: '/record/showdrawing'});
+              }else{
+                _self.$router.push({path: tocomp});
+              }
             }
             else
             {
