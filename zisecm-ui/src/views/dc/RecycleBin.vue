@@ -32,10 +32,8 @@
       </div>
     </el-dialog>
       <el-container>
-        <el-aside width="200px">
-          
+        <el-aside width="160px" :style="{height: asideHeight+'px'}" >
           <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
-            
             <el-breadcrumb-item><i class="el-icon-delete-solid"></i>&nbsp; {{$t('menu.recycleBin')}}</el-breadcrumb-item>
           </el-breadcrumb>
           <el-tree
@@ -181,6 +179,7 @@ export default {
         isIndeterminate: false
       },
       tableHeight: window.innerHeight - 125,
+      asideHeight: window.innerHeight - 80,
       currentLanguage: "zh-cn",
       loading: false,
       currentFolder: [],
