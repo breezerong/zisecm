@@ -112,6 +112,15 @@ export const recordRouter =  [
                 component: () => import('@/views/record/ArchiveBorrowcompleted.vue')
             }
         ]
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1
+        },
+        path: '/record/archivebackup',
+        name: '光盘刻录',
+        component: () => import('@/views/record/ArchiveBackup.vue')
     }
     
 ]
