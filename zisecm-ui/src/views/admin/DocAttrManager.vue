@@ -1,98 +1,97 @@
 <template>
   <div>
-        <el-dialog title="添加" :visible.sync="dialogVisible">
-          <el-form :model="form">
-            <el-form-item label="名称" :label-width="formLabelWidth">
-              <el-input v-model="form.name" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="说明" :label-width="formLabelWidth">
-              <el-input v-model="form.description" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="类型" :label-width="formLabelWidth">
-              <el-select v-model="form.dataType">
-                  <el-option label="String" :value="1"></el-option>
-                  <el-option label="Int" :value="2"></el-option>
-                  <el-option label="Double" :value="3"></el-option>
-                  <el-option label="Long" :value="4"></el-option>
-                  <el-option label="DateTime" :value="5"></el-option>
-                  <el-option label="Boolean" :value="6"></el-option>
-              </el-select>
-            </el-form-item>
-             <el-form-item label="允许为空" :label-width="formLabelWidth">
-              <el-select v-model="form.isNull">
-                  <el-option label="NO" value="NO"></el-option>
-                  <el-option label="YES" value="YES"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="长度" :label-width="formLabelWidth">
-              <el-input v-model="form.length" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="默认值" :label-width="formLabelWidth">
-              <el-input v-model="form.defaultValue" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="saveitem(form)">确 定</el-button>
-          </div>
-        </el-dialog>
-      <table border="0" width="100%">
-          <tr>
-            <td class="navbar">
-              <el-breadcrumb separator="/">
-                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item>后台管理</el-breadcrumb-item>
-                <el-breadcrumb-item>系统元数据</el-breadcrumb-item>
-              </el-breadcrumb>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="160px">
-                    <el-input v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td>
-                    <el-button type="primary" icon="el-icon-edit"  @click="newitem()">新建</el-button>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
-    <el-table
-                :data="dataList"
-                border
-                :height="tableHeight"
-                v-loading="loading"
-                style="width: 100%">
-            <el-table-column
-              label="行号"
-              type="index"
-              width="60">
-            </el-table-column>
-        <el-table-column prop="name" label="字段名称" width="180" sortable>
-        </el-table-column>
-        <el-table-column prop="description" label="说明" width="180" sortable>
-        </el-table-column>
-         <el-table-column prop="dataType" label="类型" width="120" sortable>
-        </el-table-column>
-         <el-table-column prop="length" label="长度" width="120" sortable>
-        </el-table-column>
-        <el-table-column label="操作"  width="320">
-          <template slot-scope="scope" >
-            <div v-if="scope.row.name.indexOf('C_')==0">
-            <el-button :plain="true" type="success" size="small" icon="edit" @click="showitem(scope.row)">编辑</el-button>
-            <el-button :plain="true" type="danger" size="small" icon="delete" @click="delitem(scope.row)">删除</el-button>
-            </div>
-          </template>
-        </el-table-column>
-    </el-table>
-     </td>
-                </tr>
-              </table>
+    <el-dialog title="添加" :visible.sync="dialogVisible">
+      <el-form :model="form">
+        <el-form-item label="名称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="说明" :label-width="formLabelWidth">
+          <el-input v-model="form.description" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="类型" :label-width="formLabelWidth">
+          <el-select v-model="form.dataType">
+            <el-option label="String" :value="1"></el-option>
+            <el-option label="Int" :value="2"></el-option>
+            <el-option label="Double" :value="3"></el-option>
+            <el-option label="Long" :value="4"></el-option>
+            <el-option label="DateTime" :value="5"></el-option>
+            <el-option label="Boolean" :value="6"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="允许为空" :label-width="formLabelWidth">
+          <el-select v-model="form.isNull">
+            <el-option label="NO" value="NO"></el-option>
+            <el-option label="YES" value="YES"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="长度" :label-width="formLabelWidth">
+          <el-input v-model="form.length" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="默认值" :label-width="formLabelWidth">
+          <el-input v-model="form.defaultValue" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveitem(form)">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+          <el-breadcrumb-item>系统元数据</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-row class="topbar">
+          <el-col :span="4">
+            <el-input
+              v-model="inputkey"
+              placeholder="请输入关键字"
+              @change="search"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="20" style="text-align:left;">
+            <el-button type="primary" icon="el-icon-edit" size="medium" @click="newitem()">新建</el-button>
+          </el-col>
+        </el-row>
+      </el-header>
+      <el-main>
+        <el-table
+          :data="dataList"
+          border
+          :height="tableHeight"
+          v-loading="loading"
+          style="width: 100%"
+        >
+          <el-table-column label="行号" type="index" width="60"></el-table-column>
+          <el-table-column prop="name" label="字段名称" width="180" sortable></el-table-column>
+          <el-table-column prop="description" label="说明" width="180" sortable></el-table-column>
+          <el-table-column prop="dataType" label="类型" width="120" sortable></el-table-column>
+          <el-table-column prop="length" label="长度" width="120" sortable></el-table-column>
+          <el-table-column label="操作" width="320">
+            <template slot-scope="scope">
+              <div v-if="scope.row.name.indexOf('C_')==0">
+                <el-button
+                  :plain="true"
+                  type="success"
+                  size="small"
+                  icon="edit"
+                  @click="showitem(scope.row)"
+                >编辑</el-button>
+                <el-button
+                  :plain="true"
+                  type="danger"
+                  size="small"
+                  icon="delete"
+                  @click="delitem(scope.row)"
+                >删除</el-button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -116,76 +115,89 @@ export default {
       form: {
         name: "",
         description: "",
-        dataType:1,
+        dataType: 1,
         length: 0,
-        defaultValue:"",
-        isNull:"YES"
+        defaultValue: "",
+        isNull: "YES"
       },
       formLabelWidth: "120px"
     };
   },
-   created(){ 
-     
+  created() {
     let _self = this;
     _self.loading = true;
-	axios.get('/admin/getAttribute').then(function(response) {
+    axios
+      .get("/admin/getAttribute")
+      .then(function(response) {
         _self.dataList = response.data.data;
         _self.dataListFull = response.data.data;
         _self.loading = false;
-      }).catch(function(error) {
+      })
+      .catch(function(error) {
         console.log(error);
         _self.loading = false;
       });
-
-    },
+  },
   methods: {
     refreshData() {
       let _self = this;
       _self.loading = true;
-	  axios.get('/admin/getAttribute').then(function(response) {
-        _self.dataList = response.data.data;
-        _self.dataListFull = response.data.data;
-        _self.loading = false;
-      }).catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+      axios
+        .get("/admin/getAttribute")
+        .then(function(response) {
+          _self.dataList = response.data.data;
+          _self.dataListFull = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
     saveitem(indata) {
       let _self = this;
-      if(_self.isNew){
+      if (_self.isNew) {
         _self.additem(indata);
-      }else{
+      } else {
         _self.updateitem(indata);
       }
       _self.dialogVisible = false;
     },
-    updateitem(indata){
+    updateitem(indata) {
       let _self = this;
-	  axios.post('/admin/updateAttribute',JSON.stringify(indata)).then(function(response) {
-        _self.$message("保存成功!");
-      }).catch(function(error) {
-        console.log(error);
-      });
+      axios
+        .post("/admin/updateAttribute", JSON.stringify(indata))
+        .then(function(response) {
+          _self.$message("保存成功!");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     delitem(indata) {
       let _self = this;
-	  axios.post('/admin/deleteAttribute',JSON.stringify(indata)).then(function(response) {
-        _self.$message("删除成功!");
-        _self.refreshData();
-      }).catch(function(error) {
-        console.log(error);
-      });
+      axios
+        .post("/admin/deleteAttribute", JSON.stringify(indata))
+        .then(function(response) {
+          _self.$message("删除成功!");
+          _self.refreshData();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     additem(indata) {
       let _self = this;
       _self.isNew = true;
-	  axios.post('/admin/newAttribute',JSON.stringify(indata)).then(function(response) {
+      axios
+        .post("/admin/newAttribute", JSON.stringify(indata))
+        .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();
-      }).catch(function(error) {
-        console.log(error);
-      });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     newitem() {
       let _self = this;
@@ -193,9 +205,9 @@ export default {
       _self.form.id = null;
       _self.form.description = "";
       _self.form.dataType = 1;
-      _self.form.length=0;
-      _self.form.defaultValue="";
-      _self.form.isNull="YES";
+      _self.form.length = 0;
+      _self.form.defaultValue = "";
+      _self.form.isNull = "YES";
       _self.dialogVisible = true;
     },
     showitem(indata) {
@@ -206,10 +218,12 @@ export default {
     },
     search() {
       let _self = this;
-      _self.dataList = _self.dataListFull.filter(function(item){
-          return item.name.match(_self.inputkey) || item.description.match(_self.inputkey);
-        }
-      );
+      _self.dataList = _self.dataListFull.filter(function(item) {
+        return (
+          item.name.match(_self.inputkey) ||
+          item.description.match(_self.inputkey)
+        );
+      });
     }
   }
 };
@@ -231,5 +245,12 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header,
+.el-footer {
+  background-color: #e8eaeb;
+}
+.el-row {
+  padding-bottom: 10px;
 }
 </style>
