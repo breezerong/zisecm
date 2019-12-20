@@ -213,10 +213,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 					}
 					documentService.updateStatus(ecmSession.getToken(), formId, "已完成");
 				} else if ("updateStatus".equals(flowElementId)) {
-					for (int i = 0; i < childList.size(); i++) {
+//					for (int i = 0; i < childList.size(); i++) {
 						documentService.updateStatus(ecmSession.getToken(), formId, "待出库");
-						documentService.updateStatus(ecmSession.getToken(), childList.get(i).get("CHILD_ID").toString(), "待出库");
-					}
+//						documentService.updateStatus(ecmSession.getToken(), childList.get(i).get("CHILD_ID").toString(), "待出库");
+//					}
 				}
 
 			}
