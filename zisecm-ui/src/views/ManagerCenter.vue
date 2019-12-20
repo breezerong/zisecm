@@ -1,41 +1,47 @@
 <template>
     <el-container>
       <el-container>
-        <el-aside width="200px">
+        <el-aside :width="asideWidth">
+          <div style="text-align:left;cursor:pointer;" @click="handleClose">
+          <i v-if="isCollapse==false" class="el-icon-s-fold"></i><i v-else class="el-icon-s-unfold"></i>
+          </div>
           <div v-bind:style="{height: menuHeight +'px'}">
-          <!--左侧导航-->
-          <el-menu default-active="101" class="el-menu-vertical-ecm"  :open="100">
+          <!--左侧导航class="el-menu-vertical-ecm"-->
+          <el-menu default-active="101" :collapse="isCollapse" class="menu-wrapper">
             <div v-if="clientPermission>3">
-              <el-submenu index="100">
-                <template slot="title">
-                  <i class="el-icon-setting"></i>
-                  <span>系统管理</span>
-                </template>
                   <div v-if="systemPermission>=5">
+                    <router-link to="/managercenter/parametermanager">
                   <el-menu-item index="101">
-                    <i class="el-icon-caret-right"></i>
-                    <span slot="title"><router-link to="/managercenter/parametermanager">参数设置</router-link></span>
+                    <i class="el-icon-ecm-edit_light"></i>
+                    <span slot="title">参数设置</span>
                   </el-menu-item>
+                  </router-link>
                    <el-submenu index="110">
                     <template slot="title">
                       <i class="el-icon-menu"></i>
-                      <span>元数据管理</span>
+                      <span slot="title">元数据管理</span>
                     </template>
+                    <router-link to="/managercenter/docattrmanager">
                     <el-menu-item index="111">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/docattrmanager">系统元数据</router-link></span>
+                      <i class="el-icon-ecm-form"></i>
+                      <span slot="title">系统元数据</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/typemanager">
                     <el-menu-item index="112">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/typemanager">业务类型</router-link></span>
+                      <i class="el-icon-ecm-cascades"></i>
+                      <span slot="title">业务类型</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/storemanager">
                     <el-menu-item index="113">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/storemanager">存储管理</router-link></span>
+                      <i class="el-icon-ecm-file"></i>
+                      <span slot="title">存储管理</span>
                     </el-menu-item>
+                    </router-link>
                    </el-submenu>
                   </div>
-                  <!--流程-->
+                  <!--流程
                    <div v-if="systemPermission>=4">
                   <el-submenu index="200">
                     <template slot="title">
@@ -50,81 +56,108 @@
                   </el-submenu>
                   </div>
 
-                  <!--end流程-->
+                  end流程-->
                   <div v-if="systemPermission>=4">
                   <el-submenu index="200">
                     <template slot="title">
                       <i class="el-icon-menu"></i>
-                      <span>界面配置</span>
+                      <span slot="title">界面配置</span>
                     </template>
+                    <router-link to="/managercenter/componentmanager">
                     <el-menu-item index="201">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/componentmanager">组件设置</router-link></span>
+                      <i class="el-icon-ecm-news_light"></i>
+                      <span slot="title">组件设置</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/actionmanager">
                     <el-menu-item index="202">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/actionmanager">事件设置</router-link></span>
+                      <i class="el-icon-ecm-link"></i>
+                      <span slot="title">事件设置</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/menumanager">
                     <el-menu-item index="203">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/menumanager">菜单设置</router-link></span>
+                      <i class="el-icon-ecm-round_menu_fill"></i>
+                      <span slot="title">菜单设置</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/formmanager">
                     <el-menu-item index="204">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/formmanager">表单设置</router-link></span>
+                      <i class="el-icon-ecm-form_light"></i>
+                      <span slot="title">表单设置</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/gridviewmanager">
                     <el-menu-item index="205">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/gridviewmanager">列表设置</router-link></span>
+                      <i class="el-icon-ecm-list"></i>
+                      <span slot="title">列表设置</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/querymanager">
                     <el-menu-item index="206">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/querymanager">查询设置</router-link></span>
+                      <i class="el-icon-ecm-search_list_light"></i>
+                      <span slot="title">查询设置</span>
                     </el-menu-item>
-                    
+                    </router-link>
+                    <router-link to="/managercenter/cardsearchmanager">
                     <el-menu-item index="208">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/managercenter/cardsearchmanager">卡片查询</router-link></span>
+                      <i class="el-icon-ecm-vipcard"></i>
+                      <span slot="title">卡片查询</span>
                     </el-menu-item>
+                    </router-link>
                   </el-submenu>
                   </div>
                   <div v-if="systemPermission>=2">
                   <el-submenu index="300">
                     <template slot="title">
                       <i class="el-icon-ecm-group"></i>
-                      <span>用户组管理</span>
+                      <span slot="title">用户组管理</span>
                     </template>
+                    <router-link to="/managercenter/groupmanager">
                     <el-menu-item index="301">
                       <i class="el-icon-ecm-people_list_light"></i>
-                      <span slot="title"><router-link to="/managercenter/groupmanager">部门管理</router-link></span>
+                      <span slot="title">部门管理</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/rolemanager">
                     <el-menu-item index="302">
                       <i class="el-icon-ecm-people_list_light"></i>
-                      <span slot="title"><router-link to="/managercenter/rolemanager">角色管理</router-link></span>
+                      <span slot="title">角色管理</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/usermanager">
                     <el-menu-item index="303">
                       <i class="el-icon-ecm-my_light"></i>
-                      <span slot="title"><router-link to="/managercenter/usermanager">用户管理</router-link></span>
+                      <span slot="title">用户管理</span>
                     </el-menu-item>
+                    </router-link>
                   </el-submenu>
+                  <router-link to="/managercenter/aclmanager">
                    <el-menu-item index="103">
                     <i class="el-icon-lock"></i>
-                    <span slot="title"><router-link to="/managercenter/aclmanager">ACL管理</router-link></span>
+                    <span slot="title">ACL管理</span>
                   </el-menu-item>
+                  </router-link>
+                  <router-link to="/managercenter/systemmanager">
                   <el-menu-item index="104">
                     <i class="el-icon-refresh"></i>
-                    <span slot="title"><router-link to="/managercenter/systemmanager">缓存管理</router-link></span>
+                    <span slot="title">缓存管理</span>
                   </el-menu-item>
+                  </router-link>
                 </div>
                 <div v-if="systemPermission>0">
+                  <router-link to="/managercenter/selectvaluemanager">
                   <el-menu-item index="120">
                       <i class="el-icon-ecm-sortlight"></i>
-                      <span slot="title"><router-link to="/managercenter/selectvaluemanager">选项设置</router-link></span>
+                      <span slot="title">选项设置</span>
                     </el-menu-item>
+                    </router-link>
+                    <router-link to="/managercenter/foldermanager">
                   <el-menu-item index="121">
                     <i class="el-icon-message"></i>
-                    <span slot="title"><router-link to="/managercenter/foldermanager">文件夹设置</router-link></span>
+                    <span slot="title">文件夹设置</span>
                   </el-menu-item>
+                  </router-link>
                 </div>
               <div v-if="systemPermission>=4">
                 <el-submenu index="500">
@@ -132,14 +165,14 @@
                       <i class="el-icon-menu"></i>
                       <span>工作流管理</span>
                     </template>
+                    <router-link :to="{ path: '/workflow/allWorkflow', query: { showAllWorkflow: 1}}">
                     <el-menu-item index="501">
-                      <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link :to="{ path: '/workflow/allWorkflow', query: { showAllWorkflow: 1}}">流程查看</router-link></span>
+                      <i class="el-icon-ecm-round_pay"></i>
+                      <span slot="title">流程查看</span>
                     </el-menu-item>
+                    </router-link>
                   </el-submenu>
               </div>
-              </el-submenu>
-              
             </div>
           </el-menu>
           </div>
@@ -157,10 +190,12 @@ export default {
   name: 'SearchCenter',
   data() {
     return {
-       username:'',
-       clientPermission: 0,
-       systemPermission: 0,
-       menuHeight: window.innerHeight -80
+      isCollapse:false,
+      username:'',
+      clientPermission: 0,
+      systemPermission: 0,
+      asideWidth:"200px",
+      menuHeight: window.innerHeight -100
     };
   },
   created()
@@ -168,6 +203,10 @@ export default {
     this.checkLogin();
   },
   methods: {
+    handleClose(){
+      this.isCollapse = this.isCollapse?false:true;
+      this.asideWidth = this.isCollapse?"50px":"200px";
+    },
     checkLogin()
     {
       var user = sessionStorage.getItem('access-user');
@@ -199,13 +238,17 @@ export default {
   }
   
 element.style {
-    padding-left: 60px;
+  padding-left: 20px;
+  color: rgb(64, 158, 255);
+  background-color: rgb(48, 65, 86);
 }
-.el-submenu .el-menu-item {
-    height: 32px;
-    line-height: 32px;
-    padding: 0 36px;
-    min-width: 200px;
+
+li{
+  width:100%;
+  text-align: left;
+}
+i{
+  font-size : 20px !important;
 }
 
 </style>

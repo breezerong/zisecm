@@ -70,8 +70,8 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
-             rightTableHeight: (window.innerHeight - 200)/2,
-             rightOutTableHeight:(window.innerHeight - 200)/2
+             rightTableHeight: (window.innerHeight - 150)/2,
+             rightOutTableHeight:(window.innerHeight - 150)/2
         }
        
     },

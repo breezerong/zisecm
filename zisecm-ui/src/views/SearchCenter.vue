@@ -1,28 +1,38 @@
 <template>
   <el-container>
     <el-container>
-      <el-aside width="180px">
+      <el-aside :width="asideWidth">
+        <div style="text-align:left;cursor:pointer;" @click="handleClose">
+          <i v-if="isCollapse==false" class="el-icon-s-fold"></i>
+          <i v-else class="el-icon-s-unfold"></i>
+        </div>
         <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航-->
-          <el-menu default-active="1" class="el-menu-vertical-ecm" :default-openeds="opens" style="background-color:#D3DCE6">
-            <el-menu-item index="1">
-              <i class="el-icon-document"></i>
-              <span slot="title">
-                <router-link to="/search/fulltextsearch">{{$t('menu.fullTextSearch')}}</router-link>
-              </span>
-            </el-menu-item>
+          <el-menu
+            default-active="1"
+            class="el-menu-vertical-ecm"
+            :collapse="isCollapse"
+            :default-openeds="opens"
+            style="background-color:#D3DCE6"
+          >
+            <router-link to="/search/fulltextsearch">
+              <el-menu-item index="1">
+                <i class="el-icon-document"></i>
+                <span slot="title">{{$t('menu.fullTextSearch')}}</span>
+              </el-menu-item>
+            </router-link>
             <el-submenu index="10">
               <template slot="title">
                 <i class="el-icon-document-copy"></i>
                 <span>{{$t('menu.cardSearch')}}</span>
               </template>
-              <div v-for="(item,index) in cardList">
-                <el-menu-item :index="(index+100)+''" @click="clickRouter(item.id)">
-                  <i class="el-icon-tickets"></i>
-                  <span slot="title">
-                    <router-link :to="{path:'/search/cardSearch',query:{id:item.id}}">{{item.label}}</router-link>
-                  </span>
-                </el-menu-item>
+              <div v-for="(item,index) in cardList" :key="'C_'+index">
+                <router-link :to="{path:'/search/cardSearch',query:{id:item.id}}">
+                  <el-menu-item :index="(index+100)+''" @click="clickRouter(item.id)">
+                    <i class="el-icon-tickets"></i>
+                    <span slot="title">{{item.label}}</span>
+                  </el-menu-item>
+                </router-link>
               </div>
             </el-submenu>
             <!-- <el-menu-item index="3">
@@ -30,7 +40,7 @@
               <span slot="title">
                 <router-link to="/search/advsearch">{{$t('menu.advSearch')}}</router-link>
               </span>
-            </el-menu-item> -->
+            </el-menu-item>-->
             <!--
             <el-menu-item index="4">
               <i class="el-icon-user"></i>
@@ -59,7 +69,9 @@ export default {
       username: "",
       cardList: [],
       clientPermission: 0,
-      menuHeight: window.innerHeight - 64
+      menuHeight: window.innerHeight - 85,
+      isCollapse: false,
+      asideWidth: "160px"
     };
   },
   created() {
@@ -74,21 +86,24 @@ export default {
     _self.loadCards();
   },
   methods: {
-  clickRouter(val){
-    let _self = this;
-    _self.$router.push({ 
-      path: "/search/cardSearch",
-      query:{id:val}
-    });
-
-  },
-    loadCards()
-    {
+    handleClose() {
+      this.isCollapse = this.isCollapse ? false : true;
+      this.asideWidth = this.isCollapse ? "50px" : "160px";
+    },
+    clickRouter(val) {
+      let _self = this;
+      _self.$router.push({
+        path: "/search/cardSearch",
+        query: { id: val }
+      });
+    },
+    loadCards() {
       let _self = this;
       _self.loading = true;
-      
+
       //alert(_self.parentid);
-      axios.post('/search/getCardSearchAll',_self.getLang())
+      axios
+        .post("/search/getCardSearchAll", _self.getLang())
         .then(function(response) {
           _self.cardList = response.data.data;
           _self.loading = false;
@@ -111,9 +126,9 @@ body > .el-container {
   margin-bottom: 0px;
 }
 .el-submenu .el-menu-item {
-    height: 32px;
-    line-height: 32px;
-    padding: 0 36px;
-    min-width: 200px;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 36px;
+  min-width: 200px;
 }
 </style>

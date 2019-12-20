@@ -6,6 +6,9 @@
             <template v-if="item.attrName=='creationDate' || item.attrName=='modifiedDate'">
               {{datetimeFormat(scope.row[item.attrName])}}
             </template>
+            <template v-else-if="item.attrName=='contentSize'">
+              {{formatSize(scope.row[item.attrName])}} 
+            </template>
             <template v-else>
               {{scope.row[item.attrName]}}  
             </template>            
@@ -29,8 +32,9 @@ export default {
             gridList: [
               //{id:'1',attrName:'name',label:'文件名'},
               {id:'2',attrName:'formatName',label:'格式'},
-              {id:'3',attrName:'creationDate',label:'创建时间'},
-              {id:'4',attrName:'modifiedDate',label:'修改时间'}
+              {id:'3',attrName:'contentSize',label:'大小'},
+              {id:'4',attrName:'creationDate',label:'创建时间'},
+              {id:'5',attrName:'modifiedDate',label:'修改时间'}
             ],
             currentLanguage: "zh-cn",
             tabledata:[]
@@ -54,6 +58,18 @@ export default {
       loadGridView(){
         let _self = this;
         _self.loadData();        
+      },
+      formatSize(data){
+        if(data){
+          if(data<1024){
+            return data +" B";
+          }
+          if(data>1024 && data<1024*1204){
+            return (data/1024).toFixed(2) + " KB";
+          }
+          return (data/1024/1024).toFixed(2) +" MB";
+        }
+        return "0 B";
       },
       loadData(){
           let _self = this;

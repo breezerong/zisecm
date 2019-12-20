@@ -47,24 +47,22 @@
             <el-button @click="showprocessDiagram()">显示流程图</el-button>
          </div>
         </el-dialog>
-      <table border="0" width="100%">
-          <tr>
-            <td class="navbar">
-              /工作流/我的流程
-            </td>
-          </tr>
-          <tr>
-            <td >
-
+<el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>工作流</el-breadcrumb-item>
+          <el-breadcrumb-item>我的流程</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-row class="topbar">
           <el-form ref="workflowForm"   :model="workflowForm"   >
             <el-row  >
-              <el-col   style="width:100%;" >
+              <el-col :span="4">
                 <el-form-item  v-if="currentUserName=='all'"  label="发起人"   :label-width="formLabelWidth" style="float:left">
                   <UserSelectInput  v-model="workflowForm.startUser" v-bind:inputValue="workflowForm.startUser" roleName=""></UserSelectInput>
                 </el-form-item>
               </el-col >
-               <el-col   style="width:100%;" >
-              <el-form-item   label="完成状态" :label-width="formLabelWidth"  style="float:left">
+               <el-col :span="20">
+               <el-form-item   label="完成状态" :label-width="formLabelWidth"  style="float:left">
                   <el-select style="width:12em"  v-model="workflowForm.isFinished">
                        <el-option label="全部"  value="全部"></el-option>
                        <el-option label="未完成"  value="未完成"></el-option>
@@ -84,13 +82,11 @@
                  </el-form-item>
                </el-col >
            </el-row>
-            </el-form>                   
-
-            </td>
-          </tr>
-        <tr>
-          <td>
-               <div>
+            </el-form>  
+        </el-row>
+      </el-header>
+      <el-main>
+       
            <el-table
               :data="dataList"
               border
@@ -126,7 +122,6 @@
                 </template>
               </el-table-column>
             </el-table>
-              </div>
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -136,9 +131,8 @@
               layout="total, sizes, prev, pager, next, jumper"
               :total="itemCount">
             </el-pagination>
-          </td>
-         </tr>
-      </table>
+      </el-main>
+</el-container>
   </div>
 </template>
 
@@ -169,7 +163,7 @@ export default {
       currentPage: 1,
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 190,
+      tableHeight: window.innerHeight - 150,
       formLabelWidth: "80px",
       currentProcessId:"",
       workflowPicVisible:"",
@@ -405,4 +399,12 @@ a {
 .active2{
   background: rgb(145, 146, 145);
 }
+header.el-header {
+  background-color: #e8eaeb;
+  height: 66px !important;
+}
+.el-row {
+  padding-bottom: 10px;
+}
+
 </style>
