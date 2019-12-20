@@ -62,4 +62,6 @@ public interface IUserService {
 
 	List<EcmUser> getGroupUsers(String token, String groupId);
 
+	EcmUser getObjectByLoginName(String token, String loginName);
+
 }

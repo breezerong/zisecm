@@ -105,7 +105,7 @@ export default {
       _self.account.username = loginName;
 
       axios
-        .post("/userLoginEx", loginName)
+        .post("/ssoLogin", loginName)
         .then(function(response) {
           console.log(response.data);
           if (response.data.code == 1) {

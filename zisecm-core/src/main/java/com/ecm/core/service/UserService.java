@@ -571,6 +571,18 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		return null;
 	}
 	
+	
+	@Override
+	public EcmUser getObjectByLoginName(String token, String loginName) {
+		// TODO Auto-generated method stub
+		String condition = "LOGIN_NAME='"+DBUtils.getString(loginName)+"'";
+		List<EcmUser> list = getObjects(token, condition);
+		if(list.size()>0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
 	@Override
 	public boolean updatePassword(String token,String userName, String password, String newPassword) throws EcmException, AccessDeniedException, NoPermissionException {
 		

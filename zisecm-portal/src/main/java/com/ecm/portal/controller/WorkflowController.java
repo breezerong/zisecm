@@ -64,10 +64,12 @@ import com.ecm.core.dao.EcmWorkflowMapper;
 import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.EcmWorkflow;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.AuditService;
+import com.ecm.core.service.UserService;
 import com.ecm.flowable.controller.StartProcessNameProcessInstanceCmd;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -88,6 +90,9 @@ public class WorkflowController  extends ControllerAbstract{
 	    private HistoryService historyService;
 	    @Autowired
 	    private ManagementService managementService;
+	    
+	    @Autowired
+	    private UserService userService;
 	    
 	    
 		@Autowired
@@ -653,6 +658,11 @@ public class WorkflowController  extends ControllerAbstract{
 	    @ResponseBody
 	    @RequestMapping(value = "getMyAllTodoCount")
 	    public long  getMyAllTodoCount(@RequestParam String LoginName) {
+	    	//根据登录名获取用户名
+	    	EcmUser user = userService.getObjectByLoginName(null, LoginName);
+	    	if(user !=null) {
+	    		LoginName = user.getName();
+	    	}
 	        return  taskService.createTaskQuery().taskAssignee(LoginName).count() ;
 
 	    }
