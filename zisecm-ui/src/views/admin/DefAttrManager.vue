@@ -1,269 +1,280 @@
 <template>
   <div>
-    <el-dialog title="选择属性" :visible.sync="categoryVisible" >
-      <CategoryManager ref="CategoryManager" @onselected="onselected" width="560" v-bind:categoryVisible="categoryVisible"></CategoryManager>
+    <el-dialog title="选择属性" :visible.sync="categoryVisible">
+      <CategoryManager
+        ref="CategoryManager"
+        @onselected="onselected"
+        width="560"
+        v-bind:categoryVisible="categoryVisible"
+      ></CategoryManager>
       <div slot="footer" class="dialog-footer">
         <el-button @click="categoryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="表单校验" :visible.sync="checkVisible" >
+    <el-dialog title="表单校验" :visible.sync="checkVisible">
       <FormItemCheck ref="FormItemCheck" width="560" :parentformid="parentid"></FormItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="选择查询条件" :visible.sync="queryVisible" >
+    <el-dialog title="选择查询条件" :visible.sync="queryVisible">
       <QuerySelector ref="QuerySelector" @onqueryselected="onqueryselected" width="560"></QuerySelector>
       <div slot="footer" class="dialog-footer">
         <el-button @click="queryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-        <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible">
-          <el-form :model="form">
-            <el-form-item label="父Id" :label-width="formLabelWidth">
-              <el-input v-model="form.parentId" auto-complete="off"></el-input>
+    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" width="80%">
+      <el-form :model="form">
+        <el-form-item label="父Id" :label-width="formLabelWidth">
+          <el-input v-model="form.parentId" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-row>
+          <el-col :span="10">
+            <el-form-item label="属性名称" :label-width="formLabelWidth">
+              <el-input v-model="form.attrName" auto-complete="off"></el-input>
             </el-form-item>
-            <el-row>
-              <el-col :span="10">
-                <el-form-item label="属性名称" :label-width="formLabelWidth">
-                  <el-input v-model="form.attrName" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item label="标签" :label-width="formLabelWidth">
-                  <el-input v-model="form.label" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <el-button @click="showcategory('')">选择属性</el-button>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="标签" :label-width="formLabelWidth">
+              <el-input v-model="form.label" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-button @click="showcategory('')">选择属性</el-button>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="控件类型" :label-width="formLabelWidth2">
               <el-select v-model="form.controlType">
-                  <el-option label="TextBox" value="TextBox"></el-option>
-                  <el-option label="TextArea" value="TextArea"></el-option>
-                  <el-option label="Select" value="Select"></el-option>
-                  <el-option label="ValueSelect" value="ValueSelect"></el-option>
-                  <el-option label="SQLSelect" value="SQLSelect"></el-option>
-                  <el-option label="Department" value="Department"></el-option>
-                  <el-option label="Date" value="Date"></el-option>
-                  <el-option label="Boolean" value="Boolean"></el-option>
-                  <el-option label="Integer" value="Integer"></el-option>
-                  <el-option label="Classification" value="Classification"></el-option>
+                <el-option label="TextBox" value="TextBox"></el-option>
+                <el-option label="TextArea" value="TextArea"></el-option>
+                <el-option label="Select" value="Select"></el-option>
+                <el-option label="ValueSelect" value="ValueSelect"></el-option>
+                <el-option label="SQLSelect" value="SQLSelect"></el-option>
+                <el-option label="Department" value="Department"></el-option>
+                <el-option label="Date" value="Date"></el-option>
+                <el-option label="Boolean" value="Boolean"></el-option>
+                <el-option label="Integer" value="Integer"></el-option>
+                <el-option label="Classification" value="Classification"></el-option>
               </el-select>
             </el-form-item>
-              </el-col>
-              <el-col :span="12">
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="宽度类型" :label-width="formLabelWidth2">
               <el-select v-model="form.widthType">
-                  <el-option label="1" value="1"></el-option>
-                  <el-option label="2" value="2"></el-option>
-                  <el-option label="3" value="3"></el-option>
-                  <el-option label="4" value="4"></el-option>
+                <el-option label="1" value="1"></el-option>
+                <el-option label="2" value="2"></el-option>
+                <el-option label="3" value="3"></el-option>
+                <el-option label="4" value="4"></el-option>
               </el-select>
             </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="必填" :label-width="formLabelWidth2">
-                    <el-select v-model="form.required">
-                      <el-option label="否" value="false"></el-option>
-                      <el-option label="是" value="true"></el-option>
-                    </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="只读" :label-width="formLabelWidth2">
-                  <el-select v-model="form.readOnly">
-                    <el-option label="否" value="false"></el-option>
-                    <el-option label="是" value="true"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="是否可查询" :label-width="formLabelWidth2">
-                  <el-select v-model="form.searchable">
-                    <el-option label="否" value="false"></el-option>
-                    <el-option label="是" value="true"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="默认值" :label-width="formLabelWidth2">
-                  <el-input :autosize="true" v-model="form.defaultValue"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="序号" :label-width="formLabelWidth">
-                  <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="隐藏" :label-width="formLabelWidth">
-                    <el-select v-model="form.isHide">
-                      <el-option label="否" value="false"></el-option>
-                      <el-option label="是" value="true"></el-option>
-                    </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-             <el-row>
-              <el-col :span="12">
-                <el-form-item label="SQL查询名" :label-width="formLabelWidth2">
-                  <el-input v-model="form.queryName" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                  <el-button @click="queryVisible = true">选择查询</el-button>
-              </el-col>
-            </el-row>
-             <el-row>
-              <el-col :span="24">
-                <el-form-item label="列选值" :label-width="formLabelWidth2">
-                  <el-input v-model="form.valueList" auto-complete="off"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="additem(form)">确 定</el-button>
-          </div>
-        </el-dialog>
-      <table border="0" width="100%" >
-          <tr>
-            <td class="navbar">
-              <el-breadcrumb>
-                <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-                <el-breadcrumb-item>界面配置</el-breadcrumb-item>
-                <el-breadcrumb-item>表单项配置</el-breadcrumb-item>
-              </el-breadcrumb>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td width="160px">
-                    类型：{{typename}}
-                  </td>
-                  <td width="80px">
-                    <el-input  v-model="parentid" placeholder="请输入父Id" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td align="left" width="160px">
-                    <el-input  v-model="inputkey" placeholder="请输入属性名关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td width="40px">
-                    <el-tooltip  class="item" effect="dark" content="新增" placement="top">
-                      <el-button type="primary" icon="el-icon-edit" circle @click="newitem()"></el-button>
-                    </el-tooltip> 
-                  </td>
-                  <td>
-                    <el-tooltip class="item" effect="dark" content="表单验证" placement="top">
-                     <el-button type="primary" icon="el-icon-check" circle @click="startcheck()"></el-button>
-                    </el-tooltip>
-                  </td>
-                </tr>
-              </table>
-            </td>
-        </tr>
-        <tr>
-          <td>
-          <el-table
-            :data="dataList"
-            border
-            :height="tableHeight"
-            style="width: 100%">
-              <el-table-column label="属性名" width="150">
-                <template slot-scope="scope">
-                  <el-input  v-model="scope.row.attrName"></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="标签" width="120">
-                <template slot-scope="scope">
-                  <el-input  v-model="scope.row.label"></el-input>
-                </template>
-              </el-table-column> 
-              <el-table-column label="控件类型" width="120">
-                <template slot-scope="scope">
-                  <el-input  v-model="scope.row.controlType"></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="宽度类型" width="90">
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.widthType">
-                        <el-option label="1" value="1"></el-option>
-                        <el-option label="2" value="2"></el-option>
-                        <el-option label="3" value="3"></el-option>
-                        <el-option label="4" value="4"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column label="隐藏" width="90">
-                <template slot-scope="scope">
-                      <el-select v-model="scope.row.isHide">
-                        <el-option label="否" value="false"></el-option>
-                        <el-option label="是" value="true"></el-option>
-                      </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column label="必填" width="90">
-                <template slot-scope="scope">
-                      <el-select v-model="scope.row.required">
-                        <el-option label="否" value="false"></el-option>
-                        <el-option label="是" value="true"></el-option>
-                      </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column label="只读" width="90">
-                <template slot-scope="scope">
-                    <el-select v-model="scope.row.readOnly">
-                      <el-option label="否" value="false"></el-option>
-                      <el-option label="是" value="true"></el-option>
-                    </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column label="是否可查询" width="90">
-                <template slot-scope="scope">
-                    <el-select v-model="scope.row.searchable">
-                      <el-option label="否" value="false"></el-option>
-                      <el-option label="是" value="true"></el-option>
-                    </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column label="默认值" width="100">
-                <template slot-scope="scope">
-                    <el-input  v-model="scope.row.defaultValue"></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="序号" width="80">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row.orderIndex" auto-complete="off"></el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="查询名" width="100">
-                <template slot-scope="scope">
-                    <el-input v-model="scope.row.queryName" auto-complete="off"></el-input>
-                </template>
-              </el-table-column> 
-              <el-table-column label="操作" width="240" fixed="right">
-                <template slot-scope="scope">
-                  <el-button :plain="true" type="primary" size="small" icon="edit" @click="edititem(scope.row)">编辑</el-button>
-                  <el-button :plain="true" type="primary" size="small" icon="edit" @click="saveitem(scope.row)">保存</el-button>
-                  <el-button :plain="true" type="danger" size="small" icon="delete" @click="delitem(scope.row)">删除</el-button>
-                </template>
-              </el-table-column>
-          </el-table>
-        </td>
-      </tr>
-    </table>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="必填" :label-width="formLabelWidth2">
+              <el-select v-model="form.required">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="只读" :label-width="formLabelWidth2">
+              <el-select v-model="form.readOnly">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否可查询" :label-width="formLabelWidth2">
+              <el-select v-model="form.searchable">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="默认值" :label-width="formLabelWidth2">
+              <el-input :autosize="true" v-model="form.defaultValue"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="序号" :label-width="formLabelWidth">
+              <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="隐藏" :label-width="formLabelWidth">
+              <el-select v-model="form.isHide">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="SQL查询名" :label-width="formLabelWidth2">
+              <el-input v-model="form.queryName" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-button @click="queryVisible = true">选择查询</el-button>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="列选值" :label-width="formLabelWidth2">
+              <el-input v-model="form.valueList" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="additem(form)">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+          <el-breadcrumb-item>界面配置</el-breadcrumb-item>
+          <el-breadcrumb-item>表单项配置</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-row class="topbar">
+          <el-col :span="2" style="text-align:left;">类型：{{typename}}</el-col>
+          <el-col :span="2" style="text-align:left;">
+            <el-input
+              v-model="parentid"
+              placeholder="请输入父Id"
+              @change="search"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-input
+              v-model="inputkey"
+              placeholder="请输入关键字"
+              @change="search"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="16" style="text-align:left;">
+            <el-button type="primary" icon="el-icon-edit" @click="newitem()">新建</el-button>
+            <el-button type="primary" icon="el-icon-check" @click="startcheck()">验证表单</el-button>
+          </el-col>
+        </el-row>
+      </el-header>
+      <el-main>
+        <el-table :data="dataList" border :height="tableHeight" style="width: 100%">
+          <el-table-column label="属性名" width="150" sortable>
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.attrName"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="标签" width="120" sortable>
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.label"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="控件类型" width="120">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.controlType"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="宽度类型" width="90">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.widthType">
+                <el-option label="1" value="1"></el-option>
+                <el-option label="2" value="2"></el-option>
+                <el-option label="3" value="3"></el-option>
+                <el-option label="4" value="4"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="隐藏" width="90">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.isHide">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="必填" width="90">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.required">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="只读" width="90">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.readOnly">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="是否可查询" width="90">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.searchable">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="默认值" width="100">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.defaultValue"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="序号" width="80">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.orderIndex" auto-complete="off"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="查询名" width="100">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.queryName" auto-complete="off"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="240" fixed="right">
+            <template slot-scope="scope">
+              <el-button
+                :plain="true"
+                type="primary"
+                size="small"
+                icon="edit"
+                @click="edititem(scope.row)"
+              >编辑</el-button>
+              <el-button
+                :plain="true"
+                type="primary"
+                size="small"
+                icon="edit"
+                @click="saveitem(scope.row)"
+              >保存</el-button>
+              <el-button
+                :plain="true"
+                type="danger"
+                size="small"
+                icon="delete"
+                @click="delitem(scope.row)"
+              >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -493,8 +504,11 @@ export default {
       let _self = this;
       _self.dataList = [];
       if (_self.inputkey != "" || _self.parentid != "") {
-        _self.dataList = _self.dataListFull.filter(function(item){
-          return item.attrName.match(_self.inputkey) || item.label.match(_self.inputkey);
+        _self.dataList = _self.dataListFull.filter(function(item) {
+          return (
+            item.attrName.match(_self.inputkey) ||
+            item.label.match(_self.inputkey)
+          );
         });
       }
     }
@@ -518,5 +532,12 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header,
+.el-footer {
+  background-color: #e8eaeb;
+}
+.el-row {
+  padding-bottom: 10px;
 }
 </style>

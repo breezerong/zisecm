@@ -1,8 +1,13 @@
 <template>
     <div>
-        
+      <el-dialog :visible.sync="printVolumesVisible" width="80%">
+            <PrintBorrowOrder
+                ref="printVolumes"
+                v-bind:archiveId="this.printObjId"
+                v-bind:gridName="printGridName"
+            ></PrintBorrowOrder>
+        </el-dialog>
         <el-row>
-            <el-col :span="2">借阅人</el-col>
             <el-col :span="5" style="float:left;text-align:left;">
                 <el-input
                 v-model="orderInputkey"
@@ -11,20 +16,9 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col :span="3">创建日期(开始)</el-col>
-            <el-col :span="3">
-                <el-date-picker v-model="startDate" 
-                type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss">
-                </el-date-picker></el-col>
-            <el-col :span="3">创建日期(结束)</el-col>
-            <el-col :span="3">
-                <el-date-picker v-model="endDate" 
-                type="date" placeholder="选择日期" style="display:block;">
-                </el-date-picker></el-col>
-            <el-col :span="2" style="padding-top:4px;float:left;text-align:left;">
+            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
                 <el-button type="primary" plain
-                size="small" icon="el-icon-search" @click="loadGridData">搜索</el-button>
-                
+                size="small" icon="el-icon-check" @click="outboundOrder">完成晒图</el-button>
             </el-col>
             
         </el-row>
@@ -40,7 +34,20 @@
             </el-col>
 
         </el-row>
-        
+        <!-- <el-row>
+         <el-col :span="6" style="float:left;text-align:left;">
+                <el-input
+                v-model="inputkey"
+                :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
+                @change="searchItem"
+                prefix-icon="el-icon-search"
+                ></el-input>
+            </el-col>
+            <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
+               <el-button type="primary" plain
+                size="small" icon="el-icon-check" @click="outboundFile">出库</el-button>
+            </el-col>
+        </el-row> -->
         <el-row>
             <el-col>
                 <DataGrid ref="fileGrid" key="fileGrid" v-bind:itemDataList="gridListFileData"
@@ -50,19 +57,27 @@
                       :loading="fileLoading"
                        @selectchange="selectChange"></DataGrid>
             </el-col>
-            
+            <!-- <el-col :span="12">
+                <DataGrid ref="outFileGrid" key="outFileGrid" v-bind:itemDataList="gridListOutFileData"
+                      v-bind:columnList="gridListOutFile" @pagesizechange="outFilePageSizeChange"
+                      @pagechange="outFilePageChange" v-bind:itemCount="outFileItemCount"
+                      v-bind:tableHeight="rightOutTableHeight" :isshowOption="true"
+                      :loading="outFileLoading"
+                       @selectchange="selectOutChange"></DataGrid>
+            </el-col> -->
         </el-row>
     </div>
 </template>
 <script type="text/javascript">
-import DataGrid from'@/components/DataGrid';
-
+import DataGrid from'@/components/DataGrid'
 export default {
-    name:'archivepending',
+    name:'showdrawing',
     permit:1,
     data(){
         return{
-             
+             printObjId:"",
+             printGridName:"",
+             printVolumesVisible: false,
              gridList:[],
              innerDataList:[],
              itemDataList:[],
@@ -90,10 +105,9 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
-             startDate:"",
-             endDate:"",
              rightTableHeight: (window.innerHeight - 200)/2,
-             rightOutTableHeight:(window.innerHeight - 200)/2
+             rightOutTableHeight:(window.innerHeight - 200)/2,
+             finishedShowDrawing:this.$route.query.finishedShowDrawing,
         }
        
     },
@@ -101,19 +115,31 @@ export default {
         this.loadGridInfo();
         this.loadGridData();
         this.loadGridInfoFile();
+        this.loadOutFileGridInfo();
     },
     components:{
         DataGrid:DataGrid,
-        
     },
     methods:{
-        filePageSizeChange(val){
-          this.filePageSize = val;
-            localStorage.setItem("docPageSize",val);
-            this.loadFileGridData();
+      beforePrint(selectedRow,gridName,vtitle){
+            let _self=this;
+            if(selectedRow.length!=1){
+                _self.$message('请选择一条数据进行打印');
+                return;
+            }
+            _self.printObjId=selectedRow[0].ID;
+            _self.printGridName=gridName;
+            _self.printVolumesVisible = true;
+            setTimeout(()=>{
+                _self.$refs.printVolumes.dialogQrcodeVisible = false
+                _self.$refs.printVolumes.getArchiveObj(_self.$refs.printVolumes.archiveId,
+                _self.$refs.printVolumes.gridName,
+                vtitle); 
+            },10);
         },
         orderclick(row){
           this.loadFileGridData(row);
+          this.loadOutFileGridData(row);
         },
         selectOutChange(val){
           this.seletedOutFile=val;
@@ -125,10 +151,15 @@ export default {
           this.fileCurrentPage = val;
           this.loadOutFileGridData();
         },
+        filePageSizeChange(val){
+          this.filePageSize = val;
+            localStorage.setItem("docPageSize",val);
+            this.loadFileGridData();
+        },
         pageSizeChange(val){
             this.pageSize = val;
             localStorage.setItem("docPageSize",val);
-            this.loadGridData();
+            _self.loadGridData();
         },
         //查询文档
         searchOrderItem() {
@@ -155,16 +186,13 @@ export default {
             this.loadGridData();
             //console.log('handleCurrentChange', val);
         },
+        show(){
+
+        },
         outboundFile(){
           let _self=this;
           if(_self.seletedFile.length<1){
-            //  _self.$message("请选择待出库文件数据！");
-             _self.$message({
-                showClose: true,
-                message: "请选择待出库文件数据！",
-                duration: 2000,
-                type: "warning"
-              });
+             _self.$message("请选择待出库文件数据！");
             return;
           }
           let tab=_self.seletedFile;
@@ -176,42 +204,24 @@ export default {
           }
           p.set("ids",m);
           p.set("pid",_self.selectedOrderRow.ID)
-          axios.post("/dc/outboundfile",SON.stringify(p))
+          axios.post("/dc/outboundfile",JSON.stringify(p))
             .then(function(response) {
               _self.loadGridData();
               _self.loadFileGridData();
               _self.loadOutFileGridData();
               // _self.innerDataList=[];
                 // _self.showInnerFile(null);
-              // _self.$message(response.data.message);
-              _self.$message({
-                showClose: true,
-                message: response.data.message,
-                duration: 2000,
-                type: 'success'
-              });
+              _self.$message(response.data.message);
             })
             .catch(function(error) {
-              // _self.$message(response.data.message);
-              _self.$message({
-                  showClose: true,
-                  message: response.data.message,
-                  duration: 5000,
-                  type: "error"
-                });
+              _self.$message(response.data.message);
               console.log(error);
           });
         },
         outboundOrder(){
           let _self=this;
           if(_self.selectedOrder.length<1){
-            // _self.$message("请选择借阅单数据！");
-            _self.$message({
-              showClose: true,
-              message: "请选择借阅单数据！",
-              duration: 2000,
-              type: 'warning'
-            });
+            _self.$message("请选择晒图单！");
             return;
           }
 
@@ -228,32 +238,10 @@ export default {
               _self.loadOutFileGridData();
               // _self.innerDataList=[];
                 // _self.showInnerFile(null);
-              // _self.$message(response.data.message);
-              if(response.data.code==1){
-                _self.$message({
-                  showClose: true,
-                  message: response.data.message,
-                  duration: 2000,
-                  type: 'success'
-                });
-              }else{
-                _self.$message({
-                  showClose: true,
-                  message: response.data.message,
-                  duration: 5000,
-                  type: 'error'
-                });
-              }
-              
+              _self.$message(response.data.message);
             })
             .catch(function(error) {
-              // _self.$message(response.data.message);
-              _self.$message({
-                  showClose: true,
-                  message: response.data.message,
-                  duration: 5000,
-                  type: 'error'
-                });
+              _self.$message(response.data.message);
               console.log(error);
           });
 
@@ -275,7 +263,7 @@ export default {
         // 加载未入库表格数据
         loadOutFileGridData(row){
           let _self = this;
-          if (row != null) {
+          if (row!=undefined &&row != null) {
             _self.selectedOutFileRow = row;
             
           }
@@ -287,7 +275,7 @@ export default {
           //   m.set("condition", key);
           // }
         
-          m.set("configName", "InBorrowOrderOutFile");
+          m.set("configName", "listShowDrawingFileList");
           // m.set('folderId',indata.id);
           // m.set("condition", key);
           m.set("parentId",_self.selectedOutFileRow.ID);
@@ -309,23 +297,25 @@ export default {
         },
         // 加载表格数据
         loadFileGridData(row) {
-          let _self = this;
-          if (row != null) {
+         let _self = this;
+          if (row!=undefined&&row != null) {
             _self.selectedOrderRow = row;
             
           }
           _self.fileLoading=true;
           var m = new Map();
           var key0 = _self.inputkey;
-          if (key0 && key0 != "") {
-            key0 = " and( a.coding like '%" + key0 + "%' or a.C_DRAFTER like '%" + key0 + "%' )";
-            m.set("condition", key0);
+          if (key0 != "") {
+            key0 = " (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
+          }else{
+            key0=" STATUS='"+_self.finishedShowDrawing +"' "
           }
         
-          m.set("configName", "InBorrowOrderFile");
+          m.set("configName", "listShowDrawingFileList");
           // m.set('folderId',indata.id);
           // m.set("condition", key);
-          m.set("parentId",_self.selectedOrderRow.ID);
+           m.set("status", _self.finishedShowDrawing);
+         m.set("parentId",_self.selectedOrderRow.ID);
           m.set("pageSize", _self.filePageSize);
           m.set("pageIndex", (_self.fileCurrentPage - 1) * _self.filePageSize);
           m.set("orderBy", "");
@@ -344,37 +334,29 @@ export default {
         },
             // 加载借阅单表格数据
         loadGridData() {
-
-
-           let _self = this;
+          let _self = this;
           _self.gridListFileData=[];
           _self.gridListOutFileData=[];
           _self.orderLoading=true;
           var key0 = _self.orderInputkey;
-          let startd=_self.startDate;
-          let endd=_self.endDate;
+          if (key0 &&key0 != "") {
+            key0 = " STATUS='"+_self.finishedShowDrawing +"' " +" (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
+          }else{
+            key0=" STATUS='"+_self.finishedShowDrawing +"' "
+          }
+
+        
           var m = new Map();
-          if (key0 && key0 != "") {
-            key0 = " and C_DRAFTER like '%" + key0 + "%' ";
-            m.set("condition", key0);
-          }
-          if(startd!=null&&startd!=""){
-              key0=key0+" and creation_date>='"+_self.dateFormat(startd)+"'";
-              m.set("condition", key0);
-          }
-          
-          if(endd!=null&&endd!=""){
-              key0=key0+" and creation_date<='"+_self.dateFormat(endd)+"'";
-              m.set("condition", key0);
-          }
-          m.set("configName", "BorrowOrderCompleted");
+          m.set("gridName", "ShowDrawingFormGrid");
           // m.set('folderId',indata.id);
-          // m.set("condition", key);
+          m.set("condition", key0);
+          m.set("status", _self.finishedShowDrawing);
+          
           m.set("pageSize", _self.pageSize);
           m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
           m.set("orderBy", "");
           // console.log('pagesize:', _self.pageSize);
-          axios.post("/dc/getObjectsByConfigclause",JSON.stringify(m))
+          axios.post("/dc/getShowDrawingOrder",JSON.stringify(m))
             .then(function(response) {
               _self.itemDataList = response.data.data;
               _self.itemDataListFull = response.data.data;
@@ -386,8 +368,6 @@ export default {
               console.log(error);
               _self.orderLoading = false;
             });
-
-          
         },
         loadGridInfoFile(){
           let _self = this;
@@ -408,7 +388,7 @@ export default {
           let _self = this;
           _self.orderLoading = true;
           var m = new Map();
-          m.set("gridName", "BorrowFormGrid");
+          m.set("gridName", "ShowDrawingGrid");
           m.set("lang", _self.getLang());
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {

@@ -1,177 +1,193 @@
 <template>
   <div>
-    <el-dialog title="选择用户" :visible.sync="selectUserDialogVisible"  width="820px">
-      <UserSelector ref="UserSelector" v-on:onuserselected="onuserselected" :noGroup="1" :groupId="selectedItemId"></UserSelector>
+    <el-dialog title="选择用户" :visible.sync="selectUserDialogVisible" width="820px">
+      <UserSelector
+        ref="UserSelector"
+        v-on:onuserselected="onuserselected"
+        :noGroup="1"
+        :groupId="selectedItemId"
+      ></UserSelector>
       <div slot="footer" class="dialog-footer">
         <el-button @click="selectUserDialogVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-        <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible">
-          <el-form :model="form">
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="名称" :label-width="formLabelWidth" :rules="[{ required: true, message: '必填', trigger: 'blur'}]">
-                  <el-input v-model="form.name" auto-complete="off" :disabled="isReadOnly"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="说明" :label-width="formLabelWidth">
-                  <el-input v-model="form.description" auto-complete="off" ></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="additem(form)">确 定</el-button>
-          </div>
-        </el-dialog>
-        <table border="0" width="100%" >
-          <tr>
-            <td class="navbar">
-              /角色管理
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%">
-                <tr>
-                  <td width="45%">
-                    <table border="0" width="100%" class="topbar">
-                      <tr>
-                        <td align="left" width="160px">
-                          <el-input  v-model="inputkey" placeholder="请输入属性名关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                        </td>
-                        <td width="40px">
-                          
-                            <el-button type="primary" plain icon="el-icon-edit"  @click="newitem()">新建角色</el-button>
-                          
-                        </td>
-                        <td>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td align="left" width="160px">
-                          <el-input  v-model="userInputkey" placeholder="请输入属性名关键字" @change="searchUser" prefix-icon="el-icon-search"></el-input>
-                        </td>
-                  <td width="24px">
-                      <el-button type="primary" plain icon="el-icon-circle-plus-outline" @click="onUserSelector()">添加用户</el-button>
-                  </td>
-                  <td>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
-            <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="640px" valign="top">
-                  <el-table
-                    :data="dataList"
-                    border
-                    :height="tableHeight"
-                    style="width: 100%">
-                    <!--
+    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible">
+      <el-form :model="form">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item
+              label="名称"
+              :label-width="formLabelWidth"
+              :rules="[{ required: true, message: '必填', trigger: 'blur'}]"
+            >
+              <el-input v-model="form.name" auto-complete="off" :disabled="isReadOnly"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="说明" :label-width="formLabelWidth">
+              <el-input v-model="form.description" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="additem(form)">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+          <el-breadcrumb-item>角色管理</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-row class="topbar">
+          <el-col :span="4">
+            <el-input
+              v-model="inputkey"
+              placeholder="请输入关键字"
+              @change="search"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="10" style="text-align:left;">
+            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建角色</el-button>
+          </el-col>
+          <el-col :span="4">
+            <el-input
+              v-model="userInputkey"
+              placeholder="请输入关键字"
+              @change="searchUser"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="12" style="text-align:left;">
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-circle-plus-outline"
+              @click="onUserSelector()"
+            >添加用户</el-button>
+          </el-col>
+        </el-row>
+      </el-header>
+      <el-main>
+        <el-row>
+          <el-col :span="12">
+            <el-table :data="dataList" border :height="tableHeight" style="width: 100%">
+              <!--
                     <el-table-column type="selection" width="40" @selection-change="selectChange">
                     </el-table-column>
-                    -->
-                    
-                    <el-table-column label="" width="60">
-                      <template slot-scope="scope">
-                        <el-radio v-model="radioSelected" :label="scope.row.id" @change.native="selectChange(scope.row)">&nbsp;</el-radio>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="序号" width="60">
-                      <template slot-scope="scope">
-                        <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="名称" min-width="30%">
-                      <template slot-scope="scope">
-                        <span>{{scope.row.name}}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="说明" min-width="30%">
-                      <template slot-scope="scope">
-                        <span>{{scope.row.description}}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="160">
-                      <template slot-scope="scope">
-                        <el-button :plain="true" type="primary" size="small" icon="edit" @click="edititem(scope.row)">编辑</el-button>
-                        <el-button :plain="true" type="danger" size="small" icon="delete" @click="delitem(scope.row)">删除</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                  <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="pageSize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="itemCount">
-                  </el-pagination>
-              </td>
-              <td valign="top">
-                <el-table
-                      :data="userList"
-                      border
-                      :height="tableHeight"
-                      style="width: 100%">
-                      <el-table-column type="selection" width="40" @selection-change="selectChange">
-                      </el-table-column>
-                      <el-table-column label="序号" width="60">
-                        <template slot-scope="scope">
-                          <span>{{ scope.$index+1}}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="用户名" width="150">
-                        <template slot-scope="scope">
-                          <span>{{scope.row.name}}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="登录名" min-width="20%">
-                        <template slot-scope="scope">
-                          <span>{{scope.row.loginName}}</span>
-                        </template>
-                      </el-table-column> 
-                      <el-table-column label="部门" min-width="20%">
-                        <template slot-scope="scope">
-                          <span>{{scope.row.groupName}}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="操作" width="160">
-                        <template slot-scope="scope">
-                          <el-button :plain="true" type="danger" size="small" icon="delete" @click="removeUser(scope.row)">移出</el-button>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                    <el-pagination
-                    @size-change="handleUserSizeChange"
-                    @current-change="handleUserCurrentChange"
-                    :current-page="userCurrentPage"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="userPageSize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="userCount">
-                  </el-pagination>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+              -->
+
+              <el-table-column label width="60">
+                <template slot-scope="scope">
+                  <el-radio
+                    v-model="radioSelected"
+                    :label="scope.row.id"
+                    @change.native="selectChange(scope.row)"
+                  >&nbsp;</el-radio>
+                </template>
+              </el-table-column>
+              <el-table-column label="序号" width="60">
+                <template slot-scope="scope">
+                  <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="名称" min-width="30%" sortable>
+                <template slot-scope="scope">
+                  <span>{{scope.row.name}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="说明" min-width="30%">
+                <template slot-scope="scope">
+                  <span>{{scope.row.description}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="160">
+                <template slot-scope="scope">
+                  <el-button
+                    :plain="true"
+                    type="primary"
+                    size="small"
+                    icon="edit"
+                    @click="edititem(scope.row)"
+                  >编辑</el-button>
+                  <el-button
+                    :plain="true"
+                    type="danger"
+                    size="small"
+                    icon="delete"
+                    @click="delitem(scope.row)"
+                  >删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="currentPage"
+              :page-sizes="[10, 20, 50, 100, 200]"
+              :page-size="pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="itemCount"
+            ></el-pagination>
+          </el-col>
+          <el-col :span="12">
+            <el-table :data="userList" border :height="tableHeight" style="width: 100%">
+              <el-table-column type="selection" width="40" @selection-change="selectChange"></el-table-column>
+              <el-table-column label="序号" width="60">
+                <template slot-scope="scope">
+                  <span>{{ scope.$index+1}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="用户名" width="150" sortable>
+                <template slot-scope="scope">
+                  <span>{{scope.row.name}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="登录名" min-width="20%" sortable>
+                <template slot-scope="scope">
+                  <span>{{scope.row.loginName}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="部门" min-width="20%">
+                <template slot-scope="scope">
+                  <span>{{scope.row.groupName}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="160">
+                <template slot-scope="scope">
+                  <el-button
+                    :plain="true"
+                    type="danger"
+                    size="small"
+                    icon="delete"
+                    @click="removeUser(scope.row)"
+                  >移出</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-pagination
+              @size-change="handleUserSizeChange"
+              @current-change="handleUserCurrentChange"
+              :current-page="userCurrentPage"
+              :page-sizes="[10, 20, 50, 100, 200]"
+              :page-size="userPageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="userCount"
+            ></el-pagination>
+          </el-col>
+        </el-row>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
 <script type="text/javascript">
-import UserSelector from '@/components/controls/UserSelector'
+import UserSelector from "@/components/controls/UserSelector";
 export default {
   name: "RoleManager",
   permit: 9,
@@ -180,14 +196,14 @@ export default {
   },
   data() {
     return {
-      radioSelected:"",
+      radioSelected: "",
       dataList: [],
       dataListFull: [],
-      userList:[],
-      userListFull:[],
-      tableHeight: window.innerHeight - 180,
+      userList: [],
+      userListFull: [],
+      tableHeight: window.innerHeight - 200,
       inputkey: "",
-      userInputkey:"",
+      userInputkey: "",
       loading: false,
       dialogVisible: false,
       selectUserDialogVisible: false,
@@ -197,10 +213,10 @@ export default {
       pageSize: 20,
       userPageSize: 20,
       itemCount: 0,
-      userCount:0,
+      userCount: 0,
       selectedItemId: 0,
       currentPage: 1,
-      userCurrentPage:1,
+      userCurrentPage: 1,
       form: {
         id: "",
         name: "",
@@ -225,37 +241,33 @@ export default {
     _self.refreshData();
   },
   methods: {
-    onUserSelector()
-    {
-      if(this.selectedItemId==0)
-      {
+    onUserSelector() {
+      if (this.selectedItemId == 0) {
         this.$message("请选择角色!");
         return;
       }
-      this.selectUserDialogVisible=true;
-      if(this.$refs.UserSelector)
-      {
+      this.selectUserDialogVisible = true;
+      if (this.$refs.UserSelector) {
         this.$refs.UserSelector.refreshData();
       }
     },
-    onuserselected(indata)
-    {
+    onuserselected(indata) {
       let _self = this;
-      if( _self.selectedItemId)
-      {
+      if (_self.selectedItemId) {
         var m = new Map();
         m.set("userId", indata.id);
         m.set("deptId", _self.selectedItemId);
-        axios.post("/admin/addToGroup",JSON.stringify(m))
-        .then(function(response) {
-          _self.refreshUserData();
-          _self.$message("添加用户成功!");
-          _self.selectUserDialogVisible = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.selectUserDialogVisible = false;
-        });
+        axios
+          .post("/admin/addToGroup", JSON.stringify(m))
+          .then(function(response) {
+            _self.refreshUserData();
+            _self.$message("添加用户成功!");
+            _self.selectUserDialogVisible = false;
+          })
+          .catch(function(error) {
+            console.log(error);
+            _self.selectUserDialogVisible = false;
+          });
       }
     },
     // 移出用户
@@ -264,7 +276,8 @@ export default {
       var m = new Map();
       m.set("userId", indata.id);
       m.set("roleId", _self.selectedItemId);
-      axios.post("/admin/removeUserRole",JSON.stringify(m))
+      axios
+        .post("/admin/removeUserRole", JSON.stringify(m))
         .then(function(response) {
           _self.$message("移出成功!");
           _self.refreshUserData();
@@ -277,12 +290,13 @@ export default {
       let _self = this;
       var m = new Map();
       m.set("groupType", 2);
-      m.set("id","");
+      m.set("id", "");
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", _self.currentPage - 1);
       // console.log('pagesize:', _self.pageSize);
-      axios.post("/admin/getGroups",JSON.stringify(m))
+      axios
+        .post("/admin/getGroups", JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
@@ -295,7 +309,7 @@ export default {
           _self.loading = false;
         });
     },
-     // 分页 页数改变
+    // 分页 页数改变
     handleSizeChange(val) {
       this.pageSize = val;
       localStorage.setItem("groupPageSize", val);
@@ -307,9 +321,8 @@ export default {
       this.currentPage = val;
       this.refreshData();
     },
-     // 表格行选择
-    selectChange(val) 
-    {
+    // 表格行选择
+    selectChange(val) {
       this.selectedItemId = val.id;
       this.refreshUserData();
     },
@@ -321,7 +334,8 @@ export default {
       m.set("pageSize", _self.userPageSize);
       m.set("pageIndex", (_self.userCurrentPage - 1) * _self.userPageSize);
       //console.log('id:', _self.selectedItemId);
-      axios.post("/admin/getRoleUsers",JSON.stringify(m))
+      axios
+        .post("/admin/getRoleUsers", JSON.stringify(m))
         .then(function(response) {
           _self.userList = response.data.data;
           _self.userListFull = response.data.data;
@@ -348,34 +362,12 @@ export default {
     loadUserPageInfo(pager) {
       let _self = this;
       _self.userCount = pager.total;
-      /*
-      
-      var m = new Map();
-      m.set("groupId", _self.selectedItemId);
-      m.set("condition", _self.userInputkey);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/admin/getRoleUserCount"
-        })
-        .then(function(response) {
-          _self.userCount = response.data.itemCount;
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-        */
     },
-    
+
     saveitem(indata) {
       let _self = this;
-      axios.post("/admin/updateGroup",JSON.stringify(indata))
+      axios
+        .post("/admin/updateGroup", JSON.stringify(indata))
         .then(function(response) {
           _self.$message("保存成功!");
         })
@@ -385,12 +377,12 @@ export default {
     },
     delitem(indata) {
       let _self = this;
-      if(indata.loginName=='admin')
-      {
+      if (indata.loginName == "admin") {
         _self.$message("Admin不允许删除!");
         return;
       }
-      axios.post("/admin/deleteGroup", JSON.stringify(indata))
+      axios
+        .post("/admin/deleteGroup", JSON.stringify(indata))
         .then(function(response) {
           _self.$message("删除成功!");
           _self.refreshData();
@@ -409,7 +401,7 @@ export default {
         description: "",
         groupType: "2",
         coding: ""
-      }
+      };
     },
     edititem(indata) {
       this.dialogtitle = "编辑";
@@ -423,7 +415,8 @@ export default {
         _self.saveitem(indata);
         _self.dialogVisible = false;
       } else {
-        axios.post("/admin/newGroup",JSON.stringify(indata))
+        axios
+          .post("/admin/newGroup", JSON.stringify(indata))
           .then(function(response) {
             _self.dialogVisible = false;
             _self.refreshData();
@@ -433,23 +426,24 @@ export default {
           });
       }
     },
-    moveUser()
-    {
-
-    },
+    moveUser() {},
     search() {
       let _self = this;
-      _self.dataList = _self.dataListFull.filter(function(item){
-          return item.name.match(_self.inputkey) || item.description.match(_self.inputkey);
-        }
-      );
+      _self.dataList = _self.dataListFull.filter(function(item) {
+        return (
+          item.name.match(_self.inputkey) ||
+          item.description.match(_self.inputkey)
+        );
+      });
     },
     searchUser() {
       let _self = this;
-      _self.userList = _self.userListFull.filter(function(item){
-          return item.name.match(_self.inputkey) || item.loginName.match(_self.inputkey);
-        }
-      );
+      _self.userList = _self.userListFull.filter(function(item) {
+        return (
+          item.name.match(_self.userInputkey) ||
+          item.loginName.match(_self.userInputkey)
+        );
+      });
     }
   }
 };
@@ -471,5 +465,12 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header,
+.el-footer {
+  background-color: #e8eaeb;
+}
+.el-row {
+  padding-bottom: 10px;
 }
 </style>

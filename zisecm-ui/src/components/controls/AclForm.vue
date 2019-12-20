@@ -10,7 +10,7 @@
               <el-form-item :label="$t('field.type')" :label-width="formLabelWidth">
                 <el-select :disabled="isEdit"
                   v-model="form.targetType" :placeholder="$t('application.pleaseSelect')" style="display:block;">
-                  <div v-for="(item,index) in typeData">
+                  <div v-for="(item,index) in typeData" :key="'T_'+index">
                     <el-option :label="item.name" :value="item.value" :key="index"></el-option>
                   </div>
                 </el-select>
@@ -31,7 +31,7 @@
               <el-form-item :label="$t('field.permission')" :label-width="formLabelWidth">
                 <el-select
                   v-model="form.permission" :placeholder="$t('application.pleaseSelect')" style="display:block;">
-                  <div v-for="(item,index) in permissionData">
+                  <div v-for="(item,index) in permissionData" :key="'P_'+index">
                     <el-option :label="item.name" :value="item.value" :key="index"></el-option>
                   </div>
                 </el-select>
@@ -39,7 +39,7 @@
             </el-col>
             <el-col :span="24">
               <el-form-item :label="$t('field.expireDate')" :label-width="formLabelWidth">
-                <el-date-picker v-model="form.expireDate" type="date" :placeholder="$t('application.selectDate')" style="display:block;"></el-date-picker>
+                <el-date-picker v-model="form.expireDate" type="date" :placeholder="$t('application.selectDate')" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
               </el-form-item>
             </el-col>
         </el-row>

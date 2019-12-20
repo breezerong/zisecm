@@ -54,10 +54,10 @@
               </el-col>
              <el-col>
             <el-form-item prop="C_START_DATE" label="借阅开始时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_START_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_START_DATE" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                  <el-form-item prop="C_END_DATE" label="借阅结束时间" :label-width="formLabelWidth" style="float:left">
-                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_END_DATE" auto-complete="off"></el-date-picker >
+                  <el-date-picker  :picker-options="expireTimeOption"   v-model="borrowForm.C_END_DATE" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                </el-col>
              <el-col>
@@ -71,7 +71,29 @@
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
-                  <template  v-for="item in gridList">
+                <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+              </template>
+            </el-table-column>>
+                             <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='C_ARCHIVE_DATE'">
@@ -164,7 +186,29 @@
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
-                  <template  v-for="item in gridList">
+               <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+              </template>
+            </el-table-column>>
+                              <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='C_ARCHIVE_DATE'">
@@ -473,7 +517,7 @@ export default {
               if(_self.borrowForm.C_CREATION_UNIT!=_self.borrowForm.C_DESC1){
                   if(_self.borrowForm.C_REVIEWER2=="")alertStr=alertStr +"'形成部门领导' ";
               }
-              if(beyondLeaderPermision||_self.borrowForm.SUB_TYPE=="纸质借阅"){
+              if(beyondLeaderPermision||_self.borrowForm.SUB_TYPE=="纸质借阅"||_self.borrowForm.SUB_TYPE=="下载"){
                   if(_self.borrowForm.C_REVIEWER3=="")alertStr=alertStr +"'分管领导' ";
               }
 

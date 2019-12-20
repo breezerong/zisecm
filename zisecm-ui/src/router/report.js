@@ -16,6 +16,15 @@ export const reportRouter = {
 			path: '/report/systemreport',
 			name: '系统报表',
 			component: () => import('@/views/report/SystemReport.vue')
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 2
+			},
+			path: '/report/archivesreport',
+			name: '档案报表',
+			component: () => import('@/views/report/ArchivesReport.vue')
 		}
 	]
 

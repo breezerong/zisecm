@@ -1,6 +1,8 @@
 package com.ecm.flowable.listener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +24,9 @@ import org.springframework.stereotype.Component;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
@@ -65,9 +70,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 		}
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+		String workflowSpecialUserName = env.getProperty("ecm.username");
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
 			extracted(ecmSession, arg0);
 //			System.out.println("========name======="+arg0.getEventName()+"===isEnded==="+arg0.isEnded());
 			//流程结束发送邮件
@@ -188,9 +193,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 		
 		
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+		String workflowSpecialUserName = env.getProperty("ecm.username");
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
 			Map<String, Object> varMap = extracted(ecmSession, arg0);
 			String processName = varMap.get("processName").toString();
 			if ("process_borrow".equals(processName)) {
@@ -199,17 +204,24 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				List<Map<String, Object>> childList = null;
 				String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
 						+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='"
-						+ formId + "' order by a.ORDER_INDEX,b.CREATION_DATE";
+						+ formId + "'  and a.NAME='irel_borrow' ";
 				childList = documentService.getMapList(ecmSession.getToken(), sql);
 				Map<String, Object> formObj = documentService.getObjectMapById(ecmSession.getToken(), formId);
+				Date grantDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(formObj.get("C_END_DATE").toString());
+				
 				if ("automaticAuthorization".equals(flowElementId)) {
+					String userName=varMap.get("startUser").toString();
+					int permit=PermissionContext.ObjectPermission.READ;
+					if ("在线浏览".equals(varMap.get("borrowType").toString())){
+						permit=PermissionContext.ObjectPermission.READ;
+					}else if("下载".equals(varMap.get("borrowType").toString())) {
+						permit=PermissionContext.ObjectPermission.DOWNLOAD;
+					}
 					for (int i = 0; i < childList.size(); i++) {
 						EcmDocument docObj = documentService.getObjectById(ecmSession.getToken(),
 								childList.get(i).get("CHILD_ID").toString());
-								documentService.grantUser(ecmSession.getToken(), docObj, varMap.get("startUser").toString(),
-								PermissionContext.ObjectPermission.READ,
-								new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(formObj.get("C_END_DATE").toString()),
-								true);
+						documentService.grantUser(ecmSession.getToken(), docObj, userName,permit, grantDate, true);
+						grantRelationPermit(ecmSession,docObj, "irel_children", userName, grantDate, permit);
 					}
 					documentService.updateStatus(ecmSession.getToken(), formId, "已完成");
 				} else if ("updateStatus".equals(flowElementId)) {
@@ -231,6 +243,23 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 		System.out.println("DelegateExecution_execute");
 	}
 
+	private void grantRelationPermit(IEcmSession ecmSession,EcmDocument docObj, String relationName, String userName, Date grantDate, int permit)
+			throws EcmException, AccessDeniedException, NoPermissionException, ParseException {
+		if("图册".equals(docObj.getTypeName())) {
+			String sqlSub = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
+					+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='"
+					+ docObj.getId() + "' and a.NAME='"+ relationName+"' ";
+			List<Map<String, Object>>  childSubList = documentService.getMapList(ecmSession.getToken(), sqlSub);
+			for (int j = 0; j < childSubList.size(); j++) {
+				EcmDocument docObjSub = documentService.getObjectById(ecmSession.getToken(),
+						childSubList.get(j).get("CHILD_ID").toString());
+				documentService.grantUser(ecmSession.getToken(), docObjSub, userName,permit,
+				grantDate,
+				true);
+			}
+		}
+	}
+
 	/**
 	 * TaskListener 方法 for taskListener
 	 */
@@ -240,10 +269,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			///////////////////////任务到达发送邮件//////////////
 			String assignee=arg0.getAssignee();//ecm_user.Name
 			IEcmSession ecmSession = null;
-			String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+			String workflowSpecialUserName = env.getProperty("ecm.username");
 			
 			try {
-				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
 				EcmUser user= userService.getObjectByName(ecmSession.getToken(), assignee);
 				String email= user.getEmail();
 				if(email!=null&&!"".equals(email)) {
@@ -268,9 +297,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
 			}
 			IEcmSession ecmSession = null;
-			String workflowSpecialUserName = env.getProperty("spring.datasource.username");
+			String workflowSpecialUserName = env.getProperty("ecm.username");
 			try {
-				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("spring.datasource.password"));
+				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
 				extracted(ecmSession, arg0);
 			} catch (Exception e) {
 				// TODO: handle exception

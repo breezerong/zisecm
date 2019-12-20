@@ -14,12 +14,18 @@ public class SearchClient {
 	
 	private String releaseStatus = "利用";
 	
+	private String notInTypeName = null;
+	
 	private SearchClient() {
 		initConfig();
 	}
 	
 	public static SearchClient getInstance() {
 		return current;
+	}
+	
+	public void refreshCache() {
+		inited = false;
 	}
 	
 	 private synchronized void initConfig() {
@@ -29,11 +35,24 @@ public class SearchClient {
 	    		}catch(Exception ex) {
 	    			
 	    		}
+	    		
+	    		try {
+	    			notInTypeName = (CacheManagerOper.getEcmParameters().get("NotInTypeName").getValue());
+	    		}catch(Exception ex) {
+	    			
+	    		}
 	    	}
 	 }
+	 
+	 
 
 	public String getReleaseStatus() {
 		return releaseStatus;
 	}
+	
+	public String getNotInTypeName() {
+		return notInTypeName;
+	}
+
 
 }

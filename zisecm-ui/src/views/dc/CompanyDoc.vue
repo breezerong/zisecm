@@ -84,8 +84,8 @@
     </el-dialog>
 
     <el-container>
-      <!-- <el-scrollbar> -->
-      <el-aside width="200px">
+      <template :style="{height:tableHeight}">
+        <el-aside width="160px" :style="{height: asideHeight+'px'}" >
         <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
           <el-breadcrumb-item>
             <i class="el-icon-receiving"></i>
@@ -104,8 +104,8 @@
           @node-click="handleNodeClick"
         ></el-tree>
       </el-aside>
-      <!-- </el-scrollbar> -->
-      <el-main>
+     </template>
+        <el-main>
         <el-row style="padding-top:4px;">
           <el-col :span="4">
             <el-input
@@ -276,19 +276,22 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 50, 100, 200]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="itemCount"
+          ></el-pagination>
         </el-row>
       </el-main>
+      <!-- </el-scrollbar> -->
+      
     </el-container>
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[10, 20, 50, 100, 200]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="itemCount"
-    ></el-pagination>
+    
   </div>
 </template>
 <script>
@@ -314,6 +317,7 @@ export default {
       },
       innerTableHeight: window.innerHeight - 360,
       tableHeight: window.innerHeight - 125,
+      asideHeight: window.innerHeight - 80,
       currentLanguage: "zh-cn",
       propertyVisible: false,
       loading: false,
@@ -912,9 +916,9 @@ export default {
 .el-container {
   height: 100%;
 }
-.el-aside {
+/* .el-aside {
   height: 680px;
-}
+} */
 </style>
 <style>
 .el-tree-node :nth-child(2) {
