@@ -74,7 +74,12 @@ export default {
     };
   },
   created() {
-    let loginName = this.getValue(window.location.href, "LoginName");
+    let loginName = this.$route.query.LoginName;
+    
+    if(!loginName){
+      loginName = this.getValue(window.location.href, "LoginName");
+    }
+    console.log("loginname:"+loginName);
     if (loginName) {
       this.loginSSO(loginName);
     }

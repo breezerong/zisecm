@@ -111,7 +111,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 				en.setDescription("");
 			}
 			// TODO Auto-generated method stub
-			if(en.getInputStream()!=null&&en.getContentType()==1&&en.getFilePath().length()>0)
+			if(en.getInputStream()!=null && en.getFilePath()!=null && en.getFilePath().length()>0)
 			{
 				String filePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 				filePath += File.separator + en.getFilePath();
@@ -217,7 +217,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 		Date dt = new Date();
 		fullPath += getPath(en.getDataTicket());
 		//Document ID文件路径+类型+时间+格式，格式副本在同一个目录。
-		String  fileName = fullPath +"_"+en.getContentType()+"_"+ dt.getTime()+"."+en.getFormatName();
+		String  fileName = fullPath +"_"+en.getContentType()+"."+en.getFormatName();
 		en.setFilePath(fileName.replace(storePath, ""));
 		Path path = Paths.get(fileName);
 		if (!Files.isWritable(path)) {

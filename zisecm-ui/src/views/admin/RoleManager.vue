@@ -52,7 +52,7 @@
               prefix-icon="el-icon-search"
             ></el-input>
           </el-col>
-          <el-col :span="10" style="text-align:left;">
+          <el-col :span="8" style="text-align:left;">
             <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建角色</el-button>
           </el-col>
           <el-col :span="4">
@@ -63,7 +63,7 @@
               prefix-icon="el-icon-search"
             ></el-input>
           </el-col>
-          <el-col :span="12" style="text-align:left;">
+          <el-col :span="8" style="text-align:left;">
             <el-button
               type="primary"
               plain
