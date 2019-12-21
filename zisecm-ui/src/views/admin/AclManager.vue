@@ -142,7 +142,7 @@ export default {
       dialogVisible: false,
       permissionVisible: false,
       dialogCopyVisible: false,
-      tableHeight: window.innerHeight - 180,
+      tableHeight: window.innerHeight - 150,
       isEdit: false,
       formCopy:{
         id:"",

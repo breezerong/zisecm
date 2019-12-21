@@ -310,7 +310,7 @@ export default {
       dataListFull: [],
       fileList: [],
       file: "",
-      tableHeight: window.innerHeight - 170,
+      tableHeight: window.innerHeight - 152,
       inputkey: "",
       loading: false,
       dialogVisible: false,
@@ -585,6 +585,7 @@ a {
 .el-header,
 .el-footer {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

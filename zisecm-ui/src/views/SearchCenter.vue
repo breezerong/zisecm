@@ -14,6 +14,7 @@
             :collapse="isCollapse"
             :default-openeds="opens"
             style="background-color:#D3DCE6"
+            ref = "searchMenu"
           >
             <router-link to="/search/fulltextsearch">
               <el-menu-item index="1">
@@ -87,8 +88,11 @@ export default {
   },
   methods: {
     handleClose() {
-      this.isCollapse = this.isCollapse ? false : true;
+      this.isCollapse = !this.isCollapse;
       this.asideWidth = this.isCollapse ? "50px" : "160px";
+      if(!this.isCollapse){
+        this.$refs.searchMenu.open("10");
+      }
     },
     clickRouter(val) {
       let _self = this;

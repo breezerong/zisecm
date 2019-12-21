@@ -48,14 +48,14 @@
         <el-button type="primary" @click="addItem(form)">确 定</el-button>
       </div>
     </el-dialog>
-    <div class="navbar">
+    <el-row class="navbar">
       <el-breadcrumb>
         <el-breadcrumb-item>系统管理</el-breadcrumb-item>
         <el-breadcrumb-item>界面配置</el-breadcrumb-item>
         <el-breadcrumb-item>卡片查询字段管理</el-breadcrumb-item>
       </el-breadcrumb>
-    </div>
-    <div class="topbar">
+    </el-row>
+    <el-row class="topbar">
       <el-col :span="4">名称：{{typeName}}</el-col>
       <el-col :span="4">
         <el-input
@@ -65,11 +65,12 @@
           prefix-icon="el-icon-search"
         ></el-input>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="16" style="text-algin:left;panding-left:20px;">
+        &nbsp;
           <el-button type="primary" icon="el-icon-edit" @click="newItem()">新建</el-button>
           <el-button type="primary" icon="el-icon-check" @click="startCheck()">表单验证</el-button>
       </el-col>
-    </div>
+    </el-row>
     <el-table
       :data="dataList"
       border
@@ -141,7 +142,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 110,
       inputkey: "",
       parentId: "",
       typeName: "",

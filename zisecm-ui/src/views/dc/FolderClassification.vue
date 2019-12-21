@@ -996,14 +996,8 @@ a {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.el-header, .el-footer {
+.el-header {
     background-color: #e8eaeb;
     color: #333;
-    text-align: center;
-    padding: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-bottom: 0px;
 }
 </style>

@@ -264,7 +264,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 170,
+      tableHeight: window.innerHeight - 125,
       inputkey: "",
       loading: false,
       dialogVisible: false,
@@ -613,6 +613,7 @@ a {
 .el-header,
 .el-footer {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

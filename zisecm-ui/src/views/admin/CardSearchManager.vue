@@ -129,7 +129,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 110,
       form: {
         name: "",
         description: ""

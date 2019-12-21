@@ -201,7 +201,7 @@ export default {
       dataListFull: [],
       userList: [],
       userListFull: [],
-      tableHeight: window.innerHeight - 200,
+      tableHeight: window.innerHeight - 155,
       inputkey: "",
       userInputkey: "",
       loading: false,
@@ -469,6 +469,7 @@ a {
 .el-header,
 .el-footer {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

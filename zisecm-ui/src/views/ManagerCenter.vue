@@ -2,8 +2,8 @@
     <el-container>
       <el-container>
         <el-aside :width="asideWidth">
-          <div style="text-align:left;cursor:pointer;" @click="handleClose">
-          <i v-if="isCollapse==false" class="el-icon-s-fold"></i><i v-else class="el-icon-s-unfold"></i>
+          <div style="text-align:left;cursor:pointer;background-color: #DCDFE6;" @click="handleClose">
+            <i v-if="isCollapse==false" class="el-icon-s-fold"></i><i v-else class="el-icon-s-unfold"></i>
           </div>
           <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航class="el-menu-vertical-ecm"-->
@@ -204,7 +204,7 @@ export default {
   },
   methods: {
     handleClose(){
-      this.isCollapse = this.isCollapse?false:true;
+      this.isCollapse = !this.isCollapse;
       this.asideWidth = this.isCollapse?"50px":"200px";
     },
     checkLogin()
@@ -244,6 +244,7 @@ element.style {
 }
 
 li{
+  
   width:100%;
   text-align: left;
 }
