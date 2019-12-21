@@ -58,11 +58,11 @@
             <el-row  >
               <el-col :span="4">
                 <el-form-item  v-if="currentUserName=='all'"  label="发起人"   :label-width="formLabelWidth" style="float:left">
-                  <UserSelectInput  v-model="workflowForm.startUser" v-bind:inputValue="workflowForm.startUser" roleName=""></UserSelectInput>
+                  <UserSelectInput  v-model="workflowForm.startUser" v-bind:inputValue="workflowForm.startUser"></UserSelectInput>
                 </el-form-item>
               </el-col >
                <el-col :span="20">
-               <el-form-item   label="完成状态" :label-width="formLabelWidth"  style="float:left">
+               <el-form-item   label="状态" :label-width="formLabelWidth"  style="float:left">
                   <el-select style="width:12em"  v-model="workflowForm.isFinished">
                        <el-option label="全部"  value="全部"></el-option>
                        <el-option label="未完成"  value="未完成"></el-option>
@@ -77,7 +77,7 @@
                   <el-date-picker     v-model="workflowForm.endTimeAfter" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                   <el-date-picker     v-model="workflowForm.endTimeBefore" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
-                 <el-form-item style="float:left;padding-left:3px">
+                 <el-form-item style="float:left;">
                    <el-button  type="primary" @click="search()">查询</el-button>
                  </el-form-item>
                </el-col >
