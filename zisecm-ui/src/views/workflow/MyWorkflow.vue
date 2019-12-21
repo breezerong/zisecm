@@ -1,6 +1,6 @@
 <template>
   <div>
-        <el-dialog title="查看" :visible.sync="dialogVisible" width="95%">
+        <el-dialog title="查看" :visible.sync="dialogVisible" v-if="dialogVisible" width="95%">
           <el-steps :active="activeIndex" align-center finish-status="process" process-status="success">
             <el-step v-for="item in activityList" :title="item.name" :key="item.id" :description="item.description"></el-step>
           </el-steps>
