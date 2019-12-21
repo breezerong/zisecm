@@ -406,5 +406,7 @@ header.el-header {
 .el-row {
   padding-bottom: 10px;
 }
-
+.el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width: 140px;
+}
 </style>
