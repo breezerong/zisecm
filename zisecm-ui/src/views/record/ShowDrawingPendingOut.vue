@@ -16,7 +16,7 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
+            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'&& typeof(C_DRAFTER)=='undefined'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
                 <el-button type="primary" plain
                 size="small" icon="el-icon-check" @click="outboundOrder">完成晒图</el-button>
             </el-col>
