@@ -12,11 +12,11 @@
                     </template>
                     <el-menu-item index="201">
                       <i class="el-icon-bottom"></i>
-                      <span slot="title"><router-link :to="{path: '/record/showdrawing/showdrawingpendingout', query: {'finishedShowDrawing': '待晒图' }}">待晒图</router-link></span>
+                      <span slot="title"><router-link :to="{path: '/record/showdrawing/showdrawingpendingouttask', query: {'finishedShowDrawing': '待晒图','C_DRAFTER':C_DRAFTER}}">待晒图</router-link></span>
                     </el-menu-item>
                     <el-menu-item index="202">
                       <i class="el-icon-finished"></i>
-                      <span slot="title"><router-link :to="{path: '/record/showdrawing/showdrawingfinish', query: {'finishedShowDrawing': '已晒图' }}">已完成</router-link></span>
+                      <span slot="title"><router-link :to="{path: '/record/showdrawing/showdrawingfinishtask', query: {'finishedShowDrawing': '已晒图' ,'C_DRAFTER':C_DRAFTER}}">已完成</router-link></span>
                     </el-menu-item>
                     
                   </el-submenu>
@@ -37,14 +37,17 @@ export default {
   permit: 1,
   data() {
         return {
-            menuHeight: window.innerHeight -64
+            menuHeight: window.innerHeight -64,
+            'C_DRAFTER':sessionStorage.getItem('access-userName')
         }
         
     },
     mounted(){
       this.$router.replace({
-        path:"/record/showdrawing/showdrawingpendingout",
-        query: {'finishedShowDrawing': '待晒图' }
+        path:"/record/showdrawing/showdrawingpendingouttask",
+        query: {'finishedShowDrawing': '待晒图',
+        C_DRAFTER:'lc',
+         }
       });
     },
     methods: {

@@ -108,6 +108,8 @@ export default {
              rightTableHeight: (window.innerHeight - 200)/2,
              rightOutTableHeight:(window.innerHeight - 200)/2,
              finishedShowDrawing:this.$route.query.finishedShowDrawing,
+             C_DRAFTER:this.$route.query.C_DRAFTER,
+             
         }
        
     },
@@ -307,10 +309,8 @@ export default {
           var key0 = _self.inputkey;
           if (key0 != "") {
             key0 = " (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
-          }else{
-            key0=" STATUS='"+_self.finishedShowDrawing +"' "
-          }
-        
+          } 
+              
           m.set("configName", "listShowDrawingFileList");
           // m.set('folderId',indata.id);
           // m.set("condition", key);
@@ -339,13 +339,17 @@ export default {
           _self.gridListOutFileData=[];
           _self.orderLoading=true;
           var key0 = _self.orderInputkey;
+
           if (key0 &&key0 != "") {
             key0 = " STATUS='"+_self.finishedShowDrawing +"' " +" (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
           }else{
             key0=" STATUS='"+_self.finishedShowDrawing +"' "
           }
 
-        
+       if(_self.C_DRAFTER!=""){
+          key0 = key0+" and C_DRAFTER='"+_self.C_DRAFTER+"'";
+        }
+
           var m = new Map();
           m.set("gridName", "ShowDrawingFormGrid");
           // m.set('folderId',indata.id);

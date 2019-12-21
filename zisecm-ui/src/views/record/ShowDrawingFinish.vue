@@ -108,7 +108,8 @@ export default {
              rightTableHeight: (window.innerHeight - 200)/2,
              rightOutTableHeight:(window.innerHeight - 200)/2,
              finishedShowDrawing:this.$route.query.finishedShowDrawing,
-        }
+              C_DRAFTER:this.$route.query.C_DRAFTER,
+       }
        
     },
     mounted(){
@@ -344,7 +345,9 @@ export default {
           }else{
             key0=" STATUS='"+_self.finishedShowDrawing +"' "
           }
-
+        if(_self.C_DRAFTER!=""){
+          key0 = key0+" and C_DRAFTER='"+_self.C_DRAFTER+"'";
+        }
         
           var m = new Map();
           m.set("gridName", "ShowDrawingFormGrid");
