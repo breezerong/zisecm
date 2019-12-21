@@ -47,10 +47,11 @@
             ></el-input>
           </el-col>
           <el-col :span="20" style="text-align:left;">
+            &nbsp; 
             <el-button
               type="primary"
               icon="el-icon-edit"
-              size="medium"
+              plain
               @click="dialogVisible = true"
             >新建</el-button>
           </el-col>
@@ -96,7 +97,7 @@
               <el-input v-model="scope.row.searchField"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="是否默认" width="90">
+          <el-table-column label="是否默认" width="100">
             <template slot-scope="scope">
               <el-select v-model="scope.row.isDefault">
                 <el-option label="否" value="false"></el-option>
@@ -155,7 +156,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 115,
       form: {
         typeName: "",
         description: "",
@@ -278,9 +279,9 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
+.el-header {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

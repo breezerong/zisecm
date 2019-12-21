@@ -43,7 +43,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-edit" @click="dialogVisible = true">新建</el-button>
+            &nbsp;
+            <el-button type="primary" plain icon="el-icon-edit" @click="dialogVisible = true">新建</el-button>
           </el-form-item>
         </el-form>
       </el-header>
@@ -58,32 +59,32 @@
           style="width: 100%"
         >
           <el-table-column label="行号" type="index" width="60" />
-          <el-table-column label="名称" width="180" sortable>
+          <el-table-column label="名称" width="160" sortable>
             <template slot-scope="scope">
               <el-input v-model="scope.row.name"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="说明" width="180">
+          <el-table-column label="说明" min-width="15%">
             <template slot-scope="scope">
               <el-input v-model="scope.row.description"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="存储类型" width="240">
+          <el-table-column label="存储类型" width="120">
             <template slot-scope="scope">
               <el-input v-model="scope.row.storeType"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="执行类" width="240">
+          <el-table-column label="执行类" min-width="20%">
             <template slot-scope="scope">
               <el-input v-model="scope.row.storeClass"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="路径" width="240">
+          <el-table-column label="路径" min-width="20%">
             <template slot-scope="scope">
               <el-input v-model="scope.row.storePath"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="320">
+          <el-table-column label="操作" width="170">
             <template slot-scope="scope">
               <el-button
                 :plain="true"
@@ -122,7 +123,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 190,
+      tableHeight: window.innerHeight - 115,
       form: {
         name: "",
         description: "",
@@ -227,7 +228,7 @@ a {
 }
 .el-header {
   background-color: #e8eaeb;
-  height: 64;
+  height: 68px !important;
 }
 .el-row{
   padding-bottom:10px;

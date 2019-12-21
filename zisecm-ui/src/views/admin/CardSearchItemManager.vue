@@ -67,8 +67,8 @@
       </el-col>
       <el-col :span="16" style="text-algin:left;panding-left:20px;">
         &nbsp;
-          <el-button type="primary" icon="el-icon-edit" @click="newItem()">新建</el-button>
-          <el-button type="primary" icon="el-icon-check" @click="startCheck()">表单验证</el-button>
+          <el-button type="primary" plain icon="el-icon-edit" @click="newItem()">新建</el-button>
+          <el-button type="primary" plain icon="el-icon-check" @click="startCheck()">表单验证</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -142,7 +142,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 110,
+      tableHeight: window.innerHeight - 115,
       inputkey: "",
       parentId: "",
       typeName: "",
@@ -290,5 +290,9 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header {
+  background-color: #e8eaeb;
+  height: 68px !important;
 }
 </style>

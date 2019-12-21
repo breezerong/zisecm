@@ -2,7 +2,7 @@
     <el-container>
       <el-container>
         <el-aside :width="asideWidth">
-          <div style="text-align:left;cursor:pointer;background-color: #DCDFE6;" @click="handleClose">
+          <div style="text-align:left;cursor:pointer;background-color: #DCDFE6; height:25px;" @click="handleClose">
             <i v-if="isCollapse==false" class="el-icon-s-fold"></i><i v-else class="el-icon-s-unfold"></i>
           </div>
           <div v-bind:style="{height: menuHeight +'px'}">

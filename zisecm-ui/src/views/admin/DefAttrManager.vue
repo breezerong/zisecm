@@ -168,8 +168,9 @@
             ></el-input>
           </el-col>
           <el-col :span="16" style="text-align:left;">
-            <el-button type="primary" icon="el-icon-edit" @click="newitem()">新建</el-button>
-            <el-button type="primary" icon="el-icon-check" @click="startcheck()">验证表单</el-button>
+            &nbsp;
+            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建</el-button>
+            <el-button type="primary" plain icon="el-icon-check" @click="startcheck()">验证表单</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -533,9 +534,9 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
+.el-header {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

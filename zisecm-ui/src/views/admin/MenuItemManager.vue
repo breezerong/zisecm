@@ -88,7 +88,8 @@
         ></el-input>
       </el-col>
       <el-col :span="2">
-        <el-button type="primary" icon="el-icon-edit" @click="newItem()">新建</el-button>
+        &nbsp;
+        <el-button type="primary" plain icon="el-icon-edit"  @click="newItem()">新建</el-button>
       </el-col>
     </el-row>
     <el-table :data="dataList" border :height="tableHeight" v-loading="loading" style="width: 100%">
@@ -98,7 +99,7 @@
       <el-table-column label="角色" prop="roleName" min-width="20%"></el-table-column>
       <el-table-column label="标签" prop="label" sortable min-width="20%"></el-table-column>
       <el-table-column label="组件名" prop="componentName" sortable min-width="20%"></el-table-column>
-      <el-table-column label="排序" prop="orderIndex" sortable width="80"></el-table-column>
+      <el-table-column label="排序" prop="orderIndex" sortable width="90"></el-table-column>
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button
@@ -142,7 +143,7 @@ export default {
       loading: false,
       dialogVisible: false,
       isEdit: false,
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 115,
       form: {
         name: "",
         description: "",
@@ -257,5 +258,9 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header {
+  background-color: #e8eaeb;
+  height: 68px !important;
 }
 </style>
