@@ -50,7 +50,8 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-edit" @click="dialogVisible = true">新建</el-button>
+            &nbsp; 
+            <el-button type="primary" plain icon="el-icon-edit" @click="dialogVisible = true">新建</el-button>
           </el-form-item>
         </el-form>
       </el-header>
@@ -133,7 +134,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 115,
       form: {
         name: "",
         description: "",
@@ -270,6 +271,7 @@ a {
 }
 .el-header{
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row{
   padding-bottom:10px;

@@ -11,17 +11,20 @@
           <el-form-item>{{typeName}}</el-form-item></el-col> -->
         
       <template v-for="(item,itemIndex) in dataList">
-        <el-col :span="showCellValue(item)" v-bind:key="itemIndex">
+        <el-col v-show="itemId || (!itemId && !item.readOnly)" :span="showCellValue(item)" v-bind:key="itemIndex" style="text-align:left;">
           <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:'必填',trigger:'blur'}]">
-                <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue"></el-input>
-                <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue"></el-input>
-                <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue"></el-input>
-                <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue"></el-checkbox>
-                <el-date-picker v-else-if="item.controlType=='Date'" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-checkbox>
+                <template v-else-if="item.controlType=='Date'">
+                  <span v-if="item.readOnly" >{{datetimeFormat(item.defaultValue)}}</span>
+                  <el-date-picker v-else :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss" :readonly="item.readOnly"></el-date-picker>
+                </template>
                 <el-select  :name="item.attrName"
                 v-else-if="item.controlType=='Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
                 v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" :multiple="item.isRepeat" style="display:block;"
-                @change="((val)=>{onSelectChange(val, item)})">
+                @change="((val)=>{onSelectChange(val, item)})" >
                       <div v-for="(name,nameIndex) in item.validValues" :key="nameIndex+'N'">
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>

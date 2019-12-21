@@ -57,6 +57,31 @@
         <el-form-item :label="$t('field.description')" :label-width="formLabelWidth">
           <el-input v-model="folderForm.description" auto-complete="off"></el-input>
         </el-form-item>
+        <el-col :span="12" v-show="clientPermission>3">
+          <el-form-item label="代码" :label-width="formLabelWidth">
+            <el-input v-model="folderForm.coding" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-show="clientPermission>3">
+          <el-form-item v-show="clientPermission>3" label="完整代码" :label-width="formLabelWidth">
+            <el-input v-model="folderForm.fullCoding" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-show="clientPermission>4">
+          <el-form-item label="ACL名称" :label-width="formLabelWidth">
+            <el-input v-model="folderForm.aclName" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-show="clientPermission>4">
+          <el-form-item  label="列表名称" :label-width="formLabelWidth">
+            <el-input v-model="folderForm.gridView" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24" v-show="clientPermission>3">
+            <el-form-item label="排序" :label-width="formLabelWidth">
+              <el-input v-model="folderForm.orderIndex" auto-complete="off"></el-input>
+            </el-form-item>
+            </el-col>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveFolder(folderForm)">{{$t('application.ok')}}</el-button>
@@ -317,6 +342,8 @@ export default {
         isIndeterminate: false
       },
       currentLanguage: "zh-cn",
+      clientPermission:0,
+      systemPermission:0,
       dataList: [],
       showFields: [],
       itemDataList: [],
@@ -389,6 +416,12 @@ export default {
     }
     _self.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     _self.loading = true;
+    var user = sessionStorage.getItem('access-user');
+      if(user)
+      {
+        _self.clientPermission = Number(sessionStorage.getItem('access-clientPermission'));
+        _self.systemPermission = Number(sessionStorage.getItem('access-systemPermission'));
+      }
     axios
       .post("/admin/getFolder", 0)
       .then(function(response) {

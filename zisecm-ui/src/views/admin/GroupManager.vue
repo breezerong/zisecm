@@ -168,6 +168,7 @@
             ></el-input>
           </el-col>
           <el-col :span="16" style="text-align:left;">
+            &nbsp; 
             <el-button type="primary" plain icon="el-icon-edit" @click="newUser()">创建用户</el-button>
             <el-button
               type="primary"
@@ -222,21 +223,18 @@
                   <el-button
                     :plain="true"
                     type="primary"
-                    size="small"
                     icon="edit"
                     @click="editUser(scope.row)"
                   >编辑</el-button>
                   <el-button
                     :plain="true"
                     type="primary"
-                    size="small"
                     icon="edit"
                     @click="moveUser(scope.row)"
                   >移到</el-button>
                   <el-button
                     :plain="true"
                     type="danger"
-                    size="small"
                     icon="delete"
                     @click="removeUser(scope.row)"
                   >移出</el-button>
@@ -610,8 +608,7 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
+.el-header {
   background-color: #e8eaeb;
   height: 68px !important;
 }

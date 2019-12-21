@@ -171,15 +171,7 @@
           <el-breadcrumb-item>表单项配置</el-breadcrumb-item>
         </el-breadcrumb>
         <el-row class="topbar">
-          <el-col :span="2">类型：{{typename}}</el-col>
-          <el-col :span="2">
-            <el-input
-              v-model="parentid"
-              placeholder="请输入父Id"
-              @change="search"
-              prefix-icon="el-icon-search"
-            ></el-input>
-          </el-col>
+          <el-col :span="4">类型：{{typename}}</el-col>
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -189,8 +181,9 @@
             ></el-input>
           </el-col>
           <el-col :span="16" style="text-align:left;">
-            <el-button type="primary" icon="el-icon-edit" size="medium" @click="newitem()">新建</el-button>
-            <el-button type="primary" icon="el-icon-check" @click="startcheck()">表单验证</el-button>
+            &nbsp; 
+            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建</el-button>
+            <el-button type="primary" plain icon="el-icon-check" @click="startcheck()">表单验证</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -310,7 +303,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 115,
       inputkey: "",
       parentid: "",
       typename: "",
@@ -521,9 +514,9 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
+.el-header {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

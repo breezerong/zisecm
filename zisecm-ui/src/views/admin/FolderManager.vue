@@ -87,9 +87,10 @@
                 <el-input  v-model="inputkey" placeholder="请输入关键字" @change="searchFolder" prefix-icon="el-icon-search"></el-input>
               </el-col>
               <el-col :span="20" style="text-align:left;">
-                <el-button type="primary"  icon="el-icon-edit"  @click="dialogVisible = true">查看</el-button>
-                    <el-button type="primary"  icon="el-icon-delete"  @click="delitem(currentData)">删除</el-button>
-                    <el-button type="primary"  icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
+                &nbsp; 
+                <el-button type="primary" plain icon="el-icon-edit"  @click="dialogVisible = true">查看</el-button>
+                    <el-button type="primary" plain icon="el-icon-delete"  @click="delitem(currentData)">删除</el-button>
+                    <el-button type="primary" plain icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
               </el-col>
             </el-row>
           </el-header>
@@ -320,9 +321,9 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
+.el-header {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

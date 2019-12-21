@@ -253,9 +253,9 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
+.el-header {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

@@ -52,7 +52,8 @@
             ></el-input>
           </el-col>
           <el-col :span="20" style="text-align:left;">
-            <el-button type="primary" icon="el-icon-edit" size="medium" @click="newitem()">新建</el-button>
+            &nbsp; 
+            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -111,7 +112,7 @@ export default {
       loading: false,
       dialogVisible: false,
       isNew: false,
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 115,
       form: {
         name: "",
         description: "",
@@ -246,9 +247,9 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
+.el-header {
   background-color: #e8eaeb;
+  height: 68px !important;
 }
 .el-row {
   padding-bottom: 10px;

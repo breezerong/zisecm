@@ -212,7 +212,8 @@
             ></el-input>
           </el-col>
           <el-col :span="20" style="text-align:left;">
-            <el-button type="primary" icon="el-icon-edit" size="medium" @click="newitem()">新建</el-button>
+            &nbsp; 
+            <el-button type="primary" plain="true" icon="el-icon-edit" @click="newitem()">新建</el-button>
           </el-col>
         </el-row>
       </el-header>

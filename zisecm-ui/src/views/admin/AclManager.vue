@@ -58,7 +58,8 @@
           prefix-icon="el-icon-search"
         ></el-input>
       </el-col>
-      <el-col :span="1">
+      <el-col :span="18" style="text-align:left;">
+        &nbsp; 
         <el-button type="primary" icon="el-icon-edit" plain @click="newItem()">新建</el-button>
       </el-col>
     </el-row>
