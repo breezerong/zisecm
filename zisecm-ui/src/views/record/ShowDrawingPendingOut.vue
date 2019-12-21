@@ -18,7 +18,7 @@
             </el-col>
             <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'&& typeof(C_DRAFTER)=='undefined'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
                 <el-button type="primary" plain
-                size="small" icon="el-icon-check" @click="outboundOrder">完成晒图</el-button>
+                size="small" icon="el-icon-check" @click="showdrawingorder">完成晒图</el-button>
             </el-col>
             
         </el-row>
@@ -220,7 +220,7 @@ export default {
               console.log(error);
           });
         },
-        outboundOrder(){
+        showdrawingorder(){
           let _self=this;
           if(_self.selectedOrder.length<1){
             _self.$message("请选择晒图单！");
@@ -233,7 +233,7 @@ export default {
           for(i in tab){
             m.push(tab[i]["ID"]);
           }
-          axios.post("/dc/outboundorder",JSON.stringify(m))
+          axios.post("/dc/showdrawingorder",JSON.stringify(m))
             .then(function(response) {
               _self.loadGridData();
               _self.loadFileGridData();
@@ -346,7 +346,7 @@ export default {
             key0=" STATUS='"+_self.finishedShowDrawing +"' "
           }
 
-       if(_self.C_DRAFTER!=""){
+       if(typeof(_self.C_DRAFTER)!='undefined'&&_self.C_DRAFTER!=""){
           key0 = key0+" and C_DRAFTER='"+_self.C_DRAFTER+"'";
         }
 

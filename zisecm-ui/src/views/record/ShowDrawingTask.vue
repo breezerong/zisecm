@@ -46,7 +46,7 @@ export default {
       this.$router.replace({
         path:"/record/showdrawing/showdrawingpendingouttask",
         query: {'finishedShowDrawing': '待晒图',
-        C_DRAFTER:'lc',
+        C_DRAFTER:this.C_DRAFTER,
          }
       });
     },
