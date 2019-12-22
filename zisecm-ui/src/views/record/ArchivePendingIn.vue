@@ -262,7 +262,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListOutFile = response.data.data;
-              
+              _self.rightOutTableHeight = "100%";
             })
             .catch(function(error) {
               console.log(error);
@@ -381,7 +381,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListFile = response.data.data;
-              
+              _self.rightOutTableHeight = "100%";
             })
             .catch(function(error) {
               console.log(error);
@@ -397,7 +397,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridList = response.data.data;
-              
+              _self.rightTableHeight = "100%";
               _self.orderLoading = false;
             })
             .catch(function(error) {

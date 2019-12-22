@@ -201,7 +201,7 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 182)/2,
+      rightTableHeight: (window.innerHeight - 190)/2,
       currentLanguage: this.getLang(),
       printsVisible:false,
       printVolumesVisible:false,
