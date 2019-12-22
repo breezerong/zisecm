@@ -16,9 +16,9 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
+            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'&& typeof(C_DRAFTER)=='undefined'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
                 <el-button type="primary" plain
-                size="small" icon="el-icon-check" @click="outboundOrder">完成晒图</el-button>
+                size="small" icon="el-icon-check" @click="showdrawingorder">完成晒图</el-button>
             </el-col>
             
         </el-row>
@@ -108,6 +108,8 @@ export default {
              rightTableHeight: (window.innerHeight - 200)/2,
              rightOutTableHeight:(window.innerHeight - 200)/2,
              finishedShowDrawing:this.$route.query.finishedShowDrawing,
+             C_DRAFTER:this.$route.query.C_DRAFTER,
+             
         }
        
     },
@@ -218,7 +220,7 @@ export default {
               console.log(error);
           });
         },
-        outboundOrder(){
+        showdrawingorder(){
           let _self=this;
           if(_self.selectedOrder.length<1){
             _self.$message("请选择晒图单！");
@@ -231,7 +233,7 @@ export default {
           for(i in tab){
             m.push(tab[i]["ID"]);
           }
-          axios.post("/dc/outboundorder",JSON.stringify(m))
+          axios.post("/dc/showdrawingorder",JSON.stringify(m))
             .then(function(response) {
               _self.loadGridData();
               _self.loadFileGridData();
@@ -307,10 +309,8 @@ export default {
           var key0 = _self.inputkey;
           if (key0 != "") {
             key0 = " (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
-          }else{
-            key0=" STATUS='"+_self.finishedShowDrawing +"' "
-          }
-        
+          } 
+              
           m.set("configName", "listShowDrawingFileList");
           // m.set('folderId',indata.id);
           // m.set("condition", key);
@@ -339,13 +339,17 @@ export default {
           _self.gridListOutFileData=[];
           _self.orderLoading=true;
           var key0 = _self.orderInputkey;
+
           if (key0 &&key0 != "") {
             key0 = " STATUS='"+_self.finishedShowDrawing +"' " +" (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
           }else{
             key0=" STATUS='"+_self.finishedShowDrawing +"' "
           }
 
-        
+       if(typeof(_self.C_DRAFTER)!='undefined'&&_self.C_DRAFTER!=""){
+          key0 = key0+" and C_DRAFTER='"+_self.C_DRAFTER+"'";
+        }
+
           var m = new Map();
           m.set("gridName", "ShowDrawingFormGrid");
           // m.set('folderId',indata.id);

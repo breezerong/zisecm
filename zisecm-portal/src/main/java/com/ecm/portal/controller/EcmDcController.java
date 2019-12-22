@@ -2,6 +2,7 @@ package com.ecm.portal.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +36,7 @@ import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.dao.EcmShopingCartMapper;
 import com.ecm.core.entity.ChartBean;
 import com.ecm.core.entity.EcmContent;
@@ -51,6 +53,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
@@ -60,7 +63,7 @@ import com.ecm.core.service.NumberService;
 import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
-import com.ecm.portal.service.ServiceDocMail;
+import com.ecm.portal.service.ZipDownloadService;
 import com.ecm.portal.util.ExcelUtil;
 
 /**
@@ -101,6 +104,11 @@ public class EcmDcController extends ControllerAbstract{
 
 	@Autowired
 	private AuthService authService;
+	@Autowired
+	private ZipDownloadService zipDownloadService;
+
+	@Autowired
+	private EcmContentMapper contentMapper;
 
  	@Autowired
 	private Environment env;
@@ -1831,4 +1839,31 @@ public class EcmDcController extends ControllerAbstract{
 			}
 			return mp;
 		}
+		
+		
+		/**
+		    * 下载全部附件
+		    */
+		   @RequestMapping(value = "/workflow/downloadAllFile")
+		   public void  downloadAllFile(HttpServletResponse response, String objectIds) {
+			   String[] objectIdsList= objectIds.split(",");
+			   List<File> files=  new ArrayList<File>();
+			   for (int i = 0; i < objectIdsList.length; i++) {
+				   try {
+					int  permit= documentService.getPermit(getToken(), objectIdsList[i]);
+					if(permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					   List<EcmContent> contentList = contentMapper.getAllContents(objectIdsList[i]);
+					   for (int j = 0; j < contentList.size(); j++) {
+						   EcmContent en = contentList.get(j);
+						   String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+						   files.add(new File(storePath+en.getFilePath()));
+					   }
+					}
+				} catch (AccessDeniedException e) {
+					e.printStackTrace();
+				}
+			   }
+			   zipDownloadService.createZipFiles(files,  response);
+		   }
+
 }

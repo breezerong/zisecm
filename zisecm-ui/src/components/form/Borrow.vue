@@ -181,7 +181,8 @@
                 </el-form-item>
                </el-col>
              <el-col>
-                <el-table :data="tabledata">
+                 <el-button v-if="borrowForm.SUB_TYPE=='下载' && borrowForm.STATUS=='已完成' " ref="downloadAllFile"  @click="downloadAllFile()">打包下载</el-button>
+               <el-table :data="tabledata">
                <el-table-column type="index" label="#" width="50">
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
@@ -290,7 +291,8 @@ export default {
             C_REVIEWER2:"",
             C_REVIEWER3:"",
             C_COMMENT:"",
-            C_CREATION_UNIT:""
+            C_CREATION_UNIT:"",
+            STATUS:""
 
       },
       rules: {
@@ -767,6 +769,15 @@ export default {
           });
       window.open(href.href, '_blank');
        });
+  },
+  downloadAllFile(){
+      let _self=this;
+      let ids= new Array();
+      for (let index = 0; index < _self.tabledata.length; index++) {
+        ids.push( _self.tabledata[index].ID);
+        
+      }
+      window.open('/workflow/downloadAllFile?objectIds='+ids, '_blank');
   },
   viewdoc(indata){
         let condition = indata.ID;
