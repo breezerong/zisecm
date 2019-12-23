@@ -341,7 +341,7 @@ export default {
           var key0 = _self.orderInputkey;
 
           if (key0 &&key0 != "") {
-            key0 = " STATUS='"+_self.finishedShowDrawing +"' " +" (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
+            key0 = " STATUS='"+_self.finishedShowDrawing +"' and " +" (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
           }else{
             key0=" STATUS='"+_self.finishedShowDrawing +"' "
           }
