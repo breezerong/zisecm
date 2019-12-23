@@ -1848,22 +1848,26 @@ public class EcmDcController extends ControllerAbstract{
 		   public void  downloadAllFile(HttpServletResponse response, String objectIds) {
 			   String[] objectIdsList= objectIds.split(",");
 			   List<File> files=  new ArrayList<File>();
+			   List<String> fileNames=  new ArrayList<String>();
 			   for (int i = 0; i < objectIdsList.length; i++) {
 				   try {
-					int  permit= documentService.getPermit(getToken(), objectIdsList[i]);
+						int  permit= documentService.getPermit(getToken(), objectIdsList[i]);
+						EcmDocument docObj= documentService.getObjectById(getToken(), objectIdsList[i]);
+						String coding=docObj.getCoding()==null?docObj.getId():docObj.getCoding();
 					if(permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
 					   List<EcmContent> contentList = contentMapper.getAllContents(objectIdsList[i]);
 					   for (int j = 0; j < contentList.size(); j++) {
 						   EcmContent en = contentList.get(j);
 						   String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 						   files.add(new File(storePath+en.getFilePath()));
+						   fileNames.add(en.getFormatName());
 					   }
 					}
 				} catch (AccessDeniedException e) {
 					e.printStackTrace();
 				}
 			   }
-			   zipDownloadService.createZipFiles(files,  response);
+			   zipDownloadService.createZipFiles(files, fileNames, response);
 		   }
 
 }

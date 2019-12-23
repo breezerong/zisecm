@@ -28,7 +28,7 @@ public class ZipDownloadService {
 	     * @param files 文件
 	     * @param path  暂存目录
 	     */
-	    public  void createZipFiles(List<File> files, HttpServletResponse response) {
+	    public  void createZipFiles(List<File> files,List<String> fileNames, HttpServletResponse response) {
 	        try {
 	            //List<File> 作为参数传进来，就是把多个文件的路径放到一个list里面
 	            //创建一个临时压缩文件
@@ -40,7 +40,7 @@ public class ZipDownloadService {
 		        OutputStream out = null;
 	            out = response.getOutputStream();
 	            ZipOutputStream zipOutput = new ZipOutputStream(out);
-	            zipFile(files, zipOutput);
+	            zipFile(files,fileNames, zipOutput);
 	            zipOutput.close();
 	            out.close();
 	        } catch (Exception e) {
@@ -51,13 +51,13 @@ public class ZipDownloadService {
 	 /**
 	     * 根据输入的文件与输出流对文件进行打包
 	     */
-	    private  void zipFile(File inputFile, ZipOutputStream outputStream) {
+	    private  void zipFile(File inputFile,String fileName, ZipOutputStream outputStream) {
 	        try {
 	            if (inputFile.exists()) {
 	                if (inputFile.isFile()) {
 	                    FileInputStream IN = new FileInputStream(inputFile);
 	                    BufferedInputStream bins = new BufferedInputStream(IN, 512);
-	                    ZipEntry entry = new ZipEntry(inputFile.getName());
+	                    ZipEntry entry = new ZipEntry(fileName);
 	                    outputStream.putNextEntry(entry);
 
 	                    // 向压缩文件中输出数据
@@ -75,7 +75,7 @@ public class ZipDownloadService {
 	                        File[] files = inputFile.listFiles();
 	                        if (files != null) {
 	                            for (File file : files) {
-	                                zipFile(file, outputStream);
+	                                zipFile(file, fileName,outputStream);
 	                            }
 	                        }
 	                    } catch (Exception e) {
@@ -92,11 +92,14 @@ public class ZipDownloadService {
 	    /**
 	     * 把接受的全部文件打成压缩包
 	     */
-	    private  void zipFile(List<File> files, ZipOutputStream outputStream) {
-	        for (Object file1 : files) {
-	            File file = (File) file1;
-	            zipFile(file, outputStream);
-	        }
+	    private  void zipFile(List<File> files,List<String> fileNames, ZipOutputStream outputStream) {
+	    	for (int i = 0; i < files.size(); i++) {
+	            File file = (File) files.get(i);
+	            String fileName =  fileNames.get(i);
+	            zipFile(file,fileName, outputStream);
+
+			}
+
 	    }
 	    
 	    /**
