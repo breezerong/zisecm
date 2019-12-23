@@ -470,19 +470,23 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		return list;
 	}
 	
+ 	
 	@Override
 	public List<EcmUser> getUsersByGroupName(String token,Pager pager, String noGroup,String groupName, String condition) {
-		
+		String groupId="";
 		if(groupName.startsWith("leaderManage_auto")) {
 			try {
 				groupName= "leaderManage_"+getSession(token).getCurrentUser().getDepartment();
+				EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
+				groupId=groupObj==null?"000000000000000000":groupObj.getId();
 			} catch (AccessDeniedException e) {
 				e.printStackTrace();
 			}
+		}else {
+			EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
+			groupId=groupObj==null?null:groupObj.getId();
 		}
-				
-		EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
-		String groupId=groupObj==null?"000000000000000000":groupObj.getId();
+		
 		return getRoleUsers( token, pager,  noGroup, groupId,  condition);
 	}
 	
