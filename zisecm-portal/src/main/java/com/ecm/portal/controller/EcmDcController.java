@@ -1860,7 +1860,7 @@ public class EcmDcController extends ControllerAbstract{
 						   EcmContent en = contentList.get(j);
 						   String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 						   files.add(new File(storePath+en.getFilePath()));
-						   fileNames.add(en.getFormatName());
+						   fileNames.add(coding+"."+en.getFormatName());
 					   }
 					}
 				} catch (AccessDeniedException e) {
