@@ -14,7 +14,9 @@ import Video from 'video.js'
 import 'video.js/dist/video-js.css'
 import './assets/styles/main.css'
 import "babel-polyfill"
+import splitPane from 'vue-splitpane'
 
+Vue.component('split-pane', splitPane);
 Vue.prototype.$video = Video
 Vue.use(ImgViewer)
 Vue.config.productionTip = false

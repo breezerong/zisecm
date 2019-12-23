@@ -77,11 +77,12 @@
             <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
           </div>
         </el-dialog>
-      <el-row>
-        <el-col :span="4" >
-          <el-aside width="100%" style="height:645px">
+      <div :style="{position:'relative',height: asideHeight+'px'}">
+      <split-pane split="vertical" @resize="resize" min-percent='10' :default-percent='15'>
+      <template slot="paneL">
+         <el-container :style="{height:asideHeight+'px',width:asideWidth+'px',overflow:'auto'}">
             <el-tree
-              style="width:200%"
+              style="width:100%"
               :props="defaultProps"
               :data="dataList"
               node-key="id"
@@ -90,11 +91,11 @@
               highlight-current
               @node-click="handleNodeClick">
             </el-tree>
-          </el-aside>
-        </el-col>
-        <el-col :span="20">
+         </el-container>
+      </template>
+     <template slot="paneR">
           <el-row v-loading="loading">
-            <el-col :span="3">
+            <el-col :span="3" class="topbar-input">
               
                     <el-input  v-model="inputkey" :placeholder="$t('message.pleaseInput')+$t('application.keyword')" @change="searchItem" prefix-icon="el-icon-search"></el-input>
                 </el-col>
@@ -102,7 +103,7 @@
                     <el-radio v-model="radio" label="卷盒" @change="changeRadio">卷盒</el-radio>
                     <el-radio v-model="radio" label="图册" @change="changeRadio">图册</el-radio>
             </el-col>
-            <el-col :span="17" style="padding-top:4px;">
+            <el-col :span="17" class="topbar-button">
                     <el-button type="primary" plain
           size="small" icon="el-icon-edit"  @click="newArchiveItem('卷盒')">{{$t('application.newArchive')}}</el-button>
                     <el-button type="primary"  plain
@@ -171,8 +172,9 @@
                        
                     </div>
           </el-row>
-        </el-col>
-      </el-row>
+        </template>
+      </split-pane>
+      </div>
   </div>
 </template>
 
@@ -201,7 +203,10 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 190)/2,
+      rightTableHeight: (window.innerHeight - 200)/2,
+      asideHeight: window.innerHeight - 50,
+      treeHight: window.innerHeight - 90,
+      asideWidth: '100%',
       currentLanguage: this.getLang(),
       printsVisible:false,
       printVolumesVisible:false,
@@ -326,6 +331,10 @@ export default {
       });
   },
   methods: {
+    resize() {
+      //console.log('resize')
+      this.asideWidth = '100%';
+    },
     selectOneOutFile(row){
       this.selectedOneOutItem=row;
     },

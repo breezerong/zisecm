@@ -15,4 +15,7 @@ export default {
 .el-date-editor.el-input, .el-date-editor.el-input__inner {
     width: 140px;
 }
+.el-input__inner {
+  height: 36px;
+}
 </style>

@@ -1,8 +1,8 @@
 <template>
     <div>
         
-        <el-row>
-            <el-col :span="2">借阅人</el-col>
+        <el-row style="font-size: 14px;padding-top:5px;padding-bottom:5px;">
+            <el-col :span="2" style="padding-top:10px;">借阅人</el-col>
             <el-col :span="5" style="float:left;text-align:left;">
                 <el-input
                 v-model="orderInputkey"
@@ -11,12 +11,12 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col :span="3">创建日期(开始)</el-col>
+            <el-col :span="3" style="padding-top:10px;">创建日期(开始)</el-col>
             <el-col :span="3">
                 <el-date-picker v-model="startDate" 
                 type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss">
                 </el-date-picker></el-col>
-            <el-col :span="3">创建日期(结束)</el-col>
+            <el-col :span="3" style="padding-top:10px;">创建日期(结束)</el-col>
             <el-col :span="3">
                 <el-date-picker v-model="endDate" 
                 type="date" placeholder="选择日期" style="display:block;">

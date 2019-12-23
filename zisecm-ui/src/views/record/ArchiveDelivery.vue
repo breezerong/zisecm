@@ -125,7 +125,7 @@
       </div>
     </el-dialog>
     <el-row v-loading="loading">
-      <el-col :span="7" style="padding-top:4px;float:left;text-align:left;">
+      <el-col :span="7" class="topbar-button">
           <el-button type="primary" icon="el-icon-circle-plus" 
           plain
           size="small" @click="onNewFolder()" :title="$t('application.newTransfer')">{{$t('application.new')}}</el-button>
@@ -144,7 +144,7 @@
           size="small" icon="el-icon-delete"  @click="onDeleteTransfer()">{{$t('application.delete')}}</el-button>
   
       </el-col>
-      <el-col :span="4" style="float:left;text-align:left;">
+      <el-col :span="4" class="topbar-input">
         <el-input
           v-model="inputkey"
           :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -153,7 +153,7 @@
         ></el-input>
       </el-col>
 
-      <el-col :span="13" style="padding-top:4px;float:left;text-align:left;">
+      <el-col :span="13" class="topbar-button">
         &nbsp; 
         <el-button
           type="primary"

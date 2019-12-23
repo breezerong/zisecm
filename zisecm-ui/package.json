@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "ajv": "^6.10.2",
     "axios": "^0.18.0",
     "echarts": "^4.4.0",
     "element-ui": "^2.13.0",
@@ -22,6 +23,7 @@
     "vue": "^2.5.2",
     "vue-i18n": "^8.15.0",
     "vue-router": "^3.0.1",
+    "vue-splitpane": "^1.0.6",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
