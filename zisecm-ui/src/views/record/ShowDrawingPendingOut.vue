@@ -105,8 +105,8 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
-             rightTableHeight: (window.innerHeight - 200)/2,
-             rightOutTableHeight:(window.innerHeight - 200)/2,
+             rightTableHeight: (window.innerHeight - 160)/2,
+             rightOutTableHeight:(window.innerHeight - 160)/2,
              finishedShowDrawing:this.$route.query.finishedShowDrawing,
              C_DRAFTER:this.$route.query.C_DRAFTER,
              
@@ -381,7 +381,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListFile = response.data.data;
-              
+              _self.rightOutTableHeight = "100%";
             })
             .catch(function(error) {
               console.log(error);
@@ -397,7 +397,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridList = response.data.data;
-              
+              _self.rightTableHeight = "100%";
               _self.orderLoading = false;
             })
             .catch(function(error) {

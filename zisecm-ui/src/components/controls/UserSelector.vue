@@ -111,7 +111,7 @@ export default {
       m.set("noGroup", _self.noGroup);
       m.set("groupId", _self.groupId);
       m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
+      m.set("pageIndex", _self.currentPage - 1);
       let urlStr = "/admin/getUsers";
       if (_self.groupId && _self.groupId != "") {
         urlStr = "/admin/getRoleUsers";

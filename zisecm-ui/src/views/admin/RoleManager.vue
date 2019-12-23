@@ -301,7 +301,6 @@ export default {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
           _self.itemCount = response.data.total;
-          _self.loadPageInfo();
           _self.loading = false;
         })
         .catch(function(error) {

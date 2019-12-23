@@ -191,11 +191,11 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		{
 			if(sql.indexOf(" where ")>0)
 			{
-				sql += " and GROUP_NAME=''";
+				sql += " and (GROUP_NAME='' or GROUP_NAME is null)";
 			}
 			else
 			{
-				sql +=" where GROUP_NAME=''";
+				sql +=" where GROUP_NAME='' or GROUP_NAME is null";
 			}
 		}
 		List<EcmUser> list = ecmUserMapper.searchToEntity(pager,sql);

@@ -223,18 +223,21 @@
                   <el-button
                     :plain="true"
                     type="primary"
+                    size="small"
                     icon="edit"
                     @click="editUser(scope.row)"
                   >编辑</el-button>
                   <el-button
                     :plain="true"
                     type="primary"
+                    size="small"
                     icon="edit"
                     @click="moveUser(scope.row)"
                   >移到</el-button>
                   <el-button
                     :plain="true"
                     type="danger"
+                    size="small"
                     icon="delete"
                     @click="removeUser(scope.row)"
                   >移出</el-button>

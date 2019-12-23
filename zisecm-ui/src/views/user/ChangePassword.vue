@@ -71,7 +71,7 @@ export default {
    mounted(){ 
     let _self = this;
     _self.userData.name = sessionStorage.getItem('access-userName');
-    axios.get("/user/getUserByName",JSON.stringify(_self.userData.name)).then(function(response){
+    axios.post("/user/getUserByName",JSON.stringify(_self.userData.name)).then(function(response){
        // console.log(JSON.stringify(response.data.data));
         _self.loginType = response.data.data.loginType;
         

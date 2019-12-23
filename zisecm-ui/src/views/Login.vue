@@ -8,7 +8,7 @@
   >
     <el-form-item>
       <h2 class="title">
-        <img src="../assets/logo.png" border="0" />
+        <img src="/static/img/logo.png" border="0" />
         {{$t("application.user")+$t("application.login")}}
       </h2>
     </el-form-item>
