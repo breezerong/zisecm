@@ -54,7 +54,7 @@ export default {
       },
       loadData(){
           let _self = this;
-          axios.post("/dc/getVerions",this.docId).then(function(response) {
+          axios.post("/dc/getVerionsEx",this.docId).then(function(response) {
             let result = response.data;
             if(result.code==1){
               _self.tabledata = result.data;
