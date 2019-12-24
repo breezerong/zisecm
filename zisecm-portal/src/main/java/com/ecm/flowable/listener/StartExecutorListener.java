@@ -76,7 +76,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			extracted(ecmSession, arg0);
 //			System.out.println("========name======="+arg0.getEventName()+"===isEnded==="+arg0.isEnded());
 			//流程结束发送邮件
-			if("end".equals(arg0.getEventName())) {
+			if("endevent1".equals(arg0.getCurrentActivityId())) {
 				try {
 					HistoricProcessInstance hi = historyService.createHistoricProcessInstanceQuery()
 					        .processInstanceId(arg0.getProcessInstanceId())

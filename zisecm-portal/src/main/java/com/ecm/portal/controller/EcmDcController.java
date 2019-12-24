@@ -37,6 +37,7 @@ import com.ecm.core.AuditContext;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
+import com.ecm.core.dao.EcmRelationMapper;
 import com.ecm.core.dao.EcmShopingCartMapper;
 import com.ecm.core.entity.ChartBean;
 import com.ecm.core.entity.EcmContent;
@@ -109,7 +110,8 @@ public class EcmDcController extends ControllerAbstract{
 
 	@Autowired
 	private EcmContentMapper contentMapper;
-
+	@Autowired
+	private EcmRelationMapper ecmRelationMapper;
  	@Autowired
 	private Environment env;
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
@@ -1278,16 +1280,18 @@ public class EcmDcController extends ControllerAbstract{
 						formDataMap.put("FOLDER_ID", folderService.getObjectByPath(getToken(), "/表单/借阅单").getId());
 						formDataMap.put("CODING", numberService.getNumber(getToken(), formDataMap));
 						formId=documentService.newObject(getToken(), formDataMap);
+						EcmRelation en=new EcmRelation();
+						en.setParentId(formId);
+						en.setName("irel_borrow");
+						en.setCreationDate(new Date());
+						en.setCreator(this.getSession().getCurrentUser().getUserName());
 						for(int i=0;i<documentIdArray.length;i++) {
-							EcmRelation en=new EcmRelation();
-							en.setParentId(formId);
 							en.setChildId(documentIdArray[i]);
-							en.setName("irel_borrow");
-							en.setCreationDate(new Date());
-							en.setCreator(this.getSession().getCurrentUser().getUserName());
-							en.setOrderIndex(i+1);
-							relationService.newObject(getToken(), en);
+							en.createId();
+							en.setOrderIndex(i);
+							ecmRelationMapper.insert(en);
 						}
+
 					}else {
 						Map<String,Object> goodFormDataMap=new HashMap<String, Object>();
 						if(formDataMap.containsKey("ID"))					
