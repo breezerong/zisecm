@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-row>
+      <el-row class="topbar-button">
             <el-button type="primary" plain
                 size="small" icon="el-icon-check" @click="giveback">归还</el-button>
             
@@ -70,8 +70,8 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
-             rightTableHeight: (window.innerHeight - 150)/2,
-             rightOutTableHeight:(window.innerHeight - 150)/2
+             rightTableHeight: (window.innerHeight - 156)/2,
+             rightOutTableHeight:(window.innerHeight - 156)/2
         }
        
     },

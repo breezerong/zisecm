@@ -84,7 +84,7 @@
             </el-form-item>
           </el-col>
         </div>
-        <el-col :span="8" style="align:left;">
+        <el-col :span="8" style="align:left;padding-top: 5px;">
           <el-button
             type="primary"
             size="small"
@@ -235,7 +235,7 @@ export default {
       dialogVisible: false,
       selectedItemId: "",
       propertyVisible: false,
-      tableHeight: window.innerHeight - 200,
+      tableHeight: window.innerHeight - 216,
       formLabelWidth: "120px"
     };
   },

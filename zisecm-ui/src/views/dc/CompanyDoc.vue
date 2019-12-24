@@ -83,31 +83,36 @@
       </div>
     </el-dialog>
 
-    <el-container>
-      <template :style="{height:tableHeight}">
-        <el-aside width="160px" :style="{height: asideHeight+'px'}" >
-        <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
-          <el-breadcrumb-item>
-            <i class="el-icon-receiving"></i>
-            &nbsp; {{$t('menu.companyDoc')}}
-          </el-breadcrumb-item>
-        </el-breadcrumb>
+    <div :style="{position:'relative',height: asideHeight+'px'}">
+      <split-pane split="vertical" @resize="resize" min-percent='10' :default-percent='15'>
+      <template slot="paneL">
         
-          <el-tree
-          style="width:200%;"
-          :props="defaultProps"
-          :data="dataList"
-          node-key="id"
-          :render-content="renderContent"
-          default-expand-all
-          highlight-current
-          @node-click="handleNodeClick"
-        ></el-tree>
-      </el-aside>
-     </template>
-        <el-main>
+            <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
+              <el-breadcrumb-item>
+                <i class="el-icon-receiving"></i>
+                &nbsp; {{$t('menu.companyDoc')}}
+              </el-breadcrumb-item>
+            </el-breadcrumb>
+         
+         <el-container :style="{height:treeHeight+'px',width:asideWidth,overflow:'auto'}">
+         
+            <el-tree
+            style="width:100%;"
+            :props="defaultProps"
+            :data="dataList"
+            node-key="id"
+            :render-content="renderContent"
+            default-expand-all
+            highlight-current
+            @node-click="handleNodeClick"
+          ></el-tree>
+     
+         </el-container>
+      </template>
+     <template slot="paneR">
         <el-row style="padding-top:4px;">
-          <el-col :span="4">
+          <el-col :span="4" class="topbar-input">
+           
             <el-input
               v-model="inputkey"
               :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -115,8 +120,8 @@
               prefix-icon="el-icon-search"
             ></el-input>
           </el-col>
-          <el-col :span="20" style="text-align: left">
-            &nbsp;&nbsp;&nbsp;
+          <el-col :span="20" class="topbar-button">
+            &nbsp;&nbsp;
             <!-- <el-button
                 type="primary"
                 plain
@@ -147,7 +152,7 @@
                 @click="destroyItem()"
               >{{$t('application.destroy')}}</el-button>
             </template>
-            &nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;
             <el-button
               type="primary"
               plain
@@ -287,10 +292,9 @@
             :total="itemCount"
           ></el-pagination>
         </el-row>
-      </el-main>
-      <!-- </el-scrollbar> -->
-      
-    </el-container>
+     </template>
+      </split-pane>
+    </div>
     
   </div>
 </template>
@@ -316,8 +320,10 @@ export default {
         isIndeterminate: false
       },
       innerTableHeight: window.innerHeight - 360,
-      tableHeight: window.innerHeight - 125,
-      asideHeight: window.innerHeight - 80,
+      tableHeight: window.innerHeight - 135,
+      asideHeight: window.innerHeight - 50,
+      treeHeight: window.innerHeight - 95,
+      asideWidth: '100%',
       currentLanguage: "zh-cn",
       propertyVisible: false,
       loading: false,
@@ -394,6 +400,10 @@ export default {
     _self.loadGridInfo(_self.defaultData);
   },
   methods: {
+     resize() {
+      //console.log('resize')
+      this.asideWidth = '100%';
+    },
     // 加载表格样式
     initGridInfo() {
       let _self = this;
@@ -921,8 +931,5 @@ export default {
 } */
 </style>
 <style>
-.el-tree-node :nth-child(2) {
-    padding: 1px;
-    overflow: visible;
-  }
+
 </style>

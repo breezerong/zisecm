@@ -8,7 +8,7 @@
             ></PrintBorrowOrder>
         </el-dialog>
         <el-row>
-            <el-col :span="5" style="float:left;text-align:left;">
+            <el-col :span="5" class="topbar-input">
                 <el-input
                 v-model="orderInputkey"
                 :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -16,7 +16,7 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'&& typeof(C_DRAFTER)=='undefined'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
+            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'&& typeof(C_DRAFTER)=='undefined'" :span="12" class="topbar-button">
                 <el-button type="primary" plain
                 size="small" icon="el-icon-check" @click="showdrawingorder">完成晒图</el-button>
             </el-col>
@@ -105,8 +105,8 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
-             rightTableHeight: (window.innerHeight - 200)/2,
-             rightOutTableHeight:(window.innerHeight - 200)/2,
+             rightTableHeight: (window.innerHeight - 170)/2,
+             rightOutTableHeight:(window.innerHeight - 170)/2,
              finishedShowDrawing:this.$route.query.finishedShowDrawing,
              C_DRAFTER:this.$route.query.C_DRAFTER,
              
@@ -341,7 +341,7 @@ export default {
           var key0 = _self.orderInputkey;
 
           if (key0 &&key0 != "") {
-            key0 = " STATUS='"+_self.finishedShowDrawing +"' " +" (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
+            key0 = " STATUS='"+_self.finishedShowDrawing +"' and " +" (coding like '%" + key0 + "%' or C_DRAFTER like '%" + key0 + "%') ";
           }else{
             key0=" STATUS='"+_self.finishedShowDrawing +"' "
           }
@@ -381,7 +381,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListFile = response.data.data;
-              
+              _self.rightOutTableHeight = "100%";
             })
             .catch(function(error) {
               console.log(error);
@@ -397,7 +397,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridList = response.data.data;
-              
+              _self.rightTableHeight = "100%";
               _self.orderLoading = false;
             })
             .catch(function(error) {

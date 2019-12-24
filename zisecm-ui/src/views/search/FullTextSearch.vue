@@ -30,7 +30,7 @@
         style="width:60%"
       ></el-autocomplete> -->
       <el-input prefix-icon="el-icon-search" v-model="inputkey" :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="enterDown"
-        style="width:60%"></el-input>
+        style="width:60%;padding-top:10px;"></el-input>
       <el-checkbox :label="$t('application.propertyOnly')" v-model="propertyOnly"></el-checkbox>
     </div>
     <div>
@@ -576,6 +576,7 @@ a {
 }
 .searchInput {
   display: inline;
+  padding-top:10px;
 }
 .docType {
   display: inline;
