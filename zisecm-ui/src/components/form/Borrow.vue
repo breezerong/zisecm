@@ -146,7 +146,10 @@
                 <el-form-item label="借阅单号" :label-width="formLabelWidth"  style="float:left">
                   {{borrowForm.CODING}}
                 </el-form-item>
-              </el-col >
+                  <el-form-item  :label-width="formLabelWidth"  style="float:right">
+                  <el-button  @click="getBorrowHelpDoc()">帮助</el-button>
+                </el-form-item>
+             </el-col >
              <el-col>
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
                   {{borrowForm.C_DRAFTER}}

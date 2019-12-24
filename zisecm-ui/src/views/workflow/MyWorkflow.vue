@@ -116,7 +116,13 @@
               </el-table-column>
               <!-- <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
               </el-table-column> -->
-              <el-table-column label="操作"  width="80px">
+              <el-table-column label="操作"  width="200px" v-if="currentUserName=='all'">
+                <template slot-scope="scope">
+                  <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
+                   <el-button  v-if="scope.row.endTime=='' && currentUserName=='all'"  @click="terminateWorkflow(scope.row)">结束流程</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作"  width="80px" v-else >
                 <template slot-scope="scope">
                   <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
                 </template>
@@ -269,6 +275,28 @@ export default {
         _self.loading = false;
         _self.loadPageInfo(response.data.totalCount);
       })
+      .catch(function(error) {
+        console.log(error);
+        _self.loading = false;
+      });
+    },
+      terminateWorkflow(indata) {
+      let _self = this;
+      _self.refreshProcess(indata.id);
+       var m = new Map();
+      m.set("processInstanceId",indata.id);
+      _self.loading = true;
+     axios.post('/workflow/stopProcessInstanceById',JSON.stringify(m))
+      .then(function(response) {
+                _self.$message({
+                showClose: true,
+                message: "流程停止成功!",
+                duration: 2000,
+                type: "success"
+              });
+        _self.loading = false;
+
+})
       .catch(function(error) {
         console.log(error);
         _self.loading = false;

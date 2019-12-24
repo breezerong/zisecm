@@ -11,20 +11,17 @@
           <el-form-item>{{typeName}}</el-form-item></el-col> -->
         
       <template v-for="(item,itemIndex) in dataList">
-        <el-col v-show="itemId || (!itemId && !item.readOnly)" :span="showCellValue(item)" v-bind:key="itemIndex" style="text-align:left;">
+        <el-col :span="showCellValue(item)" v-bind:key="itemIndex">
           <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:'必填',trigger:'blur'}]">
-                <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
-                <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
-                <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
-                <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-checkbox>
-                <template v-else-if="item.controlType=='Date'">
-                  <span v-if="item.readOnly" >{{datetimeFormat(item.defaultValue)}}</span>
-                  <el-date-picker v-else :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss" :readonly="item.readOnly"></el-date-picker>
-                </template>
+                <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue"></el-input>
+                <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue"></el-input>
+                <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue"></el-input>
+                <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue"></el-checkbox>
+                <el-date-picker v-else-if="item.controlType=='Date'" :name="item.attrName" v-model="item.defaultValue" type="date" placeholder="选择日期" style="display:block;"></el-date-picker>
                 <el-select  :name="item.attrName"
                 v-else-if="item.controlType=='Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
                 v-model="item.defaultValue" :placeholder="'请选择'+item.label" :disabled="item.readOnly" :multiple="item.isRepeat" style="display:block;"
-                @change="((val)=>{onSelectChange(val, item)})" >
+                @change="((val)=>{onSelectChange(val, item)})">
                       <div v-for="(name,nameIndex) in item.validValues" :key="nameIndex+'N'">
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                       </div>
@@ -36,19 +33,10 @@
         </el-col>
       </template>
     </el-row>
-      <el-form-item style="float:left"  label="文件类型" >{{typeName}}</el-form-item>
-      <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;">
-        <el-upload
-        :limit="1"
-        :file-list="fileList" 
-        action=""
-        :on-change="handleChange"
-        :auto-upload="false"
-        :multiple="false">
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-        </el-upload>
-        
-      </div>
+      <!-- <el-form-item style="float:left"  label="查询条件" >
+        <el-input ref='conditionsSql' :value="sqlStr"></el-input> <AddCondition ref='addCondition' @showsql='showsql'></AddCondition>
+      </el-form-item> -->
+      
     </el-form>
   </div>
 </template>
@@ -56,7 +44,6 @@
 <script type="text/javascript">
 import UserSelectInput from '@/components/controls/UserSelectInput'
 import AddCondition from '@/views/record/AddCondition'
-
 export default {
   name: "ShowProperty",
   components: {
@@ -85,10 +72,11 @@ export default {
       },
       file:"",
       fileList:[],
-      myItemId: this.itemId,
-      myTypeName: this.typeName,
+      myItemId: '',
+      myTypeName: "备份批次",
       myFolderId: this.folderId,
       parentDocId:'',
+      sqlStr:'',
       clientPermission: 1
     };
   },
@@ -100,12 +88,12 @@ export default {
       );
   },
   props: {
-    itemId: {type:String},
-    typeName: {type:String},
-    folderId: {type:String},
-    folderPath:{type:String}
+   
   },
   methods: {
+    // showsql(sqlWhere){
+    //   this.sqlStr=sqlWhere;
+    // },
     showCellValue(item){
       //console.log(item);
       var v = 24/ parseInt(item.widthType);
@@ -157,7 +145,7 @@ export default {
         _self.myTypeName = "";
       }
       var m = new Map();
-      m.set('itemInfo',_self.myItemId+_self.myTypeName);//ID 或类型
+      m.set('itemInfo',_self.myTypeName+_self.myItemId);//ID 或类型
       m.set('lang',_self.getLang());
       //console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
       axios.post("/dc/getFormItem",JSON.stringify(m))
