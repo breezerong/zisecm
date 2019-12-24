@@ -5,19 +5,19 @@
         <el-breadcrumb-item>&nbsp; 通知公告</el-breadcrumb-item>
       </el-breadcrumb>
     </el-row>
-    <el-header style="padding-top:5px;height:50px;">
-      <el-col :span="5">
+    <el-header style="height:48px;">
+      <el-col :span="5" class="topbar-input">
         <el-input v-model="inputKey" :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="search"></el-input>
       </el-col>
     </el-header>
     <el-main>
-      <el-table v-loading="loadingNoticeData" style="width:100%;height:100%"  :data="dataList.notiData">
+      <el-table v-loading="loadingNoticeData" style="width:100%;" :height="tableHeight" :data="dataList.notiData">
         <el-table-column :show-overflow-tooltip="true" width="400" label="标题">
           <el-link slot-scope="scope" type="primary" @click="showFile(scope.row)">{{(scope.row.NAME)}}</el-link>
         </el-table-column>
         <el-table-column align="center" label="创建人" prop="CREATOR"></el-table-column>
         <el-table-column align="left" label="创建时间">
-          <template slot-scope="scope">{{dateFormat(scope.row.CREATION_DATE)}}</template>
+          <template slot-scope="scope">{{datetimeFormat(scope.row.CREATION_DATE)}}</template>
         </el-table-column>
       </el-table>
     </el-main>
@@ -50,6 +50,7 @@ export default {
         itemCount: 0,
         currentPage: 1,
         pageSize:20,
+        tableHeight: window.innerHeight - 186,
         loadingNoticeData:false
     };
   },
@@ -58,37 +59,7 @@ export default {
    _self.getNewsList()
   },
   methods: {
-    //格式化时间
-    dateFtt(fmt, date) {
-      var o = {
-        "M+": date.getMonth() + 1, //月份
-        "d+": date.getDate(), //日
-        "h+": date.getHours(), //小时
-        "m+": date.getMinutes(), //分
-        "s+": date.getSeconds(), //秒
-        "q+": Math.floor((date.getMonth() + 3) / 3), //季度
-        S: date.getMilliseconds() //毫秒
-      };
-      if (/(y+)/.test(fmt))
-        fmt = fmt.replace(
-          RegExp.$1,
-          (date.getFullYear() + "").substr(4 - RegExp.$1.length)
-        );
-      for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-          fmt = fmt.replace(
-            RegExp.$1,
-            RegExp.$1.length == 1
-              ? o[k]
-              : ("00" + o[k]).substr(("" + o[k]).length)
-          );
-      return fmt;
-    },
-    //格式化时间方法
-    dateFormat(value) {
-      var crtTime = new Date(value);
-      return this.dateFtt("yyyy-MM-dd", crtTime);
-    },
+    
     getNewsList() {
       let _self = this;
       _self.loadingNoticeData = true
