@@ -78,7 +78,7 @@
                   <el-date-picker     v-model="workflowForm.endTimeBefore" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                  <el-form-item style="float:left;padding-left:3px">
-                   <el-button  type="primary" @click="search()">查询</el-button>
+                   <el-button  type="primary" plain="true" size="small" @click="search()">查询</el-button>
                  </el-form-item>
                </el-col >
            </el-row>

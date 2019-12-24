@@ -80,7 +80,7 @@
       <div :style="{position:'relative',height: asideHeight+'px'}">
       <split-pane split="vertical" @resize="resize" min-percent='10' :default-percent='15'>
       <template slot="paneL">
-         <el-container :style="{height:asideHeight+'px',width:asideWidth+'px',overflow:'auto'}">
+         <el-container :style="{height:asideHeight+'px',width:asideWidt,overflow:'auto'}">
             <el-tree
               style="width:100%"
               :props="defaultProps"
@@ -203,9 +203,9 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 200)/2,
-      asideHeight: window.innerHeight - 50,
-      treeHight: window.innerHeight - 90,
+      rightTableHeight: (window.innerHeight - 202)/2,
+      asideHeight: window.innerHeight - 55,
+      treeHight: window.innerHeight - 95,
       asideWidth: '100%',
       currentLanguage: this.getLang(),
       printsVisible:false,

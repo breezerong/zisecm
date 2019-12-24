@@ -94,7 +94,7 @@
               </el-breadcrumb-item>
             </el-breadcrumb>
          
-         <el-container :style="{height:treeHeight+'px',width:asideWidth+'px',overflow:'auto'}">
+         <el-container :style="{height:treeHeight+'px',width:asideWidth,overflow:'auto'}">
          
             <el-tree
             style="width:100%;"
@@ -320,9 +320,9 @@ export default {
         isIndeterminate: false
       },
       innerTableHeight: window.innerHeight - 360,
-      tableHeight: window.innerHeight - 130,
-      asideHeight: window.innerHeight - 45,
-      treeHeight: window.innerHeight - 90,
+      tableHeight: window.innerHeight - 135,
+      asideHeight: window.innerHeight - 50,
+      treeHeight: window.innerHeight - 95,
       asideWidth: '100%',
       currentLanguage: "zh-cn",
       propertyVisible: false,

@@ -235,7 +235,7 @@ export default {
       dialogVisible: false,
       selectedItemId: "",
       propertyVisible: false,
-      tableHeight: window.innerHeight - 200,
+      tableHeight: window.innerHeight - 216,
       formLabelWidth: "120px"
     };
   },

@@ -224,3 +224,7 @@ body .el-table th.gutter{
   float:left;
   text-align:left;
 }
+
+.el-input__inner {
+  height: 36px;
+}

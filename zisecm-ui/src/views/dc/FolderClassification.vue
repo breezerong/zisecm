@@ -132,16 +132,7 @@
     >
       <InnerItemViewer v-bind:id="currentId"></InnerItemViewer>
     </el-dialog>
-    <el-container>
-      <el-header>
-        <!--
-        <el-row style="padding-bottom:10px;">
-          <el-breadcrumb>
-            <el-breadcrumb-item>{{$t('menu.dataCenter')}}</el-breadcrumb-item>
-            <el-breadcrumb-item>{{$t('menu.folderClassification')}}</el-breadcrumb-item>
-          </el-breadcrumb>
-        </el-row>
-        -->
+ 
         <el-row style="padding-top:10px;padding-bottom:10px;">
           <el-col :span="3" style="text-align: left">
             <el-tooltip
@@ -183,32 +174,35 @@
               type="primary"
               icon="el-icon-edit"
               @click="newItem()"
-            >{{$t('application.newDocument')}}</el-button>
+            >{{$t('application.new')}}</el-button>
             <el-button
               type="primary"
               icon="el-icon-delete"
               @click="onDeleleItem()"
-            >{{$t('application.delete')+$t('application.document')}}</el-button>
-            <el-button type="primary" icon="el-icon-top-right" @click="moveItem()">移动文件</el-button>
-            <el-button type="primary" icon="el-icon-document-copy" @click="copyItem()">复制文件</el-button>
-            <el-button type="primary" icon="el-icon-upload2" @click="showUpdateFile(0)">更新文件</el-button>
-            <el-button type="primary" icon="el-icon-upload2" @click="showUpdateFile(1)">更新副本</el-button>
+            >{{$t('application.delete')}}</el-button>
+            <el-button type="primary" icon="el-icon-top-right" @click="moveItem()">移动</el-button>
+            <el-button type="primary" icon="el-icon-document-copy" @click="copyItem()">复制</el-button>
+            <el-button type="primary" icon="el-icon-upload2" @click="showUpdateFile(0)">更新</el-button>
+            <el-button type="primary" icon="el-icon-upload2" @click="showUpdateFile(1)">副本</el-button>
           </el-col>
         </el-row>
-      </el-header>
-      <el-container>
-        <el-aside width="200px" :style="{height: asideHeight+'px'}">
+      <div :style="{position:'relative',height: asideHeight+'px'}">
+      <split-pane split="vertical" @resize="resize" min-percent='10' :default-percent='15'>
+      <template slot="paneL">
+         <el-container :style="{height:treeHeight+'px',width:asideWidth,overflow:'auto'}">
           <el-tree
             :props="defaultProps"
             :data="dataList"
             node-key="id"
+            style="width:100%;"
             :render-content="renderContent"
             default-expand-all
             highlight-current
             @node-click="handleNodeClick"
           ></el-tree>
-        </el-aside>
-        <el-main>
+       </el-container>
+      </template>
+     <template slot="paneR">
           <el-row>
             <el-table
               :height="tableHeight"
@@ -305,9 +299,9 @@
               :total="itemCount"
             ></el-pagination>
           </el-row>
-        </el-main>
-      </el-container>
-    </el-container>
+         </template>
+      </split-pane>
+    </div>
   </div>
 </template>
 
@@ -364,7 +358,9 @@ export default {
       dialogFormVisible: false,
       selectedItems: [],
       asideHeight: window.innerHeight - 115,
-      tableHeight: window.innerHeight - 145,
+      treeHeight:window.innerHeight - 124,
+      tableHeight: window.innerHeight - 150,
+      asideWidth: '100%',
       folderAction: "",
       folderDialogVisible: false,
       imageArray: [""],
@@ -436,6 +432,10 @@ export default {
     _self.loadGridInfo(_self.defaultData);
   },
   methods: {
+    resize() {
+      //console.log('resize')
+      this.asideWidth = '100%';
+    },
     showUpdateFile(indata) {
       if (this.selectedItems && this.selectedItems.length > 0) {
         this.uploadFile = [];

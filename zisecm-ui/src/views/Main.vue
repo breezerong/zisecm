@@ -31,7 +31,7 @@
               </template>
             </el-menu>
           </div>
-          <div v-if="clientPermission>4" class="container-top-right">
+          <div v-if="systemPermission>7" class="container-top-right">
             <el-select v-model="currentLanguage" @change="languageChange" style="width:105px">
               <el-option label="简体中文" value="zh-cn" key="zh-cn"></el-option>
               <el-option label="English" value="en" key="en"></el-option>
@@ -68,6 +68,7 @@ export default {
       isExtUser: false,
       userName: "",
       clientPermission: 0,
+      systemPermission: 0,
       defaultColor: "#409EFF",
       homePath : "/home"
     };
@@ -141,6 +142,7 @@ export default {
         this.clientPermission = sessionStorage.getItem(
           "access-clientPermission"
         );
+        this.systemPermission = sessionStorage.getItem("access-systemPermission");
       } else {
         this.userName = "";
       }

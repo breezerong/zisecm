@@ -8,7 +8,7 @@
             ></PrintBorrowOrder>
         </el-dialog>
         <el-row>
-            <el-col :span="5" style="float:left;text-align:left;">
+            <el-col :span="5" class="topbar-input">
                 <el-input
                 v-model="orderInputkey"
                 :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -16,7 +16,7 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'&& typeof(C_DRAFTER)=='undefined'" :span="12" style="padding-top:4px;padding-left:4px;float:left;text-align:left;">
+            <el-col v-if="this.$route.query.finishedShowDrawing=='待晒图'&& typeof(C_DRAFTER)=='undefined'" :span="12" class="topbar-button">
                 <el-button type="primary" plain
                 size="small" icon="el-icon-check" @click="showdrawingorder">完成晒图</el-button>
             </el-col>
@@ -105,8 +105,8 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
-             rightTableHeight: (window.innerHeight - 160)/2,
-             rightOutTableHeight:(window.innerHeight - 160)/2,
+             rightTableHeight: (window.innerHeight - 170)/2,
+             rightOutTableHeight:(window.innerHeight - 170)/2,
              finishedShowDrawing:this.$route.query.finishedShowDrawing,
              C_DRAFTER:this.$route.query.C_DRAFTER,
              
