@@ -1186,15 +1186,17 @@ public class EcmDcController extends ControllerAbstract{
 						formDataMap.put("FOLDER_ID", folderService.getObjectByPath(getToken(), "/表单/晒图单").getId());
 						formDataMap.put("CODING", numberService.getNumber(getToken(), formDataMap));
 						formId=documentService.newObject(getToken(), formDataMap);
+						EcmRelation en=new EcmRelation();
+						en.setParentId(formId);
+						en.setName("irel_showdrawing");
+						en.setCreationDate(new Date());
+						en.setCreator(this.getSession().getCurrentUser().getUserName());
+						ecmSession = authService.login("workflow", specialUserName, env.getProperty("ecm.password"));
 						for(int i=0;i<documentIdArray.size();i++) {
-							EcmRelation en=new EcmRelation();
-							en.setParentId(formId);
 							en.setChildId(documentIdArray.get(i));
-							en.setName("irel_showdrawing");
-							en.setCreationDate(new Date());
-							en.setCreator(this.getSession().getCurrentUser().getUserName());
-							relationService.newObject(getToken(), en);
-							ecmSession = authService.login("workflow", specialUserName, env.getProperty("ecm.password"));
+							en.createId();
+							en.setOrderIndex(i);
+							ecmRelationMapper.insert(en);
 							EcmDocument docObjSub = documentService.getObjectById(getToken(),documentIdArray.get(i));
 							documentService.grantGroup(ecmSession.getToken(), docObjSub, "ST_文印中心",PermissionContext.ObjectPermission.DOWNLOAD,null,true);
 
