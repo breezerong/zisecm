@@ -47,7 +47,7 @@ export default {
   data() {
         return {
           backupStatus:"新建",
-          menuHeight: window.innerHeight
+          menuHeight: window.innerHeight - 70
         }
         
     },

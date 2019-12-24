@@ -780,7 +780,7 @@ export default {
         ids.push( _self.tabledata[index].ID);
         
       }
-      window.open('/workflow/downloadAllFile?objectIds='+ids, '_blank');
+      window.open(_self.axios.defaults.baseURL+'/workflow/downloadAllFile?objectIds='+ids, '_blank');
   },
   viewdoc(indata){
         let condition = indata.ID;

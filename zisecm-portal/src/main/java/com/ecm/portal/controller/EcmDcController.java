@@ -1285,6 +1285,7 @@ public class EcmDcController extends ControllerAbstract{
 							en.setName("irel_borrow");
 							en.setCreationDate(new Date());
 							en.setCreator(this.getSession().getCurrentUser().getUserName());
+							en.setOrderIndex(i+1);
 							relationService.newObject(getToken(), en);
 						}
 					}else {

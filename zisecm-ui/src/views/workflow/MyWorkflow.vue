@@ -40,7 +40,7 @@
                 </el-table-column>
             </el-table>
              <div v-if="workflowPicVisible=='显示流程图'"  >{{workflowPicVisible}}              
-                <img ref="processDiagram" style="width:100%;height:100%" :src="_self.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
+                <img ref="processDiagram" style="width:100%;height:100%" :src="this.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
             </div>
          <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="dialogVisible = false">关闭</el-button>

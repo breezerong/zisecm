@@ -14,38 +14,37 @@
     <el-row>
       <el-button @click="addplus" icon="el-icon-plus">添加</el-button>
       <el-button @click="removeminus" icon="el-icon-minus">删除</el-button>
-        
     </el-row>
       <el-row :key="index" v-for="(item,index) in formtips">
-            <el-col :span='3'>
+            <el-col :span='3' class="topbar-button">
               <el-select v-model="item.relation" v-if="index!=0">
                 <div v-for="relation in relations">
                   <el-option :label="relation.label" :value="relation.val"></el-option>
                 </div>
               </el-select>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="5" class="topbar-button">
               <el-select v-model="item.column">
                 <div v-for="col in columns">
                   <el-option :label="col.label" :value="col.attrName"></el-option>
                 </div>
               </el-select>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="3" class="topbar-button">
               <el-select v-model="item.condition">
                     <div v-for="condition in changeColumn(item.column,item)">
                       <el-option :label="condition.label" :value="condition.val"></el-option>
                     </div>
                 </el-select>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="8" class="topbar-button">
               <el-input v-model="item.val"></el-input>
             </el-col>
         </el-row>
     
     
-    <div class="formsearch">
-        <button type="button" @click="onOk">确定</button>
+    <div style="text-align:right">
+        <el-button   @click="onOk">确定</el-button>
     </div>
          
   </el-dialog>
@@ -55,7 +54,7 @@
       <input value="value1" type="hidden" />
     </el-col>
     <el-col>
-      <el-button icon="el-icon-user-solid" @click="clickShowDialog">高级搜索</el-button>
+      <el-button icon="el-icon-search" @click="clickShowDialog">高级搜索</el-button>
     </el-col>
   </el-row>
 </div>
@@ -272,136 +271,7 @@ export default {
 };
 </script>
 <style scoped>
-.el-header {
-  background-color: white;
-  text-align: left;
-}
-.el-main {
-  background-color: white;
-}
-.el-footer {
-  background-color: white;
-}
-
-/*临时样式*/
-  ul,li{
-    list-style: none;
-    margin:0;
-    padding:0;
-  }
-    .retrievalmian{
-        margin: 20px;
-        width:75%;
+    li{
+        padding-left: 10px;
     }
-    /**/
-    /*.retrievaltitle{*/
-        /*background: #FCFCFC;*/
-    /*}*/
-    .retrievaltitle .tabbtn:first-child{
-        margin-right: -5px;
-    }
-    .retrievaltitle .tabbtn:hover{
-       text-decoration: none;
-    }
-    .retrievaltitle .tabbtn{
-        padding: 2px 8px;
-        background: #FBFBFB;
-        border: 1px solid #DFDFDF;
-        margin-bottom: -1px;
-    }
-    .retrievaltitle .tabbtn.checked{
-        color: #E50F10;
-        padding-top: 8px;
-        border-bottom: 1px solid #FBFBFB;
-    }
-    .retrievalbar{
-        border: 1px solid #E5E5E5;
-        background: #FCFCFC;
-    }
-    .formbody{
-        position: relative;
-        margin: 10px 0px;
-    }
-    .formoperate{
-        position: absolute;
-        top:10px;
-        right: 20px;
-    }
- 
-    .formoperate .tipsicon{
-        color: #59A4D2;
-        display: inline-block;
-        line-height: 15px;
-        cursor: pointer;
-        margin-left: 15px;
-        width: 20px;
-        height: 20px;
-        /*临时*/
-        text-align: center;
-        border: 1px solid #59A4D2;
-    }
-    
-    .formline{
-        padding: 5px 30px;
-    }
-    .formtips{
-        display: inline-block;
-        margin-right: 22px;
-    }
-    .formgroup{
-        display: inline-block;
-    }
-    .formcontrol{
-        border: 1px solid #999;
-        width: 80px;
-        height: 25px;
-    }
-    .forminp{
-        border: 1px solid #146AC4;
-        width: 120px;
-        height: 25px;
-    }
-    .formcontrollarg{
-        width:120px;
-        height: 25px;
-    }
-    .formsearch{
-        position: absolute;
-        bottom:10px;
-        right: 20px;
-    }
-    .retrievalsearch{
-        padding: 5px 20px;
-    }
-    .formgroup .catalog{
-        border: 1px solid #999;
-        width:120px;
-        height: 25px;
-        cursor: pointer;
-        background-position: 95% 45%;
-    }
-    .cataloghint{
-        position: relative;
-    }
-    .cataloglist{
-        position: absolute;
-        top: -1px;
-        left: 0;
-        padding: 0;
-        border: 1px solid #999;
-        background: #fff;
-        z-index: 10;
-        width: 120px;
-    }
-    .cataloglist li{
-        padding:2px 5px;
-    }
-    .cataloglist li:hover{
-        background: #1e90ff;
-    }
-    .checkbox {
-        margin:0px;
-    }
-
-
 </style>
