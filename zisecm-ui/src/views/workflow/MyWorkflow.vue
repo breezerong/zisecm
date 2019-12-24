@@ -260,13 +260,13 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      if(obj=="1"){
+      // if(obj=="1"){
         // _self.workflowForm.startTimeAfter=_self.workflowForm.startTimeAfter==""?"":_self.dateFormat(_self.workflowForm.startTimeAfter);
         // _self.workflowForm.startTimeBefore==_self.workflowForm.startTimeBefore==""?"":_self.dateFormat(_self.workflowForm.startTimeBefore);
         // _self.workflowForm.endTimeAfter==_self.workflowForm.endTimeAfter==""?"":_self.dateFormat(_self.workflowForm.endTimeAfter);
         // _self.workflowForm.endTimeBefore==_self.workflowForm.endTimeBefore==""?"":_self.dateFormat(_self.workflowForm.endTimeBefore);
         m.set("workflowForm", _self.workflowForm);
-      }
+      // }
       m.set("userId", _self.currentUserName);
      axios.post('/workflow/myWorkflow',JSON.stringify(m))
       .then(function(response) {
@@ -288,7 +288,8 @@ export default {
       _self.loading = true;
      axios.post('/workflow/stopProcessInstanceById',JSON.stringify(m))
       .then(function(response) {
-                _self.$message({
+         _self.refreshData();
+               _self.$message({
                 showClose: true,
                 message: "流程停止成功!",
                 duration: 2000,
