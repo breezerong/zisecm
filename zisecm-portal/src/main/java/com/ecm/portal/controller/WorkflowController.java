@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.impl.cmd.CustomSqlExecution;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
@@ -72,6 +73,7 @@ import com.ecm.core.service.AuditService;
 import com.ecm.core.service.UserService;
 import com.ecm.flowable.controller.StartProcessNameProcessInstanceCmd;
 import com.ecm.flowable.listener.JobListener;
+import com.ecm.flowable.service.IFlowableBpmnModelService;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.portal.test.flowable.TODOApplication;
 
@@ -105,6 +107,8 @@ public class WorkflowController  extends ControllerAbstract{
 		private EcmAuditWorkitemMapper ecmAuditWorkitemMapper;
 		@Autowired
 		private AuditService auditService;
+	    @Autowired
+	    private IFlowableBpmnModelService flowableBpmnModelService;
 		
 	    /***************此处为业务代码******************/
 	    
@@ -167,7 +171,71 @@ public class WorkflowController  extends ControllerAbstract{
 				}
 			return result;	
 	    }
+	    /**
+	     * 删除流程
+	     *
+	     * @param argStr    参数
+	     */
+	    @RequestMapping(value = "/terminateWorkflow")
+	    @ResponseBody
+	    public Map<String, Object> terminateWorkflow(@RequestBody String argStr) {
+	        //启动流程
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			Map<String, Object> result = new HashMap<String, Object>();
+			try {
+				String processInstanceId=args.get("processInstanceId").toString();
+			    // taskService
+			    //repositoryService.process
+				List<String> activeTaskList=runtimeService.getActiveActivityIds(processInstanceId);
+				taskService.deleteTasks(activeTaskList);
+ 				runtimeService.deleteProcessInstance(processInstanceId, "");
+			        result.put("code", ActionContext.SUCESS);
+					result.put("processID", processInstanceId);
+				} catch (Exception e) {
+					e.printStackTrace();
+					result.put("code", ActionContext.FAILURE);
+					result.put("message", e.getMessage());
+				}
+			return result;	
+	    }
 
+	    /**
+	     * 执行跳转
+	     */
+	    protected void moveExecutionsToSingleActivityId(List<String> executionIds, String activityId) {
+	        runtimeService.createChangeActivityStateBuilder()
+	                .moveExecutionsToSingleActivityId(executionIds, activityId)
+	                .changeState();
+	    }
+
+	    /**
+	     * 终止流程
+	     */
+	    @RequestMapping(value = "/stopProcessInstanceById")
+	    @ResponseBody
+	    public Map<String, Object>  stopProcessInstanceById(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			Map<String, Object> result = new HashMap<String, Object>();
+			String processInstanceId=args.get("processInstanceId").toString();
+	        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+//	        if (processInstance != null) {
+	            List<EndEvent> endNodes = flowableBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
+	            String endId = endNodes.get(0).getId();
+	            //2、执行终止
+	            List<Execution> executions = runtimeService.createExecutionQuery().parentId(processInstanceId).list();
+	            List<String> executionIds = new ArrayList<>();
+	            executions.forEach(execution -> executionIds.add(execution.getId()));
+	            this.moveExecutionsToSingleActivityId(executionIds, endId);
+		        result.put("code", ActionContext.SUCESS);
+				result.put("processID", processInstanceId);
+//	        }else {
+//				result.put("code", ActionContext.FAILURE);
+//				result.put("message", e.getMessage());
+//	        }
+	        return result;
+	    }
+
+ 
 	    /**
 	     * 获取已审批的任务
 	     * @param argStr    参数
