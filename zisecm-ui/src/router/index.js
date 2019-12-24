@@ -40,9 +40,10 @@ const router = new Router({
 						},
 						{
 							path: '/dc/folderviewer',
-							name: '通知消息',
+							name: '文件夹查看',
 							component: () => import('@/views/dc/FolderViewer.vue'),
 						}
+						
 					]
 				},
 				{
@@ -52,6 +53,11 @@ const router = new Router({
 					path: '/helpcenter',
 					name: '帮助中心',
 					component: () => import( /* webpackChunkName: "helpcenter" */ '@/views/HelpCenter.vue')
+				},
+				{
+					path: '/container',
+					name: '内容容器',
+					component: () => import('@/views/MainContainer.vue'),
 				},
 				searchRouter,
 				...dcRouter,
