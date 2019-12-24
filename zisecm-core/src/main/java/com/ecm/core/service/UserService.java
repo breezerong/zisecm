@@ -191,11 +191,11 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		{
 			if(sql.indexOf(" where ")>0)
 			{
-				sql += " and GROUP_NAME=''";
+				sql += " and (GROUP_NAME='' or GROUP_NAME is null)";
 			}
 			else
 			{
-				sql +=" where GROUP_NAME=''";
+				sql +=" where GROUP_NAME='' or GROUP_NAME is null";
 			}
 		}
 		List<EcmUser> list = ecmUserMapper.searchToEntity(pager,sql);
@@ -470,19 +470,23 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		return list;
 	}
 	
+ 	
 	@Override
 	public List<EcmUser> getUsersByGroupName(String token,Pager pager, String noGroup,String groupName, String condition) {
-		
+		String groupId="";
 		if(groupName.startsWith("leaderManage_auto")) {
 			try {
 				groupName= "leaderManage_"+getSession(token).getCurrentUser().getDepartment();
+				EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
+				groupId=groupObj==null?"000000000000000000":groupObj.getId();
 			} catch (AccessDeniedException e) {
 				e.printStackTrace();
 			}
+		}else {
+			EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
+			groupId=groupObj==null?null:groupObj.getId();
 		}
-				
-		EcmGroup groupObj= ecmGroupMapper.selectByName(groupName);
-		String groupId=groupObj==null?"000000000000000000":groupObj.getId();
+		
 		return getRoleUsers( token, pager,  noGroup, groupId,  condition);
 	}
 	
@@ -564,6 +568,18 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	public EcmUser getObjectByName(String token, String userName) {
 		// TODO Auto-generated method stub
 		String condition = "NAME='"+DBUtils.getString(userName)+"'";
+		List<EcmUser> list = getObjects(token, condition);
+		if(list.size()>0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	
+	@Override
+	public EcmUser getObjectByLoginName(String token, String loginName) {
+		// TODO Auto-generated method stub
+		String condition = "LOGIN_NAME='"+DBUtils.getString(loginName)+"'";
 		List<EcmUser> list = getObjects(token, condition);
 		if(list.size()>0) {
 			return list.get(0);

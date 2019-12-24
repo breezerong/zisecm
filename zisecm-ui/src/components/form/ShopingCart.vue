@@ -32,6 +32,28 @@
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
+               <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+              </template>
+            </el-table-column>>
                   <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName" sortable>
                       <template slot-scope="scope">
@@ -65,7 +87,8 @@
             <el-button type="primary" @click="cancel(false)">取 消</el-button>
             <el-button @click="cleanShopingCart()">清空借阅单</el-button>
             <el-button @click="removeShopingCart()">移除所选</el-button>
-            <el-button @click="borrowItem()">借 阅</el-button>
+             <el-button @click="showDrawingItem()">调晒</el-button>
+           <el-button @click="borrowItem()">借阅</el-button>
            </div>
           </div>
              <router-view></router-view>
@@ -176,6 +199,66 @@ export default {
             }
           }
        },
+       showDrawingItem(){
+       let _self = this;
+       let m= new Map();
+       let C_ARCHIVE_UNIT=sessionStorage.getItem("access-department");
+                var addItemId = [];
+        if (_self.selectedItemList.length > 0) {
+          for (var i = 0; i < _self.selectedItemList.length; i++) {
+                addItemId.push(_self.selectedItemList[i].ID);
+                if(typeof(_self.selectedItemList[i].C_ARCHIVE_UNIT)=="undefined"||C_ARCHIVE_UNIT!=_self.selectedItemList[i].C_ARCHIVE_UNIT||_self.selectedItemList[i].C_SECURITY_LEVEL!='内部公开'){
+                _self.$message({
+                  showClose: true,
+                  message: "只能晒本人所在部门且内部公开的图纸!",
+                  duration: 5000,
+                  type: "warning"
+                });
+                return;
+                }
+          }
+          let showDrawingMap=new Map();
+          showDrawingMap.set("C_DRAFTER",sessionStorage.getItem("access-userName"));
+          showDrawingMap.set("C_DESC1",sessionStorage.getItem("access-department"));
+          showDrawingMap.set("STATUS","待晒图");
+          // showDrawingMap.set(C_DRAFTER,sessionStorage.getItem("access-userName"));
+          m.set("formData",showDrawingMap);
+          m.set("documentIds",addItemId);
+          m.set("formId","");
+          _self.loading = true;
+            axios.post("/dc/SaveShowDrawing", JSON.stringify(m))
+          .then(function(response) {
+                _self.$message({
+                showClose: true,
+                message: "调晒成功",
+                duration: 2000,
+                type: "warning"
+              });
+          _self.loading = false;
+          })
+          .catch(function(error) {
+              _self.$message({
+                showClose: true,
+                message: "晒图失败",
+                duration: 2000,
+                type: "warning"
+              });
+
+          _self.loading = false;
+            console.log(error);
+          });
+
+        }else{
+               _self.$message({
+                showClose: true,
+                message: "请选择需要调图的图纸",
+                duration: 5000,
+                type: "warning"
+              });
+              return;
+
+      }
+    },
     //借阅
     borrowItem() {
       let _self = this;

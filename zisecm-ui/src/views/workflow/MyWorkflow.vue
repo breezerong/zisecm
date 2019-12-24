@@ -1,6 +1,6 @@
 <template>
   <div>
-        <el-dialog title="查看" :visible.sync="dialogVisible" width="95%">
+        <el-dialog title="查看" :visible.sync="dialogVisible" v-if="dialogVisible" width="95%">
           <el-steps :active="activeIndex" align-center finish-status="process" process-status="success">
             <el-step v-for="item in activityList" :title="item.name" :key="item.id" :description="item.description"></el-step>
           </el-steps>
@@ -40,31 +40,29 @@
                 </el-table-column>
             </el-table>
              <div v-if="workflowPicVisible=='显示流程图'"  >{{workflowPicVisible}}              
-                <img ref="processDiagram" style="width:100%;height:100%" :src="_self.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
+                <img ref="processDiagram" style="width:100%;height:100%" :src="this.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
             </div>
          <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="dialogVisible = false">关闭</el-button>
             <el-button @click="showprocessDiagram()">显示流程图</el-button>
          </div>
         </el-dialog>
-      <table border="0" width="100%">
-          <tr>
-            <td class="navbar">
-              /工作流/我的流程
-            </td>
-          </tr>
-          <tr>
-            <td >
-
+<el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>工作流</el-breadcrumb-item>
+          <el-breadcrumb-item>我的流程</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-row >
           <el-form ref="workflowForm"   :model="workflowForm"   >
             <el-row  >
-              <el-col   style="width:100%;" >
+              <el-col >
                 <el-form-item  v-if="currentUserName=='all'"  label="发起人"   :label-width="formLabelWidth" style="float:left">
-                  <UserSelectInput  v-model="workflowForm.startUser" v-bind:inputValue="workflowForm.startUser" roleName=""></UserSelectInput>
+                  <UserSelectInput  v-model="workflowForm.startUser" v-bind:inputValue="workflowForm.startUser"></UserSelectInput>
                 </el-form-item>
               </el-col >
-               <el-col   style="width:100%;" >
-              <el-form-item   label="完成状态" :label-width="formLabelWidth"  style="float:left">
+               <el-col >
+               <el-form-item   label="状态" :label-width="formLabelWidth"  style="float:left">
                   <el-select style="width:12em"  v-model="workflowForm.isFinished">
                        <el-option label="全部"  value="全部"></el-option>
                        <el-option label="未完成"  value="未完成"></el-option>
@@ -80,17 +78,15 @@
                   <el-date-picker     v-model="workflowForm.endTimeBefore" auto-complete="off" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker >
                 </el-form-item>
                  <el-form-item style="float:left;padding-left:3px">
-                   <el-button  type="primary" @click="search()">查询</el-button>
+                   <el-button  type="primary" plain="true" size="small" @click="search()">查询</el-button>
                  </el-form-item>
                </el-col >
            </el-row>
-            </el-form>                   
-
-            </td>
-          </tr>
-        <tr>
-          <td>
-               <div>
+            </el-form>  
+        </el-row>
+      </el-header>
+      <el-main>
+       
            <el-table
               :data="dataList"
               border
@@ -120,13 +116,18 @@
               </el-table-column>
               <!-- <el-table-column prop="currentAssignee" label="当前执行人"  min-width="20%">
               </el-table-column> -->
-              <el-table-column label="操作"  width="80px">
+              <el-table-column label="操作"  width="200px" v-if="currentUserName=='all'">
+                <template slot-scope="scope">
+                  <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
+                   <el-button  v-if="scope.row.endTime=='' && currentUserName=='all'"  @click="terminateWorkflow(scope.row)">结束流程</el-button>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作"  width="80px" v-else >
                 <template slot-scope="scope">
                   <el-button :plain="true" type="success" size="small" icon="save" @click="showitem(scope.row)">查看</el-button>
                 </template>
               </el-table-column>
             </el-table>
-              </div>
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -136,9 +137,8 @@
               layout="total, sizes, prev, pager, next, jumper"
               :total="itemCount">
             </el-pagination>
-          </td>
-         </tr>
-      </table>
+      </el-main>
+</el-container>
   </div>
 </template>
 
@@ -169,7 +169,7 @@ export default {
       currentPage: 1,
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 190,
+      tableHeight: window.innerHeight - 150,
       formLabelWidth: "80px",
       currentProcessId:"",
       workflowPicVisible:"",
@@ -260,13 +260,13 @@ export default {
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      if(obj=="1"){
+      // if(obj=="1"){
         // _self.workflowForm.startTimeAfter=_self.workflowForm.startTimeAfter==""?"":_self.dateFormat(_self.workflowForm.startTimeAfter);
         // _self.workflowForm.startTimeBefore==_self.workflowForm.startTimeBefore==""?"":_self.dateFormat(_self.workflowForm.startTimeBefore);
         // _self.workflowForm.endTimeAfter==_self.workflowForm.endTimeAfter==""?"":_self.dateFormat(_self.workflowForm.endTimeAfter);
         // _self.workflowForm.endTimeBefore==_self.workflowForm.endTimeBefore==""?"":_self.dateFormat(_self.workflowForm.endTimeBefore);
         m.set("workflowForm", _self.workflowForm);
-      }
+      // }
       m.set("userId", _self.currentUserName);
      axios.post('/workflow/myWorkflow',JSON.stringify(m))
       .then(function(response) {
@@ -275,6 +275,29 @@ export default {
         _self.loading = false;
         _self.loadPageInfo(response.data.totalCount);
       })
+      .catch(function(error) {
+        console.log(error);
+        _self.loading = false;
+      });
+    },
+      terminateWorkflow(indata) {
+      let _self = this;
+      _self.refreshProcess(indata.id);
+       var m = new Map();
+      m.set("processInstanceId",indata.id);
+      _self.loading = true;
+     axios.post('/workflow/stopProcessInstanceById',JSON.stringify(m))
+      .then(function(response) {
+         _self.refreshData();
+               _self.$message({
+                showClose: true,
+                message: "流程停止成功!",
+                duration: 2000,
+                type: "success"
+              });
+        _self.loading = false;
+
+})
       .catch(function(error) {
         console.log(error);
         _self.loading = false;
@@ -404,5 +427,18 @@ a {
 
 .active2{
   background: rgb(145, 146, 145);
+}
+header.el-header {
+  background-color: #e8eaeb;
+  height: 100% !important;
+}
+.el-row {
+  /* padding-bottom: 10px; */
+}
+.el-form-item{
+  margin-bottom: 3px
+}
+.el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width: 140px;
 }
 </style>

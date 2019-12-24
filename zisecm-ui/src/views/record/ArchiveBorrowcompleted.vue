@@ -1,8 +1,8 @@
 <template>
     <div>
         
-        <el-row>
-            <el-col :span="2">借阅人</el-col>
+        <el-row style="font-size: 14px;padding-top:5px;padding-bottom:5px;">
+            <el-col :span="2" style="padding-top:10px;">借阅人</el-col>
             <el-col :span="5" style="float:left;text-align:left;">
                 <el-input
                 v-model="orderInputkey"
@@ -11,12 +11,12 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col :span="3">创建日期(开始)</el-col>
+            <el-col :span="3" style="padding-top:10px;">创建日期(开始)</el-col>
             <el-col :span="3">
                 <el-date-picker v-model="startDate" 
                 type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss">
                 </el-date-picker></el-col>
-            <el-col :span="3">创建日期(结束)</el-col>
+            <el-col :span="3" style="padding-top:10px;">创建日期(结束)</el-col>
             <el-col :span="3">
                 <el-date-picker v-model="endDate" 
                 type="date" placeholder="选择日期" style="display:block;">
@@ -92,8 +92,8 @@ export default {
              selectedOutFileRow:[],
              startDate:"",
              endDate:"",
-             rightTableHeight: (window.innerHeight - 200)/2,
-             rightOutTableHeight:(window.innerHeight - 200)/2
+             rightTableHeight: (window.innerHeight - 160)/2,
+             rightOutTableHeight:(window.innerHeight - 160)/2
         }
        
     },
@@ -397,7 +397,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListFile = response.data.data;
-              
+              _self.rightOutTableHeight = "100%";
             })
             .catch(function(error) {
               console.log(error);
@@ -413,7 +413,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridList = response.data.data;
-              
+              _self.rightTableHeight = "100%";
               _self.orderLoading = false;
             })
             .catch(function(error) {

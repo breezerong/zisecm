@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row v-loading="loading">
-      <el-col :span="6" style="padding-top:4px;float:left;text-align:left;">
+      <el-col :span="6" class="topbar-button">
         <el-button
           type="primary"
           icon="el-icon-back"
@@ -17,7 +17,7 @@
           @click="onUpdateStatus('整编')"
         >接收</el-button>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="4" class="topbar-input">
         <el-input
           v-model="inputkey"
           :placeholder="$t('message.pleaseInput')+$t('application.keyword')"

@@ -89,42 +89,7 @@ public class LoginManager extends ControllerAbstract{
 		return mp;
 	}
 	
-	@ResponseBody
-	@RequestMapping(value = "/ssoLogin", method = RequestMethod.POST)
-	public Map<String, Object> ssoLogin(@RequestBody String loginName, HttpSession session) {
-		
-		Map<String, Object> mp = new HashMap<String, Object>();
-			session.removeAttribute("ECMUserToken");
-			//session.removeAttribute("ECMUserSession");
-			try {
-				
-				// 系统登录认证
-				IEcmSession s = authService.loginSSO("portal",loginName.replace("\"", ""));
-				mp.put("code", ActionContext.SUCESS);
-				mp.put("token", s.getToken());
-				mp.put("department", s.getCurrentUser().getDepartment());
-				mp.put("clientPermission", s.getCurrentUser().getClientPermission());
-				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
-				mp.put("loginName", s.getCurrentUser().getLoginName());
-				mp.put("userName", s.getCurrentUser().getUserName());
-				session.setAttribute("ECMUserToken", s.getToken());
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				e.printStackTrace();
-				mp.put("code", 0);
-				mp.put("msg", e.getMessage());
-				try {
-					auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, loginName);
-				} catch (AccessDeniedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				//mp.put(key, value)
-			}
-		return mp;
-	}
+	
 
 	@ResponseBody
 	@RequestMapping(value = "/userLogout", method = RequestMethod.POST)

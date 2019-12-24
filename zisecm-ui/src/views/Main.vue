@@ -10,7 +10,7 @@
             <span style="font-size: 18px;color: #fff;"  >{{$t('application.name')}}</span>
           </div>
           <div class="container-top">
-            <el-menu default-active="1"  mode="horizontal">
+            <el-menu v-if="isExtUser==false" default-active="1"  mode="horizontal">
               <template v-for="item in dataList.menuItems">
                 <template v-if="item.submenus && item.url==null">
                   <el-submenu :index="item.id+''" :key="item.id">
@@ -31,7 +31,7 @@
               </template>
             </el-menu>
           </div>
-          <div v-if="clientPermission>4" class="container-top-right">
+          <div v-if="systemPermission>7" class="container-top-right">
             <el-select v-model="currentLanguage" @change="languageChange" style="width:105px">
               <el-option label="简体中文" value="zh-cn" key="zh-cn"></el-option>
               <el-option label="English" value="en" key="en"></el-option>
@@ -65,8 +65,10 @@ export default {
         menuItems: []
       },
       currentLanguage: "",
+      isExtUser: false,
       userName: "",
       clientPermission: 0,
+      systemPermission: 0,
       defaultColor: "#409EFF",
       homePath : "/home"
     };
@@ -75,13 +77,21 @@ export default {
     
     var user = sessionStorage.getItem("access-user");
     if (!user) {
-      console.log("go to login.................");
+      //console.log("go to login.................");
       this.$router.push({ name: "login" });
     }
+   
   },
   mounted() {
+    var extUser = sessionStorage.getItem("access-externalUser");
+    console.log("extUser:"+extUser);
+    if(extUser && extUser == "true"){
+      this.isExtUser = true;
+    }
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
-    this.loadMenu();
+    if(!this.isExtUser){
+      this.loadMenu();
+    }
     this.checklogin();
     if(this.$route && this.$route.path && this.$route.path=="/"){
       this.$router.push({ path: "/home" });
@@ -132,6 +142,7 @@ export default {
         this.clientPermission = sessionStorage.getItem(
           "access-clientPermission"
         );
+        this.systemPermission = sessionStorage.getItem("access-systemPermission");
       } else {
         this.userName = "";
       }

@@ -71,7 +71,29 @@
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
-                  <template  v-for="item in gridList">
+                <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+              </template>
+            </el-table-column>>
+                             <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='C_ARCHIVE_DATE'">
@@ -124,7 +146,10 @@
                 <el-form-item label="借阅单号" :label-width="formLabelWidth"  style="float:left">
                   {{borrowForm.CODING}}
                 </el-form-item>
-              </el-col >
+                  <el-form-item  :label-width="formLabelWidth"  style="float:right">
+                  <el-button  @click="getBorrowHelpDoc()">帮助</el-button>
+                </el-form-item>
+             </el-col >
              <el-col>
                 <el-form-item label="姓名" :label-width="formLabelWidth"  style="float:left">
                   {{borrowForm.C_DRAFTER}}
@@ -159,12 +184,35 @@
                 </el-form-item>
                </el-col>
              <el-col>
-                <el-table :data="tabledata">
+                 <el-button v-if="borrowForm.SUB_TYPE=='下载' && borrowForm.STATUS=='已完成' " ref="downloadAllFile"  @click="downloadAllFile()">打包下载</el-button>
+               <el-table :data="tabledata">
                <el-table-column type="index" label="#" width="50">
                 </el-table-column>
                 <el-table-column prop="id" label="id"  v-if="1==2" min-width="15%" sortable>
                 </el-table-column>
-                  <template  v-for="item in gridList">
+               <el-table-column width="40">
+              <template slot-scope="scope">
+                <img
+                  v-if="scope.row.TYPE_NAME=='图册'"
+                  :src="'./static/img/drawing.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                  :src="'./static/img/box.gif'"
+                  :title="scope.row.TYPE_NAME"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+              </template>
+            </el-table-column>>
+                              <template  v-for="item in gridList">
                     <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
                       <template slot-scope="scope">
                           <template v-if="item.attrName=='C_ARCHIVE_DATE'">
@@ -246,7 +294,8 @@ export default {
             C_REVIEWER2:"",
             C_REVIEWER3:"",
             C_COMMENT:"",
-            C_CREATION_UNIT:""
+            C_CREATION_UNIT:"",
+            STATUS:""
 
       },
       rules: {
@@ -723,6 +772,15 @@ export default {
           });
       window.open(href.href, '_blank');
        });
+  },
+  downloadAllFile(){
+      let _self=this;
+      let ids= new Array();
+      for (let index = 0; index < _self.tabledata.length; index++) {
+        ids.push( _self.tabledata[index].ID);
+        
+      }
+      window.open(_self.axios.defaults.baseURL+'/workflow/downloadAllFile?objectIds='+ids, '_blank');
   },
   viewdoc(indata){
         let condition = indata.ID;

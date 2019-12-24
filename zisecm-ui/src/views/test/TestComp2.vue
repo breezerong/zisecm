@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  class="components-container">
     <el-row>
       <el-button type="primary" plain icon="save" @click="updateDept()">更新部门</el-button> 
     </el-row>
@@ -27,6 +27,21 @@
       </el-row>
     </el-form>
     </el-row>
+    <split-pane split="vertical" @resize="resize">
+      <template slot="paneL">
+        <div class="left-container" />
+      </template>
+      <template slot="paneR">
+        <split-pane split="horizontal">
+          <template slot="paneL">
+            <div class="top-container" />
+          </template>
+          <template slot="paneR">
+            <div class="bottom-container" />
+          </template>
+        </split-pane>
+      </template>
+    </split-pane>
   </div>
   
 </template>
@@ -47,6 +62,9 @@ export default {
     };
   },
   methods: {
+     resize() {
+      console.log('resize')
+    },
     updateDept(){
       let _self = this;
       _self.loading =true;
@@ -118,4 +136,31 @@ li {
 a {
   color: #42b983;
 }
+
+.components-container {
+    position: relative;
+    height: 100vh;
+  }
+
+  .left-container {
+    background-color: #F38181;
+    height: 100%;
+  }
+
+  .right-container {
+    background-color: #FCE38A;
+    height: 200px;
+  }
+
+  .top-container {
+    background-color: #FCE38A;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bottom-container {
+    width: 100%;
+    background-color: #95E1D3;
+    height: 100%;
+  }
 </style>

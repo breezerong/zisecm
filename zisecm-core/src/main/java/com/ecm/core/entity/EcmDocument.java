@@ -1,8 +1,11 @@
 package com.ecm.core.entity;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ecm.common.util.DateUtils;
 
 public class EcmDocument extends EcmSysObject{
     
@@ -686,13 +689,13 @@ public class EcmDocument extends EcmSysObject{
 	    	this.setCreator(getString(attributes.get("CREATOR")));
 	    }
 	    if(attributes.get("CREATION_DATE")!=null) {
-	    	this.setCreationDate((Date)attributes.get("CREATION_DATE"));
+	    	this.setCreationDate(getDate(attributes.get("CREATION_DATE")));
 	    }
 	    if(attributes.get("MODIFIER")!=null) {
 	    	this.setModifier(getString(attributes.get("MODIFIER")));
 	    }
 	    if(attributes.get("MODIFIED_DATE")!=null) {
-	    	this.setModifiedDate((Date)attributes.get("MODIFIED_DATE"));
+	    	this.setModifiedDate(getDate(attributes.get("MODIFIED_DATE")));
 	    }
 	    if(attributes.get("IS_HIDDEN")!=null) {
 	    	this.setHidden(attributes.get("IS_HIDDEN")==null?false:attributes.get("IS_HIDDEN").toString().equals("1"));
@@ -704,7 +707,7 @@ public class EcmDocument extends EcmSysObject{
 	    	this.setLockOwner(getString(attributes.get("LOCK_OWNER")));
 	    }
 	    if(attributes.get("LOCK_DATE")!=null) {
-	    	this.setLockDate((Date)attributes.get("LOCK_DATE"));
+	    	this.setLockDate(getDate(attributes.get("LOCK_DATE")));
 	    }
 	    if(attributes.get("LOCK_CLIENT")!=null) {
 	    	this.setLockClient(getString(attributes.get("LOCK_CLIENT")));
@@ -727,6 +730,25 @@ public class EcmDocument extends EcmSysObject{
 			return null;
 		}
 		return val.toString();
+	}
+	
+	private Date getDate(Object val) {
+		if(val == null) {
+			return null;
+		}
+		else if(val instanceof Date) {
+			return (Date)val;
+		}
+		else if(val instanceof Long) {
+			return new Date((long)val);
+		}
+		try {
+			return DateUtils.sdfAll.parse(val.toString());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public boolean isCurrent() {

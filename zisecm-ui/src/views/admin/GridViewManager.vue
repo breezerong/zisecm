@@ -20,28 +20,33 @@
             <el-button type="primary" @click="additem(form)">确 定</el-button>
           </div>
         </el-dialog>
-      <table border="0" width="100%">
-          <tr>
-            <td class="navbar">
-              /列表管理
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="160px">
-                    <el-input v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td>
-                    <el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible = true"></el-button>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
+              <el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+          <el-breadcrumb-item>列表管理</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-row class="topbar">
+          <el-col :span="4">
+            <el-input
+              v-model="inputkey"
+              placeholder="请输入关键字"
+              @change="search"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="20" style="text-align:left;">
+            &nbsp; 
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              plain
+              @click="dialogVisible = true"
+            >新建</el-button>
+          </el-col>
+        </el-row>
+      </el-header>
+      <el-main>
     <el-table
                 :data="dataList"
                 border
@@ -88,9 +93,8 @@
           </template>
         </el-table-column>
     </el-table>
-     </td>
-                </tr>
-              </table>
+      </el-main>
+              </el-container>
   </div>
 </template>
 
@@ -109,7 +113,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 115,
       form: {
         name: "",
         description: "",
@@ -224,5 +228,12 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header {
+  background-color: #e8eaeb;
+  height: 68px !important;
+}
+.el-row {
+  padding-bottom: 10px;
 }
 </style>

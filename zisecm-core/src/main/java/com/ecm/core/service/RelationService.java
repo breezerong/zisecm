@@ -63,14 +63,17 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 	@Override
 	public String newObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub
-		((com.ecm.core.entity.EcmRelation)obj).createId();
-		List<Map<String, Object>> c= ecmRelationMapper.executeSQL("select count(*) as cnum from ecm_relation where parent_id='"
-		+((com.ecm.core.entity.EcmRelation)obj).getParentId()+"' and name='"
-				+((com.ecm.core.entity.EcmRelation)obj).getName()+"'");
-		int orderIndex=Integer.parseInt(c.get(0).get("cnum").toString());
-		((com.ecm.core.entity.EcmRelation)obj).setOrderIndex(orderIndex+1);
-		ecmRelationMapper.insert((com.ecm.core.entity.EcmRelation)obj);
-		return ((com.ecm.core.entity.EcmRelation)obj).getId();
+		EcmRelation en =(EcmRelation)obj;
+		en.createId();
+		if(en.getOrderIndex()==0) {
+			List<Map<String, Object>> c= ecmRelationMapper.executeSQL("select count(*) as cnum from ecm_relation where parent_id='"
+			+((com.ecm.core.entity.EcmRelation)obj).getParentId()+"' and name='"
+					+((com.ecm.core.entity.EcmRelation)obj).getName()+"'");
+			int orderIndex=Integer.parseInt(c.get(0).get("cnum").toString());
+			en.setOrderIndex(orderIndex+1);
+		}
+		ecmRelationMapper.insert(en);
+		return en.getId();
 	}
 	
 	@Override

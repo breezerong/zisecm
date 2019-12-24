@@ -1,165 +1,174 @@
 <template>
   <div>
-    <el-dialog title="选择属性" :visible.sync="categoryVisible" >
-      <CategoryManager ref="CategoryManager" @onselected="onselected" width="560" v-bind:categoryVisible="categoryVisible"></CategoryManager>
+    <el-dialog title="选择属性" :visible.sync="categoryVisible">
+      <CategoryManager
+        ref="CategoryManager"
+        @onselected="onselected"
+        width="560"
+        v-bind:categoryVisible="categoryVisible"
+      ></CategoryManager>
       <div slot="footer" class="dialog-footer">
         <el-button @click="categoryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog width="80%" title="列表校验" :visible.sync="checkVisible" >
+    <el-dialog width="80%" title="列表校验" :visible.sync="checkVisible">
       <GridViewItemCheck ref="GridViewItemCheck" width="560" :parentgridid="parentid"></GridViewItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="添加" :visible.sync="dialogVisible">
-          <el-form :model="form">
-            <el-form-item label="父Id" :label-width="formLabelWidth">
-              <el-input v-model="form.parentId" auto-complete="off"></el-input>
+    <el-dialog title="添加" :visible.sync="dialogVisible" width="80%">
+      <el-form :model="form">
+        <el-form-item label="父Id" :label-width="formLabelWidth">
+          <el-input v-model="form.parentId" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-row>
+          <el-col :span="10">
+            <el-form-item label="属性名称" :label-width="formLabelWidth">
+              <el-input v-model="form.attrName" auto-complete="off"></el-input>
             </el-form-item>
-             <el-row>
-              <el-col :span="10">
-              <el-form-item label="属性名称" :label-width="formLabelWidth">
-                <el-input v-model="form.attrName" auto-complete="off"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="10">
-              <el-form-item label="标签" :label-width="formLabelWidth">
-                <el-input v-model="form.label" auto-complete="off"></el-input>
-              </el-form-item>
-            </el-col>
-              <el-col :span="4">
-                <el-button @click="showcategory('')">选择属性</el-button>
-              </el-col>
-            </el-row>
-            <el-form-item label="宽度" :label-width="formLabelWidth">
-              <el-input v-model="form.width" auto-complete="off"></el-input>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="标签" :label-width="formLabelWidth">
+              <el-input v-model="form.label" auto-complete="off"></el-input>
             </el-form-item>
-            <el-col :span="12">
-            <el-form-item label="显示类型" :label-width="formLabelWidth">
+          </el-col>
+          <el-col :span="4">
+            <el-button @click="showcategory('')">选择属性</el-button>
+          </el-col>
+        </el-row>
+        <el-form-item label="宽度" :label-width="formLabelWidth">
+          <el-input v-model="form.width" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-col :span="12">
+          <el-form-item label="显示类型" :label-width="formLabelWidth">
             <el-select v-model="form.visibleType">
+              <el-option label="显示" value="1"></el-option>
+              <el-option label="可选" value="2"></el-option>
+              <el-option label="隐藏" value="3"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="是否排序" :label-width="formLabelWidth">
+            <el-select v-model="form.allowOrderby">
+              <el-option label="是" :value="true"></el-option>
+              <el-option label="否" :value="false"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-form-item label="序号" :label-width="formLabelWidth">
+          <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="additem(form)">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+          <el-breadcrumb-item>列表项管理</el-breadcrumb-item>
+        </el-breadcrumb>
+        <el-row class="topbar">
+          <el-col :span="4">列表名：{{typename}}</el-col>
+        
+          <el-col :span="4">
+            <el-input
+              v-model="inputkey"
+              placeholder="请输入关键字"
+              @change="search"
+              prefix-icon="el-icon-search"
+            ></el-input>
+          </el-col>
+          <el-col :span="12" style="text-align:left;">
+            &nbsp; 
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              plain
+              @click="dialogVisible =true"
+            >新建</el-button>
+            <el-button type="primary" plain icon="el-icon-check" @click="startcheck()">验证</el-button>
+          </el-col>
+        </el-row>
+      </el-header>
+      <el-main>
+        <el-table
+          :data="dataList"
+          border
+          :height="tableHeight"
+          v-loading="loading"
+          style="width: 100%"
+        >
+          <el-table-column label="行号" type="index" width="60"></el-table-column>
+          <el-table-column label="属性名" width="200" sortable>
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.attrName"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="标签" min-width="20%" sortable>
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.label"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="宽度" width="100">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.width"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="显示类型" width="120">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.visibleType">
                 <el-option label="显示" value="1"></el-option>
                 <el-option label="可选" value="2"></el-option>
                 <el-option label="隐藏" value="3"></el-option>
-            </el-select>
-            </el-form-item>
-            </el-col>
-            <el-col :span="12">
-            </el-form-item>
-            <el-form-item label="显示类型" :label-width="formLabelWidth">
-              <el-select v-model="form.allowOrderby">
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="可排序" width="100">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.allowOrderby">
                 <el-option label="是" :value="true"></el-option>
                 <el-option label="否" :value="false"></el-option>
               </el-select>
-             </el-form-item>
-            </el-col>
-            <el-form-item label="序号" :label-width="formLabelWidth">
-              <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="additem(form)">确 定</el-button>
-          </div>
-        </el-dialog>
-           <table border="0" width="100%" >
-          <tr>
-            <td class="navbar">
-              <el-breadcrumb>
-                <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-                <el-breadcrumb-item>界面配置</el-breadcrumb-item>
-                <el-breadcrumb-item>列表项管理</el-breadcrumb-item>
-              </el-breadcrumb>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td width="160px">
-                    列表：{{typename}}
-                  </td>
-                  <td width="80px">
-                    <el-input  v-model="parentid" placeholder="请输入父Id" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td align="left" width="160px">
-                    <el-input  v-model="inputkey" placeholder="请输入属性名关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td width="40px">
-                    <el-tooltip class="item" effect="dark" content="新增" placement="top">
-                      <el-button type="primary" icon="el-icon-edit" circle @click="dialogVisible =true"></el-button>
-                    </el-tooltip> 
-                  </td>
-                  <td>
-                    <el-tooltip  class="item" effect="dark" content="表单验证" placement="top">
-                     <el-button type="primary" icon="el-icon-check" circle @click="startcheck()"></el-button>
-                    </el-tooltip>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
-            <el-table
-              :data="dataList"
-              border
-              :height="tableHeight"
-              v-loading="loading"
-              style="width: 100%">
-                <el-table-column
-                label="行号"
-                type="index"
-                width="60">
-              </el-table-column>
-                <el-table-column label="属性名" width="180">
-                  <template slot-scope="scope">
-                    <el-input  v-model="scope.row.attrName"></el-input>
-                  </template>
-                </el-table-column>
-                <el-table-column label="标签" width="200">
-                  <template slot-scope="scope">
-                    <el-input  v-model="scope.row.label"></el-input>
-                  </template>
-                </el-table-column>
-                <el-table-column label="宽度" width="100">
-                  <template slot-scope="scope">
-                    <el-input  v-model="scope.row.width"></el-input>
-                  </template>
-                </el-table-column> 
-                <el-table-column label="显示类型" width="100">
-                  <template slot-scope="scope">
-                    <el-select v-model="scope.row.visibleType">
-                      <el-option label="显示" value="1"></el-option>
-                      <el-option label="可选" value="2"></el-option>
-                      <el-option label="隐藏" value="3"></el-option>
-                    </el-select>
-                  </template>
-                </el-table-column> 
-                <el-table-column label="可排序" width="100">
-                  <template slot-scope="scope">
-                    <el-select v-model="scope.row.allowOrderby">
-                      <el-option label="是" :value="true"></el-option>
-                      <el-option label="否" :value="false"></el-option>
-                    </el-select>
-                  </template>
-                </el-table-column> 
-                <el-table-column label="序号" width="80">
-                  <template slot-scope="scope">
-                    <el-input  v-model="scope.row.orderIndex"></el-input>
-                  </template>
-                </el-table-column> 
-                <el-table-column label="操作" width="240" fixed="right">
-                  <template slot-scope="scope">
-                    <el-button :plain="true" type="primary" size="small" icon="edit" @click="showcategory(scope.row)">选择</el-button>
-                    <el-button :plain="true" type="primary" size="small" icon="edit" @click="saveitem(scope.row)">保存</el-button>
-                    <el-button :plain="true" type="danger" size="small" icon="delete" @click="delitem(scope.row)">删除</el-button>
-                  </template>
-                </el-table-column>
-            </el-table>
-          </td>
-      </tr>
-    </table>
+            </template>
+          </el-table-column>
+          <el-table-column label="序号" width="80">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.orderIndex"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="240" fixed="right">
+            <template slot-scope="scope">
+              <el-button
+                :plain="true"
+                type="primary"
+                size="small"
+                icon="edit"
+                @click="showcategory(scope.row)"
+              >选择</el-button>
+              <el-button
+                :plain="true"
+                type="primary"
+                size="small"
+                icon="edit"
+                @click="saveitem(scope.row)"
+              >保存</el-button>
+              <el-button
+                :plain="true"
+                type="danger"
+                size="small"
+                icon="delete"
+                @click="delitem(scope.row)"
+              >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
@@ -168,8 +177,8 @@
 //   contentType: "application/json"
 // });
 // });
-import CategoryManager from '@/components/admin/CategoryManager'
-import GridViewItemCheck from '@/components/admin/GridViewItemCheck'
+import CategoryManager from "@/components/admin/CategoryManager";
+import GridViewItemCheck from "@/components/admin/GridViewItemCheck";
 
 export default {
   name: "GridViewItemManager",
@@ -182,11 +191,11 @@ export default {
       loading: false,
       dialogVisible: false,
       categoryVisible: false,
-      checkVisible:false,
-      typename:"",
-      parentid:"",
-      currentItem:"",
-      tableHeight: window.innerHeight - 140,
+      checkVisible: false,
+      typename: "",
+      parentid: "",
+      currentItem: "",
+      tableHeight: window.innerHeight - 115,
       form: {
         name: "",
         description: "",
@@ -194,33 +203,30 @@ export default {
         visibleType: "1",
         width: "120",
         orderIndex: 1,
-        allowOrderby:false
+        allowOrderby: false
       },
       formLabelWidth: "120px",
       formLabelWidth2: "60px"
     };
   },
-   components: {
-     CategoryManager: CategoryManager,
-     GridViewItemCheck: GridViewItemCheck
+  components: {
+    CategoryManager: CategoryManager,
+    GridViewItemCheck: GridViewItemCheck
   },
-   created(){ 
-     
+  mounted() {
     let _self = this;
     _self.loading = true;
     var pid = _self.$route.query.parentid;
     _self.typename = _self.$route.query.name;
-    if(pid)
-    {
+    if (pid) {
       _self.parentid = pid;
       _self.form.parentId = pid;
-    }
-    else
-    {
-      pid="0";
+    } else {
+      pid = "0";
     }
     //alert(_self.parentid);
-    axios.post('/admin/getGridViewItem',pid)
+    axios
+      .post("/admin/getGridViewItem", pid)
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;
@@ -231,11 +237,9 @@ export default {
         console.log(error);
         _self.loading = false;
       });
-
-    },
+  },
   methods: {
-    startcheck()
-    {
+    startcheck() {
       let _self = this;
       _self.checkVisible = true;
       _self.$refs.GridViewItemCheck.loaddata();
@@ -244,71 +248,69 @@ export default {
       let _self = this;
       _self.loading = true;
       var pid = _self.parentid;
-      if(pid=="")
-      {
-        pid ="0";
+      if (pid == "") {
+        pid = "0";
       }
-      axios.post('/admin/getGridViewItem',pid)
-      .then(function(response) {
-        _self.dataListFull = response.data.data;
-        _self.dataList = response.data.data;
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+      axios
+        .post("/admin/getGridViewItem", pid)
+        .then(function(response) {
+          _self.dataListFull = response.data.data;
+          _self.dataList = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
     saveitem(indata) {
       let _self = this;
-      axios.post('/admin/updateGridViewItem',JSON.stringify(indata))
-      .then(function(response) {
-        _self.$message("保存成功!");
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+      axios
+        .post("/admin/updateGridViewItem", JSON.stringify(indata))
+        .then(function(response) {
+          _self.$message("保存成功!");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     delitem(indata) {
       let _self = this;
-      axios.post('/admin/deleteGridViewItem',JSON.stringify(indata))
-      .then(function(response) {
-        _self.$message("删除成功!");
-        _self.refreshData();
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+      axios
+        .post("/admin/deleteGridViewItem", JSON.stringify(indata))
+        .then(function(response) {
+          _self.$message("删除成功!");
+          _self.refreshData();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     additem(indata) {
       let _self = this;
-      axios.post('/admin/newGridViewItem',JSON.stringify(indata))
-      .then(function(response) {
+      axios
+        .post("/admin/newGridViewItem", JSON.stringify(indata))
+        .then(function(response) {
           _self.dialogVisible = false;
           _self.refreshData();
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
-    showcategory(indata)
-    {
+    showcategory(indata) {
       this.categoryVisible = true;
       this.currentItem = indata;
     },
     onselected(indata) {
-     // alert(indata.fullName);
+      // alert(indata.fullName);
       let _self = this;
       _self.categoryVisible = false;
-      if(indata)
-      {
-        if(_self.currentItem=='')
-        {
+      if (indata) {
+        if (_self.currentItem == "") {
           _self.form.attrName = indata.name;
           _self.form.label = indata.description;
-        }
-        else
-        {
+        } else {
           _self.currentItem.attrName = indata.name;
           _self.currentItem.label = indata.description;
         }
@@ -320,10 +322,12 @@ export default {
       _self.dataList = [];
       var i;
       if (_self.inputkey != "" || _self.parentid != "") {
-        _self.dataList = _self.dataListFull.filter(function(item){
-            return item.attrName.match(_self.inputkey) || item.label.match(_self.inputkey);
-          }
-        );
+        _self.dataList = _self.dataListFull.filter(function(item) {
+          return (
+            item.attrName.match(_self.inputkey) ||
+            item.label.match(_self.inputkey)
+          );
+        });
       }
     }
   }
@@ -347,5 +351,11 @@ li {
 a {
   color: #42b983;
 }
-
+.el-header {
+  background-color: #e8eaeb;
+  height: 68px !important;
+}
+.el-row {
+  padding-bottom: 10px;
+}
 </style>

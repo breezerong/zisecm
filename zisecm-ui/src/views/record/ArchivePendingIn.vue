@@ -8,7 +8,7 @@
             ></PrintBorrowOrder>
         </el-dialog>
         <el-row>
-            <el-col :span="5" style="float:left;text-align:left;">
+            <el-col :span="5" class="topbar-input">
                 <el-input
                 v-model="orderInputkey"
                 :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -16,7 +16,7 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
+            <el-col :span="12" class="topbar-button">
                 <el-button type="primary" plain
                 size="small" icon="el-icon-printer" @click="beforePrint(selectedOrder,'PrintInBorrowOrderFile','借阅单打印')">打印出库单</el-button>
                 <el-button type="primary" plain
@@ -37,7 +37,7 @@
 
         </el-row>
         <el-row>
-         <el-col :span="6" style="float:left;text-align:left;">
+         <el-col :span="6" class="topbar-input">
                 <el-input
                 v-model="inputkey"
                 :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -45,7 +45,7 @@
                 prefix-icon="el-icon-search"
                 ></el-input>
             </el-col>
-            <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
+            <el-col :span="12" class="topbar-button">
                <el-button type="primary" plain
                 size="small" icon="el-icon-check" @click="putInstoreFile">入库</el-button>
             </el-col>
@@ -110,8 +110,8 @@ export default {
              outFileLoading:false,
              seletedOutFile:[],
              selectedOutFileRow:[],
-             rightTableHeight: (window.innerHeight - 200)/2,
-             rightOutTableHeight:(window.innerHeight - 200)/2
+             rightTableHeight: (window.innerHeight - 210)/2,
+             rightOutTableHeight:(window.innerHeight - 210)/2
         }
        
     },
@@ -262,7 +262,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListOutFile = response.data.data;
-              
+              _self.rightOutTableHeight = "100%";
             })
             .catch(function(error) {
               console.log(error);
@@ -381,7 +381,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridListFile = response.data.data;
-              
+              _self.rightOutTableHeight = "100%";
             })
             .catch(function(error) {
               console.log(error);
@@ -397,7 +397,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridList = response.data.data;
-              
+              _self.rightTableHeight = "100%";
               _self.orderLoading = false;
             })
             .catch(function(error) {

@@ -40,9 +40,10 @@ const router = new Router({
 						},
 						{
 							path: '/dc/folderviewer',
-							name: '通知消息',
+							name: '文件夹查看',
 							component: () => import('@/views/dc/FolderViewer.vue'),
 						}
+						
 					]
 				},
 				{
@@ -52,6 +53,11 @@ const router = new Router({
 					path: '/helpcenter',
 					name: '帮助中心',
 					component: () => import( /* webpackChunkName: "helpcenter" */ '@/views/HelpCenter.vue')
+				},
+				{
+					path: '/container',
+					name: '内容容器',
+					component: () => import('@/views/MainContainer.vue'),
 				},
 				searchRouter,
 				...dcRouter,
@@ -93,23 +99,32 @@ const router = new Router({
 })
 router.beforeEach((to, from, next) => {
 	var user = sessionStorage.getItem('access-token')
-	try{
-		console.log(window.location.href);
-		//console.log(JSON.stringify(from))
-		//console.log(JSON.stringify(to))
-		//console.log(JSON.stringify(next))
-	}catch(e){
-		console.log(e)
-	}
+	let loginName = getValue(window.location.href, "LoginName")
 	if (!user && to.path !== '/login') {
 		sessionStorage.removeItem('access-user')
 		sessionStorage.removeItem('access-token')
-		next({"name":'login'})
+		if(loginName){
+			next({"name":'login',query:{
+				LoginName:loginName,
+				redirect:to.path
+			}})
+		}else{
+			next({"name":'login',query:{
+				redirect:to.path
+			}})
+		}
 	} else {
 		next()
 	}
 
 })
+
+function getValue(str, name) {
+	var reg = new RegExp("(^|&|\\?)" + name + "=([^#]*)(&|$|#)"),
+	  r;
+	if ((r = str.match(reg))) return unescape(r[2]);
+	return null;
+  }
 
 router.onError((error) => {
 	const pattern = /Loading chunk (\d)+ failed/g;

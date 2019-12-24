@@ -55,12 +55,12 @@ public class AuthenticationFilter implements Filter {
         rep.setHeader("Access-Control-Allow-Headers","token,Origin, X-Requested-With, Content-Type, Accept");
         response.setCharacterEncoding("UTF-8");
         
-    	if(SysConfig.getLoginPath().equalsIgnoreCase(req.getServletPath())
+    	if(req.getServletPath().indexOf("userLogin")>=0
     			||req.getServletPath().indexOf("ssoLogin")>=0
          		||req.getServletPath().indexOf("newDocument")>=0
          		||req.getServletPath().indexOf("getContent")>=0
          		||req.getServletPath().indexOf("getUserImage")>=0
-         		||req.getServletPath().startsWith("/workflow")
+         		||req.getServletPath().indexOf("/workflow")>=0
          		){ 
          	 chain.doFilter(request, response);
          	 return;

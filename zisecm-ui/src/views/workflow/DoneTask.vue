@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="查看" :visible.sync="dialogVisible" width="95%">
+    <el-dialog title="查看" :visible.sync="dialogVisible" v-if="dialogVisible" width="95%">
            <el-divider content-position="left">表单信息</el-divider>
            <router-view ref="formRouter"></router-view>
           <el-divider content-position="left">流转意见</el-divider>
@@ -44,28 +44,14 @@
             <el-button @click="showprocessDiagram()">显示流程图</el-button>
           </div>
         </el-dialog>
-      <table border="0" width="100%">
-          <tr>
-            <td class="navbar">
-              /工作流/已办工作
-            </td>
-          </tr>
-          <!-- <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="200px">
-                    <el-input v-model="inputkey" placeholder="请输入关键字" @change="search" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td>
-                    
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr> -->
-        <tr>
-          <td>
+                     <el-container>
+      <el-header>
+        <el-breadcrumb separator="/" class="navbar">
+          <el-breadcrumb-item>工作流</el-breadcrumb-item>
+          <el-breadcrumb-item>已办工作</el-breadcrumb-item>
+        </el-breadcrumb>
+      </el-header>
+      <el-main>
             <el-table
                 :data="dataList"
                 border
@@ -101,9 +87,8 @@
               layout="total, sizes, prev, pager, next, jumper"
               :total="itemCount">
             </el-pagination>
-          </td>
-        </tr>
-      </table>
+      </el-main>
+                     </el-container>
   </div>
 </template>
 
@@ -128,7 +113,7 @@ export default {
       currentPage: 1,
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 170,
+      tableHeight: window.innerHeight - 110,
       formLabelWidth: "120px",
       processDiagram:"",
       currentProcessId:"",
@@ -281,5 +266,12 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header {
+  background-color: #e8eaeb;
+  height: 28px !important;
+}
+.el-row {
+  padding-bottom: 10px;
 }
 </style>

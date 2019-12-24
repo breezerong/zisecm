@@ -30,12 +30,17 @@
                 </span>
               </el-menu-item>
               <el-menu-item index="14"  @click="clickRouter('/record/archiveoutgoing/archivegivebackmine')">
-                <i class="el-icon-time"></i>
+                <i class="el-icon-top"></i>
                 <span slot="title">
                   <router-link to="/record/archiveoutgoing/archivegivebackmine">待归还</router-link>
                   <!-- <el-badge :value="todoCount" class="item"></el-badge> -->
                 </span>
               </el-menu-item>
+                <el-menu-item index="14" @click="clickRouter('/record/showdrawingtask')">
+                <i class="el-icon-printer"></i>
+                <span slot="title"><router-link to="/record/showdrawingtask">晒图记录</router-link></span>
+              </el-menu-item>
+
             </el-submenu>
           </el-menu>
         </div>
@@ -69,6 +74,10 @@ export default {
       _self.clientPermission = sessionStorage.getItem(
         "access-clientPermission"
       );
+    }
+    var externalUser = sessionStorage.getItem('access-externalUser');
+    if(externalUser && externalUser=='true'){
+      _self.$router.push({path: '/record/showdrawing'});
     }
     _self.refreshCount();
     //定时刷新数量
@@ -114,4 +123,14 @@ body > .el-container {
   margin-right: 0px;
   margin-bottom: 0px;
 }
+.el-header, .el-footer {
+    background-color: #36a9e1;
+    color: #333;
+    text-align: center;
+    padding: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+  }
 </style>

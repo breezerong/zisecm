@@ -31,13 +31,15 @@
         <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
       </div>
     </el-dialog>
-      <el-container>
-        <el-aside width="160px" :style="{height: asideHeight+'px'}" >
+    <div :style="{position:'relative',height: asideHeight+'px'}">
+      <split-pane split="vertical" @resize="resize" min-percent='10' :default-percent='15'>
+        <template slot="paneL">
           <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
             <el-breadcrumb-item><i class="el-icon-delete-solid"></i>&nbsp; {{$t('menu.recycleBin')}}</el-breadcrumb-item>
           </el-breadcrumb>
+          <el-container :style="{height:treeHeight+'px',width:asideWidth+'px',overflow:'auto'}">
           <el-tree
-            style="width:200%;"
+            style="width:100%;"
             :props="defaultProps"
             :data="dataList"
             node-key="id"
@@ -46,10 +48,11 @@
             highlight-current
             @node-click="handleNodeClick"
           ></el-tree>
-        </el-aside>
-        <el-main>
-          <el-row style="padding-top:4px;">
-            <el-col :span="4">
+        </el-container>
+      </template>
+     <template slot="paneR">
+          <el-row>
+            <el-col :span="4" class="topbar-input">
               <el-input
                 v-model="inputkey"
                 :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
@@ -58,8 +61,8 @@
                 prefix-icon="el-icon-search"
               ></el-input>
             </el-col>
-            <el-col :span="20" style="text-align: left">
-              &nbsp;&nbsp;&nbsp;
+            <el-col :span="20" class="topbar-button">
+              &nbsp;
               <el-button
                 type="primary"
                 plain
@@ -163,6 +166,9 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="itemCount"
     ></el-pagination>
+    </template>
+      </split-pane>
+    </div>
   </div>
 </template>
 <script>
@@ -179,7 +185,9 @@ export default {
         isIndeterminate: false
       },
       tableHeight: window.innerHeight - 125,
-      asideHeight: window.innerHeight - 80,
+      asideHeight: window.innerHeight - 45,
+      treeHeight: window.innerHeight - 90,
+      asideWidth: '100%',
       currentLanguage: "zh-cn",
       loading: false,
       currentFolder: [],
@@ -238,6 +246,10 @@ export default {
       });
   },
   methods: {
+    resize() {
+      //console.log('resize')
+      this.asideWidth = '100%';
+    },
     // 查看内容
     showItemContent(indata){
        let condition = indata.ID;

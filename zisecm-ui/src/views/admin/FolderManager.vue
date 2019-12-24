@@ -76,30 +76,25 @@
             <el-button type="primary" @click="saveitem(form)">保存</el-button>
           </div>
         </el-dialog>
-      <table border="0" width="100%" >
-          <tr>
-            <td class="navbar">
-              /文件夹管理
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table border="0" width="100%" class="topbar">
-                <tr>
-                  <td align="left" width="160px">
-                    <el-input  v-model="inputkey" placeholder="请输入关键字" @change="searchFolder" prefix-icon="el-icon-search"></el-input>
-                  </td>
-                  <td>
-                    <el-button type="primary"  icon="el-icon-edit"  @click="dialogVisible = true">查看</el-button>
-                    <el-button type="primary"  icon="el-icon-delete"  @click="delitem(currentData)">删除</el-button>
-                    <el-button type="primary"  icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        <tr>
-          <td>
+             <el-container>
+          <el-header>
+             <el-breadcrumb separator="/" class="navbar">
+               <el-breadcrumb-item>系统管理</el-breadcrumb-item>
+               <el-breadcrumb-item>文件夹管理</el-breadcrumb-item>
+             </el-breadcrumb>
+            <el-row class="topbar">
+              <el-col :span="4">
+                <el-input  v-model="inputkey" placeholder="请输入关键字" @change="searchFolder" prefix-icon="el-icon-search"></el-input>
+              </el-col>
+              <el-col :span="20" style="text-align:left;">
+                &nbsp; 
+                <el-button type="primary" plain icon="el-icon-edit"  @click="dialogVisible = true">查看</el-button>
+                    <el-button type="primary" plain icon="el-icon-delete"  @click="delitem(currentData)">删除</el-button>
+                    <el-button type="primary" plain icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
+              </el-col>
+            </el-row>
+          </el-header>
+          <el-main>
             <el-tree
               :props="defaultProps"
               :data="dataList"
@@ -107,9 +102,8 @@
               lazy
               @node-click="handleNodeClick">
             </el-tree>
-          </td>
-        </tr>
-      </table>
+          </el-main>
+             </el-container>
   </div>
 </template>
 
@@ -326,5 +320,12 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-header {
+  background-color: #e8eaeb;
+  height: 68px !important;
+}
+.el-row {
+  padding-bottom: 10px;
 }
 </style>
