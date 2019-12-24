@@ -113,15 +113,15 @@ export const recordRouter =  [
             }
         ]
     },
-    // {
-    //     meta:{
-    //         requireAuth: true,
-    //         permit: 1
-    //     },
-    //     path: '/record/archivebackup',
-    //     name: '光盘刻录',
-    //     component: () => import('@/views/record/ArchiveBackup.vue')
-    // },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1
+        },
+        path: '/record/archivebackup',
+        name: '光盘刻录',
+        component: () => import('@/views/record/ArchiveBackup.vue')
+    },
     {
         meta: {
             requireAuth: true,
