@@ -13,20 +13,20 @@
                     <span>报表清单</span>
                   </template>
                   <el-menu-item index="11">
-                    <i class="el-icon-s-marketing"></i>
-                    <span slot="title"><router-link to="/report/systemreport">系统报表</router-link></span>
-                  </el-menu-item>
-                  <el-menu-item index="12">
                     <i class="el-icon-collection"></i>
                     <span slot="title"><router-link to="/report/collectionreport">馆藏报表</router-link></span>
                   </el-menu-item>
-                  <el-menu-item index="13">
+                  <el-menu-item index="12">
                     <i class="el-icon-reading"></i>
                     <span slot="title"><router-link to="/report/workloadreport">工作量报表</router-link></span>
                   </el-menu-item>
-                  <el-menu-item index="14">
+                  <el-menu-item index="13">
                     <i class="el-icon-data-analysis"></i>
                     <span slot="title"><router-link to="/report/archivesreport">利用统计报表</router-link></span>
+                  </el-menu-item>
+                   <el-menu-item index="15">
+                    <i class="el-icon-s-marketing"></i>
+                    <span slot="title"><router-link to="/report/systemreport">系统报表</router-link></span>
                   </el-menu-item>
                 </el-submenu>
               </el-menu>

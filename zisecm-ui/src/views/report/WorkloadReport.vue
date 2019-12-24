@@ -4,23 +4,22 @@
     <el-container>
       <el-header>
         <el-row>
-          <el-col :span="16">
+          <el-col :span="24" class="topbar-button">
             <el-date-picker
-              style="width:18em"
+              style="width:14em"
               type="date"
               v-model="firstTime"
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="开始时间"
             ></el-date-picker>
             <el-date-picker
-              style="width:18em"
+              style="width:14em"
               type="date"
               v-model="endTime"
               value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="结束时间"
             ></el-date-picker>
-            <el-button type="primary" @click="search">点击搜索</el-button>
-            <el-button type="primary" @click="searchAll">所有数据</el-button>
+            <el-button type="primary" plain size="small" @click="search">点击搜索</el-button>
           </el-col>
         </el-row>
       </el-header>
