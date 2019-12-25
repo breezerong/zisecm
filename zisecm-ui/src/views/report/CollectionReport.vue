@@ -24,7 +24,7 @@
         </el-row>
       </el-header>
       <el-main>
-        <el-table v-loading="loading" :data="collectionChartData">
+        <el-table v-loading="loading" :data="collectionChartData" show-summary>
           <el-table-column label="档案类型" prop="typeName"></el-table-column>
           <el-table-column label="卷盒数" prop="boxNum"></el-table-column>
           <el-table-column label="图册数" prop="atlasNum"></el-table-column>
@@ -63,7 +63,7 @@ export default {
       m.set("firstTime",_self.firstTime)
       m.set("endTime",_self.endTime)
       m.set("findType",_self.findType)
-      axios.post('/dc/getCollectionData',JSON.stringify(m))
+      axios.post('/report/getCollectionData',JSON.stringify(m))
       .then(function(response) {
         _self.collectionChartData = response.data.data
         _self.loading = false;
