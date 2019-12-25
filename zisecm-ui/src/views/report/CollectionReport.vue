@@ -63,7 +63,7 @@ export default {
       m.set("firstTime",_self.firstTime)
       m.set("endTime",_self.endTime)
       m.set("findType",_self.findType)
-      axios.post('/dc/getCollectionData',JSON.stringify(m))
+      axios.post('/report/getCollectionData',JSON.stringify(m))
       .then(function(response) {
         _self.collectionChartData = response.data.data
         _self.loading = false;
