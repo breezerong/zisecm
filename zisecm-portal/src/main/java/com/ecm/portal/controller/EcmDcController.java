@@ -1754,20 +1754,34 @@ public class EcmDcController extends ControllerAbstract{
 			Map<String, Object> mp = new HashMap<String, Object>();
 			try {
 				if (uploadFile != null) {
-					EcmContent en = contentService.getObject(getToken(), id, 0, FileUtils.getExtention(uploadFile.getOriginalFilename()));
-					en.setContentSize(uploadFile.getSize());
-					en.setInputStream(uploadFile.getInputStream());
-					en.setDescription("OCR");
-					contentService.updateObject(getToken(), en);
-					//主格式更新内容大小
-					if(en.getContentType()==1) {
-						contentService.updatePrimaryContentSize(getToken(), id, en.getContentSize());
+					String ext = FileUtils.getExtention(uploadFile.getOriginalFilename());
+					EcmContent en = contentService.getObject(getToken(), id, 0, ext);
+					if(en!=null)
+					{
+						en.setContentSize(uploadFile.getSize());
+						en.setInputStream(uploadFile.getInputStream());
+						en.setDescription("OCR");
+						contentService.updateObject(getToken(), en);
+						//主格式更新内容大小
+						if(en.getContentType()==1) {
+							contentService.updatePrimaryContentSize(getToken(), id, en.getContentSize());
+						}
+						documentService.queue(getToken(), id, "ecm_full_index", "ecm_full_index", null);
+						mp.put("code", ActionContext.SUCESS);
+					}else {
+						
+						System.out.println("Content not exists, id:"+id+",format:"+ext);
+						mp.put("code", ActionContext.FAILURE);
+						mp.put("message", "内容对象为空");
 					}
-					documentService.queue(getToken(), id, "ecm_full_index", "ecm_full_index", null);
-					mp.put("code", ActionContext.SUCESS);
+				}else{
+					System.out.println("Upload file is null.");
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", "电子文件为空");
 				}
 			}
 			catch(Exception ex) {
+				ex.printStackTrace();
 				mp.put("code", ActionContext.FAILURE);
 				mp.put("message", ex.getMessage());
 			}

@@ -37,7 +37,7 @@
       <el-col :span="14">
         <el-form-item label="电子文件" style="float: left;">
           <el-upload
-            :limit="100"
+            :limit="400"
             :file-list="fileList2"
             action
             :on-change="handleChange2"
