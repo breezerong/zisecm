@@ -24,7 +24,7 @@
         </el-row>
       </el-header>
       <el-main>
-        <el-table v-loading="loading" :data="collectionChartData">
+        <el-table v-loading="loading" :data="collectionChartData" show-summary>
           <el-table-column label="档案类型" prop="typeName"></el-table-column>
           <el-table-column label="卷盒数" prop="boxNum"></el-table-column>
           <el-table-column label="图册数" prop="atlasNum"></el-table-column>
