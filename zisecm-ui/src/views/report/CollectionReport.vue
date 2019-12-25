@@ -9,14 +9,14 @@
               style="width:14em"
               type="date"
               v-model="firstTime"
-              value-format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd"
               placeholder="开始时间"
             ></el-date-picker>
             <el-date-picker
               style="width:14em"
               type="date"
               v-model="endTime"
-              value-format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd"
               placeholder="结束时间"
             ></el-date-picker>
             <el-button type="primary" plain size="small" @click="search">点击搜索</el-button>
@@ -43,7 +43,7 @@ export default {
     firstTime:'',
     endTime:'',
     loading: false,
-    findType : ''
+    findType : 'first'
     };
   },
   mounted(){ 
@@ -53,6 +53,17 @@ export default {
     {
       _self.clientPermission = sessionStorage.getItem('access-clientPermission');
     }
+    let date = new Date();
+    let startDate =new Date();
+    startDate.setTime(date.getTime() - 3600 * 1000 * 24 * 90);
+    let startYear = startDate.getFullYear();
+    let year = date.getFullYear();
+    let startMonth = startDate.getMonth()+1;
+    let startDay = startDate.getDate()
+    let month = date.getMonth()+1;
+    let day = date.getDate();
+    _self.firstTime = startYear+"-"+startMonth+"-"+startDay
+    _self.endTime = year+"-"+month+"-"+day
     _self.refreshCollectionData();
   },
   methods: {
@@ -67,7 +78,7 @@ export default {
       .then(function(response) {
         _self.collectionChartData = response.data.data
         _self.loading = false;
-        if(_self.findType==''){
+        if(_self.findType=='first'){
           _self.$message({
           showClose: true,
           message: '已查找近三个月数据',
@@ -112,27 +123,11 @@ export default {
           duration:1000
         });
         return
-      }else if(_self.endTime<_self.firstTime){
-        this.$message({
-          showClose: true,
-          message: '终止时间不能早于起始时间',
-          type: 'warning',
-          duration:1000
-        });
-        return
       }else{
         _self.findType = 'search'
         _self.refreshCollectionData();
       }
-    },
-    searchAll(){
-      let _self = this 
-      _self.firstTime = ''
-      _self.endTime = ''
-      _self.findType = 'searchAll'
-      _self.refreshCollectionData()
-    },
-    
+    }
   }
 };
 </script>
