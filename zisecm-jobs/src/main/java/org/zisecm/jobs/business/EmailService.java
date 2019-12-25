@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -17,9 +18,12 @@ import com.ecm.common.util.PasswordUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmAttribute;
+import com.ecm.core.entity.EcmUser;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.MailService;
+import com.ecm.core.service.UserService;
+import com.ecm.icore.service.IEcmSession;
 @Service
 public class EmailService implements Ijobs {
 	private String token;
@@ -36,7 +40,11 @@ public class EmailService implements Ijobs {
     
     @Autowired
     private SpringTemplateEngine templateEngine;
-	public void sendMail(List<Map<String,Object>> row) throws Exception {
+    @Autowired
+	private Environment env;
+    @Autowired
+    private UserService userService;
+	public void sendMail(List<Map<String,Object>> row,String email) throws Exception {
 		try {
 			   System.out.println("发送邮件测试!");
 			  
@@ -53,7 +61,7 @@ public class EmailService implements Ijobs {
 			   context.setVariables(map);
 			   /* String emailContent = templateEngine.process("taskArrivalMail", context);*/
 			    String emailContent = templateEngine.process("electronicLending", context);
-			    mailService.sendHtmlMail("277919136@qq.com","主题：这是模板邮件",emailContent);/**/
+			    mailService.sendHtmlMail(email,"主题：邮件催还",emailContent);/**/
 			    System.out.println("发送完成");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -64,23 +72,44 @@ public class EmailService implements Ijobs {
 	 * 启动服务
 	 * @throws Exception 
 	 */
-	@Scheduled(cron = "0 0 14 * * * *")
+	@Scheduled(cron = "* * 14 * * ?")
 	public synchronized void runJobs() throws Exception {
+		IEcmSession ecmSession = null;
+		try {
+			String sql="select "+getDocumentAllColumns()
+			+" from ecm_document where TYPE_NAME='借阅单'  and STATUS='待入库'  "
+			+ " and date_add(date_format(now(),'%Y-%m-%d'),interval 5 day)>=C_END_DATE";
+			List<Map<String,Object>> result= documentService.getMapList(getToken(), sql);
+			if(result==null||result.size()<1) {
+				return;
+			}
+			String workflowSpecialUserName = env.getProperty("ecm.username");
+
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+			
+			for(Map<String,Object> row : result) {
+				String borrowDocsSql="select a.* from ecm_document a,"
+						+ "ecm_relation b where a.id=b.child_id and b.name='irel_borrow' and"
+						+ " b.parent_id='"+row.get("ID").toString()+"' ";
+				EcmUser user= userService.getObjectByName(ecmSession.getToken(), row.get("C_DRAFTER").toString());
+				String email= user.getEmail();
+				
+				List<Map<String,Object>> docs= documentService.getMapList(getToken(), borrowDocsSql);
+				sendMail(docs,email);
+			}
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			
+			if(ecmSession!=null) {
+				authService.logout(ecmSession.getToken());
+			}
+		}
 		
-		String sql="select "+getDocumentAllColumns()
-		+" from ecm_document where TYPE_NAME='借阅单'  and STATUS='待入库'  "
-		+ " and date_add(date_format(now(),'%Y-%m-%d'),interval 5 day)>=C_END_DATE";
-		List<Map<String,Object>> result= documentService.getMapList(getToken(), sql);
-		if(result==null||result.size()<1) {
-			return;
-		}
-		for(Map<String,Object> row : result) {
-			String borrowDocsSql="select "+getDocumentAllColumns()+" from ecm_document a,"
-					+ "ecm_relation b where a.id=b.child_id and b.name='irel_borrow' and"
-					+ " b.parent_id='"+row.get("ID").toString()+"' and a.status='待入库'";
-			List<Map<String,Object>> docs= documentService.getMapList(getToken(), borrowDocsSql);
-			sendMail(docs);
-		}
+		
+		
+		
 		
 	}
 	

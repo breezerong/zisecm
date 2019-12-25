@@ -21,7 +21,7 @@ public class ServiceDocMail {
 	public boolean sendEndMail(String sendUser) throws Exception {
 
 		try {
-			   System.out.println("发送邮件测试!");
+			   //System.out.println("发送邮件开始!");
 			  
 			 //创建邮件正文
 			   Map<String,Object> map=new HashMap<String,Object>();
@@ -37,7 +37,7 @@ public class ServiceDocMail {
 			   /* String emailContent = templateEngine.process("taskArrivalMail", context);*/
 			    String emailContent = templateEngine.process("processend", context);
 			    mailService.sendHtmlMail(sendUser,"主题：借阅流程结束通知",emailContent);/**/
-			    System.out.println("发送完成");
+			    //System.out.println("发送完成");
 			} catch (Exception e) {
 				e.printStackTrace();
 				 throw new Exception("发送邮件测试发生异常！");
