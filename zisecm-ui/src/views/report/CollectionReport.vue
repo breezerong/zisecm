@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="navbar">/报表中心/系统报表</div>
+    <div class="navbar">/报表中心/馆藏报表</div>
     <el-container>
       <el-header>
         <el-row>
-          <el-col :span="24" class="topbar-button">
+          <el-col :span="24"  class="topbar-button">
             <el-date-picker
               style="width:14em"
               type="date"
@@ -20,18 +20,16 @@
               placeholder="结束时间"
             ></el-date-picker>
             <el-button type="primary" plain size="small" @click="search">点击搜索</el-button>
-            <!--
-            <el-button type="primary" @click="searchAll">所有数据</el-button>
-            -->
           </el-col>
         </el-row>
       </el-header>
       <el-main>
-        <el-table :data="brrowData" v-loading="loading">
-          <el-table-column label="借阅类型" prop="brrowType"></el-table-column>
-          <el-table-column label="利用人次" prop="subCount"></el-table-column>
-          <el-table-column label="文件数量" prop="subChildCount"></el-table-column>
-          </el-table>
+        <el-table v-loading="loading" :data="collectionChartData" show-summary>
+          <el-table-column label="档案类型" prop="typeName"></el-table-column>
+          <el-table-column label="卷盒数" prop="boxNum"></el-table-column>
+          <el-table-column label="图册数" prop="atlasNum"></el-table-column>
+          <el-table-column label="文件数" prop="fileNum"></el-table-column>
+        </el-table>
       </el-main>
     </el-container>
   </div>
@@ -41,11 +39,11 @@
 export default {
   data() {
     return { 
-    loading:false,
-    brrowData:[],
+    collectionChartData: [],
     firstTime:'',
     endTime:'',
-    findType:''
+    loading: false,
+    findType : ''
     };
   },
   mounted(){ 
@@ -55,19 +53,19 @@ export default {
     {
       _self.clientPermission = sessionStorage.getItem('access-clientPermission');
     }
-    _self.refreshBrrowData();
+    _self.refreshCollectionData();
   },
   methods: {
-    refreshBrrowData() {
+    refreshCollectionData() {
       let _self = this;
-      _self.loading = true
+      _self.loading = true;
       var m = new Map();
       m.set("firstTime",_self.firstTime)
       m.set("endTime",_self.endTime)
       m.set("findType",_self.findType)
-      axios.post('/report/getBrrowData',JSON.stringify(m))
+      axios.post('/report/getCollectionData',JSON.stringify(m))
       .then(function(response) {
-        _self.brrowData = response.data.data
+        _self.collectionChartData = response.data.data
         _self.loading = false;
         if(_self.findType==''){
           _self.$message({
@@ -124,15 +122,17 @@ export default {
         return
       }else{
         _self.findType = 'search'
-        _self.refreshBrrowData();
-      }},
-      searchAll(){
-        let _self = this 
-        _self.firstTime = ''
-        _self.endTime = ''
-        _self.findType = 'searchAll'
-        _self.refreshBrrowData()
+        _self.refreshCollectionData();
       }
+    },
+    searchAll(){
+      let _self = this 
+      _self.firstTime = ''
+      _self.endTime = ''
+      _self.findType = 'searchAll'
+      _self.refreshCollectionData()
+    },
+    
   }
 };
 </script>

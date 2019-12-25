@@ -145,10 +145,17 @@ export default {
       isEdit: false,
       tableHeight: window.innerHeight - 115,
       form: {
+        id:"",
         name: "",
+        icon:"",
+        parentId:"",
+        label:"",
         description: "",
         menuName: "",
-        value: ""
+        orderIndex: 1,
+        roleName: "",
+        componentName: "",
+        callFunction:""
       },
       formLabelWidth: "120px"
     };

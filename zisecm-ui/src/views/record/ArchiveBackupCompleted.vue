@@ -17,12 +17,14 @@
         </div>
       </el-dialog>
         <el-row>
+          <el-col :span="4" class="topbar-input">
           <el-input
             v-model="inputkey"
             :placeholder="$t('message.pleaseInput')+$t('application.keyword')"
             @change="searchItem"
             prefix-icon="el-icon-search"
           ></el-input>
+          </el-col>
         </el-row>
         <el-row>
             <el-col>
@@ -70,7 +72,7 @@ export default {
               director:"",
               condition:""
             },
-             rightTableHeight: window.innerHeight - 160
+             rightTableHeight: window.innerHeight - 130
         }
        
     },

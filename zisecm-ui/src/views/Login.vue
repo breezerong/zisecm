@@ -8,7 +8,7 @@
   >
     <el-form-item>
       <h2 class="title">
-        <img src="/static/img/logo.png" border="0" />
+        <img src="/static/img/logo.png" border="0" />&nbsp;河北分公司档案信息系统<br/>
         {{$t("application.user")+$t("application.login")}}
       </h2>
     </el-form-item>
@@ -239,7 +239,7 @@ body {
   border-radius: 5px;
   -moz-border-radius: 5px;
   background-clip: padding-box;
-  margin: 160px auto;
+  margin: 100px auto;
   width: 350px;
   padding: 35px 35px 15px 35px;
   background: #fff;
@@ -263,7 +263,7 @@ body {
   background: -o-linear-gradient(top, #ace, #00c1de); /*Opera 11.10+*/
 }
 .title {
-  margin: 0px auto 40px auto;
+  margin: 0px auto 10px auto;
   text-align: center;
   color: #505458;
 }

@@ -9,7 +9,7 @@
       </el-dialog>
         <el-row>
             
-            <el-col :span="12" style="padding-top:4px;float:left;text-align:left;">
+            <el-col :span="12" class="topbar-button">
                 <el-button type="primary" plain
                 size="small" icon="el-icon-circle-plus-outline" @click="onCreate">新建</el-button>
                 <el-button type="primary" plain
@@ -60,7 +60,7 @@ export default {
               director:"",
               condition:""
             },
-             rightTableHeight: window.innerHeight-160
+             rightTableHeight: window.innerHeight-130
         }
        
     },
@@ -413,7 +413,7 @@ export default {
           axios.post("/dc/getGridViewInfo",JSON.stringify(m))
             .then(function(response) {
               _self.gridList = response.data.data;
-              
+              _self.rightTableHeight = "100%";
               _self.orderLoading = false;
             })
             .catch(function(error) {

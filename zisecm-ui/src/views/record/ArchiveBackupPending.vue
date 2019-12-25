@@ -62,7 +62,7 @@ export default {
               director:"",
               condition:""
             },
-             rightTableHeight: window.innerHeight - 160
+             rightTableHeight: window.innerHeight - 90
         }
        
     },

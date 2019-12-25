@@ -22,8 +22,26 @@ export const reportRouter = {
 				requireAuth: true,
 				permit: 2
 			},
+			path: '/report/collectionreport',
+			name: '馆藏报表',
+			component: () => import('@/views/report/CollectionReport.vue')
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 2
+			},
+			path: '/report/workloadreport',
+			name: '工作量报表',
+			component: () => import('@/views/report/WorkloadReport.vue')
+		},
+		{
+			meta: {
+				requireAuth: true,
+				permit: 2
+			},
 			path: '/report/archivesreport',
-			name: '档案报表',
+			name: '利用统计报表',
 			component: () => import('@/views/report/ArchivesReport.vue')
 		}
 	]
