@@ -446,8 +446,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (en == null) {
 				throw new EcmException("Type :" + typeName + " ," + key.toString() + " is not exists.");
 			}
-			switch (en.getDataType()) {
-			case 5:// 日期
+			switch (en.getFieldType()) {
+			case 2:// 日期
 			{
 				String date = args.get(key).toString();
 				if(args.get(key) instanceof Date) {
@@ -462,7 +462,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				valueStr += " " + date + " ,";
 				break;
 			}
-			case 6:// 布尔
+			case 3:// 布尔
 			{
 				fieldStr += key.toString() + ",";
 				if (args.get(key).toString().equals("true")) {
@@ -472,9 +472,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}
 				break;
 			}
-			case 2:
-			case 3:
-			case 4: {
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8: 
+			{
 				valueStr += args.get(key).toString() + ",";
 				fieldStr += key.toString() + ",";
 				break;
@@ -562,8 +565,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (en == null) {
 				throw new EcmException("Object :" + id + " ," + key.toString() + " is not exists.");
 			}
-			switch (en.getDataType()) {
-			case 5:
+			switch (en.getFieldType()) {
+			case 2:
 				if (!isFirst) {
 					sql += ",";
 				} else {
@@ -587,7 +590,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					sql += " " + key.toString() + "= " + date + " ";
 				}
 				break;
-			case 6:
+			case 3:
 				if (args.get(key) == null) {
 					continue;
 				}
@@ -601,9 +604,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				} else {
 					sql += " " + key.toString() + "=0";
 				}
-			case 2:
-			case 3:
 			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
 				if (args.get(key) == null) {
 					continue;
 				}
