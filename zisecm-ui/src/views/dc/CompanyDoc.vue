@@ -189,7 +189,7 @@
             fit
           >
             <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>
-            <el-table-column :label="$t('field.indexNumber')" width="60">
+            <el-table-column :label="$t('field.indexNumber')" width="70">
               <template slot-scope="scope">
                 <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
               </template>
