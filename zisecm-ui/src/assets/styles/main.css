@@ -207,6 +207,7 @@ body .el-table th.gutter{
 
 .ecmtitle{
   font-size: 16px;
+  font-weight: bold;
 }
 
 .topbar-button{
