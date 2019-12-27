@@ -33,16 +33,16 @@ export default {
   color: #ffffff !important;
 } */
 .el-tree-node:focus > .el-tree-node__content {
-    background-color: #004ea2;
+    background-color: #7ab9fd;
     color: #ffffff !important;
 }
 .el-menu-item.is-active {
   color: #ffffff !important;
-  background-color: #004ea2;
+  background-color: #7ab9fd;
 }
 .router-link-active {
   color: #ffffff !important;
-  background-color: #004ea2;
+  background-color: #7ab9fd;
 }
 
 </style>

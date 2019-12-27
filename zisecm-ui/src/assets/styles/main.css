@@ -138,6 +138,10 @@ img {
     color: #ffffff;
     background-color: #36a9e1;
 }
+.el-menu--horizontal>.is-active {
+  color: #000000 !important;
+  
+}
 .el-menu--horizontal {
     border: none;
     background-color: #36a9e1;
@@ -182,7 +186,7 @@ img {
     vertical-align:middle;
   }
   .el-tree-node.is-current > .el-tree-node__content {
-    background-color: #004ea2 !important;
+    background-color: #7ab9fd !important;
   }
   .el-table__expanded-cell[class*=cell]{
     padding: 0px 0px;
