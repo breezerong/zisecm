@@ -4,7 +4,7 @@
       <el-aside width="180px" style="overflow-x:hidden;overflow-y:hidden">
         <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航-->
-          <el-menu default-active="11" class="el-menu-vertical-ecm" :default-openeds="opens" style="background-color:#D3DCE6">
+          <el-menu  class="el-menu-vertical-ecm" :default-openeds="opens" style="background-color:#D3DCE6">
             <el-submenu index="10">
               <template slot="title">
                 <i class="el-icon-news"></i>

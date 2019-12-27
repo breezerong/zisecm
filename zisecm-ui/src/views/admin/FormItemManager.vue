@@ -211,6 +211,8 @@
                 <el-option label="2" value="2"></el-option>
                 <el-option label="3" value="3"></el-option>
                 <el-option label="4" value="4"></el-option>
+                <el-option label="6" value="6"></el-option>
+                <el-option label="8" value="8"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -316,16 +318,19 @@ export default {
       currentItem: "",
       form: {
         parentId: "",
-        name: "",
+        attrName: "",
         description: "",
         value: "",
+	      label:"",
         searchable: "true",
         required: "false",
         readOnly: "false",
         controlType: "TextBox",
         widthType: "2",
+	      defaultValue:"",
         orderIndex: "1",
         isHide: "false",
+	      queryName:"",
         valueList: "",
         isRepeat: false,
         enableChange: false,

@@ -59,7 +59,7 @@
           highlight-current-row
         >
           <el-table-column type="selection" width="40"></el-table-column>
-          <el-table-column :label="$t('field.indexNumber')" key="#1" width="60">
+          <el-table-column :label="$t('field.indexNumber')" key="#1" width="70">
             <template slot-scope="scope">
               <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
             </template>
@@ -76,7 +76,18 @@
                     :title="scope.row.TYPE_NAME"
                     border="0"
                   />
-                  <img v-else :title="scope.row.FORMAT_NAME" :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'" border="0" />
+                  <img
+                  v-else-if="scope.row.FORMAT_NAME==null || scope.row.FORMAT_NAME==''"
+                  :src="'./static/img/format/f_undefined_16.gif'"
+                  title="无电子文件"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
             </template>
           </el-table-column>
           <div v-for="(citem,idx) in columnList" :key="idx+'_C'">

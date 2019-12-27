@@ -36,6 +36,7 @@
       </el-col>
       <el-col :span="14">
         <el-form-item label="电子文件" style="float: left;">
+          <el-container >
           <el-upload
             :limit="400"
             :file-list="fileList2"
@@ -43,11 +44,12 @@
             :on-change="handleChange2"
             :auto-upload="false"
             :multiple="true"
+            style="height:360;"
           >
           &nbsp; &nbsp;
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
           </el-upload>
-         
+         </el-container>
         </el-form-item>
       </el-col>
       
@@ -174,5 +176,12 @@ li {
 }
 a {
   color: #42b983;
+}
+.el-upload-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 300px;
+    overflow: scroll;
 }
 </style>
