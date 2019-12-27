@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +41,11 @@ public class BackupService {
 		private Environment env;
 	    @Autowired
 	    private UserService userService;
-	    @Scheduled(cron = "*/30 * * * * ?")
+	    @Scheduled(cron = "0 0/30 * * * ?")
 	    public void backup() {
+	    	System.out.println("-----"+new Date()+"-------job开始---------");
 	    	IEcmSession ecmSession = null;
 			String workflowSpecialUserName = env.getProperty("ecm.username");
-			Map<String,Object> args=new HashMap<>();
-			args.put("STATUS", "制作中");
 			try {
 				ecmSession = authService.login("jobs", workflowSpecialUserName, env.getProperty("ecm.password"));
 				List<Map<String,Object>> objs= documentService.getObjectMap(ecmSession.getToken(), "TYPE_NAME='备份批次'  and STATUS='制作中'");
@@ -153,7 +153,12 @@ public class BackupService {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}finally {
+				if(ecmSession!=null) {
+					authService.logout(ecmSession.getToken());
+				}
 			}
+			System.out.println("-----------"+new Date()+"--------job end-----------------");
 	    }
 	    
 	    public float getBoxsize(String boxId,String token) {

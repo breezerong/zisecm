@@ -45,14 +45,9 @@ th,td{
 			<td><span th:text="${docStat.count}"></span></td>
 			<td colspan="2"><span th:text="${doc[CODING]}"></span></td>
 			<td><span th:if="${doc[REVISION]!=null}" th:text="${doc[REVISION]}"></span></td>
-			<td colspan="3"><span th:if="${doc[TITLE]!=null}" th:text="${doc[TITLE]}"></span></span></td>
+			<td colspan="3"><span th:if="${doc[NAME]!=null}" th:text="${doc[NAME]}"></span></span></td>
 		</tr>
-		<tr>
-			<td></td>
-			<td colspan="2"></td>
-			<td></td>
-			<td colspan="3"></td>
-		</tr>
+		
 
 		
 	</table>

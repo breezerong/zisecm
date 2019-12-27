@@ -268,7 +268,9 @@ public class GroupService implements IGroupService {
 	@Override
 	public boolean newGroup(String token,EcmGroup obj) {
 		// TODO Auto-generated method stub
-		obj.createId();
+		if(obj.getId()==null||"".equals(obj.getId())) {
+			obj.createId();
+		}
 		return ecmGroupMapper.insert(obj)>0;
 	}
 
