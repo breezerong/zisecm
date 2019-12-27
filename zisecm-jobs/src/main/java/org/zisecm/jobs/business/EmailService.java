@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.zisecm.jobs.core.Ijobs;
 
 import com.ecm.common.util.PasswordUtils;
 import com.ecm.core.ActionContext;
@@ -25,7 +24,7 @@ import com.ecm.core.service.MailService;
 import com.ecm.core.service.UserService;
 import com.ecm.icore.service.IEcmSession;
 @Service
-public class EmailService implements Ijobs {
+public class EmailService  {
 	private String token;
 	/**
      * 邮件发送测试类
@@ -72,7 +71,7 @@ public class EmailService implements Ijobs {
 	 * 启动服务
 	 * @throws Exception 
 	 */
-	@Scheduled(cron = "* * 14 * * ?")
+	@Scheduled(cron = "0 0 14 * * ?")
 	public synchronized void runJobs() throws Exception {
 		IEcmSession ecmSession = null;
 		try {
@@ -164,9 +163,9 @@ public class EmailService implements Ijobs {
 		return token;
 	}
 	
-	@Override
-	public void run() throws Exception {
-		// TODO Auto-generated method stub
-//		sendMail();
-	}
+//	@Override
+//	public void run() throws Exception {
+//		// TODO Auto-generated method stub
+////		sendMail();
+//	}
 }
