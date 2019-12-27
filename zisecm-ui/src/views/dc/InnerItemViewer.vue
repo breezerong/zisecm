@@ -34,7 +34,7 @@ export default {
   },
   mounted() {
    let _self = this
-   _self.loadGridInfo();
+   
   },
   methods: {
     loadGridInfo() {
