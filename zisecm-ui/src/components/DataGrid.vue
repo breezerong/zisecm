@@ -58,7 +58,7 @@
           :style="{'width': tableWidth}"
           highlight-current-row
         >
-          <el-table-column type="selection" width="40"></el-table-column>
+          <el-table-column v-if="isshowSelection" type="selection" width="40"></el-table-column>
           <el-table-column :label="$t('field.indexNumber')" key="#1" width="70">
             <template slot-scope="scope">
               <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
@@ -196,6 +196,7 @@ export default {
     columnList: { type: Array, default: null },
     isshowicon: { type: Boolean, default: true },
     isshowOption: { type: Boolean, default: false },
+    isshowSelection: { type: Boolean, default: true },
     tableHeight: { type: [String, Number], default: window.innerHeight - 408 },
     tableWidth: { type: [String, Number], default: "100%" },
     itemCount: { type: [String, Number] },

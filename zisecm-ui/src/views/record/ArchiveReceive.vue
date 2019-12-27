@@ -54,7 +54,7 @@
           v-bind:columnList="gridList"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
-          v-bind:isshowOption="true"
+          v-bind:isshowOption="true" v-bind:isshowSelection ="false"
           v-bind:itemCount="itemCount"
           @rowclick="beforeShowInnerFile"
           v-bind:tableHeight="rightTableHeight"
@@ -65,7 +65,7 @@
           <DataGrid
             ref="leftDataGrid"
             key="left"
-            v-bind:isshowOption="true"
+            v-bind:isshowOption="true" v-bind:isshowSelection ="false"
             v-bind:itemDataList="innerDataList"
             v-bind:columnList="innerGridList"
             v-bind:itemCount="innerCount"
