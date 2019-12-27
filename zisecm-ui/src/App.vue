@@ -37,12 +37,11 @@ export default {
     color: #ffffff !important;
 }
 .el-menu-item.is-active {
-  color: #ffffff !important;
-  background-color: #7ab9fd;
+  color: #000000;
+  background-color: #7ab9fd !important;
 }
 .router-link-active {
-  color: #ffffff !important;
+  color: #000000 !important;
   background-color: #7ab9fd;
 }
-
 </style>

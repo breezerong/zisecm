@@ -138,10 +138,10 @@ img {
     color: #ffffff;
     background-color: #36a9e1;
 }
-.el-menu--horizontal .is-active {
+/* .el-menu--horizontal .is-active {
   color: #000000 !important;
   
-}
+} */
 .el-menu--horizontal {
     border: none;
     background-color: #36a9e1;
