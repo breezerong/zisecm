@@ -1074,7 +1074,7 @@ export default {
           },
           method: "post",
           data: indata.id,
-          url: "/admin/getFolder"
+          url: "/folder/getArchiveFolderByConfige"//"/admin/getFolder"
         })
         .then(function(response) {
           indata.children = response.data.data;
