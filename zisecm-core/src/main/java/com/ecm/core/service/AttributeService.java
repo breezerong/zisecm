@@ -72,23 +72,30 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 		//super.hasPermission(serviceCode+1,systemPermission);
 		String sql ="ALTER TABLE ecm_document ADD ";
 		sql+=obj.getName().toUpperCase()+" ";
-		//1：String，2：Int，3：Double,4:long，5：DateTime，6：boolean
-		switch(obj.getDataType()) {
+		//1：String，2：DateTime，3：boolean,4：Int，5:long，6：Double，7:decimal,8:float
+		switch(obj.getFieldType()) {
 		case 2:
-			sql += "INT ";
-			break;
-		case 3:
-			sql += "DOUBLE ";
-			break;
-		case 4:
-			sql += "BIGINT ";
-			break;
-		case 5:
 			sql += "DATETIME ";
 			break;
-		case 6:
+		case 3:
 			sql += "TINYINT(1) ";
 			break;
+		case 4:
+			sql += "INT ";
+			break;
+		case 5:
+			sql += "BIGINT ";
+			break;
+		case 6:
+			sql += "DOUBLE ";
+			break;
+		case 7:
+			sql += "DECIMAL ";
+			break;
+		case 8:
+			sql += "FLOAT ";
+			break;
+		
 		default:
 			sql += "varchar("+obj.getLength()+") ";
 			break;
@@ -99,7 +106,7 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 			sql += "NULL ";
 		}
 		if(obj.getDefaultValue()!=null&& obj.getDefaultValue().length()>0) {
-			if(obj.getDataType()==1||obj.getDataType()==4) {
+			if(obj.getFieldType()==1) {
 				sql += "DEFAULT '"+obj.getDefaultValue()+"' ";
 			}
 			else {
@@ -119,22 +126,29 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 		String sql ="ALTER TABLE ecm_document MODIFY ";
 		sql+=obj.getName().toUpperCase()+" ";
 		
-		switch(obj.getDataType()) {
+		switch(obj.getFieldType()) {
 		case 2:
-			sql += "INT ";
-			break;
-		case 3:
-			sql += "DOUBLE ";
-			break;
-		case 4:
-			sql += "BIGINT ";
-			break;
-		case 5:
 			sql += "DATETIME ";
 			break;
-		case 6:
+		case 3:
 			sql += "TINYINT(1) ";
 			break;
+		case 4:
+			sql += "INT ";
+			break;
+		case 5:
+			sql += "BIGINT ";
+			break;
+		case 6:
+			sql += "DOUBLE ";
+			break;
+		case 7:
+			sql += "DECIMAL ";
+			break;
+		case 8:
+			sql += "FLOAT ";
+			break;
+		
 		default:
 			sql += "varchar("+obj.getLength()+") ";
 			break;
