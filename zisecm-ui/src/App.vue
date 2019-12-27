@@ -29,8 +29,12 @@ export default {
 .el-input__inner {
   height: 36px;
 }
-.el-tree-node.is-current{
+/* .el-tree-node.is-current{
   color: #ffffff !important;
+} */
+.el-tree-node:focus > .el-tree-node__content {
+    background-color: #004ea2;
+    color: #ffffff !important;
 }
 .el-menu-item.is-active {
   color: #ffffff !important;
@@ -38,6 +42,7 @@ export default {
 }
 .router-link-active {
   color: #ffffff !important;
+  background-color: #004ea2;
 }
 
 </style>
