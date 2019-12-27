@@ -319,7 +319,11 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	public String newObject(String token,Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		((EcmUser)en).setPassword(SecureUtils.shaEncode(((EcmUser)en).getPassword()));
-		((EcmUser)en).createId();
+		EcmUser u=(EcmUser)en;
+		if(u.getId()==null||"".equals(u.getId())) {
+			((EcmUser)en).createId();
+		}
+		
 		ecmUserMapper.insert((EcmUser)en);
 		String userId = ((EcmUser)en).getId();
 		EcmUser newEn = ecmUserMapper.selectByLoginName(((EcmUser)en).getLoginName());
@@ -338,7 +342,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	public String newObject(String token,Object en,InputStream instream,String fileName) throws Exception{
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_CONTENT,systemPermission);
 		EcmUser user = (EcmUser)en;
-		user.createId();
+		if(user.getId()==null||"".equals(user.getId())) {
+			user.createId();
+		}
 		if(instream!=null) {
 			String fullPath =getFullPath(user,	fileName);
 			File file = new File(fullPath);   

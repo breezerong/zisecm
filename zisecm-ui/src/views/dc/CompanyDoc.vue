@@ -209,6 +209,12 @@
                   border="0"
                 />
                 <img
+                  v-else-if="scope.row.FORMAT_NAME==null || scope.row.FORMAT_NAME==''"
+                  :src="'./static/img/format/f_undefined_16.gif'"
+                  title="无电子文件"
+                  border="0"
+                />
+                <img
                   v-else
                   :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
                   :title="scope.row.FORMAT_NAME"

@@ -20,22 +20,27 @@ public class EcmAttribute  extends EcmSysObject{
 		}
 		
 		if(type.startsWith("varchar")) {
-    		dataType= 1;
+			fieldType= 1;
+    	}
+		else if(type.startsWith("datetime")) {
+			fieldType= 2;
+    	}
+		else if(type.startsWith("tinyint")) {
+			fieldType= 3;
     	}
     	else if(type.startsWith("int")) {
-    		dataType= 2;
-    	}
-    	else if(type.startsWith("double")) {
-    		dataType= 3;
-    	}
-    	else if(type.startsWith("datetime")) {
-    		dataType= 5;
-    	}
-    	else if(type.startsWith("tinyint")) {
-    		dataType= 6;
+    		fieldType= 4;
     	}
     	else if(type.startsWith("bigint")) {
-    		dataType= 4;
+    		fieldType= 5;
+    	}
+    	else if(type.startsWith("double")) {
+    		fieldType= 6;
+    	}
+    	else if(type.startsWith("decimal")) {
+    		fieldType= 7;
+    	}else if(type.startsWith("float")) {
+    		fieldType= 8;
     	}
 	}
 
@@ -71,18 +76,18 @@ public class EcmAttribute  extends EcmSysObject{
     
     private String defaultValue;
     
-    private int dataType;
+    private int fieldType;
     
-    public void setDataType(int dataType) {
-		this.dataType = dataType;
+    public void setFieldType(int fieldType) {
+		this.fieldType = fieldType;
 	}
     /**
-     	* 字段类型：1：String，2：Int，3：Double，,4:long，5：DateTime，6：boolean
+     	* 字段类型：1：String，2：DateTime，3：boolean,4：Int，5:long，6：Double，,7:decimal,8:float
      * @return
      */
-	public int getDataType() {
+	public int getFieldType() {
     	
-    	return dataType;
+    	return fieldType;
     }
    
 }
