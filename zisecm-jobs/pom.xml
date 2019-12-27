@@ -104,6 +104,13 @@
 			<artifactId>druid</artifactId>
 			<version>1.1.20</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver.jdbc/sqljdbc -->
+		<dependency>
+		    <groupId>com.microsoft.sqlserver.jdbc</groupId>
+		    <artifactId>sqljdbc</artifactId>
+		    <version>4.0</version>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>
