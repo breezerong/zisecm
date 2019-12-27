@@ -182,7 +182,7 @@ img {
     vertical-align:middle;
   }
   .el-tree-node.is-current > .el-tree-node__content {
-    background-color: #d9dff5 !important;
+    background-color: #004ea2 !important;
   }
   .el-table__expanded-cell[class*=cell]{
     padding: 0px 0px;
@@ -207,6 +207,7 @@ body .el-table th.gutter{
 
 .ecmtitle{
   font-size: 16px;
+  font-weight: bold;
 }
 
 .topbar-button{

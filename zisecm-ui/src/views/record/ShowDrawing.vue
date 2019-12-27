@@ -65,9 +65,7 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
-  color: #42b983;
-}
+
 body,html{
 			height:100%;
 			margin:0px;
