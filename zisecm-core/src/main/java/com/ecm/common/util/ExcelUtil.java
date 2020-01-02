@@ -1,4 +1,4 @@
-package com.ecm.portal.util;
+package com.ecm.common.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -160,6 +160,20 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 		fileOut.close();
 	}
 
+ 	public void makeExcel(String pathExt,String sheetName, String[] fieldName, List<Object[]> data) throws IOException {
+		// 在内存中生成工作薄
+		XSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data,false);
+		// 截取文件夹路径
+		String filePath = pathExt.substring(0, pathExt.lastIndexOf("\\"));
+		// 如果路径不存在，创建路径
+		File file = new File(filePath);
+		// System.out.println(path+"-----------"+file.exists());
+		if (!file.exists())
+			file.mkdirs();
+		FileOutputStream fileOut = new FileOutputStream(pathExt);
+		workbook.write(fileOut);
+		fileOut.close();
+	}
  	public void makeStreamExcel(String excelName, String sheetName, String[] fieldName, List<Object[]> data,
 			HttpServletResponse response,boolean hideFirstRow) throws IOException {
 		OutputStream os = null;
@@ -174,7 +188,33 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 		workbook.write(os);
 		workbook.close();
 	}
-
+// 	/**
+// 	 * 导出Excel
+// 	 * @param path 本地路径或网络路径
+// 	 * @param sheetName 
+// 	 * @param fieldName 表头
+// 	 * @param data 数据
+// 	 * @param hideFirstRow 首行隐藏
+// 	 * @throws IOException
+// 	 */
+// 	public void makeStreamExcel(String path,String sheetName,String[] fieldName,List<Object[]> data,boolean hideFirstRow) throws IOException {
+// 		XSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data , hideFirstRow);
+// 		File f=new File(path);
+// 		try {
+// 			
+// 			f.createNewFile();
+// 		}catch (Exception e) {
+//			// TODO: handle exception
+// 			File dir=new File(path.substring(0,path.lastIndexOf("/")));
+// 			dir.mkdirs();
+// 			f.createNewFile();
+//		}
+// 		OutputStream os=new FileOutputStream(f);
+//		os.flush();
+//		workbook.write(os);
+//		workbook.close();
+// 	}
+ 	
  	private XSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,boolean hideFirstRow) {
 		// 用来记录最大列宽,自动调整列宽。
 		Integer collength[] = new Integer[fieldName.length];

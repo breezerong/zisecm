@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.druid.util.StringUtils;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
+import com.ecm.common.util.ExcelUtil;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
@@ -65,7 +66,6 @@ import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.service.ZipDownloadService;
-import com.ecm.portal.util.ExcelUtil;
 
 /**
  * @ClassName EcmDcController
@@ -474,7 +474,6 @@ public class EcmDcController extends ControllerAbstract{
 	public void getExportExcel(HttpServletRequest request,HttpServletResponse response,@RequestBody String argStr) {
 		ExcelUtil excelUtil = new ExcelUtil();
 		List<Object[]> datalist = new ArrayList<Object[]>();
-		String limitExportNum = "2000";
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String gridName = args.get("gridName").toString();
 		String lang = args.get("lang").toString();

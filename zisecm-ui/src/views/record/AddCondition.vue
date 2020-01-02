@@ -5,12 +5,21 @@
       :visible.sync="visible"
       :append-to-body="true"
       :close-on-click-modal="false"
-      @open="refreshData"
+      @open="getTypeNames('AdvSearchTypes')"
       @close="closeDialog"
       title="备份条件"
       width="60%"
     >
-    
+    <el-row>
+      <el-col>请选择类型<font style="color:red;">*</font>：</el-col>
+      <el-col>
+        <el-select v-model="typeName" @change="refreshData(typeName)">
+                <div v-for="options in typeNameOptions">
+                  <el-option :label="options" :value="options"></el-option>
+                </div>
+              </el-select>
+      </el-col>
+    </el-row>
     <el-row>
       <el-button @click="addplus" icon="el-icon-plus">添加</el-button>
       <el-button @click="removeminus" icon="el-icon-minus">删除</el-button>
@@ -26,7 +35,7 @@
             <el-col :span="5" class="topbar-button">
               <el-select v-model="item.column">
                 <div v-for="col in columns">
-                  <el-option :label="col.label" :value="col.attrName"></el-option>
+                  <el-option v-if="col.isHide==false" :label="col.label" :value="col.attrName"></el-option>
                 </div>
               </el-select>
             </el-col>
@@ -74,6 +83,8 @@ export default {
       rightListId: [],
       formtips:[],
       columns:[],
+      typeNameOptions:[],
+      typeName:"",
       relations:[{"label":"且","val":"and"},{"label":"或","val":"or"}],
       intCondition:[{"label":"大于","val":">"},{"label":"小于","val":"<"},
       {"label":"大于等于","val":">="},{"label":"小于等于","val":"<="},{"label":"不等于","val":"!="}
@@ -101,7 +112,7 @@ export default {
     event: "change"
   },
   mounted() {
-    
+    // this.getTypeNames("AdvSearchTypes");
   },
   props: {
     //输入框默认显示值
@@ -128,6 +139,17 @@ export default {
   },
   
   methods: {
+    getTypeNames(keyName) {
+      let _self = this;
+      axios
+        .post("/dc/getParameters", keyName)
+        .then(function(response) {
+          _self.typeNameOptions = response.data.data.AdvSearchTypes;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     changeColumn(column,item){
       let conditions=[];
       let obj=null;
@@ -169,7 +191,15 @@ export default {
     
     onOk(){
       let _self=this;
-      let sql="";
+      let sql=" ";
+      if(_self.typeName==null
+      ||_self.typeName==''){
+        _self.$message("请选择类型名称");
+        return;
+      }
+      if(_self.typeName!='所有'){
+        sql+=" TYPE_NAME='"+_self.typeName+"' and (";
+      }
       _self.formtips.forEach(element => {
         sql=sql+element.relation+' '+element.column+' ';
 
@@ -199,13 +229,20 @@ export default {
         }
         // +element.condition+' '+element.val
       });
+      sql=sql+")";
+      if(_self.formtips.length==0){
+        sql=" TYPE_NAME='"+_self.typeName+"'";
+      }
       _self.inputValue=sql;
       _self.$emit("change", _self.inputValue);
       _self.visible=false;
       
     },
-    refreshData() {
-      this.loadColumnInfo();
+    refreshData(name) {
+      if(name){
+        this.loadColumnInfo(name);
+      }
+      
 
     },
     clickShowDialog() {
@@ -216,7 +253,7 @@ export default {
     },
 
     // 加载表单
-    loadColumnInfo()
+    loadColumnInfo(name)
     {
       let _self = this;
       _self.loading = true;
@@ -225,7 +262,7 @@ export default {
         _self.myTypeName = "";
       }
       var m = new Map();
-      m.set('itemInfo',"卷盒");//_self.myItemId+_self.myTypeName);//ID 或类型
+      m.set('itemInfo',name);//_self.myItemId+_self.myTypeName);//ID 或类型
       m.set('lang',_self.getLang());
       //console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
       axios.post("/dc/getFormItem",JSON.stringify(m))

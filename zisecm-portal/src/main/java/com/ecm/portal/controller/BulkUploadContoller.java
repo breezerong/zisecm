@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ecm.common.util.ExcelUtil;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
@@ -51,7 +52,6 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
-import com.ecm.portal.util.ExcelUtil;
 
 /**
  * 图纸操作

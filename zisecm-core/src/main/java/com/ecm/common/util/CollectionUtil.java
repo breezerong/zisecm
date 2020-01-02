@@ -1,4 +1,4 @@
-package com.ecm.portal.util;
+package com.ecm.common.util;
 
 import java.util.Collection;
 import java.util.LinkedList;
