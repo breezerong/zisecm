@@ -37,7 +37,7 @@
                 <!-- <router-link  to="/borroworder"></router-link> -->
      </el-dialog>
      <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="96%"  @close="itemDialogVisible = false">  
-      <InnerItemViewer v-bind:id = "currentId" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
+      <InnerItemViewer ref='innerItemViewer' v-bind:id = "currentId" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
      </el-dialog>
      <el-dialog
       :title="$t('application.property')"
@@ -189,7 +189,7 @@
             fit
           >
             <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>
-            <el-table-column :label="$t('field.indexNumber')" width="60">
+            <el-table-column :label="$t('field.indexNumber')" width="70">
               <template slot-scope="scope">
                 <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
               </template>
@@ -438,6 +438,10 @@ export default {
       this.currentId = row.ID;
       if (row.TYPE_NAME == "卷盒" || row.TYPE_NAME == "图册") {
         this.itemDialogVisible = true;
+        let _self=this;
+        setTimeout(()=>{
+          _self.$refs.innerItemViewer.loadGridInfo();
+        },10);
       }
     },
     renderContent: function(h, { node, data, store }) {

@@ -124,7 +124,7 @@
                       <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
                       v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
                       @pagechange="pageChange" v-bind:itemCount="itemCount"
-                      v-bind:tableHeight="rightTableHeight" :isshowOption="true"
+                      v-bind:tableHeight="rightTableHeight" :isshowOption="true" :isshowSelection ="false"
                       @rowclick="beforeShowInnerFile" @selectchange="selectChange"></DataGrid>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
@@ -144,7 +144,7 @@
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
-                       v-bind:tableHeight="rightTableHeight" :isshowOption="true"
+                       v-bind:tableHeight="rightTableHeight" :isshowOption="true" :isshowSelection ="false"
                       @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
                     </div>
                     <div class="middle" style="verticle-align:middle">
@@ -167,6 +167,7 @@
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
                       v-bind:columnList="outerGridList" v-bind:itemCount="outerCount" :isshowOption="true"
+                      :isshowSelection ="false"
                        @pagesizechange="outerPageSizeChange" v-bind:tableHeight="rightTableHeight"
                       @pagechange="outerPageChange" @selectchange="selectOutChange" @rowclick="selectOneOutFile"></DataGrid>
                        

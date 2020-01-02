@@ -10,7 +10,7 @@
                       <i class="el-icon-menu"></i>
                       <span>借阅单状态</span>
                     </template>
-                    <el-menu-item index="201">
+                    <el-menu-item index="201" >
                       <i class="el-icon-bottom"></i>
                       <span slot="title"><router-link to="/record/archiveoutgoing/archivependingout">待出库</router-link></span>
                     </el-menu-item>
@@ -72,9 +72,6 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
-  color: #42b983;
-}
 body,html{
 			height:100%;
 			margin:0px;
@@ -93,5 +90,5 @@ body,html{
 			/* background-color:rgb(34,124,134); */
 			float:left;
 			height:100%;
-		}
+    }
 </style>

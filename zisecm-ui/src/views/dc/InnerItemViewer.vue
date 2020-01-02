@@ -33,8 +33,10 @@ export default {
     tableHeight:{type:Number,String}
   },
   mounted() {
-   let _self = this
-   _self.loadGridInfo();
+   let _self = this;
+   if(_self.id){
+     _self.loadGridInfo();
+   }
   },
   methods: {
     loadGridInfo() {
