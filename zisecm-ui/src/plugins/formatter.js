@@ -63,3 +63,16 @@ Vue.prototype.dateFormat = function(val){
     }
     return ""
   }
+
+  Vue.prototype.formatSize = function(data){
+    if(data){
+      if(data<1024){
+        return data +" B";
+      }
+      if(data>1024 && data<1024*1204){
+        return (data/1024).toFixed(2) + " KB";
+      }
+      return (data/1024/1024).toFixed(2) +" MB";
+    }
+    return "0 B";
+  }

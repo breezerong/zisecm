@@ -59,18 +59,7 @@ export default {
         let _self = this;
         _self.loadData();        
       },
-      formatSize(data){
-        if(data){
-          if(data<1024){
-            return data +" B";
-          }
-          if(data>1024 && data<1024*1204){
-            return (data/1024).toFixed(2) + " KB";
-          }
-          return (data/1024/1024).toFixed(2) +" MB";
-        }
-        return "0 B";
-      },
+      
       loadData(){
           let _self = this;
           axios.post("/dc/getRenditions",this.docId).then(function(response) {

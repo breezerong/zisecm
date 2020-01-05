@@ -89,7 +89,7 @@ public interface IDocumentService {
 	 * @throws AccessDeniedException 
 	 * @throws NoPermissionException 
 	 */
-	void grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;;
+	String grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;;
 	/**
 	 * 根据文档对象添加角色权限
 	 * @param token
@@ -102,7 +102,7 @@ public interface IDocumentService {
 	 * @throws AccessDeniedException 
 	 * @throws NoPermissionException 
 	 */
-	void grantGroup(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;
+	String grantGroup(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
 	 * 根据文档Id添加用户权限
 	 * @param token
@@ -115,7 +115,7 @@ public interface IDocumentService {
 	 * @throws AccessDeniedException 
 	 * @throws NoPermissionException 
 	 */
-	void grantUser(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
+	String grantUser(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
 			throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
 	 * 根据文档对象添加用户权限
@@ -129,7 +129,7 @@ public interface IDocumentService {
 	 * @throws AccessDeniedException 
 	 * @throws NoPermissionException 
 	 */
-	void grantUser(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl)
+	String grantUser(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl)
 			throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
 	 * 移除用户权限
@@ -139,7 +139,7 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws Exception 
 	 */
-	void revokeUser(String token, String id, String targetName, boolean newAcl) throws Exception;
+	String revokeUser(String token, String id, String targetName, boolean newAcl) throws Exception;
 	/**
 	 * 根据文档对象移除用户权限
 	 * @param token
@@ -148,7 +148,7 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws Exception 
 	 */
-	void revokeUser(String token, EcmDocument doc, String targetName, boolean newAcl) throws Exception;
+	String revokeUser(String token, EcmDocument doc, String targetName, boolean newAcl) throws Exception;
 	/**
 	 * 根据文档Id移除组权限
 	 * @param token
@@ -157,7 +157,7 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws Exception 
 	 */
-	void revokeGroup(String token, String id, String targetName, boolean newAcl) throws Exception;
+	String revokeGroup(String token, String id, String targetName, boolean newAcl) throws Exception;
 	/**
 	 * 根据文档对象移除组权限
 	 * @param token
@@ -166,7 +166,7 @@ public interface IDocumentService {
 	 * @param newAcl 是否新建ACL
 	 * @throws Exception 
 	 */
-	void revokeGroup(String token, EcmDocument doc, String targetName, boolean newAcl) throws Exception;
+	String revokeGroup(String token, EcmDocument doc, String targetName, boolean newAcl) throws Exception;
 	/**
 	 * 根据文档对象获取权限
 	 * @param token

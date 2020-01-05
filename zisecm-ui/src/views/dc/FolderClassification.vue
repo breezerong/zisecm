@@ -32,14 +32,33 @@
       @close="propertyVisible = false"
       width="96%"
     >
-      <ShowProperty
-        ref="ShowProperty"
-        @onSaved="onSaved"
-        width="100%"
-        v-bind:itemId="selectedItemId"
-        v-bind:folderId="currentFolder.id"
-        v-bind:typeName="currentFolder.typeName"
-      ></ShowProperty>
+    <el-tabs type="border-card">
+      <el-tab-pane label="基本信息">
+        <ShowProperty
+          ref="ShowProperty"
+          @onSaved="onSaved"
+          width="100%"
+          v-bind:itemId="selectedItemId"
+          v-bind:folderId="currentFolder.id"
+          v-bind:typeName="currentFolder.typeName"
+        ></ShowProperty>
+      </el-tab-pane>
+      <el-tab-pane label="系统信息">
+        <SystemInfo   ref="SystemInfo"
+          width="100%"
+          v-bind:itemData="currentDocument">
+        </SystemInfo>
+      </el-tab-pane>
+      <el-tab-pane label="权限管理">
+        <ObjectAcl
+          ref="ObjectAcl"
+          width="100%"
+          v-bind:name="currentDocument.ACL_NAME"
+          v-bind:docId="currentDocument.ID"
+        ></ObjectAcl>
+      </el-tab-pane>
+    </el-tabs>
+      
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button>
         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
@@ -187,7 +206,7 @@
           </el-col>
         </el-row>
       <div :style="{position:'relative',height: asideHeight+'px'}">
-      <split-pane split="vertical" @resize="resize" min-percent='10' :default-percent='15'>
+      <split-pane split="vertical" @resize="resize" :min-percent='10' :default-percent='15'>
       <template slot="paneL">
          <el-container :style="{height:treeHeight+'px',width:asideWidth,overflow:'auto'}">
           <el-tree
@@ -309,6 +328,8 @@
 import ShowProperty from "@/components/ShowProperty";
 import FolderSelector from "@/components/controls/FolderSelector";
 import InnerItemViewer from "./InnerItemViewer.vue";
+import ObjectAcl from '@/components/controls/ObjectAcl';
+import SystemInfo from '@/components/controls/SystemInfo';
 
 import "url-search-params-polyfill";
 
@@ -318,7 +339,9 @@ export default {
   components: {
     ShowProperty: ShowProperty,
     InnerItemViewer: InnerItemViewer,
-    FolderSelector: FolderSelector
+    FolderSelector: FolderSelector,
+    ObjectAcl: ObjectAcl,
+    SystemInfo: SystemInfo
   },
   data() {
     return {
@@ -344,6 +367,7 @@ export default {
       itemDataListFull: [],
       gridList: [],
       currentFolder: [],
+      currentDocument: [],
       dataListFull: "",
       inputkey: "",
       loading: false,
@@ -802,11 +826,21 @@ export default {
     // 查看属性
     showItemProperty(indata) {
       let _self = this;
+      _self.currentDocument = indata;
       _self.selectedItemId = indata.ID;
       _self.propertyVisible = true;
       if (_self.$refs.ShowProperty) {
         _self.$refs.ShowProperty.myItemId = indata.ID;
         _self.$refs.ShowProperty.loadFormInfo();
+      }
+      if (_self.$refs.ObjectAcl) {
+        _self.$refs.ObjectAcl.name = indata.ACL_NAME;
+        _self.$refs.ObjectAcl.docId = indata.ID;
+        _self.$refs.ObjectAcl.loadAcl();
+      }
+      if (_self.$refs.SystemInfo) {
+        _self.$refs.SystemInfo.itemData = indata;
+        _self.$refs.SystemInfo.refreshData();
       }
     },
     // 查看内容

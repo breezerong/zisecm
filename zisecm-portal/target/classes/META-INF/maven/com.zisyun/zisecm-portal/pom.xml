@@ -62,12 +62,7 @@
 			<version>1.1.20</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>4.1.1</version>
-		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 		    <groupId>commons-io</groupId>
@@ -101,17 +96,6 @@
 			<artifactId>elasticsearch-rest-high-level-client</artifactId>
 			<version>7.3.2</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>4.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml-schemas</artifactId>
-			<version>4.1.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
