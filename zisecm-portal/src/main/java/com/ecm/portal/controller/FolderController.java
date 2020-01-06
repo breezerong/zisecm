@@ -168,6 +168,22 @@ public class FolderController  extends ControllerAbstract {
 		return mp;
 	}
 
-	
+	@ResponseBody
+	@RequestMapping(value="/folder/getFolderById", method = RequestMethod.POST)
+	public Map<String, Object> getFolderById(@RequestBody String id) {
+		EcmFolder folder;
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			folder = folderService.getObjectById(getToken(),id);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", folder);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} //Integer.parseInt(parentId));
+		return mp;
+	}
 
 }

@@ -57,7 +57,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 
 	private String baseColumns = "ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT,"
-			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR";
+			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR,STATUS";
 	private String filterColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
@@ -731,24 +731,25 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	}
 
 	@Override
-	public void grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
+	public String grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmDocument doc = getObjectById(token, id);
-		grantGroup(token, doc, targetName, permission, expireDate, newAcl);
+		return grantGroup(token, doc, targetName, permission, expireDate, newAcl);
 
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void grantGroup(String token, EcmDocument doc, String targetName, int permission, Date expireDate,
+	public String grantGroup(String token, EcmDocument doc, String targetName, int permission, Date expireDate,
 			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
+		String aclName = "";
 		if (doc != null) {
 
 			if (getPermit(token, doc.getId()) < ObjectPermission.PEMISSION) {
 				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 						+ " has no right to change permission:" + doc.getId());
 			}
-			String aclName = doc.getAclName();
+			aclName = doc.getAclName();
 			if (!StringUtils.isEmpty(aclName)) {
 				EcmAcl acl = aclService.getObjectByName(token, aclName);
 				if (newAcl) {
@@ -768,26 +769,27 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			newAudit(token, null, AuditContext.CHANGE_PERMIT, doc.getId(), null, aclName);
 		}
+		return aclName;
 	}
 
 	@Override
-	public void grantUser(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
+	public String grantUser(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmDocument doc = getObjectById(token, id);
-		grantUser(token, doc, targetName, permission, expireDate, newAcl);
-
+		return grantUser(token, doc, targetName, permission, expireDate, newAcl);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void grantUser(String token, EcmDocument doc, String targetName, int permission, Date expireDate,
+	public String grantUser(String token, EcmDocument doc, String targetName, int permission, Date expireDate,
 			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
+		String aclName = "";
 		if (doc != null) {
 			if (getPermit(token, doc.getId()) < ObjectPermission.PEMISSION) {
 				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 						+ " has no right to change permission:" + doc.getId());
 			}
-			String aclName = doc.getAclName();
+			aclName = doc.getAclName();
 			if (!StringUtils.isEmpty(aclName)) {
 				EcmAcl acl = aclService.getObjectByName(token, aclName);
 				if (acl != null) {
@@ -817,25 +819,27 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			newAudit(token, null, AuditContext.CHANGE_PERMIT, doc.getId(), null, aclName);
 		}
+		return aclName;
 	}
 
 	@Override
-	public void revokeUser(String token, String id, String targetName, boolean newAcl) throws Exception {
+	public String revokeUser(String token, String id, String targetName, boolean newAcl) throws Exception {
 		EcmDocument doc = getObjectById(token, id);
-		revokeUser(token, doc, targetName, newAcl);
+		return revokeUser(token, doc, targetName, newAcl);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void revokeUser(String token, EcmDocument doc, String targetName, boolean newAcl) throws NoPermissionException, AccessDeniedException {
+	public String revokeUser(String token, EcmDocument doc, String targetName, boolean newAcl) throws NoPermissionException, AccessDeniedException {
+		String aclName = "";
 		if (doc != null) {
 			if (getPermit(token, doc.getId()) < ObjectPermission.PEMISSION) {
 				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 						+ " has no right to change permission:" + doc.getId());
 			}
-			String aclName = doc.getAclName();
+			aclName = doc.getAclName();
 			if (StringUtils.isEmpty(aclName)) {
-				return;
+				return "";
 			}
 			EcmAcl acl = aclService.getObjectByName(token, aclName);
 			if (acl != null) {
@@ -848,25 +852,27 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			newAudit(token, null, AuditContext.CHANGE_PERMIT, doc.getId(), null, aclName);
 		}
+		return aclName;
 	}
 
 	@Override
-	public void revokeGroup(String token, String id, String targetName, boolean newAcl) throws Exception {
+	public String revokeGroup(String token, String id, String targetName, boolean newAcl) throws Exception {
 		EcmDocument doc = getObjectById(token, id);
-		revokeGroup(token, doc, targetName, newAcl);
+		return revokeGroup(token, doc, targetName, newAcl);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void revokeGroup(String token, EcmDocument doc, String targetName, boolean newAcl) throws NoPermissionException, AccessDeniedException {
+	public String revokeGroup(String token, EcmDocument doc, String targetName, boolean newAcl) throws NoPermissionException, AccessDeniedException {
+		String aclName = "";
 		if (doc != null) {
 			if (getPermit(token, doc.getId()) < ObjectPermission.PEMISSION) {
 				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 						+ " has no right to change permission:" + doc.getId());
 			}
-			String aclName = doc.getAclName();
+			aclName = doc.getAclName();
 			if (StringUtils.isEmpty(aclName)) {
-				return;
+				return "";
 			}
 			EcmAcl acl = aclService.getObjectByName(token, aclName);
 			if (acl != null) {
@@ -879,6 +885,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			newAudit(token, null, AuditContext.CHANGE_PERMIT, doc.getId(), null, aclName);
 		}
+		return aclName;
 	}
 
 	@Override

@@ -48,6 +48,7 @@ import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.EcmShopingCart;
@@ -1889,5 +1890,96 @@ public class EcmDcController extends ControllerAbstract{
 			   }
 			   zipDownloadService.createZipFiles(files, fileNames, response);
 		   }
+		   
+		   @ResponseBody
+			@RequestMapping(value = "/dc/grantPermit", method = RequestMethod.POST)
+			public Map<String, Object> grantPermit(@RequestBody EcmPermit permit) {
+				Map<String, Object> mp = new HashMap<String, Object>();
+				try {
+					if(StringUtils.isEmpty(permit.getTargetName())) {
+						mp.put("code", ActionContext.FAILURE);
+					}else {
+						String aclName = "";
+						String[] targetNames = permit.getTargetName().split(";");
+						for(String targetName: targetNames) {
+							if(permit.getTargetType()==1) {
+								aclName = documentService.grantUser(getToken(), permit.getParentId(), targetName, permit.getPermission(), permit.getExpireDate(),needNewAcl(permit.getParentId()));
+							}else {
+								aclName = documentService.grantGroup(getToken(), permit.getParentId(), targetName, permit.getPermission(), permit.getExpireDate(),needNewAcl(permit.getParentId()));
+							}
+						}
+						mp.put("data",aclName);
+						mp.put("code", ActionContext.SUCESS);
+					}
+				} catch (AccessDeniedException e) {
+					mp.put("code", ActionContext.TIME_OUT);
+					mp.put("data", e.getMessage());
+				} catch (EcmException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("data", e.getMessage());
+				} catch (NoPermissionException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("data", e.getMessage());
+				}
+				return mp;
+			}
+
+			
+			@ResponseBody
+			@RequestMapping(value = "/dc/revokePermit", method = RequestMethod.POST)
+			public Map<String, Object> revokePermit(@RequestBody EcmPermit permit) {
+				Map<String, Object> mp = new HashMap<String, Object>();
+				try {
+					String aclName = "";
+					if(permit.getTargetType()==1) {
+						aclName = documentService.revokeUser(getToken(), permit.getParentId(), permit.getTargetName(),needNewAcl(permit.getParentId()));
+					}else {
+						aclName = documentService.revokeGroup(getToken(), permit.getParentId(), permit.getTargetName(),needNewAcl(permit.getParentId()));
+					}
+					mp.put("data",aclName);
+					mp.put("code", ActionContext.SUCESS);
+				} catch (AccessDeniedException e) {
+					mp.put("code", ActionContext.TIME_OUT);
+					mp.put("data", e.getMessage());
+				} catch (EcmException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("data", e.getMessage());
+				} catch (NoPermissionException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("data", e.getMessage());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("data", e.getMessage());
+				}
+				return mp;
+			}
+			
+			private boolean needNewAcl(String docId) {
+				try {
+					EcmDocument doc =documentService.getObjectById(getToken(), docId);
+					String aclName = doc.getAclName();
+					if(StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
+						return true;
+					}
+					String sql ="select count(*) as aclCount from ecm_document where ACL_NAME='"+aclName+"'";
+					List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql);
+					if(list!=null && list.size()>0) {
+						return Integer.parseInt(list.get(0).get("aclCount").toString())>1;
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+				return true;
+			}
 
 }
