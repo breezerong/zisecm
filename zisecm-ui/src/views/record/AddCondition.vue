@@ -229,7 +229,10 @@ export default {
         }
         // +element.condition+' '+element.val
       });
-      sql=sql+")";
+      if(_self.typeName!='所有'){
+        sql=sql+")";
+      }
+      
       if(_self.formtips.length==0){
         sql=" TYPE_NAME='"+_self.typeName+"'";
       }
