@@ -132,6 +132,12 @@ public class SynchronismUser {
 							continue;
 						}else {
 							user=new EcmUser();
+							String validataName=" name ='"+name+"'";
+							long countUser= userService.getUserCount(ecmSession.getToken(), false, validataName);
+							if(countUser>0) {
+								name=name+loginName.substring(loginName.length()-1, loginName.length());
+							}
+							
 							user.setId(uId);
 							user.setLdapCn(code);
 							user.setName(name);
@@ -147,13 +153,11 @@ public class SynchronismUser {
 							user.setIsActived(false);
 							userService.updateObject(ecmSession.getToken(), user);
 						}else if(!code.equals(user.getLdapCn())
-								||!name.equals(user.getName())
 								||!loginName.equals(user.getLoginName())
 								||!true==user.getIsActived()
 								||!groupName.equals(user.getGroupName())) {
 							
 							user.setLdapCn(code);
-							user.setName(name);
 							user.setLoginName(loginName);
 							user.setIsActived(true);
 							user.setEmail(loginName+"@cnep.cc");
