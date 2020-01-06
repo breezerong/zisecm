@@ -158,7 +158,7 @@ public class SynchronismUser {
 							user.setIsActived(true);
 							user.setEmail(loginName+"@cnep.cc");
 							user.setGroupName(groupName);
-							userService.newObject(ecmSession.getToken(), user);
+							userService.updateObject(ecmSession.getToken(), user);
 						}
 					}
 				} catch (EcmException | AccessDeniedException | NoPermissionException e) {
