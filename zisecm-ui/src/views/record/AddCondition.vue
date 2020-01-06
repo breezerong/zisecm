@@ -58,11 +58,11 @@
          
   </el-dialog>
   <el-row>
-    <el-col>
+    <el-col :span="18">
       <el-input v-model="inputValue"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
-    <el-col>
+    <el-col :span="6">
       <el-button icon="el-icon-search" @click="clickShowDialog">高级搜索</el-button>
     </el-col>
   </el-row>
