@@ -1,8 +1,13 @@
 package com.ecm.icore.service;
 
+import java.util.Date;
 import java.util.List;
 
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 
 /**
  * 文件夹服务接口
@@ -36,5 +41,31 @@ public interface IFolderService {
 	 * @return
 	 */
 	boolean copyFolders(String token, String sourceId, String targetId, boolean includeSource);
+
+	String revokeUser(String token, String id, String targetName, boolean newAcl) throws Exception;
+
+	String revokeUser(String token, EcmFolder folder, String targetName, boolean newAcl)
+			throws NoPermissionException, AccessDeniedException;
+
+	String revokeGroup(String token, String id, String targetName, boolean newAcl) throws Exception;
+
+	String revokeGroup(String token, EcmFolder folder, String targetName, boolean newAcl)
+			throws NoPermissionException, AccessDeniedException;
+
+	int getPermit(String token, String id) throws AccessDeniedException;
+
+	int getPermit(String token, EcmFolder folder) throws AccessDeniedException;
+
+	String grantUser(String token, EcmFolder folder, String targetName, int permission, Date expireDate, boolean newAcl)
+			throws EcmException, AccessDeniedException, NoPermissionException;
+
+	String grantUser(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
+			throws EcmException, AccessDeniedException, NoPermissionException;
+
+	String grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
+			throws EcmException, AccessDeniedException, NoPermissionException;
+
+	String grantGroup(String token, EcmFolder folder, String targetName, int permission, Date expireDate,
+			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;
 
 }

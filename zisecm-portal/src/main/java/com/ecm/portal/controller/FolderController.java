@@ -11,11 +11,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.druid.util.StringUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.PermissionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmFolderMapper;
+import com.ecm.core.entity.EcmAcl;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.service.AclService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
 
@@ -39,6 +47,9 @@ public class FolderController  extends ControllerAbstract {
 	
 	@Autowired
 	private DocumentService documentService;
+	
+	@Autowired
+	private AclService aclService;
 	
 	/**
 	 * 获取所有表单
@@ -184,6 +195,452 @@ public class FolderController  extends ControllerAbstract {
 			mp.put("data", e.getMessage());
 		} //Integer.parseInt(parentId));
 		return mp;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/folder/grantPermit", method = RequestMethod.POST)
+	public Map<String, Object> grantPermit(@RequestBody EcmPermit permit) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			if (StringUtils.isEmpty(permit.getTargetName())) {
+				mp.put("code", ActionContext.FAILURE);
+			} else {
+				String aclName = "";
+				String[] targetNames = permit.getTargetName().split(";");
+				 
+				for (String targetName : targetNames) {
+					if (permit.getTargetType() == 1) {
+						aclName = folderService.grantUser(getToken(), permit.getParentId(), targetName,
+								permit.getPermission(), permit.getExpireDate(), needNewAcl(permit.getParentId(),0));
+					} else {
+						aclName = folderService.grantGroup(getToken(), permit.getParentId(), targetName,
+								permit.getPermission(), permit.getExpireDate(), needNewAcl(permit.getParentId(),0));
+					}
+				}
+				mp.put("data", aclName);
+				mp.put("code", ActionContext.SUCESS);
+			}
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("data", e.getMessage());
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		}
+		return mp;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/folder/revokePermit", method = RequestMethod.POST)
+	public Map<String, Object> revokePermit(@RequestBody EcmPermit permit) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String aclName = "";
+			if (permit.getTargetType() == 1) {
+				aclName = folderService.revokeUser(getToken(), permit.getParentId(), permit.getTargetName(),
+						needNewAcl(permit.getParentId(),0));
+			} else {
+				aclName = folderService.revokeGroup(getToken(), permit.getParentId(), permit.getTargetName(),
+						needNewAcl(permit.getParentId(),0));
+			}
+			mp.put("data", aclName);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("data", e.getMessage());
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		}
+		return mp;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/folder/batchGrantPermit", method = RequestMethod.POST)
+	public Map<String, Object> batchGrantPermit(@RequestBody EcmPermit permit) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			if (StringUtils.isEmpty(permit.getTargetName())) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("data", "Target Name is null.");
+			} else {
+				String folderId = permit.getParentId();
+				if(StringUtils.isEmpty(folderId)) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("data", "Folder Id is null.");
+				}else {
+					String oldAclName = "";
+					String newAclName = "";
+					EcmFolder folder = folderService.getObjectById(getToken(), folderId);
+					oldAclName = folder.getAclName();
+					//文件夹ACL不为空
+					if(needNewAclByAclName(oldAclName))
+					{
+						EcmAcl acl = aclService.getObjectByName(getToken(), oldAclName);
+						if (acl != null) {
+							acl = aclService.copy(getToken(), acl, null, null);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						} else {
+							acl = new EcmAcl();
+							acl.createId();
+							acl.setName("ecm_" + acl.getId());
+							aclService.newObject(getToken(), acl);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						}
+					}
+					else {
+						if(StringUtils.isEmpty(oldAclName)) {
+							EcmAcl acl = new EcmAcl();
+							acl.createId();
+							acl.setName("ecm_" + acl.getId());
+							aclService.newObject(getToken(), acl);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						}
+						else {
+							//直接在原来的基础上修改
+							EcmAcl acl = aclService.getObjectByName(getToken(), oldAclName);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						}
+					}
+					if(!oldAclName.equals(newAclName)) {
+						folder.setAclName(newAclName);
+						folderService.updateObject(getToken(), folder);
+					}
+					grantPermitDeep(oldAclName,newAclName,folderId, permit);
+					mp.put("data", newAclName);
+					mp.put("code", ActionContext.SUCESS);
+				}
+			}
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("data", e.getMessage());
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		}
+		return mp;
+	}
+	
+	private void grantPermitDeep(String oldAclName,String newAclName,String folderId, EcmPermit permit) throws AccessDeniedException, EcmException, NoPermissionException {
+		List<EcmFolder> folderList = folderService.getFoldersByParentId(getToken(), folderId);
+		for(EcmFolder folder: folderList) {
+			
+			String folderAclName = folder.getAclName();
+			//与以前Acl名称相同，直接设置为新Acl名称
+			if(folderAclName !=null && folderAclName.equals(oldAclName)) {
+				//Acl已经改变，需要更新文件夹ACL
+				if(!newAclName.equals(oldAclName)) {
+					folder.setAclName(newAclName);
+					folderService.updateObject(getToken(), folder);
+				}
+			}else {
+				EcmAcl acl = aclService.getObjectByName(getToken(), folderAclName);
+				//设置了ACL
+				if (acl != null) {
+					acl = aclService.copy(getToken(), acl, null, null);
+					if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+						aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+					}else {
+						aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+					}
+					folderAclName = acl.getName();
+				} else {
+					acl = new EcmAcl();
+					acl.createId();
+					acl.setName("ecm_" + acl.getId());
+					aclService.newObject(getToken(), acl);
+					if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+						aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+					}else {
+						aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+					}
+					folderAclName = acl.getName();
+				}
+			}
+			//递归更新子文件夹
+			grantPermitDeep(oldAclName,newAclName,folder.getId(), permit);
+		}
+		//更新文件夹中文件权限
+		String sql = "select ID,ACL_NAME from ecm_document where FOLDER_ID='"+folderId+"'";
+		List<Map<String, Object>> docList = documentService.getMapList(getToken(), sql);
+		for(Map<String, Object> docMap: docList) {
+			String id = docMap.get("ID").toString();
+			String aclName = (String)docMap.get("ACL_NAME");
+			//旧ACl名称相同，修改ACL名称即可
+			if(oldAclName.equals(aclName) && !newAclName.equals(aclName)) {
+				EcmDocument doc = documentService.getObjectById(getToken(), id);
+				doc.setAclName(newAclName);
+				documentService.updateObject(getToken(), doc, null);
+			}
+			//只有ACL不同才修改
+			else if(!newAclName.equals(aclName)) {
+				String[] targetNames = permit.getTargetName().split(";");
+				for (String targetName : targetNames) {
+					if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+						documentService.grantUser(getToken(), id, targetName,
+								permit.getPermission(), permit.getExpireDate(), needNewAcl(id,1));
+					} else {
+						documentService.grantGroup(getToken(), id, targetName,
+								permit.getPermission(), permit.getExpireDate(), needNewAcl(id,1));
+					}
+				}
+			}
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/folder/batchRevokePermit", method = RequestMethod.POST)
+	public Map<String, Object> batchRevokePermit(@RequestBody EcmPermit permit) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			if (StringUtils.isEmpty(permit.getTargetName())) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("data", "Target Name is null.");
+			} else {
+				String folderId = permit.getParentId();
+				if(StringUtils.isEmpty(folderId)) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("data", "Folder Id is null.");
+				}else {
+					String oldAclName = "";
+					String newAclName = "";
+					EcmFolder folder = folderService.getObjectById(getToken(), folderId);
+					oldAclName = folder.getAclName();
+					//文件夹ACL不为空
+					if(needNewAclByAclName(oldAclName))
+					{
+						EcmAcl acl = aclService.getObjectByName(getToken(), oldAclName);
+						if (acl != null) {
+							acl = aclService.copy(getToken(), acl, null, null);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.revokeUser(getToken(), acl.getId(), permit.getTargetName());
+							}else {
+								aclService.revokeGroup(getToken(), acl.getId(), permit.getTargetName());
+							}
+							newAclName = acl.getName();
+						} else {
+							acl = new EcmAcl();
+							acl.createId();
+							acl.setName("ecm_" + acl.getId());
+							aclService.newObject(getToken(), acl);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.revokeUser(getToken(), acl.getId(), permit.getTargetName());
+							}else {
+								aclService.revokeGroup(getToken(), acl.getId(), permit.getTargetName());
+							}
+							newAclName = acl.getName();
+						}
+					}
+					else {
+						if(StringUtils.isEmpty(oldAclName)) {
+							EcmAcl acl = new EcmAcl();
+							acl.createId();
+							acl.setName("ecm_" + acl.getId());
+							aclService.newObject(getToken(), acl);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.revokeUser(getToken(), acl.getId(), permit.getTargetName());
+							}else {
+								aclService.revokeGroup(getToken(), acl.getId(), permit.getTargetName());
+							}
+							newAclName = acl.getName();
+						}
+						else {
+							//直接在原来的基础上修改
+							EcmAcl acl = aclService.getObjectByName(getToken(), oldAclName);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.revokeUser(getToken(), acl.getId(), permit.getTargetName());
+							}else {
+								aclService.revokeGroup(getToken(), acl.getId(), permit.getTargetName());
+							}
+							newAclName = acl.getName();
+						}
+					}
+					revokePermitDeep(oldAclName,newAclName,folderId, permit);
+					mp.put("data", newAclName);
+					mp.put("code", ActionContext.SUCESS);
+				}
+			}
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("data", e.getMessage());
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		}
+		return mp;
+	}
+	
+	private void revokePermitDeep(String oldAclName,String newAclName,String folderId, EcmPermit permit) throws Exception {
+		List<EcmFolder> folderList = folderService.getFoldersByParentId(getToken(), folderId);
+		for(EcmFolder folder: folderList) {
+			
+			String folderAclName = folder.getAclName();
+			//与以前Acl名称相同，直接设置为新Acl名称
+			if(folderAclName !=null && folderAclName.equals(oldAclName)) {
+				//Acl已经改变，需要更新文件夹ACL
+				if(!newAclName.equals(oldAclName)) {
+					folder.setAclName(newAclName);
+					folderService.updateObject(getToken(), folder);
+				}
+			}else {
+				EcmAcl acl = aclService.getObjectByName(getToken(), folderAclName);
+				//设置了ACL
+				if (acl != null) {
+					acl = aclService.copy(getToken(), acl, null, null);
+					if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+						aclService.revokeUser(getToken(), acl.getId(), permit.getTargetName());
+					}else {
+						aclService.revokeGroup(getToken(), acl.getId(), permit.getTargetName());
+					}
+					folderAclName = acl.getName();
+				} else {
+					acl = new EcmAcl();
+					acl.createId();
+					acl.setName("ecm_" + acl.getId());
+					aclService.newObject(getToken(), acl);
+					if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+						aclService.revokeUser(getToken(), acl.getId(), permit.getTargetName());
+					}else {
+						aclService.revokeGroup(getToken(), acl.getId(), permit.getTargetName());
+					}
+					folderAclName = acl.getName();
+				}
+			}
+			//递归更新子文件夹
+			revokePermitDeep(oldAclName,newAclName,folder.getId(), permit);
+			
+			
+			
+		}
+		//更新文件夹中文件权限
+		String sql = "select ID,ACL_NAME from ecm_document where FOLDER_ID='"+folderId+"'";
+		List<Map<String, Object>> docList = documentService.getMapList(getToken(), sql);
+		for(Map<String, Object> docMap: docList) {
+			String id = docMap.get("ID").toString();
+			String aclName = (String)docMap.get("ACL_NAME");
+			//旧ACl名称相同，修改ACL名称即可
+			if(oldAclName.equals(aclName) && !newAclName.equals(aclName)) {
+				EcmDocument doc = documentService.getObjectById(getToken(), id);
+				doc.setAclName(newAclName);
+				documentService.updateObject(getToken(), doc, null);
+			}
+			//只有ACL不同才修改
+			else if(!newAclName.equals(aclName)) {
+				String[] targetNames = permit.getTargetName().split(";");
+				for (String targetName : targetNames) {
+					if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+						documentService.revokeUser(getToken(), id, targetName, needNewAcl(id,1));
+					} else {
+						documentService.revokeGroup(getToken(), id, targetName, needNewAcl(id,1));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @param type 0:文件夹，1:文档
+	 * @return
+	 */
+	private boolean needNewAcl(String id,int type) {
+		try {
+			String aclName = "";
+			if(type==0) {
+				EcmFolder folder = folderService.getObjectById(getToken(), id);
+				aclName = folder.getAclName();
+			}else {
+				EcmDocument doc = documentService.getObjectById(getToken(), id);
+				aclName = doc.getAclName();
+			}
+			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
+				return true;
+			}
+			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
+			if (list != null && list.size() > 0) {
+				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	private boolean needNewAclByAclName(String aclName) {
+		try {
+			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
+				return true;
+			}
+			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
+			if (list != null && list.size() > 0) {
+				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 }

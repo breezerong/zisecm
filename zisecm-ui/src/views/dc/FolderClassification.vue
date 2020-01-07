@@ -67,8 +67,10 @@
     <el-dialog
       :title="folderAction"
       :visible.sync="folderDialogVisible"
-      @close="folderDialogVisible = false"
+      @close="folderDialogVisible = false" width="80%"
     >
+    <el-tabs type="border-card">
+      <el-tab-pane label="基本信息">
       <el-form :model="folderForm">
         <el-form-item :label="$t('field.name')" :label-width="formLabelWidth">
           <el-input v-model="folderForm.name" auto-complete="off"></el-input>
@@ -102,6 +104,16 @@
             </el-form-item>
             </el-col>
       </el-form>
+      </el-tab-pane>
+      <el-tab-pane label="权限管理">
+        <FolderAcl
+          ref="FolderAcl"
+          width="100%"
+          v-bind:name="folderForm.aclName"
+          v-bind:folderId="folderForm.id"
+        ></FolderAcl>
+        </el-tab-pane>
+    </el-tabs>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="saveFolder(folderForm)">{{$t('application.ok')}}</el-button>
         <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
@@ -330,6 +342,7 @@ import FolderSelector from "@/components/controls/FolderSelector";
 import InnerItemViewer from "./InnerItemViewer.vue";
 import ObjectAcl from '@/components/controls/ObjectAcl';
 import SystemInfo from '@/components/controls/SystemInfo';
+import FolderAcl from '@/components/controls/FolderAcl';
 
 import "url-search-params-polyfill";
 
@@ -341,7 +354,8 @@ export default {
     InnerItemViewer: InnerItemViewer,
     FolderSelector: FolderSelector,
     ObjectAcl: ObjectAcl,
-    SystemInfo: SystemInfo
+    SystemInfo: SystemInfo,
+    FolderAcl:FolderAcl
   },
   data() {
     return {
@@ -613,12 +627,6 @@ export default {
     handleCheckChange(data, checked, indeterminate) {
       data.visibleType = checked ? 1 : 0;
     },
-    inited(viewer) {
-      this.imageViewer = viewer;
-    },
-    onImageClick() {
-      this.imageViewVisible = false;
-    },
     formatImage(indata) {
       var url = "./static/img/format/f_" + indata + "_16.gif";
       return url;
@@ -719,7 +727,7 @@ export default {
         .post("/admin/getFolder", 0)
         .then(function(response) {
           _self.dataList = response.data.data;
-          console.log(_self.dataList);
+          //console.log(_self.dataList);
           _self.loading = false;
         })
         .catch(function(error) {
@@ -865,9 +873,6 @@ export default {
         _self.imageViewVisible = true;
       }
     },
-    closepdf() {
-      this.imageViewVisible = false;
-    },
     // 保存文件夹
     saveFolder(indata) {
       let _self = this;
@@ -930,6 +935,11 @@ export default {
         this.$t("application.edit") + this.$t("application.folder");
       this.folderForm = this.currentFolder;
       this.folderDialogVisible = true;
+      if (this.$refs.FolderAcl) {
+        this.$refs.FolderAcl.name = currentFolder.name;
+        this.$refs.FolderAcl.folderId = currentFolder.id;
+        this.$refs.FolderAcl.loadAcl();
+      }
     },
     onDeleleFolder() {
       let _self = this;
