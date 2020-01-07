@@ -1,5 +1,23 @@
 <template>
   <div>
+    <el-dialog
+      :title="$t('application.property')"
+      :visible.sync="propertyVisible"
+      @close="propertyVisible = false"
+      width="90%"
+    >
+      <ShowProperty
+        ref="ShowProperty"
+        width="100%"
+        v-bind:itemId="selectedItemId"
+      ></ShowProperty>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="96%"  @close="itemDialogVisible = false">  
+      <InnerItemViewer ref='innerItemViewer' v-bind:id = "currentId" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
+     </el-dialog>
     <div class="navbar">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item >{{$t('menu.searchCenter')}}</el-breadcrumb-item>
@@ -68,7 +86,7 @@
                     <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                   </div>
                   <div v-else>
-                    <span>{{scope.row[citem.attrName]}}</span>
+                    <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -85,7 +103,7 @@
                     <span>{{dateFormat(scope.row[citem.attrName])}}</span>
                   </div>
                   <div v-else>
-                    <span>{{scope.row[citem.attrName]}}</span>
+                    <span @click="rowClick(scope.row)">{{scope.row[citem.attrName]}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -131,19 +149,28 @@
 
 <script type="text/javascript">
 import AddCondition from '@/views/record/AddCondition'
+import ShowProperty from "@/components/ShowProperty";
+import InnerItemViewer from "@/views/dc/InnerItemViewer";
 export default {
   components:{
-    AddCondition:AddCondition
+    AddCondition:AddCondition,
+    ShowProperty: ShowProperty,
+    InnerItemViewer: InnerItemViewer
   },
   name: "AdvSearch",
   permit: 1,
   data() {
     return {
       dataList: [],
+      propertyVisible:false,
+      itemDialogVisible:false,
+      currentId:"",
+      innerTableHeight: window.innerHeight - 360,
       dataListFull: [],
       itemDataList:[],
       gridList:[],
       inputkey: "",
+      selectedItemId:"",
       pageSize: 20,
       itemCount: 0,
       selectedItems:[],
@@ -176,6 +203,41 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
+    },
+    //查看属性
+    showItemProperty(indata) {
+      let _self = this;
+      _self.selectedItemId = indata.ID;
+      _self.propertyVisible = true;
+      _self.itemDialogVisible = false;
+      if (_self.$refs.ShowProperty) {
+        _self.$refs.ShowProperty.myItemId = indata.ID;
+        _self.$refs.ShowProperty.loadFormInfo();
+      }
+    },
+    //查看内容
+    showItemContent(indata) {
+      let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: "/viewdoc",
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, "_blank");
+    },
+    //卷盒或图册点击查看子文件列表
+    rowClick(row) {
+      this.currentId = row.ID;
+      if (row.TYPE_NAME == "卷盒" || row.TYPE_NAME == "图册") {
+        this.itemDialogVisible = true;
+        let _self=this;
+        setTimeout(()=>{
+          _self.$refs.innerItemViewer.loadGridInfo();
+        },10);
+      }
     },
     search(){
       let _self = this;
@@ -215,19 +277,6 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.search();
-    },
-    // 查看内容
-    showItemContent(indata){
-      let _self = this;
-      _self.imageArray = [];
-      _self.currentType = indata.FORMAT_NAME;
-      // 拦截器会自动替换成目标url
-      _self.imageArray[0] =  "/dc/getContent?id="+indata.ID+"&token="+sessionStorage.getItem('access-token');
-      if(_self.currentType == "pdf"){
-         window.open("./static/pdfviewer/web/viewer.html?file="+encodeURIComponent(_self.imageArray[0])+"&.pdf");
-      }else{
-         _self.imageViewVisible =true;
-      }
     },
     dateFormat(row, column) {
         let datetime = row
