@@ -141,6 +141,7 @@ public class SynchronismUser {
 							user.setId(uId);
 							user.setLdapCn(code);
 							user.setName(name);
+							user.setPassword("ecm1234");
 							user.setLoginName(loginName);
 							user.setIsActived(true);
 							//
