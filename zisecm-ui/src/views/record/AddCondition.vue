@@ -7,7 +7,7 @@
       :close-on-click-modal="false"
       @open="getTypeNames('AdvSearchTypes')"
       @close="closeDialog"
-      title="备份条件"
+      title="查询条件"
       width="60%"
     >
     <el-row>
@@ -238,6 +238,7 @@ export default {
       }
       _self.inputValue=sql;
       _self.$emit("change", _self.inputValue);
+      _self.$emit("sendMsg",_self.inputValue);
       _self.visible=false;
       
     },
