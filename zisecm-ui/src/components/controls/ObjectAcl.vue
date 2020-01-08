@@ -82,7 +82,7 @@
       <el-table-column :label="$t('field.name')" prop="targetName" min-width="20%"></el-table-column>
       <el-table-column :label="$t('field.permission')" prop="permission" :formatter="permitFormatter" min-width="10%"></el-table-column>
       <el-table-column :label="$t('field.expireDate')" prop="expireDate" :formatter="dateFormatter" width="160"></el-table-column>
-      <el-table-column v-if="systemPermission>=9 || permission>=9" :label="$t('application.operation')" width="160">
+      <el-table-column v-if="systemPermission>=9 || permission>=9" :label="$t('application.operation')" width="170">
         <template slot-scope="scope">
           <el-button
             :plain="true"
