@@ -89,7 +89,7 @@
               :height="tableHeight"
               :data="itemDataList"
               border
-              v-loading="loading"
+              v-loading="tableLoading"
               @selection-change="selectChange"
               @sort-change="sortchange"
               style="width: 100%"
@@ -190,6 +190,7 @@ export default {
       asideWidth: '100%',
       currentLanguage: "zh-cn",
       loading: false,
+      tableLoading : false,
       currentFolder: [],
       showFields: [],
       pageSize: 20,
@@ -337,6 +338,7 @@ export default {
     // 加载表格数据
     loadGridData(indata) {
       let _self = this;
+      _self.tableLoading = true
       var key = _self.inputkey;
       var m = new Map();
       m.set("gridName", indata.gridView);
@@ -350,8 +352,9 @@ export default {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
           _self.itemCount = response.data.pager.total;
+          _self.tableHeight= window.innerHeight - 150
           //console.log(JSON.stringify(response.data.datalist));
-          _self.loading = false;
+         _self.tableLoading = false;
         });
     },
     //加载包括卷盒在内的所有信息

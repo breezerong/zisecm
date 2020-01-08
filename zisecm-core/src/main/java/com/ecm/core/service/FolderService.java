@@ -2,6 +2,7 @@ package com.ecm.core.service;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +12,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ecm.core.AuditContext;
+import com.ecm.core.PermissionContext.ObjectPermission;
+import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.dao.EcmFolderMapper;
+import com.ecm.core.dao.EcmQueryMapper;
+import com.ecm.core.entity.EcmAcl;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IFolderService;
 @Service
@@ -24,6 +34,11 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	@Autowired
 	private EcmFolderMapper ecmFolderMapper;
 	
+	@Autowired
+	private AclService aclService;
+	
+	@Autowired
+	private EcmQueryMapper ecmQuery;
 
 	@Override
 	public long getFolderCount(String token, String folderId) {
@@ -192,5 +207,230 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 		}
 	}
 	
+	@Override
+	public String grantUser(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		EcmFolder folder = getObjectById(token, id);
+		return grantUser(token, folder, targetName, permission, expireDate, newAcl);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public String grantUser(String token, EcmFolder folder, String targetName, int permission, Date expireDate,
+			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
+		String aclName = "";
+		if (folder != null) {
+			if (getPermit(token, folder.getId()) < ObjectPermission.PEMISSION) {
+				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
+						+ " has no right to change permission:" + folder.getId());
+			}
+			aclName = folder.getAclName();
+			if (!StringUtils.isEmpty(aclName)) {
+				EcmAcl acl = aclService.getObjectByName(token, aclName);
+				if (acl != null) {
+					if (newAcl) {
+						acl = aclService.copy(token, acl, null, folder.getId());
+						updateAclName(token, folder.getId(), acl.getName());
+					}
+					aclService.grantUser(token, acl.getId(), targetName, permission, expireDate);
+					aclName = acl.getName();
+				} else {
+					acl = new EcmAcl();
+					acl.createId();
+					acl.setName("ecm_" + acl.getId());
+					aclService.newObject(token, acl);
+					updateAclName(token, folder.getId(), acl.getName());
+					aclService.grantUser(token, acl.getId(), targetName, permission, expireDate);
+					aclName = acl.getName();
+				}
+			} else {
+				EcmAcl acl = new EcmAcl();
+				acl.createId();
+				acl.setName("ecm_" + acl.getId());
+				aclService.newObject(token, acl);
+				aclService.grantUser(token, acl.getId(), targetName, permission, expireDate);
+				updateAclName(token, folder.getId(), acl.getName());
+				aclName = acl.getName();
+			}
+			newAudit(token, null, AuditContext.CHANGE_PERMIT, folder.getId(), null, aclName);
+		}
+		return aclName;
+	}
+	
+	@Override
+	public String grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		EcmFolder folder = getObjectById(token, id);
+		return grantGroup(token, folder, targetName, permission, expireDate, newAcl);
+
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public String grantGroup(String token, EcmFolder folder, String targetName, int permission, Date expireDate,
+			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
+		String aclName = "";
+		if (folder != null) {
+
+			if (getPermit(token, folder.getId()) < ObjectPermission.PEMISSION) {
+				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
+						+ " has no right to change permission:" + folder.getId());
+			}
+			aclName = folder.getAclName();
+			if (!StringUtils.isEmpty(aclName)) {
+				EcmAcl acl = aclService.getObjectByName(token, aclName);
+				if (newAcl) {
+					acl = aclService.copy(token, acl, null, folder.getId());
+					updateAclName(token, folder.getId(), acl.getName());
+				}
+				aclName = acl.getName();
+				aclService.grantGroup(token, acl.getId(), targetName, permission, expireDate);
+			} else {
+				EcmAcl acl = new EcmAcl();
+				acl.createId();
+				acl.setName("ecm_" + acl.getId());
+				aclService.newObject(token, acl);
+				aclService.grantGroup(token, acl.getId(), targetName, permission, expireDate);
+				updateAclName(token, folder.getId(), acl.getName());
+				aclName = acl.getName();
+			}
+			newAudit(token, null, AuditContext.CHANGE_PERMIT, folder.getId(), null, aclName);
+		}
+		return aclName;
+	}
+
+
+	@Override
+	public String revokeUser(String token, String id, String targetName, boolean newAcl) throws Exception {
+		EcmFolder folder = getObjectById(token, id);
+		return revokeUser(token, folder, targetName, newAcl);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public String revokeUser(String token, EcmFolder folder, String targetName, boolean newAcl) throws NoPermissionException, AccessDeniedException {
+		String aclName = "";
+		if (folder != null) {
+			if (getPermit(token, folder.getId()) < ObjectPermission.PEMISSION) {
+				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
+						+ " has no right to change permission:" + folder.getId());
+			}
+			aclName = folder.getAclName();
+			if (StringUtils.isEmpty(aclName)) {
+				return "";
+			}
+			EcmAcl acl = aclService.getObjectByName(token, aclName);
+			if (acl != null) {
+				if (newAcl) {
+					acl = aclService.copy(token, acl, null, folder.getId());
+					updateAclName(token, folder.getId(), acl.getName());
+					aclName = acl.getName();
+				}
+				aclService.revokeUser(token, acl.getId(), targetName);
+			}
+			newAudit(token, null, AuditContext.CHANGE_PERMIT, folder.getId(), null, aclName);
+		}
+		return aclName;
+	}
+
+	@Override
+	public String revokeGroup(String token, String id, String targetName, boolean newAcl) throws Exception {
+		EcmFolder folder = getObjectById(token, id);
+		return revokeGroup(token, folder, targetName, newAcl);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public String revokeGroup(String token, EcmFolder folder, String targetName, boolean newAcl) throws NoPermissionException, AccessDeniedException {
+		String aclName = "";
+		if (folder != null) {
+			if (getPermit(token, folder.getId()) < ObjectPermission.PEMISSION) {
+				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
+						+ " has no right to change permission:" + folder.getId());
+			}
+			aclName = folder.getAclName();
+			if (StringUtils.isEmpty(aclName)) {
+				return "";
+			}
+			EcmAcl acl = aclService.getObjectByName(token, aclName);
+			if (acl != null) {
+				if (newAcl) {
+					acl = aclService.copy(token, acl, null, folder.getId());
+					updateAclName(token, folder.getId(), acl.getName());
+					aclName = acl.getName();
+				}
+				aclService.revokeGroup(token, acl.getId(), targetName);
+			}
+			newAudit(token, null, AuditContext.CHANGE_PERMIT, folder.getId(), null, aclName);
+		}
+		return aclName;
+	}
+	
+	@Override
+	public int getPermit(String token, String id) throws AccessDeniedException {
+		EcmFolder folder = getObjectById(token, id);
+		return getPermit(token, folder);
+	}
+
+	@Override
+	public int getPermit(String token, EcmFolder folder) throws AccessDeniedException {
+		// TODO Auto-generated method stub
+		// 超级用户返回最大权限
+		if (getSession(token).getCurrentUser().getSystemPermission() >= SystemPermission.SUPER_USER) {
+			return 9;
+		}
+		String currentUser = getSession(token).getCurrentUser().getUserName();
+		String userID = getSession(token).getCurrentUser().getUserId();
+		String aclName = folder.getAclName();
+		// 没有设置ACL
+		if (StringUtils.isEmpty(aclName)) {
+			// Owner 返回最大权限
+			if (currentUser.equals(folder.getCreator())) {
+				return 9;
+			} else {
+				return ObjectPermission.READ;
+			}
+		} else {
+			EcmAcl acl = aclService.getObjectByName(token, aclName);
+			if (acl == null) {
+				// Owner 返回最大权限
+				if (currentUser.equals(folder.getCreator())) {
+					return 9;
+				} else {
+					return ObjectPermission.READ;
+				}
+			} else {
+				StringBuilder sb = new StringBuilder();
+				sb.append("select max(PERMISSION) as PERMISSION from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
+				sb.append("b.NAME='").append(aclName);
+				sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and a.TARGET_NAME in('everyone'");
+				sb.append(",'").append(currentUser).append("'");
+				if (currentUser.equals(folder.getCreator())) {
+					sb.append(",'owner'");
+				}
+				sb.append(")");
+				sb.append(" union ");
+				sb.append(
+						"select PERMISSION from ecm_acl_item a, ecm_acl b, ecm_group c, ecm_group_user d where b.NAME='");
+				sb.append(aclName).append(
+						"'  and a.PARENT_ID = b.ID and a.TARGET_TYPE='2' and a.TARGET_NAME=c.NAME and c.ID=d.GROUP_ID and ");
+				sb.append("d.USER_ID='").append(userID).append("') as permittemp");
+				List<Map<String, Object>> list = ecmQuery.executeSQL(sb.toString());
+
+				if (list.size() > 0) {
+					return (int) list.get(0).get("PERMISSION");
+				}
+			}
+		}
+		return 1;
+	}
+	
+	private void updateAclName(String token, String id, String aclName) throws AccessDeniedException {
+		String sql = "update ecm_folder set ACL_NAME='" + aclName + "', ";
+		sql += " MODIFIED_DATE=" + DBUtils.getDBDateNow();
+		sql += ", MODIFIER='" + getSession(token).getCurrentUser().getUserName() + "'";
+		sql += " where ID='" + id + "'";
+		ecmQuery.executeSQL(sql);
+	}
 	
 }

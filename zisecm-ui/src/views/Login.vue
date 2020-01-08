@@ -8,7 +8,7 @@
   >
     <el-form-item>
       <h2 class="title">
-        <img src="/static/img/logo.png" border="0" />&nbsp;河北分公司档案信息系统<br/>
+        <img src="/static/img/logo.png" border="0" />&nbsp;{{$t("application.name")}}<br/>
         {{$t("application.user")+$t("application.login")}}
       </h2>
     </el-form-item>
