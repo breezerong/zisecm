@@ -59,7 +59,7 @@
   </el-dialog>
   <el-row>
     <el-col :span="18">
-      <el-input v-model="inputValue"></el-input>
+      <el-input v-model="inputValue" :type="inputType"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="6">
@@ -135,6 +135,10 @@ export default {
     noGroup: {
       type: String,
       noGroup: "0"
+    },
+    inputType:{
+      type:String,
+      default:'text'
     }
   },
   

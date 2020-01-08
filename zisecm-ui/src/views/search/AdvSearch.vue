@@ -28,10 +28,17 @@
       <el-header style="height:50px">
         <el-row>
           <el-col :span="12">
-            <AddCondition v-model="inputkey" v-bind:inputValue="inputkey"></AddCondition>
+            <AddCondition @sendMsg='search' v-model="inputkey" v-bind:inputValue="inputkey" :inputType='hiddenInput'></AddCondition>
           </el-col>
           <el-col :span="1">
-            <el-button type="primary" @click="search">查询</el-button>
+            <el-button
+              type="primary"
+              style="height:40px"
+              plain
+              size="medium"
+              icon="el-icon-upload2"
+              @click="exportExcel()"
+            >{{$t('application.export')+'Excel'}}</el-button>
           </el-col>
           <el-col :span="11">
           </el-col>
@@ -178,6 +185,8 @@ export default {
       loading: false,
       dialogVisible: false,
       tableHeight: window.innerHeight - 170,
+      hiddenInput:'hidden',
+      isFinded:false
     };
   },
   created(){
@@ -256,11 +265,50 @@ export default {
           _self.itemCount = response.data.pager.totalRecord;
           _self.loading = false
           _self.tableHeight = window.innerHeight - 160
+          _self.isFinded = true
       })
       .catch(function(error) {
           console.log(error);
           _self.loading = false;
       });
+    },
+    exportExcel(){
+      var url = "/dc/getExportExcelByFind";
+      let _self = this;
+      var m = new Map();
+      if (_self.isFinded) {
+      m.set("gridName",'GeneralGrid')
+      m.set("condition", _self.inputkey+" and STATUS = '利用'");
+      m.set("orderBy", "MODIFIED_DATE desc");
+      axios
+          .post(url, JSON.stringify(m), {
+            responseType: "blob"
+          }).then(res => {
+            let fileName = res.headers["content-disposition"]
+              .split(";")[1]
+              .split("=")[1]
+              .replace(/\"/g, "");
+            let type = res.headers["content-type"];
+            let blob = new Blob([res.data], { type: type });
+            // IE
+            if (window.navigator.msSaveBlob) {
+              window.navigator.msSaveBlob(blob, fileName);
+            } else {
+              var link = document.createElement("a");
+              link.href = window.URL.createObjectURL(blob);
+              link.download = fileName;
+              link.click();
+              //释放内存
+              window.URL.revokeObjectURL(link.href);
+            }
+          });
+      }else{
+        this.$message({
+          showClose: true,
+          message: "请查询后操作!",
+          duration: 2000
+        });
+      }
     },
     // 表格行选择
     selectChange(val) 
