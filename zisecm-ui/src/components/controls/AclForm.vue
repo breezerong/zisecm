@@ -81,7 +81,7 @@
         </el-table-column>
       <el-table-column :label="$t('field.name')" prop="targetName" min-width="20%"></el-table-column>
       <el-table-column :label="$t('field.permission')" prop="permission" :formatter="permitFormatter" min-width="10%"></el-table-column>
-      <el-table-column :label="$t('field.expireDate')" prop="expireDate" :formatter="dateFormatter" width="160"></el-table-column>
+      <el-table-column :label="$t('field.expireDate')" prop="expireDate" :formatter="dateFormatter" width="170"></el-table-column>
       <el-table-column :label="$t('application.operation')" width="160">
         <template slot-scope="scope">
           <el-button
