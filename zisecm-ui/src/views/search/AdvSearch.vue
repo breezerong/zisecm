@@ -1,6 +1,31 @@
 <template>
   <div>
     <el-dialog
+      title="选择需要展示的字段"
+      :visible.sync="columnsInfo.dialogFormVisible"
+      width="40%"
+      center
+      top="15vh"
+      :close-on-click-modal="false"
+    >
+      <el-checkbox
+        :indeterminate="columnsInfo.isIndeterminate"
+        v-model="columnsInfo.checkAll"
+        @change="handleCheckAllChange"
+      >全选</el-checkbox>
+      <el-checkbox-group v-model="showFields" @change="handleCheckedColsChange">
+        <el-checkbox
+          v-for="item in gridList"
+          :label="item.attrName"
+          :key="item.attrName"
+        >{{item.label}}</el-checkbox>
+      </el-checkbox-group>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="columnsInfo.dialogFormVisible=false" size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
       :title="$t('application.property')"
       :visible.sync="propertyVisible"
       @close="propertyVisible = false"
@@ -118,6 +143,14 @@
           </div>
         </div>
         <el-table-column :label="$t('application.operation')" width="160">
+          <template slot="header">
+            <el-button
+              icon="el-icon-s-grid"
+              size="small"
+              @click="dialogFormShow"
+              title="选择展示字段"
+            ></el-button>
+          </template>
           <template slot-scope="scope">
             <el-button
               type="primary"
@@ -169,9 +202,15 @@ export default {
   data() {
     return {
       dataList: [],
+      columnsInfo: {
+        checkAll: true,
+        dialogFormVisible: false,
+        isIndeterminate: false
+      },
       propertyVisible:false,
       itemDialogVisible:false,
       currentId:"",
+      showFields:[],
       innerTableHeight: window.innerHeight - 360,
       dataListFull: [],
       itemDataList:[],
@@ -186,7 +225,8 @@ export default {
       dialogVisible: false,
       tableHeight: window.innerHeight - 170,
       hiddenInput:'hidden',
-      isFinded:false
+      isFinded:false,
+      gridName:'GeneralGrid'
     };
   },
   created(){
@@ -202,12 +242,19 @@ export default {
       let _self = this;
       //console.log(val);
       var m = new Map();
-      m.set("gridName", 'GeneralGrid');
+      console.log(_self.gridName)
+      m.set("gridName", _self.gridName);
       m.set("lang", _self.getLang());
       axios
         .post("/dc/getGridViewInfo", JSON.stringify(m))
         .then(function(response) {
+          _self.showFields = [];
           _self.gridList = response.data.data;
+          _self.gridList.forEach(element => {
+            if (element.visibleType == 1) {
+              _self.showFields.push(element.attrName);
+            }
+          });
         })
         .catch(function(error) {
           console.log(error);
@@ -237,6 +284,51 @@ export default {
       //console.log(href);
       window.open(href.href, "_blank");
     },
+    //展示勾选弹框
+    dialogFormShow() {
+      this.columnsInfo.dialogFormVisible = true;
+    },
+    //弹框中全选，展示所有属性
+    handleCheckAllChange(val) {
+      this.showFields = [];
+      if (val) {
+        this.gridList.forEach(element => {
+          this.showFields.push(element.attrName);
+        });
+      }
+      this.columnsInfo.isIndeterminate = false;
+    },
+    //单个勾选属性
+    handleCheckedColsChange(value) {
+      let checkedCount = value.length;
+      this.columnsInfo.checkAll = checkedCount === this.gridList.length;
+      this.columnsInfo.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.gridList.length;
+    },
+    confirmShow() {
+      let _self = this;
+      _self.gridList.forEach(element => {
+        element.visibleType = 2;
+      });
+      _self.showFields.forEach(element => {
+        let item = _self.getgriditem(element);
+        if (item) {
+          item.visibleType = 1;
+        }
+      });
+      this.columnsInfo.dialogFormVisible = false;
+    },
+    getgriditem(attrName) {
+      let _self = this;
+      let ret = null;
+      _self.gridList.forEach(element => {
+        if (element.attrName == attrName) {
+          ret = element;
+          return;
+        }
+      });
+      return ret;
+    },
     //卷盒或图册点击查看子文件列表
     rowClick(row) {
       this.currentId = row.ID;
@@ -248,11 +340,22 @@ export default {
         },10);
       }
     },
-    search(){
+    async search(){
       let _self = this;
       _self.loading = true
       var m = new Map();
-      m.set("gridName",'GeneralGrid')
+      var gm = new Map();
+      var grid = _self.ltrim(_self.inputkey)
+      if(grid.substring(0,10)!='TYPE_NAME='){
+        gm.set("cardName","所有")
+      }else{
+        gm.set("cardName",grid.match(/TYPE_NAME='(\S*)'/)[1])
+      }
+      await axios.post("/search/getCardInfo",JSON.stringify(gm)).then(function(response){
+        _self.gridName = response.data.data.gridView
+      })
+      _self.loadGridInfo();
+      m.set("gridName",_self.gridName)
       m.set("folderId", '');
       m.set("condition", _self.inputkey+" and STATUS = '利用'");
       m.set("pageSize", _self.pageSize);
@@ -277,7 +380,7 @@ export default {
       let _self = this;
       var m = new Map();
       if (_self.isFinded) {
-      m.set("gridName",'GeneralGrid')
+      m.set("gridName",_self.gridName)
       m.set("condition", _self.inputkey+" and STATUS = '利用'");
       m.set("orderBy", "MODIFIED_DATE desc");
       axios
@@ -325,6 +428,20 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.search();
+    },
+    ltrim(str){
+      if(str==""||str==undefined){
+        return "";
+      }
+      var n=0;
+      for(var i=0,length=str.length;i<length;i++){
+        var c=str.charAt(i);
+        if(c!=" "){ //如果为空，就将索引继续添加。 里面有一个空格。
+          break;
+        }
+        n++;
+      }
+      return str.substring(n);
     },
     dateFormat(row, column) {
         let datetime = row
