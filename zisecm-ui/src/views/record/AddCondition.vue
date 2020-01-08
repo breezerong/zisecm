@@ -238,6 +238,7 @@ export default {
       }
       _self.inputValue=sql;
       _self.$emit("change", _self.inputValue);
+      _self.$emit("sendMsg",_self.inputValue);
       _self.visible=false;
       
     },
