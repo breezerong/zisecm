@@ -8,7 +8,7 @@
             <el-submenu index="10">
               <template slot="title">
                 <i class="el-icon-news"></i>
-                <span>任务中心</span>
+                <span  style="font-size:16px">任务中心</span>
               </template>
               <el-menu-item index="11" @click="clickRouter('/workflow/todotask')" >
                 <i class="el-icon-time"></i>

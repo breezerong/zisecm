@@ -19,13 +19,13 @@
             <router-link to="/search/fulltextsearch">
               <el-menu-item index="1">
                 <i class="el-icon-document"></i>
-                <span slot="title">{{$t('menu.fullTextSearch')}}</span>
+                <span slot="title"  style="font-size:16px">{{$t('menu.fullTextSearch')}}</span>
               </el-menu-item>
             </router-link>
             <el-submenu index="10">
               <template slot="title">
                 <i class="el-icon-document-copy"></i>
-                <span>{{$t('menu.cardSearch')}}</span>
+                <span  style="font-size:16px">{{$t('menu.cardSearch')}}</span>
               </template>
               <div v-for="(item,index) in cardList" :key="'C_'+index">
                 <router-link :to="{path:'/search/cardSearch',query:{id:item.id}}">
@@ -38,7 +38,7 @@
             </el-submenu>
             <el-menu-item index="3">
               <i class="el-icon-s-grid"></i>
-              <span slot="title">
+              <span slot="title"  style="font-size:16px">
                 <router-link to="/search/advsearch">{{$t('menu.advSearch')}}</router-link>
               </span>
             </el-menu-item>

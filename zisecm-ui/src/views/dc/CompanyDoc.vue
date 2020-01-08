@@ -88,7 +88,7 @@
       <template slot="paneL">
         
             <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
-              <el-breadcrumb-item>
+              <el-breadcrumb-item class="title16">
                 <i class="el-icon-receiving"></i>
                 &nbsp; {{$t('menu.companyDoc')}}
               </el-breadcrumb-item>

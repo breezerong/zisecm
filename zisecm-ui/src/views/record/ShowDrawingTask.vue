@@ -8,7 +8,7 @@
                   <el-submenu index="200">
                     <template slot="title">
                       <i class="el-icon-menu"></i>
-                      <span>晒图状态</span>
+                      <span style="font-size:16px">晒图状态</span>
                     </template>
                     <el-menu-item index="201">
                       <i class="el-icon-bottom"></i>
@@ -56,38 +56,4 @@ export default {
 };
 </script>
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-body,html{
-			height:100%;
-			margin:0px;
-			padding:0px;
-			overflow:hidden;
-		}
-    .left,.right{
-			width:100%;
-      }
-      .middle{
-        width:5%;
-      }
-		.left,.middle,.right{
-			/* width:200px; */
-			/* height:100px; */
-			/* background-color:rgb(34,124,134); */
-			float:left;
-			height:100%;
-		}
 </style>
