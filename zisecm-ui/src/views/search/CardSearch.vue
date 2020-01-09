@@ -103,7 +103,7 @@
         v-loading="loading"
         style="width: 100%"
       >
-        <el-table-column :label="$t('field.indexNumber')" width="60">
+        <el-table-column :label="$t('field.indexNumber')" width="70">
           <template slot-scope="scope">
             <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
           </template>
@@ -479,9 +479,6 @@ ul {
 li {
   display: inline-block;
   margin: 0 10px;
-}
-a {
-  color: #42b983;
 }
 .el-form-item {
   margin-top: 2px;

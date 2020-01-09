@@ -38,7 +38,7 @@ export default {
     color: #000000 !important;
 }
 .el-menu-item.is-active {
-  color: #000000;
+  color: #000000 !important;
   font-weight:bold;
   background-color: #92c6fd !important;
 }
