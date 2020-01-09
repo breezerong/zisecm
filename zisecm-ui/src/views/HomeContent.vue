@@ -1,15 +1,5 @@
 <template>
   <el-container>
-    <el-dialog title="我的授权" :visible.sync="dialogVisible" width="20%">
-      <el-table :data="groupData" style="width:100%;height:300px">
-        <el-table-column type="index" width="50"></el-table-column>
-        <el-table-column prop="name" align="center" label="角色名称" ></el-table-column>
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
-      </div>
-
-    </el-dialog>
     <el-main>
       <el-row>
         <el-col :span="16">
@@ -58,7 +48,7 @@
               </el-row>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '395px' }">
+          <el-card :body-style="{ height: '170px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">待办任务<el-badge :value="totalCount" class="item"></el-badge>
               </span>
@@ -78,6 +68,13 @@
                 <template slot-scope="scope">{{dateFormat(scope.row.createTime)}}</template>
               </el-table-column>
             </el-table>
+          </el-card>
+          <el-card :body-style="{ height: '180px' }">
+            <el-carousel style="padding-bottom:0px"  height="200px" >
+              <el-carousel-item class="el-carousel__item"  v-for="item in imagesBox" :key="item">
+                <img class="carousel-image" :src="item" >
+              </el-carousel-item>
+            </el-carousel>
           </el-card>
           <!-- <el-card :body-style="{ height: '220px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
@@ -116,7 +113,7 @@
               <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
             </el-col>
           </el-card>
-          <el-card :body-style="{ height: '480px' }">
+          <el-card :body-style="{ height: '190px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">通知公告</span>
               <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
@@ -124,6 +121,25 @@
             <el-table
               v-loading="loadingNoticeData"
               :data="dataList.notiData"
+              style="width:100%;"
+              size="small"
+              :show-header="false"
+            >
+              <el-table-column :show-overflow-tooltip="true" min-width="60%" label="标题">
+                <el-link slot-scope="scope" type="primary" @click="showFile(scope.row)">{{(scope.row.NAME)}}</el-link>
+              </el-table-column>
+              <el-table-column align="right" width="120">
+                <template slot-scope="scope">{{dateFormat(scope.row.CREATION_DATE)}}</template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+          <el-card :body-style="{ height: '200px' }">
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
+              <span style="float: left;" class="ecmtitle">法律法规</span>
+            </div>
+            <el-table
+              v-loading="loadingReData"
+              :data="dataList.regulationData"
               style="width:100%;"
               size="small"
               :show-header="false"
@@ -157,6 +173,7 @@ export default {
         notification: "/dc/folderviewer",
         userCenter: "/user/userinfo"
       },
+      imagesBox:[],
       collectionChartData: {
         xAxisData: [],
         yAxisData: []
@@ -164,13 +181,16 @@ export default {
       dataList: {
         todoData: [],
         newdocData: [],
-        notiData: []
+        notiData: [],
+        carouselData:[],
+        regulationData:[]
       },
       inputkey: "",
       loading:false,
       loadingTodoData: false,
       loadingNewDocData :false,
       loadingNoticeData:false,
+      loadingReData:false,
       checkAll: true,
       isIndeterminate: false,
       checkedCards: [],
@@ -190,13 +210,8 @@ export default {
     _self.loadCards();
     _self.getNewsList();
     _self.getDocument();
-  },
-  mounted() {
-    let _self = this;
-    // _self.collectionChart = _self.echarts.init(
-    //   document.getElementById("collectionChart")
-    // );
-    // _self.getCollectionData();
+    _self.getCarousel();
+    _self.getRegulation();
   },
   methods: {
     //获取待办任务列表，最多五条
@@ -205,7 +220,7 @@ export default {
       var m = new Map();
       _self.loadingTodoData = true
       m.set("condition", "");
-      m.set("pageSize", 10);
+      m.set("pageSize", 5);
       m.set("pageIndex", 0);
       m.set("userId", sessionStorage.getItem("access-userName"));
       axios
@@ -227,7 +242,7 @@ export default {
       m.set("gridName", "NewsGrid");
       m.set("folderId", "");
       m.set("condition", " type_name='通知公告' ");
-      m.set("pageSize", 10);
+      m.set("pageSize", 5);
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
@@ -240,66 +255,6 @@ export default {
           console.log(error);
         });
     },
-    //获取馆藏状态数据
-    // getCollectionData() {
-    //   let _self = this;
-    //   axios.get("/dc/getCollectionData").then(function(response) {
-    //     _self.collectionChartData = response.data.data;
-    //     //绘制图表
-    //     _self.collectionChart.setOption({
-    //       grid:{
-    //         y:20,
-    //         y2:70
-    //       },
-    //       tooltip: {},
-    //       xAxis: {
-    //         type : 'category',
-    //         data :_self.collectionChartData.xAxisData,
-    //         axisLabel:{
-    //           show:true,
-    //           textStyle:{
-    //             color: '#000000',
-    //           },
-    //           fontSize:12,
-    //           formatter:function(val){
-    //               return val.split("").join("\n");
-    //           }
-    //         }
-    //       },
-    //       yAxis: {
-            
-    //         },
-    //       series: [
-    //         {
-    //           name: "数量",
-    //           type: "bar",
-    //           data: _self.collectionChartData.yAxisData,
-    //           itemStyle: {
-    //             normal: {
-    //               color: function(d) {
-    //                 return (
-    //                   "#" +
-    //                   Math.floor(
-    //                     Math.random() * (256 * 256 * 256 - 1)
-    //                   ).toString(16)
-    //                 );
-    //               },
-    //               label: {
-    //                 show: true, //开启显示
-    //                 position: "top", //在右侧显示
-    //                 textStyle: {
-    //                   //数值样式
-    //                   color: "black",
-    //                   fontSize: 10
-    //                 }
-    //               }
-    //             }
-    //           }
-    //         }
-    //       ]
-    //     });
-    //   });
-    // },
     //获取最新的5条新建文档
     getDocument() {
       let _self = this;
@@ -313,6 +268,51 @@ export default {
         .then(function(response) {
           _self.dataList.newdocData = response.data.data;
           _self.loadingNewDocData = false
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    //获取法律法规数据
+    getRegulation(){
+      let _self = this
+      var m = new Map();
+      _self.loadingReData = true
+      m.set("gridName", "GeneralDocGrid");
+      m.set("folderName","法律法规")
+      m.set("pageSize", 5);
+      m.set("pageIndex", 0);
+      m.set("orderBy", " CREATION_DATE DESC");
+      axios
+        .post("/dc/getDocsByFolderName", JSON.stringify(m))
+        .then(function(response) {
+          _self.dataList.regulationData = response.data.data
+          _self.loadingReData = false
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loadingReData = false
+        });
+    },
+    //获取轮播图数据
+    getCarousel(){
+      let _self = this
+      var m = new Map();
+      var imgArr = []
+      m.set("gridName", "GeneralDocGrid");
+      m.set("folderName","轮播图")
+      m.set("pageSize", 5);
+      m.set("pageIndex", 0);
+      m.set("orderBy", " CREATION_DATE DESC");
+      axios
+        .post("/dc/getDocsByFolderName", JSON.stringify(m))
+        .then(function(response) {
+          _self.dataList.carouselData = response.data.data
+          // var mycars=new Array(response.data.data.size)
+          _self.dataList.carouselData.forEach(function(val, index, arr) {
+          imgArr[index] = _self.axios.defaults.baseURL+"/dc/getContent?id="+val.ID+"&token="+sessionStorage.getItem('access-token');
+        });
+        _self.imagesBox = imgArr
         })
         .catch(function(error) {
           console.log(error);
@@ -447,5 +447,15 @@ export default {
 <style>
 .el-card__header{
   background-color: rgb(235, 235, 235);
+}
+.el-carousel__item{
+width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-image {
+    max-width: 100%;
+    max-height: 100%;
 }
 </style>
