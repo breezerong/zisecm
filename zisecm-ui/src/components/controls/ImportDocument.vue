@@ -181,7 +181,7 @@ a {
     margin: 0;
     padding: 0;
     list-style: none;
-    max-height: 300px;
-    overflow: scroll;
+    max-height: 300px !important;
+    overflow: scroll !important;
 }
 </style>
