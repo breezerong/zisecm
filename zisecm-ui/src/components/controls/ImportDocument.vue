@@ -44,7 +44,7 @@
             :on-change="handleChange2"
             :auto-upload="false"
             :multiple="true"
-            style="height:360;"
+            style="width:400px;height:360px;overflow:scroll;"
           >
           &nbsp; &nbsp;
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -166,10 +166,15 @@ h1,
 h2 {
   font-weight: normal;
 }
-ul {
+/* ul {
   list-style-type: none;
   padding: 0;
-}
+ 
+} */
+/* ul.el-upload-list{
+   height: 200px;
+  overflow: scroll;
+} */
 li {
   display: inline-block;
   margin: 0 10px;
@@ -178,10 +183,14 @@ a {
   color: #42b983;
 }
 .el-upload-list {
+  
     margin: 0;
     padding: 0;
     list-style: none;
     max-height: 300px !important;
     overflow: scroll !important;
+    
 }
+
 </style>
+
