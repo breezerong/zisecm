@@ -48,7 +48,7 @@
               </el-row>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '170px' }">
+          <el-card :body-style="{ height: '180px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">待办任务<el-badge :value="totalCount" class="item"></el-badge>
               </span>
@@ -83,8 +83,8 @@
                  <img :src="item">
                </span>
              </PaoMaDeng> -->
-             <el-card :body-style="{ height: '180px' }">
-               <el-carousel height="180px">
+             <el-card :body-style="{ height: '280px' }">
+               <el-carousel height="280px">
                <el-carousel-item v-for="item in imagesBox">
                  <img class="carousel-image" :src="item">
                </el-carousel-item>
@@ -147,7 +147,7 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '200px' }">
+          <el-card :body-style="{ height: '320px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">法律法规</span>
             </div>
@@ -295,7 +295,7 @@ export default {
       _self.loadingReData = true
       m.set("gridName", "GeneralDocGrid");
       m.set("folderName","法律法规")
-      m.set("pageSize", 5);
+      m.set("pageSize", 8);
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
