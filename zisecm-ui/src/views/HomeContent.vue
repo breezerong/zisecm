@@ -69,13 +69,27 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '180px' }">
-            <el-carousel style="padding-bottom:0px"  height="200px" >
-              <el-carousel-item class="el-carousel__item"  v-for="item in imagesBox" :key="item">
-                <img class="carousel-image" :src="item" >
-              </el-carousel-item>
-            </el-carousel>
-          </el-card>
+
+            <!-- <marquee behavior="scroll" scrollamount=26>
+              <template v-for="item in imagesBox">
+                <img :src="item">
+              </template>
+              <template v-for="item in imagesBox">
+                <img :src="item">
+              </template>
+            </marquee> -->
+             <!-- <PaoMaDeng :delay="0.5" :speed="100" :content="imagesBox">
+               <span v-for="(item, index) in imagesBox" :key="index">
+                 <img :src="item">
+               </span>
+             </PaoMaDeng> -->
+             <el-card :body-style="{ height: '180px' }">
+               <el-carousel height="180px">
+               <el-carousel-item v-for="item in imagesBox">
+                 <img class="carousel-image" :src="item">
+               </el-carousel-item>
+             </el-carousel>
+             </el-card>
           <!-- <el-card :body-style="{ height: '220px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">最新文档</span>
@@ -186,6 +200,7 @@ export default {
         regulationData:[]
       },
       inputkey: "",
+      scroll:true,
       loading:false,
       loadingTodoData: false,
       loadingNewDocData :false,
