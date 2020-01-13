@@ -34,8 +34,20 @@ module.exports = {
     cacheBusting: true,
 
     cssSourceMap: true,
+    //改完后要重启
+    //以下相当于访问http://localhost:8080/zisecm
     proxyTable: {
       '/zisecm': {
+        target: 'http://localhost:8080/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/zisecm': '/zisecm'
+        }
+      }
+    },
+    /*//相当于访问http://localhost:8080
+    proxyTable: {
+      '/': {
         target: 'http://localhost:8080/',
         changeOrigin: true,
         pathRewrite: {
@@ -43,6 +55,17 @@ module.exports = {
         }
       }
     },
+    //相当于访问http://localhost:8080
+    proxyTable: {
+      '/zisecm': {
+        target: 'http://localhost:8080/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/zisecm': ''
+        }
+      }
+    },
+    */
   },
 
   build: {
