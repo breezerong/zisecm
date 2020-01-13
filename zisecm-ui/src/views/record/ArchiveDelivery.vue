@@ -1526,7 +1526,7 @@ export default {
     // 删除文档事件
     onDeleleFileItem() {
       let _self = this;
-      if(_self.selectedFileItem.ID==undefined){
+      if(_self.selectedFileItem.RELATION_ID==undefined){
         // _self.$message("请选择一条要删除的文件数据！")
         _self.$message({
               showClose: true,
@@ -1566,7 +1566,7 @@ export default {
       //   m.push(tab[i]["ID"]);
       // }
       var m = [];
-      if(_self.selectedFileItem.ID==undefined){
+      if(_self.selectedFileItem.RELATION_ID==undefined){
         // _self.$message("请选择一条要删除的文件数据！")
         _self.$message({
               showClose: true,
@@ -1576,7 +1576,7 @@ export default {
           });
         return;
       }
-      m.push(_self.selectedFileItem.ID);
+      m.push(_self.selectedFileItem.RELATION_ID);
       // console.log(JSON.stringify(m));
       _self
         .axios({
@@ -1585,7 +1585,7 @@ export default {
           },
           method: "post",
           data:JSON.stringify(m),
-          url: "/dc/delDocumentAndRelation"
+          url: "/dc/delDocumentByRelationId"
         })
         .then(function(response) {
           _self.showInnerFile(null);

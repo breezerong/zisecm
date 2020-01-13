@@ -46,8 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
          .antMatchers("/employee/login").permitAll()///employee/login 不限定
          .antMatchers("/admin/**").hasRole("ADMIN")//对admin下的接口 需要ADMIN权限
          .antMatchers("/oauth/**").permitAll()//不拦截 oauth 开放的资源
-         .anyRequest().permitAll()//其他没有限定的请求，允许访问
-         .and().anonymous()//对于没有配置权限的其他请求允许匿名访问
+//         .anyRequest().permitAll()//其他没有限定的请求，允许访问
+         .anyRequest().authenticated()
+//         .and().anonymous()//对于没有配置权限的其他请求允许匿名访问
          .and().formLogin()//使用 spring security 默认登录页面
          .and()
          //权限拒绝的页面
