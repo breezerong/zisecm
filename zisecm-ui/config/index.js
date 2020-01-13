@@ -35,7 +35,7 @@ module.exports = {
 
     cssSourceMap: true,
     proxyTable: {
-      '/': {
+      '/zisecm': {
         target: 'http://localhost:8080/',
         changeOrigin: true,
         pathRewrite: {
