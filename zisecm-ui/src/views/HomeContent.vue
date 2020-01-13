@@ -48,7 +48,7 @@
               </el-row>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '170px' }">
+          <el-card :body-style="{ height: '180px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">待办任务<el-badge :value="totalCount" class="item"></el-badge>
               </span>
@@ -69,13 +69,27 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '180px' }">
-            <el-carousel style="padding-bottom:0px"  height="200px" >
-              <el-carousel-item class="el-carousel__item"  v-for="item in imagesBox" :key="item">
-                <img class="carousel-image" :src="item" >
-              </el-carousel-item>
-            </el-carousel>
-          </el-card>
+
+            <!-- <marquee behavior="scroll" scrollamount=26>
+              <template v-for="item in imagesBox">
+                <img :src="item">
+              </template>
+              <template v-for="item in imagesBox">
+                <img :src="item">
+              </template>
+            </marquee> -->
+             <!-- <PaoMaDeng :delay="0.5" :speed="100" :content="imagesBox">
+               <span v-for="(item, index) in imagesBox" :key="index">
+                 <img :src="item">
+               </span>
+             </PaoMaDeng> -->
+             <el-card :body-style="{ height: '280px' }">
+               <el-carousel height="280px">
+               <el-carousel-item v-for="item in imagesBox" :key="item">
+                 <img class="carousel-image" :src="item">
+               </el-carousel-item>
+             </el-carousel>
+             </el-card>
           <!-- <el-card :body-style="{ height: '220px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">最新文档</span>
@@ -116,7 +130,7 @@
           <el-card :body-style="{ height: '190px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">通知公告</span>
-              <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
+              <el-link :underline="false" @click="routerJump('通知公告')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
               v-loading="loadingNoticeData"
@@ -133,9 +147,10 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '200px' }">
+          <el-card :body-style="{ height: '310px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">法律法规</span>
+              <el-link :underline="false" @click="routerJump('法律法规')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
               v-loading="loadingReData"
@@ -186,6 +201,7 @@ export default {
         regulationData:[]
       },
       inputkey: "",
+      scroll:true,
       loading:false,
       loadingTodoData: false,
       loadingNewDocData :false,
@@ -280,7 +296,8 @@ export default {
       _self.loadingReData = true
       m.set("gridName", "GeneralDocGrid");
       m.set("folderName","法律法规")
-      m.set("pageSize", 5);
+      m.set("condition",'')
+      m.set("pageSize", 8);
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
@@ -302,6 +319,7 @@ export default {
       m.set("gridName", "GeneralDocGrid");
       m.set("folderName","轮播图")
       m.set("pageSize", 5);
+      m.set("condition",'')
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
@@ -416,6 +434,13 @@ export default {
               taskId:taskId
              }
         });
+    },
+    routerJump(folderName){
+      let _self = this
+      _self.$router.push({
+        path:'/dc/folderviewer',
+          query: { folderName: folderName }
+      });
     }
   }
 };
