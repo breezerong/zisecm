@@ -85,7 +85,7 @@
              </PaoMaDeng> -->
              <el-card :body-style="{ height: '280px' }">
                <el-carousel height="280px">
-               <el-carousel-item v-for="item in imagesBox">
+               <el-carousel-item v-for="item in imagesBox" :key="item">
                  <img class="carousel-image" :src="item">
                </el-carousel-item>
              </el-carousel>
@@ -130,7 +130,7 @@
           <el-card :body-style="{ height: '190px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">通知公告</span>
-              <el-link :underline="false" @click="$router.push(jumpPath.notification)" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
+              <el-link :underline="false" @click="routerJump('通知公告')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
               v-loading="loadingNoticeData"
@@ -147,9 +147,10 @@
               </el-table-column>
             </el-table>
           </el-card>
-          <el-card :body-style="{ height: '320px' }">
+          <el-card :body-style="{ height: '310px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">法律法规</span>
+              <el-link :underline="false" @click="routerJump('法律法规')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
               v-loading="loadingReData"
@@ -295,6 +296,7 @@ export default {
       _self.loadingReData = true
       m.set("gridName", "GeneralDocGrid");
       m.set("folderName","法律法规")
+      m.set("condition",'')
       m.set("pageSize", 8);
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
@@ -317,6 +319,7 @@ export default {
       m.set("gridName", "GeneralDocGrid");
       m.set("folderName","轮播图")
       m.set("pageSize", 5);
+      m.set("condition",'')
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
@@ -431,6 +434,13 @@ export default {
               taskId:taskId
              }
         });
+    },
+    routerJump(folderName){
+      let _self = this
+      _self.$router.push({
+        path:'/dc/folderviewer',
+          query: { folderName: folderName }
+      });
     }
   }
 };

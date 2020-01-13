@@ -47,6 +47,7 @@ export default {
           notiData:[]
         },
         inputKey:'',
+        folderName:'',
         itemCount: 0,
         currentPage: 1,
         pageSize:20,
@@ -56,22 +57,29 @@ export default {
   },
   created() {
    let _self = this
-   _self.getNewsList()
+   _self.folderName = _self.$route.query.folderName
+   _self.refresh()
   },
   methods: {
     
-    getNewsList() {
+    refresh() {
       let _self = this;
       _self.loadingNoticeData = true
       var m = new Map();
-      m.set("gridName", "NewsGrid");
-      m.set("folderId", "");
-      m.set("condition", " type_name='通知公告' and NAME like '%"+_self.inputKey+"%'");
+      // m.set("gridName", "NewsGrid");
+      // m.set("folderId", "");
+      // m.set("condition", " type_name='通知公告' and NAME like '%"+_self.inputKey+"%'");
+      // m.set("pageSize", _self.pageSize);
+      // m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
+      // m.set("orderBy", " CREATION_DATE DESC");
+      m.set("gridName", "GeneralDocGrid");
+      m.set("folderName",_self.folderName)
+      m.set("condition","NAME like '%"+_self.inputKey+"%'")
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
-        .post("/dc/getDocuments", JSON.stringify(m))
+        .post("/dc/getDocsByFolderName", JSON.stringify(m))
         .then(function(response) {
           _self.dataList.notiData = response.data.data;
           _self.itemCount = response.data.pager.total;
@@ -82,7 +90,7 @@ export default {
         });
     },
     search(){
-      this.getNewsList()
+      this.refresh()
     },
     showFile(indata){
        let condition = indata.ID;
@@ -99,13 +107,13 @@ export default {
       let _self = this;
       this.pageSize = val;
       localStorage.setItem("docPageSize", val);
-      _self.getNewsList()
+      _self.refresh()
     },
     // 分页 当前页改变
     handleCurrentChange(val) {
       let _self = this;
       this.currentPage = val;
-      _self.getNewsList()
+      _self.refresh()
     }
   }
 };
