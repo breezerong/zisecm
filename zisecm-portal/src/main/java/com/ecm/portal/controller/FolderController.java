@@ -36,12 +36,7 @@ import com.ecm.core.service.FolderService;
 @Controller
 public class FolderController  extends ControllerAbstract {
 
-	/**
-	 * 表单数据访问
-	 */
-	@Autowired
-	private EcmFolderMapper ecmFolder;
-	
+
 	@Autowired
 	private FolderService folderService;
 	
@@ -62,7 +57,7 @@ public class FolderController  extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			String id = CacheManagerOper.getEcmParameters().get(param).getValue();
-			EcmFolder folder = ecmFolder.selectByPrimaryKey(id);
+			EcmFolder folder = folderService.getObjectById(getToken(), id);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", folder);
 		}
@@ -82,10 +77,17 @@ public class FolderController  extends ControllerAbstract {
 	@ResponseBody
 	@RequestMapping(value="/admin/getFolder", method = RequestMethod.POST)
 	public Map<String, Object> getFolder(@RequestBody String parentId) {
-		List<EcmFolder> list = ecmFolder.selectByParentId(parentId); //Integer.parseInt(parentId));
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", list);
+		try {
+			List<EcmFolder> list = folderService.getFoldersByParentId(getToken(), parentId);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
 		return mp;
 	}
 	
@@ -122,9 +124,16 @@ public class FolderController  extends ControllerAbstract {
 	@RequestMapping(value = "/admin/updateFolder", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updateFolder(@RequestBody EcmFolder obj) {
-		ecmFolder.updateByPrimaryKey(obj);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
+		try {
+			folderService.updateObject(getToken(), obj);
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
 		return mp;
 	}
 
@@ -153,7 +162,7 @@ public class FolderController  extends ControllerAbstract {
 			msg="文件夹包含文件，请先删除文件。";
 		}
 		else {
-			ecmFolder.deleteByPrimaryKey(obj.getId());
+			folderService.deleteObject(getToken(), obj);
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", code);
@@ -171,11 +180,17 @@ public class FolderController  extends ControllerAbstract {
 	@RequestMapping(value = "/admin/newFolder", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newFolder(@RequestBody EcmFolder obj) {
-		obj.createId();
-		ecmFolder.insert(obj);
-		
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
+		try {
+			String id = folderService.newObject(getToken(), obj);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data",id);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data",e.getMessage());
+		}
 		return mp;
 	}
 
