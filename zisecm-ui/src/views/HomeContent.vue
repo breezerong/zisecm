@@ -295,13 +295,13 @@ export default {
       var m = new Map();
       _self.loadingReData = true
       m.set("gridName", "GeneralDocGrid");
-      m.set("folderName","法律法规")
+      m.set("folderPath","/表单/法律法规")
       m.set("condition",'')
       m.set("pageSize", 8);
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
-        .post("/dc/getDocsByFolderName", JSON.stringify(m))
+        .post("/dc/getDocsByFolderPathName", JSON.stringify(m))
         .then(function(response) {
           _self.dataList.regulationData = response.data.data
           _self.loadingReData = false
@@ -317,13 +317,13 @@ export default {
       var m = new Map();
       var imgArr = []
       m.set("gridName", "GeneralDocGrid");
-      m.set("folderName","轮播图")
+      m.set("folderPath","/表单/轮播图")
       m.set("pageSize", 5);
       m.set("condition",'')
       m.set("pageIndex", 0);
       m.set("orderBy", " CREATION_DATE DESC");
       axios
-        .post("/dc/getDocsByFolderName", JSON.stringify(m))
+        .post("/dc/getDocsByFolderPathName", JSON.stringify(m))
         .then(function(response) {
           _self.dataList.carouselData = response.data.data
           // var mycars=new Array(response.data.data.size)
