@@ -186,6 +186,7 @@
             @selection-change="selectChange"
             @sort-change="sortchange"
             style="width: 100%"
+            @header-dragend="onHeaderDragend"
             fit
           >
             <el-table-column type="selection" @selection-change="selectChange" width="50"></el-table-column>

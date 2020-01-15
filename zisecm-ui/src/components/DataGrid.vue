@@ -54,6 +54,7 @@
           @selection-change="selectChange"
           @sort-change="sortchange"
           @row-click="rowClick"
+          @header-dragend="onHeaderDragend"
           v-loading="loading"
           :style="{'width': tableWidth}"
           highlight-current-row
@@ -224,6 +225,7 @@ export default {
     ShowProperty: ShowProperty
   },
   methods: {
+    
     // 查看内容
     showItemContent(indata) {
       let condition = indata.ID;

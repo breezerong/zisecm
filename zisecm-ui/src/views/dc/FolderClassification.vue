@@ -242,6 +242,7 @@
               v-loading="loading"
               @selection-change="selectChange"
               @sort-change="sortchange"
+              @header-dragend="onHeaderDragend"
               style="width: 100%"
             >
               <el-table-column type="selection" width="40" @selection-change="selectChange"></el-table-column>

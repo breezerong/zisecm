@@ -29,7 +29,9 @@
       </el-col>
     </el-header>
     <el-main>
-      <el-table v-loading="loadingNoticeData" border style="width:100%;" :height="tableHeight" :data="dataList.notiData">
+      <el-table v-loading="loadingNoticeData" border style="width:100%;" 
+      @header-dragend="onHeaderDragend"
+      :height="tableHeight" :data="dataList.notiData">
         <el-table-column :label="$t('field.indexNumber')" width="70">
               <template slot-scope="scope">
                 <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>

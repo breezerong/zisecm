@@ -109,7 +109,7 @@
             row-key="ID"
             border
             default-expand-all
-            
+            @header-dragend="onHeaderDragend"
           >
             <el-table-column type="expand">
               <template slot-scope="scope">

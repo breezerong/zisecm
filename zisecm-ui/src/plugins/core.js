@@ -19,3 +19,5 @@ Modules.forEach(element => {
 		const component = Vue.component(componentName,componentConfig.default || componentConfig)
 	})
 })
+
+

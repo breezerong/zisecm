@@ -102,6 +102,7 @@
         border
         v-loading="loading"
         style="width: 100%"
+        @header-dragend="onHeaderDragend"
       >
         <el-table-column :label="$t('field.indexNumber')" width="70">
           <template slot-scope="scope">
