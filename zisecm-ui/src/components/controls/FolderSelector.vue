@@ -10,15 +10,16 @@
     >
       <div>
         <el-main>
-          <el-tree
-            :props="defaultProps"
-            :data="dataList"
-            node-key="id"
-            :render-content="renderContent"
-            default-expand-all
-            highlight-current
-            @node-click="handleNodeClick"
-          ></el-tree>
+            <el-tree
+              :props="defaultProps"
+              :data="dataList"
+              node-key="id"
+              :render-content="renderContent"
+              default-expand-all
+              highlight-current
+              @node-click="handleNodeClick"
+              style="overflow:scroll;height:320px;"
+            ></el-tree>
         </el-main>
         <el-footer>
           <el-button

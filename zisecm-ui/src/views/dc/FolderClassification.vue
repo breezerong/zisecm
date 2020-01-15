@@ -119,9 +119,9 @@
         <el-button @click="folderDialogVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="移动文件" :visible.sync="moveDialogVisible" @close="moveDialogVisible = false">
+    <el-dialog title="移动位置" :visible.sync="moveDialogVisible" @close="moveDialogVisible = false">
       <el-form>
-        <el-form-item label="当前文件夹ID" :label-width="formLabelWidth">{{getSelectedIds()}}</el-form-item>
+        <el-form-item label="当前ID" :label-width="formLabelWidth">{{getSelectedIds()}}</el-form-item>
         <el-form-item label="目标文件夹ID" :label-width="formLabelWidth">
           <FolderSelector v-model="targetFolderId" v-bind:inputValue="targetFolderId"></FolderSelector>
         </el-form-item>
@@ -165,7 +165,7 @@
     </el-dialog>
  
         <el-row style="padding-top:10px;padding-bottom:10px;">
-          <el-col :span="3" style="text-align: left">
+          <el-col :span="4" style="text-align: left">
             <el-tooltip
               class="item"
               effect="dark"
@@ -190,6 +190,14 @@
             >
               <el-button type="primary" icon="el-icon-delete" circle @click="onDeleleFolder()"></el-button>
             </el-tooltip>
+             <el-tooltip
+              class="item"
+              effect="dark"
+              :content="$t('application.move')+$t('application.folder')"
+              placement="top"
+            >
+              <el-button type="primary" icon="el-icon-top-right" circle @click="moveFolder()"></el-button>
+            </el-tooltip>
           </el-col>
           <el-col :span="4" style="text-align: left">
             <el-input
@@ -199,7 +207,7 @@
               prefix-icon="el-icon-search"
             ></el-input>
           </el-col>
-          <el-col :span="17" style="text-align: left">
+          <el-col :span="16" style="text-align: left">
             &nbsp; &nbsp; 
             <el-button
               type="primary"
@@ -366,6 +374,7 @@ export default {
       itemDialogVisible: false,
       newFileList: [],
       currentId: "",
+      isMoveFolder:false,
       columnsInfo: {
         checkAll: true,
         checkedCities: [],
@@ -544,11 +553,45 @@ export default {
         });
     },
     moveItem() {
+      this.isMoveFolder = false;
       if (this.selectedItems && this.selectedItems.length > 0) {
         this.moveDialogVisible = true;
       }
     },
+    moveFolder(){
+      if(this.currentFolder){
+        this.isMoveFolder = true;
+        this.moveDialogVisible = true;
+      }
+    },
     handleMoveItem() {
+      if(this.isMoveFolder){
+        this.handleMoveFolder();
+      }else{
+        this.handleMoveDocument();
+      }
+    },
+    handleMoveFolder(){
+       let _self = this;
+       if(_self.targetFolderId==_self.currentFolder.id || _self.targetFolderId==_self.currentFolder.parentId ){
+          _self.$message("目标文件夹不能更当前文件夹相同!");
+          return;
+       }
+       var fld = _self.currentFolder;
+       fld.parentId = _self.targetFolderId;
+        axios
+          .post("/admin/updateFolder", JSON.stringify(fld))
+          .then(function(response) {
+            _self.$message(_self.$t("message.saveSuccess"));
+            _self.moveDialogVisible = false;
+            _self.loading = false;
+            _self.refreshFolderData();
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+    },
+    handleMoveDocument(){
       let _self = this;
       _self.loading = true;
       var m = new Map();
