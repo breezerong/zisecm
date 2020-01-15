@@ -8,7 +8,6 @@
     >
       <ShowProperty
         ref="ShowProperty"
-        @onSaved="onSaved"
         width="100%"
         v-bind:itemId="selectedItemId"
         v-bind:folderId="currentFolder.id"

@@ -149,8 +149,8 @@
           </el-card>
           <el-card :body-style="{ height: '310px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">法律法规</span>
-              <el-link :underline="false" @click="routerJump('法律法规')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
+              <span style="float: left;" class="ecmtitle">管理文件</span>
+              <el-link :underline="false" @click="routerJump('管理文件')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
             </div>
             <el-table
               v-loading="loadingReData"
@@ -295,7 +295,7 @@ export default {
       var m = new Map();
       _self.loadingReData = true
       m.set("gridName", "GeneralDocGrid");
-      m.set("folderPath","/表单/法律法规")
+      m.set("folderPath","/表单/管理文件")
       m.set("condition",'')
       m.set("pageSize", 8);
       m.set("pageIndex", 0);
