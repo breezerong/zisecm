@@ -58,7 +58,7 @@
          
   </el-dialog>
   <el-row>
-    <el-col :span="18">
+    <el-col :span="18" :style="{display:inputType=='hidden'?'none':''}">
       <el-input v-model="inputValue" :type="inputType"></el-input>
       <input value="value1" type="hidden" />
     </el-col>

@@ -52,10 +52,10 @@
     <el-container>
       <el-header style="height:50px">
         <el-row>
-          <el-col :span="12">
+          <el-col :span="3" class="topbar-button">
             <AddCondition @sendMsg='search' v-model="inputkey" v-bind:inputValue="inputkey" :inputType='hiddenInput'></AddCondition>
           </el-col>
-          <el-col :span="1">
+          <el-col :span="21" class="topbar-button">
             <el-button
               type="primary"
               style="height:40px"
@@ -64,8 +64,6 @@
               icon="el-icon-upload2"
               @click="exportExcel()"
             >{{$t('application.export')+'Excel'}}</el-button>
-          </el-col>
-          <el-col :span="11">
           </el-col>
         </el-row>
       </el-header>
