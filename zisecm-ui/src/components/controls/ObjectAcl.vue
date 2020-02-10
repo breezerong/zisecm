@@ -232,6 +232,7 @@ export default {
       permit.targetName = inData.targetName;
       permit.targetType = inData.targetType;
       permit.permission = inData.permission;
+      permit.expireDate = inData.expireDate;
       //console.log(name);
       axios.post("/dc/grantPermit",permit).then(function(response){
         if(response.data.code == 1){

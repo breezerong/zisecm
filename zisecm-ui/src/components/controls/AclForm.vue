@@ -230,7 +230,7 @@ export default {
     },
     saveItem(inData){
       let _self = this;
-      //console.log(name);
+      console.log(inData);
       _self.axios({
         headers: {
           "Content-Type": "application/json;charset=UTF-8"

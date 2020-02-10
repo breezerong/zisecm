@@ -708,7 +708,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				StringBuilder sb = new StringBuilder();
 				sb.append("select max(PERMISSION) as PERMISSION from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
 				sb.append("b.NAME='").append(aclName);
-				sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and a.TARGET_NAME in('everyone'");
+				sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and (a.expire_date is null or a.expire_date>")
+				.append(DBUtils.getDBDateNow())
+				.append(") and a.TARGET_NAME in('everyone'");
 				sb.append(",'").append(currentUser).append("'");
 				if (currentUser.equals(doc.getOwnerName())) {
 					sb.append(",'owner'");
@@ -719,6 +721,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 						"select PERMISSION from ecm_acl_item a, ecm_acl b, ecm_group c, ecm_group_user d where b.NAME='");
 				sb.append(aclName).append(
 						"'  and a.PARENT_ID = b.ID and a.TARGET_TYPE='2' and a.TARGET_NAME=c.NAME and c.ID=d.GROUP_ID and ");
+				sb.append(" (a.expire_date is null or a.expire_date>")
+						.append(DBUtils.getDBDateNow()) 
+						.append(") and ");
 				sb.append("d.USER_ID='").append(userID).append("') as permittemp");
 				List<Map<String, Object>> list = ecmDocument.executeSQL(sb.toString());
 
