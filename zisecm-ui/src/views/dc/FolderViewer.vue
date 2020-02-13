@@ -18,111 +18,43 @@
       </div>
     </el-dialog>
   <el-container>
-    <el-row style="height:30px">
-      <el-breadcrumb style="padding-top:10px;padding-bottom:10px;padding-top:5px">
-        <el-breadcrumb-item>&nbsp; {{folderName}}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </el-row>
     <el-header style="height:48px;">
       <el-col :span="5" class="topbar-input">
         <el-input v-model="inputKey" :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="search"></el-input>
       </el-col>
     </el-header>
     <el-main>
-      <el-table v-loading="loadingNoticeData" border style="width:100%;" 
-      @header-dragend="onHeaderDragend"
-      :height="tableHeight" :data="dataList.notiData">
-        <el-table-column :label="$t('field.indexNumber')" width="70">
-              <template slot-scope="scope">
-                <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
-              </template>
-         </el-table-column>
-        <div v-for="(citem,idx) in gridList" :key="idx">
-              <div v-if="citem.visibleType==1">
-                <el-table-column
-                  v-if="(citem.width+'').indexOf('%')>0"
-                  :label="citem.label"
-                  :prop="citem.attrName"
-                  :min-width="citem.width"
-                  :sortable="citem.allowOrderby"
-                >
-                  <template slot-scope="scope">
-                    <div v-if="citem.attrName.indexOf('DATE')>0">
-                      <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                    </div>
-                    <div v-else>
-                      <span>{{scope.row[citem.attrName]}}</span>
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  v-else
-                  :label="citem.label"
-                  :prop="citem.attrName"
-                  :width="citem.width"
-                  :sortable="citem.allowOrderby"
-                >
-                  <template slot-scope="scope">
-                    <div v-if="citem.attrName.indexOf('DATE')>0">
-                      <span>{{dateFormat(scope.row[citem.attrName])}}</span>
-                    </div>
-                    <div v-else>
-                      <span>{{scope.row[citem.attrName]}}</span>
-                    </div>
-                  </template>
-                </el-table-column>
-              </div>
-            </div>
-            <el-table-column align="left" width="140" label="操作">
-              <template slot-scope="scope">
-                <el-button
-                  type="primary"
-                  plain
-                  size="small"
-                  :title="$t('application.viewContent')"
-                  icon="el-icon-picture-outline"
-                  @click="showItemContent(scope.row)"
-                ></el-button>
-                <el-button
-                  type="primary"
-                  plain
-                  size="small"
-                  :title="$t('application.property')"
-                  icon="el-icon-info"
-                  @click="showItemProperty(scope.row)"
-                ></el-button>
-              </template>
-            </el-table-column>
-      </el-table>
+      <DataGrid
+          ref="mainDataGrid"
+          key="main"
+          v-bind:itemDataList="itemDataList"
+          v-bind:columnList="gridList"
+          @pagesizechange="pageSizeChange"
+          @pagechange="pageChange"
+          v-bind:itemCount="itemCount"
+          v-bind:tableHeight="tableHeight"
+          v-bind:isshowOption="true" v-bind:isshowSelection ="false"
+          v-bind:propertyComponent="this.$refs.ShowProperty"
+        ></DataGrid>
     </el-main>
-    <el-footer>
-      <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[10, 20, 50, 100, 200]"
-      :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="itemCount"
-    ></el-pagination>
-    </el-footer>
   </el-container>
 </div>
 </template>
 
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
+import DataGrid from "@/components/DataGrid";
+
 export default {
   components: {
-    ShowProperty: ShowProperty
+    ShowProperty: ShowProperty,
+    DataGrid: DataGrid
   },
   data() {
     return {
-        loadingNoticeData:false,
-        dataList:{
-          notiData:[]
-        },
+        loading:false,
+        itemDataList:[],
+        itemDataListFull:[],
         currentFolder: [],
         inputKey:'',
         gridList: [],
@@ -133,47 +65,102 @@ export default {
         currentPage: 1,
         itemDialogVisible: false,
         pageSize:20,
-        innerTableHeight: window.innerHeight - 360,
-        tableHeight: window.innerHeight - 180,
-        loadingNoticeData:false
+        tableHeight: window.innerHeight - 130
     };
   },
-  created() {
+  mounted() {
    let _self = this
-   _self.folderName = _self.$route.query.folderName
-   _self.refresh()
+   let cfgName = _self.$route.query.cfgName;
+   if(cfgName){
+     _self.loadFolderByCfg(cfgName);
+   }else{
+     let folderId = _self.$route.query.folderId;
+     _self.loadFolderById(folderId);
+   }
   },
   methods: {
-    
-    refresh() {
+    loadFolderByCfg(cfgName){
       let _self = this;
-      _self.loadingNoticeData = true
-      var m = new Map();
-      // m.set("gridName", "NewsGrid");
-      // m.set("folderId", "");
-      // m.set("condition", " type_name='通知公告' and NAME like '%"+_self.inputKey+"%'");
-      // m.set("pageSize", _self.pageSize);
-      // m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      // m.set("orderBy", " CREATION_DATE DESC");
-      m.set("folderPath",'/表单/'+_self.folderName)
-      m.set("condition","NAME like '%"+_self.inputKey+"%' or coding like '%"+_self.inputKey+"%'")
-      m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
-      m.set("orderBy", " CREATION_DATE DESC");
-      axios
-        .post("/dc/getDocsViewDataByFolderPath", JSON.stringify(m))
+      _self.loading = true;
+      axios.post("/folder/getFolderByConfige",cfgName)
         .then(function(response) {
-          _self.dataList.notiData = response.data.data;
-          _self.itemCount = response.data.pager.total;
-          _self.gridList = response.data.view
-          _self.loadingNoticeData = false
+          if(response.data.code == 1){
+            _self.currentFolder = response.data.data;
+            _self.loadGridInfo(_self.currentFolder);
+          }
+          _self.loading = false;
         })
         .catch(function(error) {
           console.log(error);
+          _self.loading = false;
+        });
+    },
+    loadFolderById(folderId){
+      let _self = this;
+       _self.loading = true;
+      axios.post("/folder/getFolderById",folderId)
+        .then(function(response) {
+          if(response.data.code == 1){
+            _self.currentFolder = response.data.data;
+            _self.loadGridInfo(_self.currentFolder);
+          }
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    loadGridInfo(indata) {
+      let _self = this;
+      _self.loading = true;
+      var m = new Map();
+      m.set("gridName", indata.gridView);
+      m.set("lang", _self.getLang());
+      axios
+        .post("/dc/getGridViewInfo", JSON.stringify(m))
+        .then(function(response) {
+          _self.gridList = response.data.data;
+          _self.loading = false;
+          _self.loadGridData();
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    // 加载表格数据
+    loadGridData() {
+      let _self = this;
+      var key = _self.inputKey;
+      if (key != "" && key != undefined) {
+        key = "CODING like '%" + key + "%' or NAME like '%" + key + "%'";
+      }else{
+        key = "";
+      }
+      var m = new Map();
+      m.set("gridName", _self.currentFolder.gridView);
+      m.set("folderId", _self.currentFolder.id);
+      m.set("condition", key);
+      m.set("pageSize", _self.pageSize);
+      m.set("pageIndex", _self.currentPage - 1);
+      m.set("orderBy", "");
+      // console.log('pagesize:', _self.pageSize);
+      axios.post("/dc/getDocuments",JSON.stringify(m))
+        .then(function(response) {
+          _self.itemDataList = response.data.data;
+          _self.itemDataListFull = response.data.data;
+          _self.itemCount = response.data.pager.total;
+          console.log(JSON.stringify(response.data.data));
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
         });
     },
     search(){
-      this.refresh()
+      this.loadGridData();
     },
     showFile(indata){
        let condition = indata.ID;
@@ -186,17 +173,17 @@ export default {
       window.open(href.href, '_blank');
     },
     //分页 页数改变
-    handleSizeChange(val) {
+    pageSizeChange(val) {
       let _self = this;
       this.pageSize = val;
       localStorage.setItem("docPageSize", val);
-      _self.refresh()
+      _self.loadGridData()
     },
     // 分页 当前页改变
-    handleCurrentChange(val) {
+    pageChange(val) {
       let _self = this;
       this.currentPage = val;
-      _self.refresh()
+      _self.loadGridData()
     },
     //查看属性
     showItemProperty(indata) {

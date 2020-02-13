@@ -36,10 +36,16 @@
                   <!-- <el-badge :value="todoCount" class="item"></el-badge> -->
                 </span>
               </el-menu-item>
-                <el-menu-item index="14" @click="clickRouter('/record/showdrawingtask')">
-                <i class="el-icon-printer"></i>
-                <span slot="title"><router-link to="/record/showdrawingtask">晒图记录</router-link></span>
+              <el-menu-item index="15" @click="clickRouter('/dc/folderviewer?folderId=c27feb8346de4dc094827ff62ab3259a')">
+                <i class="el-icon-setting"></i>
+                <span slot="title"><router-link to="/dc/folderviewer?folderId=c27feb8346de4dc094827ff62ab3259a">模板配置</router-link></span>
               </el-menu-item>
+              <el-menu-item index="16" @click="clickRouter('/dc/folderviewer?cfgName=FolderPolicy')">
+                <i class="el-icon-setting"></i>
+                <span slot="title"><router-link to="/dc/folderviewer?cfgName=FolderPolicy">目录规则</router-link></span>
+              </el-menu-item>
+
+              
 
             </el-submenu>
           </el-menu>
