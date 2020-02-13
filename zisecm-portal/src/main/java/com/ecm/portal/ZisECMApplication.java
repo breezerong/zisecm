@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.alibaba.druid.pool.DruidDataSource;
 
 
-@SpringBootApplication
-@ComponentScan({ /* "com.ecm", */"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*","com.ecm.flowable"})
+@SpringBootApplication	/*(exclude = {SecurityAutoConfiguration.class})*/
+@ComponentScan({ /* "com.ecm", */"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity","com.ecm.core.bpm","com.ecm.core.service","com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*","com.ecm.flowable"/*,"org.flowable.ui.modeler","org.flowable.ui.common"*/})
 @MapperScan("com.ecm.core.dao")
 @EnableTransactionManagement//(proxyTargetClass = true)
 public class ZisECMApplication extends SpringBootServletInitializer {

@@ -74,15 +74,15 @@ export default {
     };
   },
   created() {
-    let loginName = this.$route.query.LoginName;
+    // let loginName = this.$route.query.LoginName;
     
-    if(!loginName){
-      loginName = this.getValue(window.location.href, "LoginName");
-    }
-    console.log("loginname:"+loginName);
-    if (loginName) {
-      this.loginSSO(loginName);
-    }
+    // if(!loginName){
+    //   loginName = this.getValue(window.location.href, "LoginName");
+    // }
+    // console.log("loginname:"+loginName);
+    // if (loginName) {
+    //   this.loginSSO(loginName);
+    // }
   },
   mounted() {
     var reinfo = localStorage.getItem("ziecm-rememberInfo");
@@ -100,61 +100,6 @@ export default {
       if ((r = str.match(reg))) return unescape(r[2]);
       return null;
     },
-    loginSSO(loginName) {
-      let _self = this;
-      _self.loading = true;
-      var tocomp = _self.$route.query.redirect;
-      if (!tocomp) {
-        tocomp = "/";
-      }
-      _self.account.username = loginName;
-
-      axios
-        .post("/ssoLogin", loginName)
-        .then(function(response) {
-          console.log(response.data);
-          if (response.data.code == 1) {
-            sessionStorage.setItem(
-              "access-user",
-              JSON.stringify(_self.account)
-            );
-            sessionStorage.setItem("access-userName", response.data.userName);
-            sessionStorage.setItem(
-              "access-department",
-              response.data.department
-            );
-            sessionStorage.setItem("access-token", response.data.token);
-            sessionStorage.setItem(
-              "access-clientPermission",
-              response.data.clientPermission
-            );
-            sessionStorage.setItem(
-              "access-systemPermission",
-              response.data.systemPermission
-            );
-            localStorage.setItem("ziecm-rememberInfo", "1");
-            localStorage.setItem("ziecm-ass12bn", loginName);
-            sessionStorage.setItem(
-              "access-externalUser",
-              response.data.externalUser
-            );
-            if (
-              response.data.externalUser &&
-              response.data.externalUser == true
-            ) {
-              _self.$router.push({ path: "/record/showdrawing" });
-            } else {
-              _self.$router.push({ path: tocomp });
-            }
-          }
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.$message(_self.$t("message.loginFailured"));
-          _self.loading = false;
-        });
-    },
     handleLogin() {
       let _self = this;
       var tocomp = _self.$route.query.redirect;
@@ -165,7 +110,7 @@ export default {
         if (valid) {
           _self.loading = true;
           axios
-            .post("/userLoginEx", JSON.stringify(_self.account))
+            .post("/userLogin", JSON.stringify(_self.account))
             .then(function(response) {
               //console.log(response.data);
               if (response.data.code == 1) {
@@ -203,14 +148,7 @@ export default {
                   "access-externalUser",
                   response.data.externalUser
                 );
-                if (
-                  response.data.externalUser &&
-                  response.data.externalUser == true
-                ) {
-                  _self.$router.push({ path: "/record/showdrawing" });
-                } else {
-                  _self.$router.push({ path: tocomp });
-                }
+                _self.$router.push({ path: tocomp });
               } else {
                 _self.$message(_self.$t("message.loginFailured"));
               }
