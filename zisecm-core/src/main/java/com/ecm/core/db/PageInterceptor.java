@@ -20,9 +20,11 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.druid.util.StringUtils;
 import com.ecm.core.entity.Pager;
 
 @Component
@@ -30,8 +32,29 @@ import com.ecm.core.entity.Pager;
 @SuppressWarnings("rawtypes")
 public class PageInterceptor implements Interceptor {
  
-	@Value("${ecm.database.type}")
-	private String databaseType;
+	@Value("${spring.datasource.driver-class-name}")
+	private String className;
+	
+	private String dbType;
+	
+	private String getDatabaseType() {
+		if(dbType==null) {
+			if(!StringUtils.isEmpty(className)) {
+				if(className.toLowerCase().indexOf("mysql")>-1) {
+					dbType = "mysql";
+				}else if(className.toLowerCase().indexOf("sqlserver")>-1) {
+					dbType = "sqlserver";
+				}else if(className.toLowerCase().indexOf("oracle")>-1) {
+					dbType = "oracle";
+				}else if(className.toLowerCase().indexOf("postgresql")>-1) {
+					dbType = "postgresql";
+				}
+			}else {
+				return "mysql";
+			}
+		}
+		return dbType;
+	}
 	
 	//private static String databaseType ="mysql";// 数据库类型，不同的数据库有不同的分页方法
 	/**
@@ -80,11 +103,11 @@ public class PageInterceptor implements Interceptor {
 	
 	private String getPageSql(Pager page, String sql) {
 		StringBuffer sqlBuffer = new StringBuffer(sql);
-		if ("mysql".equalsIgnoreCase(databaseType)) {
+		if ("mysql".equalsIgnoreCase(getDatabaseType())) {
 			return getMysqlPageSql(page, sqlBuffer);
-		} else if ("oracle".equalsIgnoreCase(databaseType)) {
+		} else if ("oracle".equalsIgnoreCase(getDatabaseType())) {
 			return getOraclePageSql(page, sqlBuffer);
-		} else if ("sqlserver".equalsIgnoreCase(databaseType)) {
+		} else if ("sqlserver".equalsIgnoreCase(getDatabaseType())) {
 			return getSqlserverPageSql(page, sqlBuffer);
 		}
 		return sqlBuffer.toString();
@@ -94,12 +117,24 @@ public class PageInterceptor implements Interceptor {
 		// 计算第一条记录的位置，Sqlserver中记录的位置是从0开始的。
 		int startRowNum = page.getPageIndex() * page.getPageSize() + 1;
 		int endRowNum = startRowNum + page.getPageSize();
-		String sql = "select appendRowNum.row,* from (select ROW_NUMBER() OVER (order by (select 0)) AS row,* from ("
-				+ sqlBuffer.toString()
-				+ ") as innerTable"
-				+ ")as appendRowNum where appendRowNum.row >= "
-				+ startRowNum
-				+ " AND appendRowNum.row <= " + endRowNum;
+		String sql = sqlBuffer.toString().toUpperCase();
+		if(sql.indexOf(" ORDER ")>0) {
+			String[] strs = sql.split(" ORDER ");
+			sql = "select appendRowNum.row,* from (select ROW_NUMBER() OVER (order "+strs[1]+") AS row,* from ("
+					+ strs[0]
+					+ ") as innerTable"
+					+ ")as appendRowNum where appendRowNum.row >= "
+					+ startRowNum
+					+ " AND appendRowNum.row < " + endRowNum;
+		}else
+		{
+			sql = "select appendRowNum.row,* from (select ROW_NUMBER() OVER (order by (select 0)) AS row,* from ("
+					+ sqlBuffer.toString()
+					+ ") as innerTable"
+					+ ")as appendRowNum where appendRowNum.row >= "
+					+ startRowNum
+					+ " AND appendRowNum.row < " + endRowNum;
+		}
 		return sql;
 	}
  
@@ -166,6 +201,11 @@ public class PageInterceptor implements Interceptor {
 	 * @return
 	 */
 	private String getCountSql(String sql) {
+		sql = sql.toUpperCase();
+		if(sql.indexOf(" ORDER ")>0) {
+			String[] strs = sql.split(" ORDER ");
+			return "select count(*) from (" + strs[0] + ") as countRecord";
+		}
 		return "select count(*) from (" + sql + ") as countRecord";
 	}
 
