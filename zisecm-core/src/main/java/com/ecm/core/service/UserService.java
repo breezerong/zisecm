@@ -29,6 +29,7 @@ import com.ecm.core.dao.EcmGroupItemMapper;
 import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
 import com.ecm.core.dao.EcmUserMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
 import com.ecm.core.entity.EcmUser;
@@ -37,7 +38,6 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.IUserService;
 
@@ -573,7 +573,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public EcmUser getObjectByName(String token, String userName) {
 		// TODO Auto-generated method stub
-		String condition = "NAME='"+DBUtils.getString(userName)+"'";
+		String condition = "NAME='"+DBFactory.getDBConn().getDBUtils().getString(userName)+"'";
 		List<EcmUser> list = getObjects(token, condition);
 		if(list.size()>0) {
 			return list.get(0);
@@ -585,7 +585,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public EcmUser getObjectByLoginName(String token, String loginName) {
 		// TODO Auto-generated method stub
-		String condition = "LOGIN_NAME='"+DBUtils.getString(loginName)+"'";
+		String condition = "LOGIN_NAME='"+DBFactory.getDBConn().getDBUtils().getString(loginName)+"'";
 		List<EcmUser> list = getObjects(token, condition);
 		if(list.size()>0) {
 			return list.get(0);

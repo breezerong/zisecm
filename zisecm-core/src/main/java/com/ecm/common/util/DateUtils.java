@@ -109,4 +109,34 @@ public class DateUtils {
 	    GregorianCalendar ca = gc.toGregorianCalendar();  
 	        return ca.getTime();  
 	}  
+	
+	public static Date getDate(String date) {
+		Date d=null;
+		try
+		{
+			d = new Date(Long.parseLong(date));
+		}
+		catch(Exception ex)
+		{
+			date = date.replace("Z", " UTC").replace("+0000", "").replace("T", " ");
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+			if(date.indexOf(" ")<0&&date.indexOf(":")<0) {
+				format = new SimpleDateFormat("yyyy-MM-dd");
+			}
+			try {
+				d = format.parse(date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				
+				format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				try {
+					d = format.parse(date);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+		return d;
+	}
 }

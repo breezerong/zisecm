@@ -32,29 +32,6 @@ import com.ecm.core.entity.Pager;
 @SuppressWarnings("rawtypes")
 public class PageInterceptor implements Interceptor {
  
-	@Value("${spring.datasource.driver-class-name}")
-	private String className;
-	
-	private String dbType;
-	
-	private String getDatabaseType() {
-		if(dbType==null) {
-			if(!StringUtils.isEmpty(className)) {
-				if(className.toLowerCase().indexOf("mysql")>-1) {
-					dbType = "mysql";
-				}else if(className.toLowerCase().indexOf("sqlserver")>-1) {
-					dbType = "sqlserver";
-				}else if(className.toLowerCase().indexOf("oracle")>-1) {
-					dbType = "oracle";
-				}else if(className.toLowerCase().indexOf("postgresql")>-1) {
-					dbType = "postgresql";
-				}
-			}else {
-				return "mysql";
-			}
-		}
-		return dbType;
-	}
 	
 	//private static String databaseType ="mysql";// 数据库类型，不同的数据库有不同的分页方法
 	/**
@@ -103,11 +80,11 @@ public class PageInterceptor implements Interceptor {
 	
 	private String getPageSql(Pager page, String sql) {
 		StringBuffer sqlBuffer = new StringBuffer(sql);
-		if ("mysql".equalsIgnoreCase(getDatabaseType())) {
+		if (DBBase.isMySql()) {
 			return getMysqlPageSql(page, sqlBuffer);
-		} else if ("oracle".equalsIgnoreCase(getDatabaseType())) {
+		} else if (DBBase.isOracle()) {
 			return getOraclePageSql(page, sqlBuffer);
-		} else if ("sqlserver".equalsIgnoreCase(getDatabaseType())) {
+		} else if (DBBase.isSqlServer()) {
 			return getSqlserverPageSql(page, sqlBuffer);
 		}
 		return sqlBuffer.toString();

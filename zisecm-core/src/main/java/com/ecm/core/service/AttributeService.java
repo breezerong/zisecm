@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmAttributeMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -47,7 +48,7 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 		// TODO Auto-generated method stub
 		//super.hasPermission(serviceCode+1,systemPermission);
 		if(isChanged||list==null) {
-			list = ecmAttribute.selectAll();
+			list = ecmAttribute.selectAll(DBFactory.getDBConn().getDBDocManager().getDocAttributesSql());
 			isChanged = false;
 		}
 		return list;
@@ -63,59 +64,9 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 	@Override
 	public boolean newAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token, serviceCode+1,systemPermission);
-		// ALTER TABLE zisecm.ecm_document ADD C_DOC_STATUS varchar(32) NULL COMMENT '文档状态';
-		//ALTER TABLE zisecm.ecm_document ADD IS_CURRENT TINYINT(1) DEFAULT 1 NULL COMMENT '是否当前版本';
-		//ALTER TABLE zisecm.ecm_document ADD IS_HIDDEN TINYINT(1) DEFAULT 0 null COMMENT '是否隐藏';
-		//ALTER TABLE zisecm.ecm_folder ADD column1 INT NULL;
-		//ALTER TABLE zisecm.ecm_folder ADD column2 DATETIME NULL;
-		//ALTER TABLE zisecm.ecm_folder ADD column3 DOUBLE NULL;
+
 		//super.hasPermission(serviceCode+1,systemPermission);
-		String sql ="ALTER TABLE ecm_document ADD ";
-		sql+=obj.getName().toUpperCase()+" ";
-		//1：String，2：DateTime，3：boolean,4：Int，5:long，6：Double，7:decimal,8:float
-		switch(obj.getFieldType()) {
-		case 2:
-			sql += "DATETIME ";
-			break;
-		case 3:
-			sql += "TINYINT(1) ";
-			break;
-		case 4:
-			sql += "INT ";
-			break;
-		case 5:
-			sql += "BIGINT ";
-			break;
-		case 6:
-			sql += "DOUBLE ";
-			break;
-		case 7:
-			sql += "DECIMAL ";
-			break;
-		case 8:
-			sql += "FLOAT ";
-			break;
-		
-		default:
-			sql += "varchar("+obj.getLength()+") ";
-			break;
-		}
-		if(obj.getIsNull().equals("NO")) {
-			sql += "NOT NULL ";
-		}else {
-			sql += "NULL ";
-		}
-		if(obj.getDefaultValue()!=null&& obj.getDefaultValue().length()>0) {
-			if(obj.getFieldType()==1) {
-				sql += "DEFAULT '"+obj.getDefaultValue()+"' ";
-			}
-			else {
-				sql += "DEFAULT "+obj.getDefaultValue()+" ";
-			}
-		}
-		if(obj.getDescription()!=null&&obj.getDescription().length()>0) {
-			sql += "COMMENT '"+obj.getDescription()+"' ";
-		}
+		String sql = DBFactory.getDBConn().getDBDocManager().newDocAttributeSql(obj);
 		isChanged=true;
 		return ecmAttribute.executeSQL(sql).size()>0;
 	}
@@ -123,47 +74,7 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 	public boolean updateAttribute(String token, EcmAttribute obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		// ALTER TABLE zisecm.ecm_user MODIFY COLUMN `LDAP_CN` varchar(254) NULL COMMENT 'LDAP用户登录CN';
 		super.hasPermission(token, serviceCode+1,systemPermission);
-		String sql ="ALTER TABLE ecm_document MODIFY ";
-		sql+=obj.getName().toUpperCase()+" ";
-		
-		switch(obj.getFieldType()) {
-		case 2:
-			sql += "DATETIME ";
-			break;
-		case 3:
-			sql += "TINYINT(1) ";
-			break;
-		case 4:
-			sql += "INT ";
-			break;
-		case 5:
-			sql += "BIGINT ";
-			break;
-		case 6:
-			sql += "DOUBLE ";
-			break;
-		case 7:
-			sql += "DECIMAL ";
-			break;
-		case 8:
-			sql += "FLOAT ";
-			break;
-		
-		default:
-			sql += "varchar("+obj.getLength()+") ";
-			break;
-		}
-		if(obj.getIsNull().equals("NO")) {
-			sql += "NOT NULL ";
-		}else {
-			sql += "NULL ";
-		}
-		if(obj.getDefaultValue()!=null&& obj.getDefaultValue().length()>0) {
-			sql += "DEFAULT "+obj.getDefaultValue()+" ";
-		}
-		if(obj.getDescription()!=null&&obj.getDescription().length()>0) {
-			sql += "COMMENT '"+obj.getDescription()+"' ";
-		}
+		String sql = DBFactory.getDBConn().getDBDocManager().updateDocAttributeSql(obj);
 		isChanged=true;
 		return ecmAttribute.executeSQL(sql).size()>0;
 	}
@@ -172,7 +83,7 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 		// ALTER TABLE zisecm.ecm_user DROP COLUMN `LDAP_NAME`;
 		
 		super.hasPermission(token, serviceCode+1,systemPermission);
-		String sql ="ALTER TABLE zisecm.ecm_user DROP COLUMN " +obj.getName();
+		String sql = DBFactory.getDBConn().getDBDocManager().deleteDocAttributeSql(obj);
 		isChanged=true;
 		return ecmAttribute.executeSQL(sql).size()>0;
 	}

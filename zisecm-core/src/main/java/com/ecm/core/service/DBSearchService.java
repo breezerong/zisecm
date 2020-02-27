@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmSuggestion;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.search.ESClient;
 import com.ecm.core.search.SearchClient;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.ISearchService;
 
 @Component
@@ -127,10 +127,10 @@ public class DBSearchService  extends EcmService  implements ISearchService {
 			if(item.getControlType().equalsIgnoreCase("date")) {
 				if(attrName.startsWith("dtstart_")) {
 					attrName = attrName.replace("dtstart_", "");
-					cond +=" and "+ attrName +" >= "+ DBUtils.getDBDateString(item.getDefaultValue());
+					cond +=" and "+ attrName +" >= "+ DBFactory.getDBConn().getDBUtils().getDBDateString(item.getDefaultValue());
 				}else if(attrName.startsWith("dtend_")){
 					attrName = attrName.replace("dtend_", "");
-					cond +=" and "+  attrName +" <= "+ DBUtils.getDBDateString(item.getDefaultValue());
+					cond +=" and "+  attrName +" <= "+ DBFactory.getDBConn().getDBUtils().getDBDateString(item.getDefaultValue());
 				}
 			}else if(item.getControlType().toLowerCase().indexOf("select")>-1) {
 				cond +=" and "+  attrName +"='"+ item.getDefaultValue()+"'";

@@ -14,12 +14,12 @@ import com.ecm.core.dao.EcmGroupItemMapper;
 import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
 import com.ecm.core.dao.EcmUserMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
 import com.ecm.core.entity.EcmGroupUser;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.Pager;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IGroupService;
 
 /**
@@ -128,7 +128,7 @@ public class GroupService implements IGroupService {
 	public List<EcmGroup> getUserGroupsById(String token,String userId) {
 		
 		String sql = "select a.* from ecm_group a, ecm_group_user b "
-				+ " where a.ID = b.GROUP_ID and b.USER_ID='"+DBUtils.getString(userId)+"'";
+				+ " where a.ID = b.GROUP_ID and b.USER_ID='"+DBFactory.getDBConn().getDBUtils().getString(userId)+"'";
 		
 		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
 		return list;
@@ -138,7 +138,7 @@ public class GroupService implements IGroupService {
 	public List<EcmGroup> getUserGroupsByName(String token,String userName) {
 		
 		String sql = "select a.* from ecm_group a, ecm_group_user b, ecm_user c where "
-				+ " a.ID = b.GROUP_ID and b.USER_ID=c.ID and c.NAME='"+DBUtils.getString(userName)+"'";
+				+ " a.ID = b.GROUP_ID and b.USER_ID=c.ID and c.NAME='"+DBFactory.getDBConn().getDBUtils().getString(userName)+"'";
 		
 		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
 		return list;

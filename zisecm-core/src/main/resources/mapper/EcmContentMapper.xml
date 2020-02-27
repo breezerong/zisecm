@@ -34,8 +34,12 @@
     from ecm_content
     where ${condition}
   </select>
-  <select id="selectDataTicket" resultType="java.lang.Long">
-    select next_val('data_ticket')
+  <select id="selectDataTicket" parameterType="java.lang.String" resultType="java.lang.Long">
+    <!--  
+    mysql: select next_val('data_ticket') 
+    sql server: exec next_val 'data_ticket'
+    -->
+    ${sqlStr}
   </select>
   <select id="getContents" resultMap="BaseResultMap">
     select 

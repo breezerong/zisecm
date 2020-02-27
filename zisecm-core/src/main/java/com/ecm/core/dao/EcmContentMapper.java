@@ -15,7 +15,7 @@ public interface EcmContentMapper {
 	
 	int deleteByDocument(String id);
 	
-	Long selectDataTicket();
+	Long selectDataTicket(@Param(value="sqlStr")String sqlStr);
 
 	int insert(EcmContent record);
 

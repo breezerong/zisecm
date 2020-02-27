@@ -17,13 +17,13 @@ import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.dao.EcmFolderMapper;
 import com.ecm.core.dao.EcmQueryMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmAcl;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IFolderService;
 @Service
 @Scope("prototype")
@@ -95,7 +95,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	
 	@Override
 	public EcmFolder getObjectByName(String token,String name, String parentId) {
-		String cond = " NAME='"+DBUtils.getString(name)+"' and PARENT_ID='"+DBUtils.getString(parentId)+"'";
+		String cond = " NAME='"+DBFactory.getDBConn().getDBUtils().getString(name)+"' and PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(parentId)+"'";
 		List<EcmFolder> list = ecmFolderMapper.selectByCondition(cond);
 		if(list.size()>0) {
 			return list.get(0);
@@ -162,7 +162,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	}
 	@Override
 	public EcmFolder getObjectByPath(String token,String folderPath) {
-		String cond = " FOLDER_PATH='"+DBUtils.getString(folderPath)+"'";
+		String cond = " FOLDER_PATH='"+DBFactory.getDBConn().getDBUtils().getString(folderPath)+"'";
 		List<EcmFolder> list = ecmFolderMapper.selectByCondition(cond);
 		if(list.size()>0) {
 			return list.get(0);
@@ -427,7 +427,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	
 	private void updateAclName(String token, String id, String aclName) throws AccessDeniedException {
 		String sql = "update ecm_folder set ACL_NAME='" + aclName + "', ";
-		sql += " MODIFIED_DATE=" + DBUtils.getDBDateNow();
+		sql += " MODIFIED_DATE=" + DBFactory.getDBConn().getDBUtils().getDBDateNow();
 		sql += ", MODIFIER='" + getSession(token).getCurrentUser().getUserName() + "'";
 		sql += " where ID='" + id + "'";
 		ecmQuery.executeSQL(sql);

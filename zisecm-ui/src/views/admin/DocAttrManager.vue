@@ -9,7 +9,7 @@
           <el-input v-model="form.description" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="类型" :label-width="formLabelWidth">
-          <el-select v-model="form.dataType">
+          <el-select v-model="form.fieldType">
             <el-option label="String" :value="1"></el-option>
             <el-option label="Int" :value="2"></el-option>
             <el-option label="Double" :value="3"></el-option>
@@ -68,7 +68,7 @@
           <el-table-column label="行号" type="index" width="60"></el-table-column>
           <el-table-column prop="name" label="字段名称" width="180" sortable></el-table-column>
           <el-table-column prop="description" label="说明" width="180" sortable></el-table-column>
-          <el-table-column prop="dataType" label="类型" width="120" sortable></el-table-column>
+          <el-table-column prop="fieldType" label="类型" width="120" sortable></el-table-column>
           <el-table-column prop="length" label="长度" width="120" sortable></el-table-column>
           <el-table-column label="操作" width="320">
             <template slot-scope="scope">
@@ -116,7 +116,7 @@ export default {
       form: {
         name: "",
         description: "",
-        dataType: 1,
+        fieldType: 1,
         length: 0,
         defaultValue: "",
         isNull: "YES"
@@ -205,7 +205,7 @@ export default {
       _self.isNew = true;
       _self.form.id = null;
       _self.form.description = "";
-      _self.form.dataType = 1;
+      _self.form.fieldType = 1;
       _self.form.length = 0;
       _self.form.defaultValue = "";
       _self.form.isNull = "YES";

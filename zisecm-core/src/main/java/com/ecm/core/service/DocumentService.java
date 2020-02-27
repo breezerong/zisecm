@@ -28,6 +28,7 @@ import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmLifeCycleItemMapper;
 import com.ecm.core.dao.EcmLifeCycleMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmAcl;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmContent;
@@ -44,7 +45,6 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
 import com.ecm.core.exception.NoPermissionException;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
@@ -454,7 +454,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					date = DateUtils.formatDate((Date)args.get(key),"yyyy-MM-dd HH:mm:ss");
 					date = "'"+date+"'";
 				}else {
-					date = DBUtils.getDBDateString(date);
+					date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 				}
 				if (date == null || date.length() < 1)
 					continue;
@@ -485,7 +485,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			default:// 字符串
 			{
 				fieldStr += key.toString() + ",";
-				valueStr += "'" + DBUtils.getString((String) args.get(key)) + "',";
+				valueStr += "'" + DBFactory.getDBConn().getDBUtils().getString((String) args.get(key)) + "',";
 				break;
 			}
 			}
@@ -494,7 +494,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				? args.get("OWNER_NAME").toString()
 				: getSession(token).getCurrentUser().getUserName();
 		fieldStr += "CREATION_DATE,CREATOR,VERSION_ID,OWNER_NAME";
-		valueStr += DBUtils.getDBDateNow() + ",'" + getSession(token).getCurrentUser().getUserName() + "','" + id
+		valueStr += DBFactory.getDBConn().getDBUtils().getDBDateNow() + ",'" + getSession(token).getCurrentUser().getUserName() + "','" + id
 				+ "','" + ownerName + "'";
 		// get acl name from folder when Acl Name is empty
 		if (StringUtils.isEmpty((String) args.get("ACL_NAME"))) {
@@ -573,17 +573,16 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					isFirst = false;
 				}
 				if (args.get(key) == null) {
-					sql += " " + key.toString() + "=" + DBUtils.getDBNullDate();
+					sql += " " + key.toString() + "=" + DBFactory.getDBConn().getDBUtils().getDBNullDate();
 				} else {
 					String date = "";
 					if (args.get(key) instanceof Timestamp) {
-						date = DBUtils.getDBDateString(((Timestamp) args.get(key)));
+						date = DBFactory.getDBConn().getDBUtils().getDBDateString(((Timestamp) args.get(key)));
 					}else if(args.get(key) instanceof Date) {
-						date = DateUtils.formatDate((Date)args.get(key),"yyyy-MM-dd HH:mm:ss");
-						date = "'"+date+"'";
+						date = DBFactory.getDBConn().getDBUtils().getDBDateString(((Date) args.get(key)));
 					}else {
 						date = (String) args.get(key);
-						date = DBUtils.getDBDateString(date);
+						date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 					}
 					if (date == null || date.length() < 1)
 						continue;
@@ -628,7 +627,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				} else {
 					isFirst = false;
 				}
-				sql += " " + key.toString() + "='" + DBUtils.getString((String) args.get(key)) + "'";
+				sql += " " + key.toString() + "='" + DBFactory.getDBConn().getDBUtils().getString((String) args.get(key)) + "'";
 				break;
 			}
 		}
@@ -637,9 +636,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		} else {
 			isFirst = false;
 		}
-		sql += " MODIFIED_DATE=" + DBUtils.getDBDateNow();
+		sql += " MODIFIED_DATE=" + DBFactory.getDBConn().getDBUtils().getDBDateNow();
 		sql += ", MODIFIER='" + getSession(token).getCurrentUser().getUserName() + "'";
-		sql += ", LOCK_OWNER='', LOCK_DATE=" + DBUtils.getDBNullDate() + ", LOCK_CLIENT=''";
+		sql += ", LOCK_OWNER='', LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBNullDate() + ", LOCK_CLIENT=''";
 		sql += " where ID='" + id + "'";
 		ecmDocument.executeSQL(sql);
 		newAudit(token, null, AuditContext.UPDATE, id, null, null);
@@ -709,7 +708,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				sb.append("select max(PERMISSION) as PERMISSION from(select PERMISSION from ecm_acl_item a, ecm_acl b where ");
 				sb.append("b.NAME='").append(aclName);
 				sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and (a.expire_date is null or a.expire_date>")
-				.append(DBUtils.getDBDateNow())
+				.append(DBFactory.getDBConn().getDBUtils().getDBDateNow())
 				.append(") and a.TARGET_NAME in('everyone'");
 				sb.append(",'").append(currentUser).append("'");
 				if (currentUser.equals(doc.getOwnerName())) {
@@ -722,7 +721,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				sb.append(aclName).append(
 						"'  and a.PARENT_ID = b.ID and a.TARGET_TYPE='2' and a.TARGET_NAME=c.NAME and c.ID=d.GROUP_ID and ");
 				sb.append(" (a.expire_date is null or a.expire_date>")
-						.append(DBUtils.getDBDateNow()) 
+						.append(DBFactory.getDBConn().getDBUtils().getDBDateNow()) 
 						.append(") and ");
 				sb.append("d.USER_ID='").append(userID).append("') as permittemp");
 				List<Map<String, Object>> list = ecmDocument.executeSQL(sb.toString());
@@ -916,7 +915,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 						+ " has no right to change permission:" + doc.getId());
 			}
-			String sql = "update ecm_document set LOCK_OWNER='',LOCK_DATE=" + DBUtils.getDBNullDate() + " where ID='"
+			String sql = "update ecm_document set LOCK_OWNER='',LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBNullDate() + " where ID='"
 					+ doc.getId() + "'";
 			List<Map<String, Object>> result = ecmDocument.executeSQL(sql);
 			newAudit(token, null, AuditContext.UNLOCK, doc.getId(), null, null);
@@ -953,7 +952,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 						+ " has no right to change permission:" + id);
 			}
 			String sql = "update ecm_document set LOCK_OWNER='" + session.getCurrentUser().getUserName()
-					+ "',LOCK_DATE=" + DBUtils.getDBDateNow() + " where ID='" + id + "'";
+					+ "',LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBDateNow() + " where ID='" + id + "'";
 			List<Map<String, Object>> result = ecmDocument.executeSQL(sql);
 			newAudit(token, null, AuditContext.LOCK, doc.getId(), null, null);
 			return true;
@@ -1058,7 +1057,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 
 	private void updateAclName(String token, String id, String aclName) throws AccessDeniedException {
 		String sql = "update ecm_document set ACL_NAME='" + aclName + "', ";
-		sql += " MODIFIED_DATE=" + DBUtils.getDBDateNow();
+		sql += " MODIFIED_DATE=" + DBFactory.getDBConn().getDBUtils().getDBDateNow();
 		sql += ", MODIFIER='" + getSession(token).getCurrentUser().getUserName() + "'";
 		sql += " where ID='" + id + "'";
 		ecmDocument.executeSQL(sql);
@@ -1066,7 +1065,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 
 	private void updateModifyInfo(String token, String id) throws AccessDeniedException {
 		String sql = "update ecm_document set";
-		sql += " MODIFIED_DATE=" + DBUtils.getDBDateNow();
+		sql += " MODIFIED_DATE=" + DBFactory.getDBConn().getDBUtils().getDBDateNow();
 		sql += ", MODIFIER='" + getSession(token).getCurrentUser().getUserName() + "'";
 		sql += " where ID='" + id + "'";
 		ecmDocument.executeSQL(sql);
@@ -1123,7 +1122,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				appName = ActionContext.APP_CORE;
 			}
 			String sql = "update ecm_document set LOCK_OWNER='" + session.getCurrentUser().getUserName()
-					+ "',LOCK_DATE=" + DBUtils.getDBDateNow() + ", LOCK_CLIENT='" + appName + "' where ID='" + id + "'";
+					+ "',LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBDateNow() + ", LOCK_CLIENT='" + appName + "' where ID='" + id + "'";
 			List<Map<String, Object>> result = ecmDocument.executeSQL(sql);
 			newAudit(token, null, AuditContext.LOCK, doc.getId(), null, null);
 			return true;
@@ -1180,7 +1179,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			contentService.copyContent(token, docId, doc.getId());
 		}
 		// 更新上一版信息
-		String sql = "update ecm_document set LOCK_OWNER='',LOCK_DATE=" + DBUtils.getDBNullDate() + ", LOCK_CLIENT=''";
+		String sql = "update ecm_document set LOCK_OWNER='',LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBNullDate() + ", LOCK_CLIENT=''";
 		if (isCurrent) {
 			sql += ",is_current=0";
 		}

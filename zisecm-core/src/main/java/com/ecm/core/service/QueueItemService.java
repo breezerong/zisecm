@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.dao.EcmQueueItemMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.bpm.IQueueItemService;
 /**
  * 消息队列服务
@@ -100,7 +100,7 @@ public class QueueItemService extends EcmObjectService<EcmQueueItem> implements 
 	}
 	@Override
 	public void updateQueueItemStatus(String token,String id, int status,String message) {
-		String sql = "update ecm_queue_item set STATUS="+status+" , MESSAGE='"+DBUtils.getString(message)+"'"
+		String sql = "update ecm_queue_item set STATUS="+status+" , MESSAGE='"+DBFactory.getDBConn().getDBUtils().getString(message)+"'"
 				+ " where ID='"+id+"'";
 		ecmQueueItemMapper.executeSQL(sql);
 	}

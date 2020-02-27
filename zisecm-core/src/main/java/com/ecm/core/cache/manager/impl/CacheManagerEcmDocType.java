@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.cache.manager.ICacheManager;
 import com.ecm.core.dao.EcmAttributeMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmAttribute;
 /**
  * @ClassName  CacheManagerEcmStore   
@@ -26,7 +27,7 @@ public class CacheManagerEcmDocType implements ICacheManager<EcmAttribute>{
 	@Override
 	public void initAllCaches() {
 		CacheManagerOper.getEcmAttributes().clear();
-		List<EcmAttribute> objList = ecmAttributeMapper.selectAll();
+		List<EcmAttribute> objList = ecmAttributeMapper.selectAll(DBFactory.getDBConn().getDBDocManager().getDocAttributesSql());
 		if(objList != null) {
 			for(EcmAttribute obj:objList) {
 				CacheManagerOper.getEcmAttributes().put(obj.getName(), obj);

@@ -21,11 +21,11 @@ import org.springframework.stereotype.Service;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IContentService;
 /**
  * 内容服务
@@ -68,7 +68,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			if(StringUtils.isEmpty(en.getId())) {
 				en.createId();
 			}
-			en.setDataTicket(contentMapper.selectDataTicket());
+			en.setDataTicket(contentMapper.selectDataTicket(DBFactory.getDBConn().getDBSequece().getContentDataTicketSql()));
 			String fullPath = getFullPath(en);
 			logger.info("Full path:{}",fullPath);
 			File file = new File(fullPath);   
@@ -177,11 +177,11 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	@Override
 	public EcmContent getObject(String token, String objId,int contentType,String formatName) {
 		// TODO Auto-generated method stub
-		String sql = " PARENT_ID='"+DBUtils.getString(objId)
-				+"' and FORMAT_NAME='"+DBUtils.getString(formatName)+"'";
+		String sql = " PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(objId)
+				+"' and FORMAT_NAME='"+DBFactory.getDBConn().getDBUtils().getString(formatName)+"'";
 		if(contentType>0) {
-			sql = " PARENT_ID='"+DBUtils.getString(objId)+"' and CONTENT_TYPE="+contentType
-					+" and FORMAT_NAME='"+DBUtils.getString(formatName)+"'";
+			sql = " PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(objId)+"' and CONTENT_TYPE="+contentType
+					+" and FORMAT_NAME='"+DBFactory.getDBConn().getDBUtils().getString(formatName)+"'";
 		}
 		List<EcmContent> list = contentMapper.selectByCondition(sql);
 		if(list.size()>0) {

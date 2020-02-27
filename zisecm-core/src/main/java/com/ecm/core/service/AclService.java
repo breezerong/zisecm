@@ -18,13 +18,13 @@ import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmAclItemMapper;
 import com.ecm.core.dao.EcmAclMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmAcl;
 import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
-import com.ecm.core.util.DBUtils;
 import com.ecm.icore.service.IAclService;
 import com.ecm.icore.service.IEcmSession;
 
@@ -67,7 +67,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 		String sql = "select * from ecm_acl";
 		if(!EcmStringUtils.isEmpty(name))
 		{
-			name = DBUtils.getString(name);
+			name = DBFactory.getDBConn().getDBUtils().getString(name);
 			if(name.indexOf("%")>-1) {
 				sql += " where name like '"+name+"'";
 			}else {
@@ -89,7 +89,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	@Override
 	public EcmAcl getObjectByName(String token, String name) throws AccessDeniedException {
 		this.getSession(token);
-		String sql = "select * from ecm_acl where name='"+DBUtils.getString(name)+"'";
+		String sql = "select * from ecm_acl where name='"+DBFactory.getDBConn().getDBUtils().getString(name)+"'";
 		List<EcmAcl> list = ecmAcl.searchToEntity(sql);
 		if(list.size()>0) {
 			return list.get(0);

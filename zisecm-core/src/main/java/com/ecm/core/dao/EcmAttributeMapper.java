@@ -11,6 +11,6 @@ import com.ecm.core.entity.EcmAttribute;
 @Component
 @Mapper
 public interface EcmAttributeMapper {
-	List<EcmAttribute> selectAll();
+	List<EcmAttribute> selectAll(@Param(value="sqlStr")String sqlStr);
 	List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
 }

@@ -60,9 +60,6 @@
       #{failureCount,jdbcType=INTEGER}, #{message,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, 
       #{workitemId,jdbcType=VARCHAR}, #{routerId,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
       )
-    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
-		SELECT LAST_INSERT_ID() AS ID
-	</selectKey>
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmQueueItem">
     insert into ecm_queue_item

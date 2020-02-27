@@ -1,0 +1,20 @@
+SQL Server
+1、添加存储过程
+--内容文件流水号
+CREATE procedure dbo.next_val(@prefix_name varchar(32)) 
+as
+BEGIN
+	declare @result_index bigint
+	begin tran
+		select  @result_index = current_value from ecm_sequence where sequence_name = @prefix_name
+		update ecm_sequence set current_value= current_value+1 where sequence_name =@prefix_name and current_value=@result_index
+	commit tran
+    select @result_index+1 as current_value
+END
+
+------------------------------------------------------------------------------------------------------
+Mysql
+数据库表名称不能区分大小写
+vi /etc/vi my.cnf
+
+lower_case_table_names=1
