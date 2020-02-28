@@ -43,20 +43,71 @@ public class SqlServerDocManager implements IDBDocManager {
 
 	@Override
 	public String newDocAttributeSql(EcmAttribute en) {
-		// TODO Auto-generated method stub
-		return null;
+		String sql ="ALTER TABLE ecm_document ADD ";
+		sql+=en.getName().toUpperCase()+" ";
+		//1：String，2：DateTime，3：boolean,4：Int，5:long，6：Double，7:decimal,8:float
+		switch(en.getFieldType()) {
+		case 2:
+			sql += "datetime ";
+			break;
+		case 3:
+			sql += "tinyint ";
+			break;
+		case 4:
+			sql += "int ";
+			break;
+		case 5:
+			sql += "bigint ";
+			break;
+		case 6:
+			sql += "double ";
+			break;
+		case 7:
+			sql += "decimal ";
+			break;
+		case 8:
+			sql += "float ";
+			break;
+		
+		default:
+			sql += "nvarchar("+en.getLength()+") ";
+			break;
+		}
+		if(en.getIsNull().equals("NO")) {
+			sql += " NOT NULL ";
+		}else {
+			sql += " NULL ";
+		}
+		if(en.getDefaultValue()!=null&& en.getDefaultValue().length()>0) {
+			sql += "\n\rGO\n\r";
+			sql += "alter table ecm_document add CONSTRAINT DF_ecm_document_"+en.getName();
+			if(en.getFieldType()==1) {
+				sql += " DEFAULT N'"+en.getDefaultValue()+"' ";
+			}
+			else {
+				sql += " DEFAULT "+en.getDefaultValue()+" ";
+			}
+			sql += " FOR "+en.getName();
+		}
+		if(en.getDescription()!=null&&en.getDescription().length()>0) {
+			sql += "\n\rGO\n\r";
+			sql += "EXEC sys.sp_addextendedproperty @name=N'MS_"+en.getName()+"', @value=N'"+en.getDescription()
+			+"' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ecm_document', "
+			+"@level2type=N'COLUMN',@level2name=N'"+en.getName()+"'";
+		}
+		return sql;
 	}
 
 	@Override
 	public String updateDocAttributeSql(EcmAttribute en) {
-		// TODO Auto-generated method stub
+		// SQL Server不能直接修改字段长度，修改描述需要先查询再修改，比较麻烦，暂时不在线修改
 		return null;
 	}
 
 	@Override
 	public String deleteDocAttributeSql(EcmAttribute en) {
-		// TODO Auto-generated method stub
-		return null;
+		String sql ="ALTER TABLE ecm_document DROP COLUMN " +en.getName();
+		return sql;
 	}
 
 	
