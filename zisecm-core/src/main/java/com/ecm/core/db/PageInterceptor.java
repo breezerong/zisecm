@@ -178,9 +178,9 @@ public class PageInterceptor implements Interceptor {
 	 * @return
 	 */
 	private String getCountSql(String sql) {
-		sql = sql.toUpperCase();
-		if(sql.indexOf(" ORDER ")>0) {
-			String[] strs = sql.split(" ORDER ");
+		sql = sql.toLowerCase();
+		if(sql.indexOf(" order ")>0) {
+			String[] strs = sql.split(" order ");
 			return "select count(*) from (" + strs[0] + ") as countRecord";
 		}
 		return "select count(*) from (" + sql + ") as countRecord";
