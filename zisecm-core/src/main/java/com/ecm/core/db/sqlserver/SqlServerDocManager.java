@@ -35,7 +35,7 @@ public class SqlServerDocManager implements IDBDocManager {
 				"    LEFT JOIN sys.extended_properties PTB" + 
 				"        ON PTB.class=1" + 
 				"            AND PTB.minor_id=0" + 
-				"            AND C.[object_id]=PTB.major_id" + 
+				"            AND C.[object_id]=PTB.major_id " + 
 				"WHERE O.name = 'ecm_document'" + 
 				"ORDER BY O.name,C.column_id";
 		return sql;

@@ -311,7 +311,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	public boolean deleteObject(String token,Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token,serviceCode+ObjectPermission.DELETE,systemPermission);
 		ecmUserMapper.deleteByPrimaryKey(((EcmUser)en).getId());
-		String sqlStr = "delete from ecm_group_item where child_id="+((EcmUser)en).getId();
+		String sqlStr = "delete from ecm_group_item where child_id='"+((EcmUser)en).getId()+"'";
 		ecmGroupItemMapper.executeSql(sqlStr);
 		return true;
 	}
