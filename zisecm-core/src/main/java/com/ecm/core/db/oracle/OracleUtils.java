@@ -41,7 +41,7 @@ public class OracleUtils implements IDBUtils {
 	@Override
 	public String getDBDateNow() {
 		// TODO Auto-generated method stub
-		return "SYSDATE()";
+		return "SYSDATE";
 	}
 
 }

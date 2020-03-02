@@ -13,16 +13,17 @@ public class EcmAttribute  extends EcmSysObject{
 	}
 
 	public void setType(String type) {
+		type = type.toLowerCase();
 		this.type = type;
 		if(type.startsWith("varchar")) {
 			String len = type.replace("varchar(", "").replace(")", "");
 			this.length = Integer.parseInt(len);
 		}
 		
-		if(type.startsWith("varchar")) {
+		if(type.startsWith("varchar")||type.startsWith("nvarchar")) {
 			fieldType= 1;
     	}
-		else if(type.startsWith("datetime")) {
+		else if(type.startsWith("datetime")||type.startsWith("date")) {
 			fieldType= 2;
     	}
 		else if(type.startsWith("tinyint")) {
@@ -37,7 +38,7 @@ public class EcmAttribute  extends EcmSysObject{
     	else if(type.startsWith("double")) {
     		fieldType= 6;
     	}
-    	else if(type.startsWith("decimal")) {
+    	else if(type.startsWith("decimal")||type.startsWith("number")) {
     		fieldType= 7;
     	}else if(type.startsWith("float")) {
     		fieldType= 8;

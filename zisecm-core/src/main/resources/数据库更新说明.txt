@@ -1,3 +1,6 @@
+需要修改表结构
+ecm_suggestion.SYNONYM 	为 	ecm_suggestion.SYNONYMS
+
 SQL Server
 1、添加存储过程
 --内容文件流水号
@@ -18,3 +21,17 @@ Mysql
 vi /etc/vi my.cnf
 
 lower_case_table_names=1
+
+------------------------------------------------------------------------------------------------------
+Oracle
+序列
+
+CREATE SEQUENCE "C##ECMADMIN".ecm_data_ticket
+START WITH 100000
+INCREMENT BY 1
+MINVALUE 0
+NOCACHE 
+NOCYCLE 
+NOORDER 
+NOKEEP
+GLOBAL;

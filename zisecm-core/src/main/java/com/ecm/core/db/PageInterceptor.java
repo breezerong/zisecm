@@ -178,10 +178,13 @@ public class PageInterceptor implements Interceptor {
 	 * @return
 	 */
 	private String getCountSql(String sql) {
-		sql = sql.toLowerCase();
 		if(sql.indexOf(" order ")>0) {
 			String[] strs = sql.split(" order ");
-			return "select count(*) from (" + strs[0] + ") as countRecord";
+			if(DBBase.isOracle()) {
+				return "select count(*) from (" + strs[0] + ")";
+			}else {
+				return "select count(*) from (" + strs[0] + ") as countRecord";
+			}
 		}
 		return "select count(*) from (" + sql + ") as countRecord";
 	}

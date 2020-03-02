@@ -5,11 +5,11 @@
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="WEIGHT" jdbcType="REAL" property="weight" />
-    <result column="SYNONYM" jdbcType="VARCHAR" property="synonym" />
+    <result column="SYNONYMS" jdbcType="VARCHAR" property="synonym" />
     <result column="LANG_KEY" jdbcType="VARCHAR" property="langKey" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, NAME, WEIGHT, SYNONYM, LANG_KEY
+    ID, NAME, WEIGHT, SYNONYMS, LANG_KEY
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -29,7 +29,7 @@
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmSuggestion">
     insert into ecm_suggestion (ID, NAME, WEIGHT, 
-      SYNONYM, LANG_KEY)
+      SYNONYMS, LANG_KEY)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{weight,jdbcType=REAL}, 
       #{synonym,jdbcType=VARCHAR}, #{langKey,jdbcType=VARCHAR})
   </insert>
@@ -46,7 +46,7 @@
         WEIGHT,
       </if>
       <if test="synonym != null">
-        SYNONYM,
+        SYNONYMS,
       </if>
       <if test="langKey != null">
         LANG_KEY,
@@ -80,7 +80,7 @@
         WEIGHT = #{weight,jdbcType=REAL},
       </if>
       <if test="synonym != null">
-        SYNONYM = #{synonym,jdbcType=VARCHAR},
+        SYNONYMS = #{synonym,jdbcType=VARCHAR},
       </if>
       <if test="langKey != null">
         LANG_KEY = #{langKey,jdbcType=VARCHAR},
@@ -92,7 +92,7 @@
     update ecm_suggestion
     set NAME = #{name,jdbcType=VARCHAR},
       WEIGHT = #{weight,jdbcType=REAL},
-      SYNONYM = #{synonym,jdbcType=VARCHAR},
+      SYNONYMS = #{synonym,jdbcType=VARCHAR},
       LANG_KEY = #{langKey,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>

@@ -7,7 +7,7 @@ public class OracleSequence implements IDBSequence{
 	@Override
 	public String getContentDataTicketSql() {
 		// TODO Auto-generated method stub
-		return null;
+		return "select ecm_data_ticket.nextval from dual";
 	}
 
 	
