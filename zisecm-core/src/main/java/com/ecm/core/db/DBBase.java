@@ -13,7 +13,7 @@ import com.alibaba.druid.util.StringUtils;
 @Component
 public class DBBase {
 
-	@Value("${spring.datasource.driver-class-name}")
+	
 	private static String className;
 	
 	private static String dbType;
@@ -22,6 +22,11 @@ public class DBBase {
 	public static String DB_SQLSERVER = "sqlserver";
 	public static String DB_MYSQL = "mysql";
 	public static String DB_POSTGRESQL = "postgresql";
+	
+	@Value("${spring.datasource.driver-class-name}")
+	public void setClassName(String name) {
+		DBBase.className = name;
+	}
 	
 	/**
 	 * 获取数据库类型

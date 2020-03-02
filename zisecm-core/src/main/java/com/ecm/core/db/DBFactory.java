@@ -3,6 +3,9 @@ package com.ecm.core.db;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.db.mysql.MySqlConnection;
+import com.ecm.core.db.oracle.OracleConnection;
+import com.ecm.core.db.postgresql.PostgreSqlConnection;
+import com.ecm.core.db.sqlserver.SqlServerConnection;
 
 /**
  * 数据库工厂
@@ -27,7 +30,11 @@ public class DBFactory {
 		if(DBBase.isMySql()) {
 			conn = new MySqlConnection();
 		}else if(DBBase.isSqlServer()) {
-			
+			conn = new SqlServerConnection();
+		}else if(DBBase.isOracle()) {
+			conn = new OracleConnection();
+		}else if(DBBase.isPostgreSql()) {
+			conn = new PostgreSqlConnection();
 		}
 	}
 }

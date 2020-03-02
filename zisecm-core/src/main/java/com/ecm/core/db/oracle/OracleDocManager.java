@@ -8,7 +8,7 @@ public class OracleDocManager implements IDBDocManager {
 	@Override
 	public String getDocAttributesSql() {
 		// TODO Auto-generated method stub
-		return null;
+		return "select a.COLUMN_NAME as \"Field\",a.DATA_TYPE as \"Type\",a.DATA_LENGTH as \"Length\",a.NULLABLE as \"Null\",a.DATA_DEFAULT as \"Default\",b.COMMENTS as \"Comment\" from user_tab_columns a, user_col_comments b where a.table_name='ecm_document' and A.TABLE_NAME=B.TABLE_NAME and A.COLUMN_NAME=B.COLUMN_NAME";
 	}
 
 	@Override
