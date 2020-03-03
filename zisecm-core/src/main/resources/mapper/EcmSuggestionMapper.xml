@@ -9,7 +9,7 @@
     <result column="LANG_KEY" jdbcType="VARCHAR" property="langKey" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, NAME, WEIGHT, SYNONYMS, LANG_KEY
+    ID, NAME, WEIGHT, SYNONYM, LANG_KEY
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
