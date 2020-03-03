@@ -63,9 +63,6 @@
       #{isRepeat,jdbcType=BIT},#{minCount,jdbcType=INTEGER},#{maxCount,jdbcType=INTEGER},
       #{enableChange,jdbcType=BIT}, #{dependName,jdbcType=VARCHAR}
       )
-    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
-		SELECT LAST_INSERT_ID() AS ID
-	</selectKey>
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmFormItem">
     insert into ecm_form_item

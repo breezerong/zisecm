@@ -84,9 +84,6 @@
         #{searchField,jdbcType=VARCHAR},
       </if>
     </trim>
-    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
-		SELECT LAST_INSERT_ID() AS ID
-	</selectKey>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmForm">
     update ecm_form

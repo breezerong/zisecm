@@ -34,9 +34,6 @@
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{storeType,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{storeClass,jdbcType=VARCHAR}, 
       #{storePath,jdbcType=VARCHAR})
-    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
-		SELECT LAST_INSERT_ID() AS ID
-	</selectKey>
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmStore">
     insert into ecm_store

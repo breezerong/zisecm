@@ -40,9 +40,6 @@
       #{childType,jdbcType=VARCHAR}, #{autoCopy,jdbcType=BOOLEAN},#{creationDate,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR},#{modifiedDate,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}
       )
-    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
-		SELECT LAST_INSERT_ID() AS ID
-	</selectKey>
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmRelationType">
     insert into ecm_exrelation

@@ -5,7 +5,7 @@
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="WEIGHT" jdbcType="REAL" property="weight" />
-    <result column="SYNONYMS" jdbcType="VARCHAR" property="synonym" />
+    <result column="SYNONYM" jdbcType="VARCHAR" property="synonym" />
     <result column="LANG_KEY" jdbcType="VARCHAR" property="langKey" />
   </resultMap>
   <sql id="Base_Column_List">
