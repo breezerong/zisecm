@@ -52,9 +52,6 @@
       #{appName,jdbcType=VARCHAR}, #{excuteDate,jdbcType=TIMESTAMP}, #{actionName,jdbcType=VARCHAR}, 
       #{docId,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{extendId,jdbcType=VARCHAR}
       )
-    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
-		SELECT LAST_INSERT_ID() AS ID
-	</selectKey>
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmAuditGeneral">
     insert into ecm_audit_general

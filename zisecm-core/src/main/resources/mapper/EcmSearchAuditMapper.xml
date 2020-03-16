@@ -26,9 +26,6 @@
       INPUT_KEY, SEARCH_DATE)
     values (#{id,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
       #{inputKey,jdbcType=VARCHAR}, #{searchDate,jdbcType=TIMESTAMP})
-    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
-		SELECT LAST_INSERT_ID() AS ID
-	</selectKey>
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmSearchAudit">
     insert into ecm_search_audit
