@@ -17,7 +17,7 @@ public class SqlServerDocManager implements IDBDocManager {
 				"    [Null]= C.is_nullable," + 
 				"    [Default]=CAST(ISNULL(D.definition,N'') as varchar(255))," + 
 				"    [Comment]=CAST(ISNULL(PFD.[value],N'') as varchar(255))" + 
-				"FROM sys.columns C" + 
+				" FROM sys.columns C" + 
 				"    INNER JOIN sys.objects O" + 
 				"        ON C.[object_id]=O.[object_id]" + 
 				"            AND O.type='U'" + 
@@ -28,7 +28,7 @@ public class SqlServerDocManager implements IDBDocManager {
 				"        ON C.[object_id]=D.parent_object_id" + 
 				"            AND C.column_id=D.parent_column_id" + 
 				"            AND C.default_object_id=D.[object_id]" + 
-				"LEFT JOIN sys.extended_properties PFD" + 
+				" LEFT JOIN sys.extended_properties PFD" + 
 				"        ON PFD.class=1" + 
 				"            AND C.[object_id]=PFD.major_id" + 
 				"            AND C.column_id=PFD.minor_id" + 
@@ -36,8 +36,8 @@ public class SqlServerDocManager implements IDBDocManager {
 				"        ON PTB.class=1" + 
 				"            AND PTB.minor_id=0" + 
 				"            AND C.[object_id]=PTB.major_id " + 
-				"WHERE O.name = 'ecm_document'" + 
-				"ORDER BY O.name,C.column_id";
+				" WHERE O.name = 'ecm_document'" + 
+				" ORDER BY O.name,C.column_id";
 		return sql;
 	}
 
