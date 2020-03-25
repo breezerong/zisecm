@@ -298,7 +298,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
 
-		return (long) list.get(0).get("objcount");
+		return (int) list.get(0).get("objcount");
 	}
 
 	@Override
