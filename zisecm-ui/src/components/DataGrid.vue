@@ -54,6 +54,7 @@
           @selection-change="selectChange"
           @sort-change="sortchange"
           @row-click="rowClick"
+          @row-dblclick="dbclick"
           @header-dragend="onHeaderDragend"
           v-loading="loading"
           :style="{'width': tableWidth}"
@@ -345,6 +346,9 @@ export default {
     rowClick(row) {
       this.selectedRow = row;
       this.$emit("rowclick", row);
+    },
+    dbclick(row){
+      this.$emit("dbclick", row);
     },
     selectChange(val) {
       this.$emit("selectchange", val);
