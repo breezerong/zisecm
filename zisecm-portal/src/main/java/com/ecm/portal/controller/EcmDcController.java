@@ -149,7 +149,7 @@ public class EcmDcController extends ControllerAbstract {
 			pager.setPageIndex(pageIndex);
 			pager.setPageSize(pageSize);
 			List<Map<String, Object>> list = documentService.getObjects(getToken(), args.get("gridName").toString(),
-					args.get("folderId").toString(), pager, args.get("condition").toString(),
+					args.get("folderId")==null?"":args.get("folderId").toString(), pager, args.get("condition").toString(),
 					args.get("orderBy").toString());
 			mp.put("data", list);
 			mp.put("pager", pager);
