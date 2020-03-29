@@ -18,6 +18,7 @@ import com.ecm.core.cache.manager.impl.CacheManagerEcmParam;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmStore;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmSuggestion;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmSystemEvent;
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
 
 /**
@@ -50,7 +51,10 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	private CacheManagerEcmCardSearch cacheManagerEcmCardSearch;//卡片搜索配置
 	
 	@Autowired
-	private CacheManagerLanguage cacheManagerLanguage;//语言标签配置
+	private CacheManagerLanguage cacheManagerLanguage;//语言配置
+	
+	@Autowired
+	private CacheManagerLangInfo cacheManagerLangInfo;//语言标签配置
 	
 	@Autowired
 	private CacheManagerEcmComponent cacheManagerEcmComponent;//组件配置
@@ -82,6 +86,7 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	public void run(ApplicationArguments args) throws Exception {
 		//语言标签配置
 		cacheManagerLanguage.initAllCaches();
+		cacheManagerLangInfo.initAllCaches();
 		//初始化系统配置
 		cacheManagerEcmParam.initAllCaches();
 

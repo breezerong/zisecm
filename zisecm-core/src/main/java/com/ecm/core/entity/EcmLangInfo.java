@@ -67,6 +67,6 @@ public class EcmLangInfo extends EcmObject{
 				return item.getMessageLabel();
 			}
 		}
-		return "";
+		return null;
 	}
 }

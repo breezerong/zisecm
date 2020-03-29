@@ -3,6 +3,8 @@ package com.ecm.core.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
+
 public class EcmMenuItem extends EcmSysObject{
 
     /**
@@ -149,7 +151,7 @@ public class EcmMenuItem extends EcmSysObject{
     	obj.setRoleName(roleName);
     	obj.setLangKey(langKey);
     	obj.setMenuName(menuName);
-    	obj.setLabel(label);
+    	obj.setLabel(CacheManagerLangInfo.getLanguageLabel(lang,label));
     	obj.setUrl(url);
     	obj.setParameter(parameter);
     	if(submenus != null) {

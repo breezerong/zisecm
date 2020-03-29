@@ -65,4 +65,12 @@ public class CacheManagerLangInfo implements ICacheManager<Map<String,String>>{
 		}
 		return info;
 	}
+	
+	public static String getLanguageLabel(String langKey, String key) {
+		EcmLangInfo info =  CacheManagerOper.getLangInfos().get(key);
+		if(info == null) {
+			return key;
+		}
+		return info.getLabel(langKey);
+	}
 }
