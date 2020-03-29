@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.ecm.common.util.DateUtils;
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
 import com.ecm.icore.service.IEcmSession;
 
@@ -96,11 +97,7 @@ public class EcmForm extends EcmSysObject {
 			for(EcmFormItem item : ecmFormItems) {
 				String label = item.getLabel();
 				if(!StringUtils.isEmpty(langKey)) {
-					label = CacheManagerLanguage.getLanguage(langKey, typeName, item.getAttrName());
-					//如果类型属性未定义，获取默认标签
-					if(StringUtils.isEmpty(label) && !StringUtils.isEmpty(typeName)) {
-						label = CacheManagerLanguage.getLanguage(langKey, item.getAttrName());
-					}
+					label = CacheManagerLangInfo.getLanguage(item.getLabel()).getLabel(langKey);
 				}
 				EcmFormItem itemc = item.clone();
 				if(!StringUtils.isEmpty(label)) {

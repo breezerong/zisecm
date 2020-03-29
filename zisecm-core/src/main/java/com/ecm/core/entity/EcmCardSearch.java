@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
 /**
  * 卡片搜索，名称一定需要跟类型名相同
@@ -98,7 +99,7 @@ public class EcmCardSearch extends EcmSysObject{
 		en.setGridView(this.getGridView());
 		en.setEnabled(isEnabled());
 		String key = lang + "_system_" + langKey;
-		String lan = CacheManagerOper.getLanguageCaches().get(key);
+		String lan = CacheManagerOper.getLanguages().get(key);
 		if(lan != null && lan.length()>0) {
 			en.setLabel(lan);
 		}else {
@@ -110,11 +111,8 @@ public class EcmCardSearch extends EcmSysObject{
 				for(EcmCardSearchItem item : ecmCardSearchItems) {
 					EcmCardSearchItem newItem = item.clone();
 					if(newItem.getEcmFormItem() != null) {
-						String label = CacheManagerLanguage.getLanguage(langKey, this.getName(), newItem.getEcmFormItem().getAttrName());
+						String label = CacheManagerLangInfo.getLanguage(newItem.getEcmFormItem().getLabel()).getLabel(langKey);
 						//如果类型属性未定义，获取默认标签
-						if(StringUtils.isEmpty(label) && !StringUtils.isEmpty(this.getName())) {
-							label = CacheManagerLanguage.getLanguage(langKey, newItem.getEcmFormItem().getAttrName());
-						}
 						if(label != null && label.length()>0) {
 							newItem.getEcmFormItem().setLabel(label);
 						}

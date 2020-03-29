@@ -20,6 +20,7 @@ import com.ecm.core.cache.manager.impl.CacheManagerEcmMenu;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmParam;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmStore;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmSuggestion;
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
 import com.ecm.core.search.ESClient;
 import com.ecm.core.search.SearchClient;
@@ -53,6 +54,9 @@ public class SystemManager extends ControllerAbstract{
 	CacheManagerLanguage cacheManagerLanguage;
 	
 	@Autowired
+	CacheManagerLangInfo cacheManagerLangInfo;
+	
+	@Autowired
 	CacheManagerEcmStore cacheManagerEcmStore;
 	
 	@Autowired
@@ -75,6 +79,7 @@ public class SystemManager extends ControllerAbstract{
 		 cacheManagerEcmMenu.initAllCaches();
 		 cacheManagerEcmParam.initAllCaches();
 		 cacheManagerLanguage.initAllCaches();
+		 cacheManagerLangInfo.initAllCaches();
 		 cacheManagerEcmStore.initAllCaches();
 		 cacheManagerEcmDocType.initAllCaches();
 		 cacheManagerEcmCardSearch.initAllCaches();

@@ -66,8 +66,16 @@
             enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
         </table>
         --> 
-        <table schema="${jdbc_user}" tableName="ecm_menu"
-            domainObjectName="EcmMenu" enableCountByExample="false"
+        <table schema="dbo" tableName="ecm_language"
+            domainObjectName="EcmLanguage" enableCountByExample="false"
+            enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
+        </table>
+        <table schema="dbo" tableName="ecm_lang_info"
+            domainObjectName="EcmLangInfo" enableCountByExample="false"
+            enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
+        </table>
+        <table schema="dbo" tableName="ecm_lang_item"
+            domainObjectName="EcmLangItem" enableCountByExample="false"
             enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false">
         </table>
     </context>

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
 
 public class EcmGridView extends EcmSysObject{
@@ -49,11 +50,7 @@ public class EcmGridView extends EcmSysObject{
 		if(gridViewItems != null && !StringUtils.isEmpty(langKey)) {
 			
 			for(EcmGridViewItem item : gridViewItems) {
-				String label = CacheManagerLanguage.getLanguage(langKey, typeName, item.getAttrName());
-				//如果类型属性未定义，获取默认标签
-				if(StringUtils.isEmpty(label) && !StringUtils.isEmpty(typeName)) {
-					label = CacheManagerLanguage.getLanguage(langKey, item.getAttrName());
-				}
+				String label = CacheManagerLangInfo.getLanguage(item.getLabel()).getLabel(langKey);
 				if(!StringUtils.isEmpty(label)) {
 					EcmGridViewItem itemc = item.clone();
 					itemc.setLabel(label);

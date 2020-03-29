@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmLangItemMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmLangItem">
+    <id column="ID" jdbcType="NVARCHAR" property="id" />
+    <result column="MESSAGE_KEY" jdbcType="NVARCHAR" property="messageKey" />
+    <result column="LANG_KEY" jdbcType="NCHAR" property="langKey" />
+    <result column="MESSAGE_LABEL" jdbcType="NVARCHAR" property="messageLabel" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, MESSAGE_KEY, LANG_KEY, MESSAGE_LABEL
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_lang_item order by MESSAGE_KEY
+  </select>
+  <select id="selectByMessageKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_lang_item
+    where MESSAGE_KEY = #{msgKey,jdbcType=NVARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_lang_item
+    where ID = #{id,jdbcType=NVARCHAR}
+  </select>
+  <delete id="deleteByMessageKey" parameterType="java.lang.String">
+    delete from ecm_lang_item
+    where MESSAGE_KEY = #{msgKey,jdbcType=NVARCHAR}
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_lang_item
+    where ID = #{id,jdbcType=NVARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmLangItem">
+    insert into ecm_lang_item (ID, MESSAGE_KEY, LANG_KEY, 
+      MESSAGE_LABEL)
+    values (#{id,jdbcType=NVARCHAR}, #{messageKey,jdbcType=NVARCHAR}, #{langKey,jdbcType=NCHAR}, 
+      #{messageLabel,jdbcType=NVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmLangItem">
+    insert into ecm_lang_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="messageKey != null">
+        MESSAGE_KEY,
+      </if>
+      <if test="langKey != null">
+        LANG_KEY,
+      </if>
+      <if test="messageLabel != null">
+        MESSAGE_LABEL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=NVARCHAR},
+      </if>
+      <if test="messageKey != null">
+        #{messageKey,jdbcType=NVARCHAR},
+      </if>
+      <if test="langKey != null">
+        #{langKey,jdbcType=NCHAR},
+      </if>
+      <if test="messageLabel != null">
+        #{messageLabel,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmLangItem">
+    update ecm_lang_item
+    <set>
+      <if test="messageKey != null">
+        MESSAGE_KEY = #{messageKey,jdbcType=NVARCHAR},
+      </if>
+      <if test="langKey != null">
+        LANG_KEY = #{langKey,jdbcType=NCHAR},
+      </if>
+      <if test="messageLabel != null">
+        MESSAGE_LABEL = #{messageLabel,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmLangItem">
+    update ecm_lang_item
+    set MESSAGE_KEY = #{messageKey,jdbcType=NVARCHAR},
+      LANG_KEY = #{langKey,jdbcType=NCHAR},
+      MESSAGE_LABEL = #{messageLabel,jdbcType=NVARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+</mapper>

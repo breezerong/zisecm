@@ -15,6 +15,7 @@ import com.ecm.core.entity.EcmDefType;
 import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
+import com.ecm.core.entity.EcmLangInfo;
 import com.ecm.core.entity.EcmMenu;
 import com.ecm.core.entity.EcmParameter;
 import com.ecm.core.entity.EcmStore;
@@ -49,8 +50,11 @@ public class CacheManagerOper {
 	private static final Map<String,EcmCardSearch> ECM_CARD_SEARCH = new HashMap<String,EcmCardSearch>();
 	//组件配置缓存对象
 	private static final Map<String,EcmComponent> ECM_COMPONENT = new HashMap<String,EcmComponent>();	
-	//语言标签配置缓存对象
+	//语言缓存对象
 	private static final Map<String,String> LANGUAGE_CACHE = new HashMap<String,String>();	
+	
+	//语言缓存对象
+	private static final Map<String,EcmLangInfo> LANGUAGE_INFO = new HashMap<String,EcmLangInfo>();
 	
 	//存储缓存对象
 	private static final Map<String,EcmStore> STORE_CACHE = new HashMap<String,EcmStore>();	
@@ -170,8 +174,16 @@ public class CacheManagerOper {
 	 * @date 2018年6月27日 下午5:39:53 
 	 * @modify Haihong Rong 2018年6月27日 下午5:39:53
 	 */
-	public static Map<String,String> getLanguageCaches() {
+	public static Map<String,String> getLanguages() {
 		return LANGUAGE_CACHE;
+	}
+	
+	/**
+	 * 语言标签缓存
+	 * @return
+	 */
+	public static Map<String,EcmLangInfo> getLangInfos() {
+		return LANGUAGE_INFO;
 	}
 	/**
 	 * 

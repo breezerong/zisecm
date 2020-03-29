@@ -1,15 +1,16 @@
 package com.ecm.core.entity;
 
-public class EcmLanguage {
-    private String id;
+public class EcmLanguage extends EcmObject{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    private String attrName;
+	private String id;
 
-    private String typeName;
+    private String name;
 
-    private String langKey;
-
-    private String attrLabel;
+    private String description;
 
     public String getId() {
         return id;
@@ -19,35 +20,19 @@ public class EcmLanguage {
         this.id = id == null ? null : id.trim();
     }
 
-    public String getAttrName() {
-        return attrName;
+    public String getName() {
+        return name;
     }
 
-    public void setAttrName(String attrName) {
-        this.attrName = attrName == null ? null : attrName.trim();
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName == null ? null : typeName.trim();
-    }
-
-    public String getLangKey() {
-        return langKey;
-    }
-
-    public void setLangKey(String langKey) {
-        this.langKey = langKey == null ? null : langKey.trim();
-    }
-
-    public String getAttrLabel() {
-        return attrLabel;
-    }
-
-    public void setAttrLabel(String attrLabel) {
-        this.attrLabel = attrLabel == null ? null : attrLabel.trim();
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
     }
 }
