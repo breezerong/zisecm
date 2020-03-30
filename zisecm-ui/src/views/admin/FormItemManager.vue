@@ -1,17 +1,6 @@
 <template>
   <div>
-    <el-dialog title="选择属性" :visible.sync="categoryVisible">
-      <CategoryManager
-        ref="CategoryManager"
-        @onselected="onselected"
-        width="70%"
-        v-bind:categoryVisible="categoryVisible"
-      ></CategoryManager>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="categoryVisible = false">取 消</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="表单校验" :visible.sync="checkVisible" width="80%">
+    <el-dialog title="表单校验" :visible.sync="checkVisible"  width="80%">
       <FormItemCheck ref="FormItemCheck" :parentformid="parentid"></FormItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">取 消</el-button>
@@ -23,24 +12,25 @@
         <el-button @click="queryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" width="80%">
+    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" modal-append-to-body="false" width="80%">
       <el-form :model="form">
         <el-form-item label="父Id" :label-width="formLabelWidth">
           <el-input v-model="form.parentId" auto-complete="off"></el-input>
         </el-form-item>
         <el-row>
-          <el-col :span="10">
+          <el-col :span="12">
             <el-form-item label="属性名称" :label-width="formLabelWidth">
-              <el-input v-model="form.attrName" auto-complete="off"></el-input>
+              <AttributeSelector ref="AttributeSelector" v-model="form.attrName"
+                v-bind:inputValue="form.attrName"></AttributeSelector>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
+          <el-col :span="12">
             <el-form-item label="标签" :label-width="formLabelWidth">
-              <el-input v-model="form.label" auto-complete="off"></el-input>
+              <LangSelector
+                v-model="form.label"
+                v-bind:inputValue="form.label"
+              ></LangSelector>
             </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-button @click="showcategory('')">选择属性</el-button>
           </el-col>
           <el-col :span="8">
             <el-form-item label="控件类型" :label-width="formLabelWidth2">
@@ -295,9 +285,10 @@
 </template>
 
 <script type="text/javascript">
-import CategoryManager from "@/components/admin/CategoryManager";
+import AttributeSelector from "@/components/controls/AttributeSelector";
 import QuerySelector from "@/components/admin/QuerySelector";
 import FormItemCheck from "@/components/admin/FormItemCheck";
+import LangSelector from "@/components/controls/LangSelector";
 
 export default {
   name: "FormItemManager",
@@ -343,9 +334,10 @@ export default {
     };
   },
   components: {
-    CategoryManager: CategoryManager,
+    AttributeSelector: AttributeSelector,
     QuerySelector: QuerySelector,
-    FormItemCheck: FormItemCheck
+    FormItemCheck: FormItemCheck,
+    LangSelector: LangSelector
   },
   created() {
     let _self = this;

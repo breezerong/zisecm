@@ -25,7 +25,10 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="标签" :label-width="formLabelWidth">
-              <el-input v-model="form.label" auto-complete="off"></el-input>
+              <LangSelector
+                v-model="form.label"
+                v-bind:inputValue="form.label"
+              ></LangSelector>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -127,12 +130,14 @@
 //   contentType: "application/json"
 // });
 import ComponentSelector from "@/components/controls/ComponentSelector";
+import LangSelector from "@/components/controls/LangSelector";
 
 export default {
   name: "MenuItemManager",
   permit: 9,
   components: {
-    ComponentSelector: ComponentSelector
+    ComponentSelector: ComponentSelector,
+    LangSelector: LangSelector
   },
   data() {
     return {

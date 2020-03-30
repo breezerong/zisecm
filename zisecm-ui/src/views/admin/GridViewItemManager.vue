@@ -1,23 +1,13 @@
 <template>
   <div>
-    <el-dialog title="选择属性" :visible.sync="categoryVisible">
-      <CategoryManager
-        ref="CategoryManager"
-        @onselected="onselected"
-        width="560"
-        v-bind:categoryVisible="categoryVisible"
-      ></CategoryManager>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="categoryVisible = false">取 消</el-button>
-      </div>
-    </el-dialog>
+    
     <el-dialog width="80%" title="列表校验" :visible.sync="checkVisible">
       <GridViewItemCheck ref="GridViewItemCheck" width="560" :parentgridid="parentid"></GridViewItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="添加" :visible.sync="dialogVisible" width="80%">
+    <el-dialog title="添加" :visible.sync="dialogVisible" :append-to-body="true" width="80%">
       <el-form :model="form">
         <el-form-item label="父Id" :label-width="formLabelWidth">
           <el-input v-model="form.parentId" auto-complete="off"></el-input>
@@ -25,17 +15,19 @@
         <el-row>
           <el-col :span="10">
             <el-form-item label="属性名称" :label-width="formLabelWidth">
-              <el-input v-model="form.attrName" auto-complete="off"></el-input>
+              <AttributeSelector ref="AttributeSelector" v-model="form.attrName"
+                v-bind:inputValue="form.attrName"></AttributeSelector>
             </el-form-item>
           </el-col>
           <el-col :span="10">
             <el-form-item label="标签" :label-width="formLabelWidth">
-              <el-input v-model="form.label" auto-complete="off"></el-input>
+              <LangSelector
+                v-model="form.label"
+                v-bind:inputValue="form.label"
+              ></LangSelector>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-button @click="showcategory('')">选择属性</el-button>
-          </el-col>
+      
         </el-row>
         <el-form-item label="宽度" :label-width="formLabelWidth">
           <el-input v-model="form.width" auto-complete="off"></el-input>
@@ -63,7 +55,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="additem(form)">确 定</el-button>
+        <el-button type="primary" @click="saveItem(form)">确 定</el-button>
       </div>
     </el-dialog>
     <el-container>
@@ -89,7 +81,7 @@
               type="primary"
               icon="el-icon-edit"
               plain
-              @click="dialogVisible =true"
+              @click="newItem"
             >新建</el-button>
             <el-button type="primary" plain icon="el-icon-check" @click="startcheck()">验证</el-button>
           </el-col>
@@ -148,21 +140,21 @@
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="showcategory(scope.row)"
-              >选择</el-button>
+                @click="editItem(scope.row)"
+              >编辑</el-button>
               <el-button
                 :plain="true"
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="saveitem(scope.row)"
+                @click="saveItem(scope.row)"
               >保存</el-button>
               <el-button
                 :plain="true"
                 type="danger"
                 size="small"
                 icon="delete"
-                @click="delitem(scope.row)"
+                @click="delItem(scope.row)"
               >删除</el-button>
             </template>
           </el-table-column>
@@ -177,7 +169,8 @@
 //   contentType: "application/json"
 // });
 // });
-import CategoryManager from "@/components/admin/CategoryManager";
+import AttributeSelector from "@/components/controls/AttributeSelector";
+import LangSelector from "@/components/controls/LangSelector";
 import GridViewItemCheck from "@/components/admin/GridViewItemCheck";
 
 export default {
@@ -190,13 +183,14 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      categoryVisible: false,
       checkVisible: false,
       typename: "",
       parentid: "",
-      currentItem: "",
+      idEdit: false,
       tableHeight: window.innerHeight - 115,
       form: {
+        id:"",
+        parentId:"",
         name: "",
         description: "",
         value: "",
@@ -210,7 +204,8 @@ export default {
     };
   },
   components: {
-    CategoryManager: CategoryManager,
+    AttributeSelector: AttributeSelector,
+    LangSelector: LangSelector,
     GridViewItemCheck: GridViewItemCheck
   },
   mounted() {
@@ -263,18 +258,19 @@ export default {
           _self.loading = false;
         });
     },
-    saveitem(indata) {
+    updateItem(indata) {
       let _self = this;
       axios
         .post("/admin/updateGridViewItem", JSON.stringify(indata))
         .then(function(response) {
+          _self.dialogVisible = false;
           _self.$message("保存成功!");
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    delitem(indata) {
+    delItem(indata) {
       let _self = this;
       axios
         .post("/admin/deleteGridViewItem", JSON.stringify(indata))
@@ -286,7 +282,27 @@ export default {
           console.log(error);
         });
     },
-    additem(indata) {
+    newItem(){
+      this.idEdit = false;
+      this.form.id = "";
+      this.form.name = "";
+      this.form.description = "";
+      this.form.value = "";
+      this.dialogVisible = true;
+    },
+    saveItem(indata){
+      if(this.idEdit){
+        this.updateItem(indata);
+      }else{
+        this.addItem(indata);
+      }
+    },
+    editItem(indata){
+      this.form = indata;
+      this.idEdit = true;
+      this.dialogVisible = true;
+    },
+    addItem(indata) {
       let _self = this;
       axios
         .post("/admin/newGridViewItem", JSON.stringify(indata))
@@ -297,10 +313,6 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
-    },
-    showcategory(indata) {
-      this.categoryVisible = true;
-      this.currentItem = indata;
     },
     onselected(indata) {
       // alert(indata.fullName);
