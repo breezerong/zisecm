@@ -12,9 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmGridViewItemMapper;
 import com.ecm.core.dao.EcmGridViewMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IGridViewService;
 
 /**
@@ -102,6 +105,14 @@ public class GridViewService extends EcmObjectService<EcmGridView> implements IG
 			 return obj.getId();
 		 }
 		 return null;
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmGridView.deleteByPrimaryKey(id)>0;
 	}
 		 
 		 

@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmFormMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmForm;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IFormService;
 
 /**
@@ -65,5 +69,13 @@ public class FormService extends EcmObjectService<EcmForm> implements IFormServi
 		((EcmForm)obj).createId();
 		ecmForm.insert((com.ecm.core.entity.EcmForm)obj);
 		return ((com.ecm.core.entity.EcmForm)obj).getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmForm.deleteByPrimaryKey(id)>0;
 	}
 }

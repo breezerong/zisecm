@@ -40,13 +40,6 @@ public interface IContentService {
 	EcmContent getObject(String token, String objId, int contentType, String formatName);
 
 	/**
-	 * 根据ID删除内容
-	 * @param token
-	 * @param id
-	 * @return
-	 */
-	boolean deleteObject(String token, String id);
-	/**
 	 * 获取文档主格式文件路径
 	 * @param token
 	 * @param docId

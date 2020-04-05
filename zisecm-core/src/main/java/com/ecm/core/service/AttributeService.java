@@ -87,5 +87,11 @@ public class AttributeService extends EcmObjectService<EcmAttribute> implements 
 		isChanged=true;
 		return ecmAttribute.executeSQL(sql).size()>0;
 	}
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 }

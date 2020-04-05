@@ -432,5 +432,12 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 		sql += " where ID='" + id + "'";
 		ecmQuery.executeSQL(sql);
 	}
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmFolderMapper.deleteByPrimaryKey(id)>0;
+	}
 	
 }

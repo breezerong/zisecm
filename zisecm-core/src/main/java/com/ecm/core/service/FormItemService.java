@@ -7,7 +7,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.dao.EcmFormItemMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmFormItem;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IFormItemService;
 
 /**
@@ -61,5 +65,13 @@ public class FormItemService extends EcmObjectService<EcmFormItem> implements IF
 	public List<EcmFormItem> getFormItems(String token, String id) {
 		// TODO Auto-generated method stub
 		return formItemMapper.selectByParentId(id);
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return formItemMapper.deleteByPrimaryKey(id)>0;
 	}
 }

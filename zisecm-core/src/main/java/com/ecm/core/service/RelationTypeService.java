@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmRelationTypeMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmRelationType;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -95,6 +96,14 @@ public class RelationTypeService extends EcmObjectService<EcmRelationType>  impl
 		// TODO Auto-generated method stub
 		String condition = "CHILD_TYPE='"+typeName+"' or CHILD_TYPE='*'";
 		return (List<EcmRelationType>) ecmRelationTypeMapper.selectByCondition(condition);
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token, serviceCode+4,systemPermission);
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmRelationTypeMapper.deleteByPrimaryKey(id)>0;
 	}
 	
 

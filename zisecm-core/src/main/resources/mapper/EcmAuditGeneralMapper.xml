@@ -25,7 +25,7 @@
     select 
     <include refid="Base_Column_List" />
     from ecm_audit_general
-    where ${condition}
+    where ${condition} order by EXCUTE_DATE DESC
   </select>
   <select id="selectCountByCondition" parameterType="java.lang.String" resultType="java.lang.Integer">
     select 

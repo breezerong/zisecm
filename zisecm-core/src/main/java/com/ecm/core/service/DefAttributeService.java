@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmDefAttributeMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmDefAttribute;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -77,6 +78,14 @@ public class DefAttributeService extends EcmObjectService<EcmDefAttribute> imple
 	@Override
 	public List<EcmDefAttribute> getAttributes(String token, String typeId) {
 		return ecmDefAttribute.selectByCondition(" TYPE_ID="+typeId);
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token, serviceCode+4,systemPermission);
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmDefAttribute.deleteByTypeId(id)>0;
 	}
 	
 	

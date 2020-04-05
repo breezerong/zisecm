@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.dao.EcmQueryMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmQuery;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IQueryService;
 /**
  * 查询服务
@@ -62,5 +66,13 @@ public class QueryService extends EcmObjectService<EcmQuery> implements IQuerySe
 		((EcmQuery)obj).createId();
 		ecmQuery.insert((EcmQuery)obj);
 		return ((EcmQuery)obj).getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return  ecmQuery.deleteByPrimaryKey(id)>0;
 	}
 }

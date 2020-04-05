@@ -13,6 +13,7 @@ import com.ecm.core.PermissionContext;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmDefAttributeMapper;
 import com.ecm.core.dao.EcmDefTypeMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmDefAttribute;
 import com.ecm.core.entity.EcmDefType;
 import com.ecm.core.exception.AccessDeniedException;
@@ -114,6 +115,16 @@ public class DefTypeService extends EcmObjectService<EcmDefType> implements IDef
 			}
 		}
 		return false;
+	}
+
+	@Override
+	@Transactional
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token,serviceCode+4,systemPermission);
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		ecmDefAttribute.deleteByTypeId(id);
+		return ecmDefType.deleteByPrimaryKey(id)>0;
 	}
 	
 	

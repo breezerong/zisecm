@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ecm.core.dao.EcmLangInfoMapper;
 import com.ecm.core.dao.EcmLangItemMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.db.DBGeneralUtils;
 import com.ecm.core.entity.EcmLangInfo;
 import com.ecm.core.entity.EcmLangItem;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.exception.SqlDeniedException;
 @Service
 public class LangInfoService extends EcmObjectService<EcmLangInfo> {
@@ -133,6 +136,16 @@ public class LangInfoService extends EcmObjectService<EcmLangInfo> {
 	 */
 	public boolean deleteLangItem(String token, String id) {
 		return ecmLangItemMapper.deleteByPrimaryKey(id)>0;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		EcmLangInfo obj = getObjectById(token,id);
+		ecmLangItemMapper.deleteByMessageKey(obj.getMessageKey());
+		return ecmLangInfoMapper.deleteByPrimaryKey(id)>0;
 	}
 	
 }

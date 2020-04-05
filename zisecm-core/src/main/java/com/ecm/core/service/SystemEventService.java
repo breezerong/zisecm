@@ -5,53 +5,56 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ecm.core.dao.EcmLanguageMapper;
-import com.ecm.core.entity.EcmLanguage;
+import com.ecm.core.dao.EcmSystemEventMapper;
+import com.ecm.core.db.DBFactory;
+import com.ecm.core.entity.EcmSystemEvent;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 @Service
-public class LanguageService extends EcmObjectService<EcmLanguage> {
+public class SystemEventService extends EcmObjectService<EcmSystemEvent> {
 
 	@Autowired
-	private EcmLanguageMapper ecmLanguageMapper;
+	private EcmSystemEventMapper ecmSystemEventMapper;
 	
 	@Override
-	public List<EcmLanguage> getAllObject(String token) {
-		return ecmLanguageMapper.selectAll();
+	public List<EcmSystemEvent> getAllObject(String token) {
+		return ecmSystemEventMapper.selectAll();
 	}
 	
 	@Override
-	public EcmLanguage getObjectById(String token,String id) {
+	public EcmSystemEvent getObjectById(String token,String id) {
 		// TODO Auto-generated method stub
-		return (EcmLanguage) ecmLanguageMapper.selectByPrimaryKey(id);
+		return (EcmSystemEvent) ecmSystemEventMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
 	public boolean updateObject(String token,Object obj) {
 		// TODO Auto-generated method stub
-		return ecmLanguageMapper.updateByPrimaryKey((EcmLanguage) obj)>0;
+		return ecmSystemEventMapper.updateByPrimaryKey((EcmSystemEvent) obj)>0;
 	}
 
 	@Override
 	public boolean deleteObject(String token,Object obj) {
 		// TODO Auto-generated method stub
-		return ecmLanguageMapper.deleteByPrimaryKey(((EcmLanguage)obj).getId())>0;
+		return ecmSystemEventMapper.deleteByPrimaryKey(((EcmSystemEvent)obj).getId())>0;
 	}
 
 	@Override
 	public String newObject(String token,Object obj) {
 		// TODO Auto-generated method stub
-		((EcmLanguage)obj).createId();
-		ecmLanguageMapper.insert((EcmLanguage)obj);
-		return ((EcmLanguage)obj).getId();
+		EcmSystemEvent event = (EcmSystemEvent)obj;
+		event.createId();
+		ecmSystemEventMapper.insert(event);
+		return event.getId();
 	}
 
 	@Override
 	public boolean deleteObjectById(String token, String id)
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
-		return ecmLanguageMapper.deleteByPrimaryKey(id)>0;
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmSystemEventMapper.deleteByPrimaryKey(id)>0;
 	}
 	
 	

@@ -7,7 +7,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.dao.EcmSelectValueMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmSelectValue;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 
 /**
  * @Description TODO(选择项)   
@@ -53,5 +57,13 @@ public class SelectValueService extends EcmObjectService<EcmSelectValue>{
 		((EcmSelectValue)obj).createId();
 		ecmSelectValue.insert((EcmSelectValue)obj);
 		return ((EcmSelectValue)obj).getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmSelectValue.deleteByPrimaryKey(id)>0;
 	}
 }

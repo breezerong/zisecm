@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmRelationMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmRelation;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 
 
 @Service
@@ -52,12 +55,7 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 	@Override
 	public boolean deleteObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub
-		return deleteObject(((com.ecm.core.entity.EcmRelation)obj).getId());
-	}
-	
-	public boolean deleteObject(String id) throws EcmException {
-		// TODO Auto-generated method stub
-		return ecmRelationMapper.deleteByPrimaryKey(id)>0;
+		return ecmRelationMapper.deleteByPrimaryKey(((com.ecm.core.entity.EcmRelation)obj).getId())>0;
 	}
 	
 	@Override
@@ -80,5 +78,13 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 	public List<Map<String, Object>> getMapList(String token, String sql) throws EcmException {
 		// TODO Auto-generated method stub
 		return ecmRelationMapper.executeSQL(sql);
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmRelationMapper.deleteByPrimaryKey(id)>0;
 	}
 }

@@ -650,5 +650,16 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		cuser.setDepartment(loginUser.getGroupName());
 		return cuser;
 	}
+
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token,serviceCode+ObjectPermission.DELETE,systemPermission);
+		ecmUserMapper.deleteByPrimaryKey(id);
+		String sqlStr = "delete from ecm_group_item where child_id='"+DBFactory.getDBConn().getDBUtils().getString(id)+"'";
+		ecmGroupItemMapper.executeSql(sqlStr);
+		return true;
+	}
 	
 }

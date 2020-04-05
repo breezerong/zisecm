@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmActionMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmAction;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -71,6 +72,15 @@ public class ActionService extends EcmObjectService<EcmAction> {
 		((EcmAction)obj).createId();
 		ecmAction.insert((com.ecm.core.entity.EcmAction)obj);
 		return ((com.ecm.core.entity.EcmAction)obj).getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		super.hasPermission(token, serviceCode+4,systemPermission);
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmAction.deleteByPrimaryKey(id)>0;
 	}
 
 }

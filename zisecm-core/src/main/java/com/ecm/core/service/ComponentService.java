@@ -7,7 +7,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.dao.EcmComponentMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmComponent;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IMenuItemService;
 
 /**
@@ -57,5 +61,13 @@ public class ComponentService extends EcmObjectService<EcmComponent> implements 
 		((EcmComponent)obj).createId();
 		ecmComponentMapper.insert((EcmComponent)obj);
 		return ((EcmComponent)obj).getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmComponentMapper.deleteByPrimaryKey(id)>0;
 	}
 }

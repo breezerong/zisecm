@@ -26,6 +26,7 @@ import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IContentService;
 /**
  * 内容服务
@@ -271,10 +272,6 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 		return false;
 	}
 	
-	@Override
-	public boolean deleteObject(String token, String id) {
-		return contentMapper.deleteByDocument(id)>0;
-	}
 	/**
 	 * 是否启用PDF OCR
 	 * @return
@@ -323,5 +320,12 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 		queueItem.setDelectFlag(false);
 		queueItem.setStatus(0);
 		queueItemService.newObject(token, queueItem);
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		return contentMapper.deleteByPrimaryKey(id)>0;
 	}
 }

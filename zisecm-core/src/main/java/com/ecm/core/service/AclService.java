@@ -283,4 +283,15 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 		return 1;
 	}
 
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token,serviceCode+4,systemPermission);
+		getSession(token);
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		ecmAclItem.deleteByParentId(id);
+		return ecmAcl.deleteByPrimaryKey(id)>0;
+	}
+
 }

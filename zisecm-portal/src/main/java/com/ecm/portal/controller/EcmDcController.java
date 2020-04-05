@@ -1446,7 +1446,7 @@ public class EcmDcController extends ControllerAbstract {
 		Map<String, Object> mp = JSONUtils.stringToMap(argStr);
 		String relateId = args.get("relateId").toString();
 		try {
-			relationService.deleteObject(relateId);
+			relationService.deleteObjectById(getToken(),relateId);
 
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block

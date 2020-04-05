@@ -7,7 +7,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.dao.EcmGridViewItemMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IGridViewItemService;
 
 /**
@@ -59,5 +63,12 @@ public class GridViewItemService extends EcmObjectService<EcmGridViewItem> imple
 		((EcmGridViewItem)obj).createId();
 		ecmGridViewItem.insert((EcmGridViewItem)obj);
 		return ((EcmGridViewItem)obj).getId();
+	}
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmGridViewItem.deleteByPrimaryKey(id)>0;
 	}
 }

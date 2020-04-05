@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.ecm.core.ServiceContext;
 import com.ecm.core.dao.EcmStoreMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmStore;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IStoreService;
 
 /**
@@ -58,5 +62,13 @@ public class StoreService extends EcmObjectService<EcmStore> implements IStoreSe
 		((EcmStore)obj).createId();
 		ecmStore.insert((EcmStore)obj);
 		return ((EcmStore)obj).getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmStore.deleteByPrimaryKey(id)>0;
 	}
 }

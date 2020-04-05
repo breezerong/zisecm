@@ -8,7 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmParameterMapper;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmParameter;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IParameterService;
 
 /**
@@ -60,5 +64,13 @@ public class ParameterService extends EcmObjectService<EcmParameter> implements 
 		((EcmParameter)obj).createId();
 		ecmParameter.insert((EcmParameter)obj);
 		return ((EcmParameter)obj).getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		return ecmParameter.deleteByPrimaryKey(id)>0;
 	}
 }

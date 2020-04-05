@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.ecm.core.dao.EcmActivityMapper;
 import com.ecm.core.entity.EcmActivity;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.EcmObjectService;
 import com.ecm.icore.bpm.IActivityService;
 
@@ -40,5 +43,12 @@ public class ActivityService extends EcmObjectService<EcmActivity>  implements I
 		EcmActivity actObj = ecmActivityMapper.selectByPrimaryKey(id);
 		actObj.setTransactions(transactionService.getTransactions(token, actObj.getId()));
 		return actObj;
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

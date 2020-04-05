@@ -1478,6 +1478,21 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		return cols;
 	}
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		id = DBFactory.getDBConn().getDBUtils().getString(id);
+		if (getPermit(token, id) < ObjectPermission.DELETE) {
+			throw new NoPermissionException(
+					"User " + getSession(token).getCurrentUser().getUserName() + " has no delete permission:" + id);
+		}
+		EcmDocument doc = ecmDocument.selectByPrimaryKey(id);
+		contentService.deleteObject(token, id);
+		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
+		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + doc.getName());
+		addFullIndexSearchQueue(token, id);
+		return ret;
+	}
 	
 	
 }

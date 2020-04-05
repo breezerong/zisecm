@@ -8,6 +8,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 /**
  * 对象服务基础接口
  * @author Haihong Rong
@@ -16,23 +17,25 @@ import com.ecm.core.exception.NoPermissionException;
  */
 public interface IEcmObjectService<T>{
 	
-	List<T> getAllObject(String tocken) throws EcmException, AccessDeniedException, NoPermissionException;
+	List<T> getAllObject(String token) throws EcmException, AccessDeniedException, NoPermissionException;
 	
-	T getObjectById(String tocken, String id) throws EcmException, AccessDeniedException, NoPermissionException;
+	T getObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException;
 	
 	long getServiceCode();
 	
-	boolean updateObject(String tocken, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
+	boolean updateObject(String token, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
 	
-	boolean deleteObject(String tocken, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
+	boolean deleteObject(String token, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
+	
+	boolean deleteObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException;
 
-	String newObject(String tocken, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
+	String newObject(String token, T obj) throws EcmException, AccessDeniedException, NoPermissionException;
 	
 	String getCode(String msg);
 	
-	boolean hasPermission(String tocken, int permissionId,int systemPermission) throws EcmException, AccessDeniedException, NoPermissionException;
+	boolean hasPermission(String token, int permissionId,int systemPermission) throws EcmException, AccessDeniedException, NoPermissionException;
 	
-	List<T> getObjects(String tocken, String condition) throws EcmException;
+	List<T> getObjects(String token, String condition) throws EcmException, SqlDeniedException;
 	/**
 	 * 获取Map列表
 	 * @param tocken

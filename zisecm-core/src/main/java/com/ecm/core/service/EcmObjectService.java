@@ -16,6 +16,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.util.AuditUtils;
 import com.ecm.icore.service.IEcmObjectService;
 import com.ecm.icore.service.IEcmSession;
@@ -26,7 +27,7 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
     private EcmAuditGeneralMapper ecmAuditGeneralMapper;
 	
 	@Override
-	public List<T> getObjects(String token, String condition) throws EcmException {
+	public List<T> getObjects(String token, String condition) throws EcmException, SqlDeniedException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -61,6 +62,12 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
 
 	@Override
 	public boolean deleteObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException{
+		// TODO Auto-generated method stub
+		return hasPermission(token,1,0);
+	}
+	
+	@Override
+	public boolean deleteObjectById(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException{
 		// TODO Auto-generated method stub
 		return hasPermission(token,1,0);
 	}

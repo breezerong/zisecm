@@ -11,6 +11,9 @@ import com.ecm.core.dao.EcmComponentMapper;
 import com.ecm.core.dao.EcmMenuItemMapper;
 import com.ecm.core.entity.EcmComponent;
 import com.ecm.core.entity.EcmMenuItem;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IMenuItemService;
 
 /**
@@ -91,5 +94,12 @@ public class MenuItemService extends EcmObjectService<EcmMenuItem> implements IM
 		}
 		ecmMenuItemMapper.insert(en);
 		return en.getId();
+	}
+
+	@Override
+	public boolean deleteObjectById(String token, String id)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		// TODO Auto-generated method stub
+		return ecmMenuItemMapper.deleteByPrimaryKey(id)>0;
 	}
 }

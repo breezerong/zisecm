@@ -1,21 +1,12 @@
 package com.ecm.core.entity;
 
-public class EcmSystemEvent {
-    private String id;
-
+public class EcmSystemEvent extends EcmObject{
+   
     private String name;
 
     private String description;
 
     private boolean enabled;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
-    }
 
     public String getName() {
         return name;
