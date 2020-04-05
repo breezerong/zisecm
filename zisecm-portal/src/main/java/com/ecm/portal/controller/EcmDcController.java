@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1055,6 +1056,9 @@ public class EcmDcController extends ControllerAbstract {
 				EcmShopingCart shopingCart = new EcmShopingCart();
 				shopingCart.setDocumentId(id);
 				String userName = this.getSession().getCurrentUser().getUserName();
+				Date addDate=new Date();
+				
+				shopingCart.setAddDate(addDate);
 				shopingCart.setUserName(userName);
 				shopingCart.createId();
 
