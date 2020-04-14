@@ -78,6 +78,7 @@ public class FolderPathService extends EcmService {
 			EcmFolder fld = folderService.getObjectByPath(token, "/移交文档");
 			return fld.getId();
 		}
+		
 		String typeName = values.get("TYPE_NAME").toString();
 		/*
 		 * 目录规则

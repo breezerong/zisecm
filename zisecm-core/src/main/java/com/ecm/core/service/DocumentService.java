@@ -1,6 +1,7 @@
 package com.ecm.core.service;
 
 import java.io.Console;
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -344,7 +345,20 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no delete permission:" + id);
 		}
 		EcmDocument doc = ecmDocument.selectByPrimaryKey(id);
-		contentService.deleteObject(token, id);
+		
+		List<EcmContent> contents= contentService.getObjects(token, " PARENT_ID='"+id+"'");
+		
+		for(int i=0;contents!=null&&i<contents.size();i++) {
+			EcmContent c=contents.get(i);
+			String storePath = CacheManagerOper.getEcmStores().get(c.getStoreName()).getStorePath();
+			File f= new File(storePath + c.getFilePath());
+			if (f.isFile() && f.exists()) {
+				f.delete();
+			}
+			contentService.deleteObjectById(token, c.getId());
+		}
+		
+//		contentService.deleteObject(token, id);
 		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
 		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + doc.getName());
 		addFullIndexSearchQueue(token, id);
