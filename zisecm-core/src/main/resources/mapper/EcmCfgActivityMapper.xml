@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmCfgActivityMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmCfgActivity">
+    <id column="ID" jdbcType="NVARCHAR" property="id" />
+    <result column="PROCESS_ID" jdbcType="NVARCHAR" property="processId" />
+    <result column="PROCESS_NAME" jdbcType="NVARCHAR" property="processName" />
+    <result column="ACTIVITY_NAME" jdbcType="NVARCHAR" property="activityName" />
+    <result column="ROLE_NAME" jdbcType="NVARCHAR" property="roleName" />
+    <result column="IS_MULTI" jdbcType="BIT" property="isMulti" />
+    <result column="NEXT_ACTIVITY" jdbcType="NVARCHAR" property="nextActivity" />
+    <result column="REJECT_ACTIVITY" jdbcType="NVARCHAR" property="rejectActivity" />
+    <result column="NEXT_ACTIVITY_LABEL" jdbcType="NVARCHAR" property="nextActivityLabel" />
+    <result column="REJECT_ACTIVITY_LABEL" jdbcType="NVARCHAR" property="rejectActivityLabel" />
+    <result column="ENABLE_DELEGATE" jdbcType="BIT" property="enableDelegate" />
+    <result column="ENABLE_REPEAT" jdbcType="BIT" property="enableRepeat" />
+    <result column="ENABLE_EDIT" jdbcType="BIT" property="enableEdit" />
+    <result column="COMPONENT_NAME" jdbcType="NVARCHAR" property="componentName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PROCESS_ID, PROCESS_NAME, ACTIVITY_NAME, ROLE_NAME, IS_MULTI, NEXT_ACTIVITY, 
+    REJECT_ACTIVITY, NEXT_ACTIVITY_LABEL, REJECT_ACTIVITY_LABEL, ENABLE_DELEGATE, ENABLE_REPEAT, 
+    ENABLE_EDIT, COMPONENT_NAME
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dbo.ecm_cfg_activity order by PROCESS_NAME,ACTIVITY_NAME
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dbo.ecm_cfg_activity
+    where ID = #{id,jdbcType=NVARCHAR}
+  </select>
+  <select id="selectByProcessId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dbo.ecm_cfg_activity
+    where PROCESS_ID = #{processId,jdbcType=NVARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dbo.ecm_cfg_activity
+    where ID = #{id,jdbcType=NVARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmCfgActivity">
+    insert into dbo.ecm_cfg_activity (ID, PROCESS_ID, PROCESS_NAME, 
+      ACTIVITY_NAME, ROLE_NAME, IS_MULTI, 
+      NEXT_ACTIVITY, REJECT_ACTIVITY, NEXT_ACTIVITY_LABEL, 
+      REJECT_ACTIVITY_LABEL, ENABLE_DELEGATE, ENABLE_REPEAT, 
+      ENABLE_EDIT, COMPONENT_NAME)
+    values (#{id,jdbcType=NVARCHAR}, #{processId,jdbcType=NVARCHAR}, #{processName,jdbcType=NVARCHAR}, 
+      #{activityName,jdbcType=NVARCHAR}, #{roleName,jdbcType=NVARCHAR}, #{isMulti,jdbcType=BIT}, 
+      #{nextActivity,jdbcType=NVARCHAR}, #{rejectActivity,jdbcType=NVARCHAR}, #{nextActivityLabel,jdbcType=NVARCHAR}, 
+      #{rejectActivityLabel,jdbcType=NVARCHAR}, #{enableDelegate,jdbcType=BIT}, #{enableRepeat,jdbcType=BIT}, 
+      #{enableEdit,jdbcType=BIT}, #{componentName,jdbcType=NVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmCfgActivity">
+    insert into dbo.ecm_cfg_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="processId != null">
+        PROCESS_ID,
+      </if>
+      <if test="processName != null">
+        PROCESS_NAME,
+      </if>
+      <if test="activityName != null">
+        ACTIVITY_NAME,
+      </if>
+      <if test="roleName != null">
+        ROLE_NAME,
+      </if>
+      <if test="isMulti != null">
+        IS_MULTI,
+      </if>
+      <if test="nextActivity != null">
+        NEXT_ACTIVITY,
+      </if>
+      <if test="rejectActivity != null">
+        REJECT_ACTIVITY,
+      </if>
+      <if test="nextActivityLabel != null">
+        NEXT_ACTIVITY_LABEL,
+      </if>
+      <if test="rejectActivityLabel != null">
+        REJECT_ACTIVITY_LABEL,
+      </if>
+      <if test="enableDelegate != null">
+        ENABLE_DELEGATE,
+      </if>
+      <if test="enableRepeat != null">
+        ENABLE_REPEAT,
+      </if>
+      <if test="enableEdit != null">
+        ENABLE_EDIT,
+      </if>
+      <if test="componentName != null">
+        COMPONENT_NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=NVARCHAR},
+      </if>
+      <if test="processId != null">
+        #{processId,jdbcType=NVARCHAR},
+      </if>
+      <if test="processName != null">
+        #{processName,jdbcType=NVARCHAR},
+      </if>
+      <if test="activityName != null">
+        #{activityName,jdbcType=NVARCHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=NVARCHAR},
+      </if>
+      <if test="isMulti != null">
+        #{isMulti,jdbcType=BIT},
+      </if>
+      <if test="nextActivity != null">
+        #{nextActivity,jdbcType=NVARCHAR},
+      </if>
+      <if test="rejectActivity != null">
+        #{rejectActivity,jdbcType=NVARCHAR},
+      </if>
+      <if test="nextActivityLabel != null">
+        #{nextActivityLabel,jdbcType=NVARCHAR},
+      </if>
+      <if test="rejectActivityLabel != null">
+        #{rejectActivityLabel,jdbcType=NVARCHAR},
+      </if>
+      <if test="enableDelegate != null">
+        #{enableDelegate,jdbcType=BIT},
+      </if>
+      <if test="enableRepeat != null">
+        #{enableRepeat,jdbcType=BIT},
+      </if>
+      <if test="enableEdit != null">
+        #{enableEdit,jdbcType=BIT},
+      </if>
+      <if test="componentName != null">
+        #{componentName,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmCfgActivity">
+    update dbo.ecm_cfg_activity
+    <set>
+      <if test="processId != null">
+        PROCESS_ID = #{processId,jdbcType=NVARCHAR},
+      </if>
+      <if test="processName != null">
+        PROCESS_NAME = #{processName,jdbcType=NVARCHAR},
+      </if>
+      <if test="activityName != null">
+        ACTIVITY_NAME = #{activityName,jdbcType=NVARCHAR},
+      </if>
+      <if test="roleName != null">
+        ROLE_NAME = #{roleName,jdbcType=NVARCHAR},
+      </if>
+      <if test="isMulti != null">
+        IS_MULTI = #{isMulti,jdbcType=BIT},
+      </if>
+      <if test="nextActivity != null">
+        NEXT_ACTIVITY = #{nextActivity,jdbcType=NVARCHAR},
+      </if>
+      <if test="rejectActivity != null">
+        REJECT_ACTIVITY = #{rejectActivity,jdbcType=NVARCHAR},
+      </if>
+      <if test="nextActivityLabel != null">
+        NEXT_ACTIVITY_LABEL = #{nextActivityLabel,jdbcType=NVARCHAR},
+      </if>
+      <if test="rejectActivityLabel != null">
+        REJECT_ACTIVITY_LABEL = #{rejectActivityLabel,jdbcType=NVARCHAR},
+      </if>
+      <if test="enableDelegate != null">
+        ENABLE_DELEGATE = #{enableDelegate,jdbcType=BIT},
+      </if>
+      <if test="enableRepeat != null">
+        ENABLE_REPEAT = #{enableRepeat,jdbcType=BIT},
+      </if>
+      <if test="enableEdit != null">
+        ENABLE_EDIT = #{enableEdit,jdbcType=BIT},
+      </if>
+      <if test="componentName != null">
+        COMPONENT_NAME = #{componentName,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmCfgActivity">
+    update dbo.ecm_cfg_activity
+    set PROCESS_ID = #{processId,jdbcType=NVARCHAR},
+      PROCESS_NAME = #{processName,jdbcType=NVARCHAR},
+      ACTIVITY_NAME = #{activityName,jdbcType=NVARCHAR},
+      ROLE_NAME = #{roleName,jdbcType=NVARCHAR},
+      IS_MULTI = #{isMulti,jdbcType=BIT},
+      NEXT_ACTIVITY = #{nextActivity,jdbcType=NVARCHAR},
+      REJECT_ACTIVITY = #{rejectActivity,jdbcType=NVARCHAR},
+      NEXT_ACTIVITY_LABEL = #{nextActivityLabel,jdbcType=NVARCHAR},
+      REJECT_ACTIVITY_LABEL = #{rejectActivityLabel,jdbcType=NVARCHAR},
+      ENABLE_DELEGATE = #{enableDelegate,jdbcType=BIT},
+      ENABLE_REPEAT = #{enableRepeat,jdbcType=BIT},
+      ENABLE_EDIT = #{enableEdit,jdbcType=BIT},
+      COMPONENT_NAME = #{componentName,jdbcType=NVARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+</mapper>
