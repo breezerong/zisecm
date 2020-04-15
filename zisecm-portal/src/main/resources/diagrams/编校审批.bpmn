@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/test">
+  <process id="BianJiaoShenPi" name="编校审批" isExecutable="true">
+    <startEvent id="startevent1" name="启动"></startEvent>
+    <endEvent id="endevent1" name="结束"></endEvent>
+    <userTask id="bianxie" name="编写"></userTask>
+    <userTask id="jiaohe" name="校核"></userTask>
+    <userTask id="shenhe" name="审核"></userTask>
+    <userTask id="pizhun" name="批准"></userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="bianxie"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="bianxie" targetRef="jiaohe"></sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="jiaohe" targetRef="shenhe"></sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="shenhe" targetRef="pizhun"></sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="pizhun" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow10" sourceRef="jiaohe" targetRef="bianxie"></sequenceFlow>
+    <sequenceFlow id="flow11" sourceRef="shenhe" targetRef="bianxie"></sequenceFlow>
+    <sequenceFlow id="flow13" sourceRef="pizhun" targetRef="bianxie"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_BianJiaoShenPi">
+    <bpmndi:BPMNPlane bpmnElement="BianJiaoShenPi" id="BPMNPlane_BianJiaoShenPi">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="100.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="810.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="bianxie" id="BPMNShape_bianxie">
+        <omgdc:Bounds height="55.0" width="105.0" x="210.0" y="180.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="jiaohe" id="BPMNShape_jiaohe">
+        <omgdc:Bounds height="55.0" width="105.0" x="360.0" y="180.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="shenhe" id="BPMNShape_shenhe">
+        <omgdc:Bounds height="55.0" width="105.0" x="500.0" y="180.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="pizhun" id="BPMNShape_pizhun">
+        <omgdc:Bounds height="55.0" width="105.0" x="650.0" y="180.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="135.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="207.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="315.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="207.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="465.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="500.0" y="207.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="605.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="650.0" y="207.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="755.0" y="207.0"></omgdi:waypoint>
+        <omgdi:waypoint x="810.0" y="207.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="412.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="412.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="270.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="383.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="262.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="262.0" y="180.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="552.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="552.0" y="105.0"></omgdi:waypoint>
+        <omgdi:waypoint x="262.0" y="105.0"></omgdi:waypoint>
+        <omgdi:waypoint x="262.0" y="180.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="702.0" y="235.0"></omgdi:waypoint>
+        <omgdi:waypoint x="702.0" y="297.0"></omgdi:waypoint>
+        <omgdi:waypoint x="262.0" y="297.0"></omgdi:waypoint>
+        <omgdi:waypoint x="262.0" y="235.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
