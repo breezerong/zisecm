@@ -79,7 +79,7 @@ public class SqlServerDocManager implements IDBDocManager {
 			sql += " NULL ";
 		}
 		if(en.getDefaultValue()!=null&& en.getDefaultValue().length()>0) {
-			sql += "\n\rGO\n\r";
+			sql += "\n\r ";
 			sql += "alter table ecm_document add CONSTRAINT DF_ecm_document_"+en.getName();
 			if(en.getFieldType()==1) {
 				sql += " DEFAULT N'"+en.getDefaultValue()+"' ";
@@ -90,7 +90,7 @@ public class SqlServerDocManager implements IDBDocManager {
 			sql += " FOR "+en.getName();
 		}
 		if(en.getDescription()!=null&&en.getDescription().length()>0) {
-			sql += "\n\rGO\n\r";
+			sql += "\n\r ";
 			sql += "EXEC sys.sp_addextendedproperty @name=N'MS_"+en.getName()+"', @value=N'"+en.getDescription()
 			+"' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ecm_document', "
 			+"@level2type=N'COLUMN',@level2name=N'"+en.getName()+"'";

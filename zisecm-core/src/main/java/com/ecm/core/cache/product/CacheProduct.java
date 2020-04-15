@@ -6,6 +6,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
+import com.ecm.core.cache.manager.impl.CacheManagerCfgActivity;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmAction;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmCardSearch;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmComponent;
@@ -74,6 +75,9 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	@Autowired
 	private CacheManagerEcmDefType cacheManagerEcmDefType;//类型配置
 	
+	@Autowired
+	private CacheManagerCfgActivity cacheManagerCfgActivity;//活动配置
+	
 	//@Autowired
 	//private PdfSignService pdfService;
 
@@ -119,6 +123,9 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 		cacheManagerEcmSuggestion.initAllCaches();
 		
 		cacheManagerEcmDefType.initAllCaches();
+		
+		cacheManagerCfgActivity.initAllCaches();
+		
 		//pdfService.run();
 	}
 

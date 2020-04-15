@@ -10,6 +10,7 @@ import java.util.Map;
 import com.ecm.core.entity.EcmAction;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmCardSearch;
+import com.ecm.core.entity.EcmCfgActivity;
 import com.ecm.core.entity.EcmComponent;
 import com.ecm.core.entity.EcmDefType;
 import com.ecm.core.entity.EcmForm;
@@ -70,6 +71,9 @@ public class CacheManagerOper {
 	
 	//建议缓存对象
 	private static List<EcmSuggestion> SUGGESTION_CACHE;	
+	
+	//缓存活动配置对象
+	private static final Map<String,EcmCfgActivity> CFG_ACTIVITY = new HashMap<String,EcmCfgActivity>();
 	
 	/**
 	 * @Title getEcmParameters   
@@ -213,9 +217,17 @@ public class CacheManagerOper {
 	public static List<EcmSuggestion> getSuggestionCache() {
 		return SUGGESTION_CACHE;
 	}
+	/**
+	 * 活动界面配置，Key：流程定义ID+活动名
+	 * @return
+	 */
+	public static Map<String,EcmCfgActivity> getCfgActivityCache() {
+		return CFG_ACTIVITY;
+	}
 	
 
 	public static void setSuggestionCache(List<EcmSuggestion> list) {
 		SUGGESTION_CACHE = list;
 	}
+	
 }
