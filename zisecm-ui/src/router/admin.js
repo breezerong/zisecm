@@ -211,6 +211,42 @@ export const adminRouter = {
         requireAuth: true,
         permit: 9
       },
+      path: '/managercenter/languagemanager',
+      component: () => import('@/views/admin/LanguageManager.vue'),
+      name: '语言管理'
+    },
+    {
+      meta: {
+        requireAuth: true,
+        permit: 9
+      },
+      path: '/managercenter/langinfomanager',
+      component: () => import('@/views/admin/LangInfoManager.vue'),
+      name: '语言标签管理'
+    },
+    {
+      meta: {
+        requireAuth: true,
+        permit: 9
+      },
+      path: '/managercenter/auditmanager',
+      component: () => import('@/views/admin/AuditManager.vue'),
+      name: '日志管理'
+    },
+    {
+      meta: {
+        requireAuth: true,
+        permit: 9
+      },
+      path: '/managercenter/syseventmanager',
+      component: () => import('@/views/admin/SysEventManager.vue'),
+      name: '事件管理'
+    },
+    {
+      meta: {
+        requireAuth: true,
+        permit: 9
+      },
       path: '/managercenter/systemmanager',
       component: () => import('@/views/admin/SystemManager.vue'),
       name: '系统配置'
@@ -227,7 +263,16 @@ export const adminRouter = {
     {
       meta: {
         requireAuth: true,
-        permit: 2,
+        permit: 9
+      },
+      path: '/managercenter/activitymanager',
+      component: () => import('@/views/admin/ActivityManager.vue'),
+      name: '工作流活动管理'
+    },
+    {
+      meta: {
+        requireAuth: true,
+        permit: 9,
       },
       path: '/workflow/allWorkflow',
       component: () => import('@/views/workflow/MyWorkflow.vue'),
