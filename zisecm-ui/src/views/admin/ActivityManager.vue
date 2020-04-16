@@ -37,6 +37,18 @@
         </el-col>
         </el-row>
         <el-row>
+        <el-col :span="18">
+          <el-form-item label="选人活动" :label-width="formLabelWidth">
+            <el-input v-model="form.selectActivities" placeholder="开始：start，多个用英文分号分隔" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="序号" :label-width="formLabelWidth">
+           <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        </el-row>
+        <el-row>
         <el-col :span="12">
           <el-form-item label="通过活动名" :label-width="formLabelWidth" required>
             <el-input v-model="form.nextActivity" auto-complete="off"></el-input>
@@ -236,6 +248,8 @@ export default {
         activityName: "",
         roleName:"",
         isMulti:false,
+        selectActivities: "start",
+        orderIndex: 1,
         componentName: "",
         nextActivity:"",
         rejectActivity:"",

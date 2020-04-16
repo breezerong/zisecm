@@ -1,5 +1,8 @@
 package com.ecm.core.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
@@ -72,6 +75,47 @@ public class EcmCfgActivity extends EcmObject {
      * 组件
      */
     private EcmComponent component;
+    
+    /**
+     * 选人活动，流程启动start，多个用英文分号分隔
+     */
+    private String selectActivities;
+    
+    public String getSelectActivities() {
+		return selectActivities;
+	}
+
+	public void setSelectActivities(String selectActivities) {
+		this.selectActivities = selectActivities;
+		if(!StringUtils.isEmpty(selectActivities)) {
+			String[] strs = selectActivities.split(";");
+			for(String s: strs) {
+				selectActivityList.add(s);
+			}
+		}
+	}
+
+	public int getOrderIndex() {
+		return orderIndex;
+	}
+
+	public void setOrderIndex(int orderIndex) {
+		this.orderIndex = orderIndex;
+	}
+
+	public List<String> getSelectActivityList() {
+		return selectActivityList;
+	}
+
+	/**
+     * 排序序号
+     */
+    private int orderIndex = 1;
+    
+    /**
+     * 选人活动列表
+     */
+    private List<String> selectActivityList = new ArrayList<String>();
 
 
     public String getProcessId() {
