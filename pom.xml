@@ -15,5 +15,6 @@
   	<module>zisecm-portal</module>
   	<module>zisecm-ESIndexAgent</module>
     <module>zisecm-extinterface</module>
+    <module>zisecm-process</module>
   </modules>
 </project>

@@ -1990,6 +1990,42 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 
+	/**
+	 * 升版
+	 * 
+	 * @param argStr
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/upgradeDocument", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> upgradeDocument(@RequestBody String argStr) {
+		
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String newDocId="";
+		try {
+			if (!StringUtils.isEmpty(argStr)) {
+				EcmDocument doc = documentService.getObjectById(getToken(), argStr);
+				
+				if (doc != null) {
+					
+					newDocId= documentService.newObject(getToken(), doc, null);
+					contentService.copyContent(getToken(), argStr, newDocId, 1);
+					doc.setModifiedDate(new Date());
+					doc.setModifier(documentService.getCurrentUser(getToken()).getUserName());
+					
+					mp.put("id", newDocId);
+				}
+			}
+			
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	
 	private boolean needNewAcl(String docId) {
 		try {
 			EcmDocument doc = documentService.getObjectById(getToken(), docId);
