@@ -204,6 +204,28 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			this.newObject(token, conent);
 		}
 	}
+	/**
+	 * 复制制定类型文件内容
+	 * @param token
+	 * @param fromDocId 被复制文件ID
+	 * @param toDocId 目标文件ID
+	 * @param contentType 类型,1:主文件，2：格式副本，3：附件，小于1任意类型
+	 * @return
+	 */
+	public void copyContent(String token, String fromDocId,String toDocId,int contentType ) throws Exception {
+		
+		List<EcmContent> list = getObjects(token, toDocId, contentType);
+		if(list.size()>0) {
+			throw new EcmException("Document already has content:"+toDocId); 
+		}
+		list = getObjects(token, fromDocId, contentType);
+		for(EcmContent conent:list) {
+			conent.setInputStream(getContentStream( token, conent));
+			conent.createId();
+			conent.setParentId(toDocId);
+			this.newObject(token, conent);
+		}
+	}
 	
 	private String getFullPath(EcmContent en) throws Exception
 	{

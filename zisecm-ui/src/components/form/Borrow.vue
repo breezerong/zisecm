@@ -430,7 +430,7 @@ export default {
       _self.formEditPermision = _self.$route.query.formEditPermision;
       _self.istask = _self.$route.query.istask;
     }
-    _self.loadGridView();
+    // _self.loadGridView();
   },
   mounted() {
     let _self = this;

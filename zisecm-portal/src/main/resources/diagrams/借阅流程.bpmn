@@ -86,6 +86,7 @@
     <sequenceFlow id="flow28" name="否" sourceRef="exclusivegateway7" targetRef="automaticAuthorization"></sequenceFlow>
     <userTask id="usertask6" name="借阅驳回" default="flow38" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${taskUser_owner}">
       <extensionElements>
+        <flowable:taskListener event="create" delegateExpression="${startExecutorListener}"></flowable:taskListener>
         <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
       </extensionElements>
     </userTask>

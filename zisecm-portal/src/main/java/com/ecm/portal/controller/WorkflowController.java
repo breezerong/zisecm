@@ -37,6 +37,7 @@ import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Comment;
 import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.variable.api.history.HistoricVariableInstance;
@@ -531,8 +532,24 @@ public class WorkflowController  extends ControllerAbstract{
 			String message= args.get("message").toString();
 			args.put("outcome",result);
 	        setTaskApprovalResult(taskId, result, message);
-	        taskService.complete(taskId, args);
-	        saveEcmauditWorkItem(taskId, result, message);
+	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+	        // owner不为空说明可能存在委托任务
+	        if (!StringUtils.isEmpty(task.getOwner())) {
+	        	DelegationState delegationState = task.getDelegationState();
+	            switch (delegationState) {
+	            case PENDING:
+	                taskService.resolveTask(taskId);
+	                taskService.complete(taskId, args);
+	                break;
+
+	            default:
+	                taskService.complete(taskId, args);
+	                break;
+	            }
+	        } else {
+	            taskService.complete(taskId, args);
+	        }
+	        updateEcmauditWorkItem(taskId, result, message);
 	        return "processed ok!";
 	    }
 
@@ -541,8 +558,8 @@ public class WorkflowController  extends ControllerAbstract{
 		 * @param result
 		 * @param message
 		 */
-		private void saveEcmauditWorkItem(String taskId, String result, String message) {
-			saveEcmauditWorkItem(taskId, result, message,"","");
+		private void updateEcmauditWorkItem(String taskId, String result, String message) {
+			updateEcmauditWorkItem(taskId, result, message,"","");
 		}
 		/**
 		 * @param taskId
@@ -551,11 +568,43 @@ public class WorkflowController  extends ControllerAbstract{
 		 * @param formId
 		 * @param docId
 		 */
-		private void saveEcmauditWorkItem(String taskId, String result, String message,String formId,String docId) {
+		private void updateEcmauditWorkItem(String taskId, String result, String message,String formId,String docId) {
 			EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
 	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
-			audit.createId();
+			String auditId=ecmAuditWorkitemMapper.selectByCondition("TASK_ID='"+taskId+"' and ASSIGNEE='"+task.getAssignee()+"' and END_TIME is null").get(0).getId();
+			audit.setId(auditId);
 			audit.setCreateTime(task.getCreateTime());
+			audit.setEndTime(task.getEndTime());
+			audit.setDocId("");
+			audit.setFormId("");
+			audit.setTaskName(task.getName());
+			audit.setAssignee(task.getAssignee());
+			audit.setResult(result);
+			audit.setMessage(message);
+			audit.setProcessInstanceId(task.getProcessInstanceId());
+			audit.setTaskId(taskId);
+			ecmAuditWorkitemMapper.updateByPrimaryKey(audit);
+		}
+		/**
+		 * @param taskId
+		 * @param result
+		 * @param message
+		 */
+		private void newEcmauditWorkItem(String taskId, String result, String message) {
+			newEcmauditWorkItem(taskId, result, message,"","");
+		}
+		/**
+		 * @param taskId
+		 * @param result
+		 * @param message
+		 * @param formId
+		 * @param docId
+		 */
+		private void newEcmauditWorkItem(String taskId, String result, String message,String formId,String docId) {
+			EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
+	        audit.createId();
+			audit.setCreateTime(new Date());
 			if(dailiString.equals(result)) {
 				audit.setEndTime(new Date());
 			}else {
@@ -564,7 +613,7 @@ public class WorkflowController  extends ControllerAbstract{
 			audit.setDocId("");
 			audit.setFormId("");
 			audit.setTaskName(task.getName());
-			
+	
 			audit.setAssignee(task.getAssignee());
 			audit.setResult(result);
 			audit.setMessage(message);
@@ -597,8 +646,14 @@ public class WorkflowController  extends ControllerAbstract{
 			String delegateTaskUserId= args.get("delegateTaskUserId").toString();
 			String result= dailiString;
 			String message= args.get("message").toString();
-			taskService.delegateTask(taskId, delegateTaskUserId);
-	        saveEcmauditWorkItem(taskId, result, message);
+	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+	        if (StringUtils.isEmpty(task.getOwner())) {
+    			taskService.setOwner(taskId, task.getAssignee());
+				taskService.delegateTask(taskId, delegateTaskUserId);
+	        } else {
+				taskService.delegateTask(taskId, delegateTaskUserId);
+	        }
+			newEcmauditWorkItem(taskId, result, message);
 	        return "processed ok!";
 	    }
 
@@ -807,16 +862,6 @@ public class WorkflowController  extends ControllerAbstract{
 				List<Map> resultList = new ArrayList<Map>();
 				String isPocessFinished="0";
 	        try {
-				List<HistoricTaskInstance> currentTasks  = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).unfinished().list();
- 		        for (HistoricTaskInstance task : currentTasks) {
-			        HashMap<String, Object> map = new HashMap<>();
-			        map.put("id", task.getId());
-			        map.put("name", task.getName());
-			        map.put("assignee", task.getAssignee());
-			        map.put("createTime", task.getCreateTime());
-			        map.put("processInstanceId", task.getProcessInstanceId());
- 			        resultList.add(map);
-		        }
 	        	List<EcmAuditWorkitem>  tasks=ecmAuditWorkitemMapper.selectByCondition("PROCESS_INSTANCE_ID='"+processInstanceId+"' order by CREATE_TIME desc");
  		        for (EcmAuditWorkitem task : tasks) {
 			        HashMap<String, Object> map = new HashMap<>();
