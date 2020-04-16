@@ -117,6 +117,7 @@ public class WorkflowController  extends ControllerAbstract{
 		
 		@Autowired
 		EcmComponentMapper ecmComponentMapper;
+		private String dailiString="委托代理";
 	    /***************此处为业务代码******************/
 	    
 	    /**
@@ -529,17 +530,37 @@ public class WorkflowController  extends ControllerAbstract{
 			String result= args.get("result").toString();
 			String message= args.get("message").toString();
 			args.put("outcome",result);
-//	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-//	        if (task == null) {
-//	            throw new RuntimeException("流程不存在");
-//	        }
 	        setTaskApprovalResult(taskId, result, message);
 	        taskService.complete(taskId, args);
-	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+	        saveEcmauditWorkItem(taskId, result, message);
+	        return "processed ok!";
+	    }
+
+		/**
+		 * @param taskId
+		 * @param result
+		 * @param message
+		 */
+		private void saveEcmauditWorkItem(String taskId, String result, String message) {
+			saveEcmauditWorkItem(taskId, result, message,"","");
+		}
+		/**
+		 * @param taskId
+		 * @param result
+		 * @param message
+		 * @param formId
+		 * @param docId
+		 */
+		private void saveEcmauditWorkItem(String taskId, String result, String message,String formId,String docId) {
+			EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
 	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
 			audit.createId();
 			audit.setCreateTime(task.getCreateTime());
-			audit.setEndTime(task.getEndTime());
+			if(dailiString.equals(result)) {
+				audit.setEndTime(new Date());
+			}else {
+				audit.setEndTime(task.getEndTime());
+			}
 			audit.setDocId("");
 			audit.setFormId("");
 			audit.setTaskName(task.getName());
@@ -550,8 +571,7 @@ public class WorkflowController  extends ControllerAbstract{
 			audit.setProcessInstanceId(task.getProcessInstanceId());
 			audit.setTaskId(taskId);
 			ecmAuditWorkitemMapper.insert(audit);
-	        return "processed ok!";
-	    }
+		}
 
 		private void setTaskApprovalResult(String taskId, String result, String message) {
 			if(!"".equals(message)) {
@@ -575,25 +595,10 @@ public class WorkflowController  extends ControllerAbstract{
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String taskId= args.get("taskId").toString();
 			String delegateTaskUserId= args.get("delegateTaskUserId").toString();
-			String result= args.get("result").toString();
+			String result= dailiString;
 			String message= args.get("message").toString();
-			args.put("outcome",result);
 			taskService.delegateTask(taskId, delegateTaskUserId);
-	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
-	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
-			audit.createId();
-			audit.setCreateTime(task.getCreateTime());
-			audit.setEndTime(task.getEndTime());
-			audit.setDocId("");
-			audit.setFormId("");
-			audit.setTaskName(task.getName());
-			
-			audit.setAssignee(task.getAssignee());
-			audit.setResult(result);
-			audit.setMessage(message);
-			audit.setProcessInstanceId(task.getProcessInstanceId());
-			audit.setTaskId(taskId);
-			ecmAuditWorkitemMapper.insert(audit);
+	        saveEcmauditWorkItem(taskId, result, message);
 	        return "processed ok!";
 	    }
 
@@ -750,21 +755,19 @@ public class WorkflowController  extends ControllerAbstract{
 	    }
 	        
 	    /**
-	     * 获取流程审批信息
+	     * 
+	     * 从flowable获取流程审批信息
 	     * @param processInstanceId
 	     */
 	    @ResponseBody
-	    @RequestMapping(value = "getWorkflowTask")
-	    public Map<String, Object>  getWorkflowTask(@RequestBody String argStr) {
+	    @RequestMapping(value = "getWorkflowTask0")
+	    public Map<String, Object>  getWorkflowTask0(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			Map<String, Object> mp =  new HashMap();
 				String processInstanceId=args.get("processInstanceId").toString();
 				List<Map> resultList = new ArrayList<Map>();
 				String isPocessFinished="0";
-//	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
-//	        List<EcmAuditWorkitem> auditList=null;
 	        try {
-	        	//auditList=workitemAuditService.getObjects(getToken(), "process_instance_id='"+processInstanceId+"'");
 				List<HistoricTaskInstance> tasks = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).orderByTaskCreateTime().asc().list();
 		        for (HistoricTaskInstance task : tasks) {
 			        HashMap<String, Object> map = new HashMap<>();
@@ -778,6 +781,57 @@ public class WorkflowController  extends ControllerAbstract{
  			        resultList.add(map);
 		        }
 		         HistoricProcessInstance   hiProcessInstance  = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).unfinished().singleResult();
+		           if(hiProcessInstance==null) {
+		        	   isPocessFinished="1";
+		           }
+ 			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	        mp.put("data", resultList);
+	        mp.put("isPocessFinished", isPocessFinished);
+
+         	return  mp;
+	    }
+	    
+	    /**
+	     * 
+	     * 从EcmAudit获取流程审批信息
+	     * @param processInstanceId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "getWorkflowTask")
+	    public Map<String, Object>  getWorkflowTask(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			Map<String, Object> mp =  new HashMap<String, Object>();
+				String processInstanceId=args.get("processInstanceId").toString();
+				List<Map> resultList = new ArrayList<Map>();
+				String isPocessFinished="0";
+	        try {
+				List<HistoricTaskInstance> currentTasks  = historyService.createHistoricTaskInstanceQuery().processInstanceId(processInstanceId).unfinished().list();
+ 		        for (HistoricTaskInstance task : currentTasks) {
+			        HashMap<String, Object> map = new HashMap<>();
+			        map.put("id", task.getId());
+			        map.put("name", task.getName());
+			        map.put("assignee", task.getAssignee());
+			        map.put("createTime", task.getCreateTime());
+			        map.put("processInstanceId", task.getProcessInstanceId());
+ 			        resultList.add(map);
+		        }
+	        	List<EcmAuditWorkitem>  tasks=ecmAuditWorkitemMapper.selectByCondition("PROCESS_INSTANCE_ID='"+processInstanceId+"' order by CREATE_TIME desc");
+ 		        for (EcmAuditWorkitem task : tasks) {
+			        HashMap<String, Object> map = new HashMap<>();
+			        map.put("id", task.getTaskId());
+			        map.put("name", task.getTaskName());
+			        map.put("assignee", task.getAssignee());
+			        map.put("result", task.getResult());					
+			        map.put("message", task.getMessage());					
+			        map.put("createTime", task.getCreateTime());
+			        map.put("endTime", task.getEndTime());
+			        map.put("processInstanceId", task.getProcessInstanceId());
+ 			        resultList.add(map);
+		        }
+
+				HistoricProcessInstance   hiProcessInstance  = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).unfinished().singleResult();
 		           if(hiProcessInstance==null) {
 		        	   isPocessFinished="1";
 		           }
