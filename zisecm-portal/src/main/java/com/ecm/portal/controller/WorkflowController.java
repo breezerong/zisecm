@@ -59,12 +59,17 @@ import com.ecm.core.bpm.ProcessService;
 import com.ecm.core.bpm.WorkflowAuditService;
 import com.ecm.core.bpm.WorkflowService;
 import com.ecm.core.bpm.WorkitemAuditService;
+import com.ecm.core.cache.manager.impl.CacheManagerCfgActivity;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmMenu;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
+import com.ecm.core.dao.EcmComponentMapper;
 import com.ecm.core.dao.EcmWorkflowMapper;
 import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.EcmComponent;
+import com.ecm.core.entity.EcmMenuItem;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.EcmWorkflow;
 import com.ecm.core.exception.AccessDeniedException;
@@ -110,6 +115,8 @@ public class WorkflowController  extends ControllerAbstract{
 	    @Autowired
 	    private IFlowableBpmnModelService flowableBpmnModelService;
 		
+		@Autowired
+		EcmComponentMapper ecmComponentMapper;
 	    /***************此处为业务代码******************/
 	    
 	    /**
@@ -323,6 +330,7 @@ public class WorkflowController  extends ControllerAbstract{
 //		        map.put("startUser", varMap.get("startUser").getValue());
 //		        map.put("formId", varMap.get("formId").getValue());
 		        map.put("createTime", task.getCreateTime());
+		        map.put("processDefinitionId", task.getProcessDefinitionId());
 		        resultListTemp.add(map);
 	        }
 //		    CustomSqlExecution<VarQueryMapper, List<Map<String, Object>>> customSqlExecution = new AbstractCustomSqlExecution<VarQueryMapper, List<Map<String, Object>>>(VarQueryMapper.class) {
@@ -421,6 +429,7 @@ public class WorkflowController  extends ControllerAbstract{
 	    	if(!"all".equals(userId) ) {
 	    		sql1.append(" and a.START_USER_ID_='").append(userId).append("' ");
 	    	}
+    		//processes = historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).append(" order by a.START_TIME_ desc").toString()).listPage(pageIndex,pageSize);
     		processes = historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).append(" order by a.START_TIME_ desc").toString()).listPage(pageIndex,pageSize);
     		processTotalCount = historyService.createNativeHistoricProcessInstanceQuery().sql(sqlCount0.append(sql1).toString()).count();
 	        List<HashMap> resultList = new ArrayList<HashMap>();
@@ -471,6 +480,33 @@ public class WorkflowController  extends ControllerAbstract{
 	        return resultMap;
 	    }
 
+	    
+	    /**
+	     * 获取组件名称
+	     * @param processDefinitionId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "getEcmCfgActivity")
+	    public Map<String, Object>  getEcmCfgActivity(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			Map<String, Object> mp =  new HashMap<String, Object>();
+			String processDefinitionId=args.get("processDefinitionId").toString();
+			String activityName=args.get("activityName").toString();
+			String componentUrl="";
+	        try {
+	        	String processName= repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult().getName();
+	        	String componentName=CacheManagerCfgActivity.getCfgActivity(processName, activityName).getComponentName();
+	    		List<EcmComponent> comps = ecmComponentMapper.selectByCondition("NAME='" + componentName+"'");
+	    		componentUrl=comps.get(0).getUrl();
+ 			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	        mp.put("data", componentUrl);
+	        mp.put("success", true);
+         	return  mp;
+	    }
+	    	    
+	    
 	    private Date formatDate(String date) {
 	    	try {
 				return new SimpleDateFormat("yyyy-MM-dd").parse(date);
@@ -527,6 +563,41 @@ public class WorkflowController  extends ControllerAbstract{
 		}
 
 
+	    /**
+	     * 代理任务
+	     *
+	     * @param taskId 任务ID
+	     * userId 接收代理人员ID
+	     */
+	    @RequestMapping(value = "delegateTask")
+	    @ResponseBody
+	    public String delegateTask(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String taskId= args.get("taskId").toString();
+			String delegateTaskUserId= args.get("delegateTaskUserId").toString();
+			String result= args.get("result").toString();
+			String message= args.get("message").toString();
+			args.put("outcome",result);
+			taskService.delegateTask(taskId, delegateTaskUserId);
+	        EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
+			audit.createId();
+			audit.setCreateTime(task.getCreateTime());
+			audit.setEndTime(task.getEndTime());
+			audit.setDocId("");
+			audit.setFormId("");
+			audit.setTaskName(task.getName());
+			
+			audit.setAssignee(task.getAssignee());
+			audit.setResult(result);
+			audit.setMessage(message);
+			audit.setProcessInstanceId(task.getProcessInstanceId());
+			audit.setTaskId(taskId);
+			ecmAuditWorkitemMapper.insert(audit);
+	        return "processed ok!";
+	    }
+
+ 
 	    /**
 	     * 生成流程图
 	     *
