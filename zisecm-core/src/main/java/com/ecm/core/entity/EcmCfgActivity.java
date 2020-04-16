@@ -81,6 +81,11 @@ public class EcmCfgActivity extends EcmObject {
      */
     private String selectActivities;
     
+    /**
+     * 表单属性名称
+     */
+    private String formAttribute;
+    
     public String getSelectActivities() {
 		return selectActivities;
 	}
@@ -231,6 +236,14 @@ public class EcmCfgActivity extends EcmObject {
 
 	public void setComponent(EcmComponent component) {
 		this.component = component;
+	}
+
+	public String getFormAttribute() {
+		return formAttribute;
+	}
+
+	public void setFormAttribute(String formAttribute) {
+		this.formAttribute = formAttribute;
 	}
     
 }

@@ -22,17 +22,22 @@
         </el-col>
         </el-row>
         <el-row>
-        <el-col :span="12">
+        <el-col :span="10">
           <el-form-item label="角色名" :label-width="formLabelWidth">
             <RoleSelectInput v-model="form.roleName" v-bind:inputValue="form.roleName"></RoleSelectInput>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="是否多选" :label-width="formLabelWidth">
             <el-select v-model="form.isMulti">
               <el-option label="否" :value="false"></el-option>
               <el-option label="是" :value="true"></el-option>
             </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="表单属性名" :label-width="formLabelWidth">
+            <el-input v-model="form.formAttribute" auto-complete="off"></el-input>
           </el-form-item>
         </el-col>
         </el-row>
@@ -248,6 +253,7 @@ export default {
         activityName: "",
         roleName:"",
         isMulti:false,
+        formAttribute:"",
         selectActivities: "start",
         orderIndex: 1,
         componentName: "",
