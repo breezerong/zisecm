@@ -3,6 +3,7 @@ package com.ecm.flowable.listener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.flowable.engine.delegate.ExecutionListener;
 import org.flowable.engine.delegate.JavaDelegate;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.service.delegate.DelegateTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +25,10 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.ecm.core.PermissionContext;
+import com.ecm.core.dao.EcmAuditWorkflowMapper;
+import com.ecm.core.dao.EcmAuditWorkitemMapper;
+import com.ecm.core.entity.EcmAuditWorkflow;
+import com.ecm.core.entity.EcmAuditWorkitem;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -59,6 +65,8 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	private ServiceDocMail serviceDocMail;
 	@Autowired
 	private Environment env;
+	@Autowired
+	private EcmAuditWorkitemMapper ecmAuditWorkitemMapper;
 
 	/**
 	 * 监听 for executionListener
@@ -264,10 +272,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	 * TaskListener 方法 for taskListener
 	 */
 	@Override
-	public void notify(DelegateTask arg0) {
-		if("create".equals(arg0.getEventName())){
+	public void notify(DelegateTask task) {
+		if("create".equals(task.getEventName())){
 			///////////////////////任务到达发送邮件//////////////
-			String assignee=arg0.getAssignee();//ecm_user.Name
+			String assignee=task.getAssignee();//ecm_user.Name
 			IEcmSession ecmSession = null;
 			String workflowSpecialUserName = env.getProperty("ecm.username");
 			
@@ -291,16 +299,30 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 //			arg0.getName();
 			//发邮件
 //			TODOApplication.getNeedTOChange();
+			
+		        //创建流程日志
+			EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+			audit.createId();
+			audit.setCreateTime(task.getCreateTime());
+			audit.setDocId("");
+			audit.setFormId("");
+			audit.setTaskName(task.getName());
+			audit.setAssignee(task.getAssignee());
+			audit.setProcessInstanceId(task.getProcessInstanceId());
+			audit.setTaskId(task.getId());
+			ecmAuditWorkitemMapper.insert(audit);
+	    
+
 		}else {
-			if (arg0.getVariable("processInstanceID") == null) {
-				arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
-				arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
+			if (task.getVariable("processInstanceID") == null) {
+				task.setVariable("processInstanceID", task.getProcessInstanceId());
+				task.setVariable("processName", task.getProcessDefinitionId().split(":")[0]);
 			}
 			IEcmSession ecmSession = null;
 			String workflowSpecialUserName = env.getProperty("ecm.username");
 			try {
 				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
-				extracted(ecmSession, arg0);
+				extracted(ecmSession, task);
 			} catch (Exception e) {
 				// TODO: handle exception
 			} finally {
