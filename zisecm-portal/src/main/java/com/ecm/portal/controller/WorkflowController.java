@@ -64,11 +64,13 @@ import com.ecm.core.cache.manager.impl.CacheManagerCfgActivity;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmMenu;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
+import com.ecm.core.dao.EcmCfgActivityMapper;
 import com.ecm.core.dao.EcmComponentMapper;
 import com.ecm.core.dao.EcmWorkflowMapper;
 import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.EcmCfgActivity;
 import com.ecm.core.entity.EcmComponent;
 import com.ecm.core.entity.EcmMenuItem;
 import com.ecm.core.entity.EcmUser;
@@ -118,6 +120,8 @@ public class WorkflowController  extends ControllerAbstract{
 		
 		@Autowired
 		EcmComponentMapper ecmComponentMapper;
+		@Autowired
+		private EcmCfgActivityMapper ecmCfgActivityMapper;
 		private String dailiString="委托代理";
 	    /***************此处为业务代码******************/
 	    
@@ -508,6 +512,27 @@ public class WorkflowController  extends ControllerAbstract{
          	return  mp;
 	    }
 	    	    
+	    
+		@RequestMapping(value = "getApprovalUserList", method = RequestMethod.POST)
+		@ResponseBody
+		public Map<String, Object> getApprovalUserList(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String processDefinitionId=args.get("processDefinitionId").toString();
+			String activityName=args.get("activityName").toString();
+			Map<String, Object> mp = new HashMap<String, Object>();
+			Map<String, Object> objectMap = null;
+			String processName=repositoryService.getProcessDefinition(processDefinitionId).getName();
+			try {
+				List<EcmCfgActivity> acitivityList=ecmCfgActivityMapper.selectByProcessName(processName);
+				acitivityList.removeIf(a->a.getSelectActivityList().indexOf(activityName)<0);
+				mp.put("data", acitivityList);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", ex.getMessage());
+			}
+			return mp;
+		}
 	    
 	    private Date formatDate(String date) {
 	    	try {

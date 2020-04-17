@@ -378,6 +378,8 @@ export default {
                 tabledata: _self.taskTableData,
                 borrowFormId: _self.form.formId,
                 istask: 1,
+                processDefinitionId: _self.currentData.processDefinitionId,
+                activityName: _self.currentData.name,
                 formEditPermision: _self.formEditPermision
               }
             });
