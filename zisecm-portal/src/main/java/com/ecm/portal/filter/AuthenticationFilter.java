@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,7 +62,7 @@ public class AuthenticationFilter implements Filter {
          		||req.getServletPath().indexOf("getContent")>=0
          		||req.getServletPath().indexOf("getUserImage")>=0
          		||req.getServletPath().indexOf("/workflow")>=0
-         		){ 
+         		||req.getServletPath().indexOf("/admin/validataAdminToken")>=0){ 
          	 chain.doFilter(request, response);
          	 return;
          }
