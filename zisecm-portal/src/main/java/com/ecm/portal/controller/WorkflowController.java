@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
+import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 import org.flowable.common.engine.impl.cmd.CustomSqlExecution;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
@@ -37,6 +38,7 @@ import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.task.Comment;
 import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -104,8 +106,7 @@ public class WorkflowController  extends ControllerAbstract{
 	    @Autowired
 	    private UserService userService;
 	    
-	    
-		@Autowired
+ 		@Autowired
 		private WorkflowAuditService workflowAuditService;
 		@Autowired
 		private  WorkitemAuditService  workitemAuditService;
@@ -136,9 +137,9 @@ public class WorkflowController  extends ControllerAbstract{
 	        //流程部署
 	        Deployment deployment = repositoryService.createDeployment().addInputStream("借阅流程.bpmn", new FileInputStream("C:\\Workfolder\\zisecm\\zisecm-portal\\src\\main\\resources\\diagrams\\借阅流程.bpmn"))
 	                //.addClasspathResource("resources/diagrams/借阅流程.bpmn")
-	                .name("flowable")
+//	                .name("借阅流程")
 	                .deploy();
-	        
+	        System.out.println("deploy success="+deployment.getId());
 	        //增加事件监听
 	        //runtimeService.addEventListener(new JobListener());
 	        return deployment.getId();
@@ -575,9 +576,9 @@ public class WorkflowController  extends ControllerAbstract{
 	            taskService.complete(taskId, args);
 	        }
 	        updateEcmauditWorkItem(taskId, result, message);
-	        return "processed ok!";
-	    }
+	        return "processed ok!";	  
 
+	    }
 		/**
 		 * @param taskId
 		 * @param result
@@ -930,4 +931,105 @@ public class WorkflowController  extends ControllerAbstract{
 
 	    }
 	    
+	    /**
+	     * 
+	     * @param jobId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "getJobById")
+	    public Map<String, Object>  getJobById(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String jobId= args.get("jobId").toString();
+			Job job = geJobById(jobId);
+			Map<String, Object> mp =  new HashMap<String, Object>();
+			mp.put("job", job);
+	        return mp;
+	    }
+
+	    /**
+	     * 
+	     * @param jobId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "getJobList")
+	    public Map<String, Object>  getJobList(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			List<Job> jobList=managementService.createJobQuery().list();
+ 			Map<String, Object> mp =  new HashMap<String, Object>();
+ 			mp.put("data", jobList);
+ 			mp.put("totalCount", jobList.size());
+ 	        return mp;
+	    }
+
+	    
+ 	    public Job geJobById(String jobId) {
+	        Job job = managementService.createJobQuery().jobId(jobId).singleResult();
+	        validateJob(job, jobId);
+	        return job;
+	    }
+
+ 	    
+	    public Job getSuspendedJobById(String jobId) {
+	        Job job = managementService.createSuspendedJobQuery().jobId(jobId).singleResult();
+	        validateJob(job, jobId);
+	        return job;
+	    }
+ 	    
+
+	    public Job getDeadLetterJobById(String jobId) {
+	        Job job = managementService.createDeadLetterJobQuery().jobId(jobId).singleResult();
+	        validateJob(job, jobId);
+	        return job;
+	    }
+	    
+	    protected void validateJob(Job job, String jobId) {
+	        if (job == null) {
+	            throw new FlowableObjectNotFoundException("Could not find a deadletter job with id '" + jobId + "'.", Job.class);
+	        }
+	    }
+
+	    /**
+	     * 
+	     * @param jobId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "deleteJobById")
+	    public Map<String, Object>  deleteJobById(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String jobId= args.get("jobId").toString();
+ 			Map<String, Object> mp =  new HashMap<String, Object>();
+	        managementService.deleteJob(jobId);
+ 			mp.put("success", true);
+ 	        return mp;
+	    }
+	    
+	    public void deleteDeadLetterJob(String jobId) {
+	        managementService.deleteDeadLetterJob(jobId);
+
+	    }
+	    public void deleteSuspendedJob(String jobId) {
+	        managementService.deleteSuspendedJob(jobId);
+	    }
+	    
+	    /**
+	     * 
+	     * @param jobId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "executeJob")
+	    public Map<String, Object>  executeJob(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String jobId= args.get("jobId").toString();
+ 			Map<String, Object> mp =  new HashMap<String, Object>();
+	        managementService.executeJob(jobId);
+ 			mp.put("success", true);
+ 	        return mp;
+	    }
+
+	    public void moveDeadLetterJobToExecutableJob(String jobId) {
+	        managementService.moveDeadLetterJobToExecutableJob(jobId, 3);
+
+	    }
+  
+
 }

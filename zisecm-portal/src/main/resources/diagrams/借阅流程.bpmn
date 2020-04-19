@@ -25,7 +25,7 @@
     </sequenceFlow>
     <serviceTask id="updateStatus" name="更新状态" flowable:delegateExpression="${startExecutorListener}"></serviceTask>    
     <startEvent id="startevent1" name="Start"></startEvent>
-    <exclusiveGateway id="exclusivegateway_paperAndOpen" name="exclusivegateway_paperAndOpen" default="flow15">
+    <exclusiveGateway id="exclusivegateway_paperAndOpen" name="exclusivegateway_paperAndOpen" flowable:async="true" >
       <documentation>纸质借阅&amp;内部公开</documentation>
       <extensionElements>
         <flowable:executionListener event="start" delegateExpression="${startExecutorListener}"></flowable:executionListener>
