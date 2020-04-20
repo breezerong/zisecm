@@ -272,6 +272,15 @@ export const adminRouter = {
     {
       meta: {
         requireAuth: true,
+        permit: 9
+      },
+      path: '/managercenter/jobmanager',
+      component: () => import('@/views/admin/JobManager.vue'),
+      name: 'Job管理'
+    },
+    {
+      meta: {
+        requireAuth: true,
         permit: 9,
       },
       path: '/workflow/allWorkflow',

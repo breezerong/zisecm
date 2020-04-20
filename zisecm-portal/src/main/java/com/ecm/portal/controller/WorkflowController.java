@@ -401,7 +401,7 @@ public class WorkflowController  extends ControllerAbstract{
 	    	List<HistoricProcessInstance> processes = null;
 	    	long processTotalCount=0;
 			Map workflowForm=  args.get("workflowForm")==null?null:JSONUtils.stringToMap(args.get("workflowForm").toString());
-			StringBuffer  sql0= new StringBuffer ("SELECT a.ID_, a.START_TIME_, a.END_TIME_,  a.START_USER_ID_, b.NAME_ " + 
+			StringBuffer  sql0= new StringBuffer ("SELECT  a.START_TIME_, a.ID_, a.END_TIME_,  a.START_USER_ID_, b.NAME_ " + 
 	    			" FROM ACT_HI_PROCINST  a, ACT_RE_PROCDEF b where a.PROC_DEF_ID_ = b.ID_ ");
 			StringBuffer  sqlCount0= new StringBuffer ("SELECT count(*) " + 
 	    			" FROM ACT_HI_PROCINST a " + 
@@ -437,7 +437,7 @@ public class WorkflowController  extends ControllerAbstract{
 	    		sql1.append(" and a.START_USER_ID_='").append(userId).append("' ");
 	    	}
     		//processes = historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).append(" order by a.START_TIME_ desc").toString()).listPage(pageIndex,pageSize);
-    		processes = historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).append(" order by a.START_TIME_ desc").toString()).listPage(pageIndex,pageSize);
+    		processes = historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).toString()).listPage(pageIndex,pageSize);
     		processTotalCount = historyService.createNativeHistoricProcessInstanceQuery().sql(sqlCount0.append(sql1).toString()).count();
 	        List<HashMap> resultList = new ArrayList<HashMap>();
 //	        Map<String, VariableInstance> varMap=null;
@@ -954,12 +954,26 @@ public class WorkflowController  extends ControllerAbstract{
 	    @RequestMapping(value = "getJobList")
 	    public Map<String, Object>  getJobList(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
-			List<Job> jobList=managementService.createJobQuery().list();
+			String jobType= args.get("jobType").toString();
  			Map<String, Object> mp =  new HashMap<String, Object>();
+ 			List<Job> jobList=null;
+ 		      switch (jobType) {
+ 		        case "suspendJob":
+ 					jobList=managementService.createSuspendedJobQuery().list();
+		          break;
+ 		        case "deadJob":
+ 					jobList=managementService.createDeadLetterJobQuery().list();
+ 		          break;
+ 		      
+ 		        default:
+ 					jobList=managementService.createJobQuery().list();
+ 		          break;
+ 		      }
  			mp.put("data", jobList);
  			mp.put("totalCount", jobList.size());
  	        return mp;
 	    }
+
 
 	    
  	    public Job geJobById(String jobId) {
@@ -969,12 +983,20 @@ public class WorkflowController  extends ControllerAbstract{
 	    }
 
  	    
-	    public Job getSuspendedJobById(String jobId) {
+	    /**
+	     * 
+	     * @param jobId
+	     */
+	    @ResponseBody
+	    @RequestMapping(value = "getSuspendedJobById")
+	    public Map<String, Object>  getSuspendedJobById(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String jobId= args.get("jobId").toString();
 	        Job job = managementService.createSuspendedJobQuery().jobId(jobId).singleResult();
-	        validateJob(job, jobId);
-	        return job;
+			Map<String, Object> mp =  new HashMap<String, Object>();
+			mp.put("job", job);
+	        return mp;
 	    }
- 	    
 
 	    public Job getDeadLetterJobById(String jobId) {
 	        Job job = managementService.createDeadLetterJobQuery().jobId(jobId).singleResult();
@@ -1011,6 +1033,7 @@ public class WorkflowController  extends ControllerAbstract{
 	        managementService.deleteSuspendedJob(jobId);
 	    }
 	    
+ 
 	    /**
 	     * 
 	     * @param jobId
@@ -1020,7 +1043,20 @@ public class WorkflowController  extends ControllerAbstract{
 	    public Map<String, Object>  executeJob(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String jobId= args.get("jobId").toString();
+			String jobType= args.get("jobType").toString();
  			Map<String, Object> mp =  new HashMap<String, Object>();
+
+ 		      switch (jobType) {
+ 		        case "suspendJob":
+ 		 			managementService.moveSuspendedJobToExecutableJob(jobId);
+		          break;
+ 		        case "deadJob":
+ 		 			managementService.moveDeadLetterJobToExecutableJob(jobId, 1);
+ 		          break;
+ 		      
+ 		        default:
+ 		          break;
+ 		      }
 	        managementService.executeJob(jobId);
  			mp.put("success", true);
  	        return mp;
