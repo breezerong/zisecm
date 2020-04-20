@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans   
        http://www.springframework.org/schema/beans/spring-beans.xsd">
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<!-- 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName">
 			<value>com.mysql.cj.jdbc.Driver</value>
 		</property>
@@ -13,13 +13,42 @@
 			<value>ecmadmin</value>
 		</property>
 		<property name="password" value="Passw0rd!19" />
+	</bean> -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>com.microsoft.sqlserver.jdbc.SQLServerDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:sqlserver://121.40.103.187:1433;databasename=ecmdb</value>
+		</property>
+		<property name="username">
+			<value>ecmadmin</value>
+		</property>
+		<property name="password" value="Passw0rd@1" />
 	</bean>
+
+
 	<bean id="processEngineConfiguration"
 		class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration">
 		<property name="dataSource" ref="dataSource" />
 		<property name="databaseSchemaUpdate" value="true" />
+		<property name="asyncExecutor" ref="asyncExecutor" />
+		<property name="asyncExecutorEnabled" value="true" />
+		<property name="asyncExecutorActivate" value="true" />
 	</bean>
-	<bean id="ProcessConfig"
+	<bean id="asyncExecutor" class="org.flowable.job.service.impl.asyncexecutor.DefaultAsyncJobExecutor">
+	    <property name="corePoolSize" value="20" />
+	    <property name="maxPoolSize" value="50" />
+	    <property name="keepAliveTime" value="3000" />
+	    <property name="queueSize" value="200" />
+	    <property name="maxTimerJobsPerAcquisition" value="2" />
+	    <property name="maxAsyncJobsDuePerAcquisition" value="2" />
+	    <property name="defaultAsyncJobAcquireWaitTimeInMillis" value="1000" />
+	    <property name="defaultTimerJobAcquireWaitTimeInMillis" value="1000" />
+	    <property name="timerLockTimeInMillis" value="60000" />
+	    <property name="asyncJobLockTimeInMillis" value="60000" />
+	</bean>	
+<bean id="ProcessConfig"
 		class="com.ecm.flowable.config.ProcessConfig">
 		<property name="processEngineConfiguration"
 			ref="processEngineConfiguration" />

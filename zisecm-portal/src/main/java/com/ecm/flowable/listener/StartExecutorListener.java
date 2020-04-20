@@ -284,7 +284,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				EcmUser user= userService.getObjectByName(ecmSession.getToken(), assignee);
 				String email= user.getEmail();
 				if(email!=null&&!"".equals(email)) {
-					serviceDocMail.sendTaskMail(email);
+					//serviceDocMail.sendTaskMail(email);
 				}
 				
 			} catch (Exception e) {

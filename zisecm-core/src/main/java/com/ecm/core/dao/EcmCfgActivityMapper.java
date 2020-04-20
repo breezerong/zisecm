@@ -17,6 +17,8 @@ public interface EcmCfgActivityMapper {
     EcmCfgActivity selectByPrimaryKey(String id);
     
     List<EcmCfgActivity> selectByProcessId(String processId);
+    
+    List<EcmCfgActivity> selectByProcessName(String processName);
 
     int updateByPrimaryKeySelective(EcmCfgActivity record);
 

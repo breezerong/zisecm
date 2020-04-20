@@ -42,6 +42,12 @@
     from dbo.ecm_cfg_activity
     where PROCESS_ID = #{processId,jdbcType=NVARCHAR} order by ORDER_INDEX
   </select>
+  <select id="selectByProcessName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dbo.ecm_cfg_activity
+    where PROCESS_NAME = #{processName,jdbcType=NVARCHAR} order by ORDER_INDEX
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from dbo.ecm_cfg_activity
     where ID = #{id,jdbcType=NVARCHAR}

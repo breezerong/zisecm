@@ -2,7 +2,7 @@
   <div>
     <el-form ref="borrowForm" :model="borrowForm" style="width:100%" :rules="rules">
       <el-row style="width:100%">
-        <div v-if="(istask==1 && formEditPermision==1)||istask==0">
+        <div v-if="(istask==1 && formEditPermision==0)||istask==0">
           <el-col>
             <el-form-item
               label="借阅单号"
@@ -28,26 +28,6 @@
             >
               <el-input v-model="borrowForm.C_DESC1" auto-complete="off"></el-input>
             </el-form-item>
-            <!-- <el-form-item  prop="C_CREATION_UNIT" label="编制部门" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.C_CREATION_UNIT" auto-complete="off" readonly></el-input>
-                    <el-tree v-if="showDepartMentList==1"
-                      :props="defaultProps"
-                      :data="deptList"
-                      node-key="id"
-                      lazy
-                      @node-click="handleNodeClick">
-                    </el-tree>
-
-            </el-form-item>-->
-            <!-- <el-form-item label="日期" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm." :formatter="dateFormatter" auto-complete="off"></el-input> 
-                </el-form-item>
-                  <el-form-item label="文件归档单位" :label-width="formLabelWidth" style="float:left">
-                  <el-input   v-model="borrowForm.cCreationUnit" auto-complete="off"></el-input>
-            </el-form-item>-->
-            <!-- <el-form-item style="float:left;padding-left:3px">
-                   <el-button  type="primary" @click="handleNodeClick()">选择编制部门</el-button>
-            </el-form-item>-->
           </el-col>
           <el-col>
             <el-form-item label="借阅类型" :label-width="formLabelWidth" style="float:left">
@@ -153,29 +133,16 @@
               <el-button ref="add" style="float:left" @click="addToFormFromShopingCart()">添加到表单</el-button>
             </div>
           </el-col>
-
-          <el-col style="padding-top:3px;">
-            <el-form-item label="申请人领导" :label-width="formLabelWidth" style="float:left">
+           <el-col style="padding-top:3px;">
+            <div v-for="(approver,index)  in approvalUserList" :key="'approver_'+index">
+            <el-form-item :label="approver.activityName"  :label-width="formLabelWidth" style="float:left">
               <UserSelectInput
-                v-model="borrowForm.C_REVIEWER1"
-                v-bind:inputValue="borrowForm.C_REVIEWER1"
-                roleName="leaderManage_auto"
+                v-model="borrowForm[approver.formAttribute]"
+                v-bind:inputValue="borrowForm[approver.formAttribute]"
+                v-bind:roleName="approver.roleName"
               ></UserSelectInput>
             </el-form-item>
-            <el-form-item label="形成部门领导" :label-width="formLabelWidth" style="float:left">
-              <UserSelectInput
-                v-model="borrowForm.C_REVIEWER2"
-                v-bind:inputValue="borrowForm.C_REVIEWER2"
-                :roleName="'leaderManage_'+[borrowForm.C_CREATION_UNIT]"
-              ></UserSelectInput>
-            </el-form-item>
-            <el-form-item label="分管领导" :label-width="formLabelWidth" style="float:left">
-              <UserSelectInput
-                v-model="borrowForm.C_REVIEWER3"
-                v-bind:inputValue="borrowForm.C_REVIEWER3"
-                roleName="分公司领导"
-              ></UserSelectInput>
-            </el-form-item>
+          </div>
           </el-col>
           <el-col>
             <el-form-item label="借阅目的" :label-width="formLabelWidth" style="text-align:left">
@@ -358,9 +325,10 @@ export default {
       loading: false,
       formLabelWidth: "120px",
       borrowData: [],
+      approvalUserList: [],
       dialogTitle: "借阅",
       borrowDialogVisible: false,
-      componentName: "borrow",
+      componentName: "borrow", 
       borrowForm: {
         C_DRAFTER: sessionStorage.getItem("access-userName"),
         C_DESC1: sessionStorage.getItem("access-department"),
@@ -408,7 +376,9 @@ export default {
       formId: "",
       istask: 0,
       formEditPermision: 0,
-      vshowShopingCart: false,
+      processDefinitionId: "",
+      activityName: "",
+     vshowShopingCart: false,
       showOrCloseShopingCartLabel: "从借阅单添加",
       expireTimeOption: this.dateCheck(),
       defaultProps: {
@@ -429,7 +399,10 @@ export default {
     if (typeof _self.$route.query.istask != "undefined") {
       _self.formEditPermision = _self.$route.query.formEditPermision;
       _self.istask = _self.$route.query.istask;
-    }
+      _self.processDefinitionId = _self.$route.query.processDefinitionId;
+      _self.activityName = _self.$route.query.activityName;
+  }
+    _self.getApprovalUserList();
     // _self.loadGridView();
   },
   mounted() {
@@ -438,6 +411,18 @@ export default {
   },
 
   methods: {
+    getApprovalUserList(){
+            let _self = this;
+       var m = new Map();
+      m.set("processDefinitionId", _self.processDefinitionId);
+      m.set("activityName", _self.activityName);
+    axios
+        .post("/workflow/getApprovalUserList", JSON.stringify(m))
+        .then(function(response) {
+         _self.approvalUserList = response.data.data;
+        });
+     
+    },
     dateCheck() {
       let _self = this;
       return {
