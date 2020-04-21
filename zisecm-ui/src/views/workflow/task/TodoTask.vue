@@ -88,18 +88,21 @@
         </el-row>
         <div v-show="delegateDialogVisible"  style="padding-top:3px;"  >
         <el-row>
-             <el-col span="6" style="float:right">
+             <el-col :span="6" style="float:right">
               <el-button @click="delegateTask(form)">确认委托</el-button>
             </el-col>
-           <el-col span="8"  style="float:right">
+           <el-col :span="8"  style="float:right">
               <UserSelectInput
                     v-model="form.delegateTaskUserId"
                     v-bind:inputValue="form.delegateTaskUserId"
-                    roleName="leaderManage_分公司领导"   
+                    v-bind:roleName="ecmCfgActivity.roleName"   
+                    :isRepeat="ecmCfgActivity.isMulti"
                   ></UserSelectInput> 
             </el-col>
        </el-row>
-        </div>
+       <el-row>
+       </el-row>
+        </div> 
       </el-form>
               <!-- <UserSelectInput
                 v-model="borrowForm.C_REVIEWER1"
@@ -109,7 +112,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">取 消</el-button>
-        <el-button @click="showOrHiddenDelegate()">{{delegateButton}}</el-button>
+        <el-button v-if="ecmCfgActivity.enableDelegate==true" @click="showOrHiddenDelegate()">{{delegateButton}}</el-button>
         <el-button @click="completetask(form)">完成任务</el-button>
       </div>
     </el-dialog>
@@ -196,6 +199,7 @@ export default {
       tableHeight: window.innerHeight - 110,
       delegateDialogVisible:false,
       delegateButton: "委托代理",
+      ecmCfgActivity:[],
       result: "通过",
       form: {
         taskId: 0,
@@ -396,8 +400,9 @@ showOrHiddenDelegate(){
       axios
         .post("/workflow/getEcmCfgActivity", JSON.stringify(m))
         .then(function(response) {
+          _self.ecmCfgActivity= response.data.data;
           _self.$router.replace({
-              path: response.data.data,
+              path: response.data.data.component.url,
               query: {
                 tabledata: _self.taskTableData,
                 borrowFormId: _self.form.formId,

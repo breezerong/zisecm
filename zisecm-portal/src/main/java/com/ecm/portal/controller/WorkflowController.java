@@ -499,16 +499,19 @@ public class WorkflowController  extends ControllerAbstract{
 			Map<String, Object> mp =  new HashMap<String, Object>();
 			String processDefinitionId=args.get("processDefinitionId").toString();
 			String activityName=args.get("activityName").toString();
-			String componentUrl="";
+//			String componentUrl="";
+			EcmCfgActivity  EcmCfgActivityObj=null;
 	        try {
+
+
 	        	String processName= repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult().getName();
-	        	String componentName=CacheManagerCfgActivity.getCfgActivity(processName, activityName).getComponentName();
-	    		List<EcmComponent> comps = ecmComponentMapper.selectByCondition("NAME='" + componentName+"'");
-	    		componentUrl=comps.get(0).getUrl();
+	        	EcmCfgActivityObj=CacheManagerCfgActivity.getCfgActivity(processName, activityName);
+//	        	String componentName=CacheManagerCfgActivity.getCfgActivity(processName, activityName).getComponentName();
+//	    		List<EcmComponent> comps = ecmComponentMapper.selectByCondition("NAME='" + componentName+"'");
  			} catch (Exception e) {
 				e.printStackTrace();
 			}
-	        mp.put("data", componentUrl);
+	        mp.put("data", EcmCfgActivityObj);
 	        mp.put("success", true);
          	return  mp;
 	    }
