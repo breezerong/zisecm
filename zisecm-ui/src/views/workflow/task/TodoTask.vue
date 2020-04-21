@@ -375,6 +375,7 @@ showOrHiddenDelegate(){
     showitem(indata) {
       let _self = this;
       _self.dialogTitle = "查看任务";
+      _self.delegateDialogVisible=false;
       _self.isCompleteSelected = false;
       _self.currentData = indata;
       _self.form.taskId = indata.id;
