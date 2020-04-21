@@ -86,21 +86,30 @@
             </el-col>
           </div>
         </el-row>
+        <div v-show="delegateDialogVisible"  style="padding-top:3px;"  >
+        <el-row>
+             <el-col span="6" style="float:right">
+              <el-button @click="delegateTask(form)">确认委托</el-button>
+            </el-col>
+           <el-col span="8"  style="float:right">
+              <UserSelectInput
+                    v-model="form.delegateTaskUserId"
+                    v-bind:inputValue="form.delegateTaskUserId"
+                    roleName="leaderManage_分公司领导"   
+                  ></UserSelectInput> 
+            </el-col>
+       </el-row>
+        </div>
       </el-form>
               <!-- <UserSelectInput
                 v-model="borrowForm.C_REVIEWER1"
                 v-bind:inputValue="borrowForm.C_REVIEWER1"
                 roleName="leaderManage_auto"
               ></UserSelectInput> -->
-               <UserSelectInput
-                v-model="form.delegateTaskUserId"
-                v-bind:inputValue="form.delegateTaskUserId"
-                roleName="leaderManage_分公司领导"
-              ></UserSelectInput> 
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">取 消</el-button>
-        <el-button @click="delegateTask(form)">委托代理</el-button>
+        <el-button @click="showOrHiddenDelegate()">{{delegateButton}}</el-button>
         <el-button @click="completetask(form)">完成任务</el-button>
       </div>
     </el-dialog>
@@ -185,6 +194,8 @@ export default {
       dialogTitle: "查看任务",
       isCompleteSelected: false,
       tableHeight: window.innerHeight - 110,
+      delegateDialogVisible:false,
+      delegateButton: "委托代理",
       result: "通过",
       form: {
         taskId: 0,
@@ -322,7 +333,8 @@ export default {
     },
     delegateTask(indata) {
        let _self = this;
-     _self.loading = true;
+       _self.delegateDialogVisible=true;
+       _self.loading = true;
         axios
           .post("/workflow/delegateTask", JSON.stringify(indata))
           .then(function(response) {
@@ -338,6 +350,17 @@ export default {
           });
     },
 
+showOrHiddenDelegate(){
+  let _self=this;
+  if(_self.delegateDialogVisible==false){
+       _self.delegateButton="取消委托";
+      _self.delegateDialogVisible=true;
+  }else{
+         _self.delegateButton="委托代理";
+        _self.delegateDialogVisible=false;
+  }
+    
+},
 
     completeselected() {
       let _self = this;
