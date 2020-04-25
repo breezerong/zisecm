@@ -8,8 +8,8 @@
 
       <!-- <error-log class="errLog-container right-menu-item"></error-log> -->
      
-      <span>
-        <router-link to="/user/userinfo" style="color:#fff;">{{userName}}</router-link>&nbsp;
+      <span class="ecm-help">
+        <router-link to="/user/userinfo" >{{userName}}</router-link>&nbsp;
       </span>
       <ecm-help class="ecm-help right-menu-item" />
       <ecm-top-lock style="cursor:pointer" class="ecm-help"></ecm-top-lock>
@@ -20,10 +20,10 @@
       <!-- <lang-select class="international right-menu-item"></lang-select> -->
       <ecm-lang-select class="international right-menu-item"></ecm-lang-select>
 
-      <el-tooltip effect="dark" content="主题" placement="bottom">
+      
         <!-- <theme-picker class="theme-switch right-menu-item"></theme-picker> -->
         <ecm-skin class="theme-switch right-menu-item"></ecm-skin>
-      </el-tooltip>
+
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">

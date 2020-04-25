@@ -5,7 +5,7 @@
       </el-option>
     </el-select> -->
     <el-dropdown @command="handleCommandSkin" trigger="hover" class="eldropdown">
-      <span class="el-dropdown-link lang">{{$t('application.theme')}}</span>
+      <span class="theme-switch right-menu-item">{{$t('application.theme')}}</span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item v-for="(item,index) in skins" :key="index" :command="item.name">{{generateSkinColor(item.label)}}</el-dropdown-item>
       </el-dropdown-menu>
