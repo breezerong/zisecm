@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+
 import router from '@/router/index.js'
 import store from './store'
 import i18n from './assets/locales'
@@ -7,7 +8,7 @@ import './plugins/element.js'
 import './plugins/axios.js'
 import './plugins/formatter.js'
 import echarts from 'echarts'
-import './assets/icons/iconfont.css'
+
 import ImgViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 import Video from 'video.js'
@@ -21,6 +22,7 @@ import '@/styles/index.scss' // global css
 import '@/icons'
 import { global } from '@/global/global'
 
+import '@/assets/icons/iconfont.css'
 
 
 Vue.component('split-pane', splitPane);

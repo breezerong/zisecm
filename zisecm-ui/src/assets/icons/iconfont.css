@@ -836,3 +836,7 @@
 
 .el-icon-ecm-ticket_money_fill:before { content: "\e84a"; }
 
+.test-css{
+  color: red;
+  background-color: seagreen;
+}

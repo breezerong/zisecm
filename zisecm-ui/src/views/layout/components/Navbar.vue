@@ -1,11 +1,11 @@
 <template>
-  <el-menu class="navbar" mode="horizontal">
+  <el-menu class="navbar " mode="horizontal">
     <ecm-hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></ecm-hamburger>
-
+    
     <ecm-breadcrumb class="breadcrumb-container"></ecm-breadcrumb>
 
     <div class="right-menu">
-
+     
       <!-- <error-log class="errLog-container right-menu-item"></error-log> -->
      
       <span class="ecm-help">
