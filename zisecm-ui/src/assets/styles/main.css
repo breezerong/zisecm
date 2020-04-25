@@ -48,23 +48,6 @@ body {
   background: #000!important;
 }
 
-.navbar{
-  background-color: #DCDFE6;
-  font-size: 16;
-  vertical-align:middle;
-  text-align:left;
-  border-bottom-width: 0.5;
-  border-color: #C0C4CC;
-  height: 24px;
-  padding-left: 10px;
-}
-
-.topbar{
-  background-color: #eee;
-  border-bottom-width: 0.5;
-  border-color: #C0C4CC;
-  text-align:left; 
-}
 a:-webkit-any-link {
   color: -webkit-link;
   cursor: pointer;

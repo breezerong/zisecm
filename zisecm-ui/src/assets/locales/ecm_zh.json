@@ -132,9 +132,17 @@
     "fileBox":"卷盒",
     "warehousing":"上架",
     "addToShopingCart":"添加到借阅单",
-    "openShopingCart":"借阅单"
+    "openShopingCart":"借阅单",
+    "theme": "主题"
 },
-"menu": {
+"skin": {
+    "Blue": "天空蓝",
+    "Green": "典雅绿",
+    "Red": "樱桃红",
+    "Purple": "贵族紫",
+    "Default": "默认"
+},
+"route": {
     "home":"首页",
     "searchCenter":"搜索中心",
     "taskCenter":"任务中心",
@@ -159,7 +167,35 @@
     "userRoleInfo":"我的授权",
     "archiveTool":"档案工具",
     "batchUpdate":"批量更新",
-    "batchMount":"批量挂载"
+    "parameterManager":"参数管理",
+    "statusWorkflow":"状态流程",
+    "groupManager": "部门管理",
+    "roleManager": "角色管理",
+    "componentManager": "组件管理",
+    "actionManager": "事件管理",
+    "userManager": "用户管理",
+    "menuManager": "菜单管理",
+    "menuitemManager": "菜单子项",
+    "formManager": "表单管理",
+    "formItemManager": "表单子项",
+    "gridviewManager": "列表管理",
+    "gridviewitemManager": "列表项",
+    "metaData": "元数据管理",
+    "objectType": "业务类型管理",
+    "storeManager": "存储管理",
+    "aclManager": "ACL管理",
+    "queryManager": "查询管理",
+    "selectvalueManager": "选择项管理",
+    "cardsearchManager":"卡片查询管理",
+    "cardsearchitemManager": "卡片查询项",
+    "languageManager": "语言管理",
+    "langinfoManager": "语言标签管理",
+    "auditManager": "日志管理",
+    "syseventManager": "事件管理",
+    "folderManager": "文件夹管理",
+    "activityManager": "工作流活动管理",
+    "jobManager": "Job管理",
+    "allWorkflow": "所有工作流"
 },
 "message": {
     "saveSuccess":"保存成功",

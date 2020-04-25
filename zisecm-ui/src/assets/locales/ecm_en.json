@@ -125,9 +125,17 @@
     "destroy":"Destroy",
     "show":"Show",
     "fileBox":"FileBox",
-    "warehousing":"Warehousing"
+    "warehousing":"Warehousing",
+    "theme": "Theme"
 },
-"menu": {
+"skin": {
+    "Blue": "Blue",
+    "Green": "Green",
+    "Red": "Red",
+    "Purple": "Purple",
+    "Default": "Default"
+},
+"route": {
     "home":"Home",
     "searchCenter":"SearchCenter",
     "taskCenter":"TaskCenter",

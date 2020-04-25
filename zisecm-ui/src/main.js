@@ -12,9 +12,16 @@ import ImgViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 import Video from 'video.js'
 import 'video.js/dist/video-js.css'
-import './assets/styles/main.css'
+// import './assets/styles/main.css'
 import "babel-polyfill"
 import splitPane from 'vue-splitpane'
+
+import 'normalize.css/normalize.css'// A modern alternative to CSS resets
+import '@/styles/index.scss' // global css
+import '@/icons'
+import { global } from '@/global/global'
+
+
 
 Vue.component('split-pane', splitPane);
 Vue.prototype.$video = Video
@@ -23,6 +30,12 @@ Vue.config.productionTip = false
 Vue.prototype.getLang = function (){
   let lang = localStorage.getItem("localeLanguage") || "zh-cn"
   return lang == ''?'zh-cn':lang
+}
+// 加载用户主题
+if (localStorage.getItem('themeValue')) {
+  global.changeTheme(localStorage.getItem('themeValue'))
+} else {
+  global.changeTheme('default')
 }
 Vue.prototype.echarts = echarts
 

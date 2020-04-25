@@ -1,18 +1,31 @@
+import Layout from '../views/layout/Layout'
 export const adminRouter = {
   meta: {
     requireAuth: true,
     permit: 9
   },
   path: '/managercenter',
-  component: () => import('@/views/ManagerCenter.vue'),
+  component: Layout,
   name: '系统管理',
+  redirect: '/managercenter/managermain',
   children: [
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 9,
+        title: 'managerCenter'
       },
-      path: '/managercenter/parametermanager',
+      path: 'managermain',
+      component: () => import('@/views/ManagerCenter.vue'),
+      name: '系统管理首页',
+    },
+    {
+      meta: {
+        requireAuth: true,
+        permit: 5,
+        title: 'parameterManager'
+      },
+      path: 'parametermanager',
       component: () => import('@/views/admin/ParameterManager.vue'),
       name: '参数管理'
     },
@@ -20,126 +33,140 @@ export const adminRouter = {
 
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'statusWorkflow'
       },
-      path: '/managercenter/workflowstatus',
+      path: 'workflowstatus',
       component: () => import('@/views/admin/WorkflowStatus.vue'),
       name: '状态流程'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'userManager'
       },
-      path: '/managercenter/usermanager',
+      path: 'usermanager',
       component: () => import('@/views/admin/UserManager.vue'),
       name: '用户管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'groupManager'
       },
-      path: '/managercenter/groupmanager',
+      path: 'groupmanager',
       component: () => import('@/views/admin/GroupManager.vue'),
       name: '组管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'roleManager'
       },
-      path: '/managercenter/rolemanager',
+      path: 'rolemanager',
       component: () => import('@/views/admin/RoleManager.vue'),
       name: '角色管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'componentManager'
       },
-      path: '/managercenter/componentmanager',
+      path: 'componentmanager',
       component: () => import('@/views/admin/ComponentManager.vue'),
       name: '组件管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'actionManager'
       },
-      path: '/managercenter/actionmanager',
+      path: 'actionmanager',
       component: () => import('@/views/admin/ActionManager.vue'),
       name: '事件管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'menuManager'
       },
-      path: '/managercenter/menumanager',
+      path: 'menumanager',
       component: () => import('@/views/admin/MenuManager.vue'),
       name: '菜单管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'menuitemManager'
       },
-      path: '/managercenter/menuitemmanager',
+      path: 'menuitemmanager',
       component: () => import('@/views/admin/MenuItemManager.vue'),
       name: '菜单项管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'formManager'
       },
-      path: '/managercenter/formmanager',
+      path: 'formmanager',
       component: () => import('@/views/admin/FormManager.vue'),
       name: '表单管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'formItemManager'
       },
-      path: '/managercenter/formItemmanager',
+      path: 'formItemmanager',
       component: () => import('@/views/admin/FormItemManager.vue'),
       name: '表单项管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'gridviewManager'
       },
-      path: '/managercenter/gridviewmanager',
+      path: 'gridviewmanager',
       component: () => import('@/views/admin/GridViewManager.vue'),
       name: '列表管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'gridviewitemManager'
       },
-      path: '/managercenter/gridviewitemmanager',
+      path: 'gridviewitemmanager',
       component: () => import('@/views/admin/GridViewItemManager.vue'),
       name: '列表项管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'metaData'
       },
-      path: '/managercenter/docattrmanager',
+      path: 'docattrmanager',
       component: () => import('@/views/admin/DocAttrManager.vue'),
       name: '文档元数据管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'objectType'
       },
-      path: '/managercenter/typemanager',
+      path: 'typemanager',
       component: () => import('@/views/admin/TypeManager.vue'),
       name: '业务类型管理'
     },
@@ -148,133 +175,147 @@ export const adminRouter = {
         requireAuth: true,
         permit: 5
       },
-      path: '/managercenter/defattrmanager',
+      path: 'defattrmanager',
       component: () => import('@/views/admin/DefAttrManager.vue'),
       name: '业务元数据管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'storeManager'
       },
-      path: '/managercenter/storemanager',
+      path: 'storemanager',
       component: () => import('@/views/admin/StoreManager.vue'),
       name: '存储管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 5
+        permit: 5,
+        title: 'aclManager'
       },
-      path: '/managercenter/aclmanager',
+      path: 'aclmanager',
       component: () => import('@/views/admin/AclManager.vue'),
       name: 'ACL管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 2
+        permit: 2,
+        title: 'queryManager'
       },
-      path: '/managercenter/querymanager',
+      path: 'querymanager',
       component: () => import('@/views/admin/QueryManager.vue'),
       name: '查询管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 2
+        permit: 2,
+        title: 'selectvalueManager'
       },
-      path: '/managercenter/selectvaluemanager',
+      path: 'selectvaluemanager',
       component: () => import('@/views/admin/SelectValueManager.vue'),
       name: '选项管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'cardsearchManager'
       },
-      path: '/managercenter/cardsearchmanager',
+      path: 'cardsearchmanager',
       component: () => import('@/views/admin/CardSearchManager.vue'),
       name: '卡片查询管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'cardsearchitemManager'
       },
-      path: '/managercenter/cardsearchitemmanager',
+      path: 'cardsearchitemmanager',
       component: () => import('@/views/admin/CardSearchItemManager.vue'),
       name: '卡片表单项'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'languageManager'
       },
-      path: '/managercenter/languagemanager',
+      path: 'languagemanager',
       component: () => import('@/views/admin/LanguageManager.vue'),
       name: '语言管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'langinfoManager'
       },
-      path: '/managercenter/langinfomanager',
+      path: 'langinfomanager',
       component: () => import('@/views/admin/LangInfoManager.vue'),
       name: '语言标签管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'auditManager'
       },
-      path: '/managercenter/auditmanager',
+      path: 'auditmanager',
       component: () => import('@/views/admin/AuditManager.vue'),
       name: '日志管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'syseventManager'
       },
-      path: '/managercenter/syseventmanager',
+      path: 'syseventmanager',
       component: () => import('@/views/admin/SysEventManager.vue'),
       name: '事件管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'systemManager'
       },
-      path: '/managercenter/systemmanager',
+      path: 'systemmanager',
       component: () => import('@/views/admin/SystemManager.vue'),
       name: '系统配置'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 2
+        permit: 2,
+        title: 'folderManager'
       },
-      path: '/managercenter/foldermanager',
+      path: 'foldermanager',
       component: () => import('@/views/admin/FolderManager.vue'),
       name: '文件夹管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'activityManager'
       },
-      path: '/managercenter/activitymanager',
+      path: 'activitymanager',
       component: () => import('@/views/admin/ActivityManager.vue'),
       name: '工作流活动管理'
     },
     {
       meta: {
         requireAuth: true,
-        permit: 9
+        permit: 9,
+        title: 'jobManager'
       },
-      path: '/managercenter/jobmanager',
+      path: 'jobmanager',
       component: () => import('@/views/admin/JobManager.vue'),
       name: 'Job管理'
     },
@@ -282,6 +323,7 @@ export const adminRouter = {
       meta: {
         requireAuth: true,
         permit: 9,
+        title: 'allWorkflow'
       },
       path: '/workflow/allWorkflow',
       component: () => import('@/views/workflow/MyWorkflow.vue'),
