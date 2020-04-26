@@ -402,7 +402,8 @@ showOrHiddenDelegate(){
         .then(function(response) {
           _self.ecmCfgActivity= response.data.data;
           _self.$router.replace({
-              path: response.data.data.component.url,
+              // path: response.data.data.component.url,
+              path: "/borrow1",
               query: {
                 tabledata: _self.taskTableData,
                 borrowFormId: _self.form.formId,

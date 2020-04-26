@@ -2,6 +2,7 @@ package com.ecm.flowable.listener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,26 +69,55 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	@Autowired
 	private EcmAuditWorkitemMapper ecmAuditWorkitemMapper;
 
+    public Integer geVariable(DelegateExecution execution, String variableName) {
+        Object value = execution.getVariableLocal(variableName);
+        return (Integer) (value != null ? value : 0);
+    }
+    protected DelegateExecution getMultiInstanceRootExecution(DelegateExecution executionEntity) {
+        DelegateExecution multiInstanceRootExecution = null;
+        DelegateExecution currentExecution = executionEntity;
+        while (currentExecution != null && multiInstanceRootExecution == null && currentExecution.getParent() != null) {
+            if (currentExecution.isMultiInstanceRoot()) {
+                multiInstanceRootExecution = currentExecution;
+            } else {
+                currentExecution = currentExecution.getParent();
+            }
+        }
+        return multiInstanceRootExecution;
+    }
 	/**
 	 * 监听 for executionListener
 	 */
 	@Override
-	public void notify(DelegateExecution arg0){
-		if (arg0.getVariable("processInstanceID") == null) {
-			arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
-			arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
+	public void notify(DelegateExecution execution){
+		if (execution.getVariable("processInstanceID") == null) {
+			execution.setVariable("processInstanceID", execution.getProcessInstanceId());
+			execution.setVariable("processName", execution.getProcessDefinitionId().split(":")[0]);
 		}
+
+		//设置通过拒绝参数
+		DelegateExecution miRootExecution = getMultiInstanceRootExecution(execution);
+		if(miRootExecution!=null) {
+			if("通过".equals(execution.getVariable("outcome"))) {
+				int nrOfPassedInstances=geVariable(miRootExecution,"nrOfPassedInstances");
+				miRootExecution.setVariableLocal("nrOfPassedInstances", ++nrOfPassedInstances);
+			}else {
+				int nrOfRejectedInstances=geVariable(miRootExecution,"nrOfRejectedInstances");
+				miRootExecution.setVariableLocal("nrOfRejectedInstances", ++nrOfRejectedInstances);
+			}
+		}
+		
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		try {
 			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
-			extracted(ecmSession, arg0);
+			extracted(ecmSession, execution);
 //			System.out.println("========name======="+arg0.getEventName()+"===isEnded==="+arg0.isEnded());
 			//流程结束发送邮件
-			if("endevent1".equals(arg0.getCurrentActivityId())) {
+			if("endevent1".equals(execution.getCurrentActivityId())) {
 				try {
 					HistoricProcessInstance hi = historyService.createHistoricProcessInstanceQuery()
-					        .processInstanceId(arg0.getProcessInstanceId())
+					        .processInstanceId(execution.getProcessInstanceId())
 					        .singleResult();
 					String startUserId = hi.getStartUserId();
 //					System.out.println("userId===="+startUserId);
@@ -172,7 +202,8 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				// runtimeService.getVariables("1995ac1d-1259-11ea-9171-00505622af9b")
 				varMap.put("taskUser_owner",
 						runtimeService.getVariable(arg0.getVariable("processInstanceID").toString(), "startUser"));
-				varMap.put("taskUser_owner_leader", ecmObject.getAttributes().get("C_REVIEWER1"));
+				//varMap.put("taskUser_owner_leader", ecmObject.getAttributes().get("C_REVIEWER1"));
+				varMap.put("assigneeList", Arrays.asList(ecmObject.getAttributes().get("C_REVIEWER1").toString().split(";")));
 				varMap.put("taskUser_doc_leader", ecmObject.getAttributes().get("C_REVIEWER2"));
 				varMap.put("taskUser_leader_in_charge", ecmObject.getAttributes().get("C_REVIEWER3"));
 				break;
@@ -248,7 +279,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				authService.logout(workflowSpecialUserName);
 			}
 		}
-		System.out.println("DelegateExecution_execute");
+		System.out.println("serviceTask_execute");
 	}
 
 	private void grantRelationPermit(IEcmSession ecmSession,EcmDocument docObj, String relationName, String userName, Date grantDate, int permit)
@@ -313,7 +344,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			ecmAuditWorkitemMapper.insert(audit);
 	    
 
-		}else {
+		}else if("complete".equals(task.getEventName())){
 			if (task.getVariable("processInstanceID") == null) {
 				task.setVariable("processInstanceID", task.getProcessInstanceId());
 				task.setVariable("processName", task.getProcessDefinitionId().split(":")[0]);
@@ -332,7 +363,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			}
 
 		}
-		System.out.println("DelegateTask_notify");
+		System.out.println("taskListener_notify");
 
 	}
 }

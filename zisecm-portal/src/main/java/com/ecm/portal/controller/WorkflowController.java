@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
@@ -30,9 +32,13 @@ import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
+import org.flowable.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.flowable.engine.impl.cmd.AbstractCustomSqlExecution;
+import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -47,6 +53,7 @@ import org.flowable.variable.api.persistence.entity.VariableInstance;
 import org.flowable.variable.service.VariableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -86,6 +93,7 @@ import com.ecm.flowable.listener.JobListener;
 import com.ecm.flowable.service.IFlowableBpmnModelService;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.portal.test.flowable.TODOApplication;
+import com.ecm.flowable.config.CustomProcessDiagramGenerator;;
 
 @Controller
 @RequestMapping(value = "/workflow")
@@ -160,6 +168,7 @@ public class WorkflowController  extends ControllerAbstract{
 		    	String userName =workflowAuditService.getSession(getToken()).getCurrentUser().getUserName();
 		    		Authentication.setAuthenticatedUserId(userName);
 		    		args.put("startUser", userName);
+		    		
  			        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
 					String processName="借阅流程 "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
  			        try { 			        
@@ -554,14 +563,14 @@ public class WorkflowController  extends ControllerAbstract{
 	     */
 	    @RequestMapping(value = "completeTask")
 	    @ResponseBody
+		@Transactional(rollbackFor = Exception.class)
 	    public String completeTask(@RequestBody String argStr) {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String taskId= args.get("taskId").toString();
-			String result= args.get("result").toString();
-			String message= args.get("message").toString();
-			args.put("outcome",result);
-	        setTaskApprovalResult(taskId, result, message);
+			args.put("outcome",args.get("result").toString());
+			args.remove("result");
 	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+ 	        setTaskApprovalResult(args, taskId);
 	        // owner不为空说明可能存在委托任务
 	        if (!StringUtils.isEmpty(task.getOwner())) {
 	        	DelegationState delegationState = task.getDelegationState();
@@ -578,17 +587,33 @@ public class WorkflowController  extends ControllerAbstract{
 	        } else {
 	            taskService.complete(taskId, args);
 	        }
-	        updateEcmauditWorkItem(taskId, result, message);
+	        
+	        updateEcmauditWorkItem(args);
 	        return "processed ok!";	  
 
 	    }
+
+		/**
+		 * @param args
+		 * @param taskId
+		 */
+		private void setTaskApprovalResult(Map<String, Object> args, String taskId) {
+			Map<String, Object> varLocalMap = new HashMap<String, Object>();
+	        varLocalMap.put("outcome", args.get("outcome"));
+			String message= args.get("message").toString();
+	        varLocalMap.put("message", args.get("message"));
+			if(!"".equals(message)) {
+				varLocalMap.put("message",message);
+	        }
+	        taskService.setVariablesLocal(taskId, varLocalMap);
+		}
 		/**
 		 * @param taskId
 		 * @param result
 		 * @param message
 		 */
-		private void updateEcmauditWorkItem(String taskId, String result, String message) {
-			updateEcmauditWorkItem(taskId, result, message,"","");
+		private void updateEcmauditWorkItem(Map<String, Object> varMap) {
+			updateEcmauditWorkItem(varMap,"","");
 		}
 		/**
 		 * @param taskId
@@ -597,7 +622,8 @@ public class WorkflowController  extends ControllerAbstract{
 		 * @param formId
 		 * @param docId
 		 */
-		private void updateEcmauditWorkItem(String taskId, String result, String message,String formId,String docId) {
+		private void updateEcmauditWorkItem(Map<String, Object> varMap, String formId,String docId) {
+			String taskId= varMap.get("taskId").toString();
 			EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
 	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
 			String auditId=ecmAuditWorkitemMapper.selectByCondition("TASK_ID='"+taskId+"' and ASSIGNEE='"+task.getAssignee()+"' and END_TIME is null").get(0).getId();
@@ -608,8 +634,8 @@ public class WorkflowController  extends ControllerAbstract{
 			audit.setFormId("");
 			audit.setTaskName(task.getName());
 			audit.setAssignee(task.getAssignee());
-			audit.setResult(result);
-			audit.setMessage(message);
+			audit.setResult(varMap.get("outcome").toString());
+			audit.setMessage(varMap.get("message").toString());
 			audit.setProcessInstanceId(task.getProcessInstanceId());
 			audit.setTaskId(taskId);
 			ecmAuditWorkitemMapper.updateByPrimaryKey(audit);
@@ -651,15 +677,7 @@ public class WorkflowController  extends ControllerAbstract{
 			ecmAuditWorkitemMapper.insert(audit);
 		}
 
-		private void setTaskApprovalResult(String taskId, String result, String message) {
-			if(!"".equals(message)) {
-		        taskService.setVariableLocal(taskId, "message",message);
-	        }
-
-	        //通过审核
-	        taskService.setVariableLocal(taskId, "outcome",result);
-		}
-
+		
 
 	    /**
 	     * 代理任务
@@ -708,20 +726,35 @@ public class WorkflowController  extends ControllerAbstract{
 	                .createExecutionQuery()
 	                .processInstanceId(InstanceId)
 	                .list();
+			List<String> highLightedFlows = new ArrayList<>();
+			List<String> highLightedActivities = new ArrayList<>();
+			List<HistoricActivityInstance> allHistoricActivityIntances = historyService.createHistoricActivityInstanceQuery()
+					.processInstanceId(InstanceId).list();
+			allHistoricActivityIntances.forEach(historicActivityInstance -> {
+				if (BpmnXMLConstants.ELEMENT_SEQUENCE_FLOW.equals(historicActivityInstance.getActivityType())) {
+					highLightedFlows.add(historicActivityInstance.getActivityId());
+				} else {
+					highLightedActivities.add(historicActivityInstance.getActivityId());
+				}
+			});
 
-	        //得到正在执行的Activity的Id
-	        List<String> activityIds = new ArrayList<>();
-	        List<String> flows = new ArrayList<>();
-	        for (Execution exe : executions) {
-	            List<String> ids = runtimeService.getActiveActivityIds(exe.getId());
-	            activityIds.addAll(ids);
-	        }
+			List<String> runningActivitiIdList = null;
+			// 流程已结束
+			if (pi.isEnded()) {
+				runningActivitiIdList = Arrays.asList();
+			} else {
+				runningActivitiIdList = runtimeService.getActiveActivityIds(InstanceId);
+			}
 
-	        //获取流程图
-	        BpmnModel bpmnModel = repositoryService.getBpmnModel(pi.getProcessDefinitionId());
+			BpmnModel bpmnModel = repositoryService.getBpmnModel(pi.getProcessDefinitionId());
 	        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
-	        ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
-	        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", activityIds, flows, engconf.getActivityFontName(), engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, false);
+	        engconf.setProcessDiagramGenerator( new CustomProcessDiagramGenerator());
+			CustomProcessDiagramGenerator diagramGenerator = (CustomProcessDiagramGenerator) engconf.getProcessDiagramGenerator();
+			InputStream in = diagramGenerator.generateCustomDiagram(bpmnModel, "png", highLightedActivities, runningActivitiIdList,
+					highLightedFlows, engconf.getActivityFontName(), engconf.getLabelFontName(),
+					engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, true);
+			
+
 	        OutputStream out = null;
 	        byte[] buf = new byte[1024];
 	        int legth = 0;

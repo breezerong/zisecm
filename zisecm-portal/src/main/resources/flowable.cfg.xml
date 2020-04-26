@@ -48,9 +48,7 @@
 	    <property name="timerLockTimeInMillis" value="60000" />
 	    <property name="asyncJobLockTimeInMillis" value="60000" />
 	</bean>	
-<bean id="ProcessConfig"
-		class="com.ecm.flowable.config.ProcessConfig">
-		<property name="processEngineConfiguration"
-			ref="processEngineConfiguration" />
+	<bean id="ProcessConfig" class="com.ecm.flowable.config.ProcessConfig">
+		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
 	</bean>
 </beans>
