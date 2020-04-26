@@ -39,6 +39,14 @@ const router = new Router({
         },
         docexchange,
         searchRouter,
+        ...dcRouter,
+        ...recordRouter,
+        workflowRouter,
+        reportRouter,
+        userRouter,
+        docexchange,
+        ...testRouter,
+        ...adminRouter,
         // 图标组件
         {
           path: '/icons',
@@ -64,15 +72,6 @@ const router = new Router({
       name: "内容容器",
       component: () => import("@/views/MainContainer.vue")
     },
-   
-    ...dcRouter,
-    ...recordRouter,
-    workflowRouter,
-    reportRouter,
-    userRouter,
-    docexchange,
-    ...testRouter,
-    adminRouter,
     {
       meta: {
         requireAuth: true,
