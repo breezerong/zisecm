@@ -36,7 +36,16 @@ const router = new Router({
           path: "/home",
           component: () => import("@/views/HomeContent.vue"),
           name: "首页内容"
-        }
+        },
+        docexchange,
+        searchRouter,
+        // 图标组件
+        {
+          path: '/icons',
+          name: 'iconIndex',
+          component: () => import('@/views/icons/svg-icons/iconIndex'),
+          meta: { title: 'svgicons', icon: 'icon' }
+        },
       ]
     },
     ,
@@ -55,7 +64,7 @@ const router = new Router({
       name: "内容容器",
       component: () => import("@/views/MainContainer.vue")
     },
-    searchRouter,
+   
     ...dcRouter,
     ...recordRouter,
     workflowRouter,
