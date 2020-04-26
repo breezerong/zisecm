@@ -40,12 +40,5 @@ export default {
     font-weight:bold;
     color: #000000 !important;
 }
-.el-menu-item.is-active {
-  color: #000000 !important;
-  font-weight:bold;
-  background-color: #92c6fd !important;
-}
-.router-link-active {
-  color: #000000 !important;
-}
+
 </style>

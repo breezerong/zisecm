@@ -13,7 +13,7 @@ import ImgViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 import Video from 'video.js'
 import 'video.js/dist/video-js.css'
-// import './assets/styles/main.css'
+
 import "babel-polyfill"
 import splitPane from 'vue-splitpane'
 
@@ -22,7 +22,8 @@ import '@/styles/index.scss' // global css
 import '@/icons'
 import { global } from '@/global/global'
 
-import '@/assets/icons/iconfont.css'
+ import '@/assets/icons/iconfont.css'
+// import '@/assets/icons2/iconfont.css'
 
 
 Vue.component('split-pane', splitPane);

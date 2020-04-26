@@ -2,42 +2,42 @@
   <div v-if="clientPermission>3">
     <el-submenu index="999">
         <template slot="title">
-          <i class="white el-icon-setting"></i>
+          <i class="menu-white el-icon-setting"></i>
           <span slot="title">{{$t('route.managerCenter')}}</span>
         </template>
     <div v-if="systemPermission>=5">
       <router-link to="/managercenter/parametermanager">
-        <el-menu-item index="101">
-          <i class="white el-icon-ecm-edit_light"></i>
+        <el-menu-item index="/managercenter/parametermanager">
+          <i class="iconfont zisecm-edit_light menu-white"></i>
           <span slot="title">参数设置</span>
         </el-menu-item>
       </router-link>
       <el-submenu index="1010">
         <template slot="title">
-          <i class="white el-icon-menu"></i>
+          <i class="menu-white el-icon-menu"></i>
           <span slot="title">元数据管理</span>
         </template>
         <router-link to="/managercenter/docattrmanager">
-          <el-menu-item index="1011">
-            <i class="white el-icon-ecm-form"></i>
+          <el-menu-item index="/managercenter/docattrmanager">
+            <i class="menu-white iconfont zisecm-form"></i>
             <span slot="title">系统元数据</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/typemanager">
-          <el-menu-item index="1012">
-            <i class="white el-icon-ecm-cascades"></i>
+          <el-menu-item index="/managercenter/typemanager">
+            <i class="menu-white iconfont zisecm-cascades"></i>
             <span slot="title">业务类型</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/storemanager">
-          <el-menu-item index="1013">
-            <i class="white el-icon-ecm-file"></i>
+          <el-menu-item index="/managercenter/storemanager">
+            <i class="menu-white iconfont zisecm-file"></i>
             <span slot="title">存储管理</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/languagemanager">
-          <el-menu-item index="1014">
-            <i class="white el-icon-warning-outline"></i>
+          <el-menu-item index="/managercenter/languagemanager">
+            <i class="menu-white el-icon-warning-outline"></i>
             <span slot="title">语言管理</span>
           </el-menu-item>
         </router-link>
@@ -46,54 +46,54 @@
     <div v-if="systemPermission>=4">
       <el-submenu index="1200">
         <template slot="title">
-          <i class="white el-icon-menu"></i>
+          <i class="el-icon-menu menu-white"></i>
           <span slot="title">界面配置</span>
         </template>
         <router-link to="/managercenter/langinfomanager">
-          <el-menu-item index="1209">
-            <i class="white el-icon-info"></i>
+          <el-menu-item index="/managercenter/langinfomanager">
+            <i class="el-icon-info menu-white"></i>
             <span slot="title">语言标签</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/componentmanager">
-          <el-menu-item index="1210">
-            <i class="white el-icon-ecm-news_light"></i>
+          <el-menu-item index="/managercenter/componentmanager">
+            <i class="iconfont zisecm-news_light menu-white"></i>
             <span slot="title">组件设置</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/actionmanager">
-          <el-menu-item index="1211">
-            <i class="white el-icon-ecm-link"></i>
+          <el-menu-item index="/managercenter/actionmanager">
+            <i class="iconfont zisecm-link menu-white"></i>
             <span slot="title">事件设置</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/menumanager">
-          <el-menu-item index="1212">
-            <i class="white el-icon-ecm-round_menu_fill"></i>
+          <el-menu-item index="/managercenter/menumanager">
+            <i class="iconfont zisecm-round_menu_fill menu-white"></i>
             <span slot="title">菜单设置</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/formmanager">
-          <el-menu-item index="1213">
-            <i class="white el-icon-ecm-form_light"></i>
+          <el-menu-item index="/managercenter/formmanager">
+            <i class="iconfont zisecm-form_light menu-white"></i>
             <span slot="title">表单设置</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/gridviewmanager">
-          <el-menu-item index="1214">
-            <i class="white el-icon-ecm-list"></i>
+          <el-menu-item index="/managercenter/gridviewmanager">
+            <i class="iconfont zisecm-list menu-white"></i>
             <span slot="title">列表设置</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/querymanager">
-          <el-menu-item index="1215">
-            <i class="white el-icon-ecm-search_list_light"></i>
+          <el-menu-item index="/managercenter/querymanager">
+            <i class="iconfont zisecm-search_list_light menu-white"></i>
             <span slot="title">查询设置</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/cardsearchmanager">
-          <el-menu-item index="1216">
-            <i class="white el-icon-ecm-vipcard"></i>
+          <el-menu-item index="/managercenter/cardsearchmanager">
+            <i class="iconfont zisecm-vipcard menu-white"></i>
             <span slot="title">卡片查询</span>
           </el-menu-item>
         </router-link>
@@ -102,51 +102,51 @@
     <div v-if="systemPermission>=2">
       <el-submenu index="1300">
         <template slot="title">
-          <i class="white el-icon-ecm-group"></i>
+          <i class="iconfont zisecm-group menu-white"></i>
           <span slot="title">用户组管理</span>
         </template>
         <router-link to="/managercenter/groupmanager">
-          <el-menu-item index="1301">
-            <i class="white el-icon-ecm-people_list_light"></i>
+          <el-menu-item index="/managercenter/groupmanager">
+            <i class="iconfont zisecm-people_list_light menu-white"></i>
             <span slot="title">部门管理</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/rolemanager">
-          <el-menu-item index="1302">
-            <i class="white el-icon-ecm-people_list_light"></i>
+          <el-menu-item index="/managercenter/rolemanager">
+            <i class="iconfont zisecm-people_list_light menu-white"></i>
             <span slot="title">角色管理</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/usermanager">
-          <el-menu-item index="1303">
-            <i class="white el-icon-ecm-my_light"></i>
+          <el-menu-item index="/managercenter/usermanager">
+            <i class="iconfont zisecm-my_light menu-white"></i>
             <span slot="title">用户管理</span>
           </el-menu-item>
         </router-link>
       </el-submenu>
       <router-link to="/managercenter/aclmanager">
-        <el-menu-item index="1103">
-          <i class="white el-icon-lock"></i>
+        <el-menu-item index="/managercenter/aclmanager">
+          <i class="el-icon-lock menu-white"></i>
           <span slot="title">ACL管理</span>
         </el-menu-item>
       </router-link>
       <router-link to="/managercenter/systemmanager">
-        <el-menu-item index="1104">
-          <i class="white el-icon-refresh"></i>
+        <el-menu-item index="/managercenter/systemmanager">
+          <i class="el-icon-refresh menu-white"></i>
           <span slot="title">缓存管理</span>
         </el-menu-item>
       </router-link>
     </div>
     <div v-if="systemPermission>0">
       <router-link to="/managercenter/selectvaluemanager">
-        <el-menu-item index="1120">
-          <i class="white el-icon-ecm-sortlight"></i>
+        <el-menu-item index="/managercenter/selectvaluemanager">
+          <i class="iconfont zisecm-sortlight menu-white"></i>
           <span slot="title">选项设置</span>
         </el-menu-item>
       </router-link>
       <router-link to="/managercenter/foldermanager">
-        <el-menu-item index="1121">
-          <i class="white el-icon-message"></i>
+        <el-menu-item index="/managercenter/foldermanager">
+          <i class="el-icon-message menu-white"></i>
           <span slot="title">文件夹设置</span>
         </el-menu-item>
       </router-link>
@@ -154,24 +154,24 @@
     <div v-if="systemPermission>=4">
       <el-submenu index="1500">
         <template slot="title">
-          <i class="white el-icon-menu"></i>
+          <i class="el-icon-menu menu-white"></i>
           <span>工作流管理</span>
         </template>
         <router-link to="/managercenter/activitymanager">
-          <el-menu-item index="1501">
-            <i class="white el-icon-s-order"></i>
+          <el-menu-item index="/managercenter/activitymanager">
+            <i class="el-icon-s-order menu-white"></i>
             <span slot="title">流程配置</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/jobmanager">
-          <el-menu-item index="1502">
-            <i class="white el-icon-s-order"></i>
+          <el-menu-item index="/managercenter/jobmanager">
+            <i class="el-icon-s-order menu-white"></i>
             <span slot="title">Job管理</span>
           </el-menu-item>
         </router-link>
         <router-link :to="{ path: '/workflow/allWorkflow', query: { showAllWorkflow: 1}}">
-          <el-menu-item index="1503">
-            <i class="white el-icon-ecm-round_pay"></i>
+          <el-menu-item index="/workflow/allWorkflow">
+            <i class="iconfont zisecm-round_pay menu-white"></i>
             <span slot="title">流程查看</span>
           </el-menu-item>
         </router-link>
@@ -180,18 +180,18 @@
     <div v-if="systemPermission>=5">
       <el-submenu index="1600">
         <template slot="title">
-          <i class="white el-icon-menu"></i>
+          <i class="el-icon-menu menu-white"></i>
           <span>日志管理</span>
         </template>
         <router-link to="/managercenter/syseventmanager">
-          <el-menu-item index="1601">
-            <i class="white el-icon-ecm-edit"></i>
+          <el-menu-item index="/managercenter/syseventmanager">
+            <i class="iconfont zisecm-edit menu-white"></i>
             <span slot="title">事件管理</span>
           </el-menu-item>
         </router-link>
         <router-link to="/managercenter/auditmanager">
-          <el-menu-item index="1602">
-            <i class="white el-icon-search"></i>
+          <el-menu-item index="/managercenter/auditmanager">
+            <i class="el-icon-search menu-white"></i>
             <span slot="title">日志查询</span>
           </el-menu-item>
         </router-link>
@@ -212,6 +212,12 @@ export default {
       asideWidth: "200px",
       menuHeight: window.innerHeight - 100
     };
+  },
+  props: {
+    isNest: {
+      type: Boolean,
+      default: false
+    }
   },
   created() {
     this.checkLogin();
@@ -239,7 +245,5 @@ export default {
 };
 </script scoped>
 <style scoped>
-.white {
-    filter: brightness(100);
-}
+
 </style>
