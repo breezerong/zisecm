@@ -35,10 +35,10 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <el-breadcrumb separator="/" class="navbar">
+        <!-- <el-breadcrumb separator="/" class="navbar">
           <el-breadcrumb-item>系统管理</el-breadcrumb-item>
           <el-breadcrumb-item>类型管理</el-breadcrumb-item>
-        </el-breadcrumb>
+        </el-breadcrumb> -->
 
         <el-form :inline="true" style="text-align: left;" class="topbar">
           <el-form-item>

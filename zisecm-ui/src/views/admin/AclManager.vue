@@ -43,12 +43,12 @@
         <el-button type="primary" @click="copyItem(formCopy)">确 定</el-button>
       </div>
     </el-dialog>
-    <div class="navbar">
+    <!-- <div class="navbar">
       <el-breadcrumb>
         <el-breadcrumb-item>{{$t('menu.systemManager')}}</el-breadcrumb-item>
         <el-breadcrumb-item>ACL管理</el-breadcrumb-item>
       </el-breadcrumb>
-    </div>
+    </div> -->
     <el-row>
       <el-col :span="6">
         <el-input

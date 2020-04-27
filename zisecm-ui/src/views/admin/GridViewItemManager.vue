@@ -60,10 +60,10 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <el-breadcrumb separator="/" class="navbar">
+        <!-- <el-breadcrumb separator="/" class="navbar">
           <el-breadcrumb-item>系统管理</el-breadcrumb-item>
           <el-breadcrumb-item>列表项管理</el-breadcrumb-item>
-        </el-breadcrumb>
+        </el-breadcrumb> -->
         <el-row class="topbar">
           <el-col :span="4">列表名：{{typename}}</el-col>
         

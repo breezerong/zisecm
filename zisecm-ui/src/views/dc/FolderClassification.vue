@@ -165,7 +165,7 @@
     </el-dialog>
  
         <el-row style="padding-top:10px;padding-bottom:10px;">
-          <el-col :span="4" style="text-align: left">
+          <el-col :span="5" style="text-align: left">
             <el-tooltip
               class="item"
               effect="dark"
@@ -207,7 +207,7 @@
               prefix-icon="el-icon-search"
             ></el-input>
           </el-col>
-          <el-col :span="16" style="text-align: left">
+          <el-col :span="15" style="text-align: left">
             &nbsp; &nbsp; 
             <el-button
               type="primary"

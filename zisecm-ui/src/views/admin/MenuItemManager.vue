@@ -75,11 +75,11 @@
       </div>
     </el-dialog>
     <el-row>
-      <el-breadcrumb class="navbar">
+      <!-- <el-breadcrumb class="navbar">
         <el-breadcrumb-item>{{$t('menu.systemManager')}}</el-breadcrumb-item>
         <el-breadcrumb-item>菜单项管理</el-breadcrumb-item>
         <el-breadcrumb-item>{{menuName}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      </el-breadcrumb> -->
     </el-row>
     <el-row class="topbar">
       <el-col :span="4">
@@ -90,7 +90,7 @@
           prefix-icon="el-icon-search"
         ></el-input>
       </el-col>
-      <el-col :span="2">
+      <el-col :span="3">
         &nbsp;
         <el-button type="primary" plain icon="el-icon-edit"  @click="newItem()">新建</el-button>
       </el-col>

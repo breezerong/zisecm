@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="navbar">/系统管理/系统缓存</div>
+    <!-- <div class="navbar">/系统管理/系统缓存</div> -->
     <div>
       <el-button type="primary" icon="el-icon-refresh" @click="refreshCache()">刷新缓存</el-button>
     </div>

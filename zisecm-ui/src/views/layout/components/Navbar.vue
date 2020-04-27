@@ -7,7 +7,11 @@
     <div class="right-menu">
      
       <!-- <error-log class="errLog-container right-menu-item"></error-log> -->
-     
+      <span class="ecm-help" title="购物车">
+        <router-link to="/shoppingCart" >
+          <svg-icon icon-class="shopping" />
+        </router-link>&nbsp;
+      </span>
       <span class="ecm-help">
         <router-link to="/user/userinfo" >{{userName}}</router-link>&nbsp;
       </span>

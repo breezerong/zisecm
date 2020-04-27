@@ -78,10 +78,10 @@
         </el-dialog>
              <el-container>
           <el-header>
-             <el-breadcrumb separator="/" class="navbar">
+             <!-- <el-breadcrumb separator="/" class="navbar">
                <el-breadcrumb-item>系统管理</el-breadcrumb-item>
                <el-breadcrumb-item>文件夹管理</el-breadcrumb-item>
-             </el-breadcrumb>
+             </el-breadcrumb> -->
             <el-row class="topbar">
               <el-col :span="4">
                 <el-input  v-model="inputkey" placeholder="请输入关键字" @change="searchFolder" prefix-icon="el-icon-search"></el-input>

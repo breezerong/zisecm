@@ -144,11 +144,11 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <el-breadcrumb separator="/" class="navbar">
+        <!-- <el-breadcrumb separator="/" class="navbar">
           <el-breadcrumb-item>系统管理</el-breadcrumb-item>
           <el-breadcrumb-item>界面配置</el-breadcrumb-item>
           <el-breadcrumb-item>表单项配置</el-breadcrumb-item>
-        </el-breadcrumb>
+        </el-breadcrumb> -->
         <el-row class="topbar">
           <el-col :span="2" style="text-align:left;">类型：{{typename}}</el-col>
           <el-col :span="2" style="text-align:left;">
