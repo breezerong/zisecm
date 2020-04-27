@@ -2,6 +2,7 @@ package com.ecm.flowable.listener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,12 +40,14 @@ import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmSession;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.flowable.service.CustomWorkflowService;
 import com.ecm.icore.service.IEcmSession;
@@ -66,7 +69,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	private RuntimeService runtimeService;
 	@Autowired
 	private UserService userService;
-	
+	@Autowired
+	private GroupService groupService;
+	 
 	@Autowired
 	private DocumentService documentService;
 
@@ -212,11 +217,11 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			case "process_borrow":
 				// runtimeService.getVariables("1995ac1d-1259-11ea-9171-00505622af9b")
 				varMap.put("taskUser_owner",
-						getApprover(runtimeService.getVariable(arg0.getVariable("processInstanceID").toString(), "startUser").toString()));
+						getApprover(ecmSession,runtimeService.getVariable(arg0.getVariable("processInstanceID").toString(), "startUser").toString()));
 				//varMap.put("taskUser_owner_leader", ecmObject.getAttributes().get("C_REVIEWER1"));
-				varMap.put("assigneeList", getApprover(ecmObject.getAttributes().get("C_REVIEWER1").toString()));
-				varMap.put("taskUser_doc_leader", getApprover(ecmObject.getAttributes().get("C_REVIEWER2").toString()));
-				varMap.put("taskUser_leader_in_charge", getApprover(ecmObject.getAttributes().get("C_REVIEWER3").toString()));
+				varMap.put("assigneeList", getApprover(ecmSession,ecmObject.getAttributes().get("C_REVIEWER1").toString()));
+				varMap.put("taskUser_doc_leader", getApprover(ecmSession,ecmObject.getAttributes().get("C_REVIEWER2").toString()));
+				varMap.put("taskUser_leader_in_charge", getApprover(ecmSession,ecmObject.getAttributes().get("C_REVIEWER3").toString()));
 				break;
 
 			default:
@@ -417,12 +422,22 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 
 	}
 
-	private  Object  getApprover(String userName){
+	private  Object  getApprover(IEcmSession ecmSession,String userName){
 		String[] user= userName.split(";");
 		Object result= null;
-		if(user.length==1) {
-			result=userName;
-		}else {
+		if(user.length==1) {//只有一个用户或一个用户组
+			if(userService.getObjectByName(ecmSession.getToken(), userName)!=null) {
+				result=userName;
+			}else {//如果是用户组
+				String groupId= groupService.getGroupByName(ecmSession.getToken(), userName).getId();
+				List<EcmUser>  userList=groupService.getUsers(ecmSession.getToken(),groupId);
+				List<String> userNameList= new ArrayList<String>();
+				for (int i = 0; i < userList.size(); i++) {
+					userNameList.add(userList.get(i).getName());
+				}
+				result=userNameList;
+			}
+		}else {//多个用户
 			result =Arrays.asList(user);	
 		}
 		return  result;
