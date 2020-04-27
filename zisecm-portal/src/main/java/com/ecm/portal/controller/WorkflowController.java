@@ -1,14 +1,12 @@
 package com.ecm.portal.controller;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +21,6 @@ import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
-import org.flowable.common.engine.impl.cmd.CustomSqlExecution;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.ManagementService;
@@ -32,77 +29,59 @@ import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
-import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
-import org.flowable.engine.history.HistoricProcessInstanceQuery;
-import org.flowable.engine.impl.cfg.ProcessEngineConfigurationImpl;
-import org.flowable.engine.impl.cmd.AbstractCustomSqlExecution;
-import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.engine.task.Comment;
-import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.variable.api.history.HistoricVariableInstance;
-import org.flowable.variable.api.persistence.entity.VariableInstance;
-import org.flowable.variable.service.VariableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
-import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
-import com.ecm.core.bpm.ProcessService;
 import com.ecm.core.bpm.WorkflowAuditService;
-import com.ecm.core.bpm.WorkflowService;
 import com.ecm.core.bpm.WorkitemAuditService;
 import com.ecm.core.cache.manager.impl.CacheManagerCfgActivity;
-import com.ecm.core.cache.manager.impl.CacheManagerEcmMenu;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.dao.EcmCfgActivityMapper;
 import com.ecm.core.dao.EcmComponentMapper;
-import com.ecm.core.dao.EcmWorkflowMapper;
-import com.ecm.core.entity.EcmAuditGeneral;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
 import com.ecm.core.entity.EcmCfgActivity;
-import com.ecm.core.entity.EcmComponent;
-import com.ecm.core.entity.EcmMenuItem;
 import com.ecm.core.entity.EcmUser;
-import com.ecm.core.entity.EcmWorkflow;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.UserService;
-import com.ecm.flowable.controller.StartProcessNameProcessInstanceCmd;
-import com.ecm.flowable.listener.JobListener;
+import com.ecm.flowable.config.CustomProcessDiagramGenerator;
+import com.ecm.flowable.service.CustomWorkflowService;
 import com.ecm.flowable.service.IFlowableBpmnModelService;
-import com.ecm.portal.controller.ControllerAbstract;
-import com.ecm.portal.test.flowable.TODOApplication;
-import com.ecm.flowable.config.CustomProcessDiagramGenerator;;
 
 @Controller
 @RequestMapping(value = "/workflow")
 public class WorkflowController  extends ControllerAbstract{
   	@Autowired
     private RuntimeService runtimeService;
- 	    @Autowired
-	    private TaskService taskService;
 	    @Autowired
+    private TaskService taskService;
+ 	    @Autowired
+	    private CustomWorkflowService customWorkflowService;
+ 	   
+ 	   
+ 	   @Autowired
 	    private RepositoryService repositoryService;
 	    @Autowired
 	    private ProcessEngine processEngine;
@@ -329,8 +308,7 @@ public class WorkflowController  extends ControllerAbstract{
 			String userId= args.get("userId").toString();
 			int pageSize= Integer.parseInt(args.get("pageSize").toString()) ;
 			int pageIndex= Integer.parseInt(args.get("pageIndex").toString());
- 
-			List<Task> tasks = taskService.createTaskQuery().taskAssignee(userId).orderByTaskCreateTime().desc().listPage(pageIndex, pageSize);
+			List<Task> tasks=taskService.createTaskQuery().taskCandidateOrAssigned(userId).orderByTaskCreateTime().desc().listPage(pageIndex, pageSize);	 
 	        List<HashMap> resultList = new ArrayList<HashMap>();
 //	        Map<String, VariableInstance> varMap=null;
 	        HashMap<String, Object> map=null;
@@ -341,6 +319,7 @@ public class WorkflowController  extends ControllerAbstract{
 		        map.put("processInstanceId", task.getProcessInstanceId());
 		        processInstanceIdSet.add(task.getProcessInstanceId());
 		        map.put("id", task.getId());
+		        map.put("assignee", task.getAssignee() );
 		        map.put("name", task.getName());
 //		        varMap=runtimeService.getVariableInstances(map.get("processInstanceId").toString());
 //		        map.put("startUser", varMap.get("startUser").getValue());
@@ -563,83 +542,35 @@ public class WorkflowController  extends ControllerAbstract{
 	     */
 	    @RequestMapping(value = "completeTask")
 	    @ResponseBody
-		@Transactional(rollbackFor = Exception.class)
-	    public String completeTask(@RequestBody String argStr) {
+	    public String completeTask(@RequestBody String argStr) 
+	    {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
-			String taskId= args.get("taskId").toString();
 			args.put("outcome",args.get("result").toString());
 			args.remove("result");
-	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
- 	        setTaskApprovalResult(args, taskId);
-	        // owner不为空说明可能存在委托任务
-	        if (!StringUtils.isEmpty(task.getOwner())) {
-	        	DelegationState delegationState = task.getDelegationState();
-	            switch (delegationState) {
-	            case PENDING:
-	                taskService.resolveTask(taskId);
-	                taskService.complete(taskId, args);
-	                break;
-
-	            default:
-	                taskService.complete(taskId, args);
-	                break;
-	            }
-	        } else {
-	            taskService.complete(taskId, args);
-	        }
-	        
-	        updateEcmauditWorkItem(args);
+			customWorkflowService.completeTask(args);
 	        return "processed ok!";	  
 
 	    }
 
-		/**
-		 * @param args
-		 * @param taskId
-		 */
-		private void setTaskApprovalResult(Map<String, Object> args, String taskId) {
-			Map<String, Object> varLocalMap = new HashMap<String, Object>();
-	        varLocalMap.put("outcome", args.get("outcome"));
-			String message= args.get("message").toString();
-	        varLocalMap.put("message", args.get("message"));
-			if(!"".equals(message)) {
-				varLocalMap.put("message",message);
-	        }
-	        taskService.setVariablesLocal(taskId, varLocalMap);
+
+	    @RequestMapping(value = "claim")
+	    @ResponseBody
+		public String claim(@RequestBody  String argStr) throws Exception {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String taskId= args.get("id").toString();
+			customWorkflowService.claimTask(getSession(), taskId);
+	        return "processed ok!";	  
 		}
-		/**
-		 * @param taskId
-		 * @param result
-		 * @param message
-		 */
-		private void updateEcmauditWorkItem(Map<String, Object> varMap) {
-			updateEcmauditWorkItem(varMap,"","");
+
+	    @RequestMapping(value = "unclaim")
+	    @ResponseBody
+		public String unclaim(@RequestBody String argStr) throws Exception {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String taskId= args.get("taskId").toString();
+			customWorkflowService.unclaimTask(getSession(),taskId);
+	        return "processed ok!";	  
 		}
-		/**
-		 * @param taskId
-		 * @param result
-		 * @param message
-		 * @param formId
-		 * @param docId
-		 */
-		private void updateEcmauditWorkItem(Map<String, Object> varMap, String formId,String docId) {
-			String taskId= varMap.get("taskId").toString();
-			EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
-	        HistoricTaskInstance  task= historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
-			String auditId=ecmAuditWorkitemMapper.selectByCondition("TASK_ID='"+taskId+"' and ASSIGNEE='"+task.getAssignee()+"' and END_TIME is null").get(0).getId();
-			audit.setId(auditId);
-			audit.setCreateTime(task.getCreateTime());
-			audit.setEndTime(task.getEndTime());
-			audit.setDocId("");
-			audit.setFormId("");
-			audit.setTaskName(task.getName());
-			audit.setAssignee(task.getAssignee());
-			audit.setResult(varMap.get("outcome").toString());
-			audit.setMessage(varMap.get("message").toString());
-			audit.setProcessInstanceId(task.getProcessInstanceId());
-			audit.setTaskId(taskId);
-			ecmAuditWorkitemMapper.updateByPrimaryKey(audit);
-		}
+
 		/**
 		 * @param taskId
 		 * @param result
@@ -693,13 +624,7 @@ public class WorkflowController  extends ControllerAbstract{
 			String delegateTaskUserId= args.get("delegateTaskUserId").toString();
 			String result= dailiString;
 			String message= args.get("message").toString();
-	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-	        if (StringUtils.isEmpty(task.getOwner())) {
-    			taskService.setOwner(taskId, task.getAssignee());
-				taskService.delegateTask(taskId, delegateTaskUserId);
-	        } else {
-				taskService.delegateTask(taskId, delegateTaskUserId);
-	        }
+			customWorkflowService.delegateTask(taskId, delegateTaskUserId);
 			newEcmauditWorkItem(taskId, result, message);
 	        return "processed ok!";
 	    }

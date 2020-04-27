@@ -139,4 +139,12 @@ public class DateUtils {
 		}
 		return d;
 	}
+	
+	public static int compareDate(Date date1,Date date2) {
+	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");  
+	String s1 = df.format(date1);  
+	String s2 = df.format(date2);  
+	  
+	return s1.compareTo(s2);  
+	}
 }

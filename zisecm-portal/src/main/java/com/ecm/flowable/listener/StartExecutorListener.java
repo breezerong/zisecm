@@ -5,9 +5,14 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.elasticsearch.common.Strings;
+import org.flowable.common.engine.api.FlowableException;
+import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 import org.flowable.engine.HistoryService;
 import javax.sql.DataSource;
 
@@ -17,6 +22,8 @@ import org.flowable.engine.delegate.ExecutionListener;
 import org.flowable.engine.delegate.JavaDelegate;
 import org.flowable.engine.delegate.TaskListener;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.impl.el.DateUtil;
+import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.task.service.delegate.DelegateTask;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +32,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.ecm.common.util.DateUtils;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
@@ -38,6 +46,7 @@ import com.ecm.core.entity.EcmUser;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.UserService;
+import com.ecm.flowable.service.CustomWorkflowService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.service.ServiceDocMail;
 import com.ecm.portal.test.flowable.TODOApplication;
@@ -48,6 +57,8 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	    @Autowired
+    private CustomWorkflowService customWorkflowService;
 	
 	@Autowired
 	private HistoryService historyService;
@@ -89,7 +100,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	 * 监听 for executionListener
 	 */
 	@Override
-	public void notify(DelegateExecution execution){
+	public void notify(DelegateExecution execution) throws FlowableException{
 		if (execution.getVariable("processInstanceID") == null) {
 			execution.setVariable("processInstanceID", execution.getProcessInstanceId());
 			execution.setVariable("processName", execution.getProcessDefinitionId().split(":")[0]);
@@ -201,11 +212,11 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			case "process_borrow":
 				// runtimeService.getVariables("1995ac1d-1259-11ea-9171-00505622af9b")
 				varMap.put("taskUser_owner",
-						runtimeService.getVariable(arg0.getVariable("processInstanceID").toString(), "startUser"));
+						getApprover(runtimeService.getVariable(arg0.getVariable("processInstanceID").toString(), "startUser").toString()));
 				//varMap.put("taskUser_owner_leader", ecmObject.getAttributes().get("C_REVIEWER1"));
-				varMap.put("assigneeList", Arrays.asList(ecmObject.getAttributes().get("C_REVIEWER1").toString().split(";")));
-				varMap.put("taskUser_doc_leader", ecmObject.getAttributes().get("C_REVIEWER2"));
-				varMap.put("taskUser_leader_in_charge", ecmObject.getAttributes().get("C_REVIEWER3"));
+				varMap.put("assigneeList", getApprover(ecmObject.getAttributes().get("C_REVIEWER1").toString()));
+				varMap.put("taskUser_doc_leader", getApprover(ecmObject.getAttributes().get("C_REVIEWER2").toString()));
+				varMap.put("taskUser_leader_in_charge", getApprover(ecmObject.getAttributes().get("C_REVIEWER3").toString()));
 				break;
 
 			default:
@@ -218,11 +229,30 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 		return varMap;
 	}
 
+
+	public Object  delegateTask(IEcmSession ecmSession,String delegateUser){
+		//查询出所有代理的用户 ，替换执行人 TOOD
+		//userService.getObjects(token, "user name in(",)
+		String[] delegate= delegateUser.split(";");
+		String condition=delegate[0];
+		for (int i = 1; i < delegate.length; i++) {
+			condition=condition+",'"+delegate[i]+"'";
+		}
+		List<EcmUser>  userList=userService.getObjects(ecmSession.getToken(), " USER_NAME in ("+condition+")");
+		Object result= null;
+		if(delegate.length==1) {
+			result=delegateUser;
+		}else {
+			result =Arrays.asList(delegate);	
+		}
+		return  result;
+	}
+	
 	/**
 	 * JavaDelegate 方法 for serviceTask
 	 */
 	@Override
-	public void execute(DelegateExecution arg0) {
+	public void execute(DelegateExecution arg0)  throws FlowableException{
 		if (arg0.getVariable("processInstanceID") == null) {
 			arg0.setVariable("processInstanceID", arg0.getProcessInstanceId());
 			arg0.setVariable("processName", arg0.getProcessDefinitionId().split(":")[0]);
@@ -303,47 +333,67 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 	 * TaskListener 方法 for taskListener
 	 */
 	@Override
-	public void notify(DelegateTask task) {
+	public void notify(DelegateTask task)  throws FlowableException{
 		if("create".equals(task.getEventName())){
 			///////////////////////任务到达发送邮件//////////////
 			String assignee=task.getAssignee();//ecm_user.Name
+
 			IEcmSession ecmSession = null;
 			String workflowSpecialUserName = env.getProperty("ecm.username");
-			
 			try {
 				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
-				EcmUser user= userService.getObjectByName(ecmSession.getToken(), assignee);
-				String email= user.getEmail();
-				if(email!=null&&!"".equals(email)) {
-					//serviceDocMail.sendTaskMail(email);
+				if(task.getAssignee()!=null) {//普通任务
+						EcmUser user= userService.getObjectByName(ecmSession.getToken(), assignee);
+						//TODO 如果代理人不为空，就执行代理
+						if(!Strings.isEmpty(user.getDelegateUser()) &&  DateUtils.compareDate(new Date(),user.getDelegateStart())>=0 && DateUtils.compareDate(new Date(),user.getDelegateEnd())<0) {
+							customWorkflowService.delegateTask(task.getId(), user.getDelegateUser());;
+						}
+						String email= user.getEmail();
+						if(email!=null&&!"".equals(email)) {
+							//serviceDocMail.sendTaskMail(email);
+						}
+	 			
+						EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+						audit.createId();
+						audit.setCreateTime(task.getCreateTime());
+						audit.setDocId("");
+						audit.setFormId("");
+						audit.setTaskName(task.getName());
+						audit.setAssignee(task.getAssignee());
+						audit.setProcessInstanceId(task.getProcessInstanceId());
+						audit.setTaskId(task.getId());
+						ecmAuditWorkitemMapper.insert(audit);
+				}else {//候选用户
+						Set<IdentityLink> candidates=  task.getCandidates();
+						String taskUserIds="";
+						for (Iterator iterator = candidates.iterator(); iterator.hasNext();) {
+							IdentityLink identityLink = (IdentityLink) iterator.next();
+							EcmUser user= userService.getObjectByName(ecmSession.getToken(), identityLink.getUserId());
+							String email= user.getEmail();
+							if(email!=null&&!"".equals(email)) {
+								//serviceDocMail.sendTaskMail(email);
+							}
+							taskUserIds=identityLink.getUserId()+";"+taskUserIds;
+						}
+				        //创建流程日志
+						EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
+						audit.createId();
+						audit.setCreateTime(task.getCreateTime());
+						audit.setDocId("");
+						audit.setFormId("");
+						audit.setTaskName(task.getName());
+						audit.setAssignee(taskUserIds);
+						audit.setProcessInstanceId(task.getProcessInstanceId());
+						audit.setTaskId(task.getId());
+						ecmAuditWorkitemMapper.insert(audit);
 				}
-				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}finally {
 				if (ecmSession != null) {
 					authService.logout(workflowSpecialUserName);
 				}
 			}
-			////////////////////end/////////////////
-//			arg0.getName();
-			//发邮件
-//			TODOApplication.getNeedTOChange();
-			
-		        //创建流程日志
-			EcmAuditWorkitem  audit =	new EcmAuditWorkitem();
-			audit.createId();
-			audit.setCreateTime(task.getCreateTime());
-			audit.setDocId("");
-			audit.setFormId("");
-			audit.setTaskName(task.getName());
-			audit.setAssignee(task.getAssignee());
-			audit.setProcessInstanceId(task.getProcessInstanceId());
-			audit.setTaskId(task.getId());
-			ecmAuditWorkitemMapper.insert(audit);
-	    
-
 		}else if("complete".equals(task.getEventName())){
 			if (task.getVariable("processInstanceID") == null) {
 				task.setVariable("processInstanceID", task.getProcessInstanceId());
@@ -365,5 +415,16 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 		}
 		System.out.println("taskListener_notify");
 
+	}
+
+	private  Object  getApprover(String userName){
+		String[] user= userName.split(";");
+		Object result= null;
+		if(user.length==1) {
+			result=userName;
+		}else {
+			result =Arrays.asList(user);	
+		}
+		return  result;
 	}
 }

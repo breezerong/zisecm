@@ -113,7 +113,8 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">取 消</el-button>
         <el-button v-if="ecmCfgActivity.enableDelegate==true" @click="showOrHiddenDelegate()">{{delegateButton}}</el-button>
-        <el-button @click="completetask(form)">完成任务</el-button>
+         <el-button  @click="claim(currentData)">认领任务</el-button>
+       <el-button @click="completetask(form)">完成任务</el-button>
       </div>
     </el-dialog>
     <el-container>
@@ -347,6 +348,20 @@ export default {
             _self.refreshData();
             _self.$message("委托代理成功!");
             _self.$emit("refreshcount");
+          })
+          .catch(function(error) {
+            _self.loading = false;
+            console.log(error);
+          });
+    },
+   claim(indata) {
+       let _self = this;
+       _self.loading = true;
+        axios
+          .post("/workflow/claim", JSON.stringify(indata))
+          .then(function(response) {
+            _self.loading = false;
+            _self.$message("认领成功!");
           })
           .catch(function(error) {
             _self.loading = false;

@@ -13,7 +13,7 @@
         <completionCondition>${nrOfCompletedInstances/nrOfInstances >= 1}</completionCondition>
       </multiInstanceLoopCharacteristics>
     </userTask>
-    <userTask id="usertask3" name="文档形成领导审批" default="flow30" flowable:assignee="${taskUser_doc_leader}" flowable:formFieldValidation="true">
+    <userTask id="usertask3" name="文档形成领导审批" default="flow30" flowable:candidateUsers="Admin,test01,test02"  flowable:formFieldValidation="true">
       <extensionElements>
         <flowable:taskListener event="create" delegateExpression="${startExecutorListener}"></flowable:taskListener>
         <flowable:taskListener event="complete" delegateExpression="${startExecutorListener}"></flowable:taskListener>
