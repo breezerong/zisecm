@@ -269,9 +269,12 @@ li {
 a {
   color: #42b983;
 }
-.el-header{
+.el-header {
   background-color: #e8eaeb;
-  height: 68px !important;
+  height: 42px !important;
+}
+.el-main{
+  padding:5px;
 }
 .el-row{
   padding-bottom:10px;

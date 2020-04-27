@@ -588,6 +588,9 @@ a {
   background-color: #e8eaeb;
   height: 68px !important;
 }
+.el-main{
+  padding:5px;
+}
 .el-row {
   padding-bottom: 10px;
 }

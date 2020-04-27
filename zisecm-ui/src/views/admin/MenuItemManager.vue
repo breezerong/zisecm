@@ -273,6 +273,9 @@ a {
 }
 .el-header {
   background-color: #e8eaeb;
-  height: 68px !important;
+  height: 42px !important;
+}
+.el-main{
+  padding:5px;
 }
 </style>

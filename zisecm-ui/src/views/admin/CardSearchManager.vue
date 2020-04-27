@@ -241,7 +241,10 @@ a {
 .el-header,
 .el-footer {
   background-color: #e8eaeb;
-  height: 68px !important;
+  height: 42px !important;
+}
+.el-main{
+  padding:5px;
 }
 .el-row {
   padding-bottom: 10px;
