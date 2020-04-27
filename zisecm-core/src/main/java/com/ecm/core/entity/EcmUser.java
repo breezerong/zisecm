@@ -1,5 +1,6 @@
 package com.ecm.core.entity;
 
+import java.util.Date;
 
 public class EcmUser extends EcmSysObject{
 
@@ -19,6 +20,8 @@ public class EcmUser extends EcmSysObject{
     private String groupName;
 
     private String password;
+    
+    private String passwordConfirm;
 
     private String groupId;
 
@@ -37,6 +40,12 @@ public class EcmUser extends EcmSysObject{
     private String extendGroupId;
     
     private String signImage;
+    
+    private String delegateUser;
+    
+    private Date delegateStart;
+    
+    private Date delegateEnd;
 
     public String getSignImage() {
 		return signImage;
@@ -93,6 +102,9 @@ public class EcmUser extends EcmSysObject{
 
     public void setPassword(String password) {
         this.password = password == null ? null : password.trim();
+        if(this.passwordConfirm == null) {
+        	this.passwordConfirm = this.password;
+        }
     }
 
     public String getGroupId() {
@@ -158,4 +170,36 @@ public class EcmUser extends EcmSysObject{
     public void setExtendGroupId(String extendGroupId) {
         this.extendGroupId = extendGroupId == null ? null : extendGroupId.trim();
     }
+
+	public Date getDelegateStart() {
+		return delegateStart;
+	}
+
+	public void setDelegateStart(Date delegateStart) {
+		this.delegateStart = delegateStart;
+	}
+
+	public String getDelegateUser() {
+		return delegateUser;
+	}
+
+	public void setDelegateUser(String delegateUser) {
+		this.delegateUser = delegateUser;
+	}
+
+	public Date getDelegateEnd() {
+		return delegateEnd;
+	}
+
+	public void setDelegateEnd(Date delegateEnd) {
+		this.delegateEnd = delegateEnd;
+	}
+
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}
 }

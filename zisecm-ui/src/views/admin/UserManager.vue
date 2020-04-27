@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="dialogtitle" :visible.sync="dialogVisible" width="60%">
+    <el-dialog :title="dialogtitle" :visible.sync="dialogVisible" width="70%">
       <el-form :model="form" label-position="right" label-width="100px">
         <el-row>
           <el-col :span="12">
@@ -138,6 +138,24 @@
                 v-model="form.groupName"
                 :disabled="clientPermission<form.clientPermission"
               ></el-input>
+            </el-form-item>
+          </el-col>
+           <el-col :span="8">
+            <el-form-item label="代理用户" :label-width="formLabelWidth">
+              <el-input
+                :autosize="true"
+                v-model="form.delegateUser"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+           <el-col :span="8">
+            <el-form-item label="代理开始日期" :label-width="formLabelWidth">
+              <el-date-picker v-model="form.delegateStart" type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss" ></el-date-picker>
+            </el-form-item>
+          </el-col>
+           <el-col :span="8">
+            <el-form-item label="代理结束日期" :label-width="formLabelWidth">
+              <el-date-picker v-model="form.delegateEnd" type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss" ></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -335,7 +353,10 @@ export default {
         phone: "",
         groupName: "",
         password: "",
-        passwordConfirm: ""
+        passwordConfirm: "",
+        delegateUser: "",
+        delegateStart: null,
+        delegateEnd: null
       },
       sysOptions: [
         { label: "无", value: 0 },
@@ -500,6 +521,7 @@ export default {
     edititem(indata) {
       this.dialogtitle = "编辑用户";
       this.isReadOnly = true;
+      indata.passwordConfirm = '';
       this.form = indata;
       this.form.passwordConfirm = indata.password + "";
       //this.form.passwordConfirm = this.form.password+"";

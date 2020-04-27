@@ -24,11 +24,14 @@
     <result column="EXTEND_ID" jdbcType="VARCHAR" property="extendId" />
     <result column="EXTEND_GROUP_ID" jdbcType="VARCHAR" property="extendGroupId" />
     <result column="SIGN_IMAGE" jdbcType="VARCHAR" property="signImage" />
+    <result column="DELEGATE_USER" jdbcType="VARCHAR" property="delegateUser" />
+    <result column="DELEGATE_START" jdbcType="TIMESTAMP" property="delegateStart" />
+    <result column="DELEGATE_END" jdbcType="TIMESTAMP" property="delegateEnd" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, DESCRIPTION, LOGIN_NAME, PHONE, CREATION_DATE, CREATOR, EMAIL, MODIFIER, 
     MODIFIED_DATE, IS_ACTIVED, GROUP_NAME, PASSWORD,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,
-    SYSTEM_PERMISSION,LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,SIGN_IMAGE
+    SYSTEM_PERMISSION,LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,SIGN_IMAGE, DELEGATE_USER, DELEGATE_START, DELEGATE_END
   </sql>
   <select id="searchToEntity" parameterType="java.lang.String" resultMap="BaseResultMap"> 
 	${sqlStr}
@@ -51,7 +54,7 @@
    <select id="selectByGroupId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     a.ID, a.NAME, a.DESCRIPTION, a.LOGIN_NAME, a.PHONE, a.CREATION_DATE, a.CREATOR, a.EMAIL, a.MODIFIER, a.MODIFIED_DATE, a.IS_ACTIVED, a.GROUP_NAME
-   ,a.GROUP_ID,a.LOGIN_TYPE,a.LDAP_CN,a.CLIENT_PERMISSION,a.SYSTEM_PERMISSION,a.LDAP_NAME,a.EXTEND_ID,a.EXTEND_GROUP_ID,a.SIGN_IMAGE  from ecm_user a, ecm_group_item b where b.CHILD_ID=a.ID and b.PARENT_ID= #{id,jdbcType=VARCHAR} order by a.NAME
+   ,a.GROUP_ID,a.LOGIN_TYPE,a.LDAP_CN,a.CLIENT_PERMISSION,a.SYSTEM_PERMISSION,a.LDAP_NAME,a.EXTEND_ID,a.EXTEND_GROUP_ID,a.SIGN_IMAGE,a.DELEGATE_USER, a.DELEGATE_START, a.DELEGATE_END  from ecm_user a, ecm_group_item b where b.CHILD_ID=a.ID and b.PARENT_ID= #{id,jdbcType=VARCHAR} order by a.NAME
   </select>
   <select id="selectByLoginName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -69,7 +72,7 @@
       CREATOR, EMAIL, MODIFIER, 
       MODIFIED_DATE, IS_ACTIVED, GROUP_NAME, 
       PASSWORD,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,SYSTEM_PERMISSION,
-      LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,SIGN_IMAGE)
+      LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,SIGN_IMAGE,DELEGATE_USER, DELEGATE_START, DELEGATE_END)
     values ( #{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{loginName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, 
@@ -78,7 +81,10 @@
       #{loginType,jdbcType=INTEGER},#{ldapCn,jdbcType=VARCHAR},#{clientPermission,jdbcType=INTEGER},
       #{systemPermission,jdbcType=INTEGER},#{ldapName,jdbcType=VARCHAR},
       #{extendId,jdbcType=VARCHAR},#{extendGroupId,jdbcType=VARCHAR},
-      #{signImage,jdbcType=VARCHAR}
+      #{signImage,jdbcType=VARCHAR},
+      #{delegateUser,jdbcType=VARCHAR},
+      #{delegateStart,jdbcType=TIMESTAMP},
+      #{delegateEnd,jdbcType=TIMESTAMP},
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmUser">
@@ -150,6 +156,15 @@
       <if test="signImage != null">
         SIGN_IMAGE,
       </if>
+      <if test="delegateUser != null">
+        DELEGATE_USER,
+      </if>
+      <if test="delegateStart != null">
+         DELEGATE_START, 
+      </if>
+      <if test="delegateEnd != null">
+        DELEGATE_END,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -217,6 +232,15 @@
       </if>
       <if test="signImage != null">
         #{signImage,jdbcType=VARCHAR},
+      </if>
+      <if test="delegateUser != null">
+        #{delegateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="delegateStart != null">
+        #{delegateStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delegateEnd != null">
+        #{delegateEnd,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -286,6 +310,15 @@
       <if test="signImage != null">
         SIGN_IMAGE = #{signImage,jdbcType=VARCHAR},
       </if>
+      <if test="delegateUser != null">
+        DELEGATE_USER = #{delegateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="delegateStart != null">
+        DELEGATE_START = #{delegateStart,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delegateEnd != null">
+        DELEGATE_END = #{delegateEnd,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -311,7 +344,10 @@
       LDAP_NAME = #{ldapName,jdbcType=VARCHAR},
       EXTEND_ID = #{extendId,jdbcType=VARCHAR},
       EXTEND_GROUP_ID = #{extendGroupId,jdbcType=VARCHAR},
-      SIGN_IMAGE = #{signImage,jdbcType=VARCHAR}
+      SIGN_IMAGE = #{signImage,jdbcType=VARCHAR},
+      DELEGATE_USER = #{delegateUser,jdbcType=VARCHAR},
+      DELEGATE_START = #{delegateStart,jdbcType=TIMESTAMP},
+      DELEGATE_END = #{delegateEnd,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
