@@ -1,12 +1,20 @@
 <template>
   <div>
+    <el-dialog :visible.sync="showAddfile" :append-to-body='true' width="80%">
+      <AddFile ref="addfile" ></AddFile>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addReuseToVolume">{{$t('application.save')}}</el-button>
+        <el-button @click="showAddfile = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog :visible.sync="typeSelectVisible" :append-to-body='true'>
       <el-form>
-        <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+        <el-form-item :label="$t('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
           <el-select
             name="selectName"
             v-model="selectedTypeName"
-            placeholder="'请选择文件类型'"
+            placeholder="$t('application.selectFileType')"
             style="display:block;"
           >
             <div v-for="(name,nameIndex) in typeNames" :key="'T_'+nameIndex">
@@ -21,6 +29,26 @@
         >{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
+    <el-dialog 
+        :title="dialogName+$t('application.property')"
+        :visible.sync="upgradepropertyVisible"
+        @close="upgradepropertyVisible = false"
+        width="80%"
+        :append-to-body='true'>
+      <DialogProperties
+         ref="upgradeproperties"
+        @onSaved="onSaved"
+        width="100%"
+        v-bind:itemId="newDocId"
+       >
+      
+      </DialogProperties>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="saveUpgradeItem">{{$t('application.save')}}</el-button>
+        <el-button @click="upgradepropertyVisible = false">{{$t('application.cancel')}}</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog
       :title="dialogName+$t('application.property')"
       :visible.sync="propertyVisible"
@@ -61,16 +89,29 @@
           size="small"
           icon="el-icon-edit"
           @click="beforeCreateFile()"
-        >新建传递单</el-button>
+        >{{$t('application.createFileToTransfer')}}</el-button>
         
-        
-         <el-button
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          icon="el-icon-edit"
+          @click="showAddfile=true"
+        >{{$t('application.addToTransfer')}}</el-button>
+        <el-button
           type="primary"
           plain
           size="small"
           icon="el-icon-delete"
-          @click="onDeleleItem()"
-        >{{$t('application.delete')}}</el-button>
+          @click="removeFromArchive"
+        >{{$t('application.removeFromTransfer')}}</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="small"
+          icon="el-icon-delete"
+          @click="addToShoppingCar(selectedInnerItems)"
+        >{{$t('application.addToShoppingCart')}}</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -80,13 +121,14 @@
           key="main"
           v-bind:itemDataList="itemDataList"
           v-bind:columnList="gridList"
+          @upgradeFun="afterUpgrade"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
           v-bind:tableHeight="rightTableHeight"
-          v-bind:isshowOption="true" v-bind:isshowSelection ="false"
+          v-bind:isshowOption="true" v-bind:isshowSelection ="true"
           v-bind:propertyComponent="this.$refs.ShowProperty"
-          
+          @rowclick="selectedRow"
           @selectchange="selectChange"
           @refreshdatagrid="refreshMain"
         ></DataGrid>
@@ -98,9 +140,10 @@
 
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
+import DialogProperties from "@/components/DialogProperties";
 import DataGrid from "@/components/DataGrid";
 import DataGridleft from "@/components/DataGrid";
-
+import AddFile from "@/views/docexchange/AddFile"
 
 
 export default {
@@ -117,11 +160,11 @@ export default {
       showFields: [],
       itemDataList: [],
       itemDataListFull: [],
-      
-      
+      showAddfile:false,
+      newDocId:"",
       selectedTypeName: [],
       printGridName:"",
-      
+      upgradepropertyVisible:false,
       reuseVisible: false,
       uploadFileLoding:false,
       typeName: "卷盒",
@@ -218,6 +261,106 @@ export default {
     this.loadGridData();
   },
   methods: {
+    // 表格行选择
+    selectChange(val) 
+    {
+      // console.log(JSON.stringify(val));
+      this.selectedInnerItems = val;
+    },
+    removeFromArchive()
+    {
+      let _self = this;
+      
+
+      if(_self.selectedInnerItems.length==0)
+      {
+        _self.$message({
+                showClose: true,
+                message: _self.$t('message.selectOneOrMoreData'),
+                duration: 2000,
+                type: "waring"
+              });
+        
+        return;
+      }
+      var m = new Map();
+      m.set('archiveId',_self.transferId);
+      let innerIds=new Array();
+      for(let i=0;i<_self.selectedInnerItems.length;i++)
+      {
+        innerIds.push(_self.selectedInnerItems[i].ID);
+      }
+      m.set('fileIds',innerIds);
+
+      // console.log('pagesize:', _self.pageSize);
+      _self
+      .axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: "post",
+        data: JSON.stringify(m),
+        url: "/dc/removeFromArchive"
+      })
+      .then(function(response) {
+       _self.loadGridData();
+        
+        //console.log(JSON.stringify(response.data.datalist));
+        _self.loading = false;
+      })
+      .catch(function(error) {
+        console.log(error);
+        _self.loading = false;
+      });
+    },
+    addReuseToVolume() {
+      let _self = this;
+      _self.selectedReuses = _self.$refs.addfile.selectedItems;
+
+      var params = new Map();
+      var m = [];
+      let tab = _self.selectedReuses;
+
+      var i;
+      for (i in tab) {
+        m.push(tab[i]["ID"]);
+      }
+      params.set("cids", m);
+      params.set("id", _self.transferId);
+      console.log(JSON.stringify(m));
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(params),
+          url: "/dc/addReuseToVolume"
+        })
+        .then(function(response) {
+          _self.loadGridData(null);
+
+          // _self.showInnerFile(null);
+          _self.showAddfile = false;
+          // _self.$message("添加成功！");
+          _self.$message({
+                showClose: true,
+                message: _self.$t('message.addSuccess'),
+                duration: 2000,
+                type: "success"
+              });
+        })
+        .catch(function(error) {
+          // _self.$message("添加失败！");
+          _self.$message({
+                showClose: true,
+                message: _self.$t('message.addFaild'),
+                duration: 5000,
+                type: "error"
+              });
+          console.log(error);
+        });
+    },
     // 加载表格样式
     loadGridInfo() {
       let _self = this;
@@ -345,6 +488,132 @@ export default {
       }
     },
     // 保存文档
+    saveUpgradeItem() {
+      if (!this.$refs.upgradeproperties.validFormValue()) {
+        return;
+      }
+      let _self = this;
+      var m = new Map();
+      let dataRows = this.$refs.upgradeproperties.dataList;
+      var i;
+      for (i in dataRows) {
+        if (dataRows[i].attrName && dataRows[i].attrName != "") {
+          if (
+            dataRows[i].attrName != "FOLDER_ID" &&
+            dataRows[i].attrName != "ID"
+          ) {
+            m.set(dataRows[i].attrName, dataRows[i].defaultValue);
+          }
+        }
+      }
+      if (_self.$refs.upgradeproperties.myItemId != "") {
+        m.set("ID", _self.$refs.upgradeproperties.myItemId);
+      }
+      // if (_self.$refs.upgradeproperties.myTypeName != "") {
+      //   m.set("TYPE_NAME", _self.$refs.upgradeproperties.myTypeName);
+      //   m.set("folderPath", _self.$refs.upgradeproperties.folderPath);
+      //   m.set("transferId", _self.$refs.upgradeproperties.parentDocId);
+      // }
+      let formdata = new FormData();
+      formdata.append("metaData", JSON.stringify(m));
+
+      if (_self.$refs.upgradeproperties.file != "") {
+        //console.log(_self.file);
+        formdata.append("uploadFile", _self.$refs.upgradeproperties.file.raw);
+      }
+      // console.log(JSON.stringify(m));
+      if (_self.$refs.upgradeproperties.myItemId == "") {
+        _self
+          .axios({
+            headers: {
+              "Content-Type": "multipart/form-data"
+              // x-www-form-urlencoded'
+              //"Content-Type": "application/json;charset=UTF-8"
+            },
+            method: "post",
+            data: formdata,
+            url: "/dc/newInnerDocument"
+          })
+          .then(function(response) {
+            let code = response.data.code;
+            //console.log(JSON.stringify(response));
+            if (code == 1) {
+              // _self.$message("创建成功!");
+              _self.$message({
+                showClose: true,
+                message: _self.$t('message.newSuccess'),
+                duration: 2000,
+                type: "success"
+              });
+              _self.upgradepropertyVisible = false;
+
+              // _self.loadTransferGridData();
+              _self.loadGridData(null);
+            } else {
+              // _self.$message("新建失败!");
+              _self.$message({
+                showClose: true,
+                message: _self.$t('message.newFailured'),
+                duration: 2000,
+                type: "warning"
+              });
+            }
+          })
+          .catch(function(error) {
+            // _self.$message("新建失败!");
+            _self.$message({
+                showClose: true,
+                message: _self.$t('message.newFailured'),
+                duration: 5000,
+                type: "error"
+              });
+            console.log(error);
+          });
+      } else {
+        _self
+          .axios({
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8"
+            },
+            method: "post",
+            data: JSON.stringify(m),
+            url: "/dc/saveDocument"
+          })
+          .then(function(response) {
+            let code = response.data.code;
+            //console.log(JSON.stringify(response));
+            if (code == 1) {
+              // _self.$emit("onSaved", "update");
+              _self.$message({
+                showClose: true,
+                message: _self.$t('message.newSuccess'),
+                duration: 2000,
+                type: "success"
+              });
+              _self.upgradepropertyVisible = false;
+            } else {
+              // _self.$message("保存失败!");
+              _self.$message({
+                showClose: true,
+                message: _self.$t('message.saveFailured'),
+                duration: 5000,
+                type: "error"
+              });
+            }
+          })
+          .catch(function(error) {
+            // _self.$message("保存失败!");
+            _self.$message({
+                showClose: true,
+                message:  _self.$t('message.saveFailured'),
+                duration: 5000,
+                type: "error"
+              });
+            console.log(error);
+          });
+      }
+    },
+    // 保存文档
     saveItem() {
       if (!this.$refs.ShowProperty.validFormValue()) {
         return;
@@ -398,7 +667,7 @@ export default {
               // _self.$message("创建成功!");
               _self.$message({
                 showClose: true,
-                message: "创建成功!",
+                message: _self.$t('message.newSuccess'),
                 duration: 2000,
                 type: "success"
               });
@@ -410,7 +679,7 @@ export default {
               // _self.$message("新建失败!");
               _self.$message({
                 showClose: true,
-                message: "新建失败!",
+                message: _self.$t('message.newFailured'),
                 duration: 2000,
                 type: "warning"
               });
@@ -420,7 +689,7 @@ export default {
             // _self.$message("新建失败!");
             _self.$message({
                 showClose: true,
-                message: "新建失败!",
+                message: _self.$t('message.newFailured'),
                 duration: 5000,
                 type: "error"
               });
@@ -445,7 +714,7 @@ export default {
               // _self.$message("保存失败!");
               _self.$message({
                 showClose: true,
-                message: "保存失败!",
+                message: _self.$t('message.saveFailured'),
                 duration: 5000,
                 type: "error"
               });
@@ -455,7 +724,7 @@ export default {
             // _self.$message("保存失败!");
             _self.$message({
                 showClose: true,
-                message: "保存失败!",
+                message:  _self.$t('message.saveFailured'),
                 duration: 5000,
                 type: "error"
               });
@@ -579,7 +848,10 @@ export default {
           ? " ASC"
           : " DESC";
     },
-    
+    afterUpgrade(docId){
+      this.newDocId=docId;
+      this.upgradepropertyVisible=true;
+    },
     pageSizeChange(val) {
       this.pageSize = val;
       localStorage.setItem("docPageSize", val);
@@ -615,7 +887,7 @@ export default {
         // _self.$message("新建成功!");
         _self.$message({
             showClose: true,
-            message: "新建成功",
+            message: _self.$t("message.newSuccess"),
             duration: 2000,
             type: 'success'
           });
@@ -624,6 +896,10 @@ export default {
       _self.loadGridData();
       
     },
+    selectedRow(row){
+      let _self=this;
+      _self.selectRow=row;
+    },
     // 删除文档事件
     onDeleleItem() {
       let _self = this;
@@ -631,7 +907,7 @@ export default {
         // _self.$message("请选择一条要删除的图册或卷盒数据！");
         _self.$message({
             showClose: true,
-            message: "请选择一条要删除的图册或卷盒数据！",
+            message: _self.$t('message.selectOneOrMoreDeleteData'),
             duration: 2000,
             type: 'warning'
           });
@@ -670,7 +946,7 @@ export default {
         // _self.$message("请选择一条要删除的图册或卷盒数据！");
         _self.$message({
               showClose: true,
-              message: "请选择一条要删除的图册或卷盒数据！",
+              message: _self.$t('message.selectOneOrMoreDeleteData'),
               duration: 2000,
               type: 'warning'
           });
@@ -691,7 +967,6 @@ export default {
         .then(function(response) {
           _self.loadGridData(null);
 
-          _self.showInnerFile(null);
           // _self.$message(_self.$t("message.deleteSuccess"));
           _self.$message({
               showClose: true,
@@ -718,7 +993,7 @@ export default {
         // _self.$message("请选择一条要删除的文件数据！")
         _self.$message({
               showClose: true,
-              message: "请选择一条要删除的文件数据！",
+              message: _self.$t('message.selectOneOrMoreDeleteData'),
               duration: 2000,
               type: 'warning'
           });
@@ -758,7 +1033,7 @@ export default {
         // _self.$message("请选择一条要删除的文件数据！")
         _self.$message({
               showClose: true,
-              message: "请选择一条要删除的文件数据！",
+              message: _self.$t('message.selectOneOrMoreDeleteData'),
               duration: 2000,
               type: 'warning'
           });
@@ -857,6 +1132,8 @@ export default {
     ShowProperty: ShowProperty,
     
     DataGrid: DataGrid,
+    AddFile:AddFile,
+    DialogProperties:DialogProperties
     
   }
 };

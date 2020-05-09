@@ -153,13 +153,13 @@
           @click="newArchiveItem('传递单',selectedOneTransfer)"
         >新建传递单</el-button>
         
-        <el-button
+        <!-- <el-button
           type="primary"
            plain
             size="small"
           icon="el-icon-edit"
           @click="beforeNewDocument(selectedOneTransfer)"
-        >{{$t('application.newDocument')}}</el-button>
+        >{{$t('application.newDocument')}}</el-button> -->
         <el-button type="primary" plain size="small" icon="el-icon-upload2"
          @click="batchDialogVisible=true">批量导入</el-button> 
        
@@ -193,7 +193,7 @@
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
           v-bind:tableHeight="rightTableHeight"
-          v-bind:isshowOption="true" v-bind:isshowSelection ="false"
+          v-bind:isshowOption="true" v-bind:isshowSelection ="true"
           v-bind:propertyComponent="this.$refs.ShowProperty"
           @dbclick="dbclick"
           @selectchange="selectChange"
@@ -384,7 +384,7 @@ export default {
         // _self.$message('请选择一条图册或卷盒数据！')
         _self.$message({
                 showClose: true,
-                message: '请选择一条图册或卷盒数据！',
+                message: _self.$t('message.selectOneOrMoreDeleteData'),
                 duration: 2000,
                 type: "warning"
               });
@@ -399,7 +399,7 @@ export default {
         // _self.$message('请选择一条文件数据');
          _self.$message({
                 showClose: true,
-                message: '请选择一条文件数据!',
+                message: _self.$t('message.selectOneOrMoreDeleteData'),
                 duration: 2000,
                 type: "warning"
               });
@@ -416,7 +416,7 @@ export default {
         // _self.$message('请选择一条数据进行打印');
         _self.$message({
                 showClose: true,
-                message: '请选择一条数据进行打印!',
+                message: _self.$t('message.selectOneOrMoreData')+_self.$t('message.print'),
                 duration: 2000,
                 type: "warning"
               });
@@ -470,7 +470,7 @@ export default {
           // _self.$message("添加成功！");
           _self.$message({
                 showClose: true,
-                message: '添加成功！',
+                message: _self.$t('message.addSuccess'),
                 duration: 2000,
                 type: "success"
               });
@@ -479,7 +479,7 @@ export default {
           // _self.$message("添加失败！");
           _self.$message({
                 showClose: true,
-                message: '添加失败！',
+                message: _self.$t('message.addFaild'),
                 duration: 5000,
                 type: "error"
               });
@@ -596,6 +596,7 @@ export default {
     // 表格行选择
     selectChange(val) {
       // console.log(JSON.stringify(val));
+      
       this.selectedItems = val;
     },
     // 表格行选择
@@ -1271,16 +1272,16 @@ export default {
     // 删除文档事件
     onDeleleItem() {
       let _self = this;
-      if(_self.selectRow.ID==undefined){
-        // _self.$message("请选择一条要删除的图册或卷盒数据！");
+      if(_self.selectedItems.length==0){
         _self.$message({
-            showClose: true,
-            message: "请选择一条要删除的图册或卷盒数据！",
-            duration: 2000,
-            type: 'warning'
-          });
-        return;
+                    showClose: true,
+                    message: "请选择一条或多条要删除的数据！",
+                    duration: 2000,
+                    type: 'warning'
+                  });
+                return;
       }
+      
       this.$confirm(
         _self.$t("message.deleteInfo"),
         _self.$t("application.info"),
@@ -1303,25 +1304,25 @@ export default {
     // 删除文档
     deleleItem() {
       let _self = this;
-      // var m = [];
-      // let tab = _self.selectedItems;
-
-      // var i;
-      // for (i in tab) {
-      //   m.push(tab[i]["ID"]);
-      // }
-      if(_self.selectRow.ID==undefined){
-        // _self.$message("请选择一条要删除的图册或卷盒数据！");
-        _self.$message({
-              showClose: true,
-              message: "请选择一条要删除的图册或卷盒数据！",
-              duration: 2000,
-              type: 'warning'
-          });
-        return;
-      }
       var m = [];
-      m.push(_self.selectRow.ID);
+      let tab = _self.selectedItems;
+
+      var i;
+      for (i in tab) {
+        m.push(tab[i]["ID"]);
+      }
+      // if(_self.selectRow.ID==undefined){
+      //   // _self.$message("请选择一条要删除的图册或卷盒数据！");
+      //   _self.$message({
+      //         showClose: true,
+      //         message: "请选择一条要删除的图册或卷盒数据！",
+      //         duration: 2000,
+      //         type: 'warning'
+      //     });
+      //   return;
+      // }
+      // var m = [];
+      // m.push(_self.selectRow.ID);
       // console.log(JSON.stringify(m));
       _self
         .axios({
@@ -1335,7 +1336,7 @@ export default {
         .then(function(response) {
           _self.loadGridData(null);
 
-          _self.showInnerFile(null);
+          // _self.showInnerFile(null);
           // _self.$message(_self.$t("message.deleteSuccess"));
           _self.$message({
               showClose: true,

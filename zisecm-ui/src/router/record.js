@@ -2,7 +2,8 @@ export const recordRouter =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:"archivedelivery"
         },
         path: '/record/archivedelivery',
         name: '档案移交',
@@ -11,7 +12,8 @@ export const recordRouter =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:'archiveReceive'
         },
         path: '/record/archivereceive',
         name: '档案接收',
@@ -20,7 +22,8 @@ export const recordRouter =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:'archiveArrange'
         },
         path: '/record/archivearrange',
         name: '档案整理',
@@ -29,7 +32,8 @@ export const recordRouter =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:"archivetool"
         },
         path: '/record/archivetool',
         name: '档案工具',
@@ -38,7 +42,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"BatchUpdate"
                 },
                 path: '/record/batchupdate',
                 name: '批量更新',
@@ -47,7 +52,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:'batchmount'
                 },
                 path: '/record/batchmount',
                 name: '批量挂载',
@@ -56,7 +62,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:'batchserverimport'
                 },
                 path: '/record/batchserverimport',
                 name: '服务器批量导入',
@@ -68,7 +75,8 @@ export const recordRouter =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:'archiveoutgoing'
         },
         path: '/record/archiveoutgoing',
         name: '出入库管理',
@@ -77,7 +85,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"archivependingout"
                 },
                 path: '/record/archiveoutgoing/archivependingout',
                 name: '待出库',
@@ -86,7 +95,8 @@ export const recordRouter =  [
             {
                 meta: {
                   requireAuth: true,
-                  permit: 1
+                  permit: 1,
+                  title:"archivegiveback"
                 },
                 path: '/record/archiveoutgoing/archivegiveback',
                 name: '待归还',
@@ -96,7 +106,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"archivependingin"
                 },
                 path: '/record/archiveoutgoing/archivependingin',
                 name: '待入库',
@@ -105,7 +116,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"archiveborrowcompleted"
                 },
                 path: '/record/archiveoutgoing/archiveborrowcompleted',
                 name: '已完成',
@@ -116,7 +128,8 @@ export const recordRouter =  [
     {
         meta:{
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:'archivebackup'
         },
         path: '/record/archivebackup',
         name: '光盘刻录',
@@ -125,7 +138,8 @@ export const recordRouter =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:'showdrawing'
         },
         path: '/record/showdrawing',
         name: '出入库管理',
@@ -134,7 +148,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"showdrawingpendingout"
                 },
                 path: '/record/showdrawing/showdrawingpendingout',
                 name: '待晒图',
@@ -143,7 +158,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"showdrawingfinish"
                 },
                 path: '/record/showdrawing/showdrawingfinish',
                 name: '已完成',
@@ -154,7 +170,8 @@ export const recordRouter =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:"showdrawingtask"
         },
         path: '/record/showdrawingtask',
         name: '出入库管理',
@@ -163,7 +180,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"showdrawingpendingouttask"
                 },
                 path: '/record/showdrawing/showdrawingpendingouttask',
                 name: '待晒图',
@@ -172,7 +190,8 @@ export const recordRouter =  [
             {
                 meta: {
                     requireAuth: true,
-                    permit: 1
+                    permit: 1,
+                    title:"showdrawingfinishtask"
                 },
                 path: '/record/showdrawing/showdrawingfinishtask',
                 name: '已完成',

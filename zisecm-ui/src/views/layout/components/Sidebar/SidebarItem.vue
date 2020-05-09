@@ -3,26 +3,30 @@
     <template v-for="item in dataList.menuItems">
       <template v-if="item.submenus && item.url==null">
         <el-submenu :index="item.id+''" :key="item.id">
-          <template slot="title">
-            <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i>
-            {{item.label}}
-          </template>
+          <template slot="title">{{item.label}}</template>
           <template v-for="sitem in item.submenus">
             <router-link :to="sitem.url">
               <el-menu-item :index="sitem.url" :key="sitem.id" :class="{'submenu-title-noDropdown':!isNest}">
-                  <!-- <svg-icon v-if="sitem.icon!=null" :icon-class="sitem.icon"></svg-icon>-->
-                  <i v-if="sitem.icon!=null" :class="sitem.icon  + ' menu-white'"></i> 
+                  <!--<svg-icon v-if="sitem.icon!=null" :icon-class="sitem.icon"></svg-icon>-->
+                   <i v-if="sitem.icon!=null" :class="sitem.icon  + ' menu-white'"></i> 
                   {{sitem.label}}
               </el-menu-item>
             </router-link>
           </template>
         </el-submenu>
       </template>
+      <template v-else-if="urlIsExt(item.url)">
+        <el-menu-item :index="item.id+''" :key="item.id+'_e'" @click="clickRouter(item.url)">
+          <!--<svg-icon icon-class="work-flow"></svg-icon>-->
+		  <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i> 
+          {{item.label}}
+        </el-menu-item>
+      </template>
       <template v-else>
         <router-link :to="item.url">
           <el-menu-item :index="item.url" :key="item.id+'_e'" :class="{'submenu-title-noDropdown':!isNest}">
-            <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i> 
-            <!-- <svg-icon v-if="item.icon!=null" :icon-class="item.icon"></svg-icon> -->
+             <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i> 
+            <!--<svg-icon v-if="item.icon!=null" :icon-class="item.icon"></svg-icon>-->
             {{item.label}}
           </el-menu-item>
         </router-link>
@@ -62,6 +66,26 @@ export default {
       }
       return false;
     },
+     urlIsExt(url){
+      if(url.indexOf('http')==0){
+        return true;
+      }else{
+        return false;
+      }
+      
+    },
+    clickRouter(pathVal){
+    let _self = this;
+    if(pathVal.substr(0,4)=='http'){
+      window.open(pathVal+"?token="+sessionStorage.getItem('access-token'),'_blank')
+    }else{
+      _self.$router.push({ 
+        path: pathVal,
+      });
+    }
+    
+
+  },
     loadMenu() {
       let _self = this;
       var m = new Map();

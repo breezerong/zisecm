@@ -90,7 +90,7 @@
             <el-breadcrumb style="padding-top:10px;padding-bottom:10px;">
               <el-breadcrumb-item class="title16">
                 <i class="el-icon-receiving"></i>
-                &nbsp; {{$t('menu.companyDoc')}}
+                &nbsp; {{$t('route.companyDoc')}}
               </el-breadcrumb-item>
             </el-breadcrumb>
          

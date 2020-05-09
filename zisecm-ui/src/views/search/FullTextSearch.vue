@@ -13,8 +13,8 @@
     </el-dialog>
     <div class="navbar">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item>{{$t('menu.searchCenter')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('menu.fullTextSearch')}}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{$t('route.searchCenter')}}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{$t('route.fullTextSearch')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="searchInput" >

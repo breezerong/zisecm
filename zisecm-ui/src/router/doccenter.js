@@ -2,7 +2,8 @@ export const dcRouter = [
 		{
 			meta: {
 				requireAuth: true,
-				permit: 1
+				permit: 1,
+				title:'companyDoc'
 			},
 			path: '/dc/companydoc',
 			component: () => import('@/views/dc/CompanyDoc.vue'),
