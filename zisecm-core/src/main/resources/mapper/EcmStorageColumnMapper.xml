@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmStorageColumnMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmStorageColumn">
+    <id column="ID" jdbcType="NVARCHAR" property="id" />
+    <result column="CODING" jdbcType="NVARCHAR" property="coding" />
+    <result column="PARENT_CODING" jdbcType="NVARCHAR" property="parentCoding" />
+    <result column="TOTAL_LENGTH" jdbcType="DOUBLE" property="totalLength" />
+    <result column="REMAIN_LENGTH" jdbcType="DOUBLE" property="remainLength" />
+    <result column="ARCHIVE_COUNT" jdbcType="INTEGER" property="archiveCount" />
+    <result column="DESCRIPTION" jdbcType="NVARCHAR" property="description" />
+    <result column="STAUTS" jdbcType="NVARCHAR" property="stauts" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CODING, PARENT_CODING, TOTAL_LENGTH, REMAIN_LENGTH, ARCHIVE_COUNT, DESCRIPTION, 
+    STAUTS
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_storage_column
+    where ID = #{id,jdbcType=NVARCHAR}
+  </select>
+  <select id="selectByParent" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_storage_column
+    where PARENT_CODING = #{parentCoding,jdbcType=NVARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_storage_column
+    where ID = #{id,jdbcType=NVARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmStorageColumn">
+    insert into ecm_storage_column (ID, CODING, PARENT_CODING, 
+      TOTAL_LENGTH, REMAIN_LENGTH, ARCHIVE_COUNT, 
+      DESCRIPTION, STAUTS)
+    values (#{id,jdbcType=NVARCHAR}, #{coding,jdbcType=NVARCHAR}, #{parentCoding,jdbcType=NVARCHAR}, 
+      #{totalLength,jdbcType=DOUBLE}, #{remainLength,jdbcType=DOUBLE}, #{archiveCount,jdbcType=INTEGER}, 
+      #{description,jdbcType=NVARCHAR}, #{stauts,jdbcType=NVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmStorageColumn">
+    insert into ecm_storage_column
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="coding != null">
+        CODING,
+      </if>
+      <if test="parentCoding != null">
+        PARENT_CODING,
+      </if>
+      <if test="totalLength != null">
+        TOTAL_LENGTH,
+      </if>
+      <if test="remainLength != null">
+        REMAIN_LENGTH,
+      </if>
+      <if test="archiveCount != null">
+        ARCHIVE_COUNT,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="stauts != null">
+        STAUTS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=NVARCHAR},
+      </if>
+      <if test="coding != null">
+        #{coding,jdbcType=NVARCHAR},
+      </if>
+      <if test="parentCoding != null">
+        #{parentCoding,jdbcType=NVARCHAR},
+      </if>
+      <if test="totalLength != null">
+        #{totalLength,jdbcType=DOUBLE},
+      </if>
+      <if test="remainLength != null">
+        #{remainLength,jdbcType=DOUBLE},
+      </if>
+      <if test="archiveCount != null">
+        #{archiveCount,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=NVARCHAR},
+      </if>
+      <if test="stauts != null">
+        #{stauts,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmStorageColumn">
+    update ecm_storage_column
+    <set>
+      <if test="coding != null">
+        CODING = #{coding,jdbcType=NVARCHAR},
+      </if>
+      <if test="parentCoding != null">
+        PARENT_CODING = #{parentCoding,jdbcType=NVARCHAR},
+      </if>
+      <if test="totalLength != null">
+        TOTAL_LENGTH = #{totalLength,jdbcType=DOUBLE},
+      </if>
+      <if test="remainLength != null">
+        REMAIN_LENGTH = #{remainLength,jdbcType=DOUBLE},
+      </if>
+      <if test="archiveCount != null">
+        ARCHIVE_COUNT = #{archiveCount,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=NVARCHAR},
+      </if>
+      <if test="stauts != null">
+        STAUTS = #{stauts,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmStorageColumn">
+    update ecm_storage_column
+    set CODING = #{coding,jdbcType=NVARCHAR},
+      PARENT_CODING = #{parentCoding,jdbcType=NVARCHAR},
+      TOTAL_LENGTH = #{totalLength,jdbcType=DOUBLE},
+      REMAIN_LENGTH = #{remainLength,jdbcType=DOUBLE},
+      ARCHIVE_COUNT = #{archiveCount,jdbcType=INTEGER},
+      DESCRIPTION = #{description,jdbcType=NVARCHAR},
+      STAUTS = #{stauts,jdbcType=NVARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+</mapper>

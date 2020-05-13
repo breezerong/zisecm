@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.dao.EcmStorageRoomMapper">
+  <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmStorageRoom">
+    <id column="ID" jdbcType="NVARCHAR" property="id" />
+    <result column="CODING" jdbcType="NVARCHAR" property="coding" />
+    <result column="ROOM_TYPE" jdbcType="NVARCHAR" property="roomType" />
+    <result column="ROOM_AREA" jdbcType="DOUBLE" property="roomArea" />
+    <result column="ROOM_FUNCTION" jdbcType="NVARCHAR" property="roomFunction" />
+    <result column="COLUMN_COUNT" jdbcType="INTEGER" property="columnCount" />
+    <result column="DESCRIPTION" jdbcType="NVARCHAR" property="description" />
+    <result column="STAUTS" jdbcType="NVARCHAR" property="stauts" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CODING, ROOM_TYPE, ROOM_AREA, ROOM_FUNCTION, COLUMN_COUNT, DESCRIPTION, STAUTS
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_storage_room
+    where ID = #{id,jdbcType=NVARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_storage_room
+    where ID = #{id,jdbcType=NVARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmStorageRoom">
+    insert into ecm_storage_room (ID, CODING, ROOM_TYPE, 
+      ROOM_AREA, ROOM_FUNCTION, COLUMN_COUNT, 
+      DESCRIPTION, STAUTS)
+    values (#{id,jdbcType=NVARCHAR}, #{coding,jdbcType=NVARCHAR}, #{roomType,jdbcType=NVARCHAR}, 
+      #{roomArea,jdbcType=DOUBLE}, #{roomFunction,jdbcType=NVARCHAR}, #{columnCount,jdbcType=INTEGER}, 
+      #{description,jdbcType=NVARCHAR}, #{stauts,jdbcType=NVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmStorageRoom">
+    insert into ecm_storage_room
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="coding != null">
+        CODING,
+      </if>
+      <if test="roomType != null">
+        ROOM_TYPE,
+      </if>
+      <if test="roomArea != null">
+        ROOM_AREA,
+      </if>
+      <if test="roomFunction != null">
+        ROOM_FUNCTION,
+      </if>
+      <if test="columnCount != null">
+        COLUMN_COUNT,
+      </if>
+      <if test="description != null">
+        DESCRIPTION,
+      </if>
+      <if test="stauts != null">
+        STAUTS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=NVARCHAR},
+      </if>
+      <if test="coding != null">
+        #{coding,jdbcType=NVARCHAR},
+      </if>
+      <if test="roomType != null">
+        #{roomType,jdbcType=NVARCHAR},
+      </if>
+      <if test="roomArea != null">
+        #{roomArea,jdbcType=DOUBLE},
+      </if>
+      <if test="roomFunction != null">
+        #{roomFunction,jdbcType=NVARCHAR},
+      </if>
+      <if test="columnCount != null">
+        #{columnCount,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=NVARCHAR},
+      </if>
+      <if test="stauts != null">
+        #{stauts,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmStorageRoom">
+    update ecm_storage_room
+    <set>
+      <if test="coding != null">
+        CODING = #{coding,jdbcType=NVARCHAR},
+      </if>
+      <if test="roomType != null">
+        ROOM_TYPE = #{roomType,jdbcType=NVARCHAR},
+      </if>
+      <if test="roomArea != null">
+        ROOM_AREA = #{roomArea,jdbcType=DOUBLE},
+      </if>
+      <if test="roomFunction != null">
+        ROOM_FUNCTION = #{roomFunction,jdbcType=NVARCHAR},
+      </if>
+      <if test="columnCount != null">
+        COLUMN_COUNT = #{columnCount,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        DESCRIPTION = #{description,jdbcType=NVARCHAR},
+      </if>
+      <if test="stauts != null">
+        STAUTS = #{stauts,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmStorageRoom">
+    update ecm_storage_room
+    set CODING = #{coding,jdbcType=NVARCHAR},
+      ROOM_TYPE = #{roomType,jdbcType=NVARCHAR},
+      ROOM_AREA = #{roomArea,jdbcType=DOUBLE},
+      ROOM_FUNCTION = #{roomFunction,jdbcType=NVARCHAR},
+      COLUMN_COUNT = #{columnCount,jdbcType=INTEGER},
+      DESCRIPTION = #{description,jdbcType=NVARCHAR},
+      STAUTS = #{stauts,jdbcType=NVARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
+  </update>
+</mapper>
