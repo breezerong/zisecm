@@ -22,6 +22,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermsQueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -294,8 +295,20 @@ public class ESSearchService extends EcmService implements ISearchService {
 
 			sourceBuilder.highlighter(highlightBuilder);
 
-			MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("fileattr", keyword);
-			BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder().should(matchQueryBuilder);
+			
+			BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+			if(onlyProperty) {
+				keyword = "*"+keyword+"*";
+				for(String fld: ESClient.getInstance().getSearchFields()) {
+					WildcardQueryBuilder q = QueryBuilders.wildcardQuery(fld, keyword);
+					boolQueryBuilder.should(q);
+				}
+//				WildcardQueryBuilder q = QueryBuilders.wildcardQuery("fileattr", keyword);
+//				boolQueryBuilder.should(q);
+			}else {
+				MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("fileattr", keyword);
+				boolQueryBuilder.should(matchQueryBuilder);
+			}
 			if (!onlyProperty) {
 				MatchQueryBuilder matchQueryBuilder2 = QueryBuilders.matchQuery("filecontent", keyword);
 				boolQueryBuilder.should(matchQueryBuilder2);
