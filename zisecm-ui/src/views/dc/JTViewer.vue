@@ -114,35 +114,35 @@ export default {
 //				loader.load( 'models/obj/male02/male02.obj', function ( obj ) {
 				
 
-				var m = new Map();
+				// var m = new Map();
 				
-				m.set("id", _self.id);
-				m.set("format", _self.format);
+				// m.set("id", _self.id);
+				// m.set("format", _self.format);
 				
-				// console.log('pagesize:', _self.pageSize);
-				axios
-					.post("/dc/getFilePath", JSON.stringify(m))
-					.then(function(response) {
-						if(response.data.code==1){
-							_self.filePath = response.data.data;
+				// // console.log('pagesize:', _self.pageSize);
+				// axios
+				// 	.post("/dc/getFilePath", JSON.stringify(m))
+				// 	.then(function(response) {
+				// 		if(response.data.code==1){
+				// 			_self.filePath = response.data.data;
 
-							loader.load( _self.filePath, function ( obj ) {
-								_self.object = obj;
+				// 			loader.load( _self.filePath, function ( obj ) {
+				// 				_self.object = obj;
 							
-							}, onProgress, onError );
-						}else{
-							_self.$message({
-								showClose: true,
-								message: "文件路径获取失败！"+response.data.message,
-								duration: 5000,
-								type: 'error'
-							});
-						}
+				// 			}, onProgress, onError );
+				// 		}else{
+				// 			_self.$message({
+				// 				showClose: true,
+				// 				message: "文件路径获取失败！"+response.data.message,
+				// 				duration: 5000,
+				// 				type: 'error'
+				// 			});
+				// 		}
 						
-					})
-					.catch(function(error) {
-						console.log(error);
-					});
+				// 	})
+				// 	.catch(function(error) {
+				// 		console.log(error);
+				// 	});
 
 				// loader.load( "http://localhost:8080/zisecm/dc/getContent/?id="+_self.id
 				// +"&format="+_self.format
@@ -151,10 +151,10 @@ export default {
 							
 				// 			}, onProgress, onError );
 
-				// loader.load( "/static/e.jt.obj", function ( obj ) {
-				// 				_self.object = obj;
+				loader.load( "/static/e.jt.obj", function ( obj ) {
+								_self.object = obj;
 							
-				// 			}, onProgress, onError );
+							}, onProgress, onError );
 				Models.appendChild( _self.renderer.domElement );
 
 				document.addEventListener( 'mousemove', _self.onDocumentMouseMove, false );

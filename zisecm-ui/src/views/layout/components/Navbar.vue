@@ -12,9 +12,7 @@
           <svg-icon icon-class="shopping" />
         </router-link>&nbsp;
       </span>
-      <span class="ecm-help">
-        <router-link to="/user/userinfo" >{{userName}}</router-link>&nbsp;
-      </span>
+      
       <ecm-help class="ecm-help right-menu-item" />
       <ecm-top-lock style="cursor:pointer" class="ecm-help"></ecm-top-lock>
       <el-tooltip effect="dark" content="全屏" placement="bottom">
@@ -23,7 +21,9 @@
 
       <!-- <lang-select class="international right-menu-item"></lang-select> -->
       <ecm-lang-select class="international right-menu-item"></ecm-lang-select>
-
+      <span class="ecm-help">
+        <router-link to="/user/userinfo" >{{userName}}</router-link>&nbsp;
+      </span>
       
         <!-- <theme-picker class="theme-switch right-menu-item"></theme-picker> -->
         <ecm-skin class="theme-switch right-menu-item"></ecm-skin>
