@@ -214,7 +214,11 @@
     "showdrawingfinish":"晒图完成",
     "showdrawingtask":"晒图任务管理",
     "showdrawingpendingouttask":"待晒图",
-    "showdrawingfinishtask":"晒图完成"
+    "showdrawingfinishtask":"晒图完成",
+    "systemReport": "系统报表",
+    "storageReport": "馆藏报表",
+    "workloadReport": "工作量报表",
+    "utilizationReport": "利用报表"
 },
 "message": {
     "saveSuccess":"保存成功",

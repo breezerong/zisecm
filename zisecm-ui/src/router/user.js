@@ -1,6 +1,7 @@
 export const userRouter = {
 	meta: {
-		requireAuth: true
+		requireAuth: true,
+		title: 'userCenter'
 	},
 	path: '/usercenter',
 	name: '个人信息',
@@ -8,7 +9,8 @@ export const userRouter = {
 	children: [{
 		meta: {
 			requireAuth: true,
-			permit: 1
+			permit: 1,
+			title: 'userInfo'
 		},
 		path: '/user/userinfo',
 		name: '用户基本信息',
@@ -17,7 +19,8 @@ export const userRouter = {
 	{
 		meta: {
 			requireAuth: true,
-			permit: 1
+			permit: 1,
+			title: 'userRoleInfo'
 		},
 		path: '/user/userroleinfo',
 		name: '我的授权',
@@ -26,7 +29,8 @@ export const userRouter = {
 	{
 		meta: {
 			requireAuth: true,
-			permit: 1
+			permit: 1,
+			title: 'changePassword'
 		},
 		path: '/user/changepassword',
 		name: '修改密码',

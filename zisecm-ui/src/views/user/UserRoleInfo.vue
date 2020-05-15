@@ -1,11 +1,5 @@
 <template>
   <div>
-    <div class="navbar">
-      <el-breadcrumb>
-        <el-breadcrumb-item>{{$t('menu.userCenter')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('menu.userRoleInfo')}}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
     <div>
       <el-table
       :data="dataList"

@@ -24,14 +24,6 @@
             <el-button type="primary" @click="updateSignImage()">{{$t('application.ok')}}</el-button>
           </div>
         </el-dialog>
-    <div class="navbar">
-      <el-breadcrumb>
-        <el-breadcrumb-item>{{$t('menu.userCenter')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('menu.userInfo')}}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-  <div>
-    <div>&nbsp;</div>
     <el-form label-width="120px" @submit.native.prevent>
       <el-row>
         <el-col :span="8">
@@ -81,6 +73,9 @@
         </el-col>
       </el-row>-->
       <el-row>
+        <el-col :span="2">
+          &nbsp;
+        </el-col>
         <el-col :span="14">
           <el-button type="primary" plain icon="save" @click="saveUserInfo()" >{{$t('application.save')}}</el-button> 
           <!-- &nbsp; &nbsp; 

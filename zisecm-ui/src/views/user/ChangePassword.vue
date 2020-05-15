@@ -1,12 +1,5 @@
 <template>
   <div>
-     <div class="navbar">
-      <el-breadcrumb>
-        <el-breadcrumb-item>{{$t('menu.userCenter')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('menu.changePassword')}}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <div>&nbsp;</div>
     <el-form label-width="120px" @submit.native.prevent>
       <el-row>
         <el-col :span="8">
@@ -42,6 +35,9 @@
         </el-col>
       </el-row>
       <el-row>
+        <el-col :span="2">
+          &nbsp;
+        </el-col>
         <el-col :span="6">
           <el-button  v-if="loginType=='1'" type="primary" plain icon="save" @click="updatePassword()" >{{$t('application.save')}}</el-button> 
           <span v-if="loginType=='2'">LDAP {{$t('message.cannotChangePassword')}}</span>

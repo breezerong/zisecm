@@ -11,12 +11,6 @@
         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
-    <div class="navbar">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item>{{$t('route.searchCenter')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('route.fullTextSearch')}}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
     <div class="searchInput" >
       <!-- <el-autocomplete
         class="inline-input"

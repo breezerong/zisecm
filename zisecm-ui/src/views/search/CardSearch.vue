@@ -39,8 +39,6 @@
     </el-dialog>
     <div class="navbar">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item>{{$t('menu.searchCenter')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('menu.cardSearch')}}</el-breadcrumb-item>
         <el-breadcrumb-item>{{currentCard.label}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>

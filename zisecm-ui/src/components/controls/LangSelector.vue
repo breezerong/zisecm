@@ -120,7 +120,7 @@
             ></el-pagination>
     </el-dialog>
     <el-col :span="18">
-      <el-input type="text" placeholder="请选择组件" v-model="inputValue"></el-input>
+      <el-input type="text" placeholder="请选择组件" v-model="inputValue" @change="valueChange"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="4">
@@ -178,6 +178,10 @@ export default {
     _self.refreshData();
   },
   methods: {
+    valueChange(){
+      this.$emit("change", this.inputValue);
+      // console.log("change:" + this.inputValue);
+    },
     //获取选人框体数据
     refreshData() {
       let _self = this;

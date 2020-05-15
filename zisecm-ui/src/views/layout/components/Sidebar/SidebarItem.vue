@@ -3,7 +3,10 @@
     <template v-for="item in dataList.menuItems">
       <template v-if="item.submenus && item.url==null">
         <el-submenu :index="item.id+''" :key="item.id">
-          <template slot="title">{{item.label}}</template>
+          <template slot="title">
+            <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i>
+            <span slot="title">{{item.label}}</span>
+          </template>
           <template v-for="sitem in item.submenus">
             <router-link :to="sitem.url">
               <el-menu-item :index="sitem.url" :key="sitem.id" :class="{'submenu-title-noDropdown':!isNest}">
@@ -18,7 +21,7 @@
       <template v-else-if="urlIsExt(item.url)">
         <el-menu-item :index="item.id+''" :key="item.id+'_e'" @click="clickRouter(item.url)">
           <!--<svg-icon icon-class="work-flow"></svg-icon>-->
-		  <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i> 
+		    <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i> 
           {{item.label}}
         </el-menu-item>
       </template>
@@ -32,6 +35,32 @@
         </router-link>
       </template>
     </template>
+    <template>
+      <el-submenu index="userCenter">
+	          <template slot="title">
+	            <i class="el-icon-user menu-white"></i>
+	            <span>{{$t('route.userCenter')}}</span>
+	          </template>
+	          <el-menu-item index="/user/userinfo">
+	            <i class="iconfont zisecm-my_light menu-white"></i>
+	            <span slot="title">
+	              <router-link to="/user/userinfo">{{$t('route.userInfo')}}</router-link>
+	            </span>
+	          </el-menu-item>
+			  <el-menu-item index="/user/userroleinfo">
+	            <i class="iconfont zisecm-group menu-white"></i>
+	            <span slot="title">
+	              <router-link to="/user/userroleinfo">{{$t('route.userRoleInfo')}}</router-link>
+	            </span>
+	          </el-menu-item>
+	          <el-menu-item index="/user/changepassword">
+	            <i class="el-icon-lock menu-white"></i>
+	            <span slot="title">
+	              <router-link to="/user/changepassword">{{$t('route.changePassword')}}</router-link>
+	            </span>
+	          </el-menu-item>
+	        </el-submenu>
+      </template>
     <AdminMenu :isNest="isNest"></AdminMenu>
   </div>
 </template>

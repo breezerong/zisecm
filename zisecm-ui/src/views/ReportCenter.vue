@@ -22,7 +22,7 @@
                   </el-menu-item>
                   <el-menu-item index="13">
                     <i class="el-icon-data-analysis"></i>
-                    <span slot="title"><router-link to="/report/archivesreport">利用统计报表</router-link></span>
+                    <span slot="title"><router-link to="/report/archivesreport">利用报表</router-link></span>
                   </el-menu-item>
                    <el-menu-item index="14">
                     <i class="el-icon-s-marketing"></i>

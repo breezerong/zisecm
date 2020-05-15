@@ -43,12 +43,6 @@
     <el-dialog title="文件列表" :visible.sync="itemDialogVisible" width="96%"  @close="itemDialogVisible = false">  
       <InnerItemViewer ref='innerItemViewer' v-bind:id = "currentId" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
      </el-dialog>
-    <div class="navbar">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item >{{$t('menu.searchCenter')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('menu.advSearch')}}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
     <el-container>
       <el-header style="height:50px">
         <el-row>
