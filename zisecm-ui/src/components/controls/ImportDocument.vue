@@ -19,6 +19,11 @@
       </el-col>
     </el-row>
     <el-row>
+      <el-col :span="20">
+        <el-progress :text-inside="true" :stroke-width="24" :percentage="progressNum" status="success"></el-progress>
+      </el-col>
+    </el-row>
+    <el-row>
       <el-col :span="10">
         <el-form-item label="Excel文件" style="float: left;">
           <el-upload
@@ -32,6 +37,7 @@
           &nbsp; &nbsp;
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
           </el-upload>
+          
         </el-form-item>
       </el-col>
       <el-col :span="14">
@@ -74,11 +80,13 @@ export default {
       importMessage: "",
       templateData:[],
       selectedTemplate:"",
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
+      progressNum:0
     };
   },
   mounted() {
     this.loadTemplate();
+    this.progressNum=0;
   },
   props: {
     deliveryId: { type: [String], required: true }
@@ -98,10 +106,10 @@ export default {
     },
     downloadTemplate(){
       let _self = this;
-      if(_self.deliveryId==null || _self.deliveryId.length==0){
-        _self.$message("请选择移交单导入!");
-        return;
-      }
+      // if(_self.deliveryId==null || _self.deliveryId.length==0){
+      //   _self.$message("请选择移交单导入!");
+      //   return;
+      // }
       if(_self.selectedTemplate==null || _self.selectedTemplate.length==0){
         _self.$message("请选择模板!");
         return;
@@ -122,26 +130,31 @@ export default {
         _self.$message("请选择导入Excel文件!");
         return;
       }
-      if(_self.deliveryId==null || _self.deliveryId.length==0){
-         _self.$message("请选择移交单导入!");
-        return;
-      }
+      // if(_self.deliveryId==null || _self.deliveryId.length==0){
+      //    _self.$message("请选择移交单导入!");
+      //   return;
+      // }
       let formdata = new FormData();
       let m = new Map();
-      m.set("id", _self.deliveryId);
+      // m.set("id", _self.deliveryId);
       formdata.append("metaData", JSON.stringify(m));
       formdata.append("excel", _self.fileList1[0].raw);
       _self.fileList2.forEach(function(file) {
         formdata.append("files", file.raw, file.name);
       });
-      _self.loading = true;
+      // _self.loading = true;
       axios
-        .post("/import/batchImport", formdata, {
+        .post("/import/batchImport", formdata, {headers:{
           "Content-Type": "multipart/form-data"
+        },
+        onUploadProgress: progressEvent => {
+            _self.progressNum=(progressEvent.loaded / progressEvent.total * 100).toFixed(0) //调用onProgress方法来显示进度条，需要传递个对象 percent为进度值
+            
+        }
         })
         .then(function(response) {
           _self.importMessage = response.data.data;
-          _self.loading = false;
+          // _self.loading = false;
           _self.$message("导入成功!");
           _self.cleanFiles();
           _self.$emit("onImported");

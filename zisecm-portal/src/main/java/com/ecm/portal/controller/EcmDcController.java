@@ -426,12 +426,43 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return sb.toString();
 	}
-
+	@RequestMapping(value = "/dc/getFilePath", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getFilePath(@RequestBody String argStr){
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			
+			Object objId= args.get("id");
+			if(objId==null) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", "ID不能为空");
+				return mp;
+			}
+			String id=objId.toString();
+			EcmContent en = null;
+			if (!StringUtils.isEmpty(args.get("format")==null?"":args.get("format").toString())) {
+					en = contentService.getObject(getToken(), id, 0, args.get("format").toString());
+			} else {
+				en = contentService.getPrimaryContent(getToken(), id);
+			}
+			String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+			mp.put("data", fullPath+en.getFilePath());
+			mp.put("code", ActionContext.SUCESS);
+			return mp;
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("message", e.getMessage());
+			mp.put("code", ActionContext.FAILURE);
+			return mp;
+		}
+	}
+	
 	@RequestMapping(value = "/dc/getContent") // , method = RequestMethod.POST PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public void getContent(HttpServletRequest request, HttpServletResponse response) {
 		// String data = getRequestData(request);
-
 		try {
 			String id = "";
 			if (request.getAttribute("id") != null) {

@@ -1,5 +1,9 @@
 package com.ecm.core.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class EcmStorageColumn {
     private String id;
 
@@ -16,13 +20,18 @@ public class EcmStorageColumn {
     private String description;
 
     private String stauts;
+    
+    private Map<String, Object> attributes = new HashMap<String, Object>();
 
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+        this.id = id;
+        if(attributes!=null) {
+			attributes.put("ID",  this.id);
+		}
     }
 
     public String getCoding() {
@@ -30,7 +39,10 @@ public class EcmStorageColumn {
     }
 
     public void setCoding(String coding) {
-        this.coding = coding == null ? null : coding.trim();
+        this.coding = coding;
+        if(attributes!=null) {
+			attributes.put("CODING",  this.coding);
+		}
     }
 
     public String getParentCoding() {
@@ -38,7 +50,10 @@ public class EcmStorageColumn {
     }
 
     public void setParentCoding(String parentCoding) {
-        this.parentCoding = parentCoding == null ? null : parentCoding.trim();
+        this.parentCoding = parentCoding;
+        if(attributes!=null) {
+			attributes.put("PARENT_CODING",  this.parentCoding);
+		}
     }
 
     public Double getTotalLength() {
@@ -47,6 +62,9 @@ public class EcmStorageColumn {
 
     public void setTotalLength(Double totalLength) {
         this.totalLength = totalLength;
+        if(attributes!=null) {
+			attributes.put("TOTAL_LENGTH",  this.totalLength);
+		}
     }
 
     public Double getRemainLength() {
@@ -55,6 +73,9 @@ public class EcmStorageColumn {
 
     public void setRemainLength(Double remainLength) {
         this.remainLength = remainLength;
+        if(attributes!=null) {
+			attributes.put("REMAIN_LENGTH",  this.remainLength);
+		}
     }
 
     public Integer getArchiveCount() {
@@ -63,6 +84,9 @@ public class EcmStorageColumn {
 
     public void setArchiveCount(Integer archiveCount) {
         this.archiveCount = archiveCount;
+        if(attributes!=null) {
+			attributes.put("ARCHIVE_COUNT",  this.archiveCount);
+		}
     }
 
     public String getDescription() {
@@ -70,7 +94,10 @@ public class EcmStorageColumn {
     }
 
     public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+        this.description = description;
+        if(attributes!=null) {
+			attributes.put("DESCRIPTION",  this.description);
+		}
     }
 
     public String getStauts() {
@@ -78,6 +105,73 @@ public class EcmStorageColumn {
     }
 
     public void setStauts(String stauts) {
-        this.stauts = stauts == null ? null : stauts.trim();
+        this.stauts = stauts;
+        if(attributes!=null) {
+			attributes.put("STAUTS",  this.stauts);
+		}
     }
+    
+    public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+    public void setAttributes(Map<String, Object> attributes) {
+
+		this.attributes = attributes;
+		this.setId(getString(attributes.get("ID")));
+		if(attributes.get("CODING")!=null) {
+			this.setCoding(getString(attributes.get("CODING")));
+		}
+		if(attributes.get("PARENT_CODING")!=null) {
+			this.setParentCoding(getString(attributes.get("PARENT_CODING")));
+		}
+		if(attributes.get("TOTAL_LENGTH")!=null) {
+			this.setTotalLength(getFloat(attributes.get("TOTAL_LENGTH")));
+		}
+		if(attributes.get("REMAIN_LENGTH")!=null) {
+			this.setRemainLength(getFloat(attributes.get("REMAIN_LENGTH")));
+		}
+		if(attributes.get("ARCHIVE_COUNT")!=null) {
+			this.setArchiveCount(getInt(attributes.get("ARCHIVE_COUNT")));
+		}
+		
+		if(attributes.get("DESCRIPTION")!=null) {
+			this.setDescription(getString(attributes.get("DESCRIPTION")));
+		}
+		
+		if(attributes.get("STAUTS")!=null) {
+			this.setStauts(getString(attributes.get("STAUTS")));
+		}
+    }
+    
+    private String getString(Object val) {
+		if(val==null) {
+			return null;
+		}
+		return val.toString();
+	}
+    
+    private int getInt(Object val) {
+    	if(val==null) {
+			return 0;
+		}
+		return Integer.parseInt(val.toString());
+    }
+    private double getFloat(Object val) {
+		if(val==null) {
+			return 0f;
+		}
+		return Float.parseFloat(val.toString());
+	}
+    private double getDouble(Object val) {
+		if(val==null) {
+			return 0f;
+		}
+		return Double.parseDouble(val.toString());
+	}
+    public void createId() {
+		// TODO Auto-generated method stub
+    	id = UUID.randomUUID().toString().replace("-", "");
+		
+	}
+    
 }

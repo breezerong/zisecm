@@ -48,6 +48,7 @@
         </div>
       </el-dialog>
         <el-table
+          id="datatable"
           :height="tableHeight"
           :data="itemDataList"
           border
@@ -138,14 +139,31 @@
               <!-- <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
                             <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
               <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>-->
-              <el-button
+              <!-- <el-button
                 type="primary"
                 plain
                 size="small"
                 :title="$t('application.viewContent')"
                 icon="el-icon-picture-outline"
-                @click="showItemContent(scope.row)"
+                @click="showMenu($event)"
+              ></el-button> -->
+              <el-dropdown trigger="click">
+                <el-button
+                type="primary"
+                plain
+                size="small"
+                :title="$t('application.more')"
+                icon="el-icon-more"
               ></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item icon="el-icon-reading" @click.native="showItemContent(selectedRow)">查看内容</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-info" @click.native="showItemProperty(selectedRow)">查看属性</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-circle-plus-outline" @click.native="addToShoppingCar([selectedRow])">加入购物车</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-check" @click.native="upgrade(selectedRow)">升版</el-dropdown-item>
+                  
+                </el-dropdown-menu>
+              </el-dropdown>
+              <!-- showItemContent(scope.row) -->
               <el-button
                 type="primary"
                 plain
@@ -157,6 +175,14 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <div id="menu" @mouseleave="leave">
+            <div class="menu" @click="showItemContent(selectedRow)">查看内容</div>
+            <div class="menu" @click="showItemProperty(selectedRow)">查看属性</div>
+            <div class="menu" @click="addToShoppingCar([selectedRow])">加入购物车</div>
+            <div class="menu" @click="upgrade(selectedRow)">升版</div>
+        </div>
+       
       <el-pagination
         v-if="isshowPage"
         background
@@ -225,8 +251,37 @@ export default {
   components: {
     ShowProperty: ShowProperty
   },
+  mounted(){
+    // this.ready();
+  },
   methods: {
-    
+    // ready(){
+      
+    //   document.addEventListener('click',(e)=>{
+    //       // let sp3 =document.getElementById("locationName")
+    //       let menu= document.querySelector("#menu");
+    //       if(!menu.contains(e.target)){
+    //         menu.style.display = 'none';
+    //       }
+    //       // if(menu.contains(e.target)&&menu.style.display=='none'){
+    //       //   menu.style.display = 'block';
+    //       // }else{
+    //       //   menu.style.display = 'none';
+    //       // }
+    //     })
+    // },
+    leave(){
+       var menu = document.querySelector("#menu");
+        menu.style.display = 'none';
+    },
+    //显示菜单
+    showMenu(event) { // 鼠标右击触发事件
+        var menu = document.querySelector("#menu");
+        menu.style.display = 'block';
+        menu.style.left = event.clientX - 250 + 'px'
+        menu.style.top = event.clientY - 120 + 'px'
+        
+    },
     // 查看内容
     showItemContent(indata) {
       let condition = indata.ID;
@@ -240,6 +295,33 @@ export default {
       //console.log(href);
       window.open(href.href, "_blank");
     },
+    upgrade(item){
+            let _self = this;
+
+            // console.log('pagesize:', _self.pageSize);
+            axios
+                .post("/dc/upgradeDocument", item.ID)
+                .then(function(response) {
+                  if(response.data.code=='1'){
+                    _self.$emit("upgradeFun", response.data.id);
+                  }else{
+                    _self.$message({
+                      showClose: true,
+                      message: response.data.message,
+                      duration: 2000,
+                      type: "warning"
+                    });
+                  }
+                  
+                     
+                })
+                .catch(function(error) {
+                console.log(error);
+                _self.loading = false;
+                });
+
+           
+        },
     // 保存文档
     saveItem() {
       this.$refs.ShowProperty.saveItem();
@@ -344,6 +426,7 @@ export default {
           : " DESC";
     },
     rowClick(row) {
+      
       this.selectedRow = row;
       this.$emit("rowclick", row);
     },
@@ -364,5 +447,41 @@ export default {
 .reject{
   color:red;
 }
-    
+    #menu {
+        width: 120px; 
+        height: 100px;
+        overflow: hidden; /*隐藏溢出的元素*/
+        box-shadow: 0 1px 1px #888, 1px 0 1px #ccc;
+        position: absolute; 
+        display: none;
+        background: #ffffff;
+        z-index: 10;
+    }
+ 
+    .menu {
+        width: 125px;
+        height: 25px;
+        line-height: 25px;
+        text-indent: 10px;
+        cursor: pointer;
+    }
+ 
+    .menu:hover {
+        color: deeppink;
+        text-decoration: underline;
+    }
+    .el-dropdown-link {
+      cursor: pointer;
+      color: #409EFF;
+    }
+    .hey-btn { display: inline-block; 
+    background-color: #87CEEB; 
+    color: white; 
+    text-decoration: none; 
+    font-family: 'Microsoft YaHei', sans-serif; 
+    text-align: center; 
+    border: 1px; 
+    width: 2.5rem;
+    height: 1.8rem;
+    cursor: pointer; }
 </style>

@@ -109,7 +109,7 @@ public class ImportController extends ControllerAbstract{
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		String msg;
 		try {
-			msg = importService.importExcel(getToken(),args.get("id").toString(),excel, files);
+			msg = importService.importExcel(getToken(),args.get("id")!=null?args.get("id").toString():"",excel, files);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", msg);
 		} catch (Exception e) {

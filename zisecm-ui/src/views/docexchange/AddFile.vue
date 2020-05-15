@@ -565,7 +565,7 @@ export default {
         },
         method: "post",
         data: JSON.stringify(m),
-        url: "/dc/removeFromArchive"
+        url: "/dcexchange/removeFromArchive"
       })
       .then(function(response) {
         _self.showInnerFile(null);
@@ -654,7 +654,7 @@ export default {
         },
         method: "post",
         data: JSON.stringify(m),
-        url: "/dc/getInnerFolderDocuments"
+        url: "/dcexchange/getInnerFolderDocuments"
       })
       .then(function(response) {
         _self.itemDataList = response.data.data;
@@ -1080,7 +1080,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),//_self.selectRow.ID,//JSON.stringify(m),
-          url: "/dc/delDocumentAndRelation"
+          url: "/dcexchange/delDocumentAndRelation"
         })
         .then(function(response) {
           _self.loadGridData(_self.currentFolder);

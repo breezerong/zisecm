@@ -5,7 +5,7 @@
         <el-col :span="16">
           <el-card :body-style="{ height: '120px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">{{$t('menu.fullTextSearch')}}</span>
+              <span style="float: left;" class="ecmtitle">{{$t('route.fullTextSearch')}}</span>
             </div>
             <div>
               <el-row style="padding-top:5px;padding-bottom:5px;">

@@ -126,7 +126,8 @@
     "show":"Show",
     "fileBox":"FileBox",
     "warehousing":"Warehousing",
-    "theme": "Theme"
+    "theme": "Theme",
+    "more":"more"
 },
 "skin": {
     "Blue": "Blue",
@@ -185,7 +186,10 @@
     "showdrawingfinish":"Show drawing finish",
     "showdrawingtask":"Show drawing task",
     "showdrawingpendingouttask":"Show drawing pendingout task",
-    "showdrawingfinishtask":"Show drawing finish task"
+    "showdrawingfinishtask":"Show drawing finish task",
+    "folderViewer":"Folder Viewer",
+    "mainContainer":"Main Container",
+    "storageManager":"StorageManager"
 },
 "message": {
     "saveSuccess":"Save Success",

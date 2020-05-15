@@ -41,7 +41,8 @@
              <ImageViewer v-else-if="viewerType==3" v-bind:id="doc.id" v-bind:format="doc.format"></ImageViewer>
              <VideoPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
              <AudioPlayer v-else-if="viewerType==5" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
-             
+             <CADViewer v-else-if="viewerType==6" v-bind:id="doc.id" format="ocf"></CADViewer>
+             <JTViewer v-else-if="viewerType==7" v-bind:id="doc.id" format="obj"></JTViewer>
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
                 当前文件没有电子文件。
             </div>
@@ -113,6 +114,8 @@ import VideoPlayer from './VideoPlayer.vue'
 import AudioPlayer from './AudioPlayer.vue'
 import InnerItemViewer from "./InnerItemViewer.vue"
 import ChangeDocViewer from "./ChangeDocViewer.vue"
+import CADViewer from "./CADViewer.vue"
+import JTViewer from "./JTViewer.vue"
 import { timeout } from 'q'
 
 export default {
@@ -129,7 +132,9 @@ export default {
     AudioPlayer:AudioPlayer,
     InnerItemViewer:InnerItemViewer,
     ChangeDocViewer:ChangeDocViewer,
-    PdfViewer:PdfViewer
+    PdfViewer:PdfViewer,
+    CADViewer:CADViewer,
+    JTViewer:JTViewer
   },
   data(){
     return {
@@ -237,6 +242,10 @@ export default {
           _self.viewerType = 4;
         }else if(_self.doc.format == "mp3" || _self.doc.format == "wav"){
           _self.viewerType = 5;
+        }else if(_self.doc.format == "ocf"||_self.doc.format == "cad"){
+          _self.viewerType = 6;
+        }else if(_self.doc.format == "obj"||_self.doc.format == "jt"){
+          _self.viewerType = 7;
         }
       }
       //console.log(_self.viewerType);

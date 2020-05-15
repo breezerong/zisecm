@@ -14,6 +14,11 @@
   <sql id="Base_Column_List">
     ID, CODING, ROOM_TYPE, ROOM_AREA, ROOM_FUNCTION, COLUMN_COUNT, DESCRIPTION, STAUTS
   </sql>
+  
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

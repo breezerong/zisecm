@@ -27,6 +27,9 @@
     from ecm_storage_column
     where PARENT_CODING = #{parentCoding,jdbcType=NVARCHAR}
   </select>
+   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from ecm_storage_column
     where ID = #{id,jdbcType=NVARCHAR}

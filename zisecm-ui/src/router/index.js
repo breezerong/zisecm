@@ -47,6 +47,15 @@ const router = new Router({
         docexchange,
         ...testRouter,
         ...adminRouter,
+        {
+          meta: {
+            requireAuth: true,
+            title: 'mainContainer'
+          },
+          path: "/container",
+          name: "内容容器",
+          component: () => import("@/views/MainContainer.vue")
+        },
         // 图标组件
         {
           path: '/icons',
@@ -66,11 +75,6 @@ const router = new Router({
       name: "帮助中心",
       component: () =>
         import(/* webpackChunkName: "helpcenter" */ "@/views/HelpCenter.vue")
-    },
-    {
-      path: "/container",
-      name: "内容容器",
-      component: () => import("@/views/MainContainer.vue")
     },
     {
       meta: {

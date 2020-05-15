@@ -460,7 +460,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(params),
-          url: "/dc/addReuseToVolume"
+          url: "/dcexchange/addReuseToVolume"
         })
         .then(function(response) {
           _self.loadGridData(null);
@@ -868,7 +868,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/dc/removeFromArchive"
+          url: "/dcexchange/removeFromArchive"
         })
         .then(function(response) {
           _self.showInnerFile(null);
@@ -1331,7 +1331,7 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/dc/delDocumentAndRelation"
+          url: "/dcexchange/delDocumentAndRelation"
         })
         .then(function(response) {
           _self.loadGridData(null);
@@ -1659,7 +1659,7 @@ export default {
               },
               method: "post",
               data:JSON.stringify(m),
-              url: "/dc/delDocumentAndRelation"
+              url: "/dcexchange/delDocumentAndRelation"
             })
             .then(function(response) {
               _self.loadTransferGridData();
