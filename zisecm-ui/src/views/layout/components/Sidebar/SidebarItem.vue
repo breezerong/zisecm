@@ -8,7 +8,12 @@
             <span slot="title">{{item.label}}</span>
           </template>
           <template v-for="sitem in item.submenus">
-            <router-link :to="sitem.url">
+            <el-menu-item v-if="urlIsExt(sitem.url)" @click="clickRouter(sitem.url)" :index="sitem.url" :key="sitem.id" :class="{'submenu-title-noDropdown':!isNest}">
+                  <!-- <svg-icon v-if="sitem.icon!=null" :icon-class="sitem.icon"></svg-icon> -->
+                  <i v-if="sitem.icon!=null" :class="sitem.icon  + ' menu-white'"></i>
+                  {{sitem.label}}
+              </el-menu-item>
+            <router-link v-else :to="sitem.url">
               <el-menu-item :index="sitem.url" :key="sitem.id" :class="{'submenu-title-noDropdown':!isNest}">
                   <!--<svg-icon v-if="sitem.icon!=null" :icon-class="sitem.icon"></svg-icon>-->
                    <i v-if="sitem.icon!=null" :class="sitem.icon  + ' menu-white'"></i> 

@@ -133,7 +133,8 @@
     "warehousing":"上架",
     "addToShopingCart":"添加到借阅单",
     "openShopingCart":"借阅单",
-    "theme": "主题"
+    "theme": "主题",
+    "more":"更多操作"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -218,7 +219,10 @@
     "systemReport": "系统报表",
     "storageReport": "馆藏报表",
     "workloadReport": "工作量报表",
-    "utilizationReport": "利用报表"
+    "utilizationReport": "利用报表",
+    "folderViewer":"文件夹查看",
+    "mainContainer":"内容容器",
+    "storageManager":"库房管理"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -246,7 +250,8 @@
     "signImageSize":"56X26, 100dpi, jpg",
     "differentPassword":"新密码和确认密码不相同！",
     "cannotChangePassword":"用户不能修改密码！",
-    "pleaseSelectOneTransfer":"请选择一条移交单数据"
+    "pleaseSelectOneTransfer":"请选择一条移交单数据",
+    "operationFaild":"操作失败"
 },
 "field": {
     "indexNumber":"序号",
