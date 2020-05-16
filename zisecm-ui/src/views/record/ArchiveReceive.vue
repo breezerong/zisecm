@@ -97,8 +97,8 @@ export default {
   permit: 1,
   data() {
     return {
-      leftTableHeight: window.innerHeight - 124,
-      rightTableHeight: (window.innerHeight - 180)/2,
+      leftTableHeight: window.innerHeight - 140,
+      rightTableHeight: (window.innerHeight - 230)/2,
       printsVisible: false,
       printVolumesVisible: false,
       archiveId: "",

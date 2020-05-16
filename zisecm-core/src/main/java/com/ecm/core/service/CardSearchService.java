@@ -43,7 +43,7 @@ public class CardSearchService extends EcmService{
 	public List<EcmFormItem> getFormItems(String token,String lang, String id){
 		EcmCardSearch en = getCardSearch(id);
 		if( en != null) {
-			List<EcmCardSearchItem> list = en.clone(token, true).getEcmCardSearchItems();
+			List<EcmCardSearchItem> list = en.clone(lang, true).getEcmCardSearchItems();
 			List<EcmFormItem> flist = new ArrayList<EcmFormItem>();
 			for(EcmCardSearchItem item:list) {
 				flist.add(item.getEcmFormItem());

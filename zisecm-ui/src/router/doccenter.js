@@ -105,15 +105,5 @@ export const dcRouter = [
 			path: '/dc/JTViewer',
 			component: () => import('@/views/dc/JTViewer.vue'),
 			name: 'JT查看'
-		},
-		{
-			meta: {
-				requireAuth: true,
-				permit: 1,
-				title:'storageManager'
-			},
-			path: '/dc/StorageRoom',
-			component: () => import('@/views/dc/StorageRoom.vue'),
-			name: '库房管理'
-		},
+		}
 	]

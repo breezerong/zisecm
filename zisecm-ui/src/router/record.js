@@ -29,6 +29,16 @@ export const recordRouter =  [
         name: '档案整理',
         component: () => import('@/views/record/ArchiveArrange.vue')
     },
+		{
+			meta: {
+				requireAuth: true,
+				permit: 1,
+				title:'storageManager'
+			},
+			path: '/record/StorageRoom',
+			component: () => import('@/views/record/StorageRoom.vue'),
+			name: '库房管理'
+		},
     {
         meta: {
             requireAuth: true,

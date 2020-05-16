@@ -2,6 +2,8 @@ package com.ecm.core.entity;
 
 import java.util.List;
 
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
+
 public class EcmFormItem extends EcmObject{
    
     /**
@@ -214,7 +216,7 @@ public class EcmFormItem extends EcmObject{
 		return validValues;
 	}
 	
-	public EcmFormItem clone() {
+	public EcmFormItem clone(String lang) {
 		EcmFormItem item = new EcmFormItem();
 		item.setAttrName(attrName);
 		item.setControlType(controlType);
@@ -222,7 +224,8 @@ public class EcmFormItem extends EcmObject{
 		item.setId(this.getId());
 		item.setIsHide(isHide);
 		item.setIsRepeat(isRepeat);
-		item.setLabel(label);
+		item.setLabel(CacheManagerLangInfo.getLanguageLabel(lang,label));
+		//item.setLabel(label);
 		item.setMaxCount(maxCount);
 		item.setMinCount(minCount);
 		item.setOrderIndex(orderIndex);

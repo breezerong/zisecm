@@ -50,7 +50,7 @@ public class EcmCardSearchItem extends EcmObject{
 		ecmFormItem = item;
 	}
 	
-	public EcmCardSearchItem clone() {
+	public EcmCardSearchItem clone(String langKey) {
 		EcmCardSearchItem en = new EcmCardSearchItem();
 		en.setFormItemId(getFormItemId());
 		en.setOrderIndex(getOrderIndex());
@@ -58,7 +58,7 @@ public class EcmCardSearchItem extends EcmObject{
 		en.setDescription(getDescription());
 		en.setId(getId());
 		if(ecmFormItem != null) {
-			en.setEcmFormItem(ecmFormItem.clone());
+			en.setEcmFormItem(ecmFormItem.clone(langKey));
 		}
 		return en;
 	}

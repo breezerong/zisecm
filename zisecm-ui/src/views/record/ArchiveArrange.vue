@@ -204,9 +204,9 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 202)/2,
-      asideHeight: window.innerHeight - 55,
-      treeHight: window.innerHeight - 95,
+      rightTableHeight: (window.innerHeight - 240)/2,
+      asideHeight: window.innerHeight - 110,
+      treeHight: window.innerHeight - 130,
       asideWidth: '100%',
       currentLanguage: this.getLang(),
       printsVisible:false,

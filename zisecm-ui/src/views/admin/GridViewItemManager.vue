@@ -55,7 +55,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveItem(form)">确 定</el-button>
+        <el-button type="primary" @click="saveItem(form,false)">确 定</el-button>
       </div>
     </el-dialog>
     <el-container>
@@ -147,7 +147,7 @@
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="saveItem(scope.row)"
+                @click="saveItem(scope.row,true)"
               >保存</el-button>
               <el-button
                 :plain="true"
@@ -290,8 +290,8 @@ export default {
       this.form.value = "";
       this.dialogVisible = true;
     },
-    saveItem(indata){
-      if(this.idEdit){
+    saveItem(indata,isEdit){
+      if(this.idEdit || isEdit){
         this.updateItem(indata);
       }else{
         this.addItem(indata);

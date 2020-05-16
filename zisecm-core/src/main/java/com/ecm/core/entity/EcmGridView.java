@@ -50,14 +50,8 @@ public class EcmGridView extends EcmSysObject{
 		if(gridViewItems != null && !StringUtils.isEmpty(langKey)) {
 			
 			for(EcmGridViewItem item : gridViewItems) {
-				String label = CacheManagerLangInfo.getLanguage(item.getLabel()).getLabel(langKey);
-				if(!StringUtils.isEmpty(label)) {
-					EcmGridViewItem itemc = item.clone();
-					itemc.setLabel(label);
-					list.add(itemc);
-				} else {
-					list.add(item);
-				}
+				EcmGridViewItem itemc = item.clone(langKey);
+				list.add(itemc);
 			}
 		}else {
 			list = gridViewItems;

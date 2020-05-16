@@ -327,9 +327,9 @@ export default {
         isIndeterminate: false
       },
       innerTableHeight: window.innerHeight - 360,
-      tableHeight: window.innerHeight - 135,
-      asideHeight: window.innerHeight - 50,
-      treeHeight: window.innerHeight - 95,
+      tableHeight: window.innerHeight - 160,
+      asideHeight: window.innerHeight - 100,
+      treeHeight: window.innerHeight - 120,
       asideWidth: '100%',
       currentLanguage: "zh-cn",
       propertyVisible: false,
@@ -554,7 +554,7 @@ export default {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
           _self.itemCount = response.data.pager.total;
-          _self.tableHeight= window.innerHeight - 150
+          _self.tableHeight= window.innerHeight - 160;
           //console.log(JSON.stringify(response.data.datalist));
           _self.tableLoading = false;
         });

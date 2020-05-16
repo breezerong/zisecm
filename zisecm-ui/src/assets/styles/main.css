@@ -89,7 +89,7 @@ img {
  .el-table col{
   text-align:left; 
  }
-
+/*
  .el-menu-vertical-ecm{
   display: inline-block;
   text-align:left; 
@@ -109,7 +109,7 @@ img {
     line-height: 48px;
     margin: 0;
     border: none;
-    /*border-bottom: 2px solid transparent;*/
+    //border-bottom: 2px solid transparent;
     color: #ffffff;
     background-color: #36a9e1;
 }
@@ -121,14 +121,14 @@ img {
     color: #ffffff;
     background-color: #36a9e1;
 }
-/* .el-menu--horizontal .is-active {
+ .el-menu--horizontal .is-active {
   color: #000000 !important;
   
-} */
+} 
 .el-menu--horizontal {
     border: none;
     background-color: #36a9e1;
-}
+}*/
 .el-header, .el-footer {
     background-color: #36a9e1;
     color: #333;

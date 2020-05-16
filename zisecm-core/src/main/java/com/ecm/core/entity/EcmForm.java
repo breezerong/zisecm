@@ -95,14 +95,7 @@ public class EcmForm extends EcmSysObject {
 		if(ecmFormItems != null ) {
 			
 			for(EcmFormItem item : ecmFormItems) {
-				String label = item.getLabel();
-				if(!StringUtils.isEmpty(langKey)) {
-					label = CacheManagerLangInfo.getLanguage(item.getLabel()).getLabel(langKey);
-				}
-				EcmFormItem itemc = item.clone();
-				if(!StringUtils.isEmpty(label)) {
-					itemc.setLabel(label);
-				}
+				EcmFormItem itemc = item.clone(langKey);
 				String defaultValue = itemc.getDefaultValue();
 				if("{now}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(DateUtils.currentDate("yyyy-MM-dd"));

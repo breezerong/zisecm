@@ -1,5 +1,7 @@
 package com.ecm.core.entity;
 
+import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
+
 public class EcmGridViewItem extends EcmObject{
     /**
 	 * 
@@ -76,11 +78,11 @@ public class EcmGridViewItem extends EcmObject{
         this.orderIndex = orderIndex;
     }
     
-    public EcmGridViewItem clone() {
+    public EcmGridViewItem clone(String lang) {
     	EcmGridViewItem item = new EcmGridViewItem();
     	item.setAttrName(attrName);
     	item.setId(getId());
-    	item.setLabel(label);
+    	item.setLabel(CacheManagerLangInfo.getLanguageLabel(lang,label));
     	item.setOrderIndex(orderIndex);
     	item.setVisibleType(visibleType);
     	item.setWidth(width);

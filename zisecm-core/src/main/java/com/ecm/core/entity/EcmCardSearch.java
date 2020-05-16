@@ -98,8 +98,8 @@ public class EcmCardSearch extends EcmSysObject{
 		en.setOrderIndex(getOrderIndex());
 		en.setGridView(this.getGridView());
 		en.setEnabled(isEnabled());
-		String key = lang + "_system_" + langKey;
-		String lan = CacheManagerOper.getLanguages().get(key);
+	
+		String lan = CacheManagerOper.getLanguages().get(langKey);
 		if(lan != null && lan.length()>0) {
 			en.setLabel(lan);
 		}else {
@@ -109,15 +109,8 @@ public class EcmCardSearch extends EcmSysObject{
 			if(ecmCardSearchItems != null) {
 				List<EcmCardSearchItem> list = new ArrayList<EcmCardSearchItem>();
 				for(EcmCardSearchItem item : ecmCardSearchItems) {
-					EcmCardSearchItem newItem = item.clone();
-					if(newItem.getEcmFormItem() != null) {
-						String label = CacheManagerLangInfo.getLanguage(newItem.getEcmFormItem().getLabel()).getLabel(langKey);
-						//如果类型属性未定义，获取默认标签
-						if(label != null && label.length()>0) {
-							newItem.getEcmFormItem().setLabel(label);
-						}
-						list.add(newItem);
-					}
+					EcmCardSearchItem newItem = item.clone(lang);
+					list.add(newItem);
 				}
 				en.setEcmCardSearchItems(list);
 			}

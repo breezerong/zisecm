@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-container>
-      <el-aside :width="asideWidth">
+      <el-aside :width="asideWidth" class="">
         <div style="text-align:left;cursor:pointer;" @click="handleClose">
           <i v-if="isCollapse==false" class="el-icon-s-fold"></i>
           <i v-else class="el-icon-s-unfold"></i>
@@ -9,39 +9,43 @@
         <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航-->
           <el-menu
-            default-active="1"
-            class="el-menu-vertical-ecm"
+            default-active="$route.path"
             :collapse="isCollapse"
             :default-openeds="opens"
-            style="background-color:#D3DCE6"
+            style="background-color:#6959CD"
+            text-color="white"
+      		  active-text-color="#42b983"
             ref = "searchMenu"
           >
+
             <router-link to="/search/fulltextsearch">
-              <el-menu-item index="1">
-                <i class="el-icon-document"></i>
+              <el-menu-item index="/search/fulltextsearch">
+                <i class="el-icon-document  menu-white"></i>
                 <span slot="title"  style="font-size:16px">{{$t('route.fullTextSearch')}}</span>
               </el-menu-item>
             </router-link>
-            <el-submenu index="10">
+            <el-submenu index="1000">
               <template slot="title">
-                <i class="el-icon-document-copy"></i>
+                <i class="el-icon-document-copy  menu-white"></i>
                 <span  style="font-size:16px">{{$t('route.cardSearch')}}</span>
               </template>
-              <div v-for="(item,index) in cardList" :key="'C_'+index">
-                <router-link :to="{path:'/search/cardSearch',query:{id:item.id}}">
-                  <el-menu-item :index="(index+100)+''" @click="clickRouter(item.id)">
-                    <i class="el-icon-tickets"></i>
+              <template v-for="(item,index) in cardList">
+                <router-link :to="{path:'/search/cardSearch',query:{id:item.id}}" :key="item.id">
+                  <el-menu-item :index="'/search/cardSearch?id='+item.id">
+                    <i class="el-icon-tickets  menu-white"></i>
                     <span slot="title">{{item.label}}</span>
                   </el-menu-item>
                 </router-link>
-              </div>
+              </template>
             </el-submenu>
-            <el-menu-item index="3">
-              <i class="el-icon-s-grid"></i>
+            <router-link to="/search/advsearch">
+            <el-menu-item index="/search/advsearch">
+              <i class="el-icon-s-grid  menu-white"></i>
               <span slot="title"  style="font-size:16px">
-                <router-link to="/search/advsearch">{{$t('route.advSearch')}}</router-link>
+                {{$t('route.advSearch')}}
               </span>
             </el-menu-item>
+            </router-link>
             <!--
             <el-menu-item index="4">
               <i class="el-icon-user"></i>
@@ -66,11 +70,11 @@ export default {
   name: "SearchCenter",
   data() {
     return {
-      opens: ["10"],
+      opens: ["1000"],
       username: "",
       cardList: [],
       clientPermission: 0,
-      menuHeight: window.innerHeight - 85,
+      menuHeight: window.innerHeight - 120,
       isCollapse: false,
       asideWidth: "160px"
     };
@@ -83,7 +87,7 @@ export default {
         "access-clientPermission"
       );
     }
-    _self.$router.push({ path: "/search/fulltextsearch" });
+    // _self.$router.push({ path: "/search/fulltextsearch" });
     _self.loadCards();
   },
   methods: {
@@ -121,7 +125,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 body > .el-container {
   padding: 0px;
   margin-top: 0px;
@@ -129,10 +133,34 @@ body > .el-container {
   margin-right: 0px;
   margin-bottom: 0px;
 }
-.el-submenu .el-menu-item {
-  height: 32px;
-  line-height: 32px;
-  padding: 0 36px;
-  min-width: 200px;
+
+#app .sidebar-container .nest-menu .el-submenu>.el-submenu__title, #app .sidebar-container .el-submenu .el-menu-item {
+   
+    background-color: #7171C6 !important;
+}
+
+.el-menu, .el-menu-item{
+  background-color: #7171C6 !important;
+}
+.el-submenu {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    background-color: #7171C6 !important;
+}
+.el-menu-item:focus, .el-menu-item:hover {
+  background-color: #5a5a9c !important;
+}
+.el-main {
+    display: block;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    -ms-flex-preferred-size: auto;
+    flex-basis: auto;
+    overflow: auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 2px;
 }
 </style>
