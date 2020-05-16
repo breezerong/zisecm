@@ -242,4 +242,9 @@
     "type":"Type",
     "permission":"Permission",
     "expireDate":"Expire Date"
+},
+"tagsView": {
+"close": "Close",
+"closeOthers": "Close Others",
+"closeAll": "Close All"
 }}

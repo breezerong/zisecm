@@ -276,4 +276,9 @@
     "type":"类型",
     "permission":"权限",
     "expireDate":"到期日期"
+},
+"tagsView": {
+"close": "关闭",
+"closeOthers": "关闭其它",
+"closeAll": "关闭所有"
 }}
