@@ -8,6 +8,7 @@ import './plugins/element.js'
 import './plugins/axios.js'
 import './plugins/formatter.js'
 import echarts from 'echarts'
+import addToShoppingCar from './plugins/shoppingcar'
 
 import ImgViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
@@ -28,6 +29,7 @@ import { global } from '@/global/global'
 
 Vue.component('split-pane', splitPane);
 Vue.prototype.$video = Video
+Vue.prototype.addToShoppingCar=addToShoppingCar
 Vue.use(ImgViewer)
 Vue.config.productionTip = false
 Vue.prototype.getLang = function (){

@@ -196,6 +196,7 @@
           v-bind:isshowOption="true" v-bind:isshowSelection ="true"
           v-bind:propertyComponent="this.$refs.ShowProperty"
           @dbclick="dbclick"
+          @rowclick="rowClick"
           @selectchange="selectChange"
           @refreshdatagrid="refreshMain"
         ></DataGrid>
@@ -349,6 +350,9 @@ export default {
     this.loadGridData();
   },
   methods: {
+    rowClick(row){
+      this.selectRow=row;
+    },
     refreshMain(){
       this.loadGridData();
     },
@@ -375,6 +379,10 @@ export default {
       let _self=this;
       _self.transferId=row.ID;
       _self.innerTransferVisible=true;
+      this.$nextTick(()=>{
+        _self.$refs.InnerTransferDoc.loadGridInfo();
+        _self.$refs.InnerTransferDoc.loadGridData();
+      });
       
       
     },

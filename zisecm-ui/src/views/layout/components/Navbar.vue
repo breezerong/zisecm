@@ -8,7 +8,7 @@
      
       <!-- <error-log class="errLog-container right-menu-item"></error-log> -->
       <span class="ecm-help" title="购物车">
-        <router-link to="/shoppingCart" >
+        <router-link to="/docexchange/shoppingCart" >
           <svg-icon icon-class="shopping" />
         </router-link>&nbsp;
       </span>

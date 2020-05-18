@@ -228,7 +228,9 @@
     "folderViewer":"文件夹查看",
     "mainContainer":"内容容器",
     "storageManager":"库房管理",
-    "createDocFile":"创建文件"
+    "createDocFile":"创建文件",
+    "shoppingCar":"购物车",
+    "transferOrder":"传递单"
 },
 "message": {
     "saveSuccess":"保存成功",

@@ -2,7 +2,8 @@ export const docexchange =  [
     {
         meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title:'transferOrder'
         },
         path: '/docexchange/docTransfer',
         name: '传递单',

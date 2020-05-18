@@ -131,7 +131,9 @@
     "createFileToTransfer":"Create File To Transfer",
     "addToTransfer":"Add To Transfer",
     "removeFromTransfer":"Remove From Transfer",
-    "addToShoppingCart":"Add To Shopping Car"
+    "addToShoppingCart":"Add To Shopping Car",
+    "shoppingCar":"Shopping Car",
+    "transferOrder":"Transfer"
 },
 "skin": {
     "Blue": "Blue",
