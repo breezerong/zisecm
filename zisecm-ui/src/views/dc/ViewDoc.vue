@@ -42,7 +42,7 @@
              <VideoPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
              <AudioPlayer v-else-if="viewerType==5" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
              <CADViewer v-else-if="viewerType==6" v-bind:id="doc.id" format="ocf"></CADViewer>
-             <JTViewer v-else-if="viewerType==7" v-bind:id="doc.id" format="obj"></JTViewer>
+             <JTViewer v-else-if="viewerType==7" v-bind:id="doc.id" format="obj" :fileName="doc.C_IMPORT_NAME"></JTViewer>
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
                 当前文件没有电子文件。
             </div>
@@ -115,7 +115,7 @@ import AudioPlayer from './AudioPlayer.vue'
 import InnerItemViewer from "./InnerItemViewer.vue"
 import ChangeDocViewer from "./ChangeDocViewer.vue"
 import CADViewer from "./CADViewer.vue"
-import JTViewer from "./JTViewer.vue"
+import JTViewer from "./JTViewer2.vue"
 import { timeout } from 'q'
 
 export default {
@@ -155,7 +155,8 @@ export default {
         permit:0,
         contentSize:0,
         hasPdf:false,
-        changeCount:0
+        changeCount:0,
+        C_IMPORT_NAME:''
       },
       message:"加载中。。。",
       watermarkText:"",
@@ -202,6 +203,7 @@ export default {
           _self.doc.format ="pdf";
         }
         _self.doc.typeName= _self.docObj.TYPE_NAME;
+        _self.doc.C_IMPORT_NAME=_self.docObj.C_IMPORT_NAME;
         _self.initViewerType();
         if(_self.viewerType>0 && _self.viewerType<100){
           _self.watermarkText =  sessionStorage.getItem("access-userName");

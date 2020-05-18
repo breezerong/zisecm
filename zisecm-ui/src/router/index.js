@@ -37,14 +37,14 @@ const router = new Router({
           component: () => import("@/views/HomeContent.vue"),
           name: "首页内容"
         },
-        docexchange,
+        ...docexchange,
         searchRouter,
         ...dcRouter,
         ...recordRouter,
         workflowRouter,
         reportRouter,
         userRouter,
-        docexchange,
+        // docexchange,
         ...testRouter,
         ...adminRouter,
         {
