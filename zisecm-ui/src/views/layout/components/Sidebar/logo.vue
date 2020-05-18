@@ -12,7 +12,7 @@
     </transition>
     <transition-group name="fade">
       <template v-if="!isCollapse">
-        <span class="logo_title is-bold" key="1"><img src="../../../../../static/img/logo.png" border="0">{{website.title}}</span>
+        <span class="logo_title is-bold" key="1"><img class="logo-img" src="../../../../../static/img/logo.png" border="0">{{$t('application.name')}}</span>
       </template>
     </transition-group>
   </div>
@@ -54,7 +54,7 @@ export default {
   justify-content: center;
   align-items: center;
   // width: 230px;
-  height: 64px;
+  height: 56px;
   line-height: 64px;
   background: #473C8B;
   color: #fdfdfd;
@@ -78,6 +78,11 @@ export default {
   // left: 20px;
 }
 .is-img {
+  position: absolute;
+  top: 10px;
+  left: 2px;
+}
+.logo-img {
   position: absolute;
   top: 10px;
   left: 2px;

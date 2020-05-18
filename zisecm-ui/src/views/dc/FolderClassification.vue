@@ -165,7 +165,7 @@
     </el-dialog>
  
         <el-row style="padding-top:10px;padding-bottom:10px;">
-          <el-col :span="5" style="text-align: left">
+          <el-col :span="4" style="text-align: left">
             <el-tooltip
               class="item"
               effect="dark"
@@ -405,9 +405,9 @@ export default {
       propertyVisible: false,
       dialogFormVisible: false,
       selectedItems: [],
-      asideHeight: window.innerHeight - 115,
-      treeHeight:window.innerHeight - 124,
-      tableHeight: window.innerHeight - 150,
+      asideHeight: window.innerHeight - 150,
+      treeHeight:window.innerHeight - 160,
+      tableHeight: window.innerHeight - 180,
       asideWidth: '100%',
       folderAction: "",
       folderDialogVisible: false,

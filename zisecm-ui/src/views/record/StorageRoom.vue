@@ -24,18 +24,21 @@
             </div>
         </el-dialog>
         
-        <el-container style="height: 500px; border: 1px solid #eee">
+        <el-container :style="{border: '1px', solid: '#eee',height: mainheight}" >
             <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
                 <el-container>
-                    <el-header style="text-align: right; font-size: 12px;height:10px;">
+                    <el-header style="height:24px;background-color:#D4D4D4">
+                        <el-col :span="16" style="font-size: 16px"> <span>库房</span></el-col>
+                        <el-col :span="8" style="text-align: right">
                         <el-dropdown>
-                            <i class="el-icon-setting" style="margin-right: 15px"></i>
+                            <i class="el-icon-caret-bottom" style="margin-right: 15px"></i>
                             <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item @click.native="beforeCreateStorageRoom()">新增</el-dropdown-item>
                             <el-dropdown-item @click.native="beforeUpdateRoom()">查看/修改</el-dropdown-item>
                             <el-dropdown-item @click.native="confirmDeleteStorageRoom()">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
+                        </el-col>
                     </el-header>
                     
                     <el-main>
@@ -65,15 +68,18 @@
                     </el-main>
                 </el-container>
                 <el-container style="background-color: #F0F8FF">
-                <el-header style="text-align: right; font-size: 12px;height:30px;">
+                <el-header style="height:24px; background-color:#D4D4D4">
+                    <el-col :span="16" style="font-size: 16px"> <span>列</span></el-col>
+                    <el-col :span="8" style="text-align: right">
                     <el-dropdown>
-                            <i class="el-icon-setting" style="margin-right: 15px"></i>
+                            <i class="el-icon-caret-bottom" style="margin-right: 15px"></i>
                             <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item @click.native="columnVisible=true">新增</el-dropdown-item>
                             <el-dropdown-item @click.native="beforeUpdateColumn">查看/修改</el-dropdown-item>
                             <el-dropdown-item @click.native="confirmDeleteStorageColumn">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
+                    </el-col>
                 </el-header>
                 <el-main>
                     <div class='line' v-for="(item,key) in columnList" 
@@ -88,15 +94,18 @@
             </el-aside>
             
             <el-container style="background-color:#D4D4D4">
-                <el-header style="text-align: right; font-size: 12px">
+                <el-header style="height:20px;background-color:#D4D4D4">
+                    <el-col :span="16" style="font-size: 16px"> <span>排</span></el-col>
+                    <el-col :span="8" style="text-align: right">
                      <el-dropdown>
-                            <i class="el-icon-setting" style="margin-right: 15px"></i>
+                            <i class="el-icon-caret-bottom" style="margin-right: 15px;font-size:18px"></i>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item @click.native="beforeCreateRow()">新增</el-dropdown-item>
                                 <el-dropdown-item @click.native="beforeUpdateRow">查看/修改</el-dropdown-item>
                                 <el-dropdown-item @click.native="confirmDeleteStorageRow">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
+                    </el-col>
                 </el-header>
                 <el-main>
                     <DataGrid
@@ -146,7 +155,8 @@ export default {
             showFields: [],
             selectedRoomId:'',
             selectedColumnId:'',
-            height: window.innerHeight - 300,
+            height: window.innerHeight - 170,
+            mainheight: window.innerHeight - 160,
         }
     },
     watch: {
