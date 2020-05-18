@@ -1,4 +1,4 @@
-export const docexchange =  
+export const docexchange =  [
     {
         meta: {
             requireAuth: true,
@@ -7,8 +7,38 @@ export const docexchange =
         path: '/docexchange/docTransfer',
         name: '传递单',
         component: () => import('@/views/docexchange/DocTransfer.vue')
+    },
+     {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:"shoppingCar"
+        },
+        path: '/docexchange/shoppingCart',
+        name: '购物车',
+        component: () => import('@/components/ShoppingCart.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'createDocFile'
+        },
+        path: '/docexchange/ChoiceType',
+        name: '类型选择',
+        component: () => import('@/views/docexchange/ChoiceType.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'createDocFile'
+        },
+        path: '/docexchange/CreateDoc',
+        name: '创建文件',
+        component: () => import('@/components/Properties.vue')
     }
-
+]
     
 // import Layout from "../views/layout/Layout";
 // export const docexchange =  

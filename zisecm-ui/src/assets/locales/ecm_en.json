@@ -127,7 +127,11 @@
     "fileBox":"FileBox",
     "warehousing":"Warehousing",
     "theme": "Theme",
-    "more":"more"
+    "more":"more",
+    "createFileToTransfer":"Create File To Transfer",
+    "addToTransfer":"Add To Transfer",
+    "removeFromTransfer":"Remove From Transfer",
+    "addToShoppingCart":"Add To Shopping Car"
 },
 "skin": {
     "Blue": "Blue",
@@ -189,7 +193,9 @@
     "showdrawingfinishtask":"Show drawing finish task",
     "folderViewer":"Folder Viewer",
     "mainContainer":"Main Container",
-    "storageManager":"StorageManager"
+    "storageManager":"StorageManager",
+    "createDocFile":"Create Doc File",
+    "shoppingCar":"Shopping Car"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -242,4 +248,9 @@
     "type":"Type",
     "permission":"Permission",
     "expireDate":"Expire Date"
+},
+"tagsView": {
+"close": "Close",
+"closeOthers": "Close Others",
+"closeAll": "Close All"
 }}
