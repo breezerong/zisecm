@@ -337,6 +337,7 @@ export default {
 <style scoped>
 .aside-rigth .el-button{
   margin-bottom: 5px;
+  margin-left: 5px;
 }
 .doccontent{
   min-height: 640px;
@@ -346,7 +347,21 @@ export default {
 }
 .el-header{
   color: white;
+  background-color: #36a9e1;
   padding-top: 15px;
   padding-left: 15px;
+}
+
+.el-main {
+    display: block;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    -ms-flex-preferred-size: auto;
+    flex-basis: auto;
+    overflow: auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0px;
 }
 </style>
