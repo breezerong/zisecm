@@ -6,7 +6,7 @@
             <el-aside width="200px">
               <div v-bind:style="{height: menuHeight +'px'}">
               <!--左侧导航-->
-              <el-menu default-active="11" class="el-menu-vertical-ecm" :open="11">
+              <el-menu :defaultOpeneds="['10']" class="el-menu-vertical-ecm" :open="11">
                 <el-submenu index="10">
                   <template slot="title">
                     <i class="el-icon-news"></i>
@@ -60,7 +60,7 @@ export default {
     {
       _self.clientPermission = sessionStorage.getItem('access-clientPermission');
     }
-    _self.$router.push({path: "/report/collectionreport"});
+    // _self.$router.push({path: "/report/collectionreport"});
   },
   methods: {
   

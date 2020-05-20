@@ -45,14 +45,14 @@ public class ArchiveReportController extends ControllerAbstract {
 				Map<String, Object> countMap = new HashMap<>();
 				String countSql = "";
 				countSql = "select C_ARC_CLASSIC as fileType, "
-						+ "SUM(TYPE_NAME = '卷盒' and STATUS = '利用') as boxNum, "
-						+ "SUM(TYPE_NAME = '图册' and STATUS = '利用') as atlasNum, "
-						+ "SUM(TYPE_NAME <> '图册' and TYPE_NAME <> '卷盒' and STATUS = '利用') as fileNum "
+						+ "SUM(case when TYPE_NAME = '卷盒' and STATUS = '利用' then 1 end) as boxNum, "
+						+ "SUM(case when TYPE_NAME = '图册' and STATUS = '利用' then 1 end) as atlasNum, "
+						+ "SUM(case when TYPE_NAME <> '图册' and TYPE_NAME <> '卷盒' and STATUS = '利用' then 1 end) as fileNum "
 						+ "from ecm_document where C_ARC_CLASSIC = '" + ecmFolder.getName() + "' "
 						+ "and ((C_ARCHIVE_DATE is null and C_DOC_DATE BETWEEN '"+args.get("firstTime")+"' "
-						+ "and '"+args.get("endTime")+"') or (C_ARCHIVE_DATE is not null and C_ARCHIVE_DATE BETWEEN '"+args.get("firstTime")+"' and '"+args.get("endTime")+"'))";
+						+ "and '"+args.get("endTime")+"') or (C_ARCHIVE_DATE is not null and C_ARCHIVE_DATE BETWEEN '"+args.get("firstTime")+"' and '"+args.get("endTime")+"'))  group by C_ARC_CLASSIC";
 				List<Map<String, Object>> countList = queryService.executeSQL(getToken(), countSql);
-				if (countList.get(0)!= null) {
+				if (countList!=null&&countList.size()>0&&countList.get(0)!= null) {
 					for (Map<String, Object> count : countList) {
 						countMap.put("typeName", ecmFolder.getName());
 						countMap.put("boxNum", count.get("boxNum"));
@@ -97,13 +97,13 @@ public class ArchiveReportController extends ControllerAbstract {
 					Map<String, Object> countMap = new HashMap<>();
 					String countSql = "";
 					countSql = "select C_ARC_CLASSIC as fileType,"
-							+ "SUM(TYPE_NAME = '卷盒' and STATUS = '利用') as boxNum, "
-							+ "SUM(TYPE_NAME = '图册' and STATUS = '利用') as atlasNum, "
-							+ "SUM(TYPE_NAME <> '图册' and TYPE_NAME <> '卷盒' and STATUS = '利用') as fileNum "
+							+ "SUM(case when TYPE_NAME = '卷盒' and STATUS = '利用' then 1 end) as boxNum, "
+							+ "SUM(case when TYPE_NAME = '图册' and STATUS = '利用' then 1 end) as atlasNum, "
+							+ "SUM(case when TYPE_NAME <> '图册' and TYPE_NAME <> '卷盒' and STATUS = '利用' then 1 end) as fileNum "
 							+ "from ecm_document where C_ARC_CLASSIC = '"+ecmFolder.getName()+"' AND C_INSTORE_USER='"+user+"'  and C_INSTORE_DATE BETWEEN "
-							+ "'"+args.get("firstTime")+"' and '"+args.get("endTime")+"'";
+							+ "'"+args.get("firstTime")+"' and '"+args.get("endTime")+"' group by C_ARC_CLASSIC";
 					List<Map<String, Object>> countList = queryService.executeSQL(getToken(), countSql);
-					if (countList.get(0)!= null) {
+					if (countList!=null&&countList.size()>0&&countList.get(0)!= null) {
 						for (Map<String, Object> count : countList) {
 							countMap.put("userName", user);
 							countMap.put("typeName", ecmFolder.getName());

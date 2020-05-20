@@ -2,8 +2,8 @@
   <div>
     <div class="navbar">
       <el-breadcrumb>
-        <el-breadcrumb-item>{{$t('menu.fileManage')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{$t('menu.batchUpdate')}}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{$t('route.fileManage')}}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{$t('route.batchUpdate')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div>
@@ -31,7 +31,7 @@
               </el-upload>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="4" style="float:right;">
             <el-button type="primary" plain  icon="el-icon-upload2" @click="batchUpdate()">开始更新</el-button>
           </el-col>
         </el-row>
