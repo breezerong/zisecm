@@ -164,7 +164,7 @@ export default {
     {
       let _self = this;
       _self.loading = true;
-      if(_self.myItemId!=undefined &&_self.myItemId != '')
+      if(_self.myItemId!=undefined && _self.myItemId != '')
       {
         _self.myTypeName = "";
       }
@@ -237,7 +237,7 @@ export default {
           }
         }
       }
-      if(_self.myItemId!='')
+      if(_self.myItemId != undefined && _self.myItemId!='')
       {
         m.set('ID',_self.myItemId);
       }
@@ -255,7 +255,7 @@ export default {
         formdata.append("uploadFile",_self.file.raw);
       }
       // console.log(JSON.stringify(m));
-      if(_self.myItemId=='')
+      if(_self.myItemId!=undefined || _self.myItemId=='')
       {
         axios.post("/dc/newDocument",formdata,{
             'Content-Type': 'multipart/form-data'
