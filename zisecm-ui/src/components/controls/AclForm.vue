@@ -76,7 +76,7 @@
        <el-table-column :label="$t('field.type')"  width="60">
           <template slot-scope="scope">
             <i v-if="scope.row.targetType==1" class="el-icon-user" :title="$t('application.user')"></i>
-            <i v-if="scope.row.targetType==2" class="el-icon-ecm-friend" :title="$t('application.role')"></i>
+            <i v-if="scope.row.targetType==2" class="iconfont zisecm-friend" :title="$t('application.role')"></i>
           </template>
         </el-table-column>
       <el-table-column :label="$t('field.name')" prop="targetName" min-width="20%"></el-table-column>
