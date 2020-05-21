@@ -90,6 +90,19 @@ export default {
         _self.loading = false;
       });
     },
+    startWorkflow(){
+      let _self = this;
+      _self.loading =true;
+      let m = new  Map();
+      m.set("formId",_self.wfData.formId);
+      axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
+        console.log(response);  
+        _self.loading = false;
+      }).catch(function(error){
+        console.log(error);
+        _self.loading = false;
+      });
+    },
     testWorkflow(){
       let _self = this;
       _self.loading =true;

@@ -63,8 +63,8 @@ export default {
       form: {
         name: "编校审批",
         description: "我的测试流程说明",
-        processId: "BianJiaoShenPi1",
-        docId:"d36a49dc9c32474295a3efc8fbf9e085",
+        processId: "BianJiaoShenPi",
+        docId:"e757fa37dad74f5fb77eb32a9acd06c1",
         formId:"383036d87ddd4dddb79b83fb05372c36"
       },
       formLabelWidth: "120px"

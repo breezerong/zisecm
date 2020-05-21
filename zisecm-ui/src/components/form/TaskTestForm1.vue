@@ -1,27 +1,65 @@
      <template>
   <div>
-    <el-form ref="borrowForm" :model="borrowForm" style="width:100%" >
+    <el-form ref="taskForm" :model="taskForm" style="width:100%" >
       <el-row style="width:100%">
         <div >
            <el-col style="padding-top:3px;">
             <div v-for="(approver,index)  in approvalUserList" :key="'approver_'+index">
             <el-form-item :label="approver.activityName"  :label-width="formLabelWidth" style="float:left">
               <UserSelectInput
-                v-model="borrowForm[approver.formAttribute]"
-                v-bind:inputValue="borrowForm[approver.formAttribute]"
+                v-model="taskForm[approver.formAttribute]"
+                v-bind:inputValue="taskForm[approver.formAttribute]"
                 v-bind:roleName="approver.roleName"
               ></UserSelectInput>
             </el-form-item>
           </div>
           </el-col>
+          <el-col>
+            <el-form-item label="备注" :label-width="formLabelWidth" style="text-align:left">
+              <el-input
+                type="textarea"
+                :autosize="{minRows:3}"
+                v-model="taskForm.TITLE"
+                auto-complete="off"
+              ></el-input>
+            </el-form-item>
+          </el-col>   
+          <el-col>
+             <el-form-item label="文件" :label-width="formLabelWidth" style="text-align:left">
+                <el-button @click="viewdoc(docId)">查看文件</el-button>
+                 <el-button @click="importdialogVisible=true">上传文件</el-button>
+            </el-form-item>
+          </el-col>   
+
         </div>
       </el-row>
-    </el-form>
+           </el-form>
 
     <div slot="footer" class="dialog-footer" style="text-align:center" v-if="istask==false">
       <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
-      <el-button ref="borrowStartwf" @click="startWorkflow(borrowForm)">启动流程</el-button>
+      <el-button ref="borrowStartwf" @click="startWorkflow(taskForm)">启动流程</el-button>
     </div>
+    <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%" append-to-body>
+          
+          <el-form size="mini" :label-width="formLabelWidth">
+            
+            <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+              <el-upload
+                :limit="100"
+                :file-list="fileList" 
+                action=""
+                :on-change="handleChange"
+                :auto-upload="false"
+                :multiple="false">
+                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+              </el-upload>
+            </div>
+          </el-form> 
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="importdialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="uploadData(docId)">开始导入</el-button>
+          </div>
+        </el-dialog>
   </div>
 </template>
 
@@ -46,8 +84,10 @@ export default {
       approvalUserList: [],
       dialogTitle: "借阅",
       borrowDialogVisible: false,
-      componentName: "borrow", 
-      borrowForm: {
+      importdialogVisible:false,
+       fileList:[],
+     componentName: "borrow", 
+      taskForm: {
         C_DRAFTER: sessionStorage.getItem("access-userName"),
         C_DESC1: sessionStorage.getItem("access-department"),
         TITLE: "",
@@ -62,6 +102,7 @@ export default {
         STATUS: ""
       },
       formId: "",
+      docId: "",
       istask: 0,
       formEditPermision: 0,
       processDefinitionId: "",
@@ -85,11 +126,13 @@ export default {
     if (typeof _self.$route.query.istask != "undefined") {
       _self.formEditPermision = _self.$route.query.formEditPermision;
       _self.istask = _self.$route.query.istask;
+      _self.docId = _self.$route.query.docId;
       _self.processDefinitionId = _self.$route.query.processDefinitionId;
       _self.activityName = _self.$route.query.activityName;
   }
     _self.getApprovalUserList();
     // _self.loadGridView();
+    _self.loadData();
   },
   mounted() {
     let _self = this;
@@ -135,7 +178,7 @@ export default {
       axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
         let result = response.data;
         if (result.code == 1) {
-          _self.borrowForm = result.data;
+          _self.taskForm = result.data;
         }
       });
       axios
@@ -196,7 +239,7 @@ export default {
       m = _self.getFormdataMap();
 
       axios
-        .post("/dc/saveBorrowForm", m)
+        .post("/dc/saveTaskForm", m)
         .then(function(response) {
           console.log(response.data.data);
         })
@@ -205,7 +248,10 @@ export default {
           _self.loading = false;
         });
     },
-
+    getFormdataMap() {
+      let _self = this;
+      return  _self.taskForm;
+    },
 
     downloadAllFile() {
       let _self = this;
@@ -221,18 +267,61 @@ export default {
       );
     },
     viewdoc(indata) {
-      let condition = indata.ID;
       let href = this.$router.resolve({
         path: "/viewdoc",
         query: {
-          id: condition
+          id: indata
           //token: sessionStorage.getItem('access-token')
         }
       });
       //console.log(href);
       window.open(href.href, "_blank");
     },
-    // 绑定部门
+     handleChange(file, fileList){
+      this.fileList = fileList;
+    },
+getFormData(selId){
+      let _self = this;
+      let formdata = new FormData();
+      var data = {};
+      data["ID"]=selId;
+      formdata.append("metaData",JSON.stringify(data));
+      _self.fileList.forEach(function (file) {
+        //console.log(file.name);
+        formdata.append("uploadFile", file.raw, file.name);
+      });
+      return formdata;
+    },
+      //上传文件
+    uploadData(selId){
+      let _self = this;
+      let formdata = _self.getFormData(selId);
+      //console.log("UploadData getData");
+      //console.log(formdata);
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        datatype: 'json',
+        method: 'post',
+        data: formdata,
+        url: '/dc/mountFile'
+      })
+      .then(function(response) {
+        _self.importdialogVisible = false;
+        // _self.$message("导入成功!");
+        _self.$message({
+              showClose: true,
+              message: "导入成功!",
+              duration: 2000,
+              type: 'success'
+            });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+    },
+       // 绑定部门
     bindDepartment() {
       let _self = this;
       _self.showDepartMentList = 1;
@@ -251,16 +340,12 @@ export default {
           console.log(error);
         });
     },
-    addCreationUnit() {
-      let _self = this;
-      _self.borrowForm.C_CREATION_UNIT = _self.currentGroupData.name;
-    },
     // 部门点击事件
     handleNodeClick(indata) {
       let _self = this;
       _self.currentGroupData = indata;
       if (_self.currentRootGroupData[0].name != _self.currentGroupData.name) {
-        _self.borrowForm.C_CREATION_UNIT = _self.currentGroupData.name;
+        _self.taskForm.C_CREATION_UNIT = _self.currentGroupData.name;
       }
       _self.selectedGroupItemId = indata.id;
       var m = new Map();

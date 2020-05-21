@@ -276,7 +276,7 @@ public class StartBJSPExecutorListener implements ExecutionListener, JavaDelegat
 			default:
 				break;
 			}
-			arg0.setTransientVariables(varMap);
+			arg0.setVariables(varMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

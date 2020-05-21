@@ -338,10 +338,21 @@ public class WorkflowController extends ControllerAbstract {
 			map = resultListTemp.get(i);
 			for (int j = 0; j < varInstanceList.size(); j++) {
 				if (map.get("processInstanceId").equals(varInstanceList.get(j).getProcessInstanceId())) {
-					if ("startUser".equals(varInstanceList.get(j).getVariableName())) {
+					switch (varInstanceList.get(j).getVariableName()) {
+					case "startUser":
 						map.put("startUser", varInstanceList.get(j).getValue());
-					} else if ("formId".equals(varInstanceList.get(j).getVariableName())) {
+						break;
+
+					case "formId":
 						map.put("formId", varInstanceList.get(j).getValue());
+						break;
+
+					case "docId":
+						map.put("docId", varInstanceList.get(j).getValue());
+						break;
+
+					default:
+						break;
 					}
 				}
 			}
