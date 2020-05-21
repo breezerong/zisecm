@@ -21,7 +21,8 @@
         </el-col>
          <el-col :span="8">
            <el-button type="primary" plain icon="save" @click="deployProcess()">发布流程</el-button> 
-           <el-button type="primary" plain icon="save" @click="startWorkflow()">启动流程</el-button> 
+           <el-button type="primary" plain icon="save" @click="startBorrowWorkflow()">启动借阅流程</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow()">启动编校审批流程</el-button> 
            <el-button type="primary" plain icon="save" @click="testWorkflow()">完成任务</el-button> 
          </el-col>
       </el-row>
@@ -76,12 +77,12 @@ export default {
         _self.loading = false;
       });
     },
-    startWorkflow(){
+    startBorrowWorkflow(){
       let _self = this;
       _self.loading =true;
       let m = new  Map();
       m.set("formId",_self.wfData.formId);
-      axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
+      axios.post("/workflow/startBorrowWorkflow",JSON.stringify(m)).then(function(response){
         console.log(response);  
         _self.loading = false;
       }).catch(function(error){

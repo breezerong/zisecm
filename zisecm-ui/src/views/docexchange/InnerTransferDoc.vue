@@ -14,7 +14,7 @@
           <el-select
             name="selectName"
             v-model="selectedTypeName"
-            placeholder="$t('application.selectFileType')"
+            :placeholder="$t('application.selectFileType')"
             style="display:block;"
           >
             <div v-for="(name,nameIndex) in typeNames" :key="'T_'+nameIndex">

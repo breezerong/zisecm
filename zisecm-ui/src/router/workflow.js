@@ -25,9 +25,9 @@ export const workflowRouter =
                 requireAuth: true,
                 permit: 1
               },
-              path: '/borrow1',
+              path: '/taskTestForm1',
               name: '测试1',
-              component: () => import('@/components/form/Borrow.vue')
+              component: () => import('@/components/form/TaskTestForm1.vue')
               
             }
           ]
