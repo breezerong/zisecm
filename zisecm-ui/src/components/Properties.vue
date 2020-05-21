@@ -36,22 +36,25 @@
         </el-col>
       </template>
     </el-row>
+    <el-row>
       <el-form-item style="float:left"  label="文件类型" >{{typeName}}</el-form-item>
-      <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;">
+      <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;" class="topbar-button">
         <el-upload
         :limit="1"
         :file-list="fileList" 
         action=""
         :on-change="handleChange"
         :auto-upload="false"
-        :multiple="false">
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        :multiple="false" >
+        <el-button slot="trigger"  size="small" type="primary">选取文件</el-button>
         </el-upload>
       </div>
-      <div>
-        <el-button type="primary" @click="download()">编辑文件</el-button>
+      <div class="topbar-button">
+        <el-button type="primary"  size="small" @click="download()">编辑文件</el-button>
       </div>
+    </el-row>
     </el-form>
+    
     <div slot="footer" class="dialog-footer">
         <el-button>取 消</el-button>
         <el-button type="primary" @click="saveItem()">保存</el-button>

@@ -637,11 +637,16 @@ export default {
         });
     },
     getSelectedIds() {
-      var str = "";
-      this.selectedItems.forEach(function(val) {
-        str += val.ID + ";";
-      });
-      return str;
+      if(this.isMoveFolder)
+      {
+        return this.currentFolder.id;
+      }else{
+        var str = "";
+        this.selectedItems.forEach(function(val) {
+          str += val.ID + ";";
+        });
+        return str;
+      }
     },
     rowClick(row) {
       this.currentId = row.ID;
