@@ -32,7 +32,7 @@
       @close="propertyVisible = false"
       width="96%"
     >
-    <el-tabs type="border-card">
+    <el-tabs type="border-card" >
       <el-tab-pane label="基本信息">
         <ShowProperty
           ref="ShowProperty"
@@ -56,6 +56,16 @@
           v-bind:name="currentDocument.ACL_NAME"
           v-bind:docId="currentDocument.ID"
         ></ObjectAcl>
+      </el-tab-pane>
+      <el-tab-pane label="启动流程" >
+        <StartWorkflow
+          ref="StartWorkflow"
+          @onSaved="onSaved"
+          width="100%"
+          v-bind:itemId="selectedItemId"
+          v-bind:folderId="currentFolder.id"
+          v-bind:typeName="currentFolder.typeName"
+        ></StartWorkflow>
       </el-tab-pane>
     </el-tabs>
       
@@ -302,7 +312,7 @@
                   </div>
                 </div>
               </div>
-              <el-table-column :label="$t('application.operation')" width="140">
+              <el-table-column :label="$t('application.operation')" width="210">
                 <template slot="header">
                   <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
                 </template>
@@ -322,6 +332,14 @@
                     :title="$t('application.property')"
                     icon="el-icon-info"
                     @click="showItemProperty(scope.row)"
+                  ></el-button>
+                  <el-button
+                    type="primary"
+                    plain
+                    size="small"
+                    :title="$t('application.property')"
+                    icon="el-icon-info"
+                    @click="showsStartBJSPWorkflow(scope.row)"
                   ></el-button>
                 </template>
               </el-table-column>
@@ -352,6 +370,7 @@ import InnerItemViewer from "./InnerItemViewer.vue";
 import ObjectAcl from '@/components/controls/ObjectAcl';
 import SystemInfo from '@/components/controls/SystemInfo';
 import FolderAcl from '@/components/controls/FolderAcl';
+import StartWorkflow from '@/views/workflow/StartWorkflow';
 
 import "url-search-params-polyfill";
 
@@ -364,10 +383,12 @@ export default {
     FolderSelector: FolderSelector,
     ObjectAcl: ObjectAcl,
     SystemInfo: SystemInfo,
-    FolderAcl:FolderAcl
+    FolderAcl:FolderAcl,
+    StartWorkflow: StartWorkflow
   },
   data() {
     return {
+      activeTab:"基本信息",
       targetFolderId: "",
       moveDialogVisible: false,
       udialogVisible: false,
@@ -893,6 +914,17 @@ export default {
       if (_self.$refs.SystemInfo) {
         _self.$refs.SystemInfo.itemData = indata;
         _self.$refs.SystemInfo.refreshData();
+      }
+    },
+    // 查看属性
+    showsStartBJSPWorkflow(indata) {
+      let _self = this;
+      _self.currentDocument = indata;
+      _self.selectedItemId = indata.ID;
+      _self.propertyVisible = true;
+      _self.activeTab="启动流程";
+      if (_self.$refs.StartWorkflow) {
+        _self.$refs.StartWorkflow.docId = indata.ID;
       }
     },
     // 查看内容

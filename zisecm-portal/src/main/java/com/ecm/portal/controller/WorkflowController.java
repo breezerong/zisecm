@@ -123,8 +123,8 @@ public class WorkflowController extends ControllerAbstract {
 	public String deploymentProcessExpense() throws Exception {
 
 		// 流程部署
-		Deployment deployment = repositoryService.createDeployment().addInputStream("借阅流程.bpmn",
-				new FileInputStream("C:\\Workfolder\\zisecm\\zisecm-portal\\src\\main\\resources\\diagrams\\借阅流程.bpmn"))
+		Deployment deployment = repositoryService.createDeployment().addInputStream("编校审批.bpmn",
+				new FileInputStream("C:\\Workfolder\\zisecm\\zisecm-portal\\src\\main\\resources\\diagrams\\编校审批.bpmn"))
 		// .addClasspathResource("resources/diagrams/借阅流程.bpmn")
 //	                .name("借阅流程")
 				.deploy();

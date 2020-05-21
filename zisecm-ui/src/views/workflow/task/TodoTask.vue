@@ -418,10 +418,10 @@ showOrHiddenDelegate(){
           _self.ecmCfgActivity= response.data.data;
           _self.$router.replace({
               // path: response.data.data.component.url,
-              path: "/borrow1",
+              path: "/taskTestForm1",
               query: {
                 tabledata: _self.taskTableData,
-                borrowFormId: _self.form.formId,
+                formId: _self.form.formId,
                 istask: 1,
                 processDefinitionId: _self.currentData.processDefinitionId,
                 activityName: _self.currentData.name,
