@@ -90,7 +90,8 @@ export const dcRouter = [
 		{
 			meta: {
 				requireAuth: true,
-				permit: 1
+				permit: 1,
+				title:'recycleBin'
 			},
 			path: '/dc/recyclebin',
 			component: () => import('@/views/dc/RecycleBin.vue'),

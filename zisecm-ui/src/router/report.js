@@ -2,7 +2,8 @@ export const reportRouter = {
 
 	meta: {
 		requireAuth: true,
-		permit: 7
+		permit: 7,
+		title:'reportCenter'
 	},
 	path: '/reportcenter',
 	component: () => import('@/views/ReportCenter.vue'),

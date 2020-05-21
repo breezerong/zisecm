@@ -2,7 +2,7 @@
   <div>
     <div class="navbar">
       <el-breadcrumb>
-        <el-breadcrumb-item>{{$t('menu.fileManage')}}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{$t('route.fileManage')}}</el-breadcrumb-item>
         <el-breadcrumb-item>服务端批量导入</el-breadcrumb-item>
       </el-breadcrumb>
     </div>

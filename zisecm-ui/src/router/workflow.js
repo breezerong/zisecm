@@ -2,7 +2,8 @@ export const workflowRouter =
 {
   meta: {
     requireAuth: true,
-    permit: 1
+    permit: 1,
+    title: 'taskCenter'
   },
   path: '/taskcenter',
   name: '任务中心',
@@ -12,7 +13,8 @@ export const workflowRouter =
         {
           meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title: 'todoTask'
           },
           path: '/workflow/todotask',
           name: '待办工作',
@@ -34,7 +36,8 @@ export const workflowRouter =
         {
           meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title: "doneTask"
           },
           path: '/workflow/donetask',
           name: '已办工作',
@@ -56,7 +59,8 @@ export const workflowRouter =
         {
           meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title: 'myWorkflow'
           },
           path: '/workflow/myworkflow',
           name: '我的流程',
@@ -65,7 +69,7 @@ export const workflowRouter =
             {
               meta: {
                 requireAuth: true,
-                permit: 1
+                permit: 1,
               },
               path: '/borrow3',
               name: '测试3',
@@ -76,7 +80,8 @@ export const workflowRouter =
         },{
           meta: {
             requireAuth: true,
-            permit: 1
+            permit: 1,
+            title: 'waitingBack'
           },
           path: '/record/archiveoutgoing/archivegivebackmine',
           name: '待归还',

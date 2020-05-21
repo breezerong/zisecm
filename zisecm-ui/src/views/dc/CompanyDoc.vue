@@ -327,7 +327,7 @@ export default {
         isIndeterminate: false
       },
       innerTableHeight: window.innerHeight - 360,
-      tableHeight: window.innerHeight - 160,
+      tableHeight: window.innerHeight - 170,
       asideHeight: window.innerHeight - 100,
       treeHeight: window.innerHeight - 120,
       asideWidth: '100%',
@@ -554,7 +554,7 @@ export default {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
           _self.itemCount = response.data.pager.total;
-          _self.tableHeight= window.innerHeight - 160;
+          _self.tableHeight= window.innerHeight - 170;
           //console.log(JSON.stringify(response.data.datalist));
           _self.tableLoading = false;
         });

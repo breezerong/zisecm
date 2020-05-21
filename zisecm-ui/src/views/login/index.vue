@@ -4,7 +4,7 @@
       <div class="logo" style="margin-top:-426px">
           <img src="../../../static/img/logo.png" width="160px" height="160px" alt="logo" style="vertical-align: middle;" />
       </div>
-      <h2 class="login-info-title">{{website.info.title}}</h2>
+      <h2 class="login-info-title">{{$t("application.name")}}</h2>
       <ul class="login-info-list">
         <li class="login-info-item" v-for="item in website.info.list">
           <i class="el-icon-check"></i>&nbsp;{{item}}
@@ -13,7 +13,7 @@
     </div>
     <div class="login-border  animated fadeInRight">
       <div class="login-main">
-        <h4 class="login-title">登录{{website.title}}
+        <h4 class="login-title">登录{{$t("application.name")}}
         </h4>
         <el-tabs v-model="activeName">
           <el-tab-pane label="用户密码" name="user">

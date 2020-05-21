@@ -58,6 +58,10 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 		return ecmRelationMapper.deleteByPrimaryKey(((com.ecm.core.entity.EcmRelation)obj).getId())>0;
 	}
 	
+	public boolean deleteObject(String token, String objId) throws EcmException {
+		// TODO Auto-generated method stub
+		return ecmRelationMapper.deleteByPrimaryKey(objId)>0;
+	}
 	@Override
 	public String newObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub

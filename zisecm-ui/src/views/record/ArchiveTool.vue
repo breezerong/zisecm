@@ -8,15 +8,15 @@
                   <el-submenu index="200">
                     <template slot="title">
                       <i class="el-icon-menu"></i>
-                      <span>{{$t('menu.archiveTool')}}</span>
+                      <span>{{$t('route.archiveTool')}}</span>
                     </template>
                     <el-menu-item index="201">
                       <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/record/batchupdate">{{$t('menu.batchUpdate')}}</router-link></span>
+                      <span slot="title"><router-link to="/record/batchupdate">{{$t('route.batchUpdate')}}</router-link></span>
                     </el-menu-item>
                     <el-menu-item index="202">
                       <i class="el-icon-caret-right"></i>
-                      <span slot="title"><router-link to="/record/batchmount">{{$t('menu.batchMount')}}</router-link></span>
+                      <span slot="title"><router-link to="/record/batchmount">{{$t('route.batchmount')}}</router-link></span>
                     </el-menu-item>
                     <!--
                     <el-menu-item index="202">

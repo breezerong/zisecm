@@ -41,6 +41,8 @@ import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.dao.EcmRelationMapper;
 import com.ecm.core.dao.EcmShopingCartMapper;
+import com.ecm.core.db.DBBase;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.ChartBean;
 import com.ecm.core.entity.EcmAcl;
 import com.ecm.core.entity.EcmContent;
@@ -942,7 +944,9 @@ public class EcmDcController extends ControllerAbstract {
 					+ "') as readCount,");
 			sql.append("(select count(*) from ecm_audit_general where ACTION_NAME='ecm_download' and DOC_ID='" + id
 					+ "') as downloadCount");
-			sql.append(" from dual ");
+			if(DBBase.isOracle()||DBBase.isMySql()) {
+				sql.append(" from dual ");
+			}
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql.toString());
 			mp.put("data", list.get(0));
 			mp.put("code", ActionContext.SUCESS);
