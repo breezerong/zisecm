@@ -232,7 +232,12 @@
     "storageManager":"库房管理",
     "createDocFile":"创建文件",
     "shoppingCar":"购物车",
-    "transferOrder":"传递单"
+    "transferOrder":"传递单",
+    "todoTask": "待办工作",
+    "doneTask": "已办工作",
+    "myWorkflow": "我的流程",
+    "waitingBack": "待归还"
+
 },
 "message": {
     "saveSuccess":"保存成功",

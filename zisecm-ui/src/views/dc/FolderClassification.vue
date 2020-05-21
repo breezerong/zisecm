@@ -251,6 +251,7 @@
               @selection-change="selectChange"
               @sort-change="sortchange"
               @header-dragend="onHeaderDragend"
+              
               style="width: 100%"
             >
               <el-table-column type="selection" width="40" @selection-change="selectChange"></el-table-column>
@@ -304,7 +305,7 @@
               </div>
               <el-table-column :label="$t('application.operation')" width="140">
                 <template slot="header">
-                  <el-button icon="el-icon-s-grid" @click="dialogFormShow"></el-button>
+                  <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow"></el-button>
                 </template>
                 <template slot-scope="scope">
                   <el-button
