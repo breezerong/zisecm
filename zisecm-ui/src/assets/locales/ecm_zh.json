@@ -139,7 +139,9 @@
     "addToTransfer":"添加至传递单",
     "removeFromTransfer":"移除移交单",
     "addToShoppingCart":"添加至购物车",
-    "shoppingCar":"购物车"
+    "shoppingCar":"购物车",
+    "fileType":"文件类型",
+    "selectFileType":"请选择文件类型"
 },
 "skin": {
     "Blue": "天空蓝",

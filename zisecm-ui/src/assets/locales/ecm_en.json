@@ -133,7 +133,9 @@
     "removeFromTransfer":"Remove From Transfer",
     "addToShoppingCart":"Add To Shopping Car",
     "shoppingCar":"Shopping Car",
-    "transferOrder":"Transfer"
+    "transferOrder":"Transfer",
+    "fileType":"File Type",
+    "selectFileType":"Please Select File Type"
 },
 "skin": {
     "Blue": "Blue",
