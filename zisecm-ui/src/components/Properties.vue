@@ -254,10 +254,7 @@ export default {
         //console.log(_self.file);
         formdata.append("uploadFile",_self.file.raw);
       }
-      // console.log(JSON.stringify(m));
-      if(_self.myItemId!=undefined || _self.myItemId=='')
-      {
-        axios.post("/dc/newDocument",formdata,{
+      axios.post("/dc/createOrUpdateDoc",formdata,{
             'Content-Type': 'multipart/form-data'
           })
         .then(function(response) {
@@ -267,35 +264,6 @@ export default {
             _self.$message("保存成功！")
           }
           else{
-             _self.$message("新建失败!");
-          }
-        })
-        .catch(function(error) {
-          _self.$message("新建失败!");
-          console.log(error);
-        });
-      }
-      else
-      {
-        if(_self.permit<5){
-          _self.$message("您没有修改当前文件属性的权限!");
-          return ;
-        }
-        if(_self.clientPermission && _self.clientPermission<4){
-          if(m.get("STATUS")&&(m.get("STATUS")=="利用"||m.get("STATUS")=="销毁")){
-            _self.$message("请先下架后再修改属性!");
-            return ;
-          }
-        }
-        axios.post("/dc/saveDocument",JSON.stringify(m))
-        .then(function(response) {
-          let code = response.data.code;
-          //console.log(JSON.stringify(response));
-          if(code==1){
-             _self.$message("保存成功！")
-            // _self.$emit('onSaved','update');
-          }
-          else{
              _self.$message("保存失败!");
           }
         })
@@ -303,7 +271,57 @@ export default {
           _self.$message("保存失败!");
           console.log(error);
         });
-      }
+
+      // console.log(JSON.stringify(m));
+      // if(_self.myItemId!=undefined || _self.myItemId=='')
+      // {
+      //   axios.post("/dc/newDocument",formdata,{
+      //       'Content-Type': 'multipart/form-data'
+      //     })
+      //   .then(function(response) {
+      //     let code = response.data.code;
+      //     //console.log(JSON.stringify(response));
+      //     if(code==1){
+      //       _self.$message("保存成功！")
+      //     }
+      //     else{
+      //        _self.$message("新建失败!");
+      //     }
+      //   })
+      //   .catch(function(error) {
+      //     _self.$message("新建失败!");
+      //     console.log(error);
+      //   });
+      // }
+      // else
+      // {
+      //   if(_self.permit<5){
+      //     _self.$message("您没有修改当前文件属性的权限!");
+      //     return ;
+      //   }
+      //   if(_self.clientPermission && _self.clientPermission<4){
+      //     if(m.get("STATUS")&&(m.get("STATUS")=="利用"||m.get("STATUS")=="销毁")){
+      //       _self.$message("请先下架后再修改属性!");
+      //       return ;
+      //     }
+      //   }
+      //   axios.post("/dc/saveDocument",JSON.stringify(m))
+      //   .then(function(response) {
+      //     let code = response.data.code;
+      //     //console.log(JSON.stringify(response));
+      //     if(code==1){
+      //        _self.$message("保存成功！")
+      //       // _self.$emit('onSaved','update');
+      //     }
+      //     else{
+      //        _self.$message("保存失败!");
+      //     }
+      //   })
+      //   .catch(function(error) {
+      //     _self.$message("保存失败!");
+      //     console.log(error);
+      //   });
+      // }
     },
     bindData(indata)
     {

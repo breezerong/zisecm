@@ -376,6 +376,64 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		return null;
 	}
+	/**
+	 * 创建或修改文件属性或内容
+	 * @param token
+	 * @param doc 文件对象
+	 * @param content 内容对象
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public String creatOrUpdateObject(String token, EcmDocument doc, EcmContent content) throws Exception {
+		if(null==doc.getId()||"".equals(doc.getId())) {
+			doc.createId();
+			doc.setCurrent(true);
+			newObject(token, doc.getAttributes());
+		}else {
+			updateObject(token, doc.getAttributes());
+		}
+		
+		logger.info("doc id:{}", doc.getId());
+		
+		if (content != null) {
+			if (StringUtils.isEmpty(content.getFormatName())) {
+				throw new Exception("Format cannot be empty.");
+			}
+			
+			logger.info("content id:{}", content.getId());
+			content.setContentType(1);
+			content.setParentId(doc.getId());
+			logger.info("content parent id:{}", content.getParentId());
+			if (StringUtils.isEmpty(content.getStoreName())) {
+				String typeName=doc.getTypeName();
+				if(typeName==null||"".equals(typeName)) {
+					EcmDocument docx= getObjectById(token, doc.getId());
+					typeName=docx.getTypeName();
+				}
+				content.setStoreName(CacheManagerOper.getEcmDefTypes().get(typeName).getStoreName());
+			}
+			doc.setFormatName(content.getFormatName());
+			doc.setContentSize(content.getContentSize());
+			
+			EcmContent oldContent= getContent(token, doc.getId());
+			if(oldContent!=null) {
+				content.setId(oldContent.getId());
+				content.setFilePath(oldContent.getFilePath());
+				content.setDataTicket(oldContent.getDataTicket());
+				contentService.updateObject(token, content);
+			}else {
+				content.createId();
+				contentService.newObject(token, content);
+			}
+			doc.setFormatName(content.getFormatName());
+			doc.setContentSize(content.getContentSize());
+			updateObject(token, doc.getAttributes());
+		}
+		
+		
+		return doc.getId();
+	}
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)

@@ -609,7 +609,34 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("code", ActionContext.SUCESS);
 		return mp;
 	}
-
+	/**
+	 * 创建或修改文件
+	 * @param metaData 文件属性
+	 * @param uploadFile 文件内容
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/createOrUpdateDoc", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> createOrUpdateDoc(String metaData, MultipartFile uploadFile) throws Exception {
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		EcmContent en = null;
+		EcmDocument doc = new EcmDocument();
+		doc.setAttributes(args);
+		if (uploadFile != null) {
+			en = new EcmContent();
+			en.setName(uploadFile.getOriginalFilename());
+			en.setContentSize(uploadFile.getSize());
+			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+			en.setInputStream(uploadFile.getInputStream());
+		}
+		String id = documentService.creatOrUpdateObject(getToken(), doc, en);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("id", id);
+		return mp;
+	}
+	
 	@RequestMapping(value = "/dc/newDocument", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newDocument(String metaData, MultipartFile uploadFile) throws Exception {
