@@ -43,5 +43,7 @@ export default {
     font-weight:bold;
     color: #000000 !important;
 }
-
+.el-main {
+    padding: 2px !important;
+  }
 </style>

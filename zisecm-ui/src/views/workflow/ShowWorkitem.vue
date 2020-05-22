@@ -2,11 +2,6 @@
   <div>
       <table border="0" width="100%">
           <tr>
-            <td class="navbar">
-              /工作流/任务日志
-            </td>
-          </tr>
-          <tr>
             <td>
               <table border="0" width="100%" class="topbar">
                 <tr>

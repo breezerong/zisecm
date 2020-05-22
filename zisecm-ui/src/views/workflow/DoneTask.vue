@@ -44,14 +44,6 @@
             <el-button @click="showprocessDiagram()">显示流程图</el-button>
           </div>
         </el-dialog>
-                     <el-container>
-      <el-header>
-        <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>工作流</el-breadcrumb-item>
-          <el-breadcrumb-item>已办工作</el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-header>
-      <el-main>
             <el-table
                 :data="dataList"
                 border
@@ -87,8 +79,6 @@
               layout="total, sizes, prev, pager, next, jumper"
               :total="itemCount">
             </el-pagination>
-      </el-main>
-                     </el-container>
   </div>
 </template>
 
@@ -113,7 +103,7 @@ export default {
       currentPage: 1,
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 110,
+      tableHeight: window.innerHeight - 120,
       formLabelWidth: "120px",
       processDiagram:"",
       currentProcessId:"",

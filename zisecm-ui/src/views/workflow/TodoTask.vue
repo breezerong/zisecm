@@ -94,12 +94,6 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
-        <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>工作流</el-breadcrumb-item>
-          <el-breadcrumb-item>待办工作</el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-header>
       <el-main>
         <el-table
           :data="dataList"
@@ -359,15 +353,15 @@ export default {
         _self.formEditPermision = 0;
         _self.rejectButton = "驳回";
       }
-      _self.$router.replace({
-        path: "/borrow1",
-        query: {
-          tabledata: _self.taskTableData,
-          borrowFormId: _self.form.formId,
-          istask: 1,
-          formEditPermision: _self.formEditPermision
-        }
-      });
+      // _self.$router.replace({
+      //   path: "/borrow1",
+      //   query: {
+      //     tabledata: _self.taskTableData,
+      //     borrowFormId: _self.form.formId,
+      //     istask: 1,
+      //     formEditPermision: _self.formEditPermision
+      //   }
+      // });
       var m = new Map();
       m.set("processInstanceId", indata.processInstanceId);
       axios

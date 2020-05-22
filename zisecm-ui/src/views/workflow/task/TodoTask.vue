@@ -117,14 +117,6 @@
        <el-button @click="completetask(form)">完成任务</el-button>
       </div>
     </el-dialog>
-    <el-container>
-      <el-header>
-        <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>工作流</el-breadcrumb-item>
-          <el-breadcrumb-item>待办工作</el-breadcrumb-item>
-        </el-breadcrumb>
-      </el-header>
-      <el-main>
         <el-table
           :data="dataList"
           border
@@ -166,8 +158,6 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="itemCount"
         ></el-pagination>
-      </el-main>
-    </el-container>
   </div>
 </template>
 
@@ -197,7 +187,7 @@ export default {
       dialogVisible: false,
       dialogTitle: "查看任务",
       isCompleteSelected: false,
-      tableHeight: window.innerHeight - 110,
+      tableHeight: window.innerHeight - 120,
       delegateDialogVisible:false,
       delegateButton: "委托代理",
       ecmCfgActivity:[],
@@ -417,19 +407,19 @@ showOrHiddenDelegate(){
         .post("/workflow/getEcmCfgActivity", JSON.stringify(m))
         .then(function(response) {
           _self.ecmCfgActivity= response.data.data;
-          _self.$router.replace({
-              // path: response.data.data.component.url,
-              path: "/taskTestForm1",
-              query: {
-                tabledata: _self.taskTableData,
-                formId: _self.form.formId,
-                docId: indata.docId,
-                istask: 1,
-                processDefinitionId: _self.currentData.processDefinitionId,
-                activityName: _self.currentData.name,
-                formEditPermision: _self.formEditPermision
-              }
-            });
+          // _self.$router.replace({
+          //     // path: response.data.data.component.url,
+          //     path: "/taskTestForm1",
+          //     query: {
+          //       tabledata: _self.taskTableData,
+          //       formId: _self.form.formId,
+          //       docId: indata.docId,
+          //       istask: 1,
+          //       processDefinitionId: _self.currentData.processDefinitionId,
+          //       activityName: _self.currentData.name,
+          //       formEditPermision: _self.formEditPermision
+          //     }
+          //   });
             var m = new Map();
             m.set("processInstanceId", indata.processInstanceId);
             axios

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.AuditContext;
+import com.ecm.core.db.DBBase;
 import com.ecm.core.entity.ChartBean;
 
 @Service
@@ -98,6 +99,9 @@ public class ReportService {
 	 */
 	public ChartBean getLastYearDocData(String token) {
 		String sql ="select mygroup, count(*) as mycount from (SELECT DATE_FORMAT(CREATION_DATE, '%Y年%m月') as mygroup FROM ecm_document WHERE DATE_SUB(CURDATE(), INTERVAL 1 year) < Date(CREATION_DATE))a  group by mygroup order by mygroup";
+		if(DBBase.isSqlServer()) {
+			sql = "select mygroup, count(*) as mycount from (SELECT CONVERT(varchar(100),left(CREATION_DATE,7),10) as mygroup FROM ecm_document WHERE DATEADD(year, -1, getdate()) < CREATION_DATE)a  group by mygroup order by mygroup";
+		}
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {

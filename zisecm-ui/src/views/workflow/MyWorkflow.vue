@@ -59,12 +59,6 @@
         <el-button @click="showprocessDiagram()">显示流程图</el-button>
       </div>
     </el-dialog>
-    <el-container>
-      <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>工作流</el-breadcrumb-item>
-          <el-breadcrumb-item>我的流程</el-breadcrumb-item>
-        </el-breadcrumb> -->
         <el-row>
           <el-form ref="workflowForm" :model="workflowForm">
             <el-row class="topbar-button">
@@ -120,8 +114,6 @@
             </el-row>
           </el-form>
         </el-row>
-      </el-header>
-      <el-main>
         <el-table
           :data="dataList"
           border
@@ -199,8 +191,6 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="itemCount"
         ></el-pagination>
-      </el-main>
-    </el-container>
   </div>
 </template>
 
@@ -231,7 +221,7 @@ export default {
       currentPage: 1,
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 160,
+      tableHeight: window.innerHeight - 175,
       formLabelWidth: "80px",
       currentProcessId: "",
       workflowPicVisible: "",

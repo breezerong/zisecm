@@ -2,11 +2,6 @@
   <div>
       <table border="0" width="100%">
           <tr>
-            <td class="navbar">
-              /发起工作流
-            </td>
-          </tr>
-          <tr>
             <td>
               
             </td>
