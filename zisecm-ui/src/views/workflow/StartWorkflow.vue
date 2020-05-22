@@ -61,11 +61,11 @@ export default {
       dialogVisible: false,
       tableHeight: window.innerHeight - 140,
       form: {
-        name: "文件生效流程",
+        name: "编校审批",
         description: "我的测试流程说明",
-        processId: 1,
-        docId:81,
-        formId:84
+        processId: "BianJiaoShenPi",
+        docId:"e757fa37dad74f5fb77eb32a9acd06c1",
+        formId:"383036d87ddd4dddb79b83fb05372c36"
       },
       formLabelWidth: "120px"
     };
@@ -88,7 +88,7 @@ export default {
     startworkflow() {
       let _self = this;
       _self.loading = true;
-      axios.post('/zisecm/workflow/startWrokflow',JSON.stringify(_self.form))
+      axios.post('/workflow/startWorkflow',JSON.stringify(_self.form))
       .then(function(response) {
         _self.$message("发起流程成功!");
         _self.loading = false;

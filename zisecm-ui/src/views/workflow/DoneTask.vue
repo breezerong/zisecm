@@ -2,7 +2,7 @@
   <div>
     <el-dialog title="查看" :visible.sync="dialogVisible" v-if="dialogVisible" width="95%">
            <el-divider content-position="left">表单信息</el-divider>
-           <router-view ref="formRouter"></router-view>
+           <!-- <router-view ref="formRouter"></router-view> -->
           <el-divider content-position="left">流转意见</el-divider>
          <el-table
               :data="taskList"

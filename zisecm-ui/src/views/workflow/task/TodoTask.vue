@@ -284,57 +284,58 @@ export default {
       let _self = this;
       if (_self.isCompleteSelected) {
         _self.form.taskId = [];
-        _self.form.fromId = [];
+        _self.form.formId = [];
         for (let i = 0; i < _self.selectedItems.length; i++) {
           _self.form.taskId[i] = _self.selectedItems[i].id;
         }
       }
 
-      // _self.loading = true;
-      // if (_self.formEditPermision == 1) {
-        // let a = _self.$refs.formRouter.validateBorrowForm(_self);
-        // if (typeof a == "undefined") {
-        //   _self.loading = false;
-        //   return;
-        // }
-
-
-      //   axios
-      //     .post("/dc/saveBorrowForm", new Map())
-      //     .then(function(response) {
-      //       axios
-      //         .post("/workflow/completeTask", JSON.stringify(_self.form))
-      //         .then(function(response) {
-      //           _self.dialogVisible = false;
-      //           _self.refreshData();
-      //           _self.$message("完成任务成功!");
-      //           _self.$emit("refreshcount");
-      //           _self.loading = false;
-      //         })
-      //         .catch(function(error) {
-      //           console.log(error);
-      //           _self.loading = false;
-      //         });
-      //     })
-      //     .catch(function(error) {
-      //       console.log(error);
-      //       _self.loading = false;
-      //     });
-      // } else {
+      _self.loading = true;
+      if (_self.formEditPermision == 1) {
+          if(_self.currentData.processDefinitionId.split(":")[0]=="BianJiaoShenPi"){
+            let  docMap=_self.$refs.formRouter.getFormdataMap();
+              axios.post("/dc/saveDocument", docMap).then(function(response) {
+                  _self.completetaskFinal(_self);
+                }).catch(function(error) {
+                  console.log(error);
+                  _self.loading = false;
+                });
+          }else{
+              let a = _self.$refs.formRouter.validateBorrowForm(_self);
+              if (typeof a == "undefined") {
+                _self.loading = false;
+                return;
+              }
+              axios
+                .post("/dc/saveBorrowForm", new Map())
+                .then(function(response) {
+                  _self.completetaskFinal(_self);
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  _self.loading = false;
+                });
+          }
+      } else {
+            _self.completetaskFinal(_self);
+      }
+    },
+    completetaskFinal(indata){
+      let _self=indata;
         axios
-          .post("/workflow/completeTask", JSON.stringify(_self.form))
-          .then(function(response) {
-            _self.loading = false;
-            _self.dialogVisible = false;
-            _self.refreshData();
-            _self.$message("完成任务成功!");
-            _self.$emit("refreshcount");
-          })
-          .catch(function(error) {
-            _self.loading = false;
-            console.log(error);
-          });
-      // }
+              .post("/workflow/completeTask", JSON.stringify(_self.form))
+              .then(function(response) {
+                _self.dialogVisible = false;
+                _self.refreshData();
+                _self.$message("完成任务成功!");
+                _self.$emit("refreshcount");
+                _self.loading = false;
+              })
+              .catch(function(error) {
+                console.log(error);
+                _self.loading = false;
+              });
+
     },
     delegateTask(indata) {
        let _self = this;
@@ -401,11 +402,11 @@ showOrHiddenDelegate(){
       _self.form.formId = indata.formId;
       _self.dialogVisible = true;
       _self.taskTableData = [];
-      if ("借阅驳回" == indata.name) {
-        _self.formEditPermision = 1;
+       _self.formEditPermision = 1;
+     if ("借阅驳回" == indata.name) {
         _self.rejectButton = "结束";
       } else {
-        _self.formEditPermision = 0;
+        // _self.formEditPermision = 0;
         _self.rejectButton = "驳回";
       }
      //动态获取表单 显示查看或编辑页面 
@@ -418,10 +419,11 @@ showOrHiddenDelegate(){
           _self.ecmCfgActivity= response.data.data;
           _self.$router.replace({
               // path: response.data.data.component.url,
-              path: "/borrow1",
+              path: "/taskTestForm1",
               query: {
                 tabledata: _self.taskTableData,
-                borrowFormId: _self.form.formId,
+                formId: _self.form.formId,
+                docId: indata.docId,
                 istask: 1,
                 processDefinitionId: _self.currentData.processDefinitionId,
                 activityName: _self.currentData.name,

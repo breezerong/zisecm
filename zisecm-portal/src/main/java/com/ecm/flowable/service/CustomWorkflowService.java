@@ -142,7 +142,7 @@ public class CustomWorkflowService {
 	 */
 
 	@Transactional(rollbackFor = Exception.class)
-	public Map<String, Object> startWorkflow(IEcmSession session, Map<String, Object> args) {
+	public Map<String, Object> startBorrowWorkflow(IEcmSession session, Map<String, Object> args) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			String userName = session.getCurrentUser().getUserName();
@@ -150,6 +150,40 @@ public class CustomWorkflowService {
 			Authentication.setAuthenticatedUserId(userName);
 			args.put("startUser", userName);
 			ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process_borrow", args);
+			runtimeService.setProcessInstanceName(processInstance.getId(), processName);
+			// 创建流程日志
+			EcmAuditWorkflow audit = new EcmAuditWorkflow();
+			audit.createId();
+			audit.setProcessInstanceId(processInstance.getId());
+			audit.setProcessName(processInstance.getProcessDefinitionName());
+			audit.setProcessInstanceName(processName);
+			audit.setCreator(userName);
+			audit.setStartTime(processInstance.getStartTime());
+			audit.setFormId("formId");
+			ecmAuditWorkflowMapper.insert(audit);
+			result.put("code", ActionContext.SUCESS);
+			result.put("processID", processInstance.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("code", ActionContext.FAILURE);
+			result.put("message", e.getMessage());
+		}
+		return result;
+	}
+	/**
+	 * @param args
+	 * @return
+	 */
+
+	@Transactional(rollbackFor = Exception.class)
+	public Map<String, Object> startWorkflow(IEcmSession session, Map<String, Object> args) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			String userName = session.getCurrentUser().getUserName();
+			String processName = "编校审批 " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			Authentication.setAuthenticatedUserId(userName);
+			args.put("startUser", userName);
+			ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("BianJiaoShenPi", args);
 			runtimeService.setProcessInstanceName(processInstance.getId(), processName);
 			// 创建流程日志
 			EcmAuditWorkflow audit = new EcmAuditWorkflow();

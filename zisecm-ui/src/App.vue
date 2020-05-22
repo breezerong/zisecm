@@ -30,7 +30,7 @@ export default {
   width: 140px;
 }
 .el-table td,.el-table th{
-  padding:2px 0 !important;
+  padding:4px 0 !important;
 }
 .el-input__inner {
   height: 36px;

@@ -123,8 +123,8 @@ public class WorkflowController extends ControllerAbstract {
 	public String deploymentProcessExpense() throws Exception {
 
 		// 流程部署
-		Deployment deployment = repositoryService.createDeployment().addInputStream("借阅流程.bpmn",
-				new FileInputStream("C:\\Workfolder\\zisecm\\zisecm-portal\\src\\main\\resources\\diagrams\\借阅流程.bpmn"))
+		Deployment deployment = repositoryService.createDeployment().addInputStream("编校审批.bpmn",
+				new FileInputStream("C:\\Workfolder\\zisecm\\zisecm-portal\\src\\main\\resources\\diagrams\\编校审批.bpmn"))
 		// .addClasspathResource("resources/diagrams/借阅流程.bpmn")
 //	                .name("借阅流程")
 				.deploy();
@@ -338,10 +338,21 @@ public class WorkflowController extends ControllerAbstract {
 			map = resultListTemp.get(i);
 			for (int j = 0; j < varInstanceList.size(); j++) {
 				if (map.get("processInstanceId").equals(varInstanceList.get(j).getProcessInstanceId())) {
-					if ("startUser".equals(varInstanceList.get(j).getVariableName())) {
+					switch (varInstanceList.get(j).getVariableName()) {
+					case "startUser":
 						map.put("startUser", varInstanceList.get(j).getValue());
-					} else if ("formId".equals(varInstanceList.get(j).getVariableName())) {
+						break;
+
+					case "formId":
 						map.put("formId", varInstanceList.get(j).getValue());
+						break;
+
+					case "docId":
+						map.put("docId", varInstanceList.get(j).getValue());
+						break;
+
+					default:
+						break;
 					}
 				}
 			}
