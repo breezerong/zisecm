@@ -218,7 +218,7 @@ import PrintPage from "@/views/record/PrintPage";
 import PrintVolumes from "@/views/record/PrintVolumes";
 import AddReuse from "@/views/record/AddReuse";
 import InnerTransferDoc from "@/views/docexchange/InnerTransferDoc";
-import BatchImport from '@/components/controls/ImportDocument'
+import BatchImport from '@/components/controls/ImportDocumentTransfer'
 
 
 export default {
