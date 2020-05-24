@@ -1,36 +1,78 @@
 package com.ecm.core.entity;
 
+public class EcmDefAttribute extends EcmObject{
+   
+    private String name;
 
-public class EcmDefAttribute extends EcmSysObject {
-    
+    private String description;
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	private String typeId;
+    private String typeId;
 
     private Integer status;
-    
+
+    private String creator;
+
+    private String creationDate;
+
+    private String modifier;
+
+    private String modifiedDate;
+
     private Integer dataType;
 
     private Integer length;
 
     private String defaultValue;
 
-    private Boolean notNull;
+    private Byte notNull;
 
-    private Boolean isHidden;
+    private Byte isHidden;
 
-   
+    private String label;
+
+    private Byte searchable;
+
+    private Byte isRepeat;
+
+    private Integer minCount;
+
+    private Integer maxCount;
+
+    private Integer orderIndex;
+
+    private Integer maxLength;
+
+    private String validatePolicy;
+
+    private Byte required;
+
+    private String queryName;
+
+    private String valueList;
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
 
     public String getTypeId() {
         return typeId;
     }
 
     public void setTypeId(String typeId) {
-        this.typeId = typeId;
+        this.typeId = typeId == null ? null : typeId.trim();
     }
 
     public Integer getStatus() {
@@ -40,7 +82,39 @@ public class EcmDefAttribute extends EcmSysObject {
     public void setStatus(Integer status) {
         this.status = status;
     }
-   
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator == null ? null : creator.trim();
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate == null ? null : creationDate.trim();
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier == null ? null : modifier.trim();
+    }
+
+    public String getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(String modifiedDate) {
+        this.modifiedDate = modifiedDate == null ? null : modifiedDate.trim();
+    }
+
     public Integer getDataType() {
         return dataType;
     }
@@ -65,19 +139,107 @@ public class EcmDefAttribute extends EcmSysObject {
         this.defaultValue = defaultValue == null ? null : defaultValue.trim();
     }
 
-    public Boolean getNotNull() {
+    public Byte getNotNull() {
         return notNull;
     }
 
-    public void setNotNull(Boolean notNull) {
+    public void setNotNull(Byte notNull) {
         this.notNull = notNull;
     }
 
-    public Boolean getIsHidden() {
+    public Byte getIsHidden() {
         return isHidden;
     }
 
-    public void setIsHidden(Boolean isHidden) {
+    public void setIsHidden(Byte isHidden) {
         this.isHidden = isHidden;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label == null ? null : label.trim();
+    }
+
+    public Byte getSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(Byte searchable) {
+        this.searchable = searchable;
+    }
+
+    public Byte getIsRepeat() {
+        return isRepeat;
+    }
+
+    public void setIsRepeat(Byte isRepeat) {
+        this.isRepeat = isRepeat;
+    }
+
+    public Integer getMinCount() {
+        return minCount;
+    }
+
+    public void setMinCount(Integer minCount) {
+        this.minCount = minCount;
+    }
+
+    public Integer getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(Integer maxCount) {
+        this.maxCount = maxCount;
+    }
+
+    public Integer getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(Integer orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
+    public Integer getMaxLength() {
+        return maxLength;
+    }
+
+    public void setMaxLength(Integer maxLength) {
+        this.maxLength = maxLength;
+    }
+
+    public String getValidatePolicy() {
+        return validatePolicy;
+    }
+
+    public void setValidatePolicy(String validatePolicy) {
+        this.validatePolicy = validatePolicy == null ? null : validatePolicy.trim();
+    }
+
+    public Byte getRequired() {
+        return required;
+    }
+
+    public void setRequired(Byte required) {
+        this.required = required;
+    }
+
+    public String getQueryName() {
+        return queryName;
+    }
+
+    public void setQueryName(String queryName) {
+        this.queryName = queryName == null ? null : queryName.trim();
+    }
+
+    public String getValueList() {
+        return valueList;
+    }
+
+    public void setValueList(String valueList) {
+        this.valueList = valueList == null ? null : valueList.trim();
     }
 }

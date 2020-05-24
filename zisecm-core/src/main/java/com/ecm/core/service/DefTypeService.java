@@ -107,7 +107,7 @@ public class DefTypeService extends EcmObjectService<EcmDefType> implements IDef
 		newObject(token,obj);
 		obj = ecmDefType.selectByName(name);
 		if(obj!=null) {
-			List<EcmDefAttribute> list = ecmDefAttribute.selectByCondition(" TYPE_ID="+sourceId);
+			List<EcmDefAttribute> list = ecmDefAttribute.selectByCondition(" TYPE_ID='"+sourceId+"'");
 			for(EcmDefAttribute attrObj:list) {
 				attrObj.setId(null);
 				attrObj.setTypeId(obj.getId());

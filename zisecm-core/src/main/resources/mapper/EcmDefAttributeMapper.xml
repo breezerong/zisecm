@@ -2,29 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ecm.core.dao.EcmDefAttributeMapper">
   <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmDefAttribute">
-    <id column="ID" jdbcType="VARCHAR" property="id" />
-    <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
-    <result column="TYPE_ID" jdbcType="VARCHAR" property="typeId" />
+    <id column="ID" jdbcType="NVARCHAR" property="id" />
+    <result column="NAME" jdbcType="NVARCHAR" property="name" />
+    <result column="DESCRIPTION" jdbcType="NVARCHAR" property="description" />
+    <result column="TYPE_ID" jdbcType="NVARCHAR" property="typeId" />
     <result column="STATUS" jdbcType="INTEGER" property="status" />
-    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
-    <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
-    <result column="MODIFIER" jdbcType="VARCHAR" property="modifier" />
-    <result column="MODIFIED_DATE" jdbcType="TIMESTAMP" property="modifiedDate" />
+    <result column="CREATOR" jdbcType="NVARCHAR" property="creator" />
+    <result column="CREATION_DATE" jdbcType="NVARCHAR" property="creationDate" />
+    <result column="MODIFIER" jdbcType="NVARCHAR" property="modifier" />
+    <result column="MODIFIED_DATE" jdbcType="NVARCHAR" property="modifiedDate" />
     <result column="DATA_TYPE" jdbcType="INTEGER" property="dataType" />
     <result column="LENGTH" jdbcType="INTEGER" property="length" />
-    <result column="DEFAULT_VALUE" jdbcType="VARCHAR" property="defaultValue" />
-    <result column="NOT_NULL" jdbcType="BIT" property="notNull" />
-    <result column="IS_HIDDEN" jdbcType="BIT" property="isHidden" />
+    <result column="DEFAULT_VALUE" jdbcType="NVARCHAR" property="defaultValue" />
+    <result column="NOT_NULL" jdbcType="TINYINT" property="notNull" />
+    <result column="IS_HIDDEN" jdbcType="TINYINT" property="isHidden" />
+    <result column="LABEL" jdbcType="NVARCHAR" property="label" />
+    <result column="SEARCHABLE" jdbcType="TINYINT" property="searchable" />
+    <result column="IS_REPEAT" jdbcType="TINYINT" property="isRepeat" />
+    <result column="MIN_COUNT" jdbcType="INTEGER" property="minCount" />
+    <result column="MAX_COUNT" jdbcType="INTEGER" property="maxCount" />
+    <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
+    <result column="MAX_LENGTH" jdbcType="INTEGER" property="maxLength" />
+    <result column="VALIDATE_POLICY" jdbcType="NVARCHAR" property="validatePolicy" />
+    <result column="REQUIRED" jdbcType="TINYINT" property="required" />
+    <result column="QUERY_NAME" jdbcType="NVARCHAR" property="queryName" />
+    <result column="VALUE_LIST" jdbcType="NVARCHAR" property="valueList" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, DESCRIPTION, TYPE_ID, STATUS, CREATOR, CREATION_DATE, MODIFIER, MODIFIED_DATE, 
-    DATA_TYPE, LENGTH, DEFAULT_VALUE, NOT_NULL, IS_HIDDEN
+    DATA_TYPE, LENGTH, DEFAULT_VALUE, NOT_NULL, IS_HIDDEN, LABEL, SEARCHABLE, IS_REPEAT, 
+    MIN_COUNT, MAX_COUNT, ORDER_INDEX, MAX_LENGTH, VALIDATE_POLICY, REQUIRED, QUERY_NAME, 
+    VALUE_LIST
   </sql>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ecm_def_attribute order by NAME
+    from dbo.ecm_def_attribute
+    where ID = #{id,jdbcType=NVARCHAR}
   </select>
   <select id="selectByTypeId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -32,34 +46,36 @@
     from ecm_def_attribute
     where TYPE_ID = #{typeId,jdbcType=VARCHAR} order by NAME
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from ecm_def_attribute
-    where ID = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from ecm_def_attribute
-    where ID = #{id,jdbcType=VARCHAR}
-  </delete>
   <delete id="deleteByTypeId" parameterType="java.lang.String">
     delete from ecm_def_attribute
     where TYPE_ID = #{typeId,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from dbo.ecm_def_attribute
+    where ID = #{id,jdbcType=NVARCHAR}
+  </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    insert into ecm_def_attribute (ID, NAME, DESCRIPTION, 
+    insert into dbo.ecm_def_attribute (ID, NAME, DESCRIPTION, 
       TYPE_ID, STATUS, CREATOR, 
       CREATION_DATE, MODIFIER, MODIFIED_DATE, 
       DATA_TYPE, LENGTH, DEFAULT_VALUE, 
-      NOT_NULL, IS_HIDDEN)
-    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{typeId,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
-      #{creationDate,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, 
-      #{dataType,jdbcType=INTEGER}, #{length,jdbcType=INTEGER}, #{defaultValue,jdbcType=VARCHAR}, 
-      #{notNull,jdbcType=BIT}, #{isHidden,jdbcType=BIT})
+      NOT_NULL, IS_HIDDEN, LABEL, 
+      SEARCHABLE, IS_REPEAT, MIN_COUNT, 
+      MAX_COUNT, ORDER_INDEX, MAX_LENGTH, 
+      VALIDATE_POLICY, REQUIRED, QUERY_NAME, 
+      VALUE_LIST)
+    values (#{id,jdbcType=NVARCHAR}, #{name,jdbcType=NVARCHAR}, #{description,jdbcType=NVARCHAR}, 
+      #{typeId,jdbcType=NVARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=NVARCHAR}, 
+      #{creationDate,jdbcType=NVARCHAR}, #{modifier,jdbcType=NVARCHAR}, #{modifiedDate,jdbcType=NVARCHAR}, 
+      #{dataType,jdbcType=INTEGER}, #{length,jdbcType=INTEGER}, #{defaultValue,jdbcType=NVARCHAR}, 
+      #{notNull,jdbcType=TINYINT}, #{isHidden,jdbcType=TINYINT}, #{label,jdbcType=NVARCHAR}, 
+      #{searchable,jdbcType=TINYINT}, #{isRepeat,jdbcType=TINYINT}, #{minCount,jdbcType=INTEGER}, 
+      #{maxCount,jdbcType=INTEGER}, #{orderIndex,jdbcType=INTEGER}, #{maxLength,jdbcType=INTEGER}, 
+      #{validatePolicy,jdbcType=NVARCHAR}, #{required,jdbcType=TINYINT}, #{queryName,jdbcType=NVARCHAR}, 
+      #{valueList,jdbcType=NVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    insert into ecm_def_attribute
+    insert into dbo.ecm_def_attribute
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         ID,
@@ -103,34 +119,67 @@
       <if test="isHidden != null">
         IS_HIDDEN,
       </if>
+      <if test="label != null">
+        LABEL,
+      </if>
+      <if test="searchable != null">
+        SEARCHABLE,
+      </if>
+      <if test="isRepeat != null">
+        IS_REPEAT,
+      </if>
+      <if test="minCount != null">
+        MIN_COUNT,
+      </if>
+      <if test="maxCount != null">
+        MAX_COUNT,
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX,
+      </if>
+      <if test="maxLength != null">
+        MAX_LENGTH,
+      </if>
+      <if test="validatePolicy != null">
+        VALIDATE_POLICY,
+      </if>
+      <if test="required != null">
+        REQUIRED,
+      </if>
+      <if test="queryName != null">
+        QUERY_NAME,
+      </if>
+      <if test="valueList != null">
+        VALUE_LIST,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=VARCHAR},
+        #{id,jdbcType=NVARCHAR},
       </if>
       <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+        #{name,jdbcType=NVARCHAR},
       </if>
       <if test="description != null">
-        #{description,jdbcType=VARCHAR},
+        #{description,jdbcType=NVARCHAR},
       </if>
       <if test="typeId != null">
-        #{typeId,jdbcType=VARCHAR},
+        #{typeId,jdbcType=NVARCHAR},
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
       <if test="creator != null">
-        #{creator,jdbcType=VARCHAR},
+        #{creator,jdbcType=NVARCHAR},
       </if>
       <if test="creationDate != null">
-        #{creationDate,jdbcType=TIMESTAMP},
+        #{creationDate,jdbcType=NVARCHAR},
       </if>
       <if test="modifier != null">
-        #{modifier,jdbcType=VARCHAR},
+        #{modifier,jdbcType=NVARCHAR},
       </if>
       <if test="modifiedDate != null">
-        #{modifiedDate,jdbcType=TIMESTAMP},
+        #{modifiedDate,jdbcType=NVARCHAR},
       </if>
       <if test="dataType != null">
         #{dataType,jdbcType=INTEGER},
@@ -139,42 +188,75 @@
         #{length,jdbcType=INTEGER},
       </if>
       <if test="defaultValue != null">
-        #{defaultValue,jdbcType=VARCHAR},
+        #{defaultValue,jdbcType=NVARCHAR},
       </if>
       <if test="notNull != null">
-        #{notNull,jdbcType=BIT},
+        #{notNull,jdbcType=TINYINT},
       </if>
       <if test="isHidden != null">
-        #{isHidden,jdbcType=BIT},
+        #{isHidden,jdbcType=TINYINT},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=NVARCHAR},
+      </if>
+      <if test="searchable != null">
+        #{searchable,jdbcType=TINYINT},
+      </if>
+      <if test="isRepeat != null">
+        #{isRepeat,jdbcType=TINYINT},
+      </if>
+      <if test="minCount != null">
+        #{minCount,jdbcType=INTEGER},
+      </if>
+      <if test="maxCount != null">
+        #{maxCount,jdbcType=INTEGER},
+      </if>
+      <if test="orderIndex != null">
+        #{orderIndex,jdbcType=INTEGER},
+      </if>
+      <if test="maxLength != null">
+        #{maxLength,jdbcType=INTEGER},
+      </if>
+      <if test="validatePolicy != null">
+        #{validatePolicy,jdbcType=NVARCHAR},
+      </if>
+      <if test="required != null">
+        #{required,jdbcType=TINYINT},
+      </if>
+      <if test="queryName != null">
+        #{queryName,jdbcType=NVARCHAR},
+      </if>
+      <if test="valueList != null">
+        #{valueList,jdbcType=NVARCHAR},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    update ecm_def_attribute
+    update dbo.ecm_def_attribute
     <set>
       <if test="name != null">
-        NAME = #{name,jdbcType=VARCHAR},
+        NAME = #{name,jdbcType=NVARCHAR},
       </if>
       <if test="description != null">
-        DESCRIPTION = #{description,jdbcType=VARCHAR},
+        DESCRIPTION = #{description,jdbcType=NVARCHAR},
       </if>
       <if test="typeId != null">
-        TYPE_ID = #{typeId,jdbcType=VARCHAR},
+        TYPE_ID = #{typeId,jdbcType=NVARCHAR},
       </if>
       <if test="status != null">
         STATUS = #{status,jdbcType=INTEGER},
       </if>
       <if test="creator != null">
-        CREATOR = #{creator,jdbcType=VARCHAR},
+        CREATOR = #{creator,jdbcType=NVARCHAR},
       </if>
       <if test="creationDate != null">
-        CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+        CREATION_DATE = #{creationDate,jdbcType=NVARCHAR},
       </if>
       <if test="modifier != null">
-        MODIFIER = #{modifier,jdbcType=VARCHAR},
+        MODIFIER = #{modifier,jdbcType=NVARCHAR},
       </if>
       <if test="modifiedDate != null">
-        MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+        MODIFIED_DATE = #{modifiedDate,jdbcType=NVARCHAR},
       </if>
       <if test="dataType != null">
         DATA_TYPE = #{dataType,jdbcType=INTEGER},
@@ -183,32 +265,76 @@
         LENGTH = #{length,jdbcType=INTEGER},
       </if>
       <if test="defaultValue != null">
-        DEFAULT_VALUE = #{defaultValue,jdbcType=VARCHAR},
+        DEFAULT_VALUE = #{defaultValue,jdbcType=NVARCHAR},
       </if>
       <if test="notNull != null">
-        NOT_NULL = #{notNull,jdbcType=BIT},
+        NOT_NULL = #{notNull,jdbcType=TINYINT},
       </if>
       <if test="isHidden != null">
-        IS_HIDDEN = #{isHidden,jdbcType=BIT},
+        IS_HIDDEN = #{isHidden,jdbcType=TINYINT},
+      </if>
+      <if test="label != null">
+        LABEL = #{label,jdbcType=NVARCHAR},
+      </if>
+      <if test="searchable != null">
+        SEARCHABLE = #{searchable,jdbcType=TINYINT},
+      </if>
+      <if test="isRepeat != null">
+        IS_REPEAT = #{isRepeat,jdbcType=TINYINT},
+      </if>
+      <if test="minCount != null">
+        MIN_COUNT = #{minCount,jdbcType=INTEGER},
+      </if>
+      <if test="maxCount != null">
+        MAX_COUNT = #{maxCount,jdbcType=INTEGER},
+      </if>
+      <if test="orderIndex != null">
+        ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      </if>
+      <if test="maxLength != null">
+        MAX_LENGTH = #{maxLength,jdbcType=INTEGER},
+      </if>
+      <if test="validatePolicy != null">
+        VALIDATE_POLICY = #{validatePolicy,jdbcType=NVARCHAR},
+      </if>
+      <if test="required != null">
+        REQUIRED = #{required,jdbcType=TINYINT},
+      </if>
+      <if test="queryName != null">
+        QUERY_NAME = #{queryName,jdbcType=NVARCHAR},
+      </if>
+      <if test="valueList != null">
+        VALUE_LIST = #{valueList,jdbcType=NVARCHAR},
       </if>
     </set>
-    where ID = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    update ecm_def_attribute
-    set NAME = #{name,jdbcType=VARCHAR},
-      DESCRIPTION = #{description,jdbcType=VARCHAR},
-      TYPE_ID = #{typeId,jdbcType=VARCHAR},
+    update dbo.ecm_def_attribute
+    set NAME = #{name,jdbcType=NVARCHAR},
+      DESCRIPTION = #{description,jdbcType=NVARCHAR},
+      TYPE_ID = #{typeId,jdbcType=NVARCHAR},
       STATUS = #{status,jdbcType=INTEGER},
-      CREATOR = #{creator,jdbcType=VARCHAR},
-      CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
-      MODIFIER = #{modifier,jdbcType=VARCHAR},
-      MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
+      CREATOR = #{creator,jdbcType=NVARCHAR},
+      CREATION_DATE = #{creationDate,jdbcType=NVARCHAR},
+      MODIFIER = #{modifier,jdbcType=NVARCHAR},
+      MODIFIED_DATE = #{modifiedDate,jdbcType=NVARCHAR},
       DATA_TYPE = #{dataType,jdbcType=INTEGER},
       LENGTH = #{length,jdbcType=INTEGER},
-      DEFAULT_VALUE = #{defaultValue,jdbcType=VARCHAR},
-      NOT_NULL = #{notNull,jdbcType=BIT},
-      IS_HIDDEN = #{isHidden,jdbcType=BIT}
-    where ID = #{id,jdbcType=VARCHAR}
+      DEFAULT_VALUE = #{defaultValue,jdbcType=NVARCHAR},
+      NOT_NULL = #{notNull,jdbcType=TINYINT},
+      IS_HIDDEN = #{isHidden,jdbcType=TINYINT},
+      LABEL = #{label,jdbcType=NVARCHAR},
+      SEARCHABLE = #{searchable,jdbcType=TINYINT},
+      IS_REPEAT = #{isRepeat,jdbcType=TINYINT},
+      MIN_COUNT = #{minCount,jdbcType=INTEGER},
+      MAX_COUNT = #{maxCount,jdbcType=INTEGER},
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      MAX_LENGTH = #{maxLength,jdbcType=INTEGER},
+      VALIDATE_POLICY = #{validatePolicy,jdbcType=NVARCHAR},
+      REQUIRED = #{required,jdbcType=TINYINT},
+      QUERY_NAME = #{queryName,jdbcType=NVARCHAR},
+      VALUE_LIST = #{valueList,jdbcType=NVARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
   </update>
 </mapper>
