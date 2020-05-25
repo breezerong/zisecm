@@ -10,6 +10,7 @@
                 v-model="taskForm[approver.formAttribute]"
                 v-bind:inputValue="taskForm[approver.formAttribute]"
                 v-bind:roleName="approver.roleName"
+                
               ></UserSelectInput>
             </el-form-item>
           </div>
@@ -76,7 +77,6 @@ export default {
       gridviewName: "borrowGrid",
       gridList: [],
       currentLanguage: "zh-cn",
-      tabledata: [],
       dataList: [],
       loading: false,
       formLabelWidth: "120px",
@@ -101,12 +101,6 @@ export default {
         C_CREATION_UNIT: "",
         STATUS: ""
       },
-      formId: "",
-      docId: "",
-      istask: 0,
-      formEditPermision: 0,
-      processDefinitionId: "",
-      activityName: "",
       expireTimeOption: this.dateCheck(),
       defaultProps: {
         children: "children",
@@ -117,25 +111,44 @@ export default {
       currentGroupData: "",
       selectedGroupItemId: "",
       currentRootGroupData: ""
-    };
+   };
   },
-
+    props: {
+      //输入框默认显示值
+      formId: {
+        type: String,
+        default: ""
+      },
+      docId: {
+        type: String,
+        default: ""
+      },
+      istask: {
+        type: String,
+        default: "0"
+      },
+      processDefinitionId: {
+        type: String,
+        default: ""
+      },
+      activityName: {
+        type: String,
+        default: ""
+      },
+      formEditPermision: {
+        type: String,
+        default: "0"
+      }
+    },
   created() {
-    let _self = this;
-    _self.formId = _self.$route.query.formId;
-    if (typeof _self.$route.query.istask != "undefined") {
-      _self.formEditPermision = _self.$route.query.formEditPermision;
-      _self.istask = _self.$route.query.istask;
-      _self.docId = _self.$route.query.docId;
-      _self.processDefinitionId = _self.$route.query.processDefinitionId;
-      _self.activityName = _self.$route.query.activityName;
-  }
+    let _self = this
+
     _self.getApprovalUserList();
     // _self.loadGridView();
     _self.loadData();
   },
   mounted() {
-    let _self = this;
+   let _self = this;
     _self.bindDepartment();
   },
 
