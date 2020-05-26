@@ -1,6 +1,7 @@
 package com.ecm.core.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +21,12 @@ public class EcmGridView extends EcmSysObject{
 	private String typeName;
 
     private String orderBy;
+    
+    //类型， 0 系统，1用户
+    private Integer gridType=0;
+
+    //客户端标签
+    private String gridTag;
 
     public String getCondition() {
     	
@@ -70,5 +77,21 @@ public class EcmGridView extends EcmSysObject{
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+
+	public String getGridTag() {
+		return gridTag;
+	}
+
+	public void setGridTag(String gridTag) {
+		this.gridTag = gridTag;
+	}
+
+	public Integer getGridType() {
+		return gridType;
+	}
+
+	public void setGridType(Integer gridType) {
+		this.gridType = gridType;
 	}
 }

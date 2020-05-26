@@ -22,6 +22,10 @@ public class ReportService {
 	public ChartBean getLastYearUserLoginData(String token) {
 		String sql ="select mygroup, count(*) as mycount from (SELECT DATE_FORMAT(EXCUTE_DATE, '%Y年%m月') as mygroup FROM ecm_audit_general WHERE ACTION_NAME='"+
 				AuditContext.LOGIN+"' and DATE_SUB(CURDATE(), INTERVAL 1 year) < Date(EXCUTE_DATE))a  group by mygroup order by mygroup";
+		if(DBBase.isSqlServer()) {
+			sql = "select mygroup, count(*) as mycount from (SELECT CONVERT(varchar(100),left(EXCUTE_DATE,7),10) as mygroup FROM ecm_audit_general WHERE ACTION_NAME='" + 
+					AuditContext.LOGIN+"' and DATEADD(year, -1, getdate()) < EXCUTE_DATE)a  group by mygroup order by mygroup";
+		}
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {

@@ -255,21 +255,21 @@
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="edititem(scope.row)"
+                @click="editItem(scope.row)"
               >编辑</el-button>
               <el-button
                 :plain="true"
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="saveitem(scope.row)"
+                @click="saveItem(scope.row)"
               >保存</el-button>
               <el-button
                 :plain="true"
                 type="danger"
                 size="small"
                 icon="delete"
-                @click="delitem(scope.row)"
+                @click="delItem(scope.row)"
               >删除</el-button>
             </template>
           </el-table-column>
@@ -335,25 +335,7 @@ export default {
     } else {
       pid = "0";
     }
-    _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: pid,
-        url: "/admin/getFormItem"
-      })
-      .then(function(response) {
-        _self.dataListFull = response.data.data;
-        _self.dataList = response.data.data;
-        console.log(JSON.stringify(_self.dataListFull));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+    _self.refreshData();
   },
   methods: {
     startcheck() {
@@ -375,7 +357,7 @@ export default {
           },
           method: "post",
           data: pid,
-          url: "/admin/getFormItem"
+          url: "/admin/getDefAttributeByTypeId"
         })
         .then(function(response) {
           _self.dataListFull = response.data.data;
@@ -388,7 +370,7 @@ export default {
           _self.loading = false;
         });
     },
-    saveitem(indata) {
+    saveItem(indata) {
       let _self = this;
       _self
         .axios({
@@ -398,7 +380,7 @@ export default {
           datatype: "json",
           method: "post",
           data: JSON.stringify(indata),
-          url: "/admin/updateFormItem"
+          url: "/admin/updateDefAttribute"
         })
         .then(function(response) {
           _self.$message("保存成功!");
@@ -407,7 +389,7 @@ export default {
           console.log(error);
         });
     },
-    delitem(indata) {
+    delItem(indata) {
       let _self = this;
       _self
         .axios({
@@ -417,7 +399,7 @@ export default {
           datatype: "json",
           method: "post",
           data: JSON.stringify(indata),
-          url: "/admin/deleteFormItem"
+          url: "/admin/deleteDefAttribute"
         })
         .then(function(response) {
           _self.$message("删除成功!");
@@ -427,7 +409,7 @@ export default {
           console.log(error);
         });
     },
-    newitem() {
+    newItem() {
       this.dialogtitle = "添加";
       this.dialogVisible = true;
       this.form = {
@@ -464,7 +446,7 @@ export default {
             datatype: "json",
             method: "post",
             data: JSON.stringify(indata),
-            url: "/admin/newFormItem"
+            url: "/admin/newDefAttribute"
           })
           .then(function(response) {
             _self.dialogVisible = false;

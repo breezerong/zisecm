@@ -1,6 +1,7 @@
 package com.ecm.portal.controller.admin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,27 @@ public class DefAttributeController extends ControllerAbstract{
 		}
 		 return mp;
 	 }
+	 
+	 /**
+		 * 获取文档属性
+		 * @return
+		 */
+		 @ResponseBody
+		 @RequestMapping("/admin/getDefAttributeByTypeId")
+		 public   Map<String, Object>  getDefAttributeByTypeId(String typeId)  {
+			 List<EcmDefAttribute> list;
+			 Map<String, Object>   mp = new HashMap<String, Object> ();
+			try {
+				 list = attributeService.getAttributes(getToken(), typeId);
+				 mp.put("data", list);
+				 mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				mp.put("code", ActionContext.TIME_OUT);
+				mp.put("message", e.getMessage());
+			}
+			 return mp;
+		 }
 	 
 	 /**
 		 * 更新

@@ -77,7 +77,7 @@ public class DefAttributeService extends EcmObjectService<EcmDefAttribute> imple
 
 	@Override
 	public List<EcmDefAttribute> getAttributes(String token, String typeId) {
-		return ecmDefAttribute.selectByCondition(" TYPE_ID="+typeId);
+		return ecmDefAttribute.selectByCondition(" TYPE_ID='"+DBFactory.getDBConn().getDBUtils().getString(typeId)+"'");
 	}
 
 	@Override

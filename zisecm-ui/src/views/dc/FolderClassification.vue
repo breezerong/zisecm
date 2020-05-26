@@ -313,7 +313,7 @@
                   </div>
                 </div>
               </div>
-              <el-table-column :label="$t('application.operation')" width="210">
+              <el-table-column :label="$t('application.operation')" width="130">
                 <template slot="header">
                   <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow"></el-button>
                 </template>
@@ -333,14 +333,6 @@
                     :title="$t('application.property')"
                     icon="el-icon-info"
                     @click="showItemProperty(scope.row)"
-                  ></el-button>
-                  <el-button
-                    type="primary"
-                    plain
-                    size="small"
-                    :title="$t('application.property')"
-                    icon="el-icon-info"
-                    @click="showsStartBJSPWorkflow(scope.row)"
                   ></el-button>
                 </template>
               </el-table-column>
