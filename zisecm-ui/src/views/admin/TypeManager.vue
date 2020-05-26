@@ -94,8 +94,9 @@
               <el-input v-model="scope.row.status"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column label="操作" width="210">
             <template slot-scope="scope">
+              <router-link :to="{path:'/managercenter/defattrmanager',query:{parentid:scope.row.id,name:scope.row.name}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link>
               <el-button
                 :plain="true"
                 type="primary"

@@ -15,7 +15,6 @@
     <result column="LENGTH" jdbcType="INTEGER" property="length" />
     <result column="DEFAULT_VALUE" jdbcType="NVARCHAR" property="defaultValue" />
     <result column="NOT_NULL" jdbcType="TINYINT" property="notNull" />
-    <result column="IS_HIDDEN" jdbcType="TINYINT" property="isHidden" />
     <result column="LABEL" jdbcType="NVARCHAR" property="label" />
     <result column="SEARCHABLE" jdbcType="TINYINT" property="searchable" />
     <result column="IS_REPEAT" jdbcType="TINYINT" property="isRepeat" />
@@ -25,14 +24,11 @@
     <result column="MAX_LENGTH" jdbcType="INTEGER" property="maxLength" />
     <result column="VALIDATE_POLICY" jdbcType="NVARCHAR" property="validatePolicy" />
     <result column="REQUIRED" jdbcType="TINYINT" property="required" />
-    <result column="QUERY_NAME" jdbcType="NVARCHAR" property="queryName" />
-    <result column="VALUE_LIST" jdbcType="NVARCHAR" property="valueList" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, DESCRIPTION, TYPE_ID, STATUS, CREATOR, CREATION_DATE, MODIFIER, MODIFIED_DATE, 
-    DATA_TYPE, LENGTH, DEFAULT_VALUE, NOT_NULL, IS_HIDDEN, LABEL, SEARCHABLE, IS_REPEAT, 
-    MIN_COUNT, MAX_COUNT, ORDER_INDEX, MAX_LENGTH, VALIDATE_POLICY, REQUIRED, QUERY_NAME, 
-    VALUE_LIST
+    DATA_TYPE, LENGTH, DEFAULT_VALUE, NOT_NULL, LABEL, SEARCHABLE, IS_REPEAT, 
+    MIN_COUNT, MAX_COUNT, ORDER_INDEX, MAX_LENGTH, VALIDATE_POLICY, REQUIRED
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -59,20 +55,18 @@
       TYPE_ID, STATUS, CREATOR, 
       CREATION_DATE, MODIFIER, MODIFIED_DATE, 
       DATA_TYPE, LENGTH, DEFAULT_VALUE, 
-      NOT_NULL, IS_HIDDEN, LABEL, 
+      NOT_NULL, LABEL, 
       SEARCHABLE, IS_REPEAT, MIN_COUNT, 
       MAX_COUNT, ORDER_INDEX, MAX_LENGTH, 
-      VALIDATE_POLICY, REQUIRED, QUERY_NAME, 
-      VALUE_LIST)
+      VALIDATE_POLICY, REQUIRED)
     values (#{id,jdbcType=NVARCHAR}, #{name,jdbcType=NVARCHAR}, #{description,jdbcType=NVARCHAR}, 
       #{typeId,jdbcType=NVARCHAR}, #{status,jdbcType=INTEGER}, #{creator,jdbcType=NVARCHAR}, 
       #{creationDate,jdbcType=NVARCHAR}, #{modifier,jdbcType=NVARCHAR}, #{modifiedDate,jdbcType=NVARCHAR}, 
       #{dataType,jdbcType=INTEGER}, #{length,jdbcType=INTEGER}, #{defaultValue,jdbcType=NVARCHAR}, 
-      #{notNull,jdbcType=TINYINT}, #{isHidden,jdbcType=TINYINT}, #{label,jdbcType=NVARCHAR}, 
+      #{notNull,jdbcType=TINYINT}, #{label,jdbcType=NVARCHAR}, 
       #{searchable,jdbcType=TINYINT}, #{isRepeat,jdbcType=TINYINT}, #{minCount,jdbcType=INTEGER}, 
       #{maxCount,jdbcType=INTEGER}, #{orderIndex,jdbcType=INTEGER}, #{maxLength,jdbcType=INTEGER}, 
-      #{validatePolicy,jdbcType=NVARCHAR}, #{required,jdbcType=TINYINT}, #{queryName,jdbcType=NVARCHAR}, 
-      #{valueList,jdbcType=NVARCHAR})
+      #{validatePolicy,jdbcType=NVARCHAR}, #{required,jdbcType=TINYINT}
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDefAttribute">
     insert into dbo.ecm_def_attribute
@@ -116,9 +110,6 @@
       <if test="notNull != null">
         NOT_NULL,
       </if>
-      <if test="isHidden != null">
-        IS_HIDDEN,
-      </if>
       <if test="label != null">
         LABEL,
       </if>
@@ -145,12 +136,6 @@
       </if>
       <if test="required != null">
         REQUIRED,
-      </if>
-      <if test="queryName != null">
-        QUERY_NAME,
-      </if>
-      <if test="valueList != null">
-        VALUE_LIST,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -193,9 +178,6 @@
       <if test="notNull != null">
         #{notNull,jdbcType=TINYINT},
       </if>
-      <if test="isHidden != null">
-        #{isHidden,jdbcType=TINYINT},
-      </if>
       <if test="label != null">
         #{label,jdbcType=NVARCHAR},
       </if>
@@ -222,12 +204,6 @@
       </if>
       <if test="required != null">
         #{required,jdbcType=TINYINT},
-      </if>
-      <if test="queryName != null">
-        #{queryName,jdbcType=NVARCHAR},
-      </if>
-      <if test="valueList != null">
-        #{valueList,jdbcType=NVARCHAR},
       </if>
     </trim>
   </insert>
@@ -270,9 +246,6 @@
       <if test="notNull != null">
         NOT_NULL = #{notNull,jdbcType=TINYINT},
       </if>
-      <if test="isHidden != null">
-        IS_HIDDEN = #{isHidden,jdbcType=TINYINT},
-      </if>
       <if test="label != null">
         LABEL = #{label,jdbcType=NVARCHAR},
       </if>
@@ -300,12 +273,6 @@
       <if test="required != null">
         REQUIRED = #{required,jdbcType=TINYINT},
       </if>
-      <if test="queryName != null">
-        QUERY_NAME = #{queryName,jdbcType=NVARCHAR},
-      </if>
-      <if test="valueList != null">
-        VALUE_LIST = #{valueList,jdbcType=NVARCHAR},
-      </if>
     </set>
     where ID = #{id,jdbcType=NVARCHAR}
   </update>
@@ -323,7 +290,6 @@
       LENGTH = #{length,jdbcType=INTEGER},
       DEFAULT_VALUE = #{defaultValue,jdbcType=NVARCHAR},
       NOT_NULL = #{notNull,jdbcType=TINYINT},
-      IS_HIDDEN = #{isHidden,jdbcType=TINYINT},
       LABEL = #{label,jdbcType=NVARCHAR},
       SEARCHABLE = #{searchable,jdbcType=TINYINT},
       IS_REPEAT = #{isRepeat,jdbcType=TINYINT},
@@ -332,9 +298,7 @@
       ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
       MAX_LENGTH = #{maxLength,jdbcType=INTEGER},
       VALIDATE_POLICY = #{validatePolicy,jdbcType=NVARCHAR},
-      REQUIRED = #{required,jdbcType=TINYINT},
-      QUERY_NAME = #{queryName,jdbcType=NVARCHAR},
-      VALUE_LIST = #{valueList,jdbcType=NVARCHAR}
+      REQUIRED = #{required,jdbcType=TINYINT}
     where ID = #{id,jdbcType=NVARCHAR}
   </update>
 </mapper>

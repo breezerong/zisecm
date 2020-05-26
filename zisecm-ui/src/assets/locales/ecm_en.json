@@ -61,6 +61,7 @@
     "propertyOnly":"Search Property Only",
     "placeholderSearch":"Please input keyword",
     "docTypeName": "Doc.Type",
+    "defAttribute": "Attr.Manager",
     "selectAll": "Select All",
     "scendSearch": "Search Filter",
     "search":"Search",

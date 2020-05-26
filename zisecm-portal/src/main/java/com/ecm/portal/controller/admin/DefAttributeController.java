@@ -69,7 +69,7 @@ public class DefAttributeController extends ControllerAbstract{
 		 */
 		 @ResponseBody
 		 @RequestMapping("/admin/getDefAttributeByTypeId")
-		 public   Map<String, Object>  getDefAttributeByTypeId(String typeId)  {
+		 public   Map<String, Object>  getDefAttributeByTypeId(@RequestBody String typeId)  {
 			 List<EcmDefAttribute> list;
 			 Map<String, Object>   mp = new HashMap<String, Object> ();
 			try {

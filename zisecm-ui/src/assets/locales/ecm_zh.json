@@ -190,6 +190,7 @@
     "gridviewitemManager": "列表项",
     "metaData": "元数据管理",
     "objectType": "业务类型管理",
+    "defAttribute": "业务元数据管理",
     "storeManager": "存储管理",
     "aclManager": "ACL管理",
     "queryManager": "查询管理",

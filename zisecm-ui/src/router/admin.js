@@ -165,7 +165,8 @@ export const adminRouter =
   {
     meta: {
       requireAuth: true,
-      permit: 5
+      permit: 5,
+      title: 'defAttribute'
     },
     path: '/managercenter/defattrmanager',
     component: () => import('@/views/admin/DefAttrManager.vue'),
