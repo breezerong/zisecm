@@ -26,7 +26,14 @@
         >{{dateFormat(currentData.createTime,'')}}</el-form-item>
       </el-form>
       <el-divider content-position="left">表单信息</el-divider>
-      <router-view ref="formRouter"></router-view>
+     <taskTestForm1 
+          :formId="form.formId"
+          :docId="currentData.docId"
+          :istask="1"
+          :processDefinitionId="currentData.processDefinitionId"
+          :activityName="currentData.name"
+         :formEditPermision="formEditPermision"
+        ></taskTestForm1> 
       <el-divider content-position="left">流转意见</el-divider>
       <el-table :data="taskList" border v-loading="loading" style="width: 100%">
         <el-table-column label="序号" width="65">
@@ -104,11 +111,6 @@
        </el-row>
         </div> 
       </el-form>
-              <!-- <UserSelectInput
-                v-model="borrowForm.C_REVIEWER1"
-                v-bind:inputValue="borrowForm.C_REVIEWER1"
-                roleName="leaderManage_auto"
-              ></UserSelectInput> -->
 
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">取 消</el-button>
@@ -166,11 +168,13 @@
 //   contentType: "application/json"
 // });
 import UserSelectInput from "@/components/controls/UserSelectInput";
+import TaskTestForm1 from "@/components/form/TaskTestForm1.vue";
 export default {
   name: "TodoTask",
   permit: 1,
    components: {
-    UserSelectInput: UserSelectInput
+    UserSelectInput: UserSelectInput,
+    TaskTestForm1: TaskTestForm1
   },
  data() {
     return {
