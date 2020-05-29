@@ -60,7 +60,15 @@ public class GridViewService extends EcmObjectService<EcmGridView> implements IG
 		String cond = "NAME='"+name+"'";
 		return ecmGridView.selectByCondition(cond).get(0);
 	}
-
+	
+	public EcmGridView getObjectByCondition(String token,String condition) {
+		List<EcmGridView> obj= ecmGridView.selectByCondition(condition);
+		if(obj.size()>0)
+			return obj.get(0);
+		else
+			return null;
+	}
+	
 	@Override
 	public boolean updateObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub
@@ -106,7 +114,17 @@ public class GridViewService extends EcmObjectService<EcmGridView> implements IG
 		 }
 		 return null;
 	}
-
+	
+	@Transactional(rollbackFor = Exception.class)
+	public String copyToCustomGridView(String token, EcmGridView obj) {
+		 String name = obj.getName();
+		 obj.setName(name);
+		 obj.createId();
+		 
+		 ecmGridView.insert(obj);
+		 
+		 return obj.getId();
+	}
 	@Override
 	public boolean deleteObjectById(String token, String id)
 			throws EcmException, AccessDeniedException, NoPermissionException {

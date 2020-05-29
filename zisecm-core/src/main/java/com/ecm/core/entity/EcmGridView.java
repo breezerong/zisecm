@@ -1,6 +1,7 @@
 package com.ecm.core.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,8 +21,40 @@ public class EcmGridView extends EcmSysObject{
 	private String typeName;
 
     private String orderBy;
+    
+    private int gridType;
+    
+    private String creator;
+    
+    private Date creationDate;
 
-    public String getCondition() {
+    
+    
+    public int getGridType() {
+		return gridType;
+	}
+
+	public void setGridType(int gridType) {
+		this.gridType = gridType;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public String getCondition() {
     	
         return condition;
     }

@@ -189,12 +189,15 @@
           key="main"
           v-bind:itemDataList="itemDataList"
           v-bind:columnList="gridList"
+          :sysColumnInfo="sysColumnInfo"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
           v-bind:tableHeight="rightTableHeight"
           v-bind:isshowOption="true" v-bind:isshowSelection ="true"
           v-bind:propertyComponent="this.$refs.ShowProperty"
+          gridViewName="TransferGrid"
+          isshowCustom="true"
           @dbclick="dbclick"
           @rowclick="rowClick"
           @selectchange="selectChange"
@@ -300,6 +303,7 @@ export default {
       imageViewer: Object,
       currentType: "",
       orderBy: "",
+      sysColumnInfo:[],
       selectedReuses: [],
       columnsInfo: {
         checkAll: true,
@@ -350,6 +354,7 @@ export default {
     this.loadGridData();
   },
   methods: {
+    
     rowClick(row){
       this.selectRow=row;
     },
@@ -831,11 +836,12 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/dc/getGridViewInfo"
+          url: "/dc/getEcmCustomGridViewInfo"
         })
         .then(function(response) {
           _self.showFields = [];
-          _self.gridList = response.data.data;
+          _self.gridList = response.data.customGridInfo;
+          _self.sysColumnInfo=response.data.sysGridInfo;
           _self.gridList.forEach(element => {
             if (element.visibleType == 1) {
               _self.showFields.push(element.attrName);
