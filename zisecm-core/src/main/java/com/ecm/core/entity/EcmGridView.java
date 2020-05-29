@@ -22,9 +22,6 @@ public class EcmGridView extends EcmSysObject{
 
     private String orderBy;
     
-    private String creator;
-    
-    private Date creationDate;
     //类型， 0 系统，1用户
     private Integer gridType=0;
 
@@ -32,21 +29,6 @@ public class EcmGridView extends EcmSysObject{
     private String gridTag;
 
 
-	public String getCreator() {
-		return creator;
-	}
-
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
 
 	public String getCondition() {
     	
