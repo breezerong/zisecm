@@ -24,15 +24,13 @@ public class EcmDefAttribute extends EcmObject{
 
     private String defaultValue;
 
-    private Byte notNull;
-
-    private Byte isHidden;
+    private boolean notNull;
 
     private String label;
 
-    private Byte searchable;
+    private boolean searchable;
 
-    private Byte isRepeat;
+    private boolean isRepeat;
 
     private Integer minCount;
 
@@ -44,11 +42,7 @@ public class EcmDefAttribute extends EcmObject{
 
     private String validatePolicy;
 
-    private Byte required;
-
-    private String queryName;
-
-    private String valueList;
+    private boolean required;
 
 
     public String getName() {
@@ -139,20 +133,12 @@ public class EcmDefAttribute extends EcmObject{
         this.defaultValue = defaultValue == null ? null : defaultValue.trim();
     }
 
-    public Byte getNotNull() {
+    public boolean getNotNull() {
         return notNull;
     }
 
-    public void setNotNull(Byte notNull) {
+    public void setNotNull(boolean notNull) {
         this.notNull = notNull;
-    }
-
-    public Byte getIsHidden() {
-        return isHidden;
-    }
-
-    public void setIsHidden(Byte isHidden) {
-        this.isHidden = isHidden;
     }
 
     public String getLabel() {
@@ -163,19 +149,19 @@ public class EcmDefAttribute extends EcmObject{
         this.label = label == null ? null : label.trim();
     }
 
-    public Byte getSearchable() {
+    public boolean getSearchable() {
         return searchable;
     }
 
-    public void setSearchable(Byte searchable) {
+    public void setSearchable(boolean searchable) {
         this.searchable = searchable;
     }
 
-    public Byte getIsRepeat() {
+    public boolean getIsRepeat() {
         return isRepeat;
     }
 
-    public void setIsRepeat(Byte isRepeat) {
+    public void setIsRepeat(boolean isRepeat) {
         this.isRepeat = isRepeat;
     }
 
@@ -219,27 +205,11 @@ public class EcmDefAttribute extends EcmObject{
         this.validatePolicy = validatePolicy == null ? null : validatePolicy.trim();
     }
 
-    public Byte getRequired() {
+    public boolean getRequired() {
         return required;
     }
 
-    public void setRequired(Byte required) {
+    public void setRequired(boolean required) {
         this.required = required;
-    }
-
-    public String getQueryName() {
-        return queryName;
-    }
-
-    public void setQueryName(String queryName) {
-        this.queryName = queryName == null ? null : queryName.trim();
-    }
-
-    public String getValueList() {
-        return valueList;
-    }
-
-    public void setValueList(String valueList) {
-        this.valueList = valueList == null ? null : valueList.trim();
     }
 }

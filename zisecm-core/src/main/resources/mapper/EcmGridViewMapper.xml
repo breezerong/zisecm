@@ -1,60 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ecm.core.dao.EcmGridViewMapper">
+ 
   <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmGridView">
-    <id column="ID" jdbcType="VARCHAR" property="id" />
-    <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="TYPE_NAME" jdbcType="VARCHAR" property="name" />
-    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
-    <result column="CONDITION_STR" jdbcType="VARCHAR" property="condition" />
-    <result column="ORDER_BY" jdbcType="VARCHAR" property="orderBy" />
-    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <id column="ID" jdbcType="NVARCHAR" property="id" />
+    <result column="NAME" jdbcType="NVARCHAR" property="name" />
+    <result column="DESCRIPTION" jdbcType="NVARCHAR" property="description" />
+    <result column="CONDITION_STR" jdbcType="NVARCHAR" property="condition" />
+    <result column="ORDER_BY" jdbcType="NVARCHAR" property="orderBy" />
+    <result column="TYPE_NAME" jdbcType="NVARCHAR" property="typeName" />
+    <result column="CREATOR" jdbcType="NVARCHAR" property="creator" />
     <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
     <result column="GRID_TYPE" jdbcType="INTEGER" property="gridType" />
+    <result column="GRID_TAG" jdbcType="NVARCHAR" property="gridTag" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, NAME, TYPE_NAME, DESCRIPTION, CONDITION_STR, ORDER_BY,CREATOR,CREATION_DATE,GRID_TYPE
+    ID, NAME, DESCRIPTION, CONDITION_STR, ORDER_BY, TYPE_NAME, CREATOR, CREATION_DATE, 
+    GRID_TYPE, GRID_TAG
   </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dbo.ecm_gridview
+    where ID = #{id,jdbcType=NVARCHAR}
+  </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ecm_gridview order by NAME
+    from ecm_gridview where GRID_TYPE=0 order by NAME
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from ecm_gridview
-    where ID = #{id,jdbcType=VARCHAR}
-  </select>
-  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from ecm_gridview
     where ${condition}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from ecm_gridview
-    where ID = #{id,jdbcType=VARCHAR}
+    delete from dbo.ecm_gridview
+    where ID = #{id,jdbcType=NVARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmGridView">
-    insert into ecm_gridview (ID, NAME, TYPE_NAME, DESCRIPTION, 
-      CONDITION_STR, ORDER_BY,CREATOR,CREATION_DATE,GRID_TYPE)
-    values (#{id,jdbcType=VARCHAR},  #{name,jdbcType=VARCHAR}, #{typeName,jdbcType=VARCHAR}, 
-    #{description,jdbcType=VARCHAR}, 
-      #{condition,jdbcType=VARCHAR}, #{orderBy,jdbcType=VARCHAR},#{creator,jdbcType=VARCHAR},
-      #{creationDate,jdbcType=TIMESTAMP},#{gridType,jdbcType=INTEGER})
+    insert into dbo.ecm_gridview (ID, NAME, DESCRIPTION, 
+      CONDITION_STR, ORDER_BY, TYPE_NAME, 
+      CREATOR, CREATION_DATE, GRID_TYPE, 
+      GRID_TAG)
+    values (#{id,jdbcType=NVARCHAR}, #{name,jdbcType=NVARCHAR}, #{description,jdbcType=NVARCHAR}, 
+      #{condition,jdbcType=NVARCHAR}, #{orderBy,jdbcType=NVARCHAR}, #{typeName,jdbcType=NVARCHAR}, 
+      #{creator,jdbcType=NVARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, #{gridType,jdbcType=INTEGER}, 
+      #{gridTag,jdbcType=NVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmGridView">
-    insert into ecm_gridview
+    insert into dbo.ecm_gridview
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         ID,
       </if>
       <if test="name != null">
         NAME,
-      </if>
-       <if test="typeName != null">
-        TYPE_NAME,
       </if>
       <if test="description != null">
         DESCRIPTION,
@@ -65,28 +67,52 @@
       <if test="orderBy != null">
         ORDER_BY,
       </if>
-      <if test="creator	!=null">CREATOR,</if>
-      <if test="creationDate !=null">CREATION_DATE,</if>
-      <if test="gridType !=null">GRID_TYPE,</if>
+      <if test="typeName != null">
+        TYPE_NAME,
+      </if>
+      <if test="creator != null">
+        CREATOR,
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE,
+      </if>
+      <if test="gridType != null">
+        GRID_TYPE,
+      </if>
+      <if test="gridTag != null">
+        GRID_TAG,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-     <if test="id != null">
-        #{id,jdbcType=VARCHAR},
+      <if test="id != null">
+        #{id,jdbcType=NVARCHAR},
       </if>
       <if test="name != null">
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="typeName != null">
-        #{typeName,jdbcType=VARCHAR},
+        #{name,jdbcType=NVARCHAR},
       </if>
       <if test="description != null">
-        #{description,jdbcType=VARCHAR},
+        #{description,jdbcType=NVARCHAR},
       </if>
       <if test="condition != null">
-        #{condition,jdbcType=VARCHAR},
+        #{condition,jdbcType=NVARCHAR},
       </if>
       <if test="orderBy != null">
-        #{orderBy,jdbcType=VARCHAR},
+        #{orderBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="typeName != null">
+        #{typeName,jdbcType=NVARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=NVARCHAR},
+      </if>
+      <if test="creationDate != null">
+        #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gridType != null">
+        #{gridType,jdbcType=INTEGER},
+      </if>
+      <if test="gridTag != null">
+        #{gridTag,jdbcType=NVARCHAR},
       </if>
       <if test="creator	!=null">#{creator,jdbcType=VARCHAR},</if>
       <if test="creationDate !=null">#{creationDate,jdbcType=TIMESTAMP},</if>
@@ -94,39 +120,52 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmGridView">
-    update ecm_gridview
+    update dbo.ecm_gridview
     <set>
       <if test="name != null">
-        NAME = #{name,jdbcType=VARCHAR},
-      </if>
-       <if test="typeName != null">
-        TYPE_NAME = #{typeName,jdbcType=VARCHAR},
+        NAME = #{name,jdbcType=NVARCHAR},
       </if>
       <if test="description != null">
-        DESCRIPTION = #{description,jdbcType=VARCHAR},
+        DESCRIPTION = #{description,jdbcType=NVARCHAR},
       </if>
       <if test="condition != null">
-        CONDITION_STR = #{condition,jdbcType=VARCHAR},
+        CONDITION_STR = #{condition,jdbcType=NVARCHAR},
       </if>
       <if test="orderBy != null">
-        ORDER_BY = #{orderBy,jdbcType=VARCHAR},
+        ORDER_BY = #{orderBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="typeName != null">
+        TYPE_NAME = #{typeName,jdbcType=NVARCHAR},
+      </if>
+      <if test="creator != null">
+        CREATOR = #{creator,jdbcType=NVARCHAR},
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gridType != null">
+        GRID_TYPE = #{gridType,jdbcType=INTEGER},
+      </if>
+      <if test="gridTag != null">
+        GRID_TAG = #{gridTag,jdbcType=NVARCHAR},
       </if>
       <if test="creator	!=null">CREATOR=#{creator,jdbcType=VARCHAR},</if>
       <if test="creationDate !=null">CREATION_DATE=#{creationDate,jdbcType=TIMESTAMP},</if>
       <if test="gridType !=null">GRID_TYPE=#{gridType,jdbcType=INTEGER},</if>
     </set>
-    where ID = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmGridView">
-    update ecm_gridview
-    set NAME = #{name,jdbcType=VARCHAR},
-   	  TYPE_NAME = #{typeName,jdbcType=VARCHAR},
-      DESCRIPTION = #{description,jdbcType=VARCHAR},
-      CONDITION_STR = #{condition,jdbcType=VARCHAR},
-      ORDER_BY = #{orderBy,jdbcType=VARCHAR},
-      CREATOR=#{creator,jdbcType=VARCHAR},
-      CREATION_DATE=#{creationDate,jdbcType=TIMESTAMP},
-      GRID_TYPE=#{gridType,jdbcType=INTEGER}
-    where ID = #{id,jdbcType=VARCHAR}
+    update dbo.ecm_gridview
+    set NAME = #{name,jdbcType=NVARCHAR},
+      DESCRIPTION = #{description,jdbcType=NVARCHAR},
+      CONDITION_STR = #{condition,jdbcType=NVARCHAR},
+      ORDER_BY = #{orderBy,jdbcType=NVARCHAR},
+      TYPE_NAME = #{typeName,jdbcType=NVARCHAR},
+      CREATOR = #{creator,jdbcType=NVARCHAR},
+      CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      GRID_TYPE = #{gridType,jdbcType=INTEGER},
+      GRID_TAG = #{gridTag,jdbcType=NVARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR}
   </update>
 </mapper>

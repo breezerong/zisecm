@@ -23,116 +23,65 @@
         <el-button @click="queryVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" width="80%">
+    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" modal-append-to-body="false" width="80%">
       <el-form :model="form">
         <el-form-item label="父Id" :label-width="formLabelWidth">
-          <el-input v-model="form.parentId" auto-complete="off"></el-input>
+          <el-input v-model="form.typeId" auto-complete="off" readonly></el-input>
         </el-form-item>
         <el-row>
-          <el-col :span="10">
+          <el-col :span="8">
             <el-form-item label="属性名称" :label-width="formLabelWidth">
-              <el-input v-model="form.attrName" auto-complete="off"></el-input>
+              <AttributeSelector ref="AttributeSelector" v-model="form.name"
+                v-bind:inputValue="form.name"></AttributeSelector>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
+          <el-col :span="8">
             <el-form-item label="标签" :label-width="formLabelWidth">
-              <el-input v-model="form.label" auto-complete="off"></el-input>
+              <LangSelector
+                v-model="form.label"
+                v-bind:inputValue="form.label"
+              ></LangSelector>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-button @click="showcategory('')">选择属性</el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="控件类型" :label-width="formLabelWidth2">
-              <el-select v-model="form.controlType">
-                <el-option label="TextBox" value="TextBox"></el-option>
-                <el-option label="TextArea" value="TextArea"></el-option>
-                <el-option label="Select" value="Select"></el-option>
-                <el-option label="ValueSelect" value="ValueSelect"></el-option>
-                <el-option label="SQLSelect" value="SQLSelect"></el-option>
-                <el-option label="Department" value="Department"></el-option>
-                <el-option label="Date" value="Date"></el-option>
-                <el-option label="Boolean" value="Boolean"></el-option>
-                <el-option label="Integer" value="Integer"></el-option>
-                <el-option label="Classification" value="Classification"></el-option>
-              </el-select>
+          <el-col :span="8">
+            <el-form-item label="说明" :label-width="formLabelWidth2">
+              <el-input v-model="form.description" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="宽度类型" :label-width="formLabelWidth2">
-              <el-select v-model="form.widthType">
-                <el-option label="1" value="1"></el-option>
-                <el-option label="2" value="2"></el-option>
-                <el-option label="3" value="3"></el-option>
-                <el-option label="4" value="4"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="必填" :label-width="formLabelWidth2">
-              <el-select v-model="form.required">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="只读" :label-width="formLabelWidth2">
-              <el-select v-model="form.readOnly">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="是否可查询" :label-width="formLabelWidth2">
               <el-select v-model="form.searchable">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+           <el-col :span="8">
+            <el-form-item label="最大长度" :label-width="formLabelWidth2">
+              <el-input :autosize="true" v-model="form.maxLength"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="默认值" :label-width="formLabelWidth2">
               <el-input :autosize="true" v-model="form.defaultValue"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="序号" :label-width="formLabelWidth">
-              <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="隐藏" :label-width="formLabelWidth">
-              <el-select v-model="form.isHide">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+          <el-col :span="8">
+            <el-form-item label="是否多值" :label-width="formLabelWidth">
+              <el-select v-model="form.isRepeat">
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="SQL查询名" :label-width="formLabelWidth2">
-              <el-input v-model="form.queryName" auto-complete="off"></el-input>
+          <el-col :span="8">
+            <el-form-item label="多值最少数" :label-width="formLabelWidth">
+              <el-input v-model="form.minCount" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-button @click="queryVisible = true">选择查询</el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="列选值" :label-width="formLabelWidth2">
-              <el-input v-model="form.valueList" auto-complete="off"></el-input>
+          <el-col :span="8">
+            <el-form-item label="多值最多数" :label-width="formLabelWidth">
+              <el-input v-model="form.maxCount" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -144,21 +93,8 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>界面配置</el-breadcrumb-item>
-          <el-breadcrumb-item>表单项配置</el-breadcrumb-item>
-        </el-breadcrumb> -->
         <el-row class="topbar">
-          <el-col :span="2" style="text-align:left;">类型：{{typename}}</el-col>
-          <el-col :span="2" style="text-align:left;">
-            <el-input
-              v-model="parentid"
-              placeholder="请输入父Id"
-              @change="search"
-              prefix-icon="el-icon-search"
-            ></el-input>
-          </el-col>
+          <el-col :span="4" style="text-align:left;">类型：{{typename}}</el-col>
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -169,8 +105,7 @@
           </el-col>
           <el-col :span="16" style="text-align:left;">
             &nbsp;
-            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建</el-button>
-            <el-button type="primary" plain icon="el-icon-check" @click="startcheck()">验证表单</el-button>
+            <el-button type="primary" plain icon="el-icon-edit" @click="newItem()">新建</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -178,74 +113,38 @@
         <el-table :data="dataList" border :height="tableHeight" style="width: 100%">
           <el-table-column label="属性名" width="150" sortable>
             <template slot-scope="scope">
-              <el-input v-model="scope.row.attrName"></el-input>
+              <el-input v-model="scope.row.name"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="标签" width="120" sortable>
+          <el-table-column label="标签" width="180" sortable>
             <template slot-scope="scope">
               <el-input v-model="scope.row.label"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="控件类型" width="120">
+          <el-table-column label="说明" min-width="20%" sortable>
             <template slot-scope="scope">
-              <el-input v-model="scope.row.controlType"></el-input>
+              <el-input v-model="scope.row.description"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="宽度类型" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.widthType">
-                <el-option label="1" value="1"></el-option>
-                <el-option label="2" value="2"></el-option>
-                <el-option label="3" value="3"></el-option>
-                <el-option label="4" value="4"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="隐藏" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.isHide">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="必填" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.required">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="只读" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.readOnly">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="是否可查询" width="90">
+          <el-table-column label="是否可查询" width="110">
             <template slot-scope="scope">
               <el-select v-model="scope.row.searchable">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="默认值" width="100">
+          <el-table-column label="默认值" width="160">
             <template slot-scope="scope">
               <el-input v-model="scope.row.defaultValue"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="序号" width="80">
+          <el-table-column label="是否多值" width="110">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.orderIndex" auto-complete="off"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="查询名" width="100">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.queryName" auto-complete="off"></el-input>
+              <el-select v-model="scope.row.isRepeat">
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="240" fixed="right">
@@ -255,21 +154,21 @@
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="edititem(scope.row)"
+                @click="editItem(scope.row)"
               >编辑</el-button>
               <el-button
                 :plain="true"
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="saveitem(scope.row)"
+                @click="saveItem(scope.row)"
               >保存</el-button>
               <el-button
                 :plain="true"
                 type="danger"
                 size="small"
                 icon="delete"
-                @click="delitem(scope.row)"
+                @click="delItem(scope.row)"
               >删除</el-button>
             </template>
           </el-table-column>
@@ -280,9 +179,9 @@
 </template>
 
 <script type="text/javascript">
-import CategoryManager from "@/components/admin/CategoryManager";
+import AttributeSelector from "@/components/controls/AttributeSelector";
 import QuerySelector from "@/components/admin/QuerySelector";
-import FormItemCheck from "@/components/admin/FormItemCheck";
+import LangSelector from "@/components/controls/LangSelector";
 
 export default {
   name: "DefAttrManager",
@@ -302,27 +201,24 @@ export default {
       checkVisible: false,
       currentItem: "",
       form: {
-        parentId: "",
+        typeId: "",
         name: "",
         description: "",
-        value: "",
-        searchable: "true",
-        required: "false",
-        readOnly: "false",
-        controlType: "TextBox",
-        widthType: "2",
-        orderIndex: "1",
-        isHide: "false",
-        valueList: ""
+        defaultValue: "",
+        searchable: true,
+        maxLength: 0,
+        isRepeat: false,
+        minCount: 0,
+        maxCount: 0
       },
       formLabelWidth: "120px",
       formLabelWidth2: "100px"
     };
   },
   components: {
-    CategoryManager: CategoryManager,
+    AttributeSelector: AttributeSelector,
     QuerySelector: QuerySelector,
-    FormItemCheck: FormItemCheck
+    LangSelector: LangSelector
   },
   created() {
     let _self = this;
@@ -335,25 +231,7 @@ export default {
     } else {
       pid = "0";
     }
-    _self
-      .axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: pid,
-        url: "/admin/getFormItem"
-      })
-      .then(function(response) {
-        _self.dataListFull = response.data.data;
-        _self.dataList = response.data.data;
-        console.log(JSON.stringify(_self.dataListFull));
-        _self.loading = false;
-      })
-      .catch(function(error) {
-        console.log(error);
-        _self.loading = false;
-      });
+    _self.refreshData();
   },
   methods: {
     startcheck() {
@@ -375,7 +253,7 @@ export default {
           },
           method: "post",
           data: pid,
-          url: "/admin/getFormItem"
+          url: "/admin/getDefAttributeByTypeId"
         })
         .then(function(response) {
           _self.dataListFull = response.data.data;
@@ -388,7 +266,7 @@ export default {
           _self.loading = false;
         });
     },
-    saveitem(indata) {
+    saveItem(indata) {
       let _self = this;
       _self
         .axios({
@@ -398,7 +276,7 @@ export default {
           datatype: "json",
           method: "post",
           data: JSON.stringify(indata),
-          url: "/admin/updateFormItem"
+          url: "/admin/updateDefAttribute"
         })
         .then(function(response) {
           _self.$message("保存成功!");
@@ -407,7 +285,7 @@ export default {
           console.log(error);
         });
     },
-    delitem(indata) {
+    delItem(indata) {
       let _self = this;
       _self
         .axios({
@@ -417,7 +295,7 @@ export default {
           datatype: "json",
           method: "post",
           data: JSON.stringify(indata),
-          url: "/admin/deleteFormItem"
+          url: "/admin/deleteDefAttribute"
         })
         .then(function(response) {
           _self.$message("删除成功!");
@@ -427,25 +305,20 @@ export default {
           console.log(error);
         });
     },
-    newitem() {
+    newItem() {
       this.dialogtitle = "添加";
       this.dialogVisible = true;
       this.form = {
-        parentId: this.parentid,
+        typeId: this.parentid,
         name: "",
         description: "",
-        value: "",
-        searchable: "true",
-        required: "false",
-        readOnly: "false",
-        controlType: "TextBox",
-        widthType: "2",
-        orderIndex: "1",
-        valueList: "",
-        isHide: "false"
+        defaultValue: "",
+        searchable: true,
+        isRepeat: false,
+        maxLength: 0
       };
     },
-    edititem(indata) {
+    editItem(indata) {
       this.dialogtitle = "编辑";
       this.dialogVisible = true;
       this.form = indata;
@@ -453,7 +326,7 @@ export default {
     additem(indata) {
       let _self = this;
       if (_self.dialogtitle == "编辑") {
-        _self.saveitem(indata);
+        _self.saveItem(indata);
         _self.dialogVisible = false;
       } else {
         _self
@@ -464,7 +337,7 @@ export default {
             datatype: "json",
             method: "post",
             data: JSON.stringify(indata),
-            url: "/admin/newFormItem"
+            url: "/admin/newDefAttribute"
           })
           .then(function(response) {
             _self.dialogVisible = false;

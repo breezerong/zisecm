@@ -42,7 +42,7 @@ public class DefAttributeService extends EcmObjectService<EcmDefAttribute> imple
 	public List<EcmDefAttribute> getAllObject(String token) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		super.hasPermission(token,serviceCode+1,systemPermission);
-		return (List<EcmDefAttribute>) ecmDefAttribute.selectByCondition(" 1=1 ");
+		return null;
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class DefAttributeService extends EcmObjectService<EcmDefAttribute> imple
 
 	@Override
 	public List<EcmDefAttribute> getAttributes(String token, String typeId) {
-		return ecmDefAttribute.selectByCondition(" TYPE_ID="+typeId);
+		return ecmDefAttribute.selectByTypeId(typeId);
 	}
 
 	@Override

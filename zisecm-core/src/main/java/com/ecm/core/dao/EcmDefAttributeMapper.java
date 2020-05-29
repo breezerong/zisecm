@@ -8,7 +8,7 @@ import com.ecm.core.entity.EcmDefAttribute;
 
 public interface EcmDefAttributeMapper {
 	
-	List<EcmDefAttribute> selectByCondition(@Param(value="condition")String condition);
+	List<EcmDefAttribute> selectByTypeId(String typeId);
 	
 	int deleteByTypeId(String typeId);
 	

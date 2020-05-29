@@ -22,21 +22,15 @@ public class EcmGridView extends EcmSysObject{
 
     private String orderBy;
     
-    private int gridType;
-    
     private String creator;
     
     private Date creationDate;
+    //类型， 0 系统，1用户
+    private Integer gridType=0;
 
-    
-    
-    public int getGridType() {
-		return gridType;
-	}
+    //客户端标签
+    private String gridTag;
 
-	public void setGridType(int gridType) {
-		this.gridType = gridType;
-	}
 
 	public String getCreator() {
 		return creator;
@@ -103,5 +97,21 @@ public class EcmGridView extends EcmSysObject{
 
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+
+	public String getGridTag() {
+		return gridTag;
+	}
+
+	public void setGridTag(String gridTag) {
+		this.gridTag = gridTag;
+	}
+
+	public Integer getGridType() {
+		return gridType;
+	}
+
+	public void setGridType(Integer gridType) {
+		this.gridType = gridType;
 	}
 }
