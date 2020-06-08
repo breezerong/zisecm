@@ -78,8 +78,8 @@ public class GridViewItemService extends EcmObjectService<EcmGridViewItem> imple
 	}
 	
 	
-	public List<EcmGridViewItem> getEcmCustomGridViewInfo(String token,String creator,String gridViewName){
+	public List<EcmGridViewItem> getEcmCustomGridViewInfo(String token,String id){
 		
-		return ecmGridViewItem.getItemByParam(gridViewName, creator);
+		return ecmGridViewItem.getItemByParam(id);
 	}
 }

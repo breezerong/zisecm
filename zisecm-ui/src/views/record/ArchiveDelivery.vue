@@ -968,12 +968,12 @@ export default {
           },
           method: "post",
           data: JSON.stringify(m),
-          url: "/dc/getEcmCustomGridViewInfo"
+          url: "/dc/getGridViewInfo"
         })
         .then(function(response) {
           _self.showFields = [];
-          _self.gridList = response.data.customGridInfo;
-          _self.sysColumnInfo=response.data.sysGridInfo;
+          _self.gridList = response.data.data;;
+          _self.sysColumnInfo=response.data.data;;
           _self.gridList.forEach(element => {
             if (element.visibleType == 1) {
               _self.showFields.push(element.attrName);

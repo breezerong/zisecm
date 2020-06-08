@@ -25,26 +25,62 @@ public class EcmCustomGridViewController extends ControllerAbstract {
 	@Autowired
 	private GridViewItemService itemService;
 	
-	@RequestMapping(value = "/dc/getEcmCustomGridViewInfo", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@RequestMapping(value = "/dc/getOneEcmCustomGridViewInfo", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
-	public Map<String, Object> getEcmCustomGridViewInfo(@RequestBody String argStr){
+	public Map<String, Object> getOneEcmCustomGridViewInfo(@RequestBody String argStr){
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		String gridName = args.get("gridName").toString();
+		String gridId=args.get("gridId")!=null?args.get("gridId").toString():"";
 		String lang = args.get("lang").toString();
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-		List<EcmGridViewItem> list = gv.getGridViewItems(lang);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			List<EcmGridViewItem> customItem = itemService.getEcmCustomGridViewInfo(getToken(), this.getSession().getCurrentUser().getUserName(), gridName);
+			List<EcmGridViewItem> customItem = itemService.getEcmCustomGridViewInfo(getToken(), gridId);
 			List<EcmGridViewItem> cItems=new ArrayList<EcmGridViewItem>();
 			if(customItem!=null&&customItem.size()>0) {
 				for(EcmGridViewItem item : customItem) {
 					EcmGridViewItem itemc = item.clone(lang);
 					cItems.add(itemc);
 				}
-			}else {
-				cItems=list;
 			}
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", cItems);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "查询失败！");
+		}
+		
+		return mp;
+		
+	}
+	
+	@RequestMapping(value = "/dc/getEcmCustomGridViewInfo", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> getEcmCustomGridViewInfo(@RequestBody String argStr){
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String gridName = args.get("gridName").toString();
+		String gridId=args.get("gridId")!=null?args.get("gridId").toString():"";
+		String lang = args.get("lang").toString();
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		List<EcmGridViewItem> list = gv.getGridViewItems(lang);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			List<EcmGridViewItem> cItems=new ArrayList<EcmGridViewItem>();
+			if("".equals(gridId)) {
+				cItems=list;
+			}else {
+				List<EcmGridViewItem> customItem = itemService.getEcmCustomGridViewInfo(getToken(), gridId);
+				
+				if(customItem!=null&&customItem.size()>0) {
+					for(EcmGridViewItem item : customItem) {
+						EcmGridViewItem itemc = item.clone(lang);
+						cItems.add(itemc);
+					}
+				}else {
+					cItems=list;
+				}
+			}
+			
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("sysGridInfo", list);
 			mp.put("customGridInfo", cItems);

@@ -7,6 +7,36 @@
         @close="editColumn = false"
         width="60%"
       >
+      <el-dialog
+        title="新建名称"
+        :visible.sync="inputColumn"
+        @close="inputColumn = false"
+        width="60%"
+        :append-to-body='true'
+      >
+      <el-input  placeholder="请输入自定义显示名称" v-model="selectedName"></el-input>
+      <div slot="footer" class="dialog-footer">
+          <el-button @click="createCustomGrid()">{{$t('application.save')}}</el-button>
+          <el-button @click="inputColumn = false">{{$t('application.cancel')}}</el-button>
+        </div>
+      </el-dialog>
+      <el-row>
+        <el-col :span="2">名称</el-col>
+        <el-col :span='8'>
+          <el-select v-model="selectedName" placeholder="请选择">
+            <el-option
+              v-for="item in customNames"
+              :key="item.id"
+              :label="item.description"
+              :value="item.description">
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-button @click="showCreateName">新建</el-button>
+          <el-button >删除</el-button>
+        </el-col>
+      </el-row>
         <el-transfer
           filterable
           :titles="['Source', 'Target']"
@@ -155,9 +185,24 @@
               </div>
             </div>
           </div>
-          <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="140">
+          <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="190">
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
+              <el-dropdown trigger="click" style="overflow:visible">
+                <el-button
+                type="primary"
+                plain
+                size="small"
+                title="列表选择"
+                icon="el-icon-more"
+              ></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="(item,idx) in customNames"
+                  :key="idx+'_C'"
+                   @click.native="showCustomInfo(item.id)">{{item.description}}</el-dropdown-item>
+                  
+                </el-dropdown-menu>
+              </el-dropdown>
               <el-button v-if="isshowCustom" icon="el-icon-setting" size="small" @click="showEditColumn" title="自定义列表"></el-button>
               
             </template>
@@ -230,6 +275,9 @@ export default {
   data() {
     
     return {
+      inputColumn:false,
+      customNames:[],
+      selectedName:"",
       leftData:[],
       selectedColumns:[],
       editColumn:false,
@@ -294,6 +342,7 @@ export default {
   },
   mounted(){
     // this.ready();
+    this.loadCustomName();
   },
   methods: {
     // ready(){
@@ -311,7 +360,85 @@ export default {
     //       // }
     //     })
     // },
+    showCustomInfo(id){
+      let _self=this;
+      var m = new Map();
+      m.set('gridId',id);
+      m.set("lang", "zh-cn");
+      _self.axios({
+            headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+            },
+            method: 'post',
+            data: JSON.stringify(m),
+            url: "/dc/getOneEcmCustomGridViewInfo"
+        })
+            .then(function(response) {
+              if(response.data.code==1){
+                _self.columnList=response.data.data;
 
+              }
+              
+            })
+            .catch(function(error) {
+            console.log(error);
+            });
+    },
+  createCustomGrid(){
+    let _self=this;
+    let mp=new Array();
+    
+        var m = new Map();
+        m.set('gridName',_self.gridViewName);
+        m.set('DESCRIPTION',_self.selectedName);
+        
+        _self.axios({
+            headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+            },
+            method: 'post',
+            data: JSON.stringify(m),
+            url: "/admin/createOrUpdateGridView"
+        })
+            .then(function(response) {
+              if(response.data.code==1){
+                _self.$message({
+                      showClose: true,
+                      message: "保存成功！",
+                      duration: 2000,
+                      type: "Success"
+                    });
+
+              }
+              _self.inputColumn=false;
+              _self.loadCustomName();
+              
+            })
+            .catch(function(error) {
+            console.log(error);
+            });
+  },
+  loadCustomName(){
+    
+    let _self=this;
+    _self.axios({
+            headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+            },
+            method: 'post',
+            url: "/admin/getAllGridViewsOfCurrentUser"
+        })
+            .then(function(response) {
+              if(response.data.code==1){
+                
+                _self.customNames=response.data.data;
+              }
+              
+            })
+            .catch(function(error) {
+            console.log(error);
+            });
+  },
   saveCustomColumn(){
     let _self=this;
     let mp=new Array();
@@ -325,6 +452,7 @@ export default {
     }
         var m = new Map();
         m.set('gridName',_self.gridViewName);
+        m.set('DESCRIPTION',_self.selectedName);
         m.set('items',mp);
         _self.axios({
             headers: {
@@ -344,7 +472,8 @@ export default {
                     });
 
               }
-              _self.loadGridInfo();
+              // _self.loadGridInfo();
+              _self.loadCustomName();
               _self.editColumn=false;
             })
             .catch(function(error) {
@@ -468,7 +597,11 @@ export default {
                     });
       }
     },
-    
+    showCreateName(){
+        let _self=this;
+        _self.selectedName='';
+        _self.inputColumn=true;
+    },
     showEditColumn(){
       let _self=this;
       _self.editColumn=true;

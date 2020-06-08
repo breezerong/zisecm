@@ -32,6 +32,6 @@ public interface EcmGridViewItemMapper {
     
     List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
     
-    List<EcmGridViewItem> getItemByParam(@Param(value="name") String name,@Param(value="creator") String creator);
+    List<EcmGridViewItem> getItemByParam(@Param(value="id") String id);
     
 }

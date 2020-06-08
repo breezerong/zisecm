@@ -29,9 +29,8 @@
   
   
   <select id="getItemByParam" resultMap="BaseResultMap" parameterType="java.lang.String" > 
-	select * from(select b.ID, b.PARENT_ID, b.LABEL, b.WIDTH, b.VISIBLE_TYPE, b.ATTR_NAME, b.ALLOW_ORDERBY, b.ORDER_INDEX 
-	from ecm_gridview a, ecm_gridview_item b 
-	 where a.ID=b.PARENT_ID and a.name=#{name,jdbcType=VARCHAR} and a.CREATOR=#{creator,jdbcType=VARCHAR}) t  order by ORDER_INDEX
+	select ID, PARENT_ID, LABEL, WIDTH, VISIBLE_TYPE, ATTR_NAME, ALLOW_ORDERBY, ORDER_INDEX 
+	from ecm_gridview_item where PARENT_ID=#{id,jdbcType=VARCHAR}  order by ORDER_INDEX
   </select>
   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
 	${sqlStr}

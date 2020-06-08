@@ -68,7 +68,10 @@ public class GridViewService extends EcmObjectService<EcmGridView> implements IG
 		else
 			return null;
 	}
-	
+	public List<EcmGridView> getObjectsByCondition(String token,String condition) {
+		return ecmGridView.selectByCondition(condition);
+		
+	}
 	@Override
 	public boolean updateObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub
@@ -117,8 +120,8 @@ public class GridViewService extends EcmObjectService<EcmGridView> implements IG
 	
 	@Transactional(rollbackFor = Exception.class)
 	public String copyToCustomGridView(String token, EcmGridView obj) {
-		 String name = obj.getName();
-		 obj.setName(name);
+//		 String name = obj.getName();
+//		 obj.setName(name);
 		 obj.createId();
 		 
 		 ecmGridView.insert(obj);

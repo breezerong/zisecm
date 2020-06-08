@@ -156,23 +156,78 @@ public class GridViewManager extends ControllerAbstract{
 	  * @param obj 列表实体
 	  * @return
 	  */
+//	 @RequestMapping(value="/admin/createOrUpdateGridView", method = RequestMethod.POST)  
+//	 @ResponseBody
+//	 public  Map<String, Object>  createOrUpdateGridView(@RequestBody  String argStr){
+//		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
+//		 Map<String, Object>   mp = new HashMap<String, Object> ();
+//		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
+//		 try {
+//			String creator=this.getSession().getCurrentUser().getUserName();
+//			
+//			String condition=" NAME='"+gridName+"' and CREATOR='"+creator+"'";
+//			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
+//			String newId="";
+//			if(gridView==null) {
+//				gridView= ecmGridView.getObjectByName(getToken(), gridName);
+//				gridView.setCreationDate(new Date());
+//				gridView.setCreator(creator);
+//				gridView.setGridType(1);
+//				newId= ecmGridView.copyToCustomGridView(getToken(), gridView);
+//				
+//			}else {
+//				itemService.deleteByParentId(getToken(), gridView.getId());
+//				newId=gridView.getId();
+//			}
+//			String itemsStr= args.get("items")==null?"":args.get("items").toString();
+//			if(!"".equals(itemsStr)) {
+//				List<String> itemsList= JSONUtils.stringToArray(itemsStr);
+//				for(int i=0;i<itemsList.size();i++) {
+//					String item=itemsList.get(i);
+//					EcmGridViewItem viewItem= JSONUtils.objectFromJsonStr(item, EcmGridViewItem.class);
+//					viewItem.setParentId(newId);
+//					viewItem.setOrderIndex(i+1);
+////					viewItem.setVisibleType("1");
+////					viewItem.setWidth("80");
+//					itemService.newObject(getToken(), viewItem);
+//				}
+//			}
+//			mp.put("code", ActionContext.SUCESS);
+//		} catch (AccessDeniedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			mp.put("code", ActionContext.FAILURE);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			mp.put("code", ActionContext.FAILURE);
+//		}
+//		 return mp;
+//		 
+//	 }
+	 
 	 @RequestMapping(value="/admin/createOrUpdateGridView", method = RequestMethod.POST)  
 	 @ResponseBody
 	 public  Map<String, Object>  createOrUpdateGridView(@RequestBody  String argStr){
 		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
 		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
+		 String description= args.get("DESCRIPTION")==null?"":args.get("DESCRIPTION").toString();
 		 try {
 			String creator=this.getSession().getCurrentUser().getUserName();
 			
-			String condition=" NAME='"+gridName+"' and CREATOR='"+creator+"'";
+			String condition=" DESCRIPTION='"+description+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
 			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
 			String newId="";
 			if(gridView==null) {
-				gridView= ecmGridView.getObjectByName(getToken(), gridName);
+//				gridView= ecmGridView.getObjectByName(getToken(), gridName);
+				gridView=new EcmGridView();
+				gridView.setName(new Date().toString());
 				gridView.setCreationDate(new Date());
 				gridView.setCreator(creator);
 				gridView.setGridType(1);
+				gridView.setGridTag(gridName);
+				gridView.setDescription(description);
 				newId= ecmGridView.copyToCustomGridView(getToken(), gridView);
 				
 			}else {
@@ -206,5 +261,29 @@ public class GridViewManager extends ControllerAbstract{
 		 
 	 }
 	 
+	 @RequestMapping(value="/admin/getAllGridViewsOfCurrentUser", method = RequestMethod.POST)  
+	 @ResponseBody
+	 public  Map<String, Object>  getAllGridViewsOfCurrentUser(){
+		 
+		 Map<String, Object>   mp = new HashMap<String, Object> ();
+		
+		try {
+			String creator=this.getSession().getCurrentUser().getUserName();
+			String condition=" CREATOR='"+creator+"' and GRID_TYPE=1 ";
+			List<EcmGridView> data= ecmGridView.getObjectsByCondition(getToken(), condition);
+			mp.put("data", data);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		}
+		 return mp;
+		 
+	 }
 	 
 }

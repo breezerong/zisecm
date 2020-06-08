@@ -66,7 +66,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Autowired
 	private EcmDocumentMapper ecmDocument;
 	@Autowired
-	private ContentService contentService;
+	private ContentService contentServices;
 
 	@Autowired
 	private AclService aclService;
@@ -346,7 +346,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		EcmDocument doc = ecmDocument.selectByPrimaryKey(id);
 		
-		List<EcmContent> contents= contentService.getObjects(token, " PARENT_ID='"+id+"'");
+		List<EcmContent> contents= contentServices.getObjects(token, " PARENT_ID='"+id+"'");
 		
 		for(int i=0;contents!=null&&i<contents.size();i++) {
 			EcmContent c=contents.get(i);
@@ -355,10 +355,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (f.isFile() && f.exists()) {
 				f.delete();
 			}
-			contentService.deleteObjectById(token, c.getId());
+			contentServices.deleteObjectById(token, c.getId());
 		}
 		
-//		contentService.deleteObject(token, id);
+//		contentServices.deleteObject(token, id);
 		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
 		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + doc.getName());
 		addFullIndexSearchQueue(token, id);
@@ -421,10 +421,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				content.setId(oldContent.getId());
 				content.setFilePath(oldContent.getFilePath());
 				content.setDataTicket(oldContent.getDataTicket());
-				contentService.updateObject(token, content);
+				contentServices.updateObject(token, content);
 			}else {
 				content.createId();
-				contentService.newObject(token, content);
+				contentServices.newObject(token, content);
 			}
 			doc.setFormatName(content.getFormatName());
 			doc.setContentSize(content.getContentSize());
@@ -458,7 +458,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		newObject(token, doc.getAttributes());
 		if (content != null) {
-			contentService.newObject(token, content);
+			contentServices.newObject(token, content);
 		}
 		return doc.getId();
 	}
@@ -599,13 +599,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				content.setStoreName(CacheManagerOper.getEcmStores().get(doc.getTypeName()).getName());
 			}
 			content.setParentId(doc.getId());
-			EcmContent primary = contentService.getPrimaryContent(token, doc.getId());
+			EcmContent primary = contentServices.getPrimaryContent(token, doc.getId());
 			if (primary != null) {
 				content.setId(primary.getId());
 				content.setStoreName(primary.getStoreName());
 				content.setFilePath(primary.getFilePath());
 			}
-			contentService.updateObject(token, content);
+			contentServices.updateObject(token, content);
 			doc.setFormatName(content.getFormatName());
 			doc.setContentSize(content.getContentSize());
 		}
@@ -1041,7 +1041,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 					+ " has no add rendition permission:" + id);
 		}
-		EcmContent primary = contentService.getPrimaryContent(token, id);
+		EcmContent primary = contentServices.getPrimaryContent(token, id);
 		if (primary == null) {
 			throw new EcmException("Primary Content is null.");
 		}
@@ -1053,12 +1053,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (StringUtils.isEmpty(content.getFormatName())) {
 				throw new EcmException("Format cannot be empty.");
 			}
-			EcmContent existCont = contentService.getObject(token, id, 2, content.getFormatName());
+			EcmContent existCont = contentServices.getObject(token, id, 2, content.getFormatName());
 			if (existCont != null) {
 				existCont.setName(content.getName());
 				existCont.setContentSize(content.getContentSize());
 				existCont.setInputStream(content.getInputStream());
-				contentService.updateObject(token, existCont);
+				contentServices.updateObject(token, existCont);
 			} else {
 				content.createId();
 				content.setParentId(id);
@@ -1067,7 +1067,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				    content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
 				}
 				
-				contentService.newObject(token, content);
+				contentServices.newObject(token, content);
 			}
 			updateModifyInfo(token, id);
 			newAudit(token, null, AuditContext.ADD_REDITION, id, null, content.getName());
@@ -1085,9 +1085,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		EcmDocument doc = getObjectById(token, id);
 		if (doc != null) {
-			EcmContent existCont = contentService.getObject(token, id, 2, formatName);
+			EcmContent existCont = contentServices.getObject(token, id, 2, formatName);
 			if (existCont != null) {
-				contentService.deleteObject(token, existCont);
+				contentServices.deleteObject(token, existCont);
 				updateModifyInfo(token, id);
 				newAudit(token, null, AuditContext.REMOVE_REDITION, id, null, existCont.getName());
 			}
@@ -1098,7 +1098,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public boolean removeRendition(String token, String contentId) throws NoPermissionException, AccessDeniedException {
-		EcmContent existCont = contentService.getObjectById(token, contentId);
+		EcmContent existCont = contentServices.getObjectById(token, contentId);
 		if (existCont != null) {
 			String docId = existCont.getParentId();
 			if (getPermit(token, docId) < ObjectPermission.WRITE_CONTENT) {
@@ -1110,7 +1110,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				if (existCont.getContentType() == 1) {
 					// 主格式处理
 				}
-				contentService.deleteObject(token, existCont);
+				contentServices.deleteObject(token, existCont);
 				updateModifyInfo(token, docId);
 				newAudit(token, null, AuditContext.REMOVE_REDITION, docId, null, existCont.getName());
 			}
@@ -1124,7 +1124,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no read permission:" + id);
 		}
-		return contentService.getObjects(token, id, 2);
+		return contentServices.getObjects(token, id, 2);
 	}
 
 	private void updateAclName(String token, String id, String aclName) throws AccessDeniedException {
@@ -1149,7 +1149,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no read permission:" + id);
 		}
-		List<EcmContent> list = contentService.getObjects(token, id, 1);
+		List<EcmContent> list = contentServices.getObjects(token, id, 1);
 		{
 			if (list.size() > 0) {
 				return list.get(0);
@@ -1245,10 +1245,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		newObject(token, doc.getAttributes());
 		// 如果上传了文件，设置文件为上传文件
 		if (content != null) {
-			contentService.newObject(token, content);
+			contentServices.newObject(token, content);
 		} else {
 			// 从上一版复制电子文件
-			contentService.copyContent(token, docId, doc.getId());
+			contentServices.copyContent(token, docId, doc.getId());
 		}
 		// 更新上一版信息
 		String sql = "update ecm_document set LOCK_OWNER='',LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBNullDate() + ", LOCK_CLIENT=''";
@@ -1504,7 +1504,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
 					+ " has no add mount files permission:" + docId);
 		}
-		EcmContent primary = contentService.getPrimaryContent(token, docId);
+		EcmContent primary = contentServices.getPrimaryContent(token, docId);
 		EcmDocument doc = getObjectById(token, docId);
 		if(doc!=null&&content!=null) {
 			if (primary != null) {
@@ -1512,7 +1512,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				primary.setName(content.getName());
 				
 				primary.setInputStream(content.getInputStream());
-				contentService.updateObject(token, primary);
+				contentServices.updateObject(token, primary);
 				doc.setFormatName(primary.getFormatName());
 				doc.setContentSize(primary.getContentSize());
 			} else {
@@ -1521,7 +1521,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				if (StringUtils.isEmpty(content.getStoreName())) {
 				    content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
 				   }
-				contentService.newObject(token, content);
+				contentServices.newObject(token, content);
 				doc.setFormatName(content.getFormatName());
 				doc.setContentSize(content.getContentSize());
 			}
@@ -1559,7 +1559,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no delete permission:" + id);
 		}
 		EcmDocument doc = ecmDocument.selectByPrimaryKey(id);
-		contentService.deleteObject(token, id);
+		contentServices.deleteObject(token, id);
 		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
 		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + doc.getName());
 		addFullIndexSearchQueue(token, id);
