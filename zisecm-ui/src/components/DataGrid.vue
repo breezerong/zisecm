@@ -4,13 +4,13 @@
       <el-dialog
         title="编辑列"
         :visible.sync="editColumn"
-        @close="editColumn = false"
+        @close="onCloseCustom"
         width="60%"
       >
       <el-dialog
         title="新建名称"
         :visible.sync="inputColumn"
-        @close="inputColumn = false"
+        @close="inputColumn = false;"
         width="60%"
         :append-to-body='true'
       >
@@ -34,7 +34,7 @@
         </el-col>
         <el-col :span="8">
           <el-button @click="showCreateName">新建</el-button>
-          <el-button >删除</el-button>
+          <el-button @click="deleteGridView">删除</el-button>
         </el-col>
       </el-row>
         <el-transfer
@@ -101,6 +101,7 @@
           <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
         </div>
       </el-dialog>
+      
         <el-table
           id="datatable"
           :height="tableHeight"
@@ -186,6 +187,7 @@
             </div>
           </div>
           <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="190">
+            
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
               <el-dropdown trigger="click" style="overflow:visible">
@@ -197,8 +199,9 @@
                 icon="el-icon-more"
               ></el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="(item,idx) in customNames"
-                  :key="idx+'_C'"
+                  <!-- <el-button v-for="(item,idx) in customNames" :key="idx+'cc'">{{item.description}}</el-button> -->
+                  <el-dropdown-item v-for="(item,idx) in customList"
+                  :key="idx+'_Cz'"
                    @click.native="showCustomInfo(item.id)">{{item.description}}</el-dropdown-item>
                   
                 </el-dropdown-menu>
@@ -275,8 +278,10 @@ export default {
   data() {
     
     return {
+      refreshCustomView:true,
       inputColumn:false,
       customNames:[],
+      customList:[],
       selectedName:"",
       leftData:[],
       selectedColumns:[],
@@ -330,6 +335,13 @@ export default {
         }
       });
     },
+    // customNames(){
+    //   let _self=this;
+    //   _self.refreshCustomView=false;
+    //   _self.$nextTick(()=>{
+    //                 _self.refreshCustomView=true;
+    //             });
+    // },
     value(val) {
 				this.selectedColumns = val;
 			},
@@ -360,6 +372,48 @@ export default {
     //       // }
     //     })
     // },
+    onCloseCustom(){
+      let _self=this;
+      _self.editColumn = false;
+      _self.$nextTick(()=>{
+        _self.loadCustomName();
+        _self.$forceUpdate();
+        location.reload();
+      })
+      
+    },
+    deleteGridView(){
+      let _self=this;
+      var m = new Map();
+      m.set('gridName',_self.gridViewName);
+      m.set('DESCRIPTION',_self.selectedName);
+      m.set("lang", "zh-cn");
+      _self.axios({
+            headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+            },
+            method: 'post',
+            data: JSON.stringify(m),
+            url: "/admin/deleteCustomGridView"
+        })
+            .then(function(response) {
+              if(response.data.code==1){
+                _self.$message({
+                      showClose: true,
+                      message: "删除成功！",
+                      duration: 2000,
+                      type: "Success"
+                    });
+                    _self.selectedName='';
+                    _self.loadCustomName();
+                
+              }
+              
+            })
+            .catch(function(error) {
+            console.log(error);
+            });
+    },
     showCustomInfo(id){
       let _self=this;
       var m = new Map();
@@ -387,7 +441,15 @@ export default {
   createCustomGrid(){
     let _self=this;
     let mp=new Array();
-    
+    if(_self.selectedName==''){
+      _self.$message({
+                      showClose: true,
+                      message: "名称为空！",
+                      duration: 2000,
+                      type: "Error"
+                    });
+      retrun;
+    }
         var m = new Map();
         m.set('gridName',_self.gridViewName);
         m.set('DESCRIPTION',_self.selectedName);
@@ -430,8 +492,9 @@ export default {
         })
             .then(function(response) {
               if(response.data.code==1){
-                
+                // _self.$set(_self.customNames,response.data.data);
                 _self.customNames=response.data.data;
+                _self.customList=response.data.data;
               }
               
             })
@@ -441,6 +504,15 @@ export default {
   },
   saveCustomColumn(){
     let _self=this;
+    if(_self.selectedName==''){
+      _self.$message({
+                      showClose: true,
+                      message: "名称为空！",
+                      duration: 2000,
+                      type: "Error"
+                    });
+      retrun;
+    }
     let mp=new Array();
     for(let i=0;i<_self.selectedColumns.length;i++){
       for(let j=0;j<_self.sysColumnInfo.length;j++){
@@ -473,7 +545,7 @@ export default {
 
               }
               // _self.loadGridInfo();
-              _self.loadCustomName();
+              // _self.loadCustomName();
               _self.editColumn=false;
             })
             .catch(function(error) {

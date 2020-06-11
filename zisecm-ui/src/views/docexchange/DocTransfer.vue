@@ -197,7 +197,7 @@
           v-bind:isshowOption="true" v-bind:isshowSelection ="true"
           v-bind:propertyComponent="this.$refs.ShowProperty"
           gridViewName="TransferGrid"
-          isshowCustom="true"
+          :isshowCustom="true"
           @dbclick="dbclick"
           @rowclick="rowClick"
           @selectchange="selectChange"

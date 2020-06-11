@@ -206,6 +206,39 @@ public class GridViewManager extends ControllerAbstract{
 //		 
 //	 }
 	 
+	 @RequestMapping(value="/admin/deleteCustomGridView", method = RequestMethod.POST)  
+	 @ResponseBody
+	 public  Map<String, Object>  deleteGridView(@RequestBody  String argStr){
+		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		 Map<String, Object>   mp = new HashMap<String, Object> ();
+		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
+		 String description= args.get("DESCRIPTION")==null?"":args.get("DESCRIPTION").toString();
+		 try {
+			String creator=this.getSession().getCurrentUser().getUserName();
+			
+			String condition=" DESCRIPTION='"+description+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
+			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
+			String newId="";
+			if(gridView!=null) {
+				itemService.deleteByParentId(getToken(), gridView.getId());
+				newId=gridView.getId();
+				ecmGridView.deleteObjectById(getToken(), newId);
+			}
+			mp.put("message", "删除成功");
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		}
+		 return mp;
+		 
+	 }
+	 
 	 @RequestMapping(value="/admin/createOrUpdateGridView", method = RequestMethod.POST)  
 	 @ResponseBody
 	 public  Map<String, Object>  createOrUpdateGridView(@RequestBody  String argStr){
