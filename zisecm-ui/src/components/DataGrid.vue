@@ -103,6 +103,7 @@
       </el-dialog>
       
         <el-table
+          :key="rkey"
           id="datatable"
           :height="tableHeight"
           :data="itemDataList"
@@ -278,6 +279,7 @@ export default {
   data() {
     
     return {
+      rkey:0,
       refreshCustomView:true,
       inputColumn:false,
       customNames:[],
@@ -378,7 +380,8 @@ export default {
       _self.$nextTick(()=>{
         _self.loadCustomName();
         _self.$forceUpdate();
-        location.reload();
+        _self.rkey++;
+        // location.reload();
       })
       
     },
