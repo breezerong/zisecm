@@ -221,6 +221,9 @@
           key="main"
           v-bind:itemDataList="itemDataList"
           v-bind:columnList="gridList"
+          :sysColumnInfo="sysColumnInfo"
+          gridViewName="ArchiveGrid"
+          isshowCustom="true"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
           v-bind:itemCount="itemCount"
@@ -333,6 +336,7 @@ export default {
       selectTransferRow: [],
       selectedOneTransfer:[],
       gridList: [],
+      sysColumnInfo:[],
       innerGridList: [],
       outerGridList: [],
       currentFolder: [],
@@ -968,7 +972,8 @@ export default {
         })
         .then(function(response) {
           _self.showFields = [];
-          _self.gridList = response.data.data;
+          _self.gridList = response.data.data;;
+          _self.sysColumnInfo=response.data.data;;
           _self.gridList.forEach(element => {
             if (element.visibleType == 1) {
               _self.showFields.push(element.attrName);

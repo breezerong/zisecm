@@ -1,6 +1,7 @@
 package com.ecm.core.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -38,7 +39,11 @@ public class GridViewItemService extends EcmObjectService<EcmGridViewItem> imple
 	public List<EcmGridViewItem> getByParentId(String token,String parentId){
 		return (List<EcmGridViewItem>) ecmGridViewItem.selectByParentId(parentId);
 	}
-
+	
+	public boolean deleteByParentId(String token,String parentId){
+		return ecmGridViewItem.deleteByParentId(parentId)>0;
+	}
+	
 	@Override
 	public EcmGridViewItem getObjectById(String token,String id) {
 		// TODO Auto-generated method stub
@@ -70,5 +75,11 @@ public class GridViewItemService extends EcmObjectService<EcmGridViewItem> imple
 		// TODO Auto-generated method stub
 		id = DBFactory.getDBConn().getDBUtils().getString(id);
 		return ecmGridViewItem.deleteByPrimaryKey(id)>0;
+	}
+	
+	
+	public List<EcmGridViewItem> getEcmCustomGridViewInfo(String token,String id){
+		
+		return ecmGridViewItem.getItemByParam(id);
 	}
 }

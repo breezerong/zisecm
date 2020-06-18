@@ -11,6 +11,7 @@
     <result column="ALLOW_ORDERBY" jdbcType="BIT" property="allowOrderby" />
     <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
   </resultMap>
+  
   <sql id="Base_Column_List">
     ID, PARENT_ID, LABEL, WIDTH, VISIBLE_TYPE, ATTR_NAME, ALLOW_ORDERBY, ORDER_INDEX
   </sql>
@@ -25,6 +26,15 @@
     from ecm_gridview_item
     where PARENT_ID = #{parentId,jdbcType=VARCHAR} order by ORDER_INDEX
   </select>
+  
+  
+  <select id="getItemByParam" resultMap="BaseResultMap" parameterType="java.lang.String" > 
+	select ID, PARENT_ID, LABEL, WIDTH, VISIBLE_TYPE, ATTR_NAME, ALLOW_ORDERBY, ORDER_INDEX 
+	from ecm_gridview_item where PARENT_ID=#{id,jdbcType=VARCHAR}  order by ORDER_INDEX
+  </select>
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
@@ -35,6 +45,11 @@
     delete from ecm_gridview_item
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteByParentId" parameterType="java.lang.String">
+    delete from ecm_gridview_item
+    where parent_id = #{parentId,jdbcType=VARCHAR}
+  </delete>
+  
   <insert id="insert" parameterType="com.ecm.core.entity.EcmGridViewItem">
     insert into ecm_gridview_item (ID, PARENT_ID, LABEL, 
       WIDTH, VISIBLE_TYPE, ATTR_NAME, 

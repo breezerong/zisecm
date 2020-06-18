@@ -1,5 +1,6 @@
 package com.ecm.portal.controller.admin;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.GridViewItemService;
 import com.ecm.core.service.GridViewService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -31,6 +34,8 @@ public class GridViewManager extends ControllerAbstract{
 	 */
 	@Autowired
 	private GridViewService ecmGridView;
+	@Autowired
+	private GridViewItemService itemService;
 	
 	/**
 	 * 列表项数据访问
@@ -144,5 +149,174 @@ public class GridViewManager extends ControllerAbstract{
 		 }
 		 return mp;
 	 }
-
+	 
+	 
+	 /**
+	  * 复制列表
+	  * @param obj 列表实体
+	  * @return
+	  */
+//	 @RequestMapping(value="/admin/createOrUpdateGridView", method = RequestMethod.POST)  
+//	 @ResponseBody
+//	 public  Map<String, Object>  createOrUpdateGridView(@RequestBody  String argStr){
+//		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
+//		 Map<String, Object>   mp = new HashMap<String, Object> ();
+//		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
+//		 try {
+//			String creator=this.getSession().getCurrentUser().getUserName();
+//			
+//			String condition=" NAME='"+gridName+"' and CREATOR='"+creator+"'";
+//			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
+//			String newId="";
+//			if(gridView==null) {
+//				gridView= ecmGridView.getObjectByName(getToken(), gridName);
+//				gridView.setCreationDate(new Date());
+//				gridView.setCreator(creator);
+//				gridView.setGridType(1);
+//				newId= ecmGridView.copyToCustomGridView(getToken(), gridView);
+//				
+//			}else {
+//				itemService.deleteByParentId(getToken(), gridView.getId());
+//				newId=gridView.getId();
+//			}
+//			String itemsStr= args.get("items")==null?"":args.get("items").toString();
+//			if(!"".equals(itemsStr)) {
+//				List<String> itemsList= JSONUtils.stringToArray(itemsStr);
+//				for(int i=0;i<itemsList.size();i++) {
+//					String item=itemsList.get(i);
+//					EcmGridViewItem viewItem= JSONUtils.objectFromJsonStr(item, EcmGridViewItem.class);
+//					viewItem.setParentId(newId);
+//					viewItem.setOrderIndex(i+1);
+////					viewItem.setVisibleType("1");
+////					viewItem.setWidth("80");
+//					itemService.newObject(getToken(), viewItem);
+//				}
+//			}
+//			mp.put("code", ActionContext.SUCESS);
+//		} catch (AccessDeniedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			mp.put("code", ActionContext.FAILURE);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			mp.put("code", ActionContext.FAILURE);
+//		}
+//		 return mp;
+//		 
+//	 }
+	 
+	 @RequestMapping(value="/admin/deleteCustomGridView", method = RequestMethod.POST)  
+	 @ResponseBody
+	 public  Map<String, Object>  deleteGridView(@RequestBody  String argStr){
+		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		 Map<String, Object>   mp = new HashMap<String, Object> ();
+		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
+		 String description= args.get("DESCRIPTION")==null?"":args.get("DESCRIPTION").toString();
+		 try {
+			String creator=this.getSession().getCurrentUser().getUserName();
+			
+			String condition=" DESCRIPTION='"+description+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
+			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
+			String newId="";
+			if(gridView!=null) {
+				itemService.deleteByParentId(getToken(), gridView.getId());
+				newId=gridView.getId();
+				ecmGridView.deleteObjectById(getToken(), newId);
+			}
+			mp.put("message", "删除成功");
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		}
+		 return mp;
+		 
+	 }
+	 
+	 @RequestMapping(value="/admin/createOrUpdateGridView", method = RequestMethod.POST)  
+	 @ResponseBody
+	 public  Map<String, Object>  createOrUpdateGridView(@RequestBody  String argStr){
+		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		 Map<String, Object>   mp = new HashMap<String, Object> ();
+		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
+		 String description= args.get("DESCRIPTION")==null?"":args.get("DESCRIPTION").toString();
+		 try {
+			String creator=this.getSession().getCurrentUser().getUserName();
+			
+			String condition=" DESCRIPTION='"+description+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
+			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
+			String newId="";
+			if(gridView==null) {
+//				gridView= ecmGridView.getObjectByName(getToken(), gridName);
+				gridView=new EcmGridView();
+				gridView.setName(new Date().toString());
+				gridView.setCreationDate(new Date());
+				gridView.setCreator(creator);
+				gridView.setGridType(1);
+				gridView.setGridTag(gridName);
+				gridView.setDescription(description);
+				newId= ecmGridView.copyToCustomGridView(getToken(), gridView);
+				
+			}else {
+				itemService.deleteByParentId(getToken(), gridView.getId());
+				newId=gridView.getId();
+			}
+			String itemsStr= args.get("items")==null?"":args.get("items").toString();
+			if(!"".equals(itemsStr)) {
+				List<String> itemsList= JSONUtils.stringToArray(itemsStr);
+				for(int i=0;i<itemsList.size();i++) {
+					String item=itemsList.get(i);
+					EcmGridViewItem viewItem= JSONUtils.objectFromJsonStr(item, EcmGridViewItem.class);
+					viewItem.setParentId(newId);
+					viewItem.setOrderIndex(i+1);
+//					viewItem.setVisibleType("1");
+//					viewItem.setWidth("80");
+					itemService.newObject(getToken(), viewItem);
+				}
+			}
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		}
+		 return mp;
+		 
+	 }
+	 
+	 @RequestMapping(value="/admin/getAllGridViewsOfCurrentUser", method = RequestMethod.POST)  
+	 @ResponseBody
+	 public  Map<String, Object>  getAllGridViewsOfCurrentUser(){
+		 
+		 Map<String, Object>   mp = new HashMap<String, Object> ();
+		
+		try {
+			String creator=this.getSession().getCurrentUser().getUserName();
+			String condition=" CREATOR='"+creator+"' and GRID_TYPE=1 ";
+			List<EcmGridView> data= ecmGridView.getObjectsByCondition(getToken(), condition);
+			mp.put("data", data);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		}
+		 return mp;
+		 
+	 }
+	 
 }

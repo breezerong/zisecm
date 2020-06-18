@@ -28,7 +28,9 @@ public class EcmGridView extends EcmSysObject{
     //客户端标签
     private String gridTag;
 
-    public String getCondition() {
+
+
+	public String getCondition() {
     	
         return condition;
     }
