@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>浏览CAD图纸</title>
+  <style>
+    html * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    #webcad {
+      width: 100%;
+      height: calc(100% - 50px);
+    }
+
+    .control-panel {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      height: 50px;
+      background-color: #2C2C2C;
+      list-style: none;
+    }
+
+    .control-panel>li:nth-of-type(1) {
+      background-image: url('./imgs/layer_btn.png');
+    }
+
+    .control-panel>li:nth-of-type(2) {
+      background-image: url('./imgs/layout_btn.png');
+    }
+
+    .control-panel>li:nth-of-type(3) {
+      background-image: url('./imgs/refresh_btn.png');
+    }
+
+    .control-panel>li {
+      box-sizing: border-box;
+      width: 50px;
+      height: 50px;
+      background-size: 26px 26px;
+      background-position: 12px 8px;
+      background-repeat: no-repeat;
+      cursor: pointer;
+      border-top: 4px solid transparent;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='webcad'></div>
+  <ul class="control-panel">
+    <li onclick="switchLayerPanel()"></li>
+    <li onclick="switchLayoutPanel()"></li>
+    <li onclick="refresh()"></li>
+  </ul>
+  <script src="./file/gstar-js-sdk.js"></script>
+</body>
+
+<script>
+  // 初始化
+  gc.init({
+    id: 'webcad',
+    switchLayoutCB: switchLayout, // 切换布局会触发此回调
+    tipsTime: 3000, //错误提示信息存在时间(毫秒)，默认3000（3秒）
+    ocfSizeLimit: 20000000,//可打开OCF图纸数据的最大限制（字节数），默认5000000(5M)
+  })
+  gc.openResoure({
+    // src: 'https://resource-cn.gstarcad.com/sampledraw/0000012860.ocf', //支持1.文件路径方式'./file/ocf/1001/test.ocf'，2.url地址https://resource-cn.gstarcad.com/sampledraw/0000012860.ocf，3.文件流http://xxxx.com/getocf.do
+    src:GetQueryValue('file'),
+    success: function () {
+        //alert('ok')
+      },
+      fail: function () {
+        alert('请检查电子文件是否存在')
+      }
+  })
+  // 开启鼠标缩放功能
+  gc.enableZoom({})
+  // 开启鼠标平移功能
+  gc.enablePan({})
+
+  // 切换布局layout时执行的callback函数
+  function switchLayout(layout) {
+    alert(layout.globalName)
+    gc.openResoure({
+      src: 'http://127.0.0.1/transform.do?fileId=1678&layout='+layout.globalName, //布局对应的ocf文件，由于布局图形必须有对应的布局名称，后台才能转换生成，需要将布局名传给后台，然后后台返回转换后的ocf文件流
+      success: function () {
+        //alert('ok')
+      },
+      fail: function () {
+        //alert('error')
+      }
+    })
+  }
+
+  // control-panel
+  var panelCurrent = ''
+  function switchLayerPanel() {
+    if (panelCurrent == 'layer') {
+      gc.closeLayersBox()
+      panelCurrent = ''
+    } else if (panelCurrent == 'layout') {
+      gc.closeLayoutsBox()
+      gc.openLayersBox()
+      panelCurrent = 'layer'
+    } else {
+      gc.openLayersBox()
+      panelCurrent = 'layer'
+    }
+  }
+  function switchLayoutPanel() {
+    if (panelCurrent == 'layer') {
+      gc.closeLayersBox()
+      gc.openLayoutsBox()
+      panelCurrent = 'layout'
+    } else if (panelCurrent == 'layout') {
+      gc.closeLayoutsBox()
+      panelCurrent = ''
+    } else {
+      gc.openLayoutsBox()
+      panelCurrent = 'layout'
+    }
+  }
+  function refresh() {
+    location.reload()
+  }
+  function GetQueryValue(queryName) {
+				var query = decodeURI(window.location.search.substring(1));
+				var vars = query.split("&");
+				for (var i = 0; i < vars.length; i++) {
+					var pair = vars[i].split("=");
+					if (pair[0] == queryName) { return pair[1]; }
+				}
+				return null;
+			}
+</script>
+
+</html>
