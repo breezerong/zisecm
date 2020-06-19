@@ -56,7 +56,7 @@ export default {
   },
   computed: {
         NanJingBankUrl() {
-            return "showToolBar=0&runmode=0&ze=0&OnLoadedEvent=OnFlashLoaded"
+            return "showToolBar=0&runmode=0&ze=1&OnLoadedEvent=OnFlashLoaded"
           + "&fileId=1001&fileName=test&cacheSize=1024&ocfSizeLimit=100&extData=null"
           + "&languagePage=/static/flash/cn.xml&lan=cn";
         }
