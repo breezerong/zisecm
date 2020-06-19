@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
@@ -247,6 +248,27 @@ public class UserController extends ControllerAbstract{
 					mp.put("code", ActionContext.SUCESS);
 			}
 		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mp;
+	}
+	/**
+	 * 验证权限
+	 * @param userName
+	 * @return
+	 */
+	@RequestMapping(value = "/user/validatapermission", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> validataPermission(@RequestBody String params){
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(params);
+			String username=(String) args.get("username");
+			
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", true);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

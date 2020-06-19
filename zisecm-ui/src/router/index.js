@@ -9,6 +9,7 @@ import { userRouter } from "@/router/user.js";
 import { workflowRouter } from "@/router/workflow.js";
 import { testRouter } from "@/router/test.js";
 import { docexchange } from "@/router/docexchange.js";
+import {cnpeRouter} from "@/router/cnpe.js"
 import store from "@/store";
 import Layout from "../views/layout/Layout";
 
@@ -37,7 +38,9 @@ const router = new Router({
           component: () => import("@/views/HomeContent.vue"),
           name: "首页内容"
         },
+        
         ...docexchange,
+        ...cnpeRouter,
         searchRouter,
         ...dcRouter,
         ...recordRouter,
@@ -65,7 +68,15 @@ const router = new Router({
         },
       ]
     },
-    ,
+    {
+      meta: {
+        requireAuth: true,
+        title: 'NoPermission'
+      },
+      path: "/NoPermission",
+      component: () => import("@/views/NoPermission.vue"),
+      name: "无权限"
+    },
     {
       meta: {
         requireAuth: true,
