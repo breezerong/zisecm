@@ -12,6 +12,8 @@ public class EcmStore extends EcmSysObject{
     private String storeClass;
 
     private String storePath;
+    
+    private boolean isEncrypt;
 
     public Integer getStoreType() {
         return storeType;
@@ -36,4 +38,12 @@ public class EcmStore extends EcmSysObject{
     public void setStorePath(String storePath) {
         this.storePath = storePath == null ? null : storePath.trim();
     }
+
+	public boolean isEncrypt() {
+		return isEncrypt;
+	}
+
+	public void setEncrypt(boolean isEncrypt) {
+		this.isEncrypt = isEncrypt;
+	}
 }

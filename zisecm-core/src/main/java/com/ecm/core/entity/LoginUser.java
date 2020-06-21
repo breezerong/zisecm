@@ -30,6 +30,11 @@ public class LoginUser {
 	 * 用户部门
 	 */
 	private String department;
+	
+	/**
+	 * 公司
+	 */
+	private String company;
 
 	public String getDepartment() {
 		return department;
@@ -122,5 +127,11 @@ public class LoginUser {
 	}
 	public void setAppName(String appName) {
 		this.appName = appName;
+	}
+	public String getCompany() {
+		return company;
+	}
+	public void setCompany(String company) {
+		this.company = company;
 	}
 }
