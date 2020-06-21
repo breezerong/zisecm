@@ -46,6 +46,8 @@ public class EcmUser extends EcmSysObject{
     private Date delegateStart;
     
     private Date delegateEnd;
+    
+    private String CompanyName;
 
     public String getSignImage() {
 		return signImage;
@@ -201,5 +203,13 @@ public class EcmUser extends EcmSysObject{
 
 	public void setPasswordConfirm(String passwordConfirm) {
 		this.passwordConfirm = passwordConfirm;
+	}
+
+	public String getCompanyName() {
+		return CompanyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		CompanyName = companyName;
 	}
 }

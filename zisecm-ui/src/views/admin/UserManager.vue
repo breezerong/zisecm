@@ -132,6 +132,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="公司名称" :label-width="formLabelWidth">
+              <el-input
+                :autosize="true"
+                v-model="form.companyName"
+                :disabled="clientPermission<form.clientPermission"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="默认组" :label-width="formLabelWidth">
               <el-input
                 :autosize="true"
@@ -352,6 +361,7 @@ export default {
         email: "",
         phone: "",
         groupName: "",
+        companyName: "",
         password: "",
         passwordConfirm: "",
         delegateUser: "",
@@ -513,6 +523,7 @@ export default {
         systemPermissioin: "0",
         clientPermissioin: "1",
         groupName: "",
+        companyName: "",
         isActived: true
       };
       this.fileList = [];

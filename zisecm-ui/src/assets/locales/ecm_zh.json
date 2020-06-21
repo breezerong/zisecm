@@ -237,7 +237,8 @@
     "todoTask": "待办工作",
     "doneTask": "已办工作",
     "myWorkflow": "我的流程",
-    "waitingBack": "待归还"
+    "waitingBack": "待归还",
+    "kmMap": "知识地图"
 
 },
 "message": {
