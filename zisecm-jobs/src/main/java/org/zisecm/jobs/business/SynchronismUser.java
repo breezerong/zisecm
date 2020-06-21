@@ -145,7 +145,7 @@ public class SynchronismUser {
 							user.setLoginName(loginName);
 							user.setIsActived(true);
 							//
-							user.setEmail(loginName+"@cnep.cc");
+							user.setEmail(loginName+"@cnpe.cc");
 							user.setGroupName(groupName);
 							userService.newObject(ecmSession.getToken(), user);
 						}
@@ -161,7 +161,7 @@ public class SynchronismUser {
 							user.setLdapCn(code);
 							user.setLoginName(loginName);
 							user.setIsActived(true);
-							user.setEmail(loginName+"@cnep.cc");
+							user.setEmail(loginName+"@cnpe.cc");
 							user.setGroupName(groupName);
 							userService.updateObject(ecmSession.getToken(), user);
 						}

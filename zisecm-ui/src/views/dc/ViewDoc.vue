@@ -41,7 +41,8 @@
              <ImageViewer v-else-if="viewerType==3" v-bind:id="doc.id" v-bind:format="doc.format"></ImageViewer>
              <VideoPlayer v-else-if="viewerType==4" v-bind:id="doc.id" v-bind:format="doc.format"></VideoPlayer>
              <AudioPlayer v-else-if="viewerType==5" v-bind:id="doc.id" v-bind:format="doc.format"></AudioPlayer>
-             <CADViewer v-else-if="viewerType==6" v-bind:id="doc.id" format="ocf"></CADViewer>
+             <!-- <CADViewer v-else-if="viewerType==6" v-bind:id="doc.id" format="ocf"></CADViewer> -->
+             <CADViewerHtml5 v-else-if="viewerType==6" v-bind:id="doc.id" format="ocf"></CADViewerHtml5>
              <JTViewer v-else-if="viewerType==7" v-bind:id="doc.id" format="obj" :fileName="doc.C_IMPORT_NAME"></JTViewer>
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
                 当前文件没有电子文件。
@@ -115,6 +116,7 @@ import AudioPlayer from './AudioPlayer.vue'
 import InnerItemViewer from "./InnerItemViewer.vue"
 import ChangeDocViewer from "./ChangeDocViewer.vue"
 import CADViewer from "./CADViewer.vue"
+import CADViewerHtml5 from "./CADViewerHtml5.vue"
 import JTViewer from "./JTViewer2.vue"
 import { timeout } from 'q'
 
@@ -134,6 +136,7 @@ export default {
     ChangeDocViewer:ChangeDocViewer,
     PdfViewer:PdfViewer,
     CADViewer:CADViewer,
+    CADViewerHtml5:CADViewerHtml5,
     JTViewer:JTViewer
   },
   data(){

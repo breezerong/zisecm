@@ -238,7 +238,27 @@
     "doneTask": "已办工作",
     "myWorkflow": "我的流程",
     "waitingBack": "待归还",
-    "kmMap": "知识地图"
+    "kmMap": "知识地图",
+    "DCReport":"文函报表",
+    "Deblockingdc":"待解锁文函",
+    "PendingDC":"待确认文函",
+    "ReceivedDC":"已接收文函",
+    "ReceivingDC":"待接收文函",
+    "RejectedDC":"驳回文函",
+    "Submissiondc":"待提交文函",
+    "InterfaceManual":"接口手册",
+    "ICMReport":"ICM报表",
+    "IEDpublished":"已发布的IED",
+    "IEDRejectied":"驳回IED",
+    "IEDReport":"IED报表",
+    "PendingIED":"待确认IED",
+    "PendingSubmit":"待提交IED",
+    "ProjectViewer":"项目视图",
+    "SSCviewer":"SSC视图",
+    "CnpeGantt":"甘特图",
+    "CnpePlanReport":"计划报表",
+    "CnpePlanSync":"计划同步",
+    "Cnpe3levelPlan":"三级计划"
 
 },
 "message": {

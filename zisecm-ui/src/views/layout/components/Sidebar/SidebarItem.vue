@@ -101,7 +101,7 @@ export default {
       return false;
     },
      urlIsExt(url){
-      if(url.indexOf('http')==0){
+      if(url!=null&&url.indexOf('http')==0){
         return true;
       }else{
         return false;
@@ -123,7 +123,8 @@ export default {
     loadMenu() {
       let _self = this;
       var m = new Map();
-      m.set("name", "TopMenu");
+      // m.set("name", "TopMenu");
+      m.set("name","cnpeexchange");
       m.set("lang", _self.getLang());
       axios
         .post("/memu/getMyMenu", JSON.stringify(m))

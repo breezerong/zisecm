@@ -1,0 +1,203 @@
+export const cnpeRouter=
+[
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'DCReport'
+        },
+        path: '/cnpe/DCManagement/dcreport',
+        name: '文函报表',
+        component: () => import('@/views/docexchange/DCManagement/DCReport.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'Deblockingdc'
+        },
+        path: '/cnpe/DCManagement/deblockingdc',
+        name: '待解锁文函',
+        component: () => import('@/views/docexchange/DCManagement/Deblockingdc.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'PendingDC'
+        },
+        path: '/cnpe/DCManagement/pendingDC',
+        name: '待确认文函',
+        component: () => import('@/views/docexchange/DCManagement/PendingDC.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'ReceivedDC'
+        },
+        path: '/cnpe/DCManagement/receivedDC',
+        name: '已接收文函',
+        component: () => import('@/views/docexchange/DCManagement/ReceivedDC.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'ReceivingDC'
+        },
+        path: '/cnpe/DCManagement/receivingdc',
+        name: '待接收文函',
+        component: () => import('@/views/docexchange/DCManagement/ReceivingDC.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'RejectedDC'
+        },
+        path: '/cnpe/DCManagement/rejectedDC',
+        name: '驳回文函',
+        component: () => import('@/views/docexchange/DCManagement/RejectedDC.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'Submissiondc'
+        },
+        path: '/cnpe/DCManagement/submissiondc',
+        name: '待提交文函',
+        component: () => import('@/views/docexchange/DCManagement/Submissiondc.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'InterfaceManual'
+        },
+        path: '/cnpe/icmmanagement/interfacemanual',
+        name: '接口手册',
+        component: () => import('@/views/docexchange/ICMManagement/InterfaceManual.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'ICMReport'
+        },
+        path: '/cnpe/icmmanagement/icmreport',
+        name: 'ICM报表',
+        component: () => import('@/views/docexchange/ICMManagement/ICMReport.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'IEDpublished'
+        },
+        path: '/cnpe/iedmanagement/IEDpublished',
+        name: '已发布的IED',
+        component: () => import('@/views/docexchange/IEDManagement/IEDpublished.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'IEDRejectied'
+        },
+        path: '/cnpe/iedmanagement/IEDRejectied',
+        name: '驳回IED',
+        component: () => import('@/views/docexchange/IEDManagement/IEDRejectied.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'IEDReport'
+        },
+        path: '/cnpe/iedmanagement/IEDReport',
+        name: 'IED报表',
+        component: () => import('@/views/docexchange/IEDManagement/IEDReport.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'PendingIED'
+        },
+        path: '/cnpe/iedmanagement/pendingied',
+        name: '待确认IED',
+        component: () => import('@/views/docexchange/IEDManagement/PendingIED.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'PendingSubmit'
+        },
+        path: '/cnpe/iedmanagement/pendingsubmit',
+        name: '待提交IED',
+        component: () => import('@/views/docexchange/IEDManagement/PendingSubmit.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'ProjectViewer'
+        },
+        path: '/cnpe/MoreViewerBrowe/projectviewer',
+        name: '项目视图',
+        component: () => import('@/views/docexchange/MoreViewerBrowe/ProjectViewer.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'SSCviewer'
+        },
+        path: '/cnpe/MoreViewerBrowe/sscviewer',
+        name: 'SSC视图',
+        component: () => import('@/views/docexchange/MoreViewerBrowe/SSCviewer.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'CnpeGantt'
+        },
+        path: '/cnpe/PlanManagement/gantt',
+        name: '甘特图',
+        component: () => import('@/views/docexchange/planmanagement/Gantt.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'CnpePlanReport'
+        },
+        path: '/cnpe/PlanManagement/planreport',
+        name: '计划报表',
+        component: () => import('@/views/docexchange/planmanagement/PlanReport.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'CnpePlanSync'
+        },
+        path: '/cnpe/PlanManagement/plansync',
+        name: '计划同步',
+        component: () => import('@/views/docexchange/planmanagement/PlanSync.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'Cnpe3levelPlan'
+        },
+        path: '/cnpe/plan/threelevelplan',
+        name: '三级计划',
+        component: () => import('@/views/docexchange/planmanagement/ThreeLevelPlan.vue')
+    },
+]
