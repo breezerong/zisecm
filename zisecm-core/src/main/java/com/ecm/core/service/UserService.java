@@ -76,7 +76,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	
 	@Override
 	public LoginUser authentication(EcmUser ecmUser) throws Exception {
-		
+		String ownerCompany = CacheManagerOper.getEcmParameters().get("OwnerCompany").getValue();
 		EcmUser loginUser = ecmUserMapper.selectByLoginName(ecmUser.getLoginName());
 		if(loginUser==null)
 		{
@@ -99,6 +99,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		cuser.setUserId(loginUser.getId());
 		cuser.setUserName(loginUser.getName());
 		cuser.setLoginName(loginUser.getLoginName());
+		if(ownerCompany!=null) {
+			cuser.setUserType(ownerCompany.equals(loginUser.getCompanyName())?"1":"2");
+		}
 		cuser.setClientPermission(loginUser.getClientPermission());
 		cuser.setSystemPermission(loginUser.getSystemPermission());
 		cuser.setLoginTime(new Date());
