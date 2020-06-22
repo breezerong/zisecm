@@ -63,3 +63,7 @@ zisecm-portal/.settings/org.eclipse.jdt.apt.core.prefs
 *.component
 *.prefs
 *.prefs
+zisecm-core/.classpath
+zisecm-core/.classpath
+zisecm-core/.factorypath
+zisecm-portal/.classpath
