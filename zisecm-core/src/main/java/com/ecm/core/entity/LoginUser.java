@@ -39,7 +39,7 @@ public class LoginUser {
 	/**
 	 * 用户类型，1：总包商，2：分包商
 	 */
-	private String userType;
+	private int userType=0;
 
 	public String getDepartment() {
 		return department;
@@ -139,10 +139,10 @@ public class LoginUser {
 	public void setCompany(String company) {
 		this.company = company;
 	}
-	public String getUserType() {
+	public int getUserType() {
 		return userType;
 	}
-	public void setUserType(String userType) {
+	public void setUserType(int userType) {
 		this.userType = userType;
 	}
 }
