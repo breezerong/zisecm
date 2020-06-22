@@ -52,3 +52,14 @@ zisecm-code-generator/.settings/org.eclipse.m2e.core.prefs
 zisecm-code-generator/.settings/org.eclipse.jdt.core.prefs
 zisecm-code-generator/.settings/org.eclipse.jdt.apt.core.prefs
 zisecm-code-generator/.settings/org.eclipse.core.resources.prefs
+zisecm-core/.classpath
+zisecm-core/.classpath
+zisecm-core/.classpath
+zisecm-core/.factorypath
+zisecm-portal/.classpath
+zisecm-portal/.factorypath
+zisecm-portal/.settings/org.eclipse.jdt.apt.core.prefs
+*.prefs
+*.component
+*.prefs
+*.prefs
