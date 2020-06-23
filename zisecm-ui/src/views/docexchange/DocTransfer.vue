@@ -188,7 +188,7 @@
           ref="mainDataGrid"
           key="main"
           v-bind:itemDataList="itemDataList"
-          v-bind:columnList="gridList"
+          
           :sysColumnInfo="sysColumnInfo"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
@@ -350,7 +350,7 @@ export default {
     // this.loadTransferGridData();
     // this.loadGridInfo();
     // this.loadInnerGridInfo();
-    this.loadGridInfo();
+    // this.loadGridInfo();
     this.loadGridData();
   },
   methods: {
