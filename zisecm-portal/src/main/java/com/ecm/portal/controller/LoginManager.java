@@ -64,7 +64,9 @@ public class LoginManager extends ControllerAbstract{
 				
 				mp.put("code", ActionContext.SUCESS);
 				mp.put("token", s.getToken());
+				mp.put("company", s.getCurrentUser().getCompany());
 				mp.put("department", s.getCurrentUser().getDepartment());
+				mp.put("userType", s.getCurrentUser().getUserType());
 				mp.put("clientPermission", s.getCurrentUser().getClientPermission());
 				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
 				mp.put("loginName", s.getCurrentUser().getLoginName());

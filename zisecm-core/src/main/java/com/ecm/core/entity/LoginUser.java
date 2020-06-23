@@ -35,6 +35,11 @@ public class LoginUser {
 	 * 公司
 	 */
 	private String company;
+	
+	/**
+	 * 用户类型，1：总包商，2：分包商
+	 */
+	private String userType;
 
 	public String getDepartment() {
 		return department;
@@ -133,5 +138,11 @@ public class LoginUser {
 	}
 	public void setCompany(String company) {
 		this.company = company;
+	}
+	public String getUserType() {
+		return userType;
+	}
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 }

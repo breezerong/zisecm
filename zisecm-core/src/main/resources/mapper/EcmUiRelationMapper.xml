@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.mapper.EcmUiRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ecm.core.entity.EcmUiRelation">
+        <id column="ID" property="id" jdbcType="NVARCHAR" />
+        <result column="RELATION_NAME" property="relationName" jdbcType="NVARCHAR" />
+        <result column="GRID_NAME" property="gridName" jdbcType="NVARCHAR" />
+        <result column="READONLY" property="readonly" jdbcType="TINYINT" />
+        <result column="TYPE_NAME" property="typeName" jdbcType="NVARCHAR" />
+        <result column="FORM_NAME" property="formName" jdbcType="NVARCHAR" />
+        <result column="DESCRIPTION" property="description" jdbcType="NVARCHAR" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, RELATION_NAME, GRID_NAME, READONLY, TYPE_NAME, FORM_NAME, DESCRIPTION
+    </sql>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_ui_relation
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select
+    <include refid="Base_Column_List" />
+    from ecm_ui_relation order by ID
+  </select>
+  
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ecm_ui_relation
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.ecm.core.entity.EcmUiRelation">
+    insert into ecm_ui_relation (
+		    ID,
+		    RELATION_NAME,
+		    GRID_NAME,
+		    READONLY,
+		    TYPE_NAME,
+		    FORM_NAME,
+		    DESCRIPTION
+      )
+    values (
+    		 #{id},
+    		 #{relationName},
+    		 #{gridName},
+    		 #{readonly},
+    		 #{typeName},
+    		 #{formName},
+    		 #{description}
+    	)
+  </insert>
+  
+  
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmUiRelation">
+    insert into ecm_ui_relation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    	<if test="id != null">
+    		 ID,
+    	</if>
+    	<if test="relationName != null">
+    		 RELATION_NAME,
+    	</if>
+    	<if test="gridName != null">
+    		 GRID_NAME,
+    	</if>
+    	<if test="readonly != null">
+    		 READONLY,
+    	</if>
+    	<if test="typeName != null">
+    		 TYPE_NAME,
+    	</if>
+    	<if test="formName != null">
+    		 FORM_NAME,
+    	</if>
+    	<if test="description != null">
+    		 DESCRIPTION,
+    	</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+    	<if test="id != null">
+    		#{id,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="relationName != null">
+    		#{relationName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="gridName != null">
+    		#{gridName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="readonly != null">
+    		#{readonly,jdbcType=TINYINT}, 		 
+    	</if>
+    	<if test="typeName != null">
+    		#{typeName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="formName != null">
+    		#{formName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="description != null">
+    		#{description,jdbcType=NVARCHAR}, 		 
+    	</if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmUiRelation">
+    update ecm_ui_relation
+    <set>
+    	<if test="id != null">
+    		ID=#{id,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="relationName != null">
+    		RELATION_NAME=#{relationName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="gridName != null">
+    		GRID_NAME=#{gridName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="readonly != null">
+    		READONLY=#{readonly,jdbcType=TINYINT}, 		 
+    	</if>
+    	<if test="typeName != null">
+    		TYPE_NAME=#{typeName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="formName != null">
+    		FORM_NAME=#{formName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="description != null">
+    		DESCRIPTION=#{description,jdbcType=NVARCHAR}, 		 
+    	</if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmUiRelation">
+    update ecm_component
+    set     
+   		ID=#{id},
+   		RELATION_NAME=#{relationName},
+   		GRID_NAME=#{gridName},
+   		READONLY=#{readonly},
+   		TYPE_NAME=#{typeName},
+   		FORM_NAME=#{formName},
+   		DESCRIPTION=#{description}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>
+
