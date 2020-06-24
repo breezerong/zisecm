@@ -18,5 +18,13 @@
     <module>zisecm-extinterface</module>
     <module>zisecm-process</module>
      -->
+     <module>zisecm-code-generator</module>
   </modules>
+  
+  <repositories>
+    <repository>
+        <id>clojars</id>
+        <url>http://clojars.org/repo/</url>
+    </repository>
+</repositories>
 </project>
