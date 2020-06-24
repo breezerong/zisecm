@@ -97,6 +97,13 @@
             <span slot="title">卡片查询</span>
           </el-menu-item>
         </router-link>
+
+         <router-link to="/managercenter/uirelationmanager">
+          <el-menu-item index="/managercenter/uirelationmanager">
+            <i class="iconfont zisecm-vipcard menu-white"></i>
+            <span slot="title">相关类型设置</span>
+          </el-menu-item>
+        </router-link>
       </el-submenu>
     </div>
     <div v-if="systemPermission>=2">

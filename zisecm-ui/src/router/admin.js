@@ -226,6 +226,16 @@ export const adminRouter =
     meta: {
       requireAuth: true,
       permit: 9,
+      title: '相关类型设置'
+    },
+    path: '/managercenter/uirelationmanager',
+    component: () => import('@/views/docexchange/UiRelation/'),
+    name: '相关类型设置'
+  },
+  {
+    meta: {
+      requireAuth: true,
+      permit: 9,
       title: 'cardsearchitemManager'
     },
     path: '/managercenter/cardsearchitemmanager',
