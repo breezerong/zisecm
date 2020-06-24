@@ -124,25 +124,9 @@ public class GroupService implements IGroupService {
 		return list;
 	}
 	
-	@Override
-	public List<EcmGroup> getUserGroupsById(String token,String userId) {
-		
-		String sql = "select a.* from ecm_group a, ecm_group_user b "
-				+ " where a.ID = b.GROUP_ID and b.USER_ID='"+DBFactory.getDBConn().getDBUtils().getString(userId)+"'";
-		
-		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
-		return list;
-	}
 	
-	@Override
-	public List<EcmGroup> getUserGroupsByName(String token,String userName) {
-		
-		String sql = "select a.* from ecm_group a, ecm_group_user b, ecm_user c where "
-				+ " a.ID = b.GROUP_ID and b.USER_ID=c.ID and c.NAME='"+DBFactory.getDBConn().getDBUtils().getString(userName)+"'";
-		
-		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
-		return list;
-	}
+	
+	
 
 	@Override
 	public long getGroupCount(String token,String id, String type, String condition) {
@@ -363,12 +347,7 @@ public class GroupService implements IGroupService {
 		return ecmUserMapper.searchToEntity(sql);
 	}
 	
-	@Override
-	public List<EcmGroup> getUserGroup(String token,String userName) {
-		// TODO Auto-generated method stub
-		String sql ="select a.* from ecm_group a, ecm_group_user b, ecm_user c where b.GROUP_ID=a.ID and b.USER_ID=c.ID and c.NAME='"+userName+"'";
-		return ecmGroupMapper.searchToEntity(sql);
-	}
+	
 
 	
 }

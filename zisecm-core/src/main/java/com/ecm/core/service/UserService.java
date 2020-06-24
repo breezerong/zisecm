@@ -107,7 +107,18 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		cuser.setLoginTime(new Date());
 		cuser.setCompany(loginUser.getCompanyName());
 		cuser.setDepartment(loginUser.getGroupName());
+		bindUserRoles(cuser);
 		return cuser;
+	}
+	
+	private void bindUserRoles(LoginUser cuser) {
+		if(cuser==null || cuser.getRoles() == null) {
+			return;
+		}
+		List<EcmGroup> list = getUserGroupsById(null,cuser.getUserId());
+		for(EcmGroup group: list) {
+			cuser.getRoles().add(group.getName());
+		}
 	}
 	
 //	private void searchGroups(long id, List<EcmGroup> roles, List<String> roleNames) {
@@ -430,7 +441,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public List<EcmUser> getRoleUsers(String token,Pager pager, String noGroup,String groupId, String condition) {
 		String sql = "select ID, NAME, DESCRIPTION, LOGIN_NAME, PHONE, CREATION_DATE, CREATOR, EMAIL, MODIFIER," + 
-				"MODIFIED_DATE, IS_ACTIVED, GROUP_NAME, PASSWORD,CLIENT_PERMISSION,SYSTEM_PERMISSION from ecm_user a ";
+				"MODIFIED_DATE, IS_ACTIVED, GROUP_NAME,COMPANY_NAME, PASSWORD,CLIENT_PERMISSION,SYSTEM_PERMISSION from ecm_user a ";
 		
 		if(!EcmStringUtils.isEmpty(condition))
 		{
@@ -651,7 +662,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		cuser.setClientPermission(loginUser.getClientPermission());
 		cuser.setSystemPermission(loginUser.getSystemPermission());
 		cuser.setLoginTime(new Date());
+		cuser.setCompany(loginUser.getCompanyName());
 		cuser.setDepartment(loginUser.getGroupName());
+		bindUserRoles(cuser);
 		return cuser;
 	}
 
@@ -666,4 +679,23 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		return true;
 	}
 	
+	@Override
+	public List<EcmGroup> getUserGroupsById(String token,String userId) {
+		
+		String sql = "select a.* from ecm_group a, ecm_group_user b "
+				+ " where a.ID = b.GROUP_ID and b.USER_ID='"+DBFactory.getDBConn().getDBUtils().getString(userId)+"'";
+		
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
+		return list;
+	}
+	
+	@Override
+	public List<EcmGroup> getUserGroupsByName(String token,String userName) {
+		
+		String sql = "select a.* from ecm_group a, ecm_group_user b, ecm_user c where "
+				+ " a.ID = b.GROUP_ID and b.USER_ID=c.ID and c.NAME='"+DBFactory.getDBConn().getDBUtils().getString(userName)+"'";
+		
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql);
+		return list;
+	}
 }
