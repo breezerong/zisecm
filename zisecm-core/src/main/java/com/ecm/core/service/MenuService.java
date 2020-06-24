@@ -40,7 +40,7 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 	EcmComponentMapper ecmComponentMapper;
 	
 	@Autowired
-	GroupService groupService;
+	UserService userService;
 	
 	@Override
 	public EcmMenu getMyMenu(String token, String menuName, String lang) throws AccessDeniedException {
@@ -54,7 +54,7 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 			menu = menu.clone(lang);
 			if(getSession(token).getCurrentUser().getSystemPermission()<SystemPermission.SUPER_USER) {
 				//读取当前用户所有角色
-				List<EcmGroup> glist = groupService.getUserGroupsById(token, userId);
+				List<EcmGroup> glist = userService.getUserGroupsById(token, userId);
 				checkMenuPermission(menu.getMenuItems(), glist);
 			}
 		}

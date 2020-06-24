@@ -3,6 +3,7 @@ package com.ecm.icore.service;
 import java.io.InputStream;
 import java.util.List;
 
+import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
@@ -63,5 +64,21 @@ public interface IUserService {
 	List<EcmUser> getGroupUsers(String token, String groupId);
 
 	EcmUser getObjectByLoginName(String token, String loginName);
+
+
+	/**
+	 * 根据用户ID获取用户所有组，效率比用户名获取高
+	 * @param token
+	 * @param userId
+	 * @return
+	 */
+	List<EcmGroup> getUserGroupsById(String token, String userId);
+	/**
+	 * 根据用户名获取所有组
+	 * @param token
+	 * @param userName
+	 * @return
+	 */
+	List<EcmGroup> getUserGroupsByName(String token, String userName);
 
 }
