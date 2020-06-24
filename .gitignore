@@ -67,3 +67,6 @@ zisecm-core/.classpath
 zisecm-core/.classpath
 zisecm-core/.factorypath
 zisecm-portal/.classpath
+zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.properties
+zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.xml
+zisecm-code-generator/src/main/resources/application.properties
