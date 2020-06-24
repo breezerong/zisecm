@@ -11,14 +11,10 @@ import java.time.LocalDateTime;
  * @author Chen Shuo
  * @since 2020-06-24
  */
-public class ExcTransfer implements Serializable {
+public class ExcTransfer extends EcmObject {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * ID
-     */
-    private String id;
 
     private Integer itemType;
 
@@ -92,13 +88,7 @@ public class ExcTransfer implements Serializable {
      */
     private String synStatus;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+  
     public Integer getItemType() {
         return itemType;
     }
@@ -208,7 +198,7 @@ public class ExcTransfer implements Serializable {
     @Override
     public String toString() {
         return "ExcTransfer{" +
-            "id=" + id +
+            "id=" + getId() +
             ", itemType=" + itemType +
             ", docId=" + docId +
             ", fromName=" + fromName +

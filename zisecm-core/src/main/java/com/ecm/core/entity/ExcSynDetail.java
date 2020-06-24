@@ -11,12 +11,11 @@ import java.time.LocalDateTime;
  * @author Chen Shuo
  * @since 2020-06-24
  */
-public class ExcSynDetail implements Serializable {
+public class ExcSynDetail extends EcmObject {
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
-
+   
     /**
      * 应用名称
      */
@@ -67,13 +66,7 @@ public class ExcSynDetail implements Serializable {
      */
     private String errorMessage;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+   
     public String getAppName() {
         return appName;
     }
@@ -148,7 +141,7 @@ public class ExcSynDetail implements Serializable {
     @Override
     public String toString() {
         return "ExcSynDetail{" +
-            "id=" + id +
+            "id=" + getId() +
             ", appName=" + appName +
             ", actionName=" + actionName +
             ", batchNum=" + batchNum +
