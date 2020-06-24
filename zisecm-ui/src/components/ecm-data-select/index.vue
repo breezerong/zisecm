@@ -32,12 +32,6 @@ export default {
     dataTextField:{
       type:String,
       default:""
-    },
-    onSelectChange:{
-      type:Function,
-      default:function(){
-
-      }
     }
   },
   data(){

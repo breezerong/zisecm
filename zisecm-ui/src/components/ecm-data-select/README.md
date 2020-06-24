@@ -15,11 +15,11 @@ import SQLSelect from '@components/ecm-data-select'
 
 ```
 
-### 使用自定义方式查询
+### 使用自定义URL方式查询
 ```html
 <el-form v-model="form">
   <el-form-item>
-    <SQLSelect :model="form.item" dataUrl="/admin/uiralation/list" :dataObj=""></SQLSelect>
+    <SQLSelect :model="form.item" dataUrl="/admin/uiralation/list" :dataObj="dataObj" dataValueField="NAME" dataTextField="NAME" @onSelectChange="onSelectChange"></SQLSelect>
   </el-form-item>
 </el-form>
 
@@ -28,9 +28,14 @@ import SQLSelect from '@components/ecm-data-select'
 export default{
   data(){
     return{
-      dataObj:{
-        
+      dataObj:{//查询条件
+
       }
+    }
+  },
+  methods:{
+    onSelectChange:function(val){
+
     }
   }
 }
