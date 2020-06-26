@@ -4,12 +4,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ecm.common.util.EcmStringUtils;
+import com.ecm.core.PermissionContext;
+import com.ecm.core.ServiceContext;
+import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.dao.EcmGroupItemMapper;
 import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
@@ -20,6 +25,9 @@ import com.ecm.core.entity.EcmGroupItem;
 import com.ecm.core.entity.EcmGroupUser;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IGroupService;
 
 /**
@@ -31,7 +39,7 @@ import com.ecm.icore.service.IGroupService;
  */
 @Service
 @Scope("prototype")
-public class GroupService implements IGroupService {
+public class GroupService extends EcmObjectService<EcmGroup> implements IGroupService {
 	
 	@Autowired
 	private EcmGroupMapper ecmGroupMapper;
@@ -47,6 +55,15 @@ public class GroupService implements IGroupService {
 	
 	@Autowired
 	private EcmGroupUserMapper ecmGroupUserMapper;
+	
+	private final Logger logger = LoggerFactory.getLogger(GroupService.class);
+	
+	public GroupService()
+	{
+		serviceCode = ServiceContext.GROUP_CODE;
+		systemPermission = PermissionContext.SystemPermission.USER_GROUP_CONFIGE;
+		logger.info("ServiceCode:"+serviceCode+",systemPermission:"+systemPermission);
+	}
 
 	@Override
 	public long getChildGroupCount(String token,String id) {
@@ -69,7 +86,7 @@ public class GroupService implements IGroupService {
 	}
 
 	@Override
-	public List<EcmGroup> getChildGroup(String token,String id) {
+	public List<EcmGroup> getChildGroups(String token,String id) {
 		// TODO Auto-generated method stub
 		return ecmGroupMapper.selectByParentId(id);
 	}
@@ -109,6 +126,34 @@ public class GroupService implements IGroupService {
 		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql, pager);
 		return list;
 	}
+	
+	@Override
+	public List<EcmGroup> getChildRoles(String token,String id, Pager pager, String condition) {
+		String sql = "select a.ID, a.NAME, a.DESCRIPTION, a.CODING, a.CREATION_DATE, a.CREATOR, a.MODIFIER, a.MODIFIED_DATE, a.GROUP_TYPE,a.PARENT_ID "
+				+ "from ecm_group a, ecm_group_item b where a.ID=b.CHILD_ID and b.PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(id)+"' and b.item_type='1'";
+		if(!EcmStringUtils.isEmpty(condition))
+		{
+			sql += " and ("+condition+")";
+		}
+		
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql, pager);
+		return list;
+	}
+	
+	@Override
+	public List<EcmGroup> getParentRoles(String token,String id, Pager pager, String condition) {
+		String sql = "select a.ID, a.NAME, a.DESCRIPTION, a.CODING, a.CREATION_DATE, a.CREATOR, a.MODIFIER, a.MODIFIED_DATE, a.GROUP_TYPE,a.PARENT_ID "
+				+ "from ecm_group a, ecm_group_item b where a.ID=b.CHILD_ID and b.CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(id)+"' and b.item_type='1'";
+		if(!EcmStringUtils.isEmpty(condition))
+		{
+			sql += " and ("+condition+")";
+		}
+		
+		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql, pager);
+		return list;
+	}
+	
+	
 	
 	@Override
 	public List<EcmGroup> getAllGroups(String token,String parentId, String type) {
@@ -224,6 +269,136 @@ public class GroupService implements IGroupService {
 		return true;
 	}
 	
+	@Override
+	@Transactional
+	public boolean removeUserFromGroup(String token, EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
+		EcmUser oldEn = ecmUserMapper.selectByLoginName(en.getLoginName());
+		EcmGroup g = ecmGroupMapper.selectByName(oldEn.getGroupName());
+		if(g.getGroupType().equals("1"))
+		{
+			oldEn.setGroupName("");
+			oldEn.setGroupId("");
+			ecmUserMapper.updateByPrimaryKey(oldEn);
+		}
+		String sqlStr = "delete from ecm_group_item where parent_id='"+g.getId() + "' and child_id='"
+				+en.getId()+"' and ITEM_TYPE='2'";
+		ecmGroupItemMapper.executeSql(sqlStr);
+		
+		sqlStr = "delete from ecm_group_user where group_id='"+g.getId() + "' and user_id='"
+				+en.getId()+"'";
+		ecmGroupUserMapper.executeSql(sqlStr);
+		return true;
+	}
+	
+	@Override
+	@Transactional
+	public boolean removeUserFromRole(String token, String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
+		//删除角色下所有用户, 只能删除当前角色添加的用户
+		String sqlStr = "delete from ecm_group_user where group_id='"+roleId + "' and user_id='"
+				+userId+"' and exists(select ID from ecm_group_item where parent_id='"+roleId + "' and child_id='" + 
+						userId + "' and ITEM_TYPE='2')";
+		ecmGroupUserMapper.executeSql(sqlStr);
+		
+		sqlStr = "select ID from ecm_group_item where parent_id='"+roleId + "' and child_id='"
+				+userId+"' and ITEM_TYPE='2'";
+		
+		List<Map<String, Object>>  list = ecmGroupItemMapper.executeSql(sqlStr);
+		//存在本角色添加的用户
+		if(list!=null && list.size()>0) {
+			//删除本角色添加的用户
+			sqlStr = "delete from ecm_group_item where parent_id='"+roleId + "' and child_id='"
+					+userId+"' and ITEM_TYPE='2'";
+			ecmGroupItemMapper.executeSql(sqlStr);
+			//删除引用的角色中用户
+			removeParentRoleUser(roleId, userId);
+		}
+		return true;
+	}
+	
+
+	
+	@Override
+	@Transactional
+	public boolean removeRoleFromRole(String token, String parentId, String childId) throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
+		// 移除所有角色相关的用户
+		List<EcmUser> list = getAllUser(token,childId);
+		for(EcmUser user: list) {
+			String sqlStr = "select ID from ecm_group_item where parent_id='"+parentId + "' and child_id='"
+					+user.getId()+"' and ITEM_TYPE='2'";
+			
+			List<Map<String, Object>>  list2 = ecmGroupItemMapper.executeSql(sqlStr);
+			//不存在本角色添加的用户
+			if(list2!=null || list.size()==0) {
+				if(!existsChildRole(parentId, user.getId())) {
+					 sqlStr = "delete from ecm_group_user where group_id='"+parentId + "' and user_id='"
+							+user.getId()+"'";
+					ecmGroupUserMapper.executeSql(sqlStr);
+				}
+			}
+		}
+		//移除角色
+		String sqlStr = "delete from ecm_group_item where parent_id='"+parentId + "' and child_id='"
+					+childId+"' and ITEM_TYPE='1'";
+			ecmGroupItemMapper.executeSql(sqlStr);
+		return true;
+	}
+	
+	/**
+	 * 移除引用角色中的用户
+	 * @param roleId
+	 * @param userId
+	 */
+	private void removeParentRoleUser(String roleId,String userId) {
+		String sql = "select PARENT_ID from  ecm_group_item  where CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(roleId)+"' and item_type='1'";
+		List<Map<String, Object>>  list = ecmGroupItemMapper.executeSql(sql);
+		if(list!=null) {
+			for(Map<String, Object> map: list) {
+				String parentId = map.get("PARENT_ID").toString();
+				//如果不是在这个角色添加的用户
+				if(!existsUser(parentId, userId)) {
+					//如果在其他的子角色中不存在，需要删除用户
+					if(!existsChildRole(parentId, userId)) {
+						String sqlStr = "delete from ecm_group_user where group_id='"+parentId + "' and user_id='"
+								+userId+"'";
+						ecmGroupUserMapper.executeSql(sqlStr);
+					}
+				}
+			}
+		}
+	}
+	
+	private boolean existsChildRole(String roleId, String userId)
+	{
+		String sql = "select CHILD_ID from  ecm_group_item  where PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(roleId)+"' and item_type='1'";
+			List<Map<String, Object>>  list = ecmGroupItemMapper.executeSql(sql);
+			if(list!=null && list.size()>0) {
+				for(Map<String, Object> map: list) {
+					String childId = map.get("CHILD_ID").toString();
+					if(existsUser(childId, userId)) {
+						return true;
+					}
+					//递归判断是否存在其子角色
+					if( existsChildRole(childId, userId)) {
+						return true;
+					}
+				}
+			}
+			return false;
+	}
+	
+	private boolean existsUser(String roleId, String userId) {
+		String sql = "select PARENT_ID from  ecm_group_item  where CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(roleId)+"' and child_id='"  + 
+			  userId + "' and item_type='2'";
+		List<Map<String, Object>>  list = ecmGroupItemMapper.executeSql(sql);
+		if(list!=null && list.size()>0) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * 移除上级角色用户
 	 * @param groupId
@@ -281,7 +456,31 @@ public class GroupService implements IGroupService {
 			gu.setUserId(userId);
 			ecmGroupUserMapper.insert(gu);
 		}
-
+		addUserToParentRole(token, roleId, userId);
+		return true;
+	}
+	/**
+	 * 添加用户到父角色
+	 * @param token
+	 * @param parentRoleId
+	 * @param userId
+	 * @return
+	 */
+	private boolean addUserToParentRole(String token,String parentRoleId,String userId) {
+		List<EcmGroup> list = this.getParentRoles(token, parentRoleId, null, null);
+		for(EcmGroup g: list) {
+			EcmGroupUser gu = ecmGroupUserMapper.selectByGroupUser(g.getId(), userId);
+			if(gu==null) {
+				//添加到所有用户
+				gu = new EcmGroupUser();
+				gu.createId();
+				gu.setGroupId(g.getId());
+				gu.setUserId(userId);
+				ecmGroupUserMapper.insert(gu);
+			}
+			//递归添加用户到父角色
+			addUserToParentRole(token,g.getId(),userId);
+		}
 		return true;
 	}
 
@@ -305,6 +504,7 @@ public class GroupService implements IGroupService {
 			throw new Exception("Department cannot add Role.");
 		}
 		EcmGroupItem item = new EcmGroupItem();
+		item.createId();
 		item.setItemType("1");
 		item.setParentId(parentRoleId);
 		item.setChildId(childRoleId);
@@ -317,6 +517,7 @@ public class GroupService implements IGroupService {
 			if(gu==null) {
 				//添加到所有用户
 				gu = new EcmGroupUser();
+				gu.createId();
 				gu.setGroupId(parentRoleId);
 				gu.setUserId(en.getUserId());
 				ecmGroupUserMapper.insert(gu);
