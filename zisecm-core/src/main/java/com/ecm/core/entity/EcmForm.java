@@ -130,8 +130,10 @@ public class EcmForm extends EcmSysObject {
 		// TODO Auto-generated method stub
 		ecmFormItems = items;
 		formClassifications.clear();
-		for(EcmFormItem item:items) {
-			addToClassification(item);
+		if(items!=null) {
+			for(EcmFormItem item:items) {
+				addToClassification(item);
+			}
 		}
 	}
 	

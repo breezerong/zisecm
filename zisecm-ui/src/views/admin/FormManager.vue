@@ -16,6 +16,9 @@
             <el-option label="SEARCH" value="SEARCH"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="分类" :label-width="formLabelWidth">
+          <el-input v-model="form.classifications" auto-complete="off"></el-input>
+        </el-form-item>
         <el-form-item label="列数" :label-width="formLabelWidth">
           <el-input v-model="form.columnCount" auto-complete="off"></el-input>
         </el-form-item>
@@ -78,6 +81,7 @@
               <el-input v-model="scope.row.description"></el-input>
             </template>
           </el-table-column>
+          
           <el-table-column label="事件" width="120">
             <template slot-scope="scope">
               <el-select v-model="scope.row.action">
@@ -85,6 +89,11 @@
                 <el-option label="EDIT" value="EDIT"></el-option>
                 <el-option label="VIEW" value="VIEW"></el-option>
               </el-select>
+            </template>
+          </el-table-column>
+           <el-table-column label="分类" min-width="30%">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.classifications"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="列数" width="80">

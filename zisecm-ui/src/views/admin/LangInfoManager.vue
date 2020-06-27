@@ -149,7 +149,7 @@ export default {
       currentPage: 1,
       pageSize: 20,
       itemCount:0,
-      tableHeight: window.innerHeight - 145,
+      tableHeight: window.innerHeight - 165,
       form: {
         messageKey: "attr_",
         description: "",
