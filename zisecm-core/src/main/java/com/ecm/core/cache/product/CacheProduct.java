@@ -1,5 +1,9 @@
 package com.ecm.core.cache.product;
 
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -32,6 +36,8 @@ import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
  */
 @Component
 public class CacheProduct implements ApplicationRunner,Ordered {
+	
+	private final Logger logger = LoggerFactory.getLogger(CacheProduct.class);
 	
 	@Autowired
 	private CacheManagerEcmParam cacheManagerEcmParam; //系统参数配置
@@ -88,6 +94,7 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
+		logger.info("Start load cache: "+ (new Date()).toString());
 		//语言标签配置
 		cacheManagerLanguage.initAllCaches();
 		cacheManagerLangInfo.initAllCaches();
@@ -126,6 +133,7 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 		
 		cacheManagerCfgActivity.initAllCaches();
 		
+		logger.info("Complete load cache: "+ (new Date()).toString());
 		//pdfService.run();
 	}
 
