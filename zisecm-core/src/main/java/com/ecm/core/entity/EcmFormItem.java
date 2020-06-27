@@ -1,5 +1,6 @@
 package com.ecm.core.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
@@ -44,6 +45,10 @@ public class EcmFormItem extends EcmObject{
     private Integer minCount =0 ;
     
     private Integer maxCount =0;
+    /**
+     * 分类
+     */
+    private String classification;
     /**
      * 依赖字段名
      */
@@ -216,6 +221,8 @@ public class EcmFormItem extends EcmObject{
 		return validValues;
 	}
 	
+	
+
 	public EcmFormItem clone(String lang) {
 		EcmFormItem item = new EcmFormItem();
 		item.setAttrName(attrName);
@@ -224,6 +231,7 @@ public class EcmFormItem extends EcmObject{
 		item.setId(this.getId());
 		item.setIsHide(isHide);
 		item.setIsRepeat(isRepeat);
+		item.setClassification(CacheManagerLangInfo.getLanguageLabel(lang,classification));
 		item.setLabel(CacheManagerLangInfo.getLanguageLabel(lang,label));
 		//item.setLabel(label);
 		item.setMaxCount(maxCount);
@@ -241,5 +249,13 @@ public class EcmFormItem extends EcmObject{
 		item.setEnableChange(enableChange);
 		item.setDependName(dependName);
 		return item;
+	}
+
+	public String getClassification() {
+		return classification;
+	}
+
+	public void setClassification(String classification) {
+		this.classification = classification;
 	}
 }

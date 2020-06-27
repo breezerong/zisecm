@@ -26,9 +26,45 @@ public class EcmForm extends EcmSysObject {
     private Boolean isDefault;
 
     private String searchField;
+    /**
+     * 分类，可以使用语言标签，多个用英文分号分隔
+     */
+    private String classifications;
+    
+    List<String> list = new ArrayList<String>();
+    
+    public List<String> getClassificationList(String langKey) {
+    	list.clear();
+    	if(classifications != null && classifications.length()>0) {
+    		String[] strs = classifications.split(";");
+    		for(String s: strs) {
+    			list.add(CacheManagerLangInfo.getLanguageLabel(langKey,s));
+    		}
+    	}
+		return list;
+	}
+    
+    public List<String> getClassificationList() {
+    	list.clear();
+    	if(classifications != null && classifications.length()>0) {
+    		String[] strs = classifications.split(";");
+    		for(String s: strs) {
+    			list.add(s);
+    		}
+    	}
+		return list;
+	}
 
+    
+    public String getClassifications() {
+		return classifications;
+	}
 
-    public String getTypeName() {
+	public void setClassifications(String classifications) {
+		this.classifications = classifications;
+	}
+
+	public String getTypeName() {
         return typeName;
     }
 
@@ -67,10 +103,48 @@ public class EcmForm extends EcmSysObject {
     public void setSearchField(String searchField) {
         this.searchField = searchField == null ? null : searchField.trim();
     }
+    
+    List<EcmFormClassification> formClassifications = new ArrayList<EcmFormClassification>();
+	public List<EcmFormClassification> getFormClassifications() {
+		return formClassifications;
+	}
+	/**
+	 * 获取分类属性定义
+	 * @param session
+	 * @param langKey 语言
+	 * @return
+	 */
+	public List<EcmFormClassification> getFormClassifications(IEcmSession session,String langKey) {
+		List<EcmFormClassification> list = new ArrayList<EcmFormClassification>();
+		for(EcmFormClassification fc: formClassifications) {
+			EcmFormClassification en = new EcmFormClassification();
+			en.setLabel(CacheManagerLangInfo.getLanguageLabel(langKey,fc.getLabel()));
+			en.setEcmFormItems(fc.getEcmFormItems(session, langKey));
+			list.add(en);
+		}
+		return list;
+	}
+	
     private List<EcmFormItem> ecmFormItems;
 	public void setEcmFormItems(List<EcmFormItem> items) {
 		// TODO Auto-generated method stub
 		ecmFormItems = items;
+		formClassifications.clear();
+		for(EcmFormItem item:items) {
+			addToClassification(item);
+		}
+	}
+	
+	private void addToClassification(EcmFormItem item) {
+		for(EcmFormClassification fc: formClassifications) {
+			if(fc.getLabel().equals(item.getClassification())) {
+				fc.getEcmFormItems().add(item);
+				return;
+			}
+		}
+		EcmFormClassification fc = new EcmFormClassification();
+		fc.setLabel(item.getClassification());
+		fc.getEcmFormItems().add(item);
 	}
 
 	List<EcmFormItem> ecmFormSearchItems;
@@ -88,7 +162,12 @@ public class EcmForm extends EcmSysObject {
 		// TODO Auto-generated method stub
 		return ecmFormItems;
 	}
-	
+	/**
+	 * 获取所有属性定义
+	 * @param session
+	 * @param langKey 语言
+	 * @return
+	 */
 	public List<EcmFormItem> getEcmFormItems(IEcmSession session,String langKey) {
 		// TODO Auto-generated method stub
 		List<EcmFormItem> list = new ArrayList<EcmFormItem>();
@@ -103,6 +182,8 @@ public class EcmForm extends EcmSysObject {
 					itemc.setDefaultValue(session.getCurrentUser().getUserName());
 				}else if("{department}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(session.getCurrentUser().getDepartment());
+				}else if("{company}".equalsIgnoreCase(defaultValue)) {
+					itemc.setDefaultValue(session.getCurrentUser().getCompany());
 				}
 				list.add(itemc);
 			}
