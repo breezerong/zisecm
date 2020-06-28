@@ -219,4 +219,19 @@ public class ArchiveRelationService  {
 	
 	}
 	
+	public int getMaxOrderIndex(String token, String parentId) {
+		String sql="select max(ORDER_INDEX) as maxIndex from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"'";
+		List<Map<String, Object>> list;
+		try {
+			list = relationService.getMapList(token, sql);
+			if(list!=null&&list.size()>0 && list.get(0)!=null) {
+				return Integer.parseInt(list.get(0).get("maxIndex").toString());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
 }

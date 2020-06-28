@@ -10,18 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
@@ -250,10 +246,19 @@ public class TransferController extends ControllerAbstract{
 			if(status!=null&&status.equals(Constants.ARRANGE)) {
 				transf.addAttribute("LIFECYCLE_DIR", 2);
 				transf.setStatus(Constants.ARRANGE);
+				if(transf.getAttributes().get("C_COUNT1")!=null) {
+					String count = transf.getAttributes().get("C_COUNT1").toString();
+					int cc = Integer.parseInt(count)+1;
+					transf.getAttributes().put("C_COUNT1", cc);
+				}
+				else {
+					transf.getAttributes().put("C_COUNT1", 1);
+				}
 			}else {
 				transf.addAttribute("LIFECYCLE_DIR", 0);
 				transf.setAclName("acl_all_write");
 				transf.setStatus(Constants.PRODUCE);
+				
 			}
 			
 			documentService.updateObject(getToken(), transf, null);
@@ -342,9 +347,22 @@ public class TransferController extends ControllerAbstract{
 		
 		for (String id : list) {
 //		if(!"".equals(argStr)) {
-			documentService.updateStatus(getToken(), id, Constants.ARCHIVED);
+			//documentService.updateStatus(getToken(), id, Constants.ARCHIVED);
 //		}
+			EcmDocument transf= documentService.getObjectById(getToken(), id);
+				transf.addAttribute("LIFECYCLE_DIR", 2);
+				transf.setStatus(Constants.ARCHIVED);
+				if(transf.getAttributes().get("C_COUNT1")!=null) {
+					String count = transf.getAttributes().get("C_COUNT1").toString();
+					int cc = Integer.parseInt(count)+1;
+					transf.getAttributes().put("C_COUNT1", cc);
+				}
+				else {
+					transf.getAttributes().put("C_COUNT1", 1);
+				}
 			
+			
+			documentService.updateObject(getToken(), transf, null);
 		}
 		
 		mp.put("code", ActionContext.SUCESS);

@@ -45,7 +45,14 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 	@Override
 	public EcmMenu getMyMenu(String token, String menuName, String lang) throws AccessDeniedException {
 		if(StringUtils.isEmpty(menuName)) {
-			return null;
+			try {
+				menuName = CacheManagerOper.getEcmParameters().get("DefaultMenu").getValue();
+			}catch(Exception ex) {
+				
+			}
+			if(StringUtils.isEmpty(menuName)) {
+				return null;
+			}
 		}
 		String userId = getSession(token).getCurrentUser().getUserId();
 		EcmMenu menu = CacheManagerOper.getEcmMenus().get(menuName);

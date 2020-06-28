@@ -97,7 +97,9 @@ public class PageInterceptor implements Interceptor {
 		String sql = sqlBuffer.toString().toUpperCase();
 		if(sql.indexOf(" ORDER ")>0) {
 			String[] strs = sql.split(" ORDER ");
-			sql = "select appendRowNum.row,* from (select ROW_NUMBER() OVER (order "+strs[1]+") AS row,* from ("
+			//去掉排序里面的表别名
+			String orderBy = strs[1].replace("A.", "").replace("B.", "").replace("C.", "").replace("D.", "");
+			sql = "select appendRowNum.row,* from (select ROW_NUMBER() OVER (order "+orderBy+") AS row,* from ("
 					+ strs[0]
 					+ ") as innerTable"
 					+ ")as appendRowNum where appendRowNum.row >= "

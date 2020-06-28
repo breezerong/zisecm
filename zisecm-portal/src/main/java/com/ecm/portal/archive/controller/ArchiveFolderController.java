@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,7 @@ import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
 import com.ecm.core.service.RelationService;
+import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.archive.common.ChildrenObjAction;
 import com.ecm.portal.archive.common.Constants;
 import com.ecm.portal.archive.services.ArchiveFolderService;
@@ -278,9 +280,9 @@ public class ArchiveFolderController extends ControllerAbstract{
 			if(args.get("condition")!=null) {
 				conditionWhere=args.get("condition").toString();
 			}
-			String sql = "select * from (select b.*,a.id as RELATION_ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
+			String sql = "select b.*,a.id as RELATION_ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
 					+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
-					+ " and a.PARENT_ID='"+args.get("id").toString()+"' "+conditionWhere+") t order by ORDER_INDEX,CREATION_DATE";
+					+ " and a.PARENT_ID='"+args.get("id").toString()+"' "+conditionWhere+" order by a.ORDER_INDEX,b.CREATION_DATE";
 			List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql,pager);
 			mp.put("data", list);
 			mp.put("pager", pager);
@@ -844,7 +846,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 		}
 		
 		for (String id : list) {
-			relationService.deleteObjectById(getToken(),id);
+			relationService.deleteObject(getToken(),id);
 		}
 		
 		
@@ -901,7 +903,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 		String strSql="select id from ecm_relation where child_id in("+sqlAll+")";
 		List<Map<String,Object>> relationIds=relationService.getMapList(getToken(), strSql);
 		for(Map<String,Object> rMap:relationIds) {
-			relationService.deleteObjectById(getToken(),rMap.get("id").toString());
+			relationService.deleteObject(getToken(),rMap.get("id").toString());
 		}
 		String valiSql="select count(*) as num from ecm_document where id in("+strWhere+") ";
 		List<Map<String,Object>> haveData= documentService.getMapList(getToken(), valiSql);
@@ -984,6 +986,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 			en.setParentId(archiveId);
 			en.setChildId(fileIds.get(i));
 			en.setName("irel_children");
+			en.setOrderIndex(archiveRelationService.getMaxOrderIndex(getToken(),archiveId)+1);
 			EcmDocument archiveDoc= documentService.getObjectById(getToken(), archiveId);
 			String coding= archiveDoc.getCoding();
 			EcmDocument childDoc=documentService.getObjectById(getToken(), fileIds.get(i));
@@ -1176,4 +1179,164 @@ public class ArchiveFolderController extends ControllerAbstract{
 		mp.put("data", en);
 		return mp;
 	}
+	
+	/**
+	 * 自动装盒
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/autoPutInBox", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> autoPutInBox(@RequestBody String argStr){
+		List<String> list = JSONUtils.stringToArray(argStr);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		IEcmSession session = null;
+		boolean flag=false;
+		try {
+			session = getSession();
+			for(String id :list) {
+				EcmDocument drawingDoc= documentService.getObjectById(getToken(), id);
+				EcmDocument box=null;
+				String boxId="";
+//				if(!"图册".equals(drawingDoc.getTypeName())) {
+//					continue;
+//				}
+				if("商务文件".equals(drawingDoc.getTypeName())) {
+					if(drawingDoc.getAttributeValue("C_PROJECT")==null
+							||"".equals(drawingDoc.getAttributeValue("C_PROJECT").toString())) {
+						continue;
+					}
+					String sql="select * from ecm_document where TYPE_NAME='卷盒' "
+							+ "and C_ARC_CLASSIC='合同管理' and NAME='"+drawingDoc.getAttributeValue("C_PROJECT").toString()+"'";
+					List<Map<String,Object>> boxDatas= documentService.getMapList(getToken(), sql);
+					if(boxDatas!=null&&boxDatas.size()>0) {
+						Map<String,Object> boxData= boxDatas.get(0);
+						if(boxData!=null&&boxData.get("STATUS")!=null&&
+								!"".equals(boxData.get("STATUS").toString())) {
+							if(Constants.ARRANGE.equals(boxData.get("STATUS").toString())) {
+								box= documentService.getObjectById(getToken(), boxData.get("ID").toString());
+								boxId= box.getId();
+							}else {
+								flag=true;
+								continue;
+							}
+						}
+					}else {
+						box=new EcmDocument();
+						box.setTypeName("卷盒");
+						box.setSubType("盒");
+						box.setFolderId(drawingDoc.getFolderId());
+//						box.setTitle(drawingDoc.getName());
+						if("商务文件".equals(drawingDoc.getTypeName())) {
+							box.setName(drawingDoc.getAttributeValue("C_PROJECT")!=null
+									?drawingDoc.getAttributeValue("C_PROJECT").toString():"");
+						}else {
+							box.setName(drawingDoc.getName());
+						}
+						box.addAttribute("STATUS", Constants.ARRANGE);
+						box.addAttribute("C_DOC_DATE", drawingDoc.getAttributeValue("C_DOC_DATE"));
+						box.setAclName(drawingDoc.getAclName());
+						box.setRevision(drawingDoc.getRevision());
+						box.setCreator(session.getCurrentUser().getUserName());
+						box.setCreationDate(new Date());
+						box.addAttribute("C_ARC_CLASSIC", drawingDoc.getAttributeValue("C_ARC_CLASSIC"));
+						box.addAttribute("C_ARCHIVE_NUM", drawingDoc.getAttributeValue("C_ARCHIVE_NUM"));
+						boxId= documentService.newObject(getToken(), box.getAttributes());
+					}
+				}else {
+					box=new EcmDocument();
+					box.setTypeName("卷盒");
+					box.setSubType("盒");
+					box.setFolderId(drawingDoc.getFolderId());
+//					box.setTitle(drawingDoc.getName());
+					box.setName(drawingDoc.getName());
+					
+					box.addAttribute("STATUS", Constants.ARRANGE);
+					box.addAttribute("C_DOC_DATE", drawingDoc.getAttributeValue("C_DOC_DATE"));
+					box.setAclName(drawingDoc.getAclName());
+					box.setRevision(drawingDoc.getRevision());
+					box.setCreator(session.getCurrentUser().getUserName());
+					box.setCreationDate(new Date());
+					box.addAttribute("C_ARC_CLASSIC", drawingDoc.getAttributeValue("C_ARC_CLASSIC"));
+					box.addAttribute("C_ARCHIVE_NUM", drawingDoc.getAttributeValue("C_ARCHIVE_NUM"));
+					boxId= documentService.newObject(getToken(), box.getAttributes());
+				}
+				
+				
+				
+				EcmRelation relation=new EcmRelation();
+				relation.setParentId(boxId);
+				relation.setChildId(id);
+				relation.setName("irel_children");
+				
+				relation.setCreator(session.getCurrentUser().getUserName());
+				relation.setCreationDate(new Date());
+				relation.setOrderIndex(1);
+				relationService.newObject(getToken(), relation);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			if(flag) {
+				mp.put("message", "装盒成功但是所选数据中有已经上架的盒子数据，请先将盒子下架！");
+			}else {
+				mp.put("message", "装盒成功");
+			}
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "装盒失败");
+			
+		}
+		
+		return mp;
+		
+	}
+	
+	@RequestMapping(value = "/record/autoArchive", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> autoArchive(@RequestBody String argStr){
+		List<String> list = JSONUtils.stringToArray(argStr);
+		Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				for(String id: list) {
+					if(!StringUtils.isEmpty(id)) {
+						EcmDocument doc = documentService.getObjectById(getToken(), id);
+						String arcNum = (String)doc.getAttributes().get("C_ARCHIVE_NUM");
+						if(!StringUtils.isEmpty(arcNum)) {
+							String sql =" select ID from ecm_document where TYPE_NAME='卷盒' and FOLDER_ID='"+doc.getFolderId()+"' and CODING='"+arcNum+"'";
+							List<Map<String,Object>> boxDatas= documentService.getMapList(getToken(), sql);
+							if(boxDatas.size()>0) {
+								String boxId = boxDatas.get(0).get("ID").toString();
+								EcmRelation relation=new EcmRelation();
+								relation.setParentId(boxId);
+								relation.setChildId(id);
+								relation.setName("irel_children");
+								
+								relation.setCreator(getSession().getCurrentUser().getUserName());
+								relation.setCreationDate(new Date());
+								relation.setOrderIndex(archiveRelationService.getMaxOrderIndex(getToken(),boxId)+1);
+								relationService.newObject(getToken(), relation);
+							}
+						}
+					}
+				}
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", e.getMessage());
+			} catch (EcmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", e.getMessage());
+			}
+			
+
+		return mp;
+	}
+	
 }
