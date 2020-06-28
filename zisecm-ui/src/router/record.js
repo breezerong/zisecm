@@ -53,6 +53,16 @@ export const recordRouter =  [
                 meta: {
                     requireAuth: true,
                     permit: 1,
+                    title:"check4"
+                },
+                path: '/record/check4',
+                name: '四性检查',
+                component: () => import('@/views/record/Check4.vue')
+            },
+            {
+                meta: {
+                    requireAuth: true,
+                    permit: 1,
                     title:"BatchUpdate"
                 },
                 path: '/record/batchupdate',

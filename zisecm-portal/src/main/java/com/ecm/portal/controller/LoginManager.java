@@ -71,6 +71,7 @@ public class LoginManager extends ControllerAbstract{
 				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
 				mp.put("loginName", s.getCurrentUser().getLoginName());
 				mp.put("userName", s.getCurrentUser().getUserName());
+				mp.put("roles", s.getCurrentUser().getRoles());
 				session.setAttribute("ECMUserToken", s.getToken());
 				
 				

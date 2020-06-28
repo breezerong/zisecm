@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecm.core.mapper.ExcSynDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ecm.core.entity.ExcSynDetail">
+        <id column="ID" property="id" jdbcType="NVARCHAR" />
+        <result column="APP_NAME" property="appName" jdbcType="NVARCHAR" />
+        <result column="ACTION_NAME" property="actionName" jdbcType="NVARCHAR" />
+        <result column="BATCH_NUM" property="batchNum" jdbcType="NVARCHAR" />
+        <result column="FROM_ID" property="fromId" jdbcType="NVARCHAR" />
+        <result column="TO_ID" property="toId" jdbcType="NVARCHAR" />
+        <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+        <result column="EXPORT_DATE" property="exportDate" jdbcType="TIMESTAMP" />
+        <result column="STAUTS" property="stauts" jdbcType="NVARCHAR" />
+        <result column="IMPORT_DATE" property="importDate" jdbcType="TIMESTAMP" />
+        <result column="ERROR_MESSAGE" property="errorMessage" jdbcType="NVARCHAR" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, APP_NAME, ACTION_NAME, BATCH_NUM, FROM_ID, TO_ID, CREATION_DATE, EXPORT_DATE, STAUTS, IMPORT_DATE, ERROR_MESSAGE
+    </sql>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_syn_detail
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select
+    <include refid="Base_Column_List" />
+    from exc_syn_detail order by ID
+  </select>
+  
+  <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
+	${sqlStr}
+  </select>
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from exc_syn_detail
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.ecm.core.entity.ExcSynDetail">
+    insert into exc_syn_detail (
+		    ID,
+		    APP_NAME,
+		    ACTION_NAME,
+		    BATCH_NUM,
+		    FROM_ID,
+		    TO_ID,
+		    CREATION_DATE,
+		    EXPORT_DATE,
+		    STAUTS,
+		    IMPORT_DATE,
+		    ERROR_MESSAGE
+      )
+    values (
+    		 #{id},
+    		 #{appName},
+    		 #{actionName},
+    		 #{batchNum},
+    		 #{fromId},
+    		 #{toId},
+    		 #{creationDate},
+    		 #{exportDate},
+    		 #{stauts},
+    		 #{importDate},
+    		 #{errorMessage}
+    	)
+  </insert>
+  
+  
+  <insert id="insertSelective" parameterType="com.ecm.core.entity.ExcSynDetail">
+    insert into exc_syn_detail
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    	<if test="id != null">
+    		 ID,
+    	</if>
+    	<if test="appName != null">
+    		 APP_NAME,
+    	</if>
+    	<if test="actionName != null">
+    		 ACTION_NAME,
+    	</if>
+    	<if test="batchNum != null">
+    		 BATCH_NUM,
+    	</if>
+    	<if test="fromId != null">
+    		 FROM_ID,
+    	</if>
+    	<if test="toId != null">
+    		 TO_ID,
+    	</if>
+    	<if test="creationDate != null">
+    		 CREATION_DATE,
+    	</if>
+    	<if test="exportDate != null">
+    		 EXPORT_DATE,
+    	</if>
+    	<if test="stauts != null">
+    		 STAUTS,
+    	</if>
+    	<if test="importDate != null">
+    		 IMPORT_DATE,
+    	</if>
+    	<if test="errorMessage != null">
+    		 ERROR_MESSAGE,
+    	</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+    	<if test="id != null">
+    		#{id,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="appName != null">
+    		#{appName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="actionName != null">
+    		#{actionName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="batchNum != null">
+    		#{batchNum,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="fromId != null">
+    		#{fromId,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="toId != null">
+    		#{toId,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="creationDate != null">
+    		#{creationDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="exportDate != null">
+    		#{exportDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="stauts != null">
+    		#{stauts,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="importDate != null">
+    		#{importDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="errorMessage != null">
+    		#{errorMessage,jdbcType=NVARCHAR}, 		 
+    	</if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.ExcSynDetail">
+    update exc_syn_detail
+    <set>
+    	<if test="id != null">
+    		ID=#{id,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="appName != null">
+    		APP_NAME=#{appName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="actionName != null">
+    		ACTION_NAME=#{actionName,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="batchNum != null">
+    		BATCH_NUM=#{batchNum,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="fromId != null">
+    		FROM_ID=#{fromId,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="toId != null">
+    		TO_ID=#{toId,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="creationDate != null">
+    		CREATION_DATE=#{creationDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="exportDate != null">
+    		EXPORT_DATE=#{exportDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="stauts != null">
+    		STAUTS=#{stauts,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="importDate != null">
+    		IMPORT_DATE=#{importDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="errorMessage != null">
+    		ERROR_MESSAGE=#{errorMessage,jdbcType=NVARCHAR}, 		 
+    	</if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.ExcSynDetail">
+    update ecm_component
+    set     
+   		ID=#{id},
+   		APP_NAME=#{appName},
+   		ACTION_NAME=#{actionName},
+   		BATCH_NUM=#{batchNum},
+   		FROM_ID=#{fromId},
+   		TO_ID=#{toId},
+   		CREATION_DATE=#{creationDate},
+   		EXPORT_DATE=#{exportDate},
+   		STAUTS=#{stauts},
+   		IMPORT_DATE=#{importDate},
+   		ERROR_MESSAGE=#{errorMessage}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>
+

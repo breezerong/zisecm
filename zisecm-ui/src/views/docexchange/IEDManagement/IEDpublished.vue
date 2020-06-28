@@ -1,7 +1,12 @@
-<template>
-    <div>
-        甘特图
-    </div>
+<template>    
+    <el-container>
+        <el-header></el-header>
+        <el-main>
+            <DataGrid ref="mainDataGrid" key="main" 
+            :itemDataList="tables.main.datalist"
+            ></DataGrid>
+        </el-main>
+    </el-container>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
@@ -10,7 +15,12 @@ export default {
     name: "IEDpublished",
     data(){
         return{
-
+            tables:{
+                main:{
+                    gridName:"IEDGrid",
+                    dataList:[]
+                }
+            }
         }
     },
     created(){
@@ -39,5 +49,7 @@ export default {
 }
 </script>
 <style scoped>
-
+.el-header{
+    height: auto;
+}
 </style>

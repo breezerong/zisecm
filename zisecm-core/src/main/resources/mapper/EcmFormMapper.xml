@@ -7,11 +7,12 @@
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
     <result column="COLUMN_COUNT" jdbcType="INTEGER" property="columnCount" />
     <result column="ACTION" jdbcType="VARCHAR" property="action" />
+    <result column="CLASSIFICATIONS" jdbcType="VARCHAR" property="classifications" />
     <result column="IS_DEFAULT" jdbcType="BIT" property="isDefault" />
     <result column="SEARCH_FIELD" jdbcType="VARCHAR" property="searchField" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, TYPE_NAME, DESCRIPTION, COLUMN_COUNT, ACTION, IS_DEFAULT,SEARCH_FIELD
+    ID, TYPE_NAME, DESCRIPTION, COLUMN_COUNT, ACTION, IS_DEFAULT,SEARCH_FIELD,CLASSIFICATIONS
   </sql>
   <select id="selectAll" resultMap="BaseResultMap">
     select 
@@ -30,10 +31,11 @@
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmForm">
     insert into ecm_form (ID, TYPE_NAME, DESCRIPTION, 
-      COLUMN_COUNT, ACTION, IS_DEFAULT,SEARCH_FIELD
+      COLUMN_COUNT, ACTION, IS_DEFAULT,SEARCH_FIELD,CLASSIFICATIONS
       )
     values (#{id,jdbcType=VARCHAR},#{typeName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{columnCount,jdbcType=INTEGER}, #{action,jdbcType=VARCHAR}, #{isDefault,jdbcType=BIT}, #{searchField,jdbcType=VARCHAR}
+      , #{classifications,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmForm">
@@ -60,6 +62,10 @@
       <if test="searchField != null">
         SEARCH_FIELD,
       </if>
+       <if test="classifications != null">
+        CLASSIFICATIONS,
+      </if>
+      
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
     <if test="id != null">
@@ -83,6 +89,10 @@
        <if test="searchField != null">
         #{searchField,jdbcType=VARCHAR},
       </if>
+      <if test="classifications != null">
+        #{classifications,jdbcType=VARCHAR},
+      </if>
+      
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmForm">
@@ -106,6 +116,10 @@
       <if test="searchField != null">
         SEARCH_FIELD = #{searchField,jdbcType=VARCHAR},
       </if>
+      <if test="classifications != null">
+        CLASSIFICATIONS = #{classifications,jdbcType=VARCHAR},
+      </if>
+      
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -116,7 +130,8 @@
       COLUMN_COUNT = #{columnCount,jdbcType=INTEGER},
       ACTION = #{action,jdbcType=VARCHAR},
       IS_DEFAULT = #{isDefault,jdbcType=BIT},
-      SEARCH_FIELD = #{searchField,jdbcType=VARCHAR}
+      SEARCH_FIELD = #{searchField,jdbcType=VARCHAR},
+      CLASSIFICATIONS = #{classifications,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

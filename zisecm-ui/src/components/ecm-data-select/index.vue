@@ -13,14 +13,25 @@ export default {
       required: true
     },
     queryName:{
-      type:[String],
-      required: true
+      type:[String]
     },
-    onSelectChange:{
-      type:Function,
+    dataUrl:{
+      type:String,
+      default:""
+    },
+    dataObj:{
+      type:Object,
       default:function(){
-
+        return {}
       }
+    },
+    dataValueField:{
+      type:String,
+      default:""
+    },
+    dataTextField:{
+      type:String,
+      default:""
     }
   },
   data(){
@@ -42,7 +53,18 @@ export default {
     }
   },
   methods:{
-    initOptions(){
+    initDataUrlOptions(){
+       let _self = this;
+       axios.post(this.dataUrl, JSON.stringify(this.dataObj)).then(function(resp){
+        console.log(resp.data)
+        _self.textField = _self.dataTextField
+        _self.valueField = _self.dataValueField
+        _self.options = resp.data.data
+      }).catch(function(error) {
+        console.log(error);
+      });
+    },
+    initGridViewOptions(){
       let queryObj={}
       let _self = this;
       console.log("queryName"+this.queryName)
@@ -62,7 +84,12 @@ export default {
     }
   },
   mounted(){
-    this.initOptions();
+    if(this.queryName.length>0){
+      this.initGridViewOptions();
+    }else{
+      this.initDataUrlOptions();
+    }
+    
   }
 
 }

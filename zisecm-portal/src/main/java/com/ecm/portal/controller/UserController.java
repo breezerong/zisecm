@@ -239,7 +239,7 @@ public class UserController extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			List<EcmGroup> list =null;
-			list = groupService.getUserGroupsByName(getToken(), userName);
+			list = userService.getUserGroupsByName(getToken(), userName);
 			if (list.size()>0) {
 					mp.put("data", list);
 					mp.put("code", ActionContext.SUCESS);

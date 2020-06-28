@@ -5,7 +5,7 @@
 import SQLSelect from '@components/ecm-data-select'
 ```
 
-### 使用
+### 使用EcmQuery方式查询
 ```html
 <el-form v-model="form">
   <el-form-item>
@@ -13,6 +13,32 @@ import SQLSelect from '@components/ecm-data-select'
   </el-form-item>
 </el-form>
 
+```
+
+### 使用自定义URL方式查询
+```html
+<el-form v-model="form">
+  <el-form-item>
+    <SQLSelect :model="form.item" dataUrl="/admin/uiralation/list" :dataObj="dataObj" dataValueField="NAME" dataTextField="NAME" @onSelectChange="onSelectChange"></SQLSelect>
+  </el-form-item>
+</el-form>
+
+```
+```javascript
+export default{
+  data(){
+    return{
+      dataObj:{//查询条件
+
+      }
+    }
+  },
+  methods:{
+    onSelectChange:function(val){
+
+    }
+  }
+}
 ```
 
 ### 输入属性

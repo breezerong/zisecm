@@ -18,7 +18,7 @@ import com.ecm.icore.service.IEcmUiRelationService;
  * @since 2020-06-22
  */
 @Service
-public class EcmUiRelationServiceImpl  implements IEcmUiRelationService {
+public class EcmUiRelationService  implements IEcmUiRelationService {
 	
 	private EcmUiRelationMapper mapper;
 

@@ -90,9 +90,18 @@
               <el-input :autosize="true" v-model="form.defaultValue"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+           <el-col :span="8">
             <el-form-item label="序号" :label-width="formLabelWidth">
               <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="分类" :label-width="formLabelWidth">
+              <el-select v-model="form.classicfication" >
+                <div v-for="item in classificationList" :key="item">
+                  <el-option :label="item" :key="item" :value="item"></el-option>
+                </div>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -184,9 +193,18 @@
               <el-input v-model="scope.row.attrName"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="标签" width="120" sortable>
+          <el-table-column label="标签" width="160" sortable>
             <template slot-scope="scope">
               <el-input v-model="scope.row.label"></el-input>
+            </template>
+          </el-table-column>
+           <el-table-column label="分类" width="180" sortable>
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.classification" >
+                <div v-for="item in classificationList" :key="item">
+                  <el-option :label="item" :key="item" :value="item"></el-option>
+                </div>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="控件类型" width="120">
@@ -243,6 +261,7 @@
               <el-input v-model="scope.row.defaultValue"></el-input>
             </template>
           </el-table-column>
+          
           <el-table-column label="序号" width="80">
             <template slot-scope="scope">
               <el-input v-model="scope.row.orderIndex" auto-complete="off"></el-input>
@@ -296,13 +315,14 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 115,
+      tableHeight: window.innerHeight - 135,
       inputkey: "",
       parentid: "",
       typename: "",
       loading: false,
       dialogVisible: false,
       dialogtitle: "",
+      classificationList: [],
       categoryVisible: false,
       queryVisible: false,
       checkVisible: false,
@@ -319,7 +339,7 @@ export default {
         controlType: "TextBox",
         widthType: "2",
 	      defaultValue:"",
-        orderIndex: "1",
+        orderIndex: "100",
         isHide: "false",
 	      queryName:"",
         valueList: "",
@@ -327,7 +347,8 @@ export default {
         enableChange: false,
         dependName: "",
         minCount: 0,
-        maxCount: 0
+        maxCount: 0,
+        classification: ""
       },
       formLabelWidth: "140px",
       formLabelWidth2: "100px"
@@ -341,6 +362,8 @@ export default {
   },
   created() {
     let _self = this;
+    _self.getClassicfication();
+
     _self.loading = true;
     var pid = _self.$route.query.parentid;
     _self.typename = _self.$route.query.name;
@@ -364,6 +387,22 @@ export default {
       });
   },
   methods: {
+
+    getClassicfication(){
+      let _self = this;
+      var pid = _self.$route.query.parentid;
+      axios
+        .post("/admin/getFormObj/"+pid)
+        .then(function(response) {
+          console.log(JSON.stringify(response.data.data));
+          _self.classificationList = response.data.data.classificationList;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
     startcheck() {
       let _self = this;
       _self.checkVisible = true;
@@ -425,9 +464,10 @@ export default {
         readOnly: "false",
         controlType: "TextBox",
         widthType: "2",
-        orderIndex: "1",
+        orderIndex: "100",
         valueList: "",
-        isHide: "false"
+        isHide: "false",
+        classification: ""
       };
     },
     edititem(indata) {

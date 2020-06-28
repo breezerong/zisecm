@@ -86,7 +86,7 @@
       #{signImage,jdbcType=VARCHAR},
       #{delegateUser,jdbcType=VARCHAR},
       #{delegateStart,jdbcType=TIMESTAMP},
-      #{delegateEnd,jdbcType=TIMESTAMP},
+      #{delegateEnd,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmUser">

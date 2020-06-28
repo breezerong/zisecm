@@ -1,15 +1,13 @@
 <template>
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="120px">
           <div v-bind:style="{height: menuHeight +'px'}">
           <!--左侧导航-->
-          <el-menu default-active="201" class="el-menu-vertical-ecm"  :open="200">
-                <div>
-                  <el-submenu index="200">
-                    <template slot="title">
-                      <i class="el-icon-menu"></i>
-                      <span>{{$t('route.archiveTool')}}</span>
-                    </template>
+          <el-menu class="el-menu-vertical-ecm" >
+            <el-menu-item index="200">
+                      <i class="el-icon-caret-right"></i>
+                      <span slot="title"><router-link to="/record/check4">四性检查</router-link></span>
+                    </el-menu-item>
                     <el-menu-item index="201">
                       <i class="el-icon-caret-right"></i>
                       <span slot="title"><router-link to="/record/batchupdate">{{$t('route.batchUpdate')}}</router-link></span>
@@ -24,8 +22,6 @@
                       <span slot="title"><router-link to="/record/batchserverimport">服务端批量导入</router-link></span>
                     </el-menu-item>
                     -->
-                  </el-submenu>
-                </div>
           </el-menu>
           </div>
         </el-aside>

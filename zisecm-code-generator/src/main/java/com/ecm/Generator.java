@@ -72,6 +72,7 @@ public class Generator {
         PackageConfig pc = new PackageConfig();
         pc.setModuleName(props.getStr("ecm.general.module"));
         pc.setParent(props.getStr("ecm.general.parentpack"));
+        pc.setMapper(props.getStr("ecm.general.mapper","dao"));
         mpg.setPackageInfo(pc);
 
         // 自定义配置

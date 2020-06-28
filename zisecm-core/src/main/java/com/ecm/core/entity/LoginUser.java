@@ -3,7 +3,9 @@
  */
 package com.ecm.core.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -39,7 +41,12 @@ public class LoginUser {
 	/**
 	 * 用户类型，1：总包商，2：分包商
 	 */
-	private String userType;
+	private int userType=0;
+	
+	/**
+	 * 用户角色
+	 */
+	private List<String> roles = new ArrayList<String>();
 
 	public String getDepartment() {
 		return department;
@@ -139,10 +146,16 @@ public class LoginUser {
 	public void setCompany(String company) {
 		this.company = company;
 	}
-	public String getUserType() {
+	public int getUserType() {
 		return userType;
 	}
-	public void setUserType(String userType) {
+	public void setUserType(int userType) {
 		this.userType = userType;
+	}
+	public List<String> getRoles() {
+		return roles;
+	}
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
 	}
 }
