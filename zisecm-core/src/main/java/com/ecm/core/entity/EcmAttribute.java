@@ -17,7 +17,13 @@ public class EcmAttribute  extends EcmSysObject{
 		this.type = type;
 		if(type.startsWith("varchar")) {
 			String len = type.replace("varchar(", "").replace(")", "");
-			this.length = Integer.parseInt(len);
+			try {
+				this.length = Integer.parseInt(len);
+			}catch (Exception e) {
+				// TODO: handle exception
+				this.length=64;
+			}
+			
 		}
 		
 		if(type.startsWith("varchar")||type.startsWith("nvarchar")) {
