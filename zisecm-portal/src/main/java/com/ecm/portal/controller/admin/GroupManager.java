@@ -176,6 +176,17 @@ public class GroupManager extends ControllerAbstract {
 		mp.put("code", result ? ActionContext.SUCESS : ActionContext.FAILURE);
 		return mp;
 	}
+	
+	@RequestMapping(value = "/admin/addToRole", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> addToRole(@RequestBody String argStr) throws Exception {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		boolean result = groupService.addUserToRole(getToken(), args.get("userId").toString(),
+				args.get("deptId").toString());
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", result ? ActionContext.SUCESS : ActionContext.FAILURE);
+		return mp;
+	}
 
 	@RequestMapping(value = "/admin/removeFromGroup", method = RequestMethod.POST)
 	@ResponseBody

@@ -59,6 +59,8 @@ public class Check4Controller extends ControllerAbstract{
 	
 	
 	
+	
+	
 	@RequestMapping(value = "/record/getArchiveClassic", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getArchiveClassic() throws AccessDeniedException{
@@ -88,6 +90,25 @@ public class Check4Controller extends ControllerAbstract{
 			List<EcmCheck4> list = check4Service.startCheck4(getToken(), args.get("classic").toString(), args.get("startDate").toString(), args.get("endDate").toString());
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", list);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		}
+		
+		return mp;
+	}
+	
+	@RequestMapping(value = "/record/getDocCheck4Data", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getDocCheck4Data(@RequestBody String id) throws AccessDeniedException{
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			
+			EcmCheck4 en = check4Service.checkDocument(getToken(), id);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", en);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

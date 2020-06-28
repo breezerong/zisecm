@@ -110,13 +110,13 @@
           size="small" icon="el-icon-edit"  @click="newArchiveItem('图册')">{{$t('application.newVolume')}}</el-button>
                     <el-button type="primary" plain
           size="small" icon="el-icon-delete"  @click="onDeleleArchiveItem()">{{$t('application.delete')+$t('application.document')}}</el-button>
-                    <el-button type="primary" plain
+                    <el-button type="primary" plain :loading="getNumLoading"
           size="small" icon="el-icon-s-order"  @click="takeNumbers">{{$t('application.takeNumbers')}}</el-button>
-                    <el-button type="primary" plain
+                    <el-button type="primary" plain :loading="getInfoLoading"
           size="small" icon="el-icon-notebook-2"  @click="fetchInformation">{{$t('application.fetchInformation')}}</el-button>
           <el-button type="primary" plain
           size="small" icon="el-icon-printer"  @click="beforePrintRidge(selectRow,'printRidgeGrid','打印背脊')">打印</el-button>
-                    <el-button type="primary" plain
+                    <el-button type="primary" plain :loading="releaseLoading"
           size="small" icon="el-icon-sell"  @click="putInStorage">{{$t('application.warehousing')}}</el-button>
             </el-col>
           </el-row>
@@ -124,7 +124,7 @@
                       <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
                       v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
                       @pagechange="pageChange" v-bind:itemCount="itemCount"
-                      v-bind:tableHeight="rightTableHeight" :isshowOption="true" :isshowSelection ="false"
+                      v-bind:tableHeight="rightTableHeight" :isshowOption="true" :isshowSelection ="true"
                       @rowclick="beforeShowInnerFile" @selectchange="selectChange"></DataGrid>
                     <div class="left">
                       <span style="float:left;text-align:left;">卷内文件列表</span>
@@ -153,21 +153,23 @@
                       <br>
                       <br>
                       <br>
-                      <el-button  v-show="showButton" type="primary" plain size="small" title="移除案卷"  @click="removeFromArchive()">&gt;</el-button>
+                      <el-button  v-show="showButton" type="primary" plain size="small" title="从卷盒移除"  @click="removeFromArchive()">&gt;</el-button>
                       <br>
                       <br>
-                      <el-button  v-show="showButton" type="primary" plain size="small" title="添加到案卷"  @click="addToArchive()">&lt;</el-button>
+                      <el-button  v-show="showButton" type="primary" plain size="small" title="添加到卷盒"  @click="addToArchive()">&lt;</el-button>
                       
                     </div>
                     <div class="right">
                       <span style="float:left;text-align:left;">未组卷列表</span>
                       
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="beforeMount(selectedOneOutItem);uploadUrl='/dc/mountFile'">挂载文件</el-button>
+                      <el-button type="primary" :loading="makeBoxLoading" plain size="small" title="自动建盒"  @click="autoPutInBox">自动建盒</el-button>
+                      <el-button type="primary" :loading="autoArchiveLoading" plain size="small" title="自动组卷"  @click="autoArchive">自动组卷</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedOneOutItem);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
                       v-bind:columnList="outerGridList" v-bind:itemCount="outerCount" :isshowOption="true"
-                      :isshowSelection ="false"
+                      :isshowSelection ="true"
                        @pagesizechange="outerPageSizeChange" v-bind:tableHeight="rightTableHeight"
                       @pagechange="outerPageChange" @selectchange="selectOutChange" @rowclick="selectOneOutFile"></DataGrid>
                        
@@ -204,9 +206,9 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 240)/2,
-      asideHeight: window.innerHeight - 110,
-      treeHight: window.innerHeight - 130,
+      rightTableHeight: (window.innerHeight - 232)/2,
+      asideHeight: window.innerHeight - 85,
+      treeHight: window.innerHeight - 125,
       asideWidth: '100%',
       currentLanguage: this.getLang(),
       printsVisible:false,
@@ -231,6 +233,11 @@ export default {
       uploadID:"",
       inputkey: "",
       loading: false,
+      makeBoxLoading: false,
+      getNumLoading: false,
+      getInfoLoading: false,
+      releaseLoading: false,
+      autoArchiveLoading: false,
       dialogName:"",
       pageSize: 20,
       itemCount: 0,
@@ -256,7 +263,7 @@ export default {
       fileList:[],
       childrenTypes:[],
       childrenTypeSelectVisible:false,
-      tableHeight: window.innerHeight - 408,
+      tableHeight: window.innerHeight - 428,
       folderAction:"",
       folderDialogVisible: false,
       imageArray:[""],
@@ -332,6 +339,110 @@ export default {
       });
   },
   methods: {
+    autoPutInBox(){
+      let _self=this;
+      if(_self.selectedOutItems.length==0){
+         _self.$message({
+                showClose: true,
+                message: '请选择一条或多条未组卷数据！',
+                duration: 2000,
+                type: "warning"
+              });
+        return;
+      }
+      let tab=_self.selectedOutItems;
+      let m = [];
+      let i;
+      for(i in tab){
+        
+        m.push(tab[i]["ID"]);
+      }
+      _self.makeBoxLoading = true;
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/dc/autoPutInBox"
+      })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.loadGridOutData(_self.currentFolder);
+            _self.loadGridData(_self.currentFolder);
+            _self.innerDataList=[];
+          }
+          else{
+            //  _self.$message( response.data.message);
+             _self.$message({
+                  showClose: true,
+                  message: response.data.message,
+                  duration: 5000,
+                  type: "error"
+                });
+          }
+           _self.makeBoxLoading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.makeBoxLoading = false;
+        });
+    },
+    autoArchive(){
+      let _self=this;
+      if(_self.selectedOutItems.length==0){
+         _self.$message({
+                showClose: true,
+                message: '请选择一条或多条未组卷数据！',
+                duration: 2000,
+                type: "warning"
+              });
+        return;
+      }
+      let tab=_self.selectedOutItems;
+      let m = [];
+      let i;
+      for(i in tab){
+        
+        m.push(tab[i]["ID"]);
+      }
+      _self.makeBoxLoading = true;
+      _self.axios({
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        method: 'post',
+        data: JSON.stringify(m),
+        url: "/record/autoArchive"
+      })
+        .then(function(response) {
+          
+          let code = response.data.code;
+          //console.log(JSON.stringify(response));
+          if(code==1){
+            _self.loadGridOutData(_self.currentFolder);
+            _self.loadGridData(_self.currentFolder);
+            _self.innerDataList=[];
+          }
+          else{
+            //  _self.$message( response.data.message);
+             _self.$message({
+                  showClose: true,
+                  message: response.data.message,
+                  duration: 5000,
+                  type: "error"
+                });
+          }
+           _self.makeBoxLoading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.makeBoxLoading = false;
+        });
+    },
     resize() {
       //console.log('resize')
       this.asideWidth = '100%';
@@ -401,7 +512,7 @@ export default {
               });
           return;
       }
-      if(_self.selectRow.ID==undefined){
+      if(_self.selectedItems.length==0){
         //  _self.$message('请选择一条或多条卷盒数据！');
          _self.$message({
                 showClose: true,
@@ -412,18 +523,19 @@ export default {
           return;
       }
 
-      // let tab=_self.selectedItems;
+      let tab=_self.selectedItems;
       let m = [];
-      // let i;
-      // for(i in tab){
-      //   if(tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")
-      //   {
-      //     _self.$message("所选卷盒中有未取号的数据，请先对其进行取号并提取信息！");
-      //     return;
-      //   }
-      //   m.push(tab[i]["ID"]);
-      // }
-      m.push(_self.selectRow.ID);
+      let i;
+      for(i in tab){
+        if(tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")
+        {
+          _self.$message("所选卷盒中有未取号的数据，请先对其进行取号并提取信息！");
+          return;
+        }
+        m.push(tab[i]["ID"]);
+      }
+      _self.releaseLoading = true;
+      // m.push(_self.selectRow.ID);
       _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
@@ -435,6 +547,7 @@ export default {
         .then(function(response) {
           _self.loadGridData(_self.currentFolder);
           _self.innerDataList=[];
+          _self.releaseLoading = false;
             // _self.showInnerFile(null);
           // _self.$message(_self.$t("message.warehousingSuccess"));
           _self.$message({
@@ -446,6 +559,7 @@ export default {
         })
         .catch(function(error) {
           // _self.$message(_self.$t("message.warehousingFail"));
+          _self.releaseLoading = false;
           _self.$message({
                   showClose: true,
                   message: _self.$t("message.warehousingFail"),
@@ -697,25 +811,25 @@ export default {
     pageChange(val) 
     {
       this.currentPage = val;
-      _self.loadGridData(_self.currentFolder);
+      this.loadGridData(this.currentFolder);
       //console.log('handleCurrentChange', val);
     },
     pageSizeChange(val){
       this.pageSize = val;
       localStorage.setItem("docPageSize",val);
-      _self.loadGridData(_self.currentFolder);
+      this.loadGridData(this.currentFolder);
     },
     // 分页 当前页改变
     outerPageChange(val)
     {
       this.outerCurrentPage = val;
-      this.loadGridOutData(_self.currentFolder);
+      this.loadGridOutData(this.currentFolder);
       //console.log('handleCurrentChange', val);
     },
     outerPageSizeChange(val){
       this.outerPageSize = val;
       localStorage.setItem("docPageSize",val);
-      this.loadGridOutData(_self.currentFolder);
+      this.loadGridOutData(this.currentFolder);
     },
     getTypeNamesByMainList(keyName){
       let _self=this;
@@ -1099,7 +1213,7 @@ export default {
       _self.loading = true;
       let whereSql='';
       for(let i=0;i<_self.childrenTypes.length;i++){
-        whereSql+=" TYPE_NAME='"+_self.childrenTypes[i]+"' and id!='"+_self.selectRow.ID+"'";
+        whereSql+=" TYPE_NAME='"+_self.childrenTypes[i]+"' and id!='"+_self.ID+"'";
         if(i!=_self.childrenTypes.length-1){
           whereSql+=" or "
         }
@@ -1527,51 +1641,66 @@ export default {
     //提取信息
     fetchInformation(){
       let _self=this;
-      if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
+      // if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
+      //   //  _self.$message("请选择一条卷盒数据！");
+      //    _self.$message({
+      //           showClose: true,
+      //           message: "请选择一条卷盒数据！",
+      //           duration: 2000,
+      //           type: "warning"
+      //         });
+      //     return;
+      // }
+
+      if(_self.selectedItems.length==0){
         //  _self.$message("请选择一条卷盒数据！");
          _self.$message({
                 showClose: true,
-                message: "请选择一条卷盒数据！",
+                message: "请选择一条或多条数据！",
                 duration: 2000,
                 type: "warning"
               });
           return;
       }
-      // let tab=_self.selectedItems;
-      // let m = [];
-      // let p=[];
-      // let i;
-      // for(i in tab){
-      //   if((tab[i]["CODING"]==undefined ||tab[i]["CODING"]=="")&&tab[i]["SUB_TYPE"]!="盒")
-      //   {
-      //     _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
-      //     return;
-      //   }
-      //   if(tab[i]["SUB_TYPE"]=="盒"){
-      //     p.push(tab[i]["ID"]);
-      //   }
-      //   m.push(tab[i]["ID"]);
-      // }
-      if((_self.selectRow.CODING==undefined ||_self.selectRow.CODING=="")
-      &&_self.selectRow.SUB_TYPE!="盒"){
-        _self.$message({
-                showClose: true,
-                message: "所选卷盒中有未取号的数据，请先对其进行取号！",
-                duration: 2000,
-                type: "warning"
-              });
-        // _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
-        return;
-      }
+
+      let tab=_self.selectedItems;
       let m = [];
-      m.push(_self.selectRow.ID);
+      let p=[];
+      let i;
+      for(i in tab){
+        if((tab[i]["CODING"] == undefined || tab[i]["CODING"]=="") && tab[i]["SUB_TYPE"] == "卷")
+        {
+          _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
+          return;
+        }
+        // if(tab[i]["SUB_TYPE"]=="盒"){
+        //   p.push(tab[i]["ID"]);
+        // }
+        m.push(tab[i]["ID"]);
+      }
+
+      // if((_self.selectRow.CODING==undefined ||_self.selectRow.CODING=="")
+      // &&_self.selectRow.SUB_TYPE == "卷"){
+      //   _self.$message({
+      //           showClose: true,
+      //           message: "所选卷盒中有未取号的数据，请先对其进行取号！",
+      //           duration: 2000,
+      //           type: "warning"
+      //         });
+      //   // _self.$message("所选卷盒中有未取号的数据，请先对其进行取号！");
+      //   return;
+      // }
+      // let m = [];
+      // m.push(_self.selectRow.ID);
       // if(p.length>0){
-        if(_self.selectRow.SUB_TYPE=='盒'){
+        // if(_self.selectRow.SUB_TYPE=='盒'){
         // p=p.join("','");
+        _self.getInfoLoading = true;
         let pm = new Map();
         pm.set('configName', 'ValidataHasArchiveCode');
-        // pm.set('parentId',"'"+p+"'");
-        pm.set('parentId',"'"+_self.selectRow.ID+"'");
+        let pids=m.join(',');
+        pm.set('parentId',"'"+pids+"'");
+        // pm.set('parentId',m);
          _self
             .axios({
               headers: {
@@ -1582,6 +1711,7 @@ export default {
               url: "/dc/getObjectsByConfigClauseNoPage"
             })
             .then(function(response) {
+              
               let sdata = response.data.data;
               if(sdata.length>0){
                  _self.$message({
@@ -1590,6 +1720,7 @@ export default {
                   duration: 2000,
                   type: "warning"
                 });
+                _self.getInfoLoading = false;
                 // _self.$message("盒内文件"+sdata[0].CODING+"未取号！");
                 return;
               }else{
@@ -1622,7 +1753,7 @@ export default {
                           type: "error"
                         });
                       }
-                      
+                      _self.getInfoLoading = false;
                       
                     })
                     .catch(function(error) {
@@ -1633,52 +1764,65 @@ export default {
                           duration: 5000,
                           type: "error"
                         });
+                        _self.getInfoLoading = false;
                       console.log(error);
                   });
               }
               
             })
             .catch(function(error) {
+              _self.getInfoLoading = false;
               console.log(error);
             });
 
-      }else{
-        _self.axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/fetchInformation"
-        })
-        .then(function(response) {
-          _self.loadGridData(_self.currentFolder);
+      // }else{
+      //   _self.axios({
+      //     headers: {
+      //       "Content-Type": "application/json;charset=UTF-8"
+      //     },
+      //     method: "post",
+      //     data: JSON.stringify(m),
+      //     url: "/dc/fetchInformation"
+      //   })
+      //   .then(function(response) {
+      //     _self.loadGridData(_self.currentFolder);
            
-            _self.showInnerFile(null);
-          // _self.$message(_self.$t("message.fetchInformationSuccess"));
-          _self.$message({
-              showClose: true,
-              message: _self.$t("message.fetchInformationSuccess"),
-              duration: 2000,
-              type: 'success'
-            });
-        })
-        .catch(function(error) {
-          // _self.$message(_self.$t("message.fetchInformationFailed"));
-          _self.$message({
-                  showClose: true,
-                  message: _self.$t("message.fetchInformationFailed"),
-                  duration: 5000,
-                  type: "error"
-                });
-          console.log(error);
-      });
-      }
+      //       _self.showInnerFile(null);
+      //     // _self.$message(_self.$t("message.fetchInformationSuccess"));
+      //     _self.$message({
+      //         showClose: true,
+      //         message: _self.$t("message.fetchInformationSuccess"),
+      //         duration: 2000,
+      //         type: 'success'
+      //       });
+      //   })
+      //   .catch(function(error) {
+      //     // _self.$message(_self.$t("message.fetchInformationFailed"));
+      //     _self.$message({
+      //             showClose: true,
+      //             message: _self.$t("message.fetchInformationFailed"),
+      //             duration: 5000,
+      //             type: "error"
+      //           });
+      //     console.log(error);
+      // });
+      // }
       
     },
     takeNumbers(){
       let _self =this;
-      if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
+      // if(_self.radio=='卷盒'&&_self.selectRow.ID==undefined){
+      //   //  _self.$message("请选择一条或多条卷盒数据！");
+      //   _self.$message({
+      //           showClose: true,
+      //           message: "请选择一条或多条卷盒数据！",
+      //           duration: 2000,
+      //           type: "warning"
+      //         });
+      //     return;
+      // }
+      
+      if(_self.selectedItems.length==0){
         //  _self.$message("请选择一条或多条卷盒数据！");
         _self.$message({
                 showClose: true,
@@ -1688,19 +1832,20 @@ export default {
               });
           return;
       }
-      // let tab=_self.selectedItems;
-      // let m = [];
-      // let i;
-      // for(i in tab){
-      //   if(tab[i]["CODING"]!=undefined &&tab[i]["CODING"]!=="")
-      //   {
-      //     _self.$message("卷盒"+tab[i]["CODING"]+"已取过号不需要再取号!");
-      //     return;
-      //   }
-      //   m.push(tab[i]["ID"]);
-      // }
-      let m=[];
-      m.push(_self.selectRow.ID);
+      let tab=_self.selectedItems;
+      let m = [];
+      let i;
+      for(i in tab){
+        if(tab[i]["CODING"]!=undefined &&tab[i]["CODING"]!=="")
+        {
+          _self.$message("数据"+tab[i]["CODING"]+"已取过号不需要再取号!");
+          return;
+        }
+        m.push(tab[i]["ID"]);
+      }
+      _self.getNumLoading = true;
+      // let m=[];
+      // m.push(_self.selectRow.ID);
       _self.axios({
           headers: {
             "Content-Type": "application/json;charset=UTF-8"
@@ -1710,6 +1855,7 @@ export default {
           url: "/dc/takeNumbers"
         })
         .then(function(response) {
+          _self.getNumLoading = false;
             _self.loadGridData(_self.currentFolder);
             // _self.showInnerFile(null);
             _self.innerDataList =[];
@@ -1735,6 +1881,7 @@ export default {
          
         })
         .catch(function(error) {
+          _self.getNumLoading = false;
           // _self.$message(_self.$t("message.takeNumberFaild"));
           _self.$message({
                   showClose: true,
@@ -1799,7 +1946,7 @@ export default {
     // 删除文档事件
     onDeleleFileItem() {
       let _self = this;
-      if(_self.selectedOneOutItem.ID==undefined){
+      if(_self.selectedOutItems.length==0){
         //  _self.$message("请选择一条要删除的文件！");
          _self.$message({
                 showClose: true,
@@ -1863,12 +2010,12 @@ export default {
     deleleFileItem() {
       let _self = this;
       var m = [];
-      // let tab = _self.selectedOutItems;
-      // var i;
-      // for(i in tab){
-      //   m.push(tab[i]["ID"]);
-      // }
-      m.push(_self.selectedOneOutItem.ID);
+      let tab = _self.selectedOutItems;
+      var i;
+      for(i in tab){
+        m.push(tab[i]["ID"]);
+      }
+      // m.push(_self.selectedOneOutItem.ID);
       console.log(JSON.stringify(m));
       _self.axios({
           headers: {
