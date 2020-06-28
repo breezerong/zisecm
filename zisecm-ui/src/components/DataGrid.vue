@@ -211,17 +211,7 @@
               
             </template>
             <template slot-scope="scope">
-              <!-- <el-button type="primary" plain size="small" :title="$t('application.viewProperty')" icon="el-icon-info" @click="showItemProperty(scope.row)"></el-button>
-                            <el-button type="primary" plain size="small" :title="$t('application.viewContent')" icon="el-icon-picture-outline" @click="showItemContent(scope.row)"></el-button>
-              <el-button type="primary" plain size="small" :title="$t('application.view')" icon="el-icon-picture-outline" @click="showNewWindow(scope.row.ID)"></el-button>-->
-              <!-- <el-button
-                type="primary"
-                plain
-                size="small"
-                :title="$t('application.viewContent')"
-                icon="el-icon-picture-outline"
-                @click="showMenu($event)"
-              ></el-button> -->
+              
               <el-dropdown trigger="click">
                 <el-button
                 type="primary"
@@ -250,14 +240,6 @@
             </template>
           </el-table-column>
         </el-table>
-
-        <div id="menu" @mouseleave="leave">
-            <div class="menu" @click="showItemContent(selectedRow)">查看内容</div>
-            <div class="menu" @click="showItemProperty(selectedRow)">查看属性</div>
-            <div class="menu" @click="addToShoppingCar([selectedRow])">加入购物车</div>
-            <div class="menu" @click="upgrade(selectedRow)">升版</div>
-        </div>
-       
       <el-pagination
         v-if="isshowPage"
         background
@@ -303,23 +285,29 @@ export default {
       selectedRow:"",
       typeName:"",
       selectedKey:[],
-      selectedIndex:""
+      selectedIndex:"",
+      itemDataList:[],
+      columnList:[],
+      sysColumnInfo:[],
+      itemCount:0
     };
   },
   props: {
-    itemDataList: { type: Array, default: null },
-    sysColumnInfo:{type: Array, default: null},
-    columnList: { type: Array, default: null },
+    // itemDataList: { type: Array, default: null },
+    // sysColumnInfo:{type: Array, default: null},
+    // columnList: { type: Array, default: null },
     isshowicon: { type: Boolean, default: true },
     isshowOption: { type: Boolean, default: false },
     isshowSelection: { type: Boolean, default: true },
     tableHeight: { type: [String, Number], default: window.innerHeight - 408 },
     tableWidth: { type: [String, Number], default: "100%" },
-    itemCount: { type: [String, Number] },
+    // itemCount: { type: [String, Number] },
     isshowPage: { type: Boolean, default: true },
     loading: { type: Boolean, default: false },
     gridViewName:{type:String,default:''},
-    isshowCustom:{type:Boolean,default:false}
+    isshowCustom:{type:Boolean,default:false},
+    condition:{type:String,default:""},
+    dataUrl:{type:String,default:""}
   },
   watch: {
     showFields(val, oldVal) {
@@ -337,13 +325,7 @@ export default {
         }
       });
     },
-    // customNames(){
-    //   let _self=this;
-    //   _self.refreshCustomView=false;
-    //   _self.$nextTick(()=>{
-    //                 _self.refreshCustomView=true;
-    //             });
-    // },
+    
     value(val) {
 				this.selectedColumns = val;
 			},
@@ -358,23 +340,10 @@ export default {
     // this.ready();
     this.loadCustomName();
     this.loadGridInfo();
+    this.loadGridData();
   },
   methods: {
-    // ready(){
-      
-    //   document.addEventListener('click',(e)=>{
-    //       // let sp3 =document.getElementById("locationName")
-    //       let menu= document.querySelector("#menu");
-    //       if(!menu.contains(e.target)){
-    //         menu.style.display = 'none';
-    //       }
-    //       // if(menu.contains(e.target)&&menu.style.display=='none'){
-    //       //   menu.style.display = 'block';
-    //       // }else{
-    //       //   menu.style.display = 'none';
-    //       // }
-    //     })
-    // },
+    
     // 加载表格样式
     loadGridInfo() {
       let _self = this;
@@ -408,6 +377,38 @@ export default {
           _self.loading = false;
         });
     },
+    // 加载表格数据
+    loadGridData() {
+      let _self = this;
+      
+      var m = new Map();
+      m.set("gridName", _self.gridViewName);
+      // m.set('folderId',indata.id);
+      m.set("condition", _self.condition);
+      
+      m.set("pageSize", _self.pageSize);
+      m.set("pageIndex", _self.currentPage - 1);
+      m.set("orderBy", "");
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: _self.dataUrl
+        })
+        .then(function(response) {
+          _self.itemDataList = response.data.data;
+          _self.itemCount = response.data.pager.total;
+          _self.loading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+
     onCloseCustom(){
       let _self=this;
       _self.editColumn = false;
@@ -754,6 +755,7 @@ export default {
       //console.log(href);
       window.open(href.href, "_blank");
     },
+    //升版
     upgrade(item){
             let _self = this;
 
@@ -866,14 +868,16 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       //console.log('handleCurrentChange', val);
-      this.$emit("pagechange", this.currentPage);
+      // this.$emit("pagechange", this.currentPage);
+      this.loadGridData();
     },
     // 分页 页数改变
     handleSizeChange(val) {
       this.pageSize = val;
       localStorage.setItem("docPageSize", val);
       //console.log('handleSizeChange', val);
-      this.$emit("pagesizechange", this.pageSize);
+      // this.$emit("pagesizechange", this.pageSize);
+      this.loadGridData();
     },
     sortchange(column) {
       console.log(JSON.stringify(column));
