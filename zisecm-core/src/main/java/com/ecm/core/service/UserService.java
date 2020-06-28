@@ -76,7 +76,12 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	
 	@Override
 	public LoginUser authentication(EcmUser ecmUser) throws Exception {
-		String ownerCompany = CacheManagerOper.getEcmParameters().get("OwnerCompany").getValue();
+		String ownerCompany = null;
+		try {
+			ownerCompany = CacheManagerOper.getEcmParameters().get("OwnerCompany").getValue();
+		}catch(Exception ex) {
+			
+		}
 		EcmUser loginUser = ecmUserMapper.selectByLoginName(ecmUser.getLoginName());
 		if(loginUser==null)
 		{
@@ -255,39 +260,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		return true;
 	}
 	
-	@Override
-	public boolean removeUserGroup(String token, EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException {
-		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
-		EcmUser oldEn = ecmUserMapper.selectByLoginName(en.getLoginName());
-		EcmGroup g = ecmGroupMapper.selectByName(oldEn.getGroupName());
-		if(g.getGroupType().equals("1"))
-		{
-			oldEn.setGroupName("");
-			oldEn.setGroupId("");
-			ecmUserMapper.updateByPrimaryKey(oldEn);
-		}
-		String sqlStr = "delete from ecm_group_item where parent_id='"+g.getId() + "' and child_id='"
-				+en.getId()+"' and ITEM_TYPE='2'";
-		ecmGroupItemMapper.executeSql(sqlStr);
-		
-		sqlStr = "delete from ecm_group_user where group_id='"+g.getId() + "' and user_id='"
-				+en.getId()+"'";
-		ecmGroupUserMapper.executeSql(sqlStr);
-		return true;
-	}
 	
-	@Override
-	public boolean removeUserRole(String token, String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException {
-		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
-		String sqlStr = "delete from ecm_group_item where parent_id='"+roleId + "' and child_id='"
-				+userId+"' and ITEM_TYPE='2'";
-		ecmGroupItemMapper.executeSql(sqlStr);
-		
-		sqlStr = "delete from ecm_group_user where group_id='"+roleId + "' and user_id='"
-				+userId+"'";
-		ecmGroupUserMapper.executeSql(sqlStr);
-		return true;
-	}
 	
 	@Override
 	public List<EcmUser> getObjects(String token,String condition) {
@@ -486,6 +459,21 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 				}
 			}
 		}
+		sql += " order by NAME ";//limit "+ startIndex + ","+pageSize;
+		List<EcmUser> list = ecmUserMapper.searchToEntity(pager,sql);
+		return list;
+	}
+	
+	@Override
+	public List<EcmUser> getRoleAllUsers(String token,Pager pager, String groupId, String condition) {
+		String sql = "select a.ID, a.NAME, a.DESCRIPTION, a.LOGIN_NAME, a.PHONE, a.CREATION_DATE, a.CREATOR, a.EMAIL, a.MODIFIER," + 
+				"a.MODIFIED_DATE, a.IS_ACTIVED, a.GROUP_NAME,a.COMPANY_NAME, a.PASSWORD,a.CLIENT_PERMISSION,a.SYSTEM_PERMISSION from ecm_user a, ecm_group_user b "
+				+ " where a.ID = b.USER_ID and b.GROUP_ID='"+DBFactory.getDBConn().getDBUtils().getString(groupId)+"'";
+		if(!EcmStringUtils.isEmpty(condition))
+		{
+			sql += " and ("+condition+")";
+		}
+		
 		sql += " order by NAME ";//limit "+ startIndex + ","+pageSize;
 		List<EcmUser> list = ecmUserMapper.searchToEntity(pager,sql);
 		return list;

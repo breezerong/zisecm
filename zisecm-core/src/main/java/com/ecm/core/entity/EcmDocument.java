@@ -83,7 +83,7 @@ public class EcmDocument extends EcmSysObject{
     /**
      * 是否当前版本
      */
-    private boolean isCurrent;
+    private boolean isCurrent = true;
     /**
      * 是否隐藏
      */
@@ -167,7 +167,7 @@ public class EcmDocument extends EcmSysObject{
 		}
 	}
 
-
+	
 
 	/**
      * 生命周期状态

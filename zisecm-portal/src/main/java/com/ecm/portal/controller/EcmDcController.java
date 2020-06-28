@@ -49,6 +49,7 @@ import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmForm;
+import com.ecm.core.entity.EcmFormClassification;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
@@ -751,6 +752,46 @@ public class EcmDcController extends ControllerAbstract {
 			}
 			try {
 				list = frm.getEcmFormItems(documentService.getSession(getToken()), lang);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				mp.put("code", ActionContext.TIME_OUT);
+			}
+
+		}
+		mp.put("data", list);
+		return mp;
+	}
+	
+	/**
+	 * 获取分类表单项
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/dc/getFormClassifications", method = RequestMethod.POST)
+	public Map<String, Object> getFormClassifications(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String itemInfo = args.get("itemInfo").toString();
+		String lang = args.get("lang").toString();
+		EcmDocument en = null;
+		List<EcmFormClassification> list = null;
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			en = documentService.getObjectById(getToken(), itemInfo);
+			EcmForm frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_EDIT");
+			if (frm == null) {
+				frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_1");
+			}
+			list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			EcmForm frm = CacheManagerOper.getEcmForms().get(itemInfo + "_NEW");
+			if (frm == null) {
+				frm = CacheManagerOper.getEcmForms().get(itemInfo + "_1");
+			}
+			try {
+				list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
 				mp.put("code", ActionContext.SUCESS);
 			} catch (AccessDeniedException e) {
 				// TODO Auto-generated catch block

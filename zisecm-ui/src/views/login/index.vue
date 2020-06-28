@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container pull-height" @keyup.enter.native="handleLogin">
+  <div class="login-container pull-height" @keyup.enter.native="handleLogin" v-title :data-title="$t('application.name')">
     <div class="login-info text-white animated fadeInLeft">
       <div class="logo" style="margin-top:-426px">
           <img src="../../../static/img/logo.png" width="160px" height="160px" alt="logo" style="vertical-align: middle;" />

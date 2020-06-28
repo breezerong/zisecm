@@ -44,10 +44,6 @@ public interface IUserService {
 
 	long getRoleUserCount(String token,boolean noRole, String groupId, String condition);
 
-	boolean removeUserGroup(String token,EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException;
-
-	boolean removeUserRole(String token,String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException;
-
 	String newObject(String token,Object en, InputStream instream,String fileName) throws EcmException, Exception;
 
 	boolean updateSignImage(String token,String id, InputStream instream,String fileName) throws EcmException, Exception;
@@ -80,5 +76,7 @@ public interface IUserService {
 	 * @return
 	 */
 	List<EcmGroup> getUserGroupsByName(String token, String userName);
+
+	List<EcmUser> getRoleAllUsers(String token, Pager pager, String groupId, String condition);
 
 }

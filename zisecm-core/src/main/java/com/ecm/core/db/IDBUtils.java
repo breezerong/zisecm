@@ -40,4 +40,10 @@ public interface IDBUtils {
 	 */
 	String getDBDateNow();
 	
+	/***
+	 * 验证条件，不允许条件包含update和delete字段
+	 * @return
+	 */
+	//boolean verifyCondition(String condition);
+	
 }

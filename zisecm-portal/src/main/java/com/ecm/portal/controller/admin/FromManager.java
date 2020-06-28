@@ -70,6 +70,19 @@ public class FromManager extends ControllerAbstract{
 		}
 		return mp;
 	}
+	
+	@ResponseBody
+	@RequestMapping("/admin/getFormObj/{id}")
+	public Map<String,Object> getFormObj(@PathVariable("id") String id){
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", formService.getObjectById(getToken(), id));
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
 	/**
 	 * 获取默认表单
 	 * 

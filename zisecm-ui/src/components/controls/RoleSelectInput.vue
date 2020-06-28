@@ -17,7 +17,7 @@
             </el-col>
             <el-col :span="2">
               <el-select
-                v-model="groupType" :placeholder="$t('application.pleaseSelect')" style="display:block;">
+                v-model="groupType" :placeholder="$t('application.pleaseSelect')" @change="refreshData" style="display:block;">
                 <div v-for="(item,index) in groupTypes">
                   <el-option :label="item.name" :value="item.value" :key="index"></el-option>
                 </div>
@@ -96,7 +96,7 @@
         </el-footer>
       </div>
     </el-dialog>
-    <el-col :span="19">
+    <el-col :span="19" v-if="showInputText">
       <el-input type="text" :placeholder="$t('application.selectRole')" readonly="readonly" v-model="inputValue"></el-input>
       <input value="value1" type="hidden" />
     </el-col>
@@ -156,6 +156,10 @@ export default {
     isRepeat: {
       type: Boolean,
       default: false
+    },
+    showInputText: {
+      type: Boolean,
+      default: true
     },
     maxCount: {
       type: Number,
@@ -262,6 +266,7 @@ export default {
         _self.rightNameList.length - 1
       );
       _self.$emit("change", _self.rightNameList);
+      _self.$emit("onRoleSelected", _self.rightNameList);
       _self.rightNameList = "";
       _self.visible = false;
     },

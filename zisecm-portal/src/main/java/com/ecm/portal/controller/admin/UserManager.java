@@ -30,6 +30,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.controller.ControllerAbstract;
 
@@ -44,6 +45,9 @@ public class UserManager extends ControllerAbstract {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private GroupService groupService;
 
 	/**
 	 * 获取所有用户
@@ -130,6 +134,27 @@ public class UserManager extends ControllerAbstract {
 			pager.setPageIndex(Integer.parseInt(args.get("pageIndex").toString()));
 			pager.setPageSize(Integer.parseInt(args.get("pageSize").toString()));
 			List<EcmUser> list = userService.getRoleUsers(getToken(), pager, noGroup, args.get("groupId").toString(),
+					args.get("condition").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/admin/getRoleAllUsers", method = RequestMethod.POST)
+	public Map<String, Object> getRoleAllUsers(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			
+			Pager pager = new Pager();
+			pager.setPageIndex(Integer.parseInt(args.get("pageIndex").toString()));
+			pager.setPageSize(Integer.parseInt(args.get("pageSize").toString()));
+			List<EcmUser> list = userService.getRoleAllUsers(getToken(), pager, args.get("groupId").toString(),
 					args.get("condition").toString());
 			mp.put("data", list);
 			mp.put("pager", pager);
@@ -430,7 +455,7 @@ public class UserManager extends ControllerAbstract {
 	public Map<String, Object> removeUserGroup(@RequestBody EcmUser obj) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			userService.removeUserGroup(getToken(), obj);
+			groupService.removeUserFromGroup(getToken(), obj);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block
@@ -455,7 +480,32 @@ public class UserManager extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
-			userService.removeUserRole(getToken(), args.get("userId").toString(), args.get("roleId").toString());
+			groupService.removeUserFromRole(getToken(), args.get("userId").toString(), args.get("roleId").toString());
+			mp.put("code", ActionContext.SUCESS);
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/admin/removeRoleFromRole", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> removeRoleFromRole(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			groupService.removeRoleFromRole(getToken(), args.get("parentId").toString(), args.get("childId").toString());
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block

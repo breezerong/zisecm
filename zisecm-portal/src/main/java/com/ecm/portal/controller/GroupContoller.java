@@ -56,4 +56,52 @@ public class GroupContoller extends ControllerAbstract{
 		}
 		return mp;
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/group/getChildRoles", method = RequestMethod.POST)
+	public Map<String, Object> getChildRoles(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			List<EcmGroup> list = null;
+			Pager pager = new Pager();
+			pager.setPageIndex(Integer.parseInt(args.get("pageIndex").toString()));
+			pager.setPageSize(Integer.parseInt(args.get("pageSize").toString()));
+			list = groupService.getChildRoles(getToken(), args.get("id").toString(), 
+			pager, args.get("condition").toString());
+			
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	@ResponseBody
+	@RequestMapping(value = "/group/addRoles", method = RequestMethod.POST)
+	public Map<String, Object> addRoles(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String id = args.get("id").toString();
+			String names = args.get("names").toString();
+			String[] strs = names.split(";");
+			for(String name: strs) {
+				EcmGroup g = groupService.getGroupByName(getToken(), name);
+				if(g != null) {
+					groupService.addRole(getToken(), id, g.getId());
+				}
+			}
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
 }
