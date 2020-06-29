@@ -149,14 +149,16 @@
                 />
             </template>
           </el-table-column>
-          <div v-for="(citem,idx) in columnList" :key="idx+'_C'">
-            <div v-if="citem.visibleType==1">
-              <div v-if="(citem.width+'').indexOf('%')>0">
+          <template>
+          <template v-for="(citem,idx) in columnList" >
+            <template v-if="citem.visibleType==1" >
+              <template v-if="(citem.width+'').indexOf('%')>0">
                 <el-table-column
                   :label="citem.label"
                   :prop="citem.attrName"
                   :min-width="citem.width"
                   :sortable="citem.allowOrderby"
+                  :key="idx+'_C'"
                 >
                   <template slot-scope="scope">
                     <div v-if="citem.attrName.indexOf('DATE')>0">
@@ -167,13 +169,14 @@
                     </div>
                   </template>
                 </el-table-column>
-              </div>
-              <div v-else>
+              </template>
+              <template v-else>
                 <el-table-column
                   :label="citem.label"
                   :width="citem.width"
                   :prop="citem.attrName"
                   :sortable="citem.allowOrderby"
+                  :key="idx+'_C'"
                 >
                   <template slot-scope="scope">
                     <div v-if="citem.attrName.indexOf('DATE')>0">
@@ -184,9 +187,10 @@
                     </div>
                   </template>
                 </el-table-column>
-              </div>
-            </div>
-          </div>
+              </template>
+            </template>
+          </template>
+          </template>
           <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="190">
             
             <template slot="header">
