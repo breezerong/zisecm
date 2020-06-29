@@ -1,5 +1,6 @@
 package com.ecm.core.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ecm.common.util.DateUtils;
 import com.ecm.core.dao.EcmQueryMapper;
 import com.ecm.core.entity.EcmFolder;
 /**
@@ -156,7 +158,17 @@ public class FolderPathService extends EcmService {
 				String format = temps[1];
 				Date dt = new Date();
 				if(!attrName.equalsIgnoreCase("now")) {
-					dt = (Date)values.get(attrName);			
+					try {
+						dt = (Date)values.get(attrName);	
+					}
+					catch(Exception ex) {
+						try {
+							dt = DateUtils.StrToDate(values.get(attrName).toString(), "yyyy-MM-dd HH:mm:ss");
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				folderPath +=  sdf.format(dt);
