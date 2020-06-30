@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-dialog title="添加" :visible.sync="dialog.new.visible" v-loading="dialog.new.loading">
-      <DataForm></DataForm> 
       <el-form :model="form" label-width="80px">
         <el-row>
           <el-col :span="12">
