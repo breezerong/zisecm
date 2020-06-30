@@ -2138,7 +2138,7 @@ public class EcmDcController extends ControllerAbstract {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/dc/delDocumentAndRelation", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@RequestMapping(value = "/dc/delDocumentAndRelationCommon", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> delDocumentAndRelation(@RequestBody String argStr) throws Exception {
 		List<String> list = JSONUtils.stringToArray(argStr);
