@@ -658,6 +658,45 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("id", id);
 		return mp;
 	}
+	/**
+	 * 根据数据类型将文件创建至指定目录中，并设置acl
+	 * 前提需要配置目录规则
+	 * @param metaData
+	 * @param uploadFile
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/newDocumentSaveToFolder", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> newDocumentSaveToFolder(String metaData, MultipartFile uploadFile) throws Exception {
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		EcmContent en = null;
+		EcmDocument doc = new EcmDocument();
+		doc.setAttributes(args);
+		if (uploadFile != null) {
+			en = new EcmContent();
+			en.setName(uploadFile.getOriginalFilename());
+			en.setContentSize(uploadFile.getSize());
+			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+			en.setInputStream(uploadFile.getInputStream());
+		}
+		Object fid= args.get("folderId");
+		String folderId="";
+		if(fid==null) {
+			folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+		}else {
+			folderId=fid.toString();
+		}
+		EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+		doc.setFolderId(folderId);
+		doc.setAclName(folder.getAclName());
+		String id = documentService.newObject(getToken(), doc, en);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("id", id);
+		return mp;
+	}
+	
 
 	@RequestMapping(value = "/dc/newAudit", method = RequestMethod.POST)
 	@ResponseBody
