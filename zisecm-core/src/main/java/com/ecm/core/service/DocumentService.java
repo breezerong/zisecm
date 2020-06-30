@@ -187,6 +187,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			sql += " and folder_id='" + folderId + "'";
 		}
 		if (!EcmStringUtils.isEmpty(condition)) {
+			if(condition.trim().toLowerCase().startsWith("and")) {
+				condition=condition.trim().substring(3);
+			}
 			sql += " and (" + condition + ")";
 		}
 		if (!EcmStringUtils.isEmpty(orderBy)) {

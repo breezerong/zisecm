@@ -116,6 +116,8 @@
           v-loading="loading"
           :style="{'width': tableWidth}"
           highlight-current-row
+          @cell-mouse-enter="cellMouseEnter"
+          @cell-mouse-leave="cellMouseLeave"
         >
           <el-table-column v-if="isshowSelection" type="selection" width="40"></el-table-column>
           <el-table-column :label="$t('field.indexNumber')" key="#1" width="70">
@@ -902,7 +904,15 @@ export default {
     },
     selectChange(val) {
       this.$emit("selectchange", val);
-    }
+    },
+    //row 行对象，column 列对象,cell 单元格,event 事件对象
+    cellMouseEnter (row, column, cell, event) {
+      this.$emit("cellMouseEnter",row,column,cell,event)
+    },
+    //row 行对象，column 列对象,cell 单元格,event 事件对象
+    cellMouseLeave (row, column, cell, event) {
+      this.$emit("cellMouseLeave",row,column,cell,event)
+    },
   }
 };
 </script>
