@@ -1,6 +1,6 @@
 <template>
   <el-select v-model="svalue" @change="sChange" filterable >
-    <el-option v-for="item in options" :key="item[valueField]" :label="item[valueField]" :value="item[textField]">
+    <el-option v-for="item in options" :key="item[valueField]" :label="item[textField]" :value="item[valueField]">
     </el-option>
   </el-select>
 </template>
@@ -13,7 +13,8 @@ export default {
       required: true
     },
     queryName:{
-      type:[String]
+      type:[String],
+      default:""
     },
     dataUrl:{
       type:String,
@@ -55,6 +56,7 @@ export default {
   methods:{
     initDataUrlOptions(){
        let _self = this;
+       console.log(this.dataUrl)
        axios.post(this.dataUrl, JSON.stringify(this.dataObj)).then(function(resp){
         console.log(resp.data)
         _self.textField = _self.dataTextField
@@ -85,8 +87,10 @@ export default {
   },
   mounted(){
     if(this.queryName.length>0){
+      console.log("initGridViewOptions");
       this.initGridViewOptions();
     }else{
+      console.log("initDataUrlOptions");
       this.initDataUrlOptions();
     }
     
