@@ -2132,7 +2132,44 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
+	/**
+	 * 删除文件和关系
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/delDocumentAndRelation", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> delDocumentAndRelation(@RequestBody String argStr) throws Exception {
+		List<String> list = JSONUtils.stringToArray(argStr);
+		//删除文件
+		for(String childId : list) {
+			
+			try {
+				documentService.deleteObject(getToken(),childId);
+			}catch(NullPointerException nu) {
+				nu.printStackTrace();
+				continue;
+			}catch (Exception e) {
+				// TODO: handle exception
+				throw e;
+			}
+			
+		}
+		
+		//删除关系
+		String strSql="select id from ecm_relation where parent_id in('"+String.join("','", list)+"')";
+		List<Map<String,Object>> relationIds=relationService.getMapList(getToken(), strSql);
+		for(Map<String,Object> rMap:relationIds) {
+			relationService.deleteObject(getToken(),rMap.get("id").toString());
+		}
+		
+		
 
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		return mp;
+	}
 	/**
 	 * 升版
 	 * 

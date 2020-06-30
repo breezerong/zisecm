@@ -47,7 +47,7 @@ export function onDeleleItem(selectedItems,dataGridObj) {
         },
         method: "post",
         data: JSON.stringify(m),
-        url: "/dcexchange/delDocumentAndRelation"
+        url: "/dc/delDocumentAndRelation"
       })
       .then(function(response) {
         dataGridObj.loadGridData();
