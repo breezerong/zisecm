@@ -313,7 +313,8 @@ export default {
     gridViewName:{type:String,default:''},
     isshowCustom:{type:Boolean,default:false},
     condition:{type:String,default:""},
-    dataUrl:{type:String,default:""}
+    dataUrl:{type:String,default:""},
+    parentId:{type:String,default:""}
   },
   watch: {
     showFields(val, oldVal) {
@@ -391,7 +392,9 @@ export default {
       m.set("gridName", _self.gridViewName);
       // m.set('folderId',indata.id);
       m.set("condition", _self.condition);
-      
+      if(_self.parentId!=''){
+         m.set("id", _self.parentId);
+      }
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", _self.currentPage - 1);
       m.set("orderBy", "");
@@ -809,6 +812,7 @@ export default {
     onSaved(indata) {
       if (indata == "update") {
         this.$message(this.$t("message.saveSuccess"));
+        this.loadGridData();
         this.$emit("refreshdatagrid");
       } else {
         //this.$message("新建成功!");

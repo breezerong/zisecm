@@ -21,7 +21,7 @@ export function onDeleleItem(selectedItems,dataGridObj) {
       }
     )
       .then(() => {
-        deleleItem(selectedItems,dataGridObj);
+        deleleItem(selectedItems,dataGridObj,_self);
       })
       .catch(() => {
         // this.$message({
@@ -31,8 +31,8 @@ export function onDeleleItem(selectedItems,dataGridObj) {
       });
   }
   // 删除文档
-  function deleleItem(selectedItems,dataGridObj) {
-    let _self = this;
+  function deleleItem(selectedItems,dataGridObj,_this) {
+    let _self = _this;
     var m = [];
     let tab = selectedItems;
 
@@ -41,17 +41,16 @@ export function onDeleleItem(selectedItems,dataGridObj) {
       m.push(tab[i]["ID"]);
     }
    
-    axios({
+    axios.post("/dc/delDocumentAndRelationCommon",JSON.stringify(m),{
         headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: "post",
-        data: JSON.stringify(m),
-        url: "/dc/delDocumentAndRelationCommon"
+            "Content-Type": "application/json;charset=UTF-8"
+          }
       })
       .then(function(response) {
-        dataGridObj.loadGridData();
-
+        dataGridObj.forEach(element => {
+            element.loadGridData();
+        });
+        
         _self.$message({
             showClose: true,
             message: _self.$t("message.deleteSuccess"),
