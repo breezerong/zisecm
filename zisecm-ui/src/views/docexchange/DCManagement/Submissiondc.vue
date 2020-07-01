@@ -1,6 +1,50 @@
 <template>
     <div class="app-container">
         <!-- 待提交文函 -->
+        <!-- 创建附件 -->
+        <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+            <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+                <el-upload
+                    :limit="100"
+                    :file-list="fileList"
+                    action
+                    :on-change="handleChange"
+                    :auto-upload="false"
+                    :multiple="true"
+                >
+                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                </el-upload>
+                </div>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="importdialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="uploadData()">开始导入</el-button>
+            </div>
+        </el-dialog>
+        <!-- 创建类型选择 -->
+        <el-dialog :visible.sync="childrenTypeSelectVisible">
+            <el-form>
+                <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+                <el-select
+                    name="selectName"
+                    v-model="selectedChildrenType"
+                    placeholder="'请选择文件类型'"
+                    style="display:block;"
+                >
+                    <div v-for="(name,nameIndex) in childrenTypes" :key="'T2_'+nameIndex">
+                    <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+                    </div>
+                </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button
+                @click="childrenTypeSelectVisible=false;beforeCreateDocItem(selectedChildrenType,'')"
+                >{{$t('application.ok')}}</el-button>
+            </div>
+        </el-dialog>
+
         <el-dialog
             :title="dialogName+$t('application.property')"
             :visible.sync="propertyVisible"
@@ -48,10 +92,10 @@
                     <el-input v-model="filters.title" placeholder="编码或标题"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="getData">查询</el-button>
+                    <el-button type="primary" v-on:click="searchItem">查询</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="propertyVisible = true">新建</el-button>
+                    <el-button type="primary" @click="clickNewItem">新建</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="importVisible = true">导入</el-button>
@@ -60,7 +104,9 @@
                     <el-button type="success" v-on:click="getData">提交</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="warning" v-on:click="onDeleleItem(selectedItems,$refs.mainDataGrid)">删除</el-button>
+                    <el-button type="warning" 
+                    v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
+                    $refs.relevantDoc])">删除</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="getData">导出Excel</el-button>
@@ -77,11 +123,102 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 :isshowCustom="true"
-                @dbclick="dbclick"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 ></DataGrid>
         </el-row>
+         <el-row>
+      <el-tabs value="t01">
+        <el-tab-pane label="传递文件" name="t01">
+          <el-row>
+            <el-col :span="24">
+              <el-form :inline="true" :model="filters" @submit.native.prevent>
+                <el-form-item>
+                  <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="importVisible = true">导入</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">删除</el-button>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+          <!--列表-->
+          <DataGrid
+                ref="transferDoc"
+                key="transferDocKey"
+                dataUrl="/dc/getDocuByRelationParentId"
+                v-bind:tableHeight="rightTableHeight"
+                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                gridViewName="DrawingGrid"
+                condition=" and a.NAME='设计文件'"
+                :isshowCustom="true"
+                @selectchange="selectChangeTransferDoc"
+                ></DataGrid>
+        </el-tab-pane>
+        <el-tab-pane label="相关文件" name="t02">
+          <el-row>
+            <el-col :span="24">
+              <el-form :inline="true" :model="filters" @submit.native.prevent>
+                <el-form-item>
+                  <el-button type="primary" @click="beforeCreateDocItem('设计文件','相关文件')">新建</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="importVisible = true">导入</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">删除</el-button>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+          <!--列表-->
+          <DataGrid
+                ref="relevantDoc"
+                key="relevantDocKey"
+                dataUrl="/dc/getDocuByRelationParentId"
+                v-bind:tableHeight="rightTableHeight"
+                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                gridViewName="DrawingGrid"
+                condition=" and a.NAME='相关文件'"
+                :isshowCustom="true"
+                @selectchange="relevantDocSelect"
+                ></DataGrid>
+          
+        </el-tab-pane>
+        <el-tab-pane label="附件" name="t03">
+          <el-row>
+            <el-col :span="24">
+              <el-form :inline="true" :model="filters" @submit.native.prevent>
+                <el-form-item>
+                  <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="importVisible = true">导入</el-button>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">删除</el-button>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+          <!--列表-->
+          <DataGrid
+                ref="attachmentDoc"
+                key="attachmentDocKey"
+                dataUrl="/dc/getDocuByRelationParentId"
+                v-bind:tableHeight="rightTableHeight"
+                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                gridViewName="AttachmentGrid"
+                condition=" and a.NAME='附件'"
+                :isshowCustom="true"
+                @selectchange="attachmentDocSelect"
+                ></DataGrid>
+        </el-tab-pane>
+      </el-tabs>
+    </el-row>
     </div>
 </template>
 <script type="text/javascript">
@@ -103,6 +240,19 @@ export default {
             dialogName:"文件传递单",
             propertyVisible:false,
             selectedItems: [],
+            childrenTypes:[],
+            childrenTypeSelectVisible:false,
+            selectedChildrenType:'',
+            selectedTransferDocItems:[],
+            parentId:"",
+            selectRow:[],
+            relationName:"",
+            relevantDocSelected:[],
+            importdialogVisible:false,
+            fileList: [],
+            uploading:false,
+            selectedAttachment:[],
+            uploadUrl:''
         }
     },
     created(){
@@ -119,9 +269,157 @@ export default {
         }
     },
     methods: {
+        attachmentDocSelect(val){
+            this.selectedAttachment=val;
+        },
+        handleChange(file, fileList) {
+            this.fileList = fileList;
+        },
+        beforeUploadFile(uploadpath){
+            let _self=this;
+            if(_self.parentId==undefined||_self.parentId==''){
+                // _self.$message('请选择一条文件数据');
+                _self.$message({
+                        showClose: true,
+                        message: '请选择一条文件数据!',
+                        duration: 2000,
+                        type: "warning"
+                    });
+                return;
+            }
+            _self.uploadUrl=uploadpath;
+            _self.fileList=[];
+            _self.importdialogVisible=true;
+            
+        },
+        getFormData() {
+            let _self = this;
+            let formdata = new FormData();
+            var data = {};
+            data["parentDocId"] = _self.parentId;//_self.selectedInnerItems[0].ID;//_self.selectedFileId;
+            data["relationName"]='附件';
+            data["TYPE_NAME"]='附件';
+            formdata.append("metaData", JSON.stringify(data));
+            _self.fileList.forEach(function(file) {
+                //console.log(file.name);
+                formdata.append("uploadFile", file.raw, file.name);
+            });
+            return formdata;
+            },
+        //上传文件
+        uploadData() {
+            let _self = this;
+            let formdata = _self.getFormData();
+            console.log("UploadData getData");
+            console.log(formdata);
+            _self.uploading=true;
+            _self
+                .axios({
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                },
+                datatype: "json",
+                method: "post",
+                data: formdata,
+                url: _self.uploadUrl
+                })
+                .then(function(response) {
+                _self.importdialogVisible = false;
+                // _self.refreshData();
+                _self.uploading=false;
+                _self.$refs.attachmentDoc.loadGridData();
+                // _self.$message("导入成功!");
+                _self.$message({
+                        showClose: true,
+                        message: "导入成功!",
+                        duration: 2000,
+                        type: 'success'
+                    });
+                })
+                .catch(function(error) {
+                _self.uploading=false;
+                console.log(error);
+                });
+            },
+        rowClick(row){
+            this.selectRow=row;
+            this.parentId=row.ID;
+            let _self=this;
+            _self.$refs.transferDoc.parentId=row.ID;
+            _self.$refs.relevantDoc.parentId=row.ID;
+            
+            _self.$refs.attachmentDoc.parentId=row.ID;
+            _self.$refs.transferDoc.loadGridData();
+            _self.$refs.relevantDoc.loadGridData();
+            _self.$refs.attachmentDoc.loadGridData();
+            
+            
+        },
+        relevantDocSelect(val){
+            this.relevantDocSelected=val;
+        },
+        clickNewItem(){
+            let _self=this;
+            _self.getTypeNamesByMainList("DCTypeConfig");
+            _self.childrenTypeSelectVisible=true;
+        },
+        beforeCreateDocItem(typeName,relationName) {
+                let _self = this;
+                if(typeName!='设计文件'){
+                    _self.parentId='';
+                                     
+                }
+                _self.relationName=relationName;
+                _self.dialogName = typeName;
+                _self.propertyVisible = true;
+                
+                setTimeout(()=>{
+                    if(_self.$refs.ShowProperty){
+                        _self.$refs.ShowProperty.myItemId = "";
+                        _self.dialogName=typeName;
+                        _self.$refs.ShowProperty.myTypeName =typeName;
+                        _self.typeName=typeName;
+                        // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
+                        _self.$refs.ShowProperty.loadFormInfo();
+                    }
+                },10);
+
+        },
+        //获取类型
+        getTypeNamesByMainList(keyName) {
+            let _self = this;
+            axios
+                .post("/dc/getOneParameterValue", keyName)
+                .then(function(response) {
+                _self.childrenTypes = response.data.data;
+                })
+                .catch(function(error) {
+                console.log(error);
+                });
+            },
+        searchItem(){
+            let _self=this;
+            let key="";
+            if(_self.filters.projectCode!=''){
+                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+            }
+            if(_self.filters.docType!=''){
+                key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
+            }
+            if(_self.filters.title!=''){
+                key+=" and C_CONTENT like '%"+_self.filters.title+"%'";
+            }
+            if(key!=''){
+                _self.$refs.mainDataGrid.condition=key;
+            }
+            _self.$refs.mainDataGrid.loadGridData();
+        },
         // 表格行选择
         selectChange(val) {
             this.selectedItems = val;
+        },
+        selectChangeTransferDoc(val) {
+            this.selectedTransferDocItems = val;
         },
         // 保存文档
         saveItem() {
@@ -148,7 +446,8 @@ export default {
         if (_self.$refs.ShowProperty.myTypeName != "") {
             m.set("TYPE_NAME", _self.$refs.ShowProperty.myTypeName);
             m.set("folderPath", _self.$refs.ShowProperty.folderPath);
-            m.set("transferId", _self.$refs.ShowProperty.parentDocId);
+            m.set("parentDocId", _self.parentId);
+            m.set("relationName",_self.relationName);
         }
         let formdata = new FormData();
         formdata.append("metaData", JSON.stringify(m));
@@ -168,7 +467,7 @@ export default {
                 },
                 method: "post",
                 data: formdata,
-                url: "/dc/newDocumentSaveToFolder"
+                url: "/dc/newDocumentOrSubDoc"
             })
             .then(function(response) {
                 let code = response.data.code;
@@ -185,6 +484,9 @@ export default {
 
                 // _self.loadTransferGridData();
                 _self.$refs.mainDataGrid.loadGridData();
+                _self.$refs.transferDoc.loadGridData();
+                _self.$refs.relevantDoc.loadGridData();
+                
                 } else {
                 // _self.$message("新建失败!");
                 _self.$message({
@@ -219,7 +521,8 @@ export default {
                 let code = response.data.code;
                 //console.log(JSON.stringify(response));
                 if (code == 1) {
-                _self.$emit("onSaved", "update");
+                    
+                    _self.$emit("onSaved", "update");
                 } else {
                 // _self.$message("保存失败!");
                 _self.$message({
