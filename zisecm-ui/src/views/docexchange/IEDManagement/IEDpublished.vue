@@ -7,6 +7,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary">查询</el-button>
+                    <el-button type="default" @click.native="exportData">Excel下载</el-button>
                 </el-form-item>
             </el-form>
         </el-header>
@@ -15,9 +16,9 @@
                 <el-col :span="24">
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
                     <DataGrid ref="mainDataGrid" tableHeight="350"
-                                dataUrl="/dc/getDocuments" condition="  "
+                                :dataUrl="tables.main.dataUrl" :condition="tables.main.condition"
                                 isshowOption isshowCustom
-                                gridViewName="IEDGrid"></DataGrid>
+                                :gridViewName="tables.main.gridViewName"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -51,6 +52,10 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from '@/components/ecm-data-select'
+
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+
 export default {
     name: "IEDpublished",
     data(){
@@ -58,7 +63,10 @@ export default {
             tables:{
                 main:{
                     gridName:"IEDGrid",
-                    dataList:[]
+                    dataList:[],
+                    dataUrl:"/dc/getDocuments",
+                    condition:" TYPE_NAME='图纸文件' ",
+                    gridViewName:"IEDGrid"
                 },
                 rfDg:{
                     gridName:"",
@@ -91,7 +99,34 @@ export default {
     methods: {
         onDbRowSelect:function(val){
             this.tables.rfDg.condition="";
-            
+        },
+        exportData(){
+            let dataUrl = "/exchange/doc/export"
+            let params = {
+                gridName:this.tables.main.gridViewName,
+                lang:"zh-cn",
+                condition:this.tables.main.condition,
+                filename:"abc.xlsx",
+                sheetname:"Result"
+            }
+            axios.post(dataUrl,params,{ responseType: "blob"}).then(function(res){
+                let fileName = res.headers["content-disposition"].split(";")[1].split("=")[1].replace(/\"/g, "");
+                let type = res.headers["content-type"];
+                let blob = new Blob([res.data], { type: type });
+                // IE
+                if (window.navigator.msSaveBlob) {
+                window.navigator.msSaveBlob(blob, fileName);
+                } else {
+                var link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = fileName;
+                link.click();
+                //释放内存
+                window.URL.revokeObjectURL(link.href);
+                }
+            }).catch(function(error){
+                console.log(error)
+            })
         }
     },
     props: {
