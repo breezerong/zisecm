@@ -3,7 +3,8 @@
         <el-header>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
-                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" dataValueField="code" dataTextField="name"></DataSelect>
+                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" 
+                    dataValueField="code" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary">查询</el-button>

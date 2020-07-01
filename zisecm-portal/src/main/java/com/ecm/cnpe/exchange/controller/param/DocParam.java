@@ -2,7 +2,9 @@ package com.ecm.cnpe.exchange.controller.param;
 
 public class DocParam {
 	private String gridName;
+	
 	private String lang;
+	
 	private String condition;
 	
 	private String folderId;

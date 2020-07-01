@@ -1,7 +1,9 @@
 var excel = {
   /**
    * 
-   * @param {*} params 
+   * @param {*} params {
+     gridName,lang,condition,folderId,filename,sheetname,String orderBy;
+    }
    */
   export:function(params){
     let url = "/exchange/doc/export"
