@@ -16,31 +16,27 @@
                 <el-col :span="24">
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
                     <DataGrid ref="mainDataGrid" tableHeight="350"
-                                :dataUrl="tables.main.dataUrl" :condition="tables.main.condition"
-                                isshowOption isshowCustom
-                                :gridViewName="tables.main.gridViewName"></DataGrid>
+                                :dataUrl="tables.main.dataUrl" :condition="tables.main.condition" :gridViewName="tables.main.gridViewName"
+                                isshowOption isshowCustom></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col :span="24">
-                    <el-tabs>
+                    <el-tabs v-model="tabs.active">
                         <el-tab-pane label="相关文件" name="relationFiles">
                             <DataGrid ref="rfDg" tableHeight="350"
-                                dataUrl="/dc/getDocuments" 
-                                isshowOption isshowCustom
-                                gridViewName="IEDGrid"></DataGrid>
+                                :dataUrl="tables.rfDg.dataUrl" :condition="tables.rfDg.condition" :gridViewName="tables.rfDg.gridViewName"
+                                isshowOption isshowCustom></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="设计文件" name="designFile">
                             <DataGrid ref="dfDg" tableHeight="350"
-                                dataUrl="/dc/getDocuments" condition="TYPE_NAME='图纸文件'"
-                                isshowOption isshowCustom
-                                gridViewName="DesignPhaseGrid"></DataGrid>
+                            :dataUrl="tables.dfDg.dataUrl" :condition="tables.dfDg.condition" :gridViewName="tables.dfDg.gridViewName"                                
+                                isshowOption isshowCustom></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="传递单" name="transmitals">
                             <DataGrid ref="tfDg" tableHeight="350"
-                                dataUrl="/dc/getDocuments" 
-                                isshowOption isshowCustom
-                                gridViewName="TransferGrid"></DataGrid>
+                                :dataUrl="tables.tfDg.dataUrl" :condition="tables.tfDg.condition" :gridViewName="tables.tfDg.gridViewName"
+                                isshowOption isshowCustom></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -62,14 +58,23 @@ export default {
         return{
             tables:{
                 main:{
-                    gridName:"IEDGrid",
-                    dataList:[],
                     dataUrl:"/dc/getDocuments",
-                    condition:" TYPE_NAME='图纸文件' ",
-                    gridViewName:"IEDGrid"
+                    gridViewName:"IEDGrid",
+                    condition:" TYPE_NAME='图纸文件' "
                 },
                 rfDg:{
-                    gridName:"",
+                    gridViewName:"IEDGrid",
+                    dataUrl:"/dc/getDocuments",
+                    condition:""
+                },
+                dfDg:{
+                    gridViewName:"DesignPhaseGrid",
+                    dataUrl:"/dc/getDocuments",
+                    condition:""
+                },
+                tfDg:{
+                    gridViewName:"TransferGrid",
+                    dataUrl:"/dc/getDocuments",
                     condition:""
                 }
             },
