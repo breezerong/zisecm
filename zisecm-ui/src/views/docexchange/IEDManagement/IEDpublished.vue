@@ -48,10 +48,7 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from '@/components/ecm-data-select'
-
-import FileSaver from 'file-saver'
-import XLSX from 'xlsx'
-
+import ExcelUtil from '@/utils/excel.js'
 export default {
     name: "IEDpublished",
     data(){
@@ -114,24 +111,7 @@ export default {
                 filename:"abc.xlsx",
                 sheetname:"Result"
             }
-            axios.post(dataUrl,params,{ responseType: "blob"}).then(function(res){
-                let fileName = res.headers["content-disposition"].split(";")[1].split("=")[1].replace(/\"/g, "");
-                let type = res.headers["content-type"];
-                let blob = new Blob([res.data], { type: type });
-                // IE
-                if (window.navigator.msSaveBlob) {
-                window.navigator.msSaveBlob(blob, fileName);
-                } else {
-                var link = document.createElement("a");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = fileName;
-                link.click();
-                //释放内存
-                window.URL.revokeObjectURL(link.href);
-                }
-            }).catch(function(error){
-                console.log(error)
-            })
+            ExcelUtil.export(params)
         }
     },
     props: {

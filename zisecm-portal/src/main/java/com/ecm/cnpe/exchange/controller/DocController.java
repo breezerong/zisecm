@@ -49,6 +49,7 @@ public class DocController  extends ControllerAbstract  {
 		String[] titleCNName = new String[list.size() + 1];
 		StringBuffer queryAttr = new StringBuffer();
 		titleName[0]="ID";
+		titleCNName[0]="ID";
 		for (int i = 1; i < list.size() + 1; i++) {
 			titleName[i] = list.get(i - 1).getAttrName();
 			titleCNName[i] = list.get(i - 1).getLabel();
