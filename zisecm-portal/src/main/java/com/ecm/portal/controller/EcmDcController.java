@@ -2353,6 +2353,26 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	/**
+	 * 删除文件和关系
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/nextStatus", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> nextStatus(@RequestBody String argStr) throws Exception {
+		List<String> list = JSONUtils.stringToArray(argStr);
+		//删除文件
+		for(String childId : list) {
+			
+			
+			
+		}
+		return null;
+	}
+	
+	
 	private boolean needNewAcl(String docId) {
 		try {
 			EcmDocument doc = documentService.getObjectById(getToken(), docId);

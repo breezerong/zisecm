@@ -89,7 +89,8 @@ export default {
     this.progressNum=0;
   },
   props: {
-    deliveryId: { type: [String], required: true }
+    deliveryId: { type: [String], required: true },
+    relationName: { type: [String],default:'' }
   },
   methods: {
     loadTemplate(){
@@ -137,6 +138,7 @@ export default {
       let formdata = new FormData();
       let m = new Map();
       m.set("id", _self.deliveryId);
+      m.set("relationName",_self.relationName);
       formdata.append("metaData", JSON.stringify(m));
       formdata.append("excel", _self.fileList1[0].raw);
       _self.fileList2.forEach(function(file) {
