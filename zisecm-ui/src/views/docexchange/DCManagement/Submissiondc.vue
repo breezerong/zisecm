@@ -105,7 +105,7 @@
                     <el-button type="primary" @click="clickNewItem">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false)">导入</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="success" v-on:click="getData">提交</el-button>
@@ -280,15 +280,20 @@ export default {
     },
     methods: {
         beforImport(obj,isSub,relationName){
-            if(isSub){
-                this.$refs.BatchImport.deliveryId=this.parentId;
-                this.$refs.BatchImport.relationName=relationName;
-            }else{
-                this.$refs.BatchImport.deliveryId='';
-                this.$refs.BatchImport.relationName='';
-            }
             this.gridObj=obj;
             this.batchDialogVisible=true;
+            this.$nextTick(()=>{
+                if(isSub){
+                    this.$refs.BatchImport.deliveryId=this.parentId;
+                    this.$refs.BatchImport.relationName=relationName;
+                }else{
+                    this.$refs.BatchImport.deliveryId='';
+                    this.$refs.BatchImport.relationName='';
+                }
+                
+            })
+            
+            
         },
         //批量导入完成
         onBatchImported(){
