@@ -114,7 +114,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.11</version><!--$NO-MVN-MAN-VER$ -->
+			<version>8.0.16</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -198,7 +198,7 @@
 					<dependency>
 						<groupId>mysql</groupId>
 						<artifactId>mysql-connector-java</artifactId>
-						<version>8.0.11</version>
+						<version>8.0.16</version>
 					</dependency>
 					<dependency>
 						<groupId>org.mybatis.generator</groupId>
