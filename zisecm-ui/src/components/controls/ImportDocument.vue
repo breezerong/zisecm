@@ -89,7 +89,8 @@ export default {
     this.progressNum=0;
   },
   props: {
-    deliveryId: { type: [String], required: true }
+    deliveryId: { type: [String], required: true },
+    relationName: { type: [String],default:'' }
   },
   methods: {
     loadTemplate(){
