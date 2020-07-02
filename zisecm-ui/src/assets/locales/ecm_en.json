@@ -136,7 +136,8 @@
     "shoppingCar":"Shopping Car",
     "transferOrder":"Transfer",
     "fileType":"File Type",
-    "selectFileType":"Please Select File Type"
+    "selectFileType":"Please Select File Type",
+    "allProjects":"All Projects"
 },
 "skin": {
     "Blue": "Blue",
