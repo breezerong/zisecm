@@ -116,7 +116,7 @@
                     $refs.relevantDoc])">删除</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="getData">导出Excel</el-button>
+                    <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
                 </el-form-item>
                 </el-form>
             </el-col>
@@ -231,7 +231,8 @@
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
-import BatchImport from '@/components/controls/ImportDocument'
+import BatchImport from '@/components/controls/ImportDocument';
+import ExcelUtil from '@/utils/excel.js'
 export default {
     name: "Submissiondc",
     data(){
@@ -279,6 +280,17 @@ export default {
         }
     },
     methods: {
+        exportData(){
+            let dataUrl = "/exchange/doc/export"
+            let params = {
+                gridName:this.$refs.mainDataGrid.gridViewName,
+                lang:"zh-cn",
+                condition:this.$refs.mainDataGrid.condition,
+                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                sheetname:"Result"
+            }
+            ExcelUtil.export(params)
+        },
         beforImport(obj,isSub,relationName){
             this.gridObj=obj;
             this.batchDialogVisible=true;

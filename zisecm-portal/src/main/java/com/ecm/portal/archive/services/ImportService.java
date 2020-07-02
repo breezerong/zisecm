@@ -60,6 +60,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmService;
+import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
 import com.ecm.core.service.RelationService;
@@ -77,6 +78,8 @@ public class ImportService extends EcmService {
 	
 	@Autowired
 	private FolderService folderService;
+	@Autowired
+	private FolderPathService folderPathService;
 	
 	private static String importExcelFolderId;
 	
@@ -90,7 +93,7 @@ public class ImportService extends EcmService {
 	 * @return 导入日志
 	 * @throws Exception
 	 */
-	public String importExcel(String token,String deliveryId, MultipartFile  excelSrcFile,MultipartFile[] files) throws Exception {
+	public String importExcel(String token,String deliveryId,String relationName, MultipartFile  excelSrcFile,MultipartFile[] files) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		int sucessCount =0;
 		int failedCount =0;
@@ -109,7 +112,7 @@ public class ImportService extends EcmService {
 		
 		if(ImportService.importExcelFolderId==null) {
 			ImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
-			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
+//			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
 		}
 		
 		EcmDocument doc = new EcmDocument();
@@ -205,9 +208,11 @@ public class ImportService extends EcmService {
 								)) {
 							sameValues = new HashMap<String,Object>();
 							newId = null;
-							newId = newDocument( token, parentType,null, sheet.getRow(i),  fileList, attrNames,null,number, 1,childStartIndex-1,sameValues,sameFields);
+							newId = newDocument( token, parentType,null, sheet.getRow(i),  
+									fileList, attrNames,null,relationName,number, 1,
+									childStartIndex-1,sameValues,sameFields);
 							if(!StringUtils.isEmpty(newId)) {
-								newRelation(token, deliveryId, newId, i,null);
+								newRelation(token, deliveryId,relationName, newId, i,null);
 							}
 						}
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
@@ -225,7 +230,10 @@ public class ImportService extends EcmService {
 						}
 						String tempId = null;
 						try {
-							tempId = newDocument( token, childType,itemStream, sheet.getRow(i),  fileList, attrNames,newId,number, childStartIndex,sheet.getRow(i).getLastCellNum(),sameValues,null);
+							tempId = newDocument( token, childType,itemStream,
+									sheet.getRow(i),  fileList, attrNames,
+									newId,relationName,number, childStartIndex,sheet.getRow(i).getLastCellNum(),
+									sameValues,null);
 							if(hasRendition) {
 								String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
 								if(!StringUtils.isEmpty(rendFileName)) {
@@ -282,7 +290,9 @@ public class ImportService extends EcmService {
 							}
 						}
 						try {
-							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  fileList, attrNames,null, number, 1,sheet.getRow(i).getLastCellNum(),null,null);
+							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
+									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+									null,null);
 							if(hasRendition) {
 								String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
 								if(!StringUtils.isEmpty(rendFileName)) {
@@ -316,7 +326,7 @@ public class ImportService extends EcmService {
 								}
 							}
 							if(!StringUtils.isEmpty(newId)) {
-								newRelation(token, deliveryId, newId, i,null);
+								newRelation(token, deliveryId,relationName, newId, i,null);
 							}
 						}
 						finally {
@@ -346,8 +356,10 @@ public class ImportService extends EcmService {
 		return sb.toString();
 	}
 	
-	private String newDocument(String token, String typeName,FileInputStream itemStream,Row row, Map<String,Long> fileList,
-			Map<Integer,String> attrNames,String parentId, String batchName,int start,int end,Map<String,Object> sameValues, String sameFields) throws Exception {
+	private String newDocument(String token, String typeName,FileInputStream itemStream,
+			Row row, Map<String,Long> fileList,
+			Map<Integer,String> attrNames,String parentId, String relationName,
+			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields) throws Exception {
 		
 		int index = 1;
 		String docId = null;
@@ -383,6 +395,10 @@ public class ImportService extends EcmService {
 		}else {
 			EcmDocument doc = new EcmDocument();
 			doc.setTypeName(typeName);
+			if(ImportService.importDocFolderId==null||"".equals(ImportService.importDocFolderId)) {
+//				ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
+				ImportService.importDocFolderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
+			}
 			doc.setFolderId(ImportService.importDocFolderId);
 			EcmContent content = null;
 			if(itemStream!=null) {
@@ -407,7 +423,7 @@ public class ImportService extends EcmService {
 		}
 		//子对象添加关系
 		if(parentId!=null && docId != null) {
-			newRelation(token, parentId, docId, index,desc);
+			newRelation(token, parentId,relationName, docId, index,desc);
 		}
 		return docId;
 	}
@@ -471,12 +487,19 @@ public class ImportService extends EcmService {
 		}
 	}
 	
-	private void newRelation(String token,String parentId,String childId,int orderIndex,String description) throws EcmException {
+	private void newRelation(String token,String parentId,
+			String relationName,String childId,
+			int orderIndex,String description) throws EcmException {
 		if(!StringUtils.isEmpty(parentId)) {
 			EcmRelation rel = new EcmRelation();
 			rel.setParentId(parentId);
 			rel.setChildId(childId);
-			rel.setName("irel_children");
+			if(relationName==null||"".equals(relationName)) {
+				rel.setName("irel_children");
+			}else {
+				rel.setName(relationName);
+			}
+			
 			rel.setOrderIndex(orderIndex);
 			if(description!=null) {
 				rel.setDescription(description);
