@@ -3,8 +3,10 @@
         <el-header>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
-                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" 
-                    dataValueField="code" dataTextField="name"></DataSelect>
+                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject"  dataValueField="code" dataTextField="name"></DataSelect>
+                </el-form-item>
+                <el-form-item >
+                    <DataSelect v-model="forms.headForm.plant" dataUrl="/exchange/project/myproject"  dataValueField="code" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary">查询</el-button>
@@ -16,28 +18,20 @@
             <el-row>
                 <el-col :span="24">
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
-                    <DataGrid ref="mainDataGrid" tableHeight="350"
-                                :dataUrl="tables.main.dataUrl" :condition="tables.main.condition" :gridViewName="tables.main.gridViewName"
-                                isshowOption isshowCustom></DataGrid>
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane label="相关文件" name="relationFiles">
-                            <DataGrid ref="rfDg" tableHeight="350"
-                                :dataUrl="tables.rfDg.dataUrl" :condition="tables.rfDg.condition" :gridViewName="tables.rfDg.gridViewName"
-                                isshowOption isshowCustom></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="设计文件" name="designFile">
-                            <DataGrid ref="dfDg" tableHeight="350"
-                            :dataUrl="tables.dfDg.dataUrl" :condition="tables.dfDg.condition" :gridViewName="tables.dfDg.gridViewName"                                
-                                isshowOption isshowCustom></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="传递单" name="transmitals">
-                            <DataGrid ref="tfDg" tableHeight="350"
-                                :dataUrl="tables.tfDg.dataUrl" :condition="tables.tfDg.condition" :gridViewName="tables.tfDg.gridViewName"
-                                isshowOption isshowCustom></DataGrid>
+                            <DataGrid ref="tfDg"  v-bind="tables.tfDg"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -58,22 +52,34 @@ export default {
                 main:{
                     dataUrl:"/dc/getDocuments",
                     gridViewName:"IEDGrid",
-                    condition:" TYPE_NAME='图纸文件' "
+                    condition:" TYPE_NAME='图纸文件' ",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 },
                 rfDg:{
                     gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:""
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 },
                 dfDg:{
                     gridViewName:"DesignPhaseGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:""
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 },
                 tfDg:{
                     gridViewName:"TransferGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:""
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 }
             },
             tabs:{
@@ -81,7 +87,8 @@ export default {
             },
             forms:{
                 headForm:{
-                    project:""
+                    project:"",
+                    plant:""
                 }
             }
         }
