@@ -33,7 +33,7 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from dbo.ecm_def_attribute
+    from ecm_def_attribute
     where ID = #{id,jdbcType=NVARCHAR}
   </select>
   <select id="selectByTypeId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -47,11 +47,11 @@
     where TYPE_ID = #{typeId,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from dbo.ecm_def_attribute
+    delete from ecm_def_attribute
     where ID = #{id,jdbcType=NVARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    insert into dbo.ecm_def_attribute (ID, NAME, DESCRIPTION, 
+    insert into ecm_def_attribute (ID, NAME, DESCRIPTION, 
       TYPE_ID, STATUS, CREATOR, 
       CREATION_DATE, MODIFIER, MODIFIED_DATE, 
       DATA_TYPE, LENGTH, DEFAULT_VALUE, 
@@ -69,7 +69,7 @@
       #{validatePolicy,jdbcType=NVARCHAR}, #{required,jdbcType=TINYINT}
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    insert into dbo.ecm_def_attribute
+    insert into ecm_def_attribute
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         ID,
@@ -208,7 +208,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    update dbo.ecm_def_attribute
+    update ecm_def_attribute
     <set>
       <if test="name != null">
         NAME = #{name,jdbcType=NVARCHAR},
@@ -277,7 +277,7 @@
     where ID = #{id,jdbcType=NVARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmDefAttribute">
-    update dbo.ecm_def_attribute
+    update ecm_def_attribute
     set NAME = #{name,jdbcType=NVARCHAR},
       DESCRIPTION = #{description,jdbcType=NVARCHAR},
       TYPE_ID = #{typeId,jdbcType=NVARCHAR},
