@@ -97,11 +97,6 @@ export default {
                   "access-user",
                   JSON.stringify(_self.account)
                 );
-                 //3.2.1	用户类型判断
-                sessionStorage.setItem(
-                  "access-userType",
-                  response.data.userType
-                );
                 sessionStorage.setItem(
                   "access-userName",
                   response.data.userName

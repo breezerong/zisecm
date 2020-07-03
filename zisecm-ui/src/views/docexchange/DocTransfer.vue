@@ -187,20 +187,8 @@
         <DataGrid
           ref="mainDataGrid"
           key="main"
-          dataUrl="/dc/getDocuments"
-          v-bind:tableHeight="rightTableHeight"
-          v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-          gridViewName="TransferGrid"
-          :isshowCustom="true"
-          @dbclick="dbclick"
-          @rowclick="rowClick"
-          @selectchange="selectChange"
-        ></DataGrid>
-        <!-- <DataGrid
-          ref="mainDataGrid"
-          key="main"
           v-bind:itemDataList="itemDataList"
-          v-bind:columnList="gridList"
+          
           :sysColumnInfo="sysColumnInfo"
           @pagesizechange="pageSizeChange"
           @pagechange="pageChange"
@@ -214,7 +202,8 @@
           @rowclick="rowClick"
           @selectchange="selectChange"
           @refreshdatagrid="refreshMain"
-        ></DataGrid> -->
+        ></DataGrid>
+        
       </el-col>
     </el-row>
   </div>
@@ -362,7 +351,7 @@ export default {
     // this.loadGridInfo();
     // this.loadInnerGridInfo();
     // this.loadGridInfo();
-    // this.loadGridData();
+    this.loadGridData();
   },
   methods: {
     
@@ -372,7 +361,9 @@ export default {
     refreshMain(){
       this.loadGridData();
     },
-    
+    refreshLeft(){
+      this.showInnerFile();
+    },
     beforeNewDocument(selectTrRow){
       let _self=this;
       
@@ -957,7 +948,7 @@ export default {
     loadGridData(row) {
       let _self = this;
       
-      // _self.loadGridInfo();
+      _self.loadGridInfo();
       var key = _self.inputkey;
       if (key != "") {
         key = " coding like '%" + key + "%' or name like '%" + key + "%'";

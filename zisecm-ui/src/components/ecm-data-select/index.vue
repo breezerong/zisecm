@@ -1,8 +1,6 @@
 <template>
   <el-select v-model="svalue" @change="sChange" filterable >
-    <el-option v-if="includeAll" :value="allvalue" :label="$t('application.allProjects')">     
-    </el-option>
-    <el-option v-for="item in options" :key="item[valueField]" :label="item[textField]" :value="item[valueField]">
+    <el-option v-for="item in options" :key="item[valueField]" :label="item[valueField]" :value="item[textField]">
     </el-option>
   </el-select>
 </template>
@@ -15,8 +13,7 @@ export default {
       required: true
     },
     queryName:{
-      type:[String],
-      default:""
+      type:[String]
     },
     dataUrl:{
       type:String,
@@ -35,10 +32,6 @@ export default {
     dataTextField:{
       type:String,
       default:""
-    },
-    includeAll:{
-      type:Boolean,
-      default:false
     }
   },
   data(){
@@ -46,8 +39,7 @@ export default {
       options:[],
       svalue : this.value,
       valueField:"",
-      textField:"",
-      allvalue:""
+      textField:""
     }
   },
    watch: {
@@ -63,19 +55,11 @@ export default {
   methods:{
     initDataUrlOptions(){
        let _self = this;
-       console.log(this.dataUrl)
        axios.post(this.dataUrl, JSON.stringify(this.dataObj)).then(function(resp){
         console.log(resp.data)
         _self.textField = _self.dataTextField
         _self.valueField = _self.dataValueField
         _self.options = resp.data.data
-        _self.allvalue=""
-        _self.options.forEach(function(item){
-          if(_self.allvalue.length>0){
-            _self.allvalue+=","
-          }
-          _self.allvalue+=item[_self.dataValueField]
-        })
       }).catch(function(error) {
         console.log(error);
       });
@@ -101,10 +85,8 @@ export default {
   },
   mounted(){
     if(this.queryName.length>0){
-      console.log("initGridViewOptions");
       this.initGridViewOptions();
     }else{
-      console.log("initDataUrlOptions");
       this.initDataUrlOptions();
     }
     
