@@ -47,7 +47,7 @@ export default{
 |queryName|查询名称||
 |dataUrl|自定义数据URL|当queryName为空则走dataUrl|
 |dataObj|自定义查询参数|属于｛｝类型参数，提交到给DataURL的地址，具体参数使用根据自定义的方法而定|
-
+|dataValueField,dataTextField|数据值字段/数据显示字段|
 ### 事件
 |事件名称|事件说明|事件参数|
 |---|---|---|
