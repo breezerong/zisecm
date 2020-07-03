@@ -42,6 +42,15 @@ public class UiRelationManager extends ControllerAbstract{
 		return result;
 	}
 	
+	@PostMapping("/admin/uirelation/update")
+	@ResponseBody
+	public Map<String, Object> update(@RequestBody EcmUiRelation form){
+		Map<String, Object> result = new HashMap<String,Object>();
+		service.updateObject(form);
+		result.put("code", ActionContext.SUCESS);		
+		return result;
+	}
+	
 	
 	@PostMapping("/admin/uirelation/delete")
 	@ResponseBody
