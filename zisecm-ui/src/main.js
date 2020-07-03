@@ -71,13 +71,6 @@ if (localStorage.getItem('themeValue')) {
 } else {
   global.changeTheme('default')
 }
-
-Vue.directive('title', {
-  inserted: function (el, binding) {
-    document.title = el.dataset.title
-  }
-})
-
 Vue.prototype.echarts = echarts
 
 new Vue({
