@@ -1,13 +1,6 @@
 <template>
     <div class="app-container">
         <!-- 待提交文函 -->
-        <!-- 批量导入 -->
-        <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
-            <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
-            <div slot="footer" class="dialog-footer">
-            <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
-            </div>
-        </el-dialog>
         <!-- 创建附件 -->
         <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
             <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -105,7 +98,7 @@
                     <el-button type="primary" @click="clickNewItem">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
+                    <el-button type="primary" @click="importVisible = true">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="success" v-on:click="onNextStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
@@ -117,7 +110,7 @@
                     $refs.relevantDoc])">删除</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
+                    <el-button type="primary" v-on:click="getData">导出Excel</el-button>
                 </el-form-item>
                 </el-form>
             </el-col>
@@ -145,7 +138,7 @@
                   <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件')">导入</el-button>
+                  <el-button type="primary" @click="importVisible = true">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">删除</el-button>
@@ -174,7 +167,7 @@
                   <el-button type="primary" @click="beforeCreateDocItem('设计文件','相关文件')">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">导入</el-button>
+                  <el-button type="primary" @click="importVisible = true">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">删除</el-button>
@@ -204,7 +197,7 @@
                   <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.attachmentDoc,true,'附件')">导入</el-button>
+                  <el-button type="primary" @click="importVisible = true">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">删除</el-button>
@@ -232,8 +225,6 @@
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
-import BatchImport from '@/components/controls/ImportDocument';
-import ExcelUtil from '@/utils/excel.js'
 export default {
     name: "Submissiondc",
     data(){
@@ -262,9 +253,7 @@ export default {
             fileList: [],
             uploading:false,
             selectedAttachment:[],
-            uploadUrl:'',
-            batchDialogVisible:false,
-            gridObj:[]
+            uploadUrl:''
         }
     },
     created(){
@@ -633,9 +622,7 @@ export default {
     },
     components: {
         ShowProperty:ShowProperty,
-        DataGrid:DataGrid,
-
-        BatchImport:BatchImport
+        DataGrid:DataGrid
     }
 }
 </script>
