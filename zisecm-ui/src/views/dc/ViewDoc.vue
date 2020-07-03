@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container v-title :data-title="$t('application.name')">
     <div>
        <el-dialog
       title="借阅"
@@ -9,7 +9,10 @@
       style="width:100%"
       custom-class="customWidth"
     >
+      <Borrow :docData="borrowData"></Borrow>
+      <!--
          <router-view @showOrHiden="showOrHiden" ref="ShowShopingCart"></router-view>
+        -->
      </el-dialog>
 </div>
     <el-header style="height: 40px;padding-top:8px;">
@@ -44,6 +47,7 @@
              <!-- <CADViewer v-else-if="viewerType==6" v-bind:id="doc.id" format="ocf"></CADViewer> -->
              <CADViewerHtml5 v-else-if="viewerType==6" v-bind:id="doc.id" format="ocf"></CADViewerHtml5>
              <JTViewer v-else-if="viewerType==7" v-bind:id="doc.id" format="obj" :fileName="doc.C_IMPORT_NAME"></JTViewer>
+             <ThreeDsViewer v-else-if="viewerType==8" v-bind:id="doc.id" ></ThreeDsViewer>
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
                 当前文件没有电子文件。
             </div>
@@ -118,6 +122,8 @@ import ChangeDocViewer from "./ChangeDocViewer.vue"
 import CADViewer from "./CADViewer.vue"
 import CADViewerHtml5 from "./CADViewerHtml5.vue"
 import JTViewer from "./JTViewer2.vue"
+import ThreeDsViewer from "./ThreeDsViewer.vue"
+import Borrow from "@/components/form/Borrow.vue"
 import { timeout } from 'q'
 
 export default {
@@ -137,7 +143,9 @@ export default {
     PdfViewer:PdfViewer,
     CADViewer:CADViewer,
     CADViewerHtml5:CADViewerHtml5,
-    JTViewer:JTViewer
+    JTViewer:JTViewer,
+    Borrow:Borrow,
+    ThreeDsViewer: ThreeDsViewer
   },
   data(){
     return {
@@ -146,6 +154,7 @@ export default {
       docId:"",
       docObj:null,
       viewerType: 0,
+      borrowData:[],
       ip:"",
       doc:{
         id:"",
@@ -251,6 +260,8 @@ export default {
           _self.viewerType = 6;
         }else if(_self.doc.format == "obj"||_self.doc.format == "jt"){
           _self.viewerType = 7;
+        }else if(_self.doc.format == "3ds"||_self.doc.format == "rvm"){
+          _self.viewerType = 8;
         }
       }
       //console.log(_self.viewerType);
@@ -307,9 +318,7 @@ export default {
       },
       borrowItem(obj) {
         let _self = this;
-        let rowData=[];
-        _self.borrowDialogVisible=true;
-        rowData.push(obj);
+       
         if(typeof(obj.C_ARCHIVE_UNIT)=="undefined"){
               _self.$message({
                 showClose: true,
@@ -319,15 +328,10 @@ export default {
               });
               return;
         }
-          setTimeout(() => {
-          _self.$router.replace({
-            path:'/viewDoc_borrow',
-            query: { tabledata: rowData,
-            C_ARCHIVE_UNIT:obj.C_ARCHIVE_UNIT
-            }
-          });
-    
-        }, 100);
+        _self.borrowData=[];
+        
+        _self.borrowData.push(obj);
+        _self.borrowDialogVisible=true;
       },
     showOrHiden(b){
       this.borrowDialogVisible=b;
