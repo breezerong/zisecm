@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
+import com.ecm.cnpe.exchange.entity.StatusEntity;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
@@ -2316,6 +2317,7 @@ public class EcmDcController extends ControllerAbstract {
 		}else {
 			folderId=fid.toString();
 		}
+		doc.setStatus("新建");
 		EcmFolder folder= folderService.getObjectById(getToken(), folderId);
 		doc.setFolderId(folderId);
 		doc.setAclName(folder.getAclName());
@@ -2354,7 +2356,7 @@ public class EcmDcController extends ControllerAbstract {
 	}
 	
 	/**
-	 * 删除文件和关系
+	 * 下一状态
 	 * @param argStr
 	 * @return
 	 * @throws Exception
@@ -2362,16 +2364,76 @@ public class EcmDcController extends ControllerAbstract {
 	@RequestMapping(value = "/dc/nextStatus", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> nextStatus(@RequestBody String argStr) throws Exception {
-		List<String> list = JSONUtils.stringToArray(argStr);
-		//删除文件
-		for(String childId : list) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			String strIsCnpeSend=args.get("isCnpeSend")!=null?args.get("isCnpeSend").toString():"";
+			boolean isCnpeSend=false;
+			if("true".equals(strIsCnpeSend.toLowerCase())) {
+				isCnpeSend=true;
+			}
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			//删除文件
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)) {
+					currentStatus="新建";
+				}
+				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
+				doc.setStatus(nextStatus);
+				documentService.updateObject(getToken(), doc, null);
+			}
+			mp.put("code", ActionContext.SUCESS);
 			
-			
-			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
 		}
-		return null;
+		
+		return mp;
 	}
 	
+	/**
+	 * 上一状态
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/previousStatus", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> previousStatus(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			String strIsCnpeSend=args.get("isCnpeSend")!=null?args.get("isCnpeSend").toString():"";
+			boolean isCnpeSend=false;
+			if("true".equals(strIsCnpeSend.toLowerCase())) {
+				isCnpeSend=true;
+			}
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			//删除文件
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
+					continue;
+				}
+				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
+				doc.setStatus(previousStatus);
+				documentService.updateObject(getToken(), doc, null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+		}
+		
+		return mp;
+	}
 	
 	private boolean needNewAcl(String docId) {
 		try {

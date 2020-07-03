@@ -229,7 +229,9 @@
     "cannotChangePassword":"User password cannot be changed.",
     "warehousingSuccess":"Warehousing is successful",
     "warehousingFail":"Warehousing is failed",
-    "pleaseSelectOneTransfer":"Please select a transfer"
+    "pleaseSelectOneTransfer":"Please select a transfer",
+    "commitSuccess":"Commit Success",
+    "rollbackSuccess":"Rollback Success"
 },
 "field": {
     "indexNumber":"S/N",

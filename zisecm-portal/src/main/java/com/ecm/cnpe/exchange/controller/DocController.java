@@ -57,7 +57,15 @@ public class DocController  extends ControllerAbstract  {
 			queryAttr.append(",");
 		}
 		datalist.add(titleCNName);
-		sql.append(queryAttr.deleteCharAt(queryAttr.length() - 1).toString() + " from ecm_document where 1=1");
+		String gvCondition=gv.getCondition();
+		if(gvCondition==null||"".equals(gvCondition)) {
+			gvCondition="";
+		}else {
+			gvCondition=" and "+gvCondition;
+		}
+				
+		sql.append(queryAttr.deleteCharAt(queryAttr.length() - 1).toString() 
+				+ " from ecm_document where 1=1"+gvCondition);
 		if (!StringUtils.isEmpty(params.getFolderId())) {
 			sql.append(" and folder_id='" + params.getFolderId() + "'");
 		}

@@ -280,14 +280,18 @@ public class ArchiveFolderController extends ControllerAbstract{
 			if(args.get("condition")!=null) {
 				conditionWhere=args.get("condition").toString();
 			}
-			String sql = "select b.*,a.id as RELATION_ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
-					+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
-					+ " and a.PARENT_ID='"+args.get("id").toString()+"' "+conditionWhere+" order by a.ORDER_INDEX,b.CREATION_DATE";
-			List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql,pager);
+			List<Map<String, Object>>  list=new ArrayList<Map<String,Object>>();
+			if(!"".equals(args.get("id").toString())) {
+				String sql = "select b.*,a.id as RELATION_ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
+						+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+						+ " and a.PARENT_ID='"+args.get("id").toString()+"' "+conditionWhere+" order by a.ORDER_INDEX,b.CREATION_DATE";
+				list = documentService.getMapList(getToken(), sql,pager);
+				
+			}
+			
 			mp.put("data", list);
 			mp.put("pager", pager);
 			mp.put("code", ActionContext.SUCESS);
-			
 		}
 		catch(Exception ex) {
 			mp.put("code", ActionContext.FAILURE);

@@ -69,3 +69,105 @@ export function onDeleleItem(selectedItems,dataGridObj) {
         console.log(error);
       });
   }
+
+  export function nextStatus(selectedItems,dataGridObj){
+        let _self = this;
+        var m = [];
+        let tab = selectedItems;
+
+        var i;
+        for (i in tab) {
+            m.push(tab[i]["ID"]);
+        }
+        let mp=new Map();
+        mp.set("ids",m);
+        mp.set("isCnpeSend","false");
+        axios.post("/dc/nextStatus",JSON.stringify(mp),{
+            headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+            }
+        })
+        .then(function(response) {
+            if(response.data.code==1){
+                dataGridObj.forEach(element => {
+                    element.itemDataList=[];
+                });
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.commitSuccess"),
+                    duration: 2000,
+                    type: 'success'
+                });
+            }else{
+                
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.operationFaild"),
+                    duration: 5000,
+                    type: 'error'
+                });
+            }
+            
+        })
+        .catch(function(error) {
+            
+            _self.$message({
+                showClose: true,
+                message: _self.$t("message.operationFaild"),
+                duration: 5000,
+                type: 'error'
+            });
+            console.log(error);
+        });
+    }
+
+    export function previousStatus(selectedItems,dataGridObj){
+        let _self = this;
+        var m = [];
+        let tab = selectedItems;
+
+        var i;
+        for (i in tab) {
+            m.push(tab[i]["ID"]);
+        }
+        let mp=new Map();
+        mp.set("ids",m);
+        mp.set("isCnpeSend","false");
+        axios.post("/dc/previousStatus",JSON.stringify(mp),{
+            headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+            }
+        })
+        .then(function(response) {
+            if(response.data.code==1){
+                dataGridObj.forEach(element => {
+                    element.itemDataList=[];
+                });
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.rollbackSuccess"),
+                    duration: 2000,
+                    type: 'success'
+                });
+            }else{
+                
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.operationFaild"),
+                    duration: 5000,
+                    type: 'error'
+                });
+            }
+            
+        })
+        .catch(function(error) {
+            
+            _self.$message({
+                showClose: true,
+                message: _self.$t("message.operationFaild"),
+                duration: 5000,
+                type: 'error'
+            });
+            console.log(error);
+        });
+    }

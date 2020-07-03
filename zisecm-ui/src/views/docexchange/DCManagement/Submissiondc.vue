@@ -108,7 +108,8 @@
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="getData">提交</el-button>
+                    <el-button type="success" v-on:click="onNextStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
+                    $refs.relevantDoc])">提交</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="warning" 
@@ -280,6 +281,7 @@ export default {
         }
     },
     methods: {
+        
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {

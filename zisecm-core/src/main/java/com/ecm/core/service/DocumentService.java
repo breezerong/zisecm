@@ -41,6 +41,7 @@ import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmLifeCycle;
 import com.ecm.core.entity.EcmParameter;
 import com.ecm.core.entity.EcmQueueItem;
+import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -166,21 +167,18 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	public List<Map<String, Object>> getObjects(String token, String gridName, String folderId, Pager pager,
 			String condition, String orderBy) {
 		String currentUser="";
+		LoginUser userObj=null;
 		try {
-			currentUser = getSession(token).getCurrentUser().getUserName();
+			userObj=getSession(token).getCurrentUser();
+			currentUser = userObj.getUserName();
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(condition!=null&&condition.contains("@currentuser")) {
-    		
-			condition=condition.replaceAll("@currentuser", currentUser);
-    	}
+		
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
 		String gvCondition=gv.getCondition();
-		if(gvCondition!=null&&gvCondition.contains("@currentuser")) {
-			gvCondition=gvCondition.replaceAll("@currentuser", currentUser);
-		}
+		
 		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
 				+ gvCondition;
 		if (!StringUtils.isEmpty(folderId)) {
@@ -197,6 +195,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		} else {
 			sql += " " + gv.getOrderBy();
 		}
+		
+		if(sql!=null&&sql.contains("@currentuser")) {
+			sql=sql.replaceAll("@currentuser", currentUser);
+    	}
+		if(sql!=null&&sql.contains("@company")) {
+			sql=sql.replaceAll("@company", userObj.getCompany());
+	    }
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
 		return list;
@@ -680,6 +685,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				} else {
 					sql += " " + key.toString() + "=0";
 				}
+				break;
 			case 4:
 			case 5:
 			case 6:

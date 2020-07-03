@@ -10,7 +10,7 @@ import './plugins/formatter.js'
 import echarts from 'echarts'
 import addToShoppingCar from './plugins/shoppingcar'
 import validataPermission from './plugins/validatapermission'
-import {onDeleleItem} from './plugins/exchange'
+import {onDeleleItem,nextStatus,previousStatus} from './plugins/exchange'
 
 import ImgViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
@@ -57,6 +57,8 @@ Vue.prototype.$video = Video
 Vue.prototype.addToShoppingCar=addToShoppingCar;
 Vue.prototype.validataPermission=function(){return validataPermission};
 Vue.prototype.onDeleleItem=onDeleleItem;
+Vue.prototype.onNextStatus=nextStatus;
+Vue.prototype.onPreviousStatus=previousStatus;
 
 Vue.use(ImgViewer)
 Vue.config.productionTip = false

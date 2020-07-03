@@ -292,14 +292,14 @@ export default {
       typeName:"",
       selectedKey:[],
       selectedIndex:"",
-      itemDataList:[],
+      // itemDataList:[],
       columnList:[],
       sysColumnInfo:[],
       itemCount:0
     };
   },
   props: {
-    // itemDataList: { type: Array, default: null },
+    itemDataList: { type: Array, default: null },
     // sysColumnInfo:{type: Array, default: null},
     // columnList: { type: Array, default: null },
     isshowicon: { type: Boolean, default: true },
