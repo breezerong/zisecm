@@ -37,11 +37,12 @@
                 stripe
                 border
                 size="mini"
+                @row-dblclick="leftDbClick"
                 @selection-change="handleSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
-                <el-table-column prop="name" :label="$t('application.name')" width="160"></el-table-column>
-                <el-table-column prop="description" :label="$t('application.description')"></el-table-column>
+                <el-table-column prop="name" :label="$t('field.name')" width="160"></el-table-column>
+                <el-table-column prop="description" :label="$t('field.description')"></el-table-column>
               </el-table>
               <el-pagination
                     @size-change="handleSizeChange"
@@ -78,11 +79,12 @@
                 stripe
                 border
                 size="mini"
+                @row-dblclick="rightDbClick"
                 @selection-change="handleRightSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
-                <el-table-column prop="name" :label="$t('application.name')" width="160"></el-table-column>
-                <el-table-column prop="description" :label="$t('application.description')"></el-table-column>
+                <el-table-column prop="name" :label="$t('field.name')" width="160"></el-table-column>
+                <el-table-column prop="description" :label="$t('field.description')"></el-table-column>
               </el-table>
             </el-col>
           </el-row>
@@ -285,6 +287,19 @@ export default {
           this.tranList2.push(selection[i]);
         }
       }
+    },
+    leftDbClick(row){
+     
+      this.tranList = [];
+      this.tranList.push(row);
+      this.addToRight();
+    },
+    rightDbClick(row){
+      
+      this.tranList2 = [];
+      this.tranList2.push(row);
+      this.addToLeft();
+      this.refreshData();
     },
     addToRight() {
       for (var i = 0; i < this.tranList.length; i++) {

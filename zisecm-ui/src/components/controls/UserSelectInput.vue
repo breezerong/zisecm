@@ -22,6 +22,7 @@
                 stripe
                 border
                 size="mini"
+                 @row-dblclick="leftDbClick"
                 @selection-change="handleSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
@@ -54,6 +55,7 @@
                 stripe
                 border
                 size="mini"
+                @row-dblclick="rightDbClick"
                 @selection-change="handleRightSelectionChange"
               >
                 <el-table-column type="selection" width="60"></el-table-column>
@@ -223,6 +225,17 @@ export default {
           this.tranList2.push(selection[i]);
         }
       }
+    },
+    leftDbClick(row){
+      this.tranList = [];
+      this.tranList.push(row);
+      this.addToRight();
+    },
+    rightDbClick(row){
+      this.tranList2 = [];
+      this.tranList2.push(row);
+      this.addToLeft();
+      this.refreshData();
     },
     addToRight() {
       for (var i = 0; i < this.tranList.length; i++) {
