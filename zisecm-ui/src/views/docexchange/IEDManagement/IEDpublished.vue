@@ -15,10 +15,7 @@
         <el-main>
             <el-row>
                 <el-col :span="24">
-                    <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
-                    <DataGrid ref="mainDataGrid" tableHeight="350"
-                                :dataUrl="tables.main.dataUrl" :condition="tables.main.condition" :gridViewName="tables.main.gridViewName"
-                                isshowOption isshowCustom></DataGrid>
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -28,7 +25,7 @@
                             <DataGrid ref="rfDg" v-bind="tables.rfDg"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="设计文件" name="designFile">
-                            <DataGrid ref="dfDg"  v-bind="tables.dfDg"></DataGrid>
+                            <DataGrid ref="dfDg"  c></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="传递单" name="transmitals">
                             <DataGrid ref="tfDg"  v-bind="tables.tfDg"></DataGrid>
@@ -52,6 +49,7 @@ export default {
                 main:{
                     dataUrl:"/dc/getDocuments",
                     condition:" TYPE_NAME='图纸文件' ",
+                    //condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))"
                     isshowOption:true,
                     isshowCustom:true,
                     tableHeight:"350"
