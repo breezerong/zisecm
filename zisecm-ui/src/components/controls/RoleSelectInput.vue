@@ -24,7 +24,7 @@
               </el-select>
             </el-col>
             <el-col :span="20">
-              <el-input :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="search" v-model="findValue"></el-input>
+              <el-input :placeholder="$t('application.placeholderSearch')" @keyup.enter.native="refreshData" v-model="findValue"></el-input>
             </el-col>
           </el-row>
         </el-header>
@@ -34,9 +34,11 @@
               <el-table
                 height="320"
                 :data="dataList"
+                ref="leftTable"
                 stripe
                 border
                 size="mini"
+                @row-click="leftClick"
                 @row-dblclick="leftDbClick"
                 @selection-change="handleSelectionChange"
               >
@@ -76,9 +78,11 @@
               <el-table
                 height="320"
                 :data="rightList"
+                ref="rightTable"
                 stripe
                 border
                 size="mini"
+                 @row-click="rightClick"
                 @row-dblclick="rightDbClick"
                 @selection-change="handleRightSelectionChange"
               >
@@ -169,44 +173,7 @@ export default {
     }
   },
   methods: {
-    refreshData() {
-      var m = new Map();
-      let _self = this;
-      m.set("groupType", this.groupType);
-      m.set("id", "");
-      m.set("condition", "name like '%" + this.findValue + "%' or description like '%" + this.findValue + "%'");
-      m.set("pageIndex", _self.currentPage-1);
-      m.set("pageSize", _self.pageSize);
-      console.log(_self.isRepeat);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: m,
-          url: "/group/getGroups"
-        })
-        .then(function(response) {
-          _self.dataList = response.data.data;
-          _self.itemCount = response.data.pager.total;
-          if(_self.inputValue ){
-            var userNameArr = _self.inputValue.split(";");
-            for (var i = 0; i < userNameArr.length; i++) {
-              var item = userNameArr[i];
-              _self.dataList.forEach(function(val, index, arr) {
-                if (item == val.name) {
-                  arr.splice(index, 1);
-                  _self.rightList.push(val);
-                }
-              });
-            }
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
+    
     // 分页 页数改变
     handleSizeChange(val) {
       this.pageSize = val;
@@ -218,7 +185,7 @@ export default {
       this.currentPage = val;
       this.search();
     },
-    search() {
+    refreshData() {
       let _self = this;
       for (var i = 0; i < _self.rightList.length; i++) {
         _self.rightListId[i] = _self.rightList[i].id;
@@ -288,14 +255,18 @@ export default {
         }
       }
     },
+     leftClick(row){
+      this.$refs.leftTable.toggleRowSelection(row);
+    },
+    rightClick(row){
+      this.$refs.rightTable.toggleRowSelection(row);
+    },
     leftDbClick(row){
-     
       this.tranList = [];
       this.tranList.push(row);
       this.addToRight();
     },
     rightDbClick(row){
-      
       this.tranList2 = [];
       this.tranList2.push(row);
       this.addToLeft();
