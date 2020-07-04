@@ -25,19 +25,13 @@
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane label="相关文件" name="relationFiles">
-                            <DataGrid ref="rfDg" tableHeight="350"
-                                :dataUrl="tables.rfDg.dataUrl" :condition="tables.rfDg.condition" :gridViewName="tables.rfDg.gridViewName"
-                                isshowOption isshowCustom></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="设计文件" name="designFile">
-                            <DataGrid ref="dfDg" tableHeight="350"
-                            :dataUrl="tables.dfDg.dataUrl" :condition="tables.dfDg.condition" :gridViewName="tables.dfDg.gridViewName"                                
-                                isshowOption isshowCustom></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="传递单" name="transmitals">
-                            <DataGrid ref="tfDg" tableHeight="350"
-                                :dataUrl="tables.tfDg.dataUrl" :condition="tables.tfDg.condition" :gridViewName="tables.tfDg.gridViewName"
-                                isshowOption isshowCustom></DataGrid>
+                            <DataGrid ref="tfDg"  v-bind="tables.tfDg"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -57,23 +51,34 @@ export default {
             tables:{
                 main:{
                     dataUrl:"/dc/getDocuments",
-                    gridViewName:"IEDGrid",
-                    condition:" TYPE_NAME='图纸文件' "
+                    condition:" TYPE_NAME='图纸文件' ",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 },
                 rfDg:{
                     gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:""
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 },
                 dfDg:{
                     gridViewName:"DesignPhaseGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:""
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 },
                 tfDg:{
                     gridViewName:"TransferGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:""
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
                 }
             },
             tabs:{
