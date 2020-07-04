@@ -72,6 +72,12 @@ if (localStorage.getItem('themeValue')) {
   global.changeTheme('default')
 }
 Vue.prototype.echarts = echarts
+//动态标题
+Vue.directive('title', {
+  inserted: function (el, binding) {
+    document.title = el.dataset.title
+  }
+})
 
 new Vue({
   router,

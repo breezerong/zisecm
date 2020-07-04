@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-title :data-title="$t('application.name')">
     <transition name="rotate-fall">
     <router-view></router-view>
     </transition>
