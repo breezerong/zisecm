@@ -142,7 +142,9 @@
     "shoppingCar":"购物车",
     "fileType":"文件类型",
     "selectFileType":"请选择文件类型",
-    "allProjects":"所有项目"
+    "allProjects":"所有项目",
+    "rememberLoginInfo": "记住用户",
+    "fullscreen": "全屏"
 },
 "skin": {
     "Blue": "天空蓝",

@@ -231,19 +231,16 @@ export default {
   },
   methods: {
     checkLogin() {
-      var user = sessionStorage.getItem("access-user");
-      if (user) {
+      if (this.currentUser()) {
         this.clientPermission = Number(
-          sessionStorage.getItem("access-clientPermission")
+          this.currentUser().clientPermission
         );
         this.systemPermission = Number(
-          sessionStorage.getItem("access-systemPermission")
+          this.currentUser().systemPermission
         );
         //console.log("clientPermission:"+this.clientPermission);
         //console.log("systemPermission:"+this.systemPermission);
-        this.username = JSON.parse(
-          sessionStorage.getItem("access-user")
-        ).username;
+        this.username = this.currentUser().userName;
       } else {
         this.username = "";
       }

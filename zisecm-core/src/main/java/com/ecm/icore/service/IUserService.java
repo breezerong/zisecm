@@ -79,4 +79,6 @@ public interface IUserService {
 
 	List<EcmUser> getRoleAllUsers(String token, Pager pager, String groupId, String condition);
 
+	boolean lockUser(String loginName);
+
 }
