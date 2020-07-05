@@ -97,6 +97,9 @@ export default {
                   "access-user",
                   JSON.stringify(_self.account)
                 );
+                sessionStorage.setItem("access-userType", response.data.userType)
+                sessionStorage.setItem("access-company", response.data.company)
+                
                 sessionStorage.setItem(
                   "access-userName",
                   response.data.userName
