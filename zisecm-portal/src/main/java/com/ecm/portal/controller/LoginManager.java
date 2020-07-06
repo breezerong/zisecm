@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.UserEntity;
 import com.ecm.core.exception.AccessDeniedException;
@@ -50,44 +51,76 @@ public class LoginManager extends ControllerAbstract{
 		
 		String username = user.getUsername();
 		String password = user.getPassword();
-		
+		int maxLoginCount = 10;
+		try {
+			if(CacheManagerOper.getEcmParameters().get("MaxErrorLoginCout")!=null) {
+				maxLoginCount = Integer.parseInt(CacheManagerOper.getEcmParameters().get("MaxErrorLoginCout").getValue());
+			}
+		}catch(Exception e) {
+			
+		}
+		int loginCount = 1;
+		try {
+			if(session.getAttribute("ecmLoginFailCount")!=null)
+			{
+				loginCount = Integer.parseInt(session.getAttribute("ECMLoginFailCount").toString());
+			}
+		}catch(Exception e) {
+			
+		}
 		EcmUser ecmUser = new EcmUser();
 		ecmUser.setLoginName(user.getUsername());
 		ecmUser.setPassword(user.getPassword());
 		Map<String, Object> mp = new HashMap<String, Object>();
 			session.removeAttribute("ECMUserToken");
 			//session.removeAttribute("ECMUserSession");
-			try {
-				
-				// 系统登录认证
-				IEcmSession s = authService.login("portal",username,password);
-				
-				mp.put("code", ActionContext.SUCESS);
-				mp.put("token", s.getToken());
-				mp.put("company", s.getCurrentUser().getCompany());
-				mp.put("department", s.getCurrentUser().getDepartment());
-				mp.put("userType", s.getCurrentUser().getUserType());
-				mp.put("clientPermission", s.getCurrentUser().getClientPermission());
-				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
-				mp.put("loginName", s.getCurrentUser().getLoginName());
-				mp.put("userName", s.getCurrentUser().getUserName());
-				mp.put("roles", s.getCurrentUser().getRoles());
-				session.setAttribute("ECMUserToken", s.getToken());
-				
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				e.printStackTrace();
-				mp.put("code", 0);
-				mp.put("msg", e.getMessage());
+			if(loginCount>maxLoginCount) {
+				authService.lockUser(username);
+				session.removeAttribute("ECMLoginFailCount");
+				mp.put("code", 2);
+				mp.put("msg", "登录失败超过 最大次数："+maxLoginCount);
 				try {
-					auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, username);
+					auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "登录次数超过:"+maxLoginCount, null, username);
 				} catch (AccessDeniedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				//mp.put(key, value)
+			}else {
+				try {
+					
+					// 系统登录认证
+					IEcmSession s = authService.login("portal",username,password);
+					
+					mp.put("code", ActionContext.SUCESS);
+					mp.put("token", s.getToken());
+					mp.put("data", s.getCurrentUser());
+	//				mp.put("company", s.getCurrentUser().getCompany());
+	//				mp.put("department", s.getCurrentUser().getDepartment());
+	//				mp.put("userType", s.getCurrentUser().getUserType());
+	//				mp.put("clientPermission", s.getCurrentUser().getClientPermission());
+	//				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
+	//				mp.put("loginName", s.getCurrentUser().getLoginName());
+	//				mp.put("userName", s.getCurrentUser().getUserName());
+	//				mp.put("roles", s.getCurrentUser().getRoles());
+					session.setAttribute("ECMUserToken", s.getToken());
+					
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					e.printStackTrace();
+					session.setAttribute("ECMLoginFailCount",loginCount+1);
+					mp.put("code", 0);
+					mp.put("msg", e.getMessage());
+					try {
+						auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, username);
+					} catch (AccessDeniedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					//mp.put(key, value)
+				}
 			}
 		return mp;
 	}
@@ -96,9 +129,20 @@ public class LoginManager extends ControllerAbstract{
 
 	@ResponseBody
 	@RequestMapping(value = "/userLogout", method = RequestMethod.POST)
-	public Map<String, Object> userLogout(@RequestBody String token) {
+	public Map<String, Object> userLogout(HttpSession session,@RequestBody(required=false) String token) {
 		Map<String, Object> mp = new HashMap<String, Object>();
-		authService.logout(token);
+		try {
+			if(token == null || token.length() == 0) {
+			
+				token = getToken();
+			}
+			session.removeAttribute("ECMUserToken");
+			authService.logout(token);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		mp.put("code", ActionContext.SUCESS);
 		return mp;
 	}

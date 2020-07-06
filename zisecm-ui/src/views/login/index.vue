@@ -13,10 +13,10 @@
     </div>
     <div class="login-border  animated fadeInRight">
       <div class="login-main">
-        <h4 class="login-title">登录{{$t("application.name")}}
+        <h4 class="login-title">{{$t("application.login")}}{{$t("application.name")}}
         </h4>
         <el-tabs v-model="activeName">
-          <el-tab-pane label="用户密码" name="user">
+          <el-tab-pane v-bind:label="$t('application.user')+$t('application.password')" name="user">
             <userLogin></userLogin>
           </el-tab-pane>
         </el-tabs>

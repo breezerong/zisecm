@@ -89,5 +89,9 @@ public class AuthService implements IAuthService {
 			SessionManager.getInstance().getLoginSession().invalidate(token);
 		}
 	}
+	@Override
+	public void lockUser(String loginName) {
+		userService.lockUser(loginName);
+	}
 
 }
