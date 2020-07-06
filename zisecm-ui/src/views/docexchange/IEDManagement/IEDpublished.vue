@@ -110,7 +110,7 @@ export default {
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
 
-            this.$refs.dfDg.setGridViewName('DesignPhaseGrid')
+            this.$refs.dfDg.gridViewName='DesignPhaseGrid'
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
 
