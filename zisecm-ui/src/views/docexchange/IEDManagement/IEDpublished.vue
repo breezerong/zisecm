@@ -15,7 +15,7 @@
         <el-main>
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main"></DataGrid>
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" @rowclick="onDataGridRowClick"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -25,7 +25,7 @@
                             <DataGrid ref="rfDg" v-bind="tables.rfDg"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="设计文件" name="designFile">
-                            <DataGrid ref="dfDg"  c></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="传递单" name="transmitals">
                             <DataGrid ref="tfDg"  v-bind="tables.tfDg"></DataGrid>
@@ -47,6 +47,7 @@ export default {
         return{
             tables:{
                 main:{
+                    gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:" TYPE_NAME='图纸文件' ",
                     //condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))"
@@ -63,7 +64,7 @@ export default {
                     tableHeight:"350"
                 },
                 dfDg:{
-                    gridViewName:"DesignPhaseGrid",
+                    gridViewName:"DrawingGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,
@@ -103,8 +104,18 @@ export default {
         }
     },
     methods: {
-        onDbRowSelect:function(val){
-            this.tables.rfDg.condition="";
+        onDataGridRowClick:function(row){
+            console.log(row)
+            
+            this.$refs.rfDg.loadGridInfo()
+            this.$refs.rfDg.loadGridData()
+
+            this.$refs.dfDg.setGridViewName('DesignPhaseGrid')
+            this.$refs.dfDg.loadGridInfo()
+            this.$refs.dfDg.loadGridData()
+
+            this.$refs.tfDg.loadGridInfo()
+            this.$refs.tfDg.loadGridData()
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
