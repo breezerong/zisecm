@@ -24,10 +24,10 @@ export const cnpeRouter=
         meta: {
             requireAuth: true,
             permit: 1,
-            title:'PendingDC'
+            title:'SubmitedDC'
         },
         path: '/cnpe/DCManagement/pendingDC',
-        name: '待确认文函',
+        name: '已提交文函',//'待确认文函'
         component: () => import('@/views/docexchange/DCManagement/PendingDC.vue')
     },
     {

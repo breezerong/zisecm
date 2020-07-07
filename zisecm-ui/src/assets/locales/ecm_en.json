@@ -137,7 +137,15 @@
     "transferOrder":"Transfer",
     "fileType":"File Type",
     "selectFileType":"Please Select File Type",
-    "allProjects":"All Projects"
+    "allProjects":"All Projects",
+    "Rejected":"Rejected",
+    "Submit":"Submit",
+    "Receive":"Receive",
+    "SearchData":"Search",
+    "PackToDownload":"Pack to download",
+    "Withdraw":"Withdraw",
+    "SubmitedDC":"Submited DC",
+    "AdvSearch":"AdvSearch"
 },
 "skin": {
     "Blue": "Blue",
