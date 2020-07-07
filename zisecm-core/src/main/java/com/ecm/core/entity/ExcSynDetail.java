@@ -1,7 +1,7 @@
 package com.ecm.core.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -44,12 +44,12 @@ public class ExcSynDetail extends EcmObject {
     /**
      * 创建时间
      */
-    private LocalDateTime creationDate;
+    private Date creationDate;
 
     /**
      * 导出时间
      */
-    private LocalDateTime exportDate;
+    private Date exportDate;
 
     /**
      * 状态
@@ -59,7 +59,7 @@ public class ExcSynDetail extends EcmObject {
     /**
      * 导入时间
      */
-    private LocalDateTime importDate;
+    private Date importDate;
 
     /**
      * 错误信息
@@ -102,18 +102,18 @@ public class ExcSynDetail extends EcmObject {
     public void setToId(String toId) {
         this.toId = toId;
     }
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-    public LocalDateTime getExportDate() {
+    public Date getExportDate() {
         return exportDate;
     }
 
-    public void setExportDate(LocalDateTime exportDate) {
+    public void setExportDate(Date exportDate) {
         this.exportDate = exportDate;
     }
     public String getStauts() {
@@ -123,11 +123,11 @@ public class ExcSynDetail extends EcmObject {
     public void setStauts(String stauts) {
         this.stauts = stauts;
     }
-    public LocalDateTime getImportDate() {
+    public Date getImportDate() {
         return importDate;
     }
 
-    public void setImportDate(LocalDateTime importDate) {
+    public void setImportDate(Date importDate) {
         this.importDate = importDate;
     }
     public String getErrorMessage() {

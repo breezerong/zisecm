@@ -1,7 +1,8 @@
 package com.ecm.core.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 /**
  * <p>
@@ -34,7 +35,7 @@ public class ExcSynBatch extends EcmObject {
     /**
      * 创建时间
      */
-    private LocalDateTime creationDate;
+    private Date creationDate;
 
     /**
      * 状态
@@ -44,7 +45,7 @@ public class ExcSynBatch extends EcmObject {
     /**
      * 执行时间
      */
-    private LocalDateTime executeDate;
+    private Date executeDate;
 
     /**
      * 新建数目
@@ -83,11 +84,11 @@ public class ExcSynBatch extends EcmObject {
     public void setBatchNum(String batchNum) {
         this.batchNum = batchNum;
     }
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
     public String getStauts() {
@@ -97,11 +98,11 @@ public class ExcSynBatch extends EcmObject {
     public void setStauts(String stauts) {
         this.stauts = stauts;
     }
-    public LocalDateTime getExecuteDate() {
+    public Date getExecuteDate() {
         return executeDate;
     }
 
-    public void setExecuteDate(LocalDateTime executeDate) {
+    public void setExecuteDate(Date executeDate) {
         this.executeDate = executeDate;
     }
     public Integer getNewCount() {
