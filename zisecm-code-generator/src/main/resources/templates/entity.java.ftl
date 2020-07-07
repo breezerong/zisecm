@@ -3,6 +3,7 @@ package ${package.Entity};
 <#list table.importPackages as pkg>
 import ${pkg};
 </#list>
+import java.util.Date;
 <#if swagger2>
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -66,7 +67,7 @@ public class ${entity} implements Serializable {
      */
         </#if>
     </#if>
-    private ${field.propertyType} ${field.propertyName};
+    private ${getProperType(field.propertyType)} ${field.propertyName};
 </#list>
 <#------------  END 字段循环遍历  ---------->
 
@@ -77,14 +78,14 @@ public class ${entity} implements Serializable {
         <#else>
             <#assign getprefix="get"/>
         </#if>
-    public ${field.propertyType} ${getprefix}${field.capitalName}() {
+    public ${getProperType(field.propertyType)} ${getprefix}${field.capitalName}() {
         return ${field.propertyName};
     }
 
     <#if chainModel>
-    public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+    public ${entity} set${field.capitalName}(${getProperType(field.propertyType)} ${field.propertyName}) {
     <#else>
-    public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+    public void set${field.capitalName}(${getProperType(field.propertyType)} ${field.propertyName}) {
     </#if>
         this.${field.propertyName} = ${field.propertyName};
         <#if chainModel>
@@ -126,3 +127,12 @@ public class ${entity} implements Serializable {
     }
 </#if>
 }
+
+
+<#function getProperType propertype>
+	<#if propertype == 'LocalDateTime' >
+		<#return "Date" >
+	<#else>
+		<#return propertype >
+	</#if>
+</#function>
