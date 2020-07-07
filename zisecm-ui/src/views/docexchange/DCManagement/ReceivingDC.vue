@@ -95,12 +95,12 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="onNextStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
+                    <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
                     $refs.relevantDoc])">{{$t('application.Receive')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" @click="onPreviousStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
+                    <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
                     $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
                 </el-form-item>
                 <!-- 打包下载 -->

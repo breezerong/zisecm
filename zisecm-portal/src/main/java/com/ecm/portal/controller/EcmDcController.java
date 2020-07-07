@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.EcmShopingCart;
+import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -67,6 +69,7 @@ import com.ecm.core.service.AclService;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
@@ -122,6 +125,8 @@ public class EcmDcController extends ControllerAbstract {
 	private EcmRelationMapper ecmRelationMapper;
 	@Autowired
 	private Environment env;
+	@Autowired
+	private ExcTransferServiceImpl excTransferService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
 
@@ -2355,6 +2360,8 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	
+	
 	/**
 	 * 下一状态
 	 * @param argStr
@@ -2374,7 +2381,7 @@ public class EcmDcController extends ControllerAbstract {
 				isCnpeSend=true;
 			}
 			List<String> list = JSONUtils.stringToArray(idsStr);
-			//删除文件
+			//
 			for(String childId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), childId);
 				String currentStatus= doc.getStatus();
@@ -2417,7 +2424,7 @@ public class EcmDcController extends ControllerAbstract {
 			}
 			List<String> list = JSONUtils.stringToArray(idsStr);
 			
-			//删除文件
+			//
 			for(String childId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), childId);
 				String currentStatus= doc.getStatus();
@@ -2442,7 +2449,7 @@ public class EcmDcController extends ControllerAbstract {
 	
 	
 	/**
-	 * 上一状态
+	 * 撤回
 	 * @param argStr
 	 * @return
 	 * @throws Exception
@@ -2457,7 +2464,7 @@ public class EcmDcController extends ControllerAbstract {
 			
 			List<String> list = JSONUtils.stringToArray(idsStr);
 			
-			//删除文件
+			//
 			for(String childId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), childId);
 				String currentStatus= doc.getStatus();

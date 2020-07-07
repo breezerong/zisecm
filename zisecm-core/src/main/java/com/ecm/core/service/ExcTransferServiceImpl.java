@@ -3,6 +3,8 @@ package com.ecm.core.service;
 import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.dao.ExcTransferMapper;
 import com.ecm.icore.service.IExcTransferService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang.StringUtils;
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.UUID;
  */
 @Service
 public class ExcTransferServiceImpl  implements IExcTransferService {
-	
+	@Autowired
 	private ExcTransferMapper mapper;
 
 	@Override

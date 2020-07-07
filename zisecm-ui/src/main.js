@@ -11,7 +11,7 @@ import './plugins/userInfo.js'
 import echarts from 'echarts'
 import addToShoppingCar from './plugins/shoppingcar'
 import validataPermission from './plugins/validatapermission'
-import {onDeleleItem,nextStatus,previousStatus,withdraw} from './plugins/exchange'
+import {onDeleleItem,nextStatus,previousStatus,withdraw,previousStatusCnpe,nextStatusCnpe} from './plugins/exchange'
 
 import ImgViewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
@@ -60,6 +60,8 @@ Vue.prototype.onDeleleItem=onDeleleItem;
 Vue.prototype.onNextStatus=nextStatus;
 Vue.prototype.onPreviousStatus=previousStatus;
 Vue.prototype.onWithdraw=withdraw;
+Vue.prototype.onPreviousStatusCnpe=previousStatusCnpe;
+Vue.prototype.onNextStatusCnpe=nextStatusCnpe;
 
 Vue.use(ImgViewer)
 Vue.config.productionTip = false

@@ -269,7 +269,10 @@
     "CnpePlanReport":"计划报表",
     "CnpePlanSync":"计划同步",
     "Cnpe3levelPlan":"三级计划",
-    "SubmitedDC":"已提交文函"
+    "SubmitedDC":"已提交文函",
+    "DispenseDc":"分发文函",
+    "ReceivingDcFromCnpe":"分包商接收",
+    "ReceivedDcFromCnpe":"分包商已接收"
 
 },
 "message": {
@@ -301,7 +304,8 @@
     "pleaseSelectOneTransfer":"请选择一条移交单数据",
     "operationFaild":"操作失败",
     "commitSuccess":"提交成功",
-    "rollbackSuccess":"退回成功"
+    "rollbackSuccess":"退回成功",
+    "DispenseSuccess":"分发成功"
 },
 "field": {
     "indexNumber":"序号",

@@ -105,8 +105,8 @@
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" @click="onPreviousStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
+                    <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
+                    [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
                 </el-form-item>
                 <!-- <el-form-item>
                     <el-button type="warning" 

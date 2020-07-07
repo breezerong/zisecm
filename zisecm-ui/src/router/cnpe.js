@@ -51,6 +51,36 @@ export const cnpeRouter=
         component: () => import('@/views/docexchange/DCManagement/ReceivingDC.vue')
     },
     {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'DispenseDc'
+        },
+        path:'/cnpe/DCManagement/dispenseDc',
+        name:'分发文函',
+        component:()=>import('@/views/docexchange/DCManagement/CreateDispense.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'ReceivingDcFromCnpe'
+        },
+        path:'/cnpe/DCManagement/ReceivingDC4Cnpe',
+        name:'分包商接收',
+        component:()=>import('@/views/docexchange/DCManagement/ReceivingDC4Cnpe.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'ReceivedDcFromCnpe'
+        },
+        path:'/cnpe/DCManagement/ReceivedDC4Cnpe',
+        name:'分包商已接收',
+        component:()=>import('@/views/docexchange/DCManagement/ReceivedDC4Cnpe.vue')
+    },
+    {
         meta: {
             requireAuth: true,
             permit: 1,

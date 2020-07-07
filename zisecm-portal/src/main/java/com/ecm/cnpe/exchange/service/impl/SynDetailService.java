@@ -60,7 +60,7 @@ public class SynDetailService extends EcmObjectService<ExcSynDetail> implements 
 		ExcSynDetail en = new ExcSynDetail();
 		en.createId();
 		en.setActionName(actionName);
-		en.setCreationDate(LocalDateTime.now());
+		en.setCreationDate(new Date());
 		en.setFromId(fromId);
 		en.setStauts("新建");
 		en.setAppName(appName);
