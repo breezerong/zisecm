@@ -5,16 +5,19 @@
         <el-form-item label="名称" :label-width="formLabelWidth">
           <el-input v-model="form.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="说明" :label-width="formLabelWidth">
-          <el-input v-model="form.description" auto-complete="off"></el-input>
-        </el-form-item>
+          <el-form-item label="角色" :label-width="formLabelWidth">
+            <RoleSelectInput v-model="form.roleName" v-bind:inputValue="form.roleName" ></RoleSelectInput>
+          </el-form-item>
         <el-form-item label="URL" :label-width="formLabelWidth">
           <el-input v-model="form.url" auto-complete="off"></el-input>
+        </el-form-item>
+            <el-form-item label="说明" :label-width="formLabelWidth">
+          <el-input v-model="form.description" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="additem(form)">确 定</el-button>
+        <el-button type="primary" @click="saveItem(form)">确 定</el-button>
       </div>
     </el-dialog>
     <el-container>
@@ -59,9 +62,9 @@
               <el-input v-model="scope.row.name"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="说明" width="240">
+          <el-table-column label="角色" width="240">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.description"></el-input>
+              <el-input v-model="scope.row.roleName"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="URL" width="320">
@@ -69,15 +72,27 @@
               <el-input v-model="scope.row.url"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="160">
+          <el-table-column label="说明" min-width="20%">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.description"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <el-button
                 :plain="true"
                 type="primary"
                 size="small"
                 icon="edit"
-                @click="save(scope.row)"
+                @click="updateItem(scope.row)"
               >保存</el-button>
+              <el-button
+                :plain="true"
+                type="primary"
+                size="small"
+                icon="edit"
+                @click="editItem(scope.row)"
+              >编辑</el-button>
               <el-button
                 :plain="true"
                 type="danger"
@@ -97,16 +112,20 @@
 // $.ajaxSetup({
 //   contentType: "application/json"
 // });
-
+import RoleSelectInput from '@/components/controls/RoleSelectInput'
 export default {
   name: "ComponentManager",
   permit: 9,
+  components: {
+    RoleSelectInput: RoleSelectInput
+  },
   data() {
     return {
       dataList: [],
       dataListFull: [],
       inputkey: "",
       loading: false,
+      isEdit: false,
       dialogVisible: false,
       tableHeight: window.innerHeight - 115,
       form: {
@@ -148,7 +167,20 @@ export default {
           _self.loading = false;
         });
     },
-    save(indata) {
+    editItem(indata) {
+      this.isEdit = true;
+      this.form = indata;
+      this.dialogVisible = true;
+    },
+    saveItem(indata){
+      if(this.isEdit){
+        this.updateItem(indata);
+      }else{
+        this.newItem(indata);
+      }
+      this.dialogVisible = false;
+    },
+    updateItem(indata) {
       let _self = this;
       axios
         .post("/admin/updateComponent", JSON.stringify(indata))
@@ -171,7 +203,7 @@ export default {
           console.log(error);
         });
     },
-    additem(indata) {
+    newItem(indata) {
       let _self = this;
       axios
         .post("/admin/newComponent", JSON.stringify(indata))

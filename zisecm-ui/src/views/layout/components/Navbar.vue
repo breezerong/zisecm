@@ -1,46 +1,46 @@
 <template>
-  <el-menu class="navbar " mode="horizontal">
-    <ecm-hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></ecm-hamburger>
-    
+  <el-menu class="navbar" mode="horizontal">
+    <ecm-hamburger
+      class="hamburger-container"
+      :toggleClick="toggleSideBar"
+      :isActive="sidebar.opened"
+    ></ecm-hamburger>
+
     <ecm-breadcrumb class="breadcrumb-container"></ecm-breadcrumb>
 
     <div class="right-menu">
-     
-      <!-- <error-log class="errLog-container right-menu-item"></error-log> -->
+      <!-- <error-log class="errLog-container right-menu-item"></error-log> 
       <span class="ecm-help" title="购物车">
         <router-link to="/docexchange/shoppingCart" >
           <svg-icon icon-class="shopping" />
         </router-link>&nbsp;
       </span>
-      
+      -->
+
       <ecm-help class="ecm-help right-menu-item" />
+      <!--
       <ecm-top-lock style="cursor:pointer" class="ecm-help"></ecm-top-lock>
-      <el-tooltip effect="dark" content="全屏" placement="bottom">
+      -->
+      <el-tooltip effect="dark" v-bind:content="$t('application.fullscreen')" placement="bottom">
         <ecm-full-screen class="screenfull right-menu-item"></ecm-full-screen>
       </el-tooltip>
 
-      <!-- <lang-select class="international right-menu-item"></lang-select> -->
       <ecm-lang-select class="international right-menu-item"></ecm-lang-select>
+      <ecm-skin class="theme-switch right-menu-item"></ecm-skin>
       <span class="ecm-help">
-        <router-link to="/user/userinfo" >{{userName}}</router-link>&nbsp;
+        <router-link to="/user/userinfo">{{currentUser().userName}}</router-link>&nbsp;
       </span>
-      
-        <!-- <theme-picker class="theme-switch right-menu-item"></theme-picker> -->
-        <ecm-skin class="theme-switch right-menu-item"></ecm-skin>
-
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
-          <i class="el-icon-caret-bottom"></i>
+          <i class="el-icon-caret-bottom" style="font-size:18px"></i>
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              首页
-            </el-dropdown-item>
+            <el-dropdown-item>{{$t('route.home')}}</el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span @click="logout" style="display:block;">退出</span>
+            <span @click="logout" style="display:block;">{{$t('application.logout')}}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -71,48 +71,35 @@ export default {
   },
   data() {
     return {
-      userName: "",
-      systemPermission: 1,
-      clientPermission: 1
+      userName: ""
     };
   },
   mounted(){
-    this.checklogin();
+    
   },
   computed: {
     ...mapGetters(['sidebar', 'name', 'avatar'])
     
   },
   methods: {
-    checklogin() {
-      var user = sessionStorage.getItem("access-userName");
-      if (user) {
-        this.userName = sessionStorage.getItem("access-userName");
-        this.clientPermission = sessionStorage.getItem(
-          "access-clientPermission"
-        );
-        this.systemPermission = sessionStorage.getItem("access-systemPermission");
-      } else {
-        this.userName = "";
-      }
-    },
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
     },
     logout() {
-      sessionStorage.removeItem("access-user");
-      sessionStorage.removeItem("access-userName");
-      var loca = window.location;
-      if (loca.search != null && loca.search != "") {
-        if (loca.search.substr(1, 9) == "LoginName") {
-          var url = loca.origin + loca.pathname + "#/login";
-          window.location.href = url;
+      let _self = this;
+      axios.post("/userLogout","").then(function(response) {
+        var loca = window.location;
+        if (loca.search != null && loca.search != "") {
+          if (loca.search.substr(1, 9) == "LoginName") {
+            var url = loca.origin + loca.pathname + "#/login";
+            window.location.href = url;
+          } else {
+            _self.$router.push({ path: "/login" });
+          }
         } else {
-          this.$router.push({ path: "/login" });
+          _self.$router.push({ path: "/login" });
         }
-      } else {
-        this.$router.push({ path: "/login" });
-      }
+      });
     }
   }
 }

@@ -38,7 +38,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色" :label-width="formLabelWidth">
-              <el-input v-model="form.roleName" auto-complete="off"></el-input>
+              <RoleSelectInput v-model="form.roleName" v-bind:inputValue="form.roleName" ></RoleSelectInput>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -131,13 +131,15 @@
 // });
 import ComponentSelector from "@/components/controls/ComponentSelector";
 import LangSelector from "@/components/controls/LangSelector";
+import RoleSelectInput from '@/components/controls/RoleSelectInput'
 
 export default {
   name: "MenuItemManager",
   permit: 9,
   components: {
     ComponentSelector: ComponentSelector,
-    LangSelector: LangSelector
+    LangSelector: LangSelector,
+    RoleSelectInput: RoleSelectInput
   },
   data() {
     return {

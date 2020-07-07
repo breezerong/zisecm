@@ -149,7 +149,9 @@
     "SearchData":"查询",
     "PackToDownload":"打包下载",
     "Withdraw":"撤回",
-    "AdvSearch":"高级查询"
+    "AdvSearch":"高级查询",
+    "rememberLoginInfo": "记住用户",
+    "fullscreen": "全屏"
 },
 "skin": {
     "Blue": "天空蓝",
