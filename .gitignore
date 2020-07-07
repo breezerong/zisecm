@@ -79,3 +79,4 @@ zisecm-portal/src/main/resources/flowable.cfg.xml
 zisecm-core/target/
 zisecm-portal/target/
 zisecm-code-generator/target/
+zisecm-portal/src/main/resources/flowable.cfg.xml
