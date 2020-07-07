@@ -143,6 +143,13 @@
     "fileType":"文件类型",
     "selectFileType":"请选择文件类型",
     "allProjects":"所有项目",
+    "Rejected":"驳回",
+    "Submit":"提交",
+    "Receive":"接收",
+    "SearchData":"查询",
+    "PackToDownload":"打包下载",
+    "Withdraw":"撤回",
+    "AdvSearch":"高级查询",
     "rememberLoginInfo": "记住用户",
     "fullscreen": "全屏"
 },
@@ -261,7 +268,8 @@
     "CnpeGantt":"甘特图",
     "CnpePlanReport":"计划报表",
     "CnpePlanSync":"计划同步",
-    "Cnpe3levelPlan":"三级计划"
+    "Cnpe3levelPlan":"三级计划",
+    "SubmitedDC":"已提交文函"
 
 },
 "message": {

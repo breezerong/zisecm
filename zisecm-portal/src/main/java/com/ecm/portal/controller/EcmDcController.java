@@ -2395,6 +2395,8 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	
+	
 	/**
 	 * 上一状态
 	 * @param argStr
@@ -2414,6 +2416,7 @@ public class EcmDcController extends ControllerAbstract {
 				isCnpeSend=true;
 			}
 			List<String> list = JSONUtils.stringToArray(idsStr);
+			
 			//删除文件
 			for(String childId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), childId);
@@ -2421,6 +2424,7 @@ public class EcmDcController extends ControllerAbstract {
 				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
 					continue;
 				}
+				
 				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(previousStatus);
 				documentService.updateObject(getToken(), doc, null);
@@ -2430,6 +2434,46 @@ public class EcmDcController extends ControllerAbstract {
 		}catch (Exception e) {
 			// TODO: handle exception
 			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "操作失败请联系管理员！");
+		}
+		
+		return mp;
+	}
+	
+	
+	/**
+	 * 上一状态
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/withdraw", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> withdraw(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			
+			//删除文件
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
+					continue;
+				}
+				
+				doc.setStatus("新建");
+				documentService.updateObject(getToken(), doc, null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "操作失败请联系管理员！");
 		}
 		
 		return mp;

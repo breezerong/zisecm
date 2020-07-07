@@ -10,18 +10,24 @@ public class StatusEntity {
 	
 	private static Map<String,String[]> iedStatus=new HashMap<>(); 
 	
+	private static String typeNames="文件传递单,FU通知单,作废通知单,CR澄清要求答复单,FCR现场变更答复单,"
+			+ "NCR不符合项报告答复单,DCR设计变更答复单,TCR试验澄清答复单,"
+			+ "DEN设计变更通知单,图文传真,会议纪要,设计审查意见答复";
+	private static String noConfigTypeNames="FU申请,CR澄清要求申请单,CR澄清要求关闭单,"
+			+ "FCR现场变更申请单,FCR现场变更关闭单,NCR不符合项报告单,NCR不符合项报告关闭单,"
+			+ "DCR设计变更申请单,DCR设计变更关闭单,TCR试验澄清申请单,TCR试验澄清关闭单,DEN设计变更关闭单,设计审查意见";
 	static {
 		//
 		dcStatus.put("新建", new String[] {"","待确认"});
-		dcStatus.put("待确认", new String[] {"新建","已确认"});
-		dcStatus.put("已确认", new String[] {"新建","已同步"});
-		dcStatus.put("已同步", new String[] {"新建","驳回"});
+		dcStatus.put("待确认", new String[] {"驳回","已确认"});
+		dcStatus.put("已确认", new String[] {"驳回","已同步"});
+		dcStatus.put("已同步", new String[] {"驳回",""});
 		dcStatus.put("驳回", new String[] {"","待确认"});
 		//
 		dcStatusNoConfirming.put("新建", new String[] {"","已确认"});
-		dcStatusNoConfirming.put("已确认", new String[] {"新建","已同步"});
-		dcStatusNoConfirming.put("已同步", new String[] {"新建","驳回"});
-		dcStatusNoConfirming.put("驳回", new String[] {"","待确认"});
+		dcStatusNoConfirming.put("已确认", new String[] {"驳回","已同步"});
+		dcStatusNoConfirming.put("已同步", new String[] {"驳回",""});
+		dcStatusNoConfirming.put("驳回", new String[] {"","已确认"});
 		//
 		dcStatusCnpeSend.put("新建", new String[] {"","待接收"});
 		dcStatusCnpeSend.put("待接收", new String[] {"驳回","已接收"});
@@ -52,7 +58,7 @@ public class StatusEntity {
 			return null;
 			
 		}
-		if("CR澄清要求答复单,FCR现场变更答复单,NCR不符合项报告答复单,DCR设计变更答复单,TCR试验澄清答复单,设计审查意见答复".contains(typeName)) {
+		if(noConfigTypeNames.contains(typeName)) {
 			String[] obj=dcStatusNoConfirming.get(key);
 			if(obj!=null) {
 				return obj[1];
@@ -64,7 +70,7 @@ public class StatusEntity {
 //				+ "NCR不符合项报告关闭单,DCR设计变更申请单,DCR设计变更答复单,DCR设计变更关闭单,"
 //				+ "TCR试验澄清申请单,TCR试验澄清答复单,TCR试验澄清关闭单,DEN设计变更通知单,"
 //				+ "DEN设计变更通知关闭单,图文传真,会议纪要,设计审查意见,设计审查意见答复";
-		String typeNames="设计文件,文件传递单,FU通知单,作废通知单,DEN设计变更通知单,图文传真,会议纪要";
+		
 		if(typeNames.contains(typeName)) {
 			String[] obj=dcStatus.get(key);
 			if(obj!=null) {
@@ -95,19 +101,20 @@ public class StatusEntity {
 			return null;
 			
 		}
-		if("CR澄清要求申请单,CR澄清要求答复单,CR澄清要求关闭单,FCR现场变更申请单,FCR现场变更答复单,FCR现场变更关闭单".contains(typeName)) {
+		if(noConfigTypeNames.contains(typeName)) {
 			String[] obj=dcStatusNoConfirming.get(key);
 			if(obj!=null) {
 				return obj[0];
 			}
 			return null;
 		}
-		String typeNames="文件传递单,FU申请,FU通知单,作废通知单,接口信息意见单,"
-				+ "接口信息传递单,NCR不符合项报告单,NCR不符合项报告答复单,"
-				+ "NCR不符合项报告关闭单,DCR设计变更申请单,DCR设计变更答复单,DCR设计变更关闭单,"
-				+ "TCR试验澄清申请单,TCR试验澄清答复单,TCR试验澄清关闭单,DEN设计变更通知单,"
-				+ "DEN设计变更通知关闭单,图文传真,会议纪要,设计审查意见,设计审查意见答复";
-		if("typeNames".contains(typeName)) {
+//		String typeNames="文件传递单,FU申请,FU通知单,作废通知单,接口信息意见单,"
+//				+ "接口信息传递单,NCR不符合项报告单,NCR不符合项报告答复单,"
+//				+ "NCR不符合项报告关闭单,DCR设计变更申请单,DCR设计变更答复单,DCR设计变更关闭单,"
+//				+ "TCR试验澄清申请单,TCR试验澄清答复单,TCR试验澄清关闭单,DEN设计变更通知单,"
+//				+ "DEN设计变更通知关闭单,图文传真,会议纪要,设计审查意见,设计审查意见答复";
+		
+		if(typeNames.contains(typeName)) {
 			String[] obj=dcStatus.get(key);
 			if(obj!=null) {
 				return obj[0];

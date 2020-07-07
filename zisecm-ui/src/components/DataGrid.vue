@@ -71,7 +71,7 @@
           v-bind:itemId="selectedItemId"
         ></ShowProperty>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="saveItem()">{{$t('application.save')}}</el-button>
+          <el-button v-if="isEditProperty" @click="saveItem()">{{$t('application.save')}}</el-button>
           <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
         </div>
       </el-dialog>
@@ -300,6 +300,7 @@ export default {
   },
   props: {
     itemDataList: { type: Array, default: null },
+    isEditProperty:{ type: Boolean, default: true },
     // sysColumnInfo:{type: Array, default: null},
     // columnList: { type: Array, default: null },
     isshowicon: { type: Boolean, default: true },
