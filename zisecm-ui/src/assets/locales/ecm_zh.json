@@ -273,6 +273,7 @@
     "DispenseDc":"分发文函",
     "ReceivingDcFromCnpe":"分包商接收",
     "ReceivedDcFromCnpe":"分包商已接收"
+    
 
 },
 "message": {
@@ -305,7 +306,9 @@
     "operationFaild":"操作失败",
     "commitSuccess":"提交成功",
     "rollbackSuccess":"退回成功",
-    "DispenseSuccess":"分发成功"
+    "DispenseSuccess":"分发成功",
+    "DownLoadSuccess":"下载成功",
+    "DownLoadFaild":"下载失败"
 },
 "field": {
     "indexNumber":"序号",

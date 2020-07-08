@@ -342,3 +342,5 @@ export function onDeleleItem(selectedItems,dataGridObj) {
             console.log(error);
         });
     }
+
+    

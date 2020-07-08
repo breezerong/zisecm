@@ -104,8 +104,8 @@
                     $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
                 </el-form-item> -->
                 <!-- 打包下载 -->
-                <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+               <el-form-item>
+                    <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 
                 <!-- <el-form-item>
@@ -151,7 +151,7 @@
                 </el-form-item> -->
                 <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
                 <!-- <el-form-item>
@@ -190,7 +190,7 @@
                 </el-form-item> -->
                  <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                
               </el-form>
@@ -226,7 +226,7 @@
                 </el-form-item> -->
                  <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                
                 

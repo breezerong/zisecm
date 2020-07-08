@@ -245,7 +245,9 @@
     "pleaseSelectOneTransfer":"Please select a transfer",
     "commitSuccess":"Commit Success",
     "rollbackSuccess":"Rollback Success",
-    "DispenseSuccess":"Dispense Success"
+    "DispenseSuccess":"Dispense Success",
+    "DownLoadSuccess":"DownLoad Success",
+    "DownLoadFaild":"DownLoad Faild"
 },
 "field": {
     "indexNumber":"S/N",

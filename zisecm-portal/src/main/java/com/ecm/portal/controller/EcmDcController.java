@@ -2144,7 +2144,93 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		zipDownloadService.createZipFiles(files, fileNames, response);
 	}
-
+	
+	/**
+	 * 下载子文件
+	 */
+	@RequestMapping(value = "/dc/downloadSubFile")
+	public void downloadSubFile(HttpServletResponse response, String objectIds) {
+		String[] objectIdsList = objectIds.split(",");
+		List<File> files = new ArrayList<File>();
+		List<String> fileNames = new ArrayList<String>();
+		for (int i = 0; i < objectIdsList.length; i++) {
+			try {
+				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
+				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
+				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				String revision = docObj.getRevision() == null ? "A" : docObj.getRevision();
+				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					List<EcmContent> contentList = contentMapper.getContents(objectIdsList[i], 1);
+					for (int j = 0; j < contentList.size(); j++) {
+						EcmContent en = contentList.get(j);
+						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+						files.add(new File(storePath + en.getFilePath()));
+						fileNames.add(coding +"_"+revision+ "." + en.getFormatName());
+					}
+				}
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}
+		zipDownloadService.createZipFiles(files, fileNames, response);
+	}
+	
+	/**
+	 * 根据主文件下载主文件和关联文件
+	 */
+	@RequestMapping(value = "/dc/downloadFileByMain")
+	public void downloadFilesByMainFile(HttpServletResponse response, String objectIds) {
+		String[] objectIdsList = objectIds.split(",");
+		List<File> files = new ArrayList<File>();
+		List<String> fileNames = new ArrayList<String>();
+		try {
+			for (int i = 0; i < objectIdsList.length; i++) {
+				
+				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
+				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
+				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				String revision= docObj.getRevision()==null?"A":docObj.getRevision();
+				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					List<EcmContent> parentEnList= contentMapper.getContents(objectIdsList[i], 1);
+					if(parentEnList!=null&&parentEnList.size()>0) {
+						EcmContent en=parentEnList.get(0);
+						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+						files.add(new File(storePath + en.getFilePath()));
+						fileNames.add(coding+"_"+revision+"/"+coding+"_"+revision + "." + en.getFormatName());
+					}
+					
+					String sql="select CHILD_ID,NAME from ecm_relation where (NAME='相关文件' or NAME='附件' or name='设计文件') " + 
+							"and PARENT_ID ='"+objectIdsList[i]+"'";
+					List<Map<String,Object>> childrenIds= ecmRelationMapper.executeSQL(sql);
+					for(int j=0;childrenIds!=null&&j<childrenIds.size();j++) {
+						Map<String,Object> idObj= childrenIds.get(j);
+						if(idObj!=null) {
+							String childId=idObj.get("CHILD_ID").toString();
+							String relationName=idObj.get("NAME").toString();
+							EcmDocument childDoc= documentService.getObjectById(getToken(), childId);
+							String childCoding=childDoc.getCoding();
+							String childRevision=childDoc.getRevision();
+							List<EcmContent> enList= contentMapper.getContents(childId, 1);
+							if(enList!=null&&enList.size()>0) {
+								EcmContent en=enList.get(0);
+								String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+								files.add(new File(storePath + en.getFilePath()));
+								fileNames.add(coding+"_"+revision+"/"+relationName+"/"+childCoding+"_"+childRevision + "." + en.getFormatName());
+							}
+						}
+					}
+				}
+				
+			}
+			zipDownloadService.createZipFiles(files, fileNames, response);
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "/dc/grantPermit", method = RequestMethod.POST)
 	public Map<String, Object> grantPermit(@RequestBody EcmPermit permit) {

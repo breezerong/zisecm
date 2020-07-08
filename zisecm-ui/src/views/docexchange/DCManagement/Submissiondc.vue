@@ -131,7 +131,7 @@
                 v-bind:tableHeight="rightTableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
-                condition=" (status='' or status='新建')"
+                condition=" (status='' or status is null or status='新建')"
                 :isshowCustom="true"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
@@ -445,7 +445,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" (status='' or status='新建')";
+            let key=" (status='' or status is null or status='新建')";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
             }
