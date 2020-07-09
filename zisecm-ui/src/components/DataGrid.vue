@@ -299,6 +299,7 @@ export default {
     };
   },
   props: {
+    isInitData: { type: Boolean, default: true },
     itemDataList: { type: Array, default: null },
     isEditProperty:{ type: Boolean, default: true },
     // sysColumnInfo:{type: Array, default: null},
@@ -348,7 +349,10 @@ export default {
     // this.ready();
     this.loadCustomName();
     this.loadGridInfo();
-    this.loadGridData();
+    if(isInitData){
+      this.loadGridData();
+    }
+    
   },
   methods: {
     
