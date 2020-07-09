@@ -1,6 +1,8 @@
 <template>
   <div>
     <div>
+      <!-- 创建分发 -->
+        
       <el-dialog
         title="编辑列"
         :visible.sync="editColumn"
@@ -349,7 +351,7 @@ export default {
     // this.ready();
     this.loadCustomName();
     this.loadGridInfo();
-    if(isInitData){
+    if(this.isInitData){
       this.loadGridData();
     }
     

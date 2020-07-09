@@ -2462,6 +2462,7 @@ public class EcmDcController extends ControllerAbstract {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String idsStr=args.get("ids").toString();
 			String strIsCnpeSend=args.get("isCnpeSend")!=null?args.get("isCnpeSend").toString():"";
+			
 			boolean isCnpeSend=false;
 			if("true".equals(strIsCnpeSend.toLowerCase())) {
 				isCnpeSend=true;
@@ -2476,6 +2477,7 @@ public class EcmDcController extends ControllerAbstract {
 				}
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(nextStatus);
+				
 				documentService.updateObject(getToken(), doc, null);
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -2509,7 +2511,7 @@ public class EcmDcController extends ControllerAbstract {
 				isCnpeSend=true;
 			}
 			List<String> list = JSONUtils.stringToArray(idsStr);
-			
+			String rejectCommon=args.get("rejectCommon")!=null?args.get("rejectCommon").toString():"";
 			//
 			for(String childId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), childId);
@@ -2520,6 +2522,9 @@ public class EcmDcController extends ControllerAbstract {
 				
 				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(previousStatus);
+				doc.addAttribute("C_REJECT_COMMENT", rejectCommon);
+				doc.addAttribute("C_REJECTOR", this.getSession().getCurrentUser().getUserName());
+				doc.addAttribute("C_REJECT_DATE", new Date());
 				documentService.updateObject(getToken(), doc, null);
 			}
 			mp.put("code", ActionContext.SUCESS);

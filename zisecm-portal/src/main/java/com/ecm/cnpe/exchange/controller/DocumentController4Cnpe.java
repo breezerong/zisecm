@@ -144,7 +144,42 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		return mp;
 	}
 	
-	
+	/**
+	 * 设计文件上一状态
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/previousDrawingFile", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> previousDrawingFile(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			String rejectCommon=args.get("rejectCommon")!=null?args.get("rejectCommon").toString():"";
+			//
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				
+				doc.addAttribute("C_PROCESS_STATUS", "已解锁");
+				doc.addAttribute("C_REJECT_COMMENT", rejectCommon);
+				doc.addAttribute("C_REJECTOR", this.getSession().getCurrentUser().getUserName());
+				doc.addAttribute("C_REJECT_DATE", new Date());
+				documentService.updateObject(getToken(), doc, null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "操作失败请联系管理员！");
+		}
+		
+		return mp;
+	}
 	
 	/**
 	 * 上一状态
@@ -159,7 +194,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String idsStr=args.get("ids").toString();
-			String strIsCnpeSend=args.get("isCnpeSend")!=null?args.get("isCnpeSend").toString():"";
+			String rejectCommon=args.get("rejectCommon")!=null?args.get("rejectCommon").toString():"";
 			
 			List<String> list = JSONUtils.stringToArray(idsStr);
 			
@@ -180,6 +215,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				}
 				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, null, true);
 				doc.setStauts(previousStatus);
+				doc.setComment(rejectCommon);
+				doc.setRejecter(this.getSession().getCurrentUser().getUserName());
+				doc.setRejectDate(new Date());
 				excTransferService.updateObject(doc);
 			}
 			mp.put("code", ActionContext.SUCESS);

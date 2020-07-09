@@ -105,8 +105,11 @@
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
-                    [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
+                    <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
+                    [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
+
+                    <RejectButton :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
+                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
                 </el-form-item>
                 <!-- <el-form-item>
                     <el-button type="warning" 
@@ -247,6 +250,7 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import AddCondition from '@/views/record/AddCondition';
+import RejectButton from "@/components/RejectButton";
 export default {
     name: "Submissiondc",
     data(){
@@ -651,7 +655,8 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        AddCondition:AddCondition
+        AddCondition:AddCondition,
+        RejectButton:RejectButton
     }
 }
 </script>

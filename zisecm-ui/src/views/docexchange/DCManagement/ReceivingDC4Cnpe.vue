@@ -100,8 +100,10 @@
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" @click="onPreviousStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
+                    <!-- <el-button type="primary" @click="onPreviousStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
+                    $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
+                    <RejectButton :selectedItems="selectedItems" :isRejectByContractor="true" :refreshDataGrid="$refs.mainDataGrid" 
+                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
                 </el-form-item>
                 <!-- 打包下载 -->
                 <el-form-item>
@@ -154,7 +156,8 @@
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.Rejected')}}</el-button>
+                    <!-- <el-button type="primary" >{{$t('application.Rejected')}}</el-button> -->
+                    <RejectButton :selectedItems="selectedTransferDocItems" :isSubObj="true" :refreshDataGrid="$refs.transferDoc"></RejectButton>
                 </el-form-item>
                 
               </el-form>
@@ -250,6 +253,7 @@
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
+import RejectButton from "@/components/RejectButton";
 export default {
     name: "Submissiondc",
     data(){
@@ -647,7 +651,8 @@ export default {
     },
     components: {
         ShowProperty:ShowProperty,
-        DataGrid:DataGrid
+        DataGrid:DataGrid,
+        RejectButton:RejectButton
     }
 }
 </script>
