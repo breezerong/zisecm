@@ -47,6 +47,11 @@ public class LoginUser {
 	 * 用户角色
 	 */
 	private List<String> roles = new ArrayList<String>();
+	
+	/**
+	 * 我的项目
+	 */
+	private List<String> myProjects = new ArrayList<String>();
 
 	public String getDepartment() {
 		return department;
@@ -157,5 +162,11 @@ public class LoginUser {
 	}
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
+	}
+	public List<String> getMyProjects() {
+		return myProjects;
+	}
+	public void setMyProjects(List<String> myProjects) {
+		this.myProjects = myProjects;
 	}
 }
