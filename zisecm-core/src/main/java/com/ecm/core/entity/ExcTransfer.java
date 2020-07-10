@@ -1,7 +1,9 @@
 package com.ecm.core.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * <p>
@@ -36,7 +38,7 @@ public class ExcTransfer extends EcmObject {
     /**
      * 创建时间
      */
-    private LocalDateTime creationDate;
+    private Date creationDate;
 
     /**
      * 创建人
@@ -51,7 +53,7 @@ public class ExcTransfer extends EcmObject {
     /**
      * 拒绝日期
      */
-    private LocalDateTime rejectDate;
+    private Date rejectDate;
 
     /**
      * 发送人
@@ -61,7 +63,7 @@ public class ExcTransfer extends EcmObject {
     /**
      * 发送日期
      */
-    private LocalDateTime sendDate;
+    private Date sendDate;
 
     /**
      * 接收人
@@ -71,7 +73,7 @@ public class ExcTransfer extends EcmObject {
     /**
      * 接收日期
      */
-    private LocalDateTime receiveDate;
+    private Date receiveDate;
 
     /**
      * 状态
@@ -88,11 +90,17 @@ public class ExcTransfer extends EcmObject {
      */
     private String synStatus;
 
-  
+    /**
+     * 1：CNPE发送，2：分包商发送
+     * @return
+     */
     public Integer getItemType() {
         return itemType;
     }
-
+    /**
+     * 1：CNPE发送，2：分包商发送
+     * @param itemType
+     */
     public void setItemType(Integer itemType) {
         this.itemType = itemType;
     }
@@ -117,11 +125,11 @@ public class ExcTransfer extends EcmObject {
     public void setToName(String toName) {
         this.toName = toName;
     }
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
     public String getCreator() {
@@ -138,11 +146,11 @@ public class ExcTransfer extends EcmObject {
     public void setRejecter(String rejecter) {
         this.rejecter = rejecter;
     }
-    public LocalDateTime getRejectDate() {
+    public Date getRejectDate() {
         return rejectDate;
     }
 
-    public void setRejectDate(LocalDateTime rejectDate) {
+    public void setRejectDate(Date rejectDate) {
         this.rejectDate = rejectDate;
     }
     public String getSender() {
@@ -152,11 +160,11 @@ public class ExcTransfer extends EcmObject {
     public void setSender(String sender) {
         this.sender = sender;
     }
-    public LocalDateTime getSendDate() {
+    public Date getSendDate() {
         return sendDate;
     }
 
-    public void setSendDate(LocalDateTime sendDate) {
+    public void setSendDate(Date sendDate) {
         this.sendDate = sendDate;
     }
     public String getReceiver() {
@@ -166,11 +174,11 @@ public class ExcTransfer extends EcmObject {
     public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
-    public LocalDateTime getReceiveDate() {
+    public Date getReceiveDate() {
         return receiveDate;
     }
 
-    public void setReceiveDate(LocalDateTime receiveDate) {
+    public void setReceiveDate(Date receiveDate) {
         this.receiveDate = receiveDate;
     }
     public String getStauts() {

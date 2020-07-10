@@ -105,11 +105,13 @@ public class ImportController extends ControllerAbstract{
 	@RequestMapping(value = "/import/batchImport", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> batchImport(@RequestParam("metaData")String metaData,@RequestParam("excel") MultipartFile excel, @RequestParam("files") MultipartFile[] files) throws AccessDeniedException{
+		
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		String msg;
 		try {
-			msg = importService.importExcel(getToken(),args.get("id")!=null?args.get("id").toString():"",excel, files);
+			String relationName=args.get("relationName")==null?"":args.get("relationName").toString();
+			msg = importService.importExcel(getToken(),args.get("id").toString(),relationName,excel, files);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", msg);
 		} catch (Exception e) {
@@ -120,6 +122,7 @@ public class ImportController extends ControllerAbstract{
 		}
 		
 		return mp;
+		
 	}
 	
 	@RequestMapping(value = "/import/importOnServer", method = RequestMethod.POST)

@@ -100,13 +100,16 @@
                 </el-form-item>
                 
                 <!-- 打包下载 -->
-                <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+               <el-form-item>
+                    <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" @click="onPreviousStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
+                    <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
+                    [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
+
+                    <RejectButton :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
+                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
                 </el-form-item>
                 <!-- <el-form-item>
                     <el-button type="warning" 
@@ -150,7 +153,7 @@
                 </el-form-item> -->
                 <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 
               </el-form>
@@ -184,7 +187,7 @@
                 </el-form-item> -->
                  <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                
               </el-form>
@@ -219,7 +222,7 @@
                 </el-form-item> -->
                  <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                
                 
@@ -247,6 +250,7 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import AddCondition from '@/views/record/AddCondition';
+import RejectButton from "@/components/RejectButton";
 export default {
     name: "Submissiondc",
     data(){
@@ -651,7 +655,8 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        AddCondition:AddCondition
+        AddCondition:AddCondition,
+        RejectButton:RejectButton
     }
 }
 </script>

@@ -33,7 +33,7 @@ public class ZipDownloadService {
 	            //List<File> 作为参数传进来，就是把多个文件的路径放到一个list里面
 	            //创建一个临时压缩文件
 	            //临时文件可以放在CDEF盘中，但不建议这么做，因为需要先设置磁盘的访问权限，最好是放在服务器上，方法最后有删除临时文件的步骤
-
+	        	
 	            response.reset();
 
 	            //创建文件输出流

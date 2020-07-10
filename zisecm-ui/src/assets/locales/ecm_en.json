@@ -147,7 +147,8 @@
     "SubmitedDC":"Submited DC",
     "AdvSearch":"AdvSearch",
     "rememberLoginInfo": "Remember Login Info.",
-    "fullscreen": "Fullscreen"
+    "fullscreen": "Fullscreen",
+    "exportExcel":"Export Excel"
 },
 "skin": {
     "Blue": "Blue",
@@ -211,7 +212,11 @@
     "mainContainer":"Main Container",
     "storageManager":"StorageManager",
     "createDocFile":"Create Doc File",
-    "shoppingCar":"Shopping Car"
+    "shoppingCar":"Shopping Car",
+    "DispenseDc":"Dispense Dc",
+    "ReceivingDcFromCnpe":"Receiving For Contractor",
+    "ReceivedDcFromCnpe":"Received For Contractor",
+    "RejectDC":"Reject DC"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -241,7 +246,10 @@
     "warehousingFail":"Warehousing is failed",
     "pleaseSelectOneTransfer":"Please select a transfer",
     "commitSuccess":"Commit Success",
-    "rollbackSuccess":"Rollback Success"
+    "rollbackSuccess":"Rollback Success",
+    "DispenseSuccess":"Dispense Success",
+    "DownLoadSuccess":"DownLoad Success",
+    "DownLoadFaild":"DownLoad Faild"
 },
 "field": {
     "indexNumber":"S/N",

@@ -3,7 +3,6 @@ package com.ecm.core.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-
 /**
  * <p>
  * 

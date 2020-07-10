@@ -1,6 +1,8 @@
 <template>
   <div>
     <div>
+      <!-- 创建分发 -->
+        
       <el-dialog
         title="编辑列"
         :visible.sync="editColumn"
@@ -299,6 +301,7 @@ export default {
     };
   },
   props: {
+    isInitData: { type: Boolean, default: true },
     itemDataList: { type: Array, default: null },
     isEditProperty:{ type: Boolean, default: true },
     // sysColumnInfo:{type: Array, default: null},
@@ -348,7 +351,10 @@ export default {
     // this.ready();
     this.loadCustomName();
     this.loadGridInfo();
-    this.loadGridData();
+    if(this.isInitData){
+      this.loadGridData();
+    }
+    
   },
   methods: {
     

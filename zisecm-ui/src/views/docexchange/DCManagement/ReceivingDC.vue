@@ -95,17 +95,19 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="onNextStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
+                    <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
                     $refs.relevantDoc])">{{$t('application.Receive')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" @click="onPreviousStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button>
+                    <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
+                    $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
+                    <RejectButton :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
+                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
                 </el-form-item>
                 <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 
                 <!-- <el-form-item>
@@ -128,6 +130,7 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 :isshowCustom="true"
+                :isInitData="true"
                 condition=" status='待确认'"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
@@ -150,11 +153,12 @@
                 </el-form-item> -->
                 <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.Rejected')}}</el-button>
+                    <!-- <el-button type="primary" >{{$t('application.Rejected')}}</el-button> -->
+                    <RejectButton :selectedItems="selectedTransferDocItems" :isSubObj="true" :refreshDataGrid="$refs.transferDoc"></RejectButton>
                 </el-form-item>
                 
               </el-form>
@@ -188,7 +192,7 @@
                 </el-form-item> -->
                  <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                
               </el-form>
@@ -223,7 +227,7 @@
                 </el-form-item> -->
                  <!-- 打包下载 -->
                 <el-form-item>
-                    <el-button type="primary" >{{$t('application.PackToDownload')}}</el-button>
+                    <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                
                 
@@ -250,6 +254,7 @@
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
+import RejectButton from "@/components/RejectButton";
 export default {
     name: "Submissiondc",
     data(){
@@ -278,7 +283,8 @@ export default {
             fileList: [],
             uploading:false,
             selectedAttachment:[],
-            uploadUrl:''
+            uploadUrl:'',
+            rightTableHeight:(window.innerHeight - 100)/2
         }
     },
     created(){
@@ -457,7 +463,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='待接收'";
+            let key=" status='待确认'";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
             }
@@ -647,7 +653,8 @@ export default {
     },
     components: {
         ShowProperty:ShowProperty,
-        DataGrid:DataGrid
+        DataGrid:DataGrid,
+        RejectButton:RejectButton
     }
 }
 </script>
