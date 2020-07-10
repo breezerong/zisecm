@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -24,7 +25,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ecm.core.PermissionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.dao.EcmContentMapper;
+import com.ecm.core.dao.EcmRelationMapper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.service.ContentService;
@@ -38,6 +42,12 @@ public class DownloadController extends ControllerAbstract{
 	
 	@Autowired
 	private DocumentService documentService;
+	
+	@Autowired
+	private EcmContentMapper contentMapper;
+	
+	@Autowired
+	private EcmRelationMapper ecmRelationMapper;
 	
 	public String downLoadOne(HttpServletResponse response,String id) {
 		try {
@@ -114,6 +124,9 @@ public class DownloadController extends ControllerAbstract{
 
 		return "成功";
 	}
+	
+	
+	
 	private static void isChartPathExist(String dirPath) {
 		File file = new File(dirPath);
 		if (!file.exists()) {

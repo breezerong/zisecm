@@ -1,6 +1,18 @@
 <template>
     <div class="app-container">
-        <!-- 待提交文函 -->
+        <!-- 创建分发 -->
+        <el-dialog title="分包商选择" :visible.sync="contractorCheckVisible" width="80%" >
+            <el-checkbox-group v-model="checkList">
+                <div v-for="(itm,idx) in subContractor" :key="idx+'contractorCheck'">
+                    <el-checkbox :label="itm"></el-checkbox>
+                </div>
+            </el-checkbox-group>
+            <div slot="footer" class="dialog-footer">
+                <el-button
+                @click="contractorCheckVisible=false;onDispenseDc(selectedChildrenType,'')"
+                >{{$t('application.ok')}}</el-button>
+            </div>
+        </el-dialog>
         <!-- 批量导入 -->
         <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
@@ -108,9 +120,7 @@
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,
-                    [$refs.transferDoc,
-                    $refs.relevantDoc])">提交</el-button>
+                    <el-button type="success" v-on:click="beforeDispense()">分发</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="warning" 
@@ -131,7 +141,7 @@
                 v-bind:tableHeight="rightTableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
-                condition=" (status='' or status is null or status='新建')"
+                condition=" (status='' or status='新建')"
                 :isshowCustom="true"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
@@ -266,11 +276,15 @@ export default {
             selectedAttachment:[],
             uploadUrl:'',
             batchDialogVisible:false,
-            gridObj:[]
+            gridObj:[],
+            subContractor:[],
+            checkList:[],
+            contractorCheckVisible:false,
         }
     },
     created(){
         this.loadOptionList("项目","");
+        // this.subContractor=this.loadSelectOption("分包商","")
     },
     mounted(){
         if(!this.validataPermission()){
@@ -283,7 +297,15 @@ export default {
         }
     },
     methods: {
-        
+        beforeDispense(){
+            let _self=this;
+            _self.contractorCheckVisible=true;
+            _self.$nextTick(()=>{
+                _self.subContractor=_self.loadSelectOption("分包商","");
+            });
+
+            
+        },
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {
@@ -445,7 +467,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" (status='' or status is null or status='新建')";
+            let key=" (status='' or status='新建')";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
             }
@@ -629,6 +651,78 @@ export default {
                 console.log(error);
                 });
             },
+        loadSelectOption(queryName,val){
+            let _self = this;
+            var m = new Map();
+            m.set("queryName", queryName);
+            m.set("dependValue", val);
+            axios.post("/dc/getSelectList",JSON.stringify(m))
+                .then(function(response) {
+                if(response.data.code == 1){
+                    _self.subContractor= response.data.data;
+                }
+                })
+                .catch(function(error) {
+                console.log(error);
+                });
+            },
+
+           
+            onDispenseDc(){
+                
+                let _self = this;
+                let m = [];
+                let tab = _self.selectedItems;
+                let ctab= _self.checkList;
+                let c=[];
+                let i;
+                for (i in tab) {
+                    m.push(tab[i]["ID"]);
+                }
+                let j;
+                for(j in ctab){
+                    c.push(ctab[j])
+                }
+                let mp=new Map();
+                mp.set("ids",m);
+                mp.set("contractors",c);
+                axios.post("/dc/dispenseDc",JSON.stringify(mp),{
+                    headers: {
+                        "Content-Type": "application/json;charset=UTF-8"
+                    }
+                })
+                .then(function(response) {
+                    if(response.data.code==1){
+                       
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t("message.DispenseSuccess"),
+                            duration: 2000,
+                            type: 'success'
+                        });
+                    }else{
+                        
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t("message.operationFaild"),
+                            duration: 5000,
+                            type: 'error'
+                        });
+                    }
+                    
+                })
+                .catch(function(error) {
+                    
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t("message.operationFaild"),
+                        duration: 5000,
+                        type: 'error'
+                    });
+                    console.log(error);
+                });
+
+            }
     },
     props: {
         

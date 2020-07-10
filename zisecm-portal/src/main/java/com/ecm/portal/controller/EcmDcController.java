@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.EcmShopingCart;
+import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -67,6 +69,7 @@ import com.ecm.core.service.AclService;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
@@ -122,6 +125,8 @@ public class EcmDcController extends ControllerAbstract {
 	private EcmRelationMapper ecmRelationMapper;
 	@Autowired
 	private Environment env;
+	@Autowired
+	private ExcTransferServiceImpl excTransferService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
 
@@ -2139,7 +2144,93 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		zipDownloadService.createZipFiles(files, fileNames, response);
 	}
-
+	
+	/**
+	 * 下载子文件
+	 */
+	@RequestMapping(value = "/dc/downloadSubFile")
+	public void downloadSubFile(HttpServletResponse response, String objectIds) {
+		String[] objectIdsList = objectIds.split(",");
+		List<File> files = new ArrayList<File>();
+		List<String> fileNames = new ArrayList<String>();
+		for (int i = 0; i < objectIdsList.length; i++) {
+			try {
+				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
+				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
+				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				String revision = docObj.getRevision() == null ? "A" : docObj.getRevision();
+				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					List<EcmContent> contentList = contentMapper.getContents(objectIdsList[i], 1);
+					for (int j = 0; j < contentList.size(); j++) {
+						EcmContent en = contentList.get(j);
+						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+						files.add(new File(storePath + en.getFilePath()));
+						fileNames.add(coding +"_"+revision+ "." + en.getFormatName());
+					}
+				}
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}
+		zipDownloadService.createZipFiles(files, fileNames, response);
+	}
+	
+	/**
+	 * 根据主文件下载主文件和关联文件
+	 */
+	@RequestMapping(value = "/dc/downloadFileByMain")
+	public void downloadFilesByMainFile(HttpServletResponse response, String objectIds) {
+		String[] objectIdsList = objectIds.split(",");
+		List<File> files = new ArrayList<File>();
+		List<String> fileNames = new ArrayList<String>();
+		try {
+			for (int i = 0; i < objectIdsList.length; i++) {
+				
+				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
+				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
+				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				String revision= docObj.getRevision()==null?"A":docObj.getRevision();
+				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					List<EcmContent> parentEnList= contentMapper.getContents(objectIdsList[i], 1);
+					if(parentEnList!=null&&parentEnList.size()>0) {
+						EcmContent en=parentEnList.get(0);
+						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+						files.add(new File(storePath + en.getFilePath()));
+						fileNames.add(coding+"_"+revision+"/"+coding+"_"+revision + "." + en.getFormatName());
+					}
+					
+					String sql="select CHILD_ID,NAME from ecm_relation where (NAME='相关文件' or NAME='附件' or name='设计文件') " + 
+							"and PARENT_ID ='"+objectIdsList[i]+"'";
+					List<Map<String,Object>> childrenIds= ecmRelationMapper.executeSQL(sql);
+					for(int j=0;childrenIds!=null&&j<childrenIds.size();j++) {
+						Map<String,Object> idObj= childrenIds.get(j);
+						if(idObj!=null) {
+							String childId=idObj.get("CHILD_ID").toString();
+							String relationName=idObj.get("NAME").toString();
+							EcmDocument childDoc= documentService.getObjectById(getToken(), childId);
+							String childCoding=childDoc.getCoding();
+							String childRevision=childDoc.getRevision();
+							List<EcmContent> enList= contentMapper.getContents(childId, 1);
+							if(enList!=null&&enList.size()>0) {
+								EcmContent en=enList.get(0);
+								String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+								files.add(new File(storePath + en.getFilePath()));
+								fileNames.add(coding+"_"+revision+"/"+relationName+"/"+childCoding+"_"+childRevision + "." + en.getFormatName());
+							}
+						}
+					}
+				}
+				
+			}
+			zipDownloadService.createZipFiles(files, fileNames, response);
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "/dc/grantPermit", method = RequestMethod.POST)
 	public Map<String, Object> grantPermit(@RequestBody EcmPermit permit) {
@@ -2355,6 +2446,8 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	
+	
 	/**
 	 * 下一状态
 	 * @param argStr
@@ -2369,12 +2462,13 @@ public class EcmDcController extends ControllerAbstract {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String idsStr=args.get("ids").toString();
 			String strIsCnpeSend=args.get("isCnpeSend")!=null?args.get("isCnpeSend").toString():"";
+			
 			boolean isCnpeSend=false;
 			if("true".equals(strIsCnpeSend.toLowerCase())) {
 				isCnpeSend=true;
 			}
 			List<String> list = JSONUtils.stringToArray(idsStr);
-			//删除文件
+			//
 			for(String childId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), childId);
 				String currentStatus= doc.getStatus();
@@ -2383,6 +2477,7 @@ public class EcmDcController extends ControllerAbstract {
 				}
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(nextStatus);
+				
 				documentService.updateObject(getToken(), doc, null);
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -2394,6 +2489,8 @@ public class EcmDcController extends ControllerAbstract {
 		
 		return mp;
 	}
+	
+	
 	
 	/**
 	 * 上一状态
@@ -2414,15 +2511,20 @@ public class EcmDcController extends ControllerAbstract {
 				isCnpeSend=true;
 			}
 			List<String> list = JSONUtils.stringToArray(idsStr);
-			//删除文件
+			String rejectCommon=args.get("rejectCommon")!=null?args.get("rejectCommon").toString():"";
+			//
 			for(String childId : list) {
 				EcmDocument doc= documentService.getObjectById(getToken(), childId);
 				String currentStatus= doc.getStatus();
 				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
 					continue;
 				}
+				
 				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(previousStatus);
+				doc.addAttribute("C_REJECT_COMMENT", rejectCommon);
+				doc.addAttribute("C_REJECTOR", this.getSession().getCurrentUser().getUserName());
+				doc.addAttribute("C_REJECT_DATE", new Date());
 				documentService.updateObject(getToken(), doc, null);
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -2430,6 +2532,46 @@ public class EcmDcController extends ControllerAbstract {
 		}catch (Exception e) {
 			// TODO: handle exception
 			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "操作失败请联系管理员！");
+		}
+		
+		return mp;
+	}
+	
+	
+	/**
+	 * 撤回
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/withdraw", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> withdraw(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			
+			//
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
+					continue;
+				}
+				
+				doc.setStatus("新建");
+				documentService.updateObject(getToken(), doc, null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "操作失败请联系管理员！");
 		}
 		
 		return mp;

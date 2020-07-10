@@ -70,3 +70,13 @@ zisecm-portal/.classpath
 zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.properties
 zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.xml
 zisecm-code-generator/src/main/resources/application.properties
+zisecm-portal/src/main/resources/flowable.cfg.xml
+zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.properties
+zisecm-portal/target/classes/META-INF/maven/com.zisyun/zisecm-portal/pom.xml
+zisecm.code-workspace
+zisecm-portal/src/main/resources/flowable.cfg.xml
+zisecm-portal/src/main/resources/flowable.cfg.xml
+zisecm-core/target/
+zisecm-portal/target/
+zisecm-code-generator/target/
+zisecm-portal/src/main/resources/flowable.cfg.xml

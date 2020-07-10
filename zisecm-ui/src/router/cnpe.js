@@ -24,10 +24,10 @@ export const cnpeRouter=
         meta: {
             requireAuth: true,
             permit: 1,
-            title:'PendingDC'
+            title:'SubmitedDC'
         },
         path: '/cnpe/DCManagement/pendingDC',
-        name: '待确认文函',
+        name: '已提交文函',//'待确认文函'
         component: () => import('@/views/docexchange/DCManagement/PendingDC.vue')
     },
     {
@@ -49,6 +49,36 @@ export const cnpeRouter=
         path: '/cnpe/DCManagement/receivingdc',
         name: '待接收文函',
         component: () => import('@/views/docexchange/DCManagement/ReceivingDC.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'DispenseDc'
+        },
+        path:'/cnpe/DCManagement/dispenseDc',
+        name:'分发文函',
+        component:()=>import('@/views/docexchange/DCManagement/CreateDispense.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'ReceivingDcFromCnpe'
+        },
+        path:'/cnpe/DCManagement/ReceivingDC4Cnpe',
+        name:'分包商接收',
+        component:()=>import('@/views/docexchange/DCManagement/ReceivingDC4Cnpe.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'ReceivedDcFromCnpe'
+        },
+        path:'/cnpe/DCManagement/ReceivedDC4Cnpe',
+        name:'分包商已接收',
+        component:()=>import('@/views/docexchange/DCManagement/ReceivedDC4Cnpe.vue')
     },
     {
         meta: {

@@ -57,6 +57,7 @@
           v-bind:docId="currentDocument.ID"
         ></ObjectAcl>
       </el-tab-pane>
+      <!--
       <el-tab-pane label="启动流程" >
         <StartWorkflow
           ref="StartWorkflow"
@@ -67,6 +68,7 @@
           v-bind:typeName="currentFolder.typeName"
         ></StartWorkflow>
       </el-tab-pane>
+      -->
     </el-tabs>
       
       <div slot="footer" class="dialog-footer">
@@ -474,11 +476,10 @@ export default {
     }
     _self.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     _self.loading = true;
-    var user = sessionStorage.getItem('access-user');
-      if(user)
+      if(_self.currentUser())
       {
-        _self.clientPermission = Number(sessionStorage.getItem('access-clientPermission'));
-        _self.systemPermission = Number(sessionStorage.getItem('access-systemPermission'));
+        _self.clientPermission = Number(_self.currentUser().clientPermission);
+        _self.systemPermission = Number(_self.currentUser().systemPermission);
       }
     axios
       .post("/admin/getFolder", 0)
