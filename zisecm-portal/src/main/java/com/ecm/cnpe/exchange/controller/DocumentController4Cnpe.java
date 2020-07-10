@@ -85,7 +85,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
 				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
 				excTransfer.setSendDate(new Date());
-				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), true);
+				String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
 				excTransfer.setStauts(nextStatus);
 				excTransferService.newObject(excTransfer);
 				doc.setStatus(nextStatus);

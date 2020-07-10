@@ -74,6 +74,16 @@ export const cnpeRouter=
         meta:{
             requireAuth: true,
             permit: 1,
+            title:'RejectDC'
+        },
+        path:'/cnpe/DCManagement/Reject4Cnpe',
+        name:'驳回文函Cnpe',
+        component:()=>import('@/views/docexchange/DCManagement/Reject4Cnpe.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
             title:'ReceivedDcFromCnpe'
         },
         path:'/cnpe/DCManagement/ReceivedDC4Cnpe',

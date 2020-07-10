@@ -151,7 +151,8 @@
     "Withdraw":"撤回",
     "AdvSearch":"高级查询",
     "rememberLoginInfo": "记住用户",
-    "fullscreen": "全屏"
+    "fullscreen": "全屏",
+    "exportExcel":"导出Excel"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -272,7 +273,8 @@
     "SubmitedDC":"已提交文函",
     "DispenseDc":"分发文函",
     "ReceivingDcFromCnpe":"分包商接收",
-    "ReceivedDcFromCnpe":"分包商已接收"
+    "ReceivedDcFromCnpe":"分包商已接收",
+    "RejectDC":"驳回文函"
     
 
 },

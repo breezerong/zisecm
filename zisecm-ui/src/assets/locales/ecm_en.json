@@ -147,7 +147,8 @@
     "SubmitedDC":"Submited DC",
     "AdvSearch":"AdvSearch",
     "rememberLoginInfo": "Remember Login Info.",
-    "fullscreen": "Fullscreen"
+    "fullscreen": "Fullscreen",
+    "exportExcel":"Export Excel"
 },
 "skin": {
     "Blue": "Blue",
@@ -214,7 +215,8 @@
     "shoppingCar":"Shopping Car",
     "DispenseDc":"Dispense Dc",
     "ReceivingDcFromCnpe":"Receiving For Contractor",
-    "ReceivedDcFromCnpe":"Received For Contractor"
+    "ReceivedDcFromCnpe":"Received For Contractor",
+    "RejectDC":"Reject DC"
 },
 "message": {
     "saveSuccess":"Save Success",
