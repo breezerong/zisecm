@@ -1,8 +1,12 @@
 package com.ecm.core.entity;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.ecm.common.util.DateUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
@@ -89,7 +93,87 @@ public class ExcTransfer extends EcmObject {
      * 同步状态
      */
     private String synStatus;
-
+    
+    Map<String,Object> attributes=new HashMap<String, Object>();
+    private String getString(Object val) {
+		if(val==null) {
+			return null;
+		}
+		return val.toString();
+	}
+    
+    private Date getDate(Object val) {
+		if(val == null) {
+			return null;
+		}
+		else if(val instanceof Date) {
+			return (Date)val;
+		}
+		else if(val instanceof Long) {
+			return new Date((long)val);
+		}
+		try {
+			return DateUtils.sdfAll.parse(val.toString());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+    public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
+		this.setId(getString(attributes.get("ID")));
+		if(attributes.get("ITEM_TYPE")!=null) {
+			this.setItemType(attributes.get("ITEM_TYPE")==null?0:Integer.parseInt(attributes.get("ITEM_TYPE").toString()));
+		}
+		if(attributes.get("DOC_ID")!=null) {
+			this.setDocId(getString(attributes.get("DOC_ID")));
+		}
+		if(attributes.get("FROM_NAME")!=null) {
+			this.setFromName(getString(attributes.get("FROM_NAME")));
+		}
+		if(attributes.get("TO_NAME")!=null) {
+			this.setToName(getString(attributes.get("TO_NAME")));
+		}
+		if(attributes.get("REJECTER")!=null) {
+			this.setRejecter(getString(attributes.get("REJECTER")));
+		}
+		if(attributes.get("REJECT_DATE")!=null) {
+			this.setReceiveDate(getDate(attributes.get("REJECT_DATE")));
+		}
+		if(attributes.get("SENDER")!=null) {
+			this.setSender(getString(attributes.get("SENDER")));
+		}
+		if(attributes.get("SEND_DATE")!=null) {
+			this.setSendDate(getDate(attributes.get("SEND_DATE")));
+		}
+		if(attributes.get("RECEIVER")!=null) {
+			this.setReceiver(getString(attributes.get("RECEIVER")));
+		}
+		if(attributes.get("RECEIVE_DATE")!=null) {
+			this.setReceiveDate(getDate(attributes.get("RECEIVE_DATE")));
+		}
+	    if(attributes.get("STAUTS")!=null) {
+	    	this.setStauts(getString(attributes.get("STAUTS")));
+	    }
+	    if(attributes.get("COMMENT")!=null) {
+	    	this.setComment(getString(attributes.get("COMMENT")));
+	    }
+	    if(attributes.get("SYN_STATUS")!=null) {
+	    	this.setSynStatus(getString(attributes.get("SYN_STATUS")));
+	    }
+	    
+	}
+    
+    public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+    public Object getAttributeValue(String key) {
+		Object result=null;
+		result=attributes.get(key.toUpperCase());
+		return result;
+	}
+    
     /**
      * 1：CNPE发送，2：分包商发送
      * @return

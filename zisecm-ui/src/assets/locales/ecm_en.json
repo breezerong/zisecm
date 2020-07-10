@@ -249,7 +249,10 @@
     "rollbackSuccess":"Rollback Success",
     "DispenseSuccess":"Dispense Success",
     "DownLoadSuccess":"DownLoad Success",
-    "DownLoadFaild":"DownLoad Faild"
+    "DownLoadFaild":"DownLoad Faild",
+    "ApplySuccess":"Apply Success",
+    "ApplyFaild":"Apply Faild",
+    "operationSuccess":"Operation Success"    
 },
 "field": {
     "indexNumber":"S/N",
