@@ -74,13 +74,14 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 	@Override
 	public LoginUser authentication(EcmUser ecmUser) throws Exception {
-
+		
+		String loginPassword = ecmUser.getPassword();
 		ecmUser = ecmUserMapper.selectByLoginName(ecmUser.getLoginName());
 		if (ecmUser == null) {
 			throw new Exception("User :" + ecmUser.getLoginName() + " is not exists.");
 		}
+		
 		String password = ecmUser.getPassword();
-		String loginPassword = ecmUser.getPassword();
 		if (password.length() > 30) {
 			loginPassword = SecureUtils.shaEncode(loginPassword);
 		}
