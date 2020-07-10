@@ -1,4 +1,3 @@
-
 <template>
 <div>
   <el-dialog
@@ -14,10 +13,10 @@
       <el-col>请选择类型<font style="color:red;">*</font>：</el-col>
       <el-col>
         <el-select v-model="typeName" @change="refreshData(typeName)">
-                <div v-for="options in typeNameOptions">
-                  <el-option :label="options" :value="options"></el-option>
-                </div>
-              </el-select>
+          <div v-for="options in typeNameOptions">
+            <el-option :label="options" :value="options"></el-option>
+          </div>
+        </el-select>
       </el-col>
     </el-row>
     <el-row>
@@ -44,10 +43,18 @@
                     <div v-for="condition in changeColumn(item.column,item)">
                       <el-option :label="condition.label" :value="condition.val"></el-option>
                     </div>
-                </el-select>
+              </el-select>
             </el-col>
-            <el-col :span="8" class="topbar-button">
-              <el-input v-model="item.val"></el-input>
+            <el-col :span="8" class="topbar-button" v-model="item.condition">
+              <div v-for="ConditionsType in ConditionType(item.column,item)">
+                <el-input v-if="ConditionsType=='2'" v-model="item.val" :type="inputType1" ></el-input>
+                <el-date-picker
+                v-if="ConditionsType=='1'"
+                v-model="item.val"
+                type="date"
+                placeholder="选择日期">
+                </el-date-picker>
+              </div>
             </el-col>
         </el-row>
     
@@ -63,7 +70,7 @@
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="6">
-      <el-button icon="el-icon-search" @click="clickShowDialog">高级搜索</el-button>
+      <el-button icon="el-icon-search" @click="clickShowDialog(typeName)">高级搜索</el-button>
     </el-col>
   </el-row>
 </div>
@@ -139,6 +146,10 @@ export default {
     inputType:{
       type:String,
       default:'text'
+    },
+    typeName:{
+      type: String,
+      default: ""
     }
   },
   
@@ -177,6 +188,25 @@ export default {
       }
       return conditions;
     },
+    ConditionType(column,item){
+      let ConditionsType;
+      let obj=null;
+      this.columns.forEach(e=>{
+        if(e.attrName==column){
+          obj=e;
+        }
+      });
+      if(obj==null){
+        return null;
+      }
+      item.dataType=obj.controlType;
+      if(obj.controlType=='Date'){
+        ConditionsType='1';
+      }else{
+        ConditionsType='2';
+      }
+      return ConditionsType;
+    },
     addplus:function () {
         this.formtips.push(
           {
@@ -188,11 +218,11 @@ export default {
             val:""
           }
       );
+      
     },
    removeminus:function () {
         this.formtips.splice(-1);
     },
-    
     onOk(){
       let _self=this;
       let sql=" ";
@@ -250,11 +280,10 @@ export default {
       if(name){
         this.loadColumnInfo(name);
       }
-      
-
     },
-    clickShowDialog() {
+    clickShowDialog(name) {
       this.visible = true;
+      this.refreshData(name);
     },
     closeDialog() {
       this.visible = false;
