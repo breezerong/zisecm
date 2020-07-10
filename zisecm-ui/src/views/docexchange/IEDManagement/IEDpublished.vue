@@ -5,10 +5,18 @@
                 <el-form-item >
                     <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" 
                     dataValueField="code" dataTextField="name"></DataSelect>
+                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" 
+                    dataValueField="code" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary">查询</el-button>
+                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或标题"></el-input>
+                    <el-button type="primary" @click="search()">查询</el-button>
+                </el-form-item>
+                <el-form-item>
                     <el-button type="default" @click.native="exportData">Excel下载</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
             </el-form>
         </el-header>
@@ -41,6 +49,7 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from '@/components/ecm-data-select'
 import ExcelUtil from '@/utils/excel.js'
+import AddCondition from '@/views/record/AddCondition.vue'
 export default {
     name: "IEDpublished",
     data(){
@@ -78,16 +87,19 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     tableHeight:"350"
-                }
+                },
             },
             tabs:{
                 active:"relationFiles"
             },
             forms:{
                 headForm:{
-                    project:""
+                    project:"",
                 }
-            }
+            },
+            inputValueNum:'',
+            hiddenInput:'hidden',
+            typeName:"IED"
         }
     },
     created(){
@@ -98,7 +110,7 @@ export default {
             //跳转至权限提醒页
             let _self=this;
             _self.$nextTick(()=>{
-                _self.$router.push({ path: '/NoPermission' })
+            _self.$router.push({ path: '/NoPermission' })
             })
             
         }
@@ -113,7 +125,7 @@ export default {
             this.$refs.dfDg.gridViewName='DesignPhaseGrid'
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
-
+            
             this.$refs.tfDg.loadGridInfo()
             this.$refs.tfDg.loadGridData()
         },
@@ -127,15 +139,23 @@ export default {
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
+        },
+        search(){
+            let _self = this
+            
+            var k1="TYPE_NAME='IED' AND (TITLE LIKE '%"+this.inputValueNum+"%' OR C_WBS_CODING LIKE '%"+this.inputValueNum+"%')"
+            _self.$refs.mainDataGrid.condition=k1
+            _self.$refs.mainDataGrid.loadGridData();
         }
     },
     props: {
-        
+
     },
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        DataSelect:DataSelect
+        DataSelect:DataSelect,
+        AddCondition:AddCondition
     }
 }
 </script>
