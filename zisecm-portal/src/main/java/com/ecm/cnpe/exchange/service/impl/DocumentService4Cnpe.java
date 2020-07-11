@@ -5,21 +5,29 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmDocumentMapper;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcTransferServiceImpl;
 @Service
 public class DocumentService4Cnpe extends DocumentService{
 	@Autowired
 	private EcmDocumentMapper ecmDocument;
+	@Autowired
+	private ExcTransferServiceImpl excTransferService;
 	
 	private String baseColumns = "ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT,"
@@ -98,6 +106,35 @@ public class DocumentService4Cnpe extends DocumentService{
 		return list;
 	}
 	
+	/**
+	 * 
+	 * @param token
+	 * @param docId
+	 * @return
+	 */
+	public ExcTransfer getOneExcTransferByDocId(String token,String docId){
+		LoginUser userObj=null;
+		try {
+			userObj=getSession(token).getCurrentUser();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		String sql="select a.ID from exc_transfer a,ecm_document b where a.doc_id=b.ID "
+				+ "and TO_NAME='"+userObj.getCompany()+"' and b.ID ='"+docId+"' ";
+		
+		
+		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
+		if(list!=null&&list.size()>0) {
+			ExcTransfer exc=new ExcTransfer();
+			exc.setAttributes(list.get(0));
+			return exc;
+		}
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	private String getGridColumn(EcmGridView gv, String gridName) {
 		String col = "";
@@ -112,4 +149,30 @@ public class DocumentService4Cnpe extends DocumentService{
 		}
 		return col;
 	}
+	@Transactional(rollbackFor=Exception.class)
+	public boolean handleComplete(String token,List<String> docIds) throws NoPermissionException, AccessDeniedException, EcmException {
+		for(String docId:docIds) {
+			EcmDocument doc= this.getObjectById(token, docId);
+			Object cRefCodingObj= doc.getAttributeValue("C_REF_CODING");//渠道号
+			if(cRefCodingObj!=null&&!"".equals(cRefCodingObj.toString())) {
+				doc.addAttribute("C_REF_CODING", cRefCodingObj.toString()+"-作废");
+				this.updateObject(token, doc,null);
+				
+			}else {
+				Object obj= doc.getAttributeValue("CODING");
+				String coding="";
+				if(obj!=null) {
+					coding=obj.toString();
+				}
+				doc.addAttribute("CODING", coding+"-作废");
+				this.updateObject(token, doc,null);
+			}
+			ExcTransfer excTransfer= getOneExcTransferByDocId(token, docId);
+			excTransfer.setStauts("已处理");
+			excTransferService.updateObject(excTransfer);
+		}
+		return true;
+		
+	}
+	
 }

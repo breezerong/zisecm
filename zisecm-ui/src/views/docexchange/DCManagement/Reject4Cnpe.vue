@@ -95,7 +95,7 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button >处理完成</el-button>
+                    <el-button type="primary" @click="handleComplete()">处理完成</el-button>
                 </el-form-item>
                 
                 <!-- 导出Excel -->
@@ -276,7 +276,8 @@ export default {
             fileList: [],
             uploading:false,
             selectedAttachment:[],
-            uploadUrl:''
+            uploadUrl:'',
+            rightTableHeight:(window.innerHeight - 100)/2
         }
     },
     created(){
@@ -639,7 +640,41 @@ export default {
                 .catch(function(error) {
                 console.log(error);
                 });
-            },
+        },
+        handleComplete(){
+            let _self = this;
+            var m = [];
+            let tab = _self.selectedItems;
+
+            var i;
+            for (i in tab) {
+                m.push(tab[i]["ID"]);
+            }
+        
+            axios.post("/dc/handleComplete",JSON.stringify(m),{
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            })
+            .then(function(response) {
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.operationSuccess"),
+                    duration: 2000,
+                    type: 'success'
+                });
+            })
+            .catch(function(error) {
+                
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.operationFaild"),
+                    duration: 5000,
+                    type: 'error'
+                });
+                console.log(error);
+            });
+        }
     },
     props: {
         

@@ -310,7 +310,10 @@
     "rollbackSuccess":"退回成功",
     "DispenseSuccess":"分发成功",
     "DownLoadSuccess":"下载成功",
-    "DownLoadFaild":"下载失败"
+    "DownLoadFaild":"下载失败",
+    "ApplySuccess":"申请成功",
+    "ApplyFaild":"申请失败",
+    "operationSuccess":"操作成功"
 },
 "field": {
     "indexNumber":"序号",

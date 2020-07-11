@@ -230,5 +230,55 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		return mp;
 	}
 	
+	/**
+	 * 申请解锁
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/applyForUnlock", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> applyForUnlock(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+//		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+//		String idsStr=args.get("ids").toString();
+		
+		List<String> list = JSONUtils.stringToArray(argStr);
+		for(String id : list) {
+			EcmDocument doc= documentService.getObjectById(getToken(), id);
+			
+			doc.addAttribute("C_PROCESS_STATUS", "申请解锁");
+			documentService.updateObject(getToken(), doc, null);
+		}
+		mp.put("code", ActionContext.SUCESS);
+		return mp;
+		
+	}
 	
+	
+	/**
+	 * 处理完成
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/handleComplete", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> handleComplete(@RequestBody String argStr) throws Exception {
+
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			List<String> list = JSONUtils.stringToArray(argStr);
+			
+			documentService.handleComplete(getToken(), list);
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+		}
+		
+		return mp;
+	
+	}
 }
