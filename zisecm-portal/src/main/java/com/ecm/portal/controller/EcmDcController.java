@@ -526,8 +526,7 @@ public class EcmDcController extends ControllerAbstract {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
