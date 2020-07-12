@@ -4,19 +4,17 @@
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
                     <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" 
-                    dataValueField="code" dataTextField="name"></DataSelect>
-                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" 
-                    dataValueField="code" dataTextField="name"></DataSelect>
+                    dataValueField="code" dataTextField="name"></DataSelect>                  
                 </el-form-item>
                 <el-form-item>
-                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或标题"></el-input>
+                    <el-input style="width:200px" v-model="inputValueNum" placeholder="外部编码、内部编码和中文标题"></el-input>
                     <el-button type="primary" @click="search()">查询</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="default" @click.native="exportData">Excel下载</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput'></AddCondition>
+                    <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition>
                 </el-form-item>
             </el-form>
         </el-header>
@@ -58,10 +56,10 @@ export default {
                 main:{
                     gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:" TYPE_NAME='图纸文件' ",
-                    //condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))"
+                    condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1",                    
                     isshowOption:true,
                     isshowCustom:true,
+                    isshowicon:false,                   
                     tableHeight:"350"
                 },
                 rfDg:{
@@ -70,6 +68,7 @@ export default {
                     condition:"",
                     isshowOption:true,
                     isshowCustom:true,
+                    isInitData:false,
                     tableHeight:"350"
                 },
                 dfDg:{
@@ -78,6 +77,7 @@ export default {
                     condition:"",
                     isshowOption:true,
                     isshowCustom:true,
+                    isInitData:false,
                     tableHeight:"350"
                 },
                 tfDg:{
@@ -86,6 +86,7 @@ export default {
                     condition:"",
                     isshowOption:true,
                     isshowCustom:true,
+                    isInitData:false,
                     tableHeight:"350"
                 },
             },
@@ -116,35 +117,42 @@ export default {
         }
     },
     methods: {
+        onSearchConditionChange:function(val){
+            console.log(val)
+        },
         onDataGridRowClick:function(row){
-            console.log(row)
             
-            this.$refs.rfDg.loadGridInfo()
-            this.$refs.rfDg.loadGridData()
+           // this.$refs.rfDg.loadGridInfo()
+           // this.$refs.rfDg.loadGridData()
 
-            this.$refs.dfDg.gridViewName='DesignPhaseGrid'
+            this.tables.dfDg.condition="CODING = '"+row.CODING+"'"
+            this.$refs.dfDg.condition=this.tables.dfDg.condition
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
-            
+            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='设计文件' and "+ this.tables.dfDg.condition;
+
+            this.tables.tfDg.condition = "CODING IN ("+ dfDGCondition+")"
+            this.$refs.tfDg.condition= this.tables.tfDg.condition
             this.$refs.tfDg.loadGridInfo()
-            this.$refs.tfDg.loadGridData()
+            this.$refs.tfDg.loadGridData() 
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
+            var fileDate = new Date()
+            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
                 gridName:this.tables.main.gridViewName,
                 lang:"zh-cn",
                 condition:this.tables.main.condition,
-                filename:"abc.xlsx",
+                filename:"IED"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
         },
         search(){
             let _self = this
-            
-            var k1="TYPE_NAME='IED' AND (TITLE LIKE '%"+this.inputValueNum+"%' OR C_WBS_CODING LIKE '%"+this.inputValueNum+"%')"
-            _self.$refs.mainDataGrid.condition=k1
+            var k1="TYPE_NAME='IED' AND IS_CURRENT=1 and C_IS_RELEASED=1 AND (TITLE LIKE '%"+this.inputValueNum+"%' OR C_WBS_CODING LIKE '%"+this.inputValueNum+"%')"
+            this.tables.main.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
         }
     },
