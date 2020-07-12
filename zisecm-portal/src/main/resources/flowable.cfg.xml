@@ -19,7 +19,7 @@
 			<value>com.microsoft.sqlserver.jdbc.SQLServerDriver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:sqlserver://121.40.103.187:1433;databasename=ecmdb</value>
+			<value>jdbc:sqlserver://121.40.103.187:1433;databasename=excdb</value>
 		</property>
 		<property name="username">
 			<value>ecmadmin</value>
