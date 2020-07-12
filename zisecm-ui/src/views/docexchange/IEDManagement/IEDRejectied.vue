@@ -141,11 +141,13 @@ export default {
     },
       exportData(){
             let dataUrl = "/exchange/doc/export"
+            var fileDate = new Date()
+            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
                 gridName:"IEDGrid",
                 lang:"zh-cn",
                 condition:"TYPE_NAME='IED' AND STATUS ='已驳回'",
-                filename:"Res.xlsx",
+                filename:"IED_Rejected_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
