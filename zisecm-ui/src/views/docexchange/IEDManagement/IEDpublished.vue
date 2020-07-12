@@ -104,7 +104,8 @@ export default {
         }
     },
     created(){
-
+        window.addEventListener("resize",this.getHeight);
+        this.getHeight();
     },
     mounted(){
         if(!this.validataPermission()){
@@ -117,6 +118,12 @@ export default {
         }
     },
     methods: {
+        getHeight() {
+            this.tables.main.tableHeight = window.innerHeight/2 - 95+"px"
+            this.tables.rfDg.tableHeight = window.innerHeight/2 - 95+"px"
+            this.tables.dfDg.tableHeight = window.innerHeight/2 - 95+"px"
+            this.tables.tfDg.tableHeight = window.innerHeight/2 - 95+"px"
+        },
         onSearchConditionChange:function(val){
             console.log(val)
         },
@@ -144,7 +151,7 @@ export default {
                 gridName:this.tables.main.gridViewName,
                 lang:"zh-cn",
                 condition:this.tables.main.condition,
-                filename:"IED"+fileDateStr+".xlsx",
+                filename:"IED_Published_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
