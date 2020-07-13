@@ -33,6 +33,7 @@ export default {
       let size = _self.getLayoutHeight()
       _self.$emit("onLayoutResize",size)
     })
+    this.layout.height = window.innerHeight/this.layout.split
     
   },
   mounted(){
@@ -46,11 +47,6 @@ export default {
         })
         
     }
-
-    window.addEventListener("resize",function(){
-      let size = _self.getLayoutHeight()
-      _self.$emit("onLayoutResize",size)
-    })
   }
 }
 </script>
