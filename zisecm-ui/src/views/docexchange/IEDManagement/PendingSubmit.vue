@@ -3,12 +3,7 @@
         <el-header>
             <el-row>
               <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                >
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" >
               </el-option>
               </el-select>
             <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
@@ -20,21 +15,18 @@
             </el-row>
         </el-header>
         <el-main>
-                <el-col :span="24">
-                    <!--condition="creator='@currentuser' AND company='@company' AND status='已驳回'">
-                    <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
-            <DataGrid ref="mainDataGrid" 
-            dataUrl="/dc/getDocuments"
-            isshowOption
-            isshowCustom
-            gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED' AND STATUS='新建' "
-            @cellMouseEnter="cellMouseEnter"
-            @cellMouseleave="cellMouseleave"
-            @rowclick="rowClick" 
-            @selectchange="selectChange"
-           ></DataGrid>
+            <el-row>
+
+                <el-col :span="24">                   
+                    <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" isshowOption :tableHeight="tables.main.height"
+                    isshowCustom gridViewName="IEDGrid" condition="TYPE_NAME='IED' AND STATUS='新建' "
+                    @cellMouseEnter="cellMouseEnter"
+                    @cellMouseleave="cellMouseleave"
+                    @rowclick="rowClick" 
+                    @selectchange="selectChange"
+                ></DataGrid>
                 </el-col>
+            </el-row>
        
         </el-main>
     </el-container>
@@ -53,7 +45,8 @@ export default {
             tables:{
                 main:{
                     gridName:"IEDGrid",
-                    dataList:[]
+                    dataList:[],
+                    height:0
                 },
                itemDataList: [],
                loading: false,
@@ -68,8 +61,6 @@ export default {
                dialogName:'',
                selectedItemId:'',
                typeName:'IED',
-               
-               
             },
              options:[
                  {
@@ -99,7 +90,8 @@ export default {
         }
     },
     created(){
-
+        window.addEventListener("resize",this.getHeight);
+        this.getHeight();
     },
     mounted(){
         if(!this.validataPermission()){
@@ -112,6 +104,9 @@ export default {
         }   
     },
     methods: {
+        getHeight() {
+            this.tables.main.height = window.innerHeight - 190 + "px";
+        },
         fresh(){
           let _self = this
         _self.$refs.mainDataGrid.loadGridData();
@@ -144,11 +139,13 @@ export default {
     },
         exportData(){
             let dataUrl = "/exchange/doc/export"
+            var fileDate = new Date()
+            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
                 gridName:"IEDGrid",
                 lang:"zh-cn",
                 condition:"TYPE_NAME='IED' AND STATUS ='新建'",
-                filename:"Res.xlsx",
+                filename:"IED_Pending_Submit_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)

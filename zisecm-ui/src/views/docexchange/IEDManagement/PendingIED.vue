@@ -61,7 +61,7 @@
             isshowOption
             isshowCustom
             gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED' AND STATUS='审核中' "
+            condition="TYPE_NAME='IED' AND STATUS='审核中' " :tableHeight="tables.main.height"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick"
@@ -85,7 +85,8 @@ export default {
             tables:{
                 main:{
                     gridName:"IEDGrid",
-                    dataList:[]
+                    dataList:[],
+                    height:0
                 },
                itemDataList: [],
                loading: false,
@@ -133,7 +134,8 @@ export default {
         }
     },
     created(){
-
+        window.addEventListener("resize",this.getHeight);
+        this.getHeight();
     },
     mounted(){
         if(!this.validataPermission()){
@@ -146,6 +148,9 @@ export default {
         }   
     },
     methods: {
+         getHeight() {
+            this.tables.main.height = window.innerHeight - 190 + "px";
+        },
         fresh(){
           let _self = this
         _self.$refs.mainDataGrid.loadGridData();
@@ -189,11 +194,13 @@ export default {
     },
       exportData(){
             let dataUrl = "/exchange/doc/export"
+            var fileDate = new Date()
+            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
                 gridName:"IEDGrid",
                 lang:"zh-cn",
                 condition:"TYPE_NAME='IED' AND STATUS ='审核中'",
-                filename:"Res.xlsx",
+                filename:"IED_Pending_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
