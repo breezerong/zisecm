@@ -116,6 +116,13 @@ public class EcmForm extends EcmSysObject {
 	 */
 	public List<EcmFormClassification> getFormClassifications(IEcmSession session,String langKey) {
 		List<EcmFormClassification> list = new ArrayList<EcmFormClassification>();
+		if(formClassifications.size()==0) {
+			if(ecmFormItems!=null) {
+				for(EcmFormItem item:ecmFormItems) {
+					addToClassification(item);
+				}
+			}
+		}
 		for(EcmFormClassification fc: formClassifications) {
 			EcmFormClassification en = new EcmFormClassification();
 			en.setLabel(CacheManagerLangInfo.getLanguageLabel(langKey,fc.getLabel()));
@@ -147,6 +154,7 @@ public class EcmForm extends EcmSysObject {
 		EcmFormClassification fc = new EcmFormClassification();
 		fc.setLabel(item.getClassification());
 		fc.getEcmFormItems().add(item);
+		formClassifications.add(fc);
 	}
 
 	List<EcmFormItem> ecmFormSearchItems;

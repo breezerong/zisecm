@@ -152,7 +152,9 @@
     "AdvSearch":"高级查询",
     "rememberLoginInfo": "记住用户",
     "fullscreen": "全屏",
-    "exportExcel":"导出Excel"
+    "exportExcel":"导出Excel",
+    "requiredInput": "必填",
+    "cannotEmpty": "不能为空"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -313,7 +315,8 @@
     "DownLoadFaild":"下载失败",
     "ApplySuccess":"申请成功",
     "ApplyFaild":"申请失败",
-    "operationSuccess":"操作成功"
+    "operationSuccess":"操作成功",
+    "hasnoPermssion":"您没有权限"
 },
 "field": {
     "indexNumber":"序号",
