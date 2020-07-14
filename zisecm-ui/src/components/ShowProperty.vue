@@ -13,7 +13,7 @@
           <el-collapse-item v-for="(citem,cindex) in dataList" :title="citem.label" :name="citem.label"  :id="citem.label" :key="cindex"> 
           <template v-for="(item,itemIndex) in citem.ecmFormItems">
             <el-col v-show="itemId || (!itemId && !item.readOnly)" :span="showCellValue(item)" v-bind:key="itemIndex" style="text-align:left;">
-              <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:item.required,message:$t('application.requiredInput'),trigger:'blur'}]">
+              <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:validateValue(item),message:$t('application.requiredInput'),trigger:'blur'}]">
                     <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                     <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                     <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
@@ -84,7 +84,8 @@ export default {
           widthType: "2",
           validValues:[],
           orderIndex: 1,
-          defaultValue: ""
+          defaultValue: "",
+          validatePolicy:""
         }
       },
       file:"",
@@ -110,6 +111,32 @@ export default {
     folderPath:{type:String}
   },
   methods: {
+    validateValue(itemData){
+      if(itemData.required){
+        if(itemData.validatePolicy != null && itemData.validatePolicy != ""){
+          var p = itemData.validatePolicy.split(":");
+          if(this.getValueByAttr(p[0]) == p[1]){
+            return true;
+          }
+        }else{
+          return true;
+        }
+      }
+      return false;
+    },
+    getValueByAttr(attrName){
+      var c;
+      for(c in this.dataList){
+        let dataRows = this.dataList[c].ecmFormItems;
+        var i;
+        for (i in dataRows) {
+          if(dataRows[i].attrName == attrName){
+            return dataRows[i].defaultValue;
+          }
+        }
+      }
+      return "";
+    },
     showCellValue(item){
       //console.log(item);
       var v = 24/ parseInt(item.widthType);
@@ -196,7 +223,7 @@ export default {
           // if(dataRows[i].required){
           //    console.log(dataRows[i].label+":"+dataRows[i].defaultValue+":"+typeof(dataRows[i].defaultValue));
           // }
-          if(dataRows[i].required && (typeof(dataRows[i].defaultValue)==='undefined' || dataRows[i].defaultValue==null||dataRows[i].defaultValue==""))
+          if(_self.validateValue(dataRows[i]) && (typeof(dataRows[i].defaultValue)==='undefined' || dataRows[i].defaultValue==null||dataRows[i].defaultValue==""))
           {
             msg += "["+dataRows[i].label+"] ";
             ret = false;
@@ -235,7 +262,7 @@ export default {
                 }
                 temp = temp.substring(0,temp.length-1);
                 val = temp;
-                console.log(val);
+                //console.log(val);
               }
               m.set(dataRows[i].attrName, val);
             }
@@ -259,7 +286,7 @@ export default {
         //console.log(_self.file);
         formdata.append("uploadFile",_self.file.raw);
       }
-      // console.log(JSON.stringify(m));
+      console.log(JSON.stringify(m));
       if(_self.myItemId=='')
       {
         axios.post("/dc/newDocument",formdata,{

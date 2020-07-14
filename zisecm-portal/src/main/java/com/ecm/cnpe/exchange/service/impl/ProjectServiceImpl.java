@@ -26,11 +26,16 @@ public class ProjectServiceImpl extends EcmService implements ProjectService{
 	public List<ProjectEntity> getMyProject(String token) {
 		List<ProjectEntity> result = new ArrayList<ProjectEntity>();
 		try {
-			IEcmSession session = this.getSession(token);
 			StringBuffer sql = new StringBuffer();
-			sql.append("select ed.ID,ed.CODING,ed.NAME from ecm_document ed where ed.TYPE_NAME='项目' and "
-					+ "ed.NAME in (select eg.NAME from ecm_group eg "
-					+ "where id in (select egu.group_id from ecm_group_user egu where egu.USER_ID in (select id from ecm_user where login_name='"+session.getCurrentUser().getLoginName()+"')))");
+			IEcmSession session = this.getSession(token);
+			if(session.getCurrentUser().getClientPermission()==9 || session.getCurrentUser().getSystemPermission()==9) {
+				sql.append("select ed.ID,ed.CODING,ed.NAME from ecm_document ed where ed.TYPE_NAME='项目'");
+			}else {
+				sql.append("select ed.ID,ed.CODING,ed.NAME from ecm_document ed where ed.TYPE_NAME='项目' and "
+						+ "ed.NAME in (select eg.NAME from ecm_group eg "
+						+ "where id in (select egu.group_id from ecm_group_user egu where egu.USER_ID in (select id from ecm_user where login_name='"+session.getCurrentUser().getLoginName()+"')))");
+				
+			}
 			List<Map<String, Object>> qList = documentService.getMapList(token, sql.toString());
 			for (Map<String, Object> map : qList) {
 				ProjectEntity item = new ProjectEntity();

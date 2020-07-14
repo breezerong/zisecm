@@ -48,6 +48,11 @@ public class EcmFormClassification extends EcmSysObject {
 				}else if("{company}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(session.getCurrentUser().getCompany());
 				}
+				if(itemc.getControlType().equalsIgnoreCase("select")) {
+					if("{myprojects}".equalsIgnoreCase(itemc.getQueryName())) {
+						itemc.setValidValues(session.getCurrentUser().getMyProjects());		
+					}
+				}
 				list.add(itemc);
 			}
 		}else {

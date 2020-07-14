@@ -6,33 +6,34 @@
         <el-button @click="checkVisible = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="选择查询条件" :visible.sync="queryVisible">
-      <QuerySelector ref="QuerySelector" @onqueryselected="onqueryselected" width="560"></QuerySelector>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="queryVisible = false">取 消</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" modal-append-to-body="false" width="80%">
+    <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" modal-append-to-body="false" width="86%">
       <el-form :model="form">
-        <el-form-item label="父Id" :label-width="formLabelWidth">
-          <el-input v-model="form.parentId" auto-complete="off"></el-input>
-        </el-form-item>
+       
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="属性名称" :label-width="formLabelWidth">
+          <el-col :span="8">
+            <el-form-item label="分类" :label-width="formLabelWidth2">
+              <el-select v-model="form.classicfication" >
+                <div v-for="item in classificationList" :key="item">
+                  <el-option :label="item" :key="item" :value="item"></el-option>
+                </div>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="属性名称" :label-width="formLabelWidth2">
               <AttributeSelector ref="AttributeSelector" v-model="form.attrName"
                 v-bind:inputValue="form.attrName"></AttributeSelector>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="标签" :label-width="formLabelWidth">
+          <el-col :span="8">
+            <el-form-item label="标签" :label-width="formLabelWidth2">
               <LangSelector
                 v-model="form.label"
                 v-bind:inputValue="form.label"
               ></LangSelector>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="4">
             <el-form-item label="控件类型" :label-width="formLabelWidth2">
               <el-select v-model="form.controlType">
                 <el-option label="TextBox" value="TextBox"></el-option>
@@ -49,7 +50,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="4">
             <el-form-item label="宽度类型" :label-width="formLabelWidth2">
               <el-select v-model="form.widthType">
                 <el-option label="1" value="1"></el-option>
@@ -61,7 +62,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="4">
             <el-form-item label="必填" :label-width="formLabelWidth2">
               <el-select v-model="form.required">
                 <el-option label="否" value="false"></el-option>
@@ -69,7 +70,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="12">
+            <el-form-item label="必填规则" :label-width="formLabelWidth2">
+              <el-input v-model="form.validatePolicy" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
             <el-form-item label="只读" :label-width="formLabelWidth2">
               <el-select v-model="form.readOnly">
                 <el-option label="否" value="false"></el-option>
@@ -77,7 +83,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="4">
             <el-form-item label="是否可查询" :label-width="formLabelWidth2">
               <el-select v-model="form.searchable">
                 <el-option label="否" value="false"></el-option>
@@ -85,77 +91,71 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="4">
             <el-form-item label="默认值" :label-width="formLabelWidth2">
               <el-input :autosize="true" v-model="form.defaultValue"></el-input>
             </el-form-item>
           </el-col>
-           <el-col :span="8">
-            <el-form-item label="序号" :label-width="formLabelWidth">
+           <el-col :span="4">
+            <el-form-item label="序号" :label-width="formLabelWidth2">
               <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="分类" :label-width="formLabelWidth">
-              <el-select v-model="form.classicfication" >
-                <div v-for="item in classificationList" :key="item">
-                  <el-option :label="item" :key="item" :value="item"></el-option>
-                </div>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="隐藏" :label-width="formLabelWidth">
+          
+          <el-col :span="4">
+            <el-form-item label="隐藏" :label-width="formLabelWidth2">
               <el-select v-model="form.isHide">
                 <el-option label="否" value="false"></el-option>
                 <el-option label="是" value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="SQL查询名" :label-width="formLabelWidth2">
-              <el-input v-model="form.queryName" auto-complete="off"></el-input>
+              <QuerySelector
+                v-model="form.queryName"
+                v-bind:inputValue="form.queryName"
+              ></QuerySelector>
             </el-form-item>
           </el-col>
+        
           <el-col :span="12">
-            <el-button @click="queryVisible = true">选择查询</el-button>
-          </el-col>
-          <el-col :span="24">
             <el-form-item label="列选值" :label-width="formLabelWidth2">
               <el-input v-model="form.valueList" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="是否多值" :label-width="formLabelWidth">
+          <el-col :span="4">
+            <el-form-item label="是否多值" :label-width="formLabelWidth2">
               <el-select v-model="form.isRepeat">
                 <el-option label="否" value="false"></el-option>
                 <el-option label="是" value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="多值最少数" :label-width="formLabelWidth">
+          <el-col :span="4">
+            <el-form-item label="多值最少数" :label-width="formLabelWidth2">
               <el-input v-model="form.minCount" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="多值最多数" :label-width="formLabelWidth">
+          <el-col :span="4">
+            <el-form-item label="多值最多数" :label-width="formLabelWidth2">
               <el-input v-model="form.maxCount" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="启用变更事件" :label-width="formLabelWidth">
+          <el-col :span="4">
+            <el-form-item label="启用变更事件" :label-width="formLabelWidth2">
               <el-select v-model="form.enableChange">
                 <el-option label="否" value="false"></el-option>
                 <el-option label="是" value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="依赖属性" :label-width="formLabelWidth">
+          <el-col :span="6">
+            <el-form-item label="依赖属性" :label-width="formLabelWidth2">
               <el-input v-model="form.dependName" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
+          
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -348,7 +348,8 @@ export default {
         dependName: "",
         minCount: 0,
         maxCount: 0,
-        classification: ""
+        classification: "",
+        validatePolicy: ''
       },
       formLabelWidth: "140px",
       formLabelWidth2: "100px"
@@ -467,7 +468,8 @@ export default {
         orderIndex: "100",
         valueList: "",
         isHide: "false",
-        classification: ""
+        classification: "",
+        validatePolicy:''
       };
     },
     edititem(indata) {
