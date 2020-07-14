@@ -2,7 +2,7 @@
   <el-select v-model="svalue" @change="sChange" filterable >
     <el-option v-if="includeAll" :value="allvalue" :label="$t('application.allProjects')">     
     </el-option>
-    <el-option v-for="item in options" :key="item[valueField]" :label="item[textField]" :value="item[valueField]">
+    <el-option v-for="item in options" :key="item[valueField]" :label="item[textField]" :value="'\''+item[valueField]+'\''">
     </el-option>
   </el-select>
 </template>
@@ -74,7 +74,7 @@ export default {
           if(_self.allvalue.length>0){
             _self.allvalue+=","
           }
-          _self.allvalue+=item[_self.dataValueField]
+          _self.allvalue+="'"+item[_self.dataValueField]+"'"
         })
       }).catch(function(error) {
         console.log(error);

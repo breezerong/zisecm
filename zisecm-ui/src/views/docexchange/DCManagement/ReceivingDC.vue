@@ -81,11 +81,14 @@
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
-                    <el-option label="所有文函" value></el-option>
+                    <!-- <el-option label="所有文函" value></el-option>
                     <el-option label="传递单" value="传递单"></el-option>
                     <el-option label="图文传真" value="图文传真"></el-option>
                     <el-option label="会议纪要" value="会议纪要"></el-option>
-                    <el-option label="接口传递" value="接口传递"></el-option>
+                    <el-option label="接口传递" value="接口传递"></el-option> -->
+                    <el-option label="所有文函" value></el-option>
+                    <el-option v-for="(name,nameIndex) in childrenTypes" :key="'Type2_'+nameIndex" :label="name" :value="name"></el-option>
+                    
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -175,7 +178,12 @@
                 condition=" and a.NAME='设计文件'"
                 :isshowCustom="true"
                 @selectchange="selectChangeTransferDoc"
-                ></DataGrid>
+                >
+                    <template slot="sequee" slot-scope="scope">
+                        <span :style="(scope.data.row['C_PROCESS_STATUS']!=null
+                        &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''">{{scope.data.$index+1}}</span>
+                    </template>
+                </DataGrid>
         </el-tab-pane>
         <el-tab-pane label="相关文件" name="t02">
           <el-row>
@@ -289,6 +297,7 @@ export default {
     },
     created(){
         this.loadOptionList("项目","");
+        this.getTypeNamesByMainList("DCTypeConfig");
     },
     mounted(){
         if(!this.validataPermission()){
@@ -301,7 +310,17 @@ export default {
         }
     },
     methods: {
-        
+        showItemStyle(val){
+            // (scope.data['C_PROCESS_STATUS']!=null&&scope.data['C_PROCESS_STATUS']=='已解锁')?
+            //             {'background':'red'}:''
+            if(val.row['C_PROCESS_STATUS']!=null&&val.row['C_PROCESS_STATUS']=='已解锁'){
+                return "{'background':'red'}";
+            }else{
+                return "";
+            }
+            
+        },
+
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {
@@ -406,6 +425,7 @@ export default {
                 });
             },
         rowClick(row){
+           
             this.selectRow=row;
             this.parentId=row.ID;
             let _self=this;
@@ -413,9 +433,19 @@ export default {
             _self.$refs.relevantDoc.parentId=row.ID;
             
             _self.$refs.attachmentDoc.parentId=row.ID;
-            _self.$refs.transferDoc.loadGridData();
-            _self.$refs.relevantDoc.loadGridData();
-            _self.$refs.attachmentDoc.loadGridData();
+            if(row.TYPE_NAME=='文件传递单'){
+                _self.$refs.transferDoc.loadGridData();
+            }
+            if("FU申请、FU通知单、作废通知单、CR澄清要求申请单"+
+            "CR澄清要求答复单、CR澄清要求关闭单、FCR现场变更申请单、FCR现场变更答复单、"+
+            "FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
+            "DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、"+
+            "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复".indexOf(row.TYPE_NAME)!=-1){
+                _self.$refs.relevantDoc.loadGridData();
+            }
+            if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+                 _self.$refs.attachmentDoc.loadGridData();
+            }
             
             
         },
@@ -424,7 +454,7 @@ export default {
         },
         clickNewItem(){
             let _self=this;
-            _self.getTypeNamesByMainList("DCTypeConfig");
+            
             _self.childrenTypeSelectVisible=true;
         },
         beforeCreateDocItem(typeName,relationName) {
