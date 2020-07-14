@@ -79,7 +79,7 @@
                     
                     </el-select> -->
                     <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
-                    dataValueField="code" dataTextField="name"></DataSelect>
+                    dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
@@ -132,7 +132,7 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 :isshowCustom="true"
-                condition=" stauts='待接收' and TO_NAME='@company'"
+                condition=" stauts='待接收' and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 ></DataGrid>
@@ -478,7 +478,7 @@ export default {
             let _self=this;
             let key=" stauts='待接收' and TO_NAME='@company'";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{
                 key+=" and C_PROJECT_NAME = '@project'";
             }

@@ -48,7 +48,7 @@
         :on-change="handleChange"
         :auto-upload="false"
         :multiple="false">
-        <el-button slot="trigger" size="small" type="primary">$t('application.selectFile')</el-button>
+        <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
         </el-upload>
         
       </div>

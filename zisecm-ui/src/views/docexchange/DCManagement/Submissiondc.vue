@@ -86,7 +86,7 @@
                     
                     </el-select> -->
                     <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
-                    dataValueField="code" dataTextField="name"></DataSelect>
+                    dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
@@ -136,7 +136,7 @@
                 v-bind:tableHeight="rightTableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
-                condition=" (status='' or status is null or status='新建') and C_PROJECT_NAME = '@project'"
+                condition=" (status='' or status is null or status='新建') and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
                 :isshowCustom="true"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
@@ -468,9 +468,9 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" (status='' or status is null or status='新建')";
+            let key=" (status='' or status is null or status='新建') and C_COMPANY='@company'";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{
                 key+=" and C_PROJECT_NAME = '@project'";
             }
@@ -492,58 +492,72 @@ export default {
         selectChangeTransferDoc(val) {
             this.selectedTransferDocItems = val;
         },
+
+        
+    
         // 保存文档
-        saveItem() {
-        if (!this.$refs.ShowProperty.validFormValue()) {
+        saveItem()
+        {
+        let _self = this;
+        if(!this.$refs.ShowProperty.validFormValue()){
             return;
         }
-        let _self = this;
         var m = new Map();
-        let dataRows = this.$refs.ShowProperty.dataList;
-        var i;
-        for (i in dataRows) {
-            if (dataRows[i].attrName && dataRows[i].attrName != "") {
-            if (
-                dataRows[i].attrName != "FOLDER_ID" &&
-                dataRows[i].attrName != "ID"
-            ) {
-                m.set(dataRows[i].attrName, dataRows[i].defaultValue);
+        var c;
+        for(c in _self.$refs.ShowProperty.dataList){
+            let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+            var i;
+            for (i in dataRows) {
+            if(dataRows[i].attrName && dataRows[i].attrName !='')
+            {
+                if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                {
+                var val = dataRows[i].defaultValue;
+                if(val && dataRows[i].isRepeat){
+                    var temp = "";
+                // console.log(val);
+                    for(let j=0,len=val.length;j<len;j++){
+                    temp = temp + val[j]+";";
+                    //console.log(temp);
+                    }
+                    temp = temp.substring(0,temp.length-1);
+                    val = temp;
+                    console.log(val);
+                }
+                m.set(dataRows[i].attrName, val);
+                }
             }
             }
         }
-        if (_self.$refs.ShowProperty.myItemId != "") {
-            m.set("ID", _self.$refs.ShowProperty.myItemId);
+        if(_self.$refs.ShowProperty.myItemId!='')
+        {
+            m.set('ID',_self.$refs.ShowProperty.myItemId);
         }
-        if (_self.$refs.ShowProperty.myTypeName != "") {
-            m.set("TYPE_NAME", _self.$refs.ShowProperty.myTypeName);
-            m.set("folderPath", _self.$refs.ShowProperty.folderPath);
-            m.set("parentDocId", _self.parentId);
+        if(_self.$refs.ShowProperty.myTypeName!='')
+        {
+            m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
+            m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
+			m.set("parentDocId", _self.parentId);
             m.set("relationName",_self.relationName);
         }
         let formdata = new FormData();
-        formdata.append("metaData", JSON.stringify(m));
-
-        if (_self.$refs.ShowProperty.file != "") {
+        formdata.append("metaData",JSON.stringify(m));
+        
+        if(_self.$refs.ShowProperty.file!="")
+        {
             //console.log(_self.file);
-            formdata.append("uploadFile", _self.$refs.ShowProperty.file.raw);
+            formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
         }
         // console.log(JSON.stringify(m));
-        if (_self.$refs.ShowProperty.myItemId == "") {
-            _self
-            .axios({
-                headers: {
-                "Content-Type": "multipart/form-data"
-                // x-www-form-urlencoded'
-                //"Content-Type": "application/json;charset=UTF-8"
-                },
-                method: "post",
-                data: formdata,
-                url: "/dc/newDocumentOrSubDoc"
+        if(_self.$refs.ShowProperty.myItemId=='')
+        {
+            axios.post("/dc/newDocumentOrSubDoc",formdata,{
+                'Content-Type': 'multipart/form-data'
             })
             .then(function(response) {
-                let code = response.data.code;
-                //console.log(JSON.stringify(response));
-                if (code == 1) {
+            let code = response.data.code;
+            //console.log(JSON.stringify(response));
+            if (code == 1) {
                 // _self.$message("创建成功!");
                 _self.$message({
                     showClose: true,
@@ -558,61 +572,42 @@ export default {
                 _self.$refs.transferDoc.loadGridData();
                 _self.$refs.relevantDoc.loadGridData();
                 
-                } else {
-                // _self.$message("新建失败!");
-                _self.$message({
+                } 
+            else{
+			_self.$message({
                     showClose: true,
-                    message: "新建失败!",
+                    message: _self.$t('message.newFailured'),
                     duration: 2000,
                     type: "warning"
                 });
-                }
+                
+            }
             })
             .catch(function(error) {
-                // _self.$message("新建失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "新建失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                console.log(error);
+            _self.$message(_self.$t('message.newFailured'));
+            console.log(error);
             });
-        } else {
-            _self
-            .axios({
-                headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-                },
-                method: "post",
-                data: JSON.stringify(m),
-                url: "/dc/saveDocument"
-            })
+        }
+        else
+        {
+            if(_self.$refs.ShowProperty.permit<5){
+            _self.$message(_self.$t('message.hasnoPermssion'));
+            return ;
+            }
+            axios.post("/dc/saveDocument",JSON.stringify(m))
             .then(function(response) {
-                let code = response.data.code;
-                //console.log(JSON.stringify(response));
-                if (code == 1) {
-                    
-                    _self.$emit("onSaved", "update");
-                } else {
-                // _self.$message("保存失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "保存失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                }
+            let code = response.data.code;
+            //console.log(JSON.stringify(response));
+            if(code==1){
+                _self.$emit('onSaved','update');
+            }
+            else{
+                _self.$message(_self.$t('message.saveFailured'));
+            }
             })
             .catch(function(error) {
-                // _self.$message("保存失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "保存失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                console.log(error);
+            _self.$message(_self.$t('message.saveFailured'));
+            console.log(error);
             });
         }
         },

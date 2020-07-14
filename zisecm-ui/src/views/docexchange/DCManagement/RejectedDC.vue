@@ -75,7 +75,7 @@
             <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
                 <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-select v-model="filters.projectCode">
+                    <!-- <el-select v-model="filters.projectCode">
                     <el-option label="所有项目" value></el-option>
                     <el-option
                         v-for="item in projects"
@@ -84,7 +84,9 @@
                         :value="item">
                     </el-option>
                     
-                    </el-select>
+                    </el-select> -->
+                    <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
@@ -134,7 +136,7 @@
                 v-bind:tableHeight="rightTableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
-                condition=" status='驳回'"
+                condition=" status='驳回' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
                 :isshowCustom="true"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
@@ -172,7 +174,12 @@
                 condition=" and a.NAME='设计文件'"
                 :isshowCustom="true"
                 @selectchange="selectChangeTransferDoc"
-                ></DataGrid>
+                >
+                    <template slot="sequee" slot-scope="scope">
+                        <span :style="(scope.data.row['C_PROCESS_STATUS']!=null
+                        &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''">{{scope.data.$index+1}}</span>
+                    </template>
+                </DataGrid>
         </el-tab-pane>
         <el-tab-pane label="相关文件" name="t02">
           <el-row>
@@ -241,7 +248,8 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import BatchImport from '@/components/controls/ImportDocument';
-import ExcelUtil from '@/utils/excel.js'
+import ExcelUtil from '@/utils/excel.js';
+import DataSelect from '@/components/ecm-data-select'
 export default {
     name: "Submissiondc",
     data(){
@@ -464,9 +472,11 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='驳回'";
+            let key=" status='驳回' and C_COMPANY='@company'";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
+            }else{
+                key+=" and C_PROJECT_NAME = '@project'";
             }
             if(_self.filters.docType!=''){
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
@@ -715,7 +725,7 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-
+        DataSelect:DataSelect,
         BatchImport:BatchImport
     }
 }
