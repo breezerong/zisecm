@@ -4,7 +4,7 @@
       <slot name="header"></slot>
     </el-header>
     <el-main>
-      <slot name="main"></slot>
+      <slot name="main" v-bind:layout="layout"></slot>
     </el-main>
   </el-container>
 </template>
