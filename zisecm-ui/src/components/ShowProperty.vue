@@ -48,7 +48,7 @@
         :on-change="handleChange"
         :auto-upload="false"
         :multiple="false">
-        <el-button slot="trigger" size="small" type="primary">$t('application.selectFile')</el-button>
+        <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
         </el-upload>
         
       </div>
@@ -262,7 +262,7 @@ export default {
                 }
                 temp = temp.substring(0,temp.length-1);
                 val = temp;
-                console.log(val);
+                //console.log(val);
               }
               m.set(dataRows[i].attrName, val);
             }
@@ -286,7 +286,7 @@ export default {
         //console.log(_self.file);
         formdata.append("uploadFile",_self.file.raw);
       }
-      // console.log(JSON.stringify(m));
+      console.log(JSON.stringify(m));
       if(_self.myItemId=='')
       {
         axios.post("/dc/newDocument",formdata,{

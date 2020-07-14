@@ -75,7 +75,7 @@
             <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
                 <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-select v-model="filters.projectCode">
+                    <!-- <el-select v-model="filters.projectCode">
                     <el-option label="所有项目" value></el-option>
                     <el-option
                         v-for="item in projects"
@@ -84,7 +84,9 @@
                         :value="item">
                     </el-option>
                     
-                    </el-select>
+                    </el-select> -->
+                    <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
@@ -125,7 +127,7 @@
                 gridViewName="DCTransferGrid"
                 :isshowCustom="true"
                 :isEditProperty="false"
-                condition=" status='待确认'"
+                condition=" status='待确认' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 ></DataGrid>
@@ -190,6 +192,7 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import BatchImport from '@/components/controls/ImportDocument';
 import ExcelUtil from '@/utils/excel.js'
+import DataSelect from '@/components/ecm-data-select'
 export default {
     name: "Submissiondc",
     data(){
@@ -411,9 +414,11 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='待确认'";
+            let key=" status='待确认' and C_COMPANY='@company'";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
+            }else{
+                key+=" and C_PROJECT_NAME = '@project'";
             }
             if(_self.filters.docType!=''){
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
@@ -606,7 +611,7 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-
+        DataSelect:DataSelect,
         BatchImport:BatchImport
     }
 }

@@ -254,7 +254,30 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		return mp;
 		
 	}
-	
+	/**
+	 * 申请解锁
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/unlock", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> unlock(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+//		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+//		String idsStr=args.get("ids").toString();
+		
+		List<String> list = JSONUtils.stringToArray(argStr);
+		for(String id : list) {
+			EcmDocument doc= documentService.getObjectById(getToken(), id);
+			
+			doc.addAttribute("C_PROCESS_STATUS", "已解锁");
+			documentService.updateObject(getToken(), doc, null);
+		}
+		mp.put("code", ActionContext.SUCESS);
+		return mp;
+		
+	}
 	
 	/**
 	 * 处理完成
