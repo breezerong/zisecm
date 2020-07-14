@@ -5,12 +5,13 @@
 import DataLayout from '@components/ecm-data-layout'
 ```
 
-### 使用EcmQuery方式查询
+### 使用方式
 ```html
 <DataLayout ref="dataLayout">
   <template v-slot:header>
   </template>
   <template v-slot:main="{layout}">
+      <DataGrid :tableHeight="layout.height-180"></DataGrid>
   </template>
 </DataLayout>
 ```
