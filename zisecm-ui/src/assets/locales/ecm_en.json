@@ -148,7 +148,9 @@
     "AdvSearch":"AdvSearch",
     "rememberLoginInfo": "Remember Login Info.",
     "fullscreen": "Fullscreen",
-    "exportExcel":"Export Excel"
+    "exportExcel":"Export Excel",
+    "requiredInput": "Required",
+    "cannotEmpty": "Cannot Empty"
 },
 "skin": {
     "Blue": "Blue",
@@ -252,7 +254,8 @@
     "DownLoadFaild":"DownLoad Faild",
     "ApplySuccess":"Apply Success",
     "ApplyFaild":"Apply Faild",
-    "operationSuccess":"Operation Success"    
+    "operationSuccess":"Operation Success",
+    "hasnoPermssion":"You have no permission."
 },
 "field": {
     "indexNumber":"S/N",

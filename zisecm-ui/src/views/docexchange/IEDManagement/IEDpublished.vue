@@ -3,8 +3,7 @@
         <el-header>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
-                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" 
-                    dataValueField="code" dataTextField="name"></DataSelect>                  
+                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>                  
                 </el-form-item>
                 <el-form-item>
                     <el-input style="width:200px" v-model="inputValueNum" placeholder="外部编码、内部编码和中文标题"></el-input>
@@ -59,7 +58,8 @@ export default {
                     condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1",                    
                     isshowOption:true,
                     isshowCustom:true,
-                    isshowicon:false,                   
+                    isshowicon:false,
+                    isInitData:false,                   
                     tableHeight:"350"
                 },
                 rfDg:{
@@ -69,6 +69,7 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
+                    isshowicon:false,
                     tableHeight:"350"
                 },
                 dfDg:{
@@ -78,6 +79,7 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
+                    isshowicon:false,
                     tableHeight:"350"
                 },
                 tfDg:{
@@ -87,6 +89,7 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
+                    isshowicon:false,
                     tableHeight:"350"
                 },
             },
@@ -105,7 +108,7 @@ export default {
     },
     created(){
         window.addEventListener("resize",this.getHeight);
-        this.getHeight();
+       
     },
     mounted(){
         if(!this.validataPermission()){
@@ -116,6 +119,11 @@ export default {
             })
             
         }
+
+        let user = this.currentUser();
+        console.log(user)
+        this.getHeight();
+        this.search()
     },
     methods: {
         getHeight() {
@@ -134,12 +142,14 @@ export default {
 
             this.tables.dfDg.condition="CODING = '"+row.CODING+"'"
             this.$refs.dfDg.condition=this.tables.dfDg.condition
+            this.$refs.dfDg.itemDataList=[]
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
-            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='设计文件' and "+ this.tables.dfDg.condition;
 
+            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='设计文件' and "+ this.tables.dfDg.condition;
             this.tables.tfDg.condition = "CODING IN ("+ dfDGCondition+")"
             this.$refs.tfDg.condition= this.tables.tfDg.condition
+            this.$refs.tfDg.itemDataList=[]
             this.$refs.tfDg.loadGridInfo()
             this.$refs.tfDg.loadGridData() 
         },
@@ -150,7 +160,7 @@ export default {
             let params = {
                 gridName:this.tables.main.gridViewName,
                 lang:"zh-cn",
-                condition:this.tables.main.condition,
+                condition: this.$refs.mainDataGrid.condition,
                 filename:"IED_Published_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
@@ -158,8 +168,30 @@ export default {
         },
         search(){
             let _self = this
-            var k1="TYPE_NAME='IED' AND IS_CURRENT=1 and C_IS_RELEASED=1 AND (TITLE LIKE '%"+this.inputValueNum+"%' OR C_WBS_CODING LIKE '%"+this.inputValueNum+"%')"
-            this.tables.main.condition=k1
+            let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
+            let orS = ""
+            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 "
+            if(_self.inputValueNum.trim().length>0){
+                wheres.forEach(function(item){
+                    if(orS.length>0){
+                        orS+=" OR "
+                    }
+                    orS+=item + " LIKE '%"+ _self.inputValueNum+"%'"
+                })
+                k1+=" AND (" + orS + ")"
+            }
+
+            if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
+                k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
+            }
+
+            let user = this.currentUser();
+            if(user.userType==2){
+                k1+=" AND C_COMPANY='"+user.company +"'"
+            }
+
+            console.log(k1)
+            _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
         }
     },
