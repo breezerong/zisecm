@@ -252,6 +252,9 @@ public class EcmFormItem extends EcmObject{
 	}
 
 	public String getClassification() {
+		if(classification==null || classification.equals("")) {
+			return "attr_cls_basicinfo";
+		}
 		return classification;
 	}
 
