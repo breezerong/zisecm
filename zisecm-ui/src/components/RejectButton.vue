@@ -48,6 +48,7 @@ export default {
                     _self.rejectByCnpe();
                 }
             }
+            _self.showDialog=false;
         },
         rejectByContractor(){
             let _self = this;

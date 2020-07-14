@@ -199,6 +199,55 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(sql!=null&&sql.contains("@company")) {
 			sql=sql.replaceAll("@company", userObj.getCompany());
 	    }
+		if(sql!=null&&sql.contains("@project")) {
+			List<String> projectList= userObj.getMyProjects();
+			
+			
+			if(projectList==null||projectList.size()==0) {
+				sql=sql.replaceAll("'@project'", "''");
+				sql=sql.replaceAll("@project", "''");
+			}else {
+				String whereProject=" (";
+				for(int i=0;i<projectList.size();i++) {
+					String project=projectList.get(i);
+					if(i==0) {
+						whereProject+="C_PROJECT_NAME ='"+project+"'";
+					}else {
+						whereProject+=" or C_PROJECT_NAME ='"+project+"'";
+					}
+					
+				}
+				whereProject+=")";
+				if(sql.contains("C_PROJECT_NAME in(@project)")) {
+					sql=sql.replaceAll("C_PROJECT_NAME in(@project)", whereProject);
+				} 
+				if(sql.contains("C_PROJECT_NAME in (@project)")) {
+					sql=sql.replaceAll("C_PROJECT_NAME in (@project)", whereProject);
+				} 
+				if(sql.contains("C_PROJECT_NAME in (@project) ")) {
+					sql=sql.replaceAll("C_PROJECT_NAME in (@project) ", whereProject);
+				} 
+				if(sql.contains("C_PROJECT_NAME='@project'")) {
+					sql=sql.replaceAll("C_PROJECT_NAME='@project'", whereProject);
+				}
+				if(sql.contains("C_PROJECT_NAME ='@project'")) {
+					sql=sql.replaceAll("C_PROJECT_NAME ='@project'", whereProject);
+				}
+				if(sql.contains("C_PROJECT_NAME = '@project'")) {
+					sql=sql.replaceAll("C_PROJECT_NAME = '@project'", whereProject);
+				}
+				if(sql.contains("C_PROJECT_NAME = '@project' ")) {
+					sql=sql.replaceAll("C_PROJECT_NAME = '@project' ", whereProject);
+				}
+			}
+			
+		}
+		if(sql!=null&&sql.contains("@data")) {
+			sql=sql.replaceAll("@data", "GETDATE()");
+		}
+		if(sql!=null&&sql.contains("'@data'")) {
+			sql=sql.replaceAll("'@data'", "GETDATE()");
+		}
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
 		return list;

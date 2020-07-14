@@ -104,7 +104,23 @@ public class EcmDocument extends EcmSysObject{
      * 密级 
      */
     private String securityLevel;
-    public String getSecurityLevel() {
+    
+    /**
+     * 项目
+     */
+    private String projectName;
+    
+    
+    
+    protected String getProjectName() {
+		return projectName;
+	}
+
+	protected void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public String getSecurityLevel() {
 		return securityLevel;
 	}
 
@@ -690,6 +706,9 @@ public class EcmDocument extends EcmSysObject{
 	    }
 	    if(attributes.get("CREATION_DATE")!=null) {
 	    	this.setCreationDate(getDate(attributes.get("CREATION_DATE")));
+	    }
+	    if(attributes.get("C_PROJECT_NAME")!=null) {
+	    	this.setProjectName(getString(attributes.get("C_PROJECT_NAME")));
 	    }
 	    if(attributes.get("MODIFIER")!=null) {
 	    	this.setModifier(getString(attributes.get("MODIFIER")));

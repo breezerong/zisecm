@@ -68,7 +68,7 @@
             <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
                 <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-select v-model="filters.projectCode">
+                    <!-- <el-select v-model="filters.projectCode">
                     <el-option label="所有项目" value></el-option>
                     <el-option
                         v-for="item in projects"
@@ -77,7 +77,9 @@
                         :value="item">
                     </el-option>
                     
-                    </el-select>
+                    </el-select> -->
+                    <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="code" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
@@ -254,6 +256,7 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import RejectButton from "@/components/RejectButton";
+import DataSelect from '@/components/ecm-data-select';
 export default {
     name: "Submissiondc",
     data(){
@@ -287,6 +290,7 @@ export default {
     },
     created(){
         this.loadOptionList("项目","");
+        this.getTypeNamesByMainList("DCTypeConfig");
     },
     mounted(){
         if(!this.validataPermission()){
@@ -404,6 +408,7 @@ export default {
                 });
             },
         rowClick(row){
+           
             this.selectRow=row;
             this.parentId=row.ID;
             let _self=this;
@@ -411,9 +416,19 @@ export default {
             _self.$refs.relevantDoc.parentId=row.ID;
             
             _self.$refs.attachmentDoc.parentId=row.ID;
-            _self.$refs.transferDoc.loadGridData();
-            _self.$refs.relevantDoc.loadGridData();
-            _self.$refs.attachmentDoc.loadGridData();
+            if(row.TYPE_NAME=='文件传递单'){
+                _self.$refs.transferDoc.loadGridData();
+            }
+            if("FU申请、FU通知单、作废通知单、CR澄清要求申请单"+
+            "CR澄清要求答复单、CR澄清要求关闭单、FCR现场变更申请单、FCR现场变更答复单、"+
+            "FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
+            "DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、"+
+            "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复".indexOf(row.TYPE_NAME)!=-1){
+                _self.$refs.relevantDoc.loadGridData();
+            }
+            if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+                 _self.$refs.attachmentDoc.loadGridData();
+            }
             
             
         },
@@ -422,7 +437,7 @@ export default {
         },
         clickNewItem(){
             let _self=this;
-            _self.getTypeNamesByMainList("DCTypeConfig");
+            
             _self.childrenTypeSelectVisible=true;
         },
         beforeCreateDocItem(typeName,relationName) {
@@ -464,6 +479,8 @@ export default {
             let key=" stauts='待接收' and TO_NAME='@company'";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+            }else{
+                key+=" and C_PROJECT_NAME = '@project'";
             }
             if(_self.filters.docType!=''){
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
@@ -652,7 +669,8 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        RejectButton:RejectButton
+        RejectButton:RejectButton,
+        DataSelect:DataSelect,
     }
 }
 </script>

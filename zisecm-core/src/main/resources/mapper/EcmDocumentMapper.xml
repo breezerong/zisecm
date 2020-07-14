@@ -22,12 +22,14 @@
     <result column="LIFECYCLE_NAME" jdbcType="VARCHAR" property="lifecycleName" />
     <result column="LIFECYCLE_STATUS" jdbcType="VARCHAR" property="lifecycleStatus" />
     <result column="LIFECYCLE_DIR" jdbcType="INTEGER" property="lifecycleDir" />
+    <result column="C_PROJECT_NAME" jdbcType="VARCHAR" property="projectName" />
+    
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, TITLE, FOLDER_ID, STATUS, CREATION_DATE, CREATOR, TYPE_NAME, MODIFIER, 
     MODIFIED_DATE, REVISION, ACL_NAME, FORMAT_NAME, 
     CONTENT_SIZE, ATTACHMENT_COUNT,SYSTEM_VERSION,VERSION_ID,
-    LIFECYCLE_NAME,LIFECYCLE_STATUS ,LIFECYCLE_DIR 
+    LIFECYCLE_NAME,LIFECYCLE_STATUS ,LIFECYCLE_DIR,C_PROJECT_NAME 
   </sql>
   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
 	${sqlStr}
@@ -48,7 +50,7 @@
       CREATOR, TYPE_NAME, MODIFIER, 
       MODIFIED_DATE, REVISION,  
        ACL_NAME, FORMAT_NAME, CONTENT_SIZE, ATTACHMENT_COUNT,
-       SYSTEM_VERSION,VERSION_ID,LIFECYCLE_NAME,LIFECYCLE_STATUS
+       SYSTEM_VERSION,VERSION_ID,LIFECYCLE_NAME,LIFECYCLE_STATUS,C_PROJECT_NAME
       )
     values ( #{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
       #{folderId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
@@ -57,7 +59,7 @@
       #{aclName,jdbcType=VARCHAR}, 
       #{formatName,jdbcType=VARCHAR}, #{contentSize,jdbcType=BIGINT}, #{attachmentCount,jdbcType=INTEGER},
       #{systemVersion,jdbcType=DOUBLE}, #{versionId,jdbcType=BIGINT},
-      #{lifecycleName,jdbcType=VARCHAR},#{lifecycleStatus,jdbcType=VARCHAR}
+      #{lifecycleName,jdbcType=VARCHAR},#{lifecycleStatus,jdbcType=VARCHAR},#{projectName,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDocument">
@@ -123,6 +125,9 @@
       <if test="lifecycleDir != null">
         LIFECYCLE_DIR,
       </if>
+      <if test="projectName != null">
+      	C_PROJECT_NAME
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -184,6 +189,9 @@
       </if>
       <if test="lifecycleDir != null">
         #{lifecycleDir,jdbcType=INTEGER},
+      </if>
+      <if test="projectName != null">
+      	#{projectName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -247,6 +255,9 @@
       <if test="lifecycleDir != null">
         LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INTEGER},
       </if>
+      <if test="projectName != null">
+      	C_PROJECT_NAME = #{projectName,jdbcType=VARCHAR},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -270,7 +281,8 @@
       VERSION_ID = #{versionID,jdbcType=BIGINT},
       LIFECYCLE_NAME = #{lifecycleName,jdbcType=VARCHAR},
       LIFECYCLE_STATUS = #{lifecycleStatus,jdbcType=VARCHAR},
-      LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INTEGER}
+      LIFECYCLE_DIR = #{lifecycleDir,jdbcType=INTEGER},
+      C_PROJECT_NAME = #{projectName,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
