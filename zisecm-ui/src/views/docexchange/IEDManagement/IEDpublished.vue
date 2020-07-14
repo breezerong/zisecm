@@ -20,7 +20,7 @@
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main"  :tableHeight="layout.height/2-115" @rowclick="onDataGridRowClick"></DataGrid>
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" @rowclick="onDataGridRowClick"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
