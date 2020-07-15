@@ -1,6 +1,24 @@
 <template>    
         <DataLayout @onLayoutResize="onLayoutResize">
         <template v-slot:header>
+
+     <el-dialog title="驳回备注" :visible.sync="showDialog" width="80%" @close="showDialog=false">
+            <el-input
+              type="textarea"
+              :rows="5"
+              placeholder="请输入内容"
+              v-model="rejectComment">
+            </el-input>
+            <div slot="footer" class="dialog-footer">
+                <el-button
+                @click="rejectByCnpe()"
+                >{{$t('application.ok')}}</el-button>
+            </div>
+        </el-dialog>
+
+
+
+
             <el-row>
              <el-form :inline="true" :model="filters">
                  <el-form-item>
@@ -30,16 +48,12 @@
             <el-button type="primary" @click.native="exportData">Excel下载</el-button>
             </el-form-item>
         <el-form-item>  
-        <RejectButton 
-        :selectedItems="selectedItems" 
-        :refreshDataGrid="$refs.mainDataGrid"
-        :isIED="true"
-        > 
-        </RejectButton></el-form-item>
+        <el-button icon="el-icon-back" @click="clickShowDialog">驳回</el-button>
+        </el-form-item>
         </el-form>
         </el-row>
         </template>
-    
+
              <template v-slot:main="{layout}">
         <el-row>
                 <el-col :span="24">
@@ -83,8 +97,6 @@ export default {
                status : '已完成',
                selectedItems: [],
                selectedItemId: "",
-            
-             
             },
             options1:[{ 
                 value:'动力院',
@@ -98,6 +110,8 @@ export default {
             Subcontractors:'',
             input:'',
             batchDialogVisible:false,
+            rejectComment:"",
+            showDialog:false,
         }
     },
     created(){
@@ -127,6 +141,7 @@ export default {
         fresh(){
           let _self = this
         window.addEventListener("resize",this.getHeight);
+        console.log("现在所选中对象是"+_self.selectedItems)
         _self.$refs.mainDataGrid.loadGridData();
        },
         cellMouseEnter(row, column, cell, event){
@@ -140,6 +155,7 @@ export default {
      selectChange(val) {
       // console.log(JSON.stringify(val));
       this.selectedItems = val;
+      console.log(this.selectedItems)
     },
     submit(){
       this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
@@ -162,15 +178,14 @@ export default {
             if(_self.value != undefined && _self.value>0){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
-            if(_self.Subcontractors !=undefined && _self.Subcontractors>0){
+            if(_self.Subcontractors !='' ){
                 k1+=" AND C_COMPANY = '"+_self.Subcontractors+"'"
             }
-            console.log(k1)
       
 
         console.log(k1)
         _self.$refs.mainDataGrid.condition=k1
-        _self.$refs.mainDataGrid.loadGridData();
+        _self.fresh()
     },
       exportData(){
             let dataUrl = "/exchange/doc/export"
@@ -185,6 +200,68 @@ export default {
             }
             ExcelUtil.export(params)
         },
+
+
+         clickShowDialog(){
+            let _self=this;
+            _self.showDialog=true;
+        },
+
+    rejectByCnpe(){
+            let _self = this;
+            var m = [];
+            let tab = _self.selectedItems;
+            console.log(_self.selectedItems)
+            var i;
+            for (i in tab) {
+                m.push(tab[i]["ID"]);
+            }
+            let mp=new Map();
+            mp.set("ids",m);
+            mp.set("rejectCommon",_self.rejectComment);
+            axios.post("/dc/previousStatus",JSON.stringify(mp),{
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            })
+            .then(function(response) {
+                if(response.data.code==1){
+                        _self.selectedItems=''
+                        _self.$refs.mainDataGrid.loadGridData()
+                        
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t("message.rollbackSuccess"),
+                        duration: 2000,
+                        type: 'success'
+                    });
+                    
+                }else{
+                    
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t("message.operationFaild"),
+                        duration: 5000,
+                        type: 'error'
+                    });
+                }
+                
+            })
+            .catch(function(error) {
+                
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.operationFaild"),
+                    duration: 5000,
+                    type: 'error'
+                });
+                console.log(error);
+            });
+            _self.showDialog=false
+        }
+
+
+
 
     },
     props: {
