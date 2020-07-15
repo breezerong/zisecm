@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ecm.core.entity.EcmUiRelation;
@@ -19,7 +20,7 @@ import com.ecm.icore.service.IEcmUiRelationService;
  */
 @Service
 public class EcmUiRelationService  implements IEcmUiRelationService {
-	
+	@Autowired
 	private EcmUiRelationMapper mapper;
 
 	@Override
