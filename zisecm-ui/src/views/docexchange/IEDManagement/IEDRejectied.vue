@@ -1,27 +1,19 @@
-<template>    
-    <el-container>
-        <el-header>
+<template>
+    <DataLayout @onLayoutResize="onLayoutResize">
+    
+        <template v-slot:header>
             <el-row>
-              <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                >
-              </el-option>
-              </el-select>
+              <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
                <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
             <el-button type="primary" @click="search()">查询</el-button>
-            <el-button type="primary" @click="fresh()">刷新数据</el-button>
             <el-button type="success" @click="submit()">提交</el-button>
             <el-button type="warning" v-on:click="onDeleleItem(selectedItems,$refs.mainDataGrid)">删除</el-button>
             <el-button type="primary" @click.native="exportData">Excel下载</el-button>
             
             </el-row>
-        </el-header>
-        <el-main>
-        
+        </template>
+        <template v-slot:main="{layout}">
+                <el-row>
                 <el-col :span="24">
                     <!--condition="creator='@currentuser' AND company='@company' AND status='已驳回'">
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
@@ -30,69 +22,54 @@
             isshowOption
             isshowCustom
             gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED' AND C_company='动力院'  " :tableHeight="tables.main.height"
+            condition="TYPE_NAME='IED' AND STATUS='已驳回'  " :tableHeight="tables.main.height"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
             @selectchange="selectChange"
            ></DataGrid>
                 </el-col>
-       
-        </el-main>
-    </el-container>
+                </el-row>
+        </template>
+   
+    </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
+import DataLayout from '@/components/ecm-data-layout'
 export default {
-    name: "IEDpublished",
+    name: "IEDRejected",
     data(){
         return{
             tables:{
                 main:{
                     gridName:"IEDGrid",
                     dataList:[],
-                    height:0
+                    height:"",
                 },
                itemDataList: [],
                loading: false,
                status : '已完成',
                selectedItems: [],
                selectedItemId: "",
-            
-                userData: {},
-                loading: false,
-                userName: "",
-                token:"",
-                ticket:12345
+    
             },
-             options:[{
-          value: '福清5、6号机组',
-          label: '福清5、6号机组',
-            },
-            {
-          value: '海南5、6号机组',
-          label: '海南5、6号机组',
-            },
-            {
-                value:'海阳5、6号机组',
-                label:'海阳5、6号机组'
-            },
-            {
-                value:'田湾7、8号机组',
-                label:'田湾7、8号机组'
-            }],
-            value:'所有项目',
+            value:'',
             input:''
         }
     },
-    created(){
+
+ created(){
         window.addEventListener("resize",this.getHeight);
-        this.getHeight();
+
     },
-    mounted(){
+
+
+
+ mounted(){
         if(!this.validataPermission()){
             //跳转至权限提醒页
             let _self=this;
@@ -101,13 +78,19 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }   
+        
+            this.getHeight();
+            this.fresh()
     },
+
     methods: {
-        getHeight() {
-            this.tables.main.height = window.innerHeight - 190 + "px";
+        onLayoutResize(size){
+            console.log(size)
+            this.tables.main.height = size - 180    
         },
         fresh(){
           let _self = this
+          console.log("123123")
         _self.$refs.mainDataGrid.loadGridData();
        },
         cellMouseEnter(row, column, cell, event){
@@ -123,36 +106,57 @@ export default {
       this.selectedItems = val;
     },
     submit(){
-      this.onNextStatus(this.selectedItems,[this.$refs.mainDataGrid])
+      this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
         this.fresh()
     },
+       onSearchConditionChange:function(val){
+            console.log(val)
+        },
     search(){
         let _self = this
-        var k1="TYPE_NAME='IED' AND STATUS='已驳回' AND C_company='动力院' AND C_PROJECT_NAME='"+this.value+"'"+"AND (C_IN_CODING LIKE '%"+this.input+"%' OR TITLE LIKE '%"+this.input+"%')"
-        if(this.value=='所有项目'&&this.input=='')//所有条件为空
-        k1="TYPE_NAME='IED' AND STATUS='新建' AND C_company='动力院'"
-        if(this.value=='所有项目'&&this.input!='')//项目为空，标题不为空
-        k1="TYPE_NAME='IED' AND STATUS='新建'"+"AND (C_IN_CODING LIKE '%"+this.input+"%' OR TITLE LIKE '%"+this.input+"%') AND C_company='动力院'"
-        if(this.value!='所有项目'&&this.input=='')//项目不为空，标题为空
-        k1="TYPE_NAME='IED' AND STATUS='新建'"+"AND (C_IN_CODING LIKE '%"+this.input+"%' OR TITLE LIKE '%"+this.input+"%') AND C_company='动力院'"
+        let wheres = ["TITLE","C_IN_CODING"]
+        let orS = ""
+        var k1="TYPE_NAME='IED' AND STATUS='已驳回'"
+         if(_self.input.trim().length>0){
+                wheres.forEach(function(item){
+                    if(orS.length>0){
+                        orS+=" OR "
+                    }
+                    orS+=item + " LIKE '%"+ _self.input+"%'"
+                })
+                k1+=" AND (" + orS + ")"
+            }
+            if(_self.value != undefined && _self.value>0){
+                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
+            }
+            let user = this.currentUser();
+            if(user.userType==2 && user.company!=null){
+                k1+=" AND C_COMPANY='"+user.company +"'"
+            }
+            console.log(k1)
+
 
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
     },
       exportData(){
+            let _self =this
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
                 gridName:"IEDGrid",
                 lang:"zh-cn",
-                condition:"TYPE_NAME='IED' AND STATUS ='已驳回'",
+                condition:_self.$refs.mainDataGrid.condition,
                 filename:"IED_Rejected_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
         },
-    
+    getHeight() {
+            this.tables.main.tableHeight = window.innerHeight - 180+"px"
+  
+        },
     },
     props: {
         
@@ -160,7 +164,8 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        DataSelect:DataSelect
+        DataSelect:DataSelect,
+        DataLayout:DataLayout
     }
 }
 </script>

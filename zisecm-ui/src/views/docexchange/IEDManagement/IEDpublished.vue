@@ -20,7 +20,7 @@
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main"  :tableHeight="layout.height/2-115" @rowclick="onDataGridRowClick"></DataGrid>
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" @rowclick="onDataGridRowClick"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -113,14 +113,19 @@ export default {
         },
         onDataGridRowClick:function(row){
             
-           // this.$refs.rfDg.loadGridInfo()
-           // this.$refs.rfDg.loadGridData()
-
+            let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='设计文件' and CODING = '"+row.CODING+"')"
+            this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
+            this.$refs.rfDg.condition=this.tables.rfDg.condition
+            console.log(this.tables.rfDg.condition)
+            this.$refs.rfDg.loadGridInfo()
+            this.$refs.rfDg.loadGridData()
+            
             this.tables.dfDg.condition="CODING = '"+row.CODING+"'"
             this.$refs.dfDg.condition=this.tables.dfDg.condition
             this.$refs.dfDg.itemDataList=[]
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
+
 
             let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='设计文件' and "+ this.tables.dfDg.condition;
             this.tables.tfDg.condition = "CODING IN ("+ dfDGCondition+")"
