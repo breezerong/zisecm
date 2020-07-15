@@ -1,5 +1,5 @@
 package com.ecm.core.sync;
 
-public interface ISyncOutNet {
+public interface ISyncPublicNet {
 	public boolean exportData() throws Exception;
 }

@@ -33,8 +33,8 @@ import com.ecm.core.util.SysConfig;
 import com.ecm.icore.service.IExcSynDetailService;
 
 @Service
-public class SyncOutNet implements ISyncOutNet {
-	private final Logger logger = LoggerFactory.getLogger(SyncOutNet.class);
+public class SyncPublicNet implements ISyncPublicNet {
+	private final Logger logger = LoggerFactory.getLogger(SyncPublicNet.class);
 
 	@Autowired
 	IExcSynDetailService iExcSynDetailService;
