@@ -1,17 +1,86 @@
 <template>
-    <div>
-        三级计划
-
-    </div>
+    <DataLayout>
+        <template v-slot:header>
+            <el-form :inline="true" :model="forms.headForm">
+                <el-form-item >
+                    <DataSelect v-model="forms.headForm.plan" includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="code" dataTextField="name"></DataSelect>
+                    <el-select>
+                        <el-option label="所有计划"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或标题"></el-input>
+                    <el-button type="primary" @click="search()">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="default" @click.native="exportData">Excel下载</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:typeName="typeName" :inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
+                </el-form-item>
+            </el-form>
+        </template>
+        <template v-slot:main="{layout}">
+            <el-row>
+                <el-col :span="24">
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-135" @rowclick="onDataGridRowClick"></DataGrid>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24">
+                    <el-tabs v-model="tabs.active">
+                        <el-tab-pane label="相关IED" name="relationFiles">
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-135"></DataGrid>
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+            </el-row>
+        </template>
+    </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
+import DataSelect from '@/components/ecm-data-select'
+import ExcelUtil from '@/utils/excel.js'
+import AddCondition from '@/views/record/AddCondition.vue'
+import DataLayout from '@/components/ecm-data-layout'
 export default {
     name: "ThreeLevelPlan",
     data(){
         return{
-
+            tables:{
+                main:{
+                    gridViewName:"PlanTaskGrid",
+                    dataUrl:"/dc/getDocuments",
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
+                },
+                rfDg:{
+                    gridViewName:"IEDGrid",
+                    dataUrl:"",
+                    condition:"",
+                    isshowOption:true,
+                    isshowCustom:true,
+                    tableHeight:"350"
+                }
+            },
+            tabs:{
+                active:"relationFiles"
+            },
+            forms:{
+                headForm:{
+                    project:"",
+                    plan:""
+                }
+            },
+            advCondition:'',
+            inputValueNum:'',
+            hiddenInput:'hidden',
+            typeName:"计划任务",
         }
     },
     created(){
@@ -29,17 +98,72 @@ export default {
         }
     },
     methods: {
-       
-    },
+       onDataGridRowClick:function(row){
+            this.tables.rfDg.dataUrl="/dc/getDocuments"
+            this.$refs.rfDg.condition="C_WBS_CODING='"+row.C_WBS_CODING+"'"
+            this.$refs.rfDg.loadGridInfo()
+            this.$refs.rfDg.loadGridData()
+            // this.$alert(row);
+        },
+        exportData(){
+            let dataUrl = "/exchange/doc/export"
+            var fileDate = new Date()
+            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+            let params = {
+                gridName:this.tables.main.gridViewName,
+                lang:"zh-cn",
+                condition: this.$refs.mainDataGrid.condition,
+                condition:this.tables.main.condition,
+                filename:"ThreeLevelPlan_"+fileDateStr+".xlsx",
+                sheetname:"Result"
+            }
+            ExcelUtil.export(params)
+        },
+        search(){
+            let _self = this
+            let wheres = ["NAME","C_WBS_CODING"]
+            let orS = ""
+            var k1=" TYPE_NAME='计划任务'"
+            if(_self.inputValueNum.trim().length>0){
+                wheres.forEach(function(item){
+                    if(orS.length>0){
+                        orS+=" OR "
+                    }
+                    orS+=item + " LIKE '%"+ _self.inputValueNum+"%'"
+                })
+                k1+=" AND (" + orS + ")"
+            }
+            if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
+                k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
+            }
+
+            _self.$refs.mainDataGrid.condition=k1
+            // _self.$alert(_self.$refs.mainDataGrid.condition)
+            _self.$refs.mainDataGrid.loadGridData();
+        },
+        searchItem(){
+            let _self = this
+            let key="";
+            key = _self.advCondition;
+            _self.$refs.mainDataGrid.condition=key;
+            _self.$alert(_self.$refs.mainDataGrid.condition)
+            _self.$refs.mainDataGrid.loadGridData();
+        }
+    }, 
     props: {
         
     },
     components: {
         ShowProperty:ShowProperty,
-        DataGrid:DataGrid
+        DataGrid:DataGrid,
+        DataSelect:DataSelect,
+        AddCondition:AddCondition,
+        DataLayout:DataLayout
     }
 }
 </script>
 <style scoped>
-
+.el-header{
+    height: auto;
+}
 </style>
