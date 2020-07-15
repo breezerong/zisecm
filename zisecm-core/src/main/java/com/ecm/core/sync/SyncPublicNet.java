@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.dao.EcmDocumentMapper;
@@ -35,7 +37,7 @@ import com.ecm.icore.service.IExcSynDetailService;
 @Service
 public class SyncPublicNet implements ISyncPublicNet {
 	private final Logger logger = LoggerFactory.getLogger(SyncPublicNet.class);
-
+	 private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 	@Autowired
 	IExcSynDetailService iExcSynDetailService;
 	@Autowired
@@ -65,15 +67,17 @@ public class SyncPublicNet implements ISyncPublicNet {
 		List<ExcSynDetail> excSynDetailObjList = new ArrayList<ExcSynDetail>();
 		List<EcmDocument> ecmDocumentObjList = new ArrayList<EcmDocument>();
 		EcmDocument en = ecmDocumentMapper.selectByPrimaryKey("ef993cc172fe46c9b752fb0cf1c52cdc");
+		EcmDocument en2 = ecmDocumentMapper.selectByPrimaryKey("ef993cc172fe46c9b752fb0cf1c52cdc");
+		en2.setId("ef993cc172fe46c9b752fb0cf1c52cdc_1");
 		ecmDocumentObjList.add(en);
+		ecmDocumentObjList.add(en2);
 		List<EcmDocument> resultObjList = new ArrayList<EcmDocument>();
 		folderName=getFolderName();
 		for (int i = 0; i < ecmDocumentObjList.size(); i++) {
 			exportFile(ecmDocumentObjList.get(i), getConfPath()+"/"+folderName);
 			resultObjList.add(ecmDocumentObjList.get(i));
 		}
-		String jsonStr = JSON.toJSONString(resultObjList);
-		writeJsonFile(jsonStr, "a.json");
+		writeJsonFile(resultObjList, "a.json");
 		updateExcSynDetailStatus(excSynDetailObjList, "已导出", new Date());
 		ZipUtil.zip(getConfPath()+"/"+folderName, getConfPath()+"/"+folderName+".zip");
 		return false;
@@ -113,28 +117,47 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 1.3.取内网返回结果
 	 */
-	public boolean readJsonResult() {
-		return false;
+	public EcmDocument readJsonResult(String fileName) {
+		List<EcmDocument> objList=JSON.parseArray(readJsonFile(fileName), EcmDocument.class);
+		EcmDocument en = objList.get(0);
+		return en;
 	}
 
 	/**
 	 * 1.4.将结果更新到外网系统
 	 */
 	public boolean updateExcSynDetail() {
+		//
+		updateExcSynDetailStatus(null, "已同步", new Date());
 		return false;
 	}
 
 	/**
 	 * 2.1从指定目录导入数据到当前系统
 	 */
+	@Override
 	public boolean importData() {
+		File fileDirectory = new File(getConfPath());
+		List<File> folderList =  new ArrayList<File>();
+		for (File temp : fileDirectory.listFiles()) {
+			if (temp.isDirectory()&&!temp.getName().startsWith("DONE_")) {
+				folderList.add(temp);
+			}
+		}
+		//
+  		ecmDocumentMapper.insert(readJsonResult(folderList.get(0).toString()+"a.json"));
+  		
+  		writeJsonResult(folderList.get(0),"DONE_");
 		return false;
 	}
 
 	/**
 	 * 2.2从指定目录导入数据到当前系统后，将结果信息文件到指定目录
+	 * 完成DONE_
+	 * 错误ERR_
 	 */
-	public boolean writeJsonResult() {
+	public boolean writeJsonResult(File folder,String result) {
+		folder.renameTo( new File( getConfPath()+"/"+ result+folder.getName()));
 		return false;
 	}
 
@@ -153,7 +176,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 		}
 
 		String jsonString = new String(bytes);
-
 		return jsonString;
 	}
 
