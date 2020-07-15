@@ -103,6 +103,7 @@
           <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
         </div>
       </el-dialog>
+      <!-- :height="tableHeight" -->
       
         <el-table
           :key="rkey"
@@ -250,6 +251,7 @@
             </template>
           </el-table-column>
         </el-table>
+        
       <el-pagination
         v-if="isshowPage"
         background
@@ -933,27 +935,34 @@ export default {
 .el-transfer-panel__item.el-checkbox{
   margin-left: 0px;
 }
+
 </style>
 <style scoped>
-
+/* :root {
+   --scoll-height: (tableHeight)px;
+}
+.el-table__body-wrapper{
+  height: var(--scoll-height);
+} */
 .success {
   color:'';
 }
 .reject{
   color:red;
 }
-    #menu {
+
+    /* #menu {
         width: 120px; 
         height: 100px;
-        overflow: hidden; /*隐藏溢出的元素*/
-        box-shadow: 0 1px 1px #888, 1px 0 1px #ccc;
+        overflow: hidden; //隐藏溢出的元素 */
+        /* box-shadow: 0 1px 1px #888, 1px 0 1px #ccc;
         position: absolute; 
         display: none;
         background: #ffffff;
         z-index: 10;
-    }
+    } */
  
-    .menu {
+    /* .menu {
         width: 125px;
         height: 25px;
         line-height: 25px;
@@ -978,5 +987,5 @@ export default {
     border: 1px; 
     width: 2.5rem;
     height: 1.8rem;
-    cursor: pointer; }
+    cursor: pointer; } */
 </style>

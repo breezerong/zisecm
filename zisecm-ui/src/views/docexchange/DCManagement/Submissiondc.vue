@@ -275,7 +275,7 @@ export default {
             uploadUrl:'',
             batchDialogVisible:false,
             gridObj:[],
-            rightTableHeight: (window.innerHeight - 100)/2,
+            rightTableHeight: (window.innerHeight - 60)/2,
         }
     },
     created(){

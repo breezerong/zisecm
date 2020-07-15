@@ -276,7 +276,8 @@
     "DispenseDc":"分发文函",
     "ReceivingDcFromCnpe":"分包商接收",
     "ReceivedDcFromCnpe":"分包商已接收",
-    "RejectDC":"驳回文函"
+    "RejectDC":"驳回文函",
+    "BeenDispensed":"已分发"
     
 
 },

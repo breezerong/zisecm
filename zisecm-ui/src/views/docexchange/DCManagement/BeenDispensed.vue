@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <!-- 已接收文函 -->
+        <!-- 已分发 -->
         <!-- 创建附件 -->
         <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
             <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -100,19 +100,22 @@
                     <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
-                
+                <!--导出Excel-->
+                <el-form-item>
+                    <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
+                </el-form-item>
                 <!-- 打包下载 -->
                <el-form-item>
                     <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
-                <el-form-item>
+                <!-- <el-form-item> -->
                     <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
                     [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
 
-                    <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
+                    <!-- <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
                     :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
-                </el-form-item>
+                </el-form-item> -->
                 <!-- <el-form-item>
                     <el-button type="warning" 
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
@@ -133,7 +136,7 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 :isshowCustom="true"
-                condition=" status='已确认'"
+                condition=" status!='新建' or status is not null or status !=''"
                 @rowclick="rowClick"
                 :isEditProperty="false"
                 @selectchange="selectChange"
@@ -492,7 +495,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='已确认'";
+            let key=" status!='新建' or status is not null or status !=''";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
             }

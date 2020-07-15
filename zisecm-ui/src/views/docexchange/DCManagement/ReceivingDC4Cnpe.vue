@@ -175,6 +175,7 @@
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
@@ -209,6 +210,7 @@
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -245,6 +247,7 @@
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>

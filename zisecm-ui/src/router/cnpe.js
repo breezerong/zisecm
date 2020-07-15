@@ -34,6 +34,16 @@ export const cnpeRouter=
         meta: {
             requireAuth: true,
             permit: 1,
+            title:'BeenDispensed'
+        },
+        path: '/cnpe/DCManagement/BeenDispensed',
+        name: '已分发',//'待确认文函'
+        component: () => import('@/views/docexchange/DCManagement/BeenDispensed.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
             title:'ReceivedDC'
         },
         path: '/cnpe/DCManagement/receivedDC',

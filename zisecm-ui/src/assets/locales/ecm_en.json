@@ -150,7 +150,8 @@
     "fullscreen": "Fullscreen",
     "exportExcel":"Export Excel",
     "requiredInput": "Required",
-    "cannotEmpty": "Cannot Empty"
+    "cannotEmpty": "Cannot Empty",
+    "BeenDispensed":"Been Dispensed"
 },
 "skin": {
     "Blue": "Blue",

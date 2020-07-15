@@ -223,7 +223,8 @@ export default {
             selectedAttachment:[],
             uploadUrl:'',
             batchDialogVisible:false,
-            gridObj:[]
+            gridObj:[],
+            rightTableHeight: (window.innerHeight - 150)/2,
         }
     },
     created(){

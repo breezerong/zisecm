@@ -136,6 +136,7 @@
                 :isInitData="true"
                 condition=" status='待确认'"
                 @rowclick="rowClick"
+                :isEditProperty="false"
                 @selectchange="selectChange"
                 ></DataGrid>
         </el-row>
@@ -177,6 +178,7 @@
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="selectChangeTransferDoc"
                 >
                     <template slot="sequee" slot-scope="scope">
@@ -216,6 +218,7 @@
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -252,6 +255,7 @@
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>
