@@ -74,8 +74,8 @@
          
           <el-table-column label="操作" width="320">
             <template slot-scope="scope">
-                <el-button type="info" size="small" icon="edit" @click="editView(scope.row)">查看</el-button>
-                <el-button type="danger" size="small" icon="delete" @click="deleteItem(scope.row.id)">删除</el-button>
+                <el-button type="info" size="mini" icon="edit" @click="editView(scope.row)">查看</el-button>
+                <el-button type="danger" size="mini" icon="delete" @click="deleteItem(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -151,7 +151,8 @@ export default {
             _self.$message({message:"保存成功!", type:'success'});
             _self.loadTable();
           }else{
-            _self.$message.error('保存失败!');
+            //_self.$message.error('保存失败!');
+            _self.$message.error(response.data.code.message);
           }
          
           _self.dialog.new.loading = false

@@ -28,4 +28,6 @@ public interface IEcmUiRelationService {
 	public boolean deleteObject(EcmUiRelation obj);
 	
 	public List<EcmUiRelation> selectAll();
+
+	public EcmUiRelation getObjectByName(String relationName);
 }

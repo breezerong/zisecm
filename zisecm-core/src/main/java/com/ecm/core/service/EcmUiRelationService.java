@@ -79,4 +79,24 @@ public class EcmUiRelationService  implements IEcmUiRelationService {
 	public List<EcmUiRelation> selectAll() {
 		return mapper.selectAll();
 	}
+
+	@Override
+	public EcmUiRelation getObjectByName(String relationName) {
+		List<EcmUiRelation> list = mapper.selectByCondition("RELATION_NAME ='"+relationName+"'");
+		if(list.size()<1) {
+			return null;
+		}else {
+			return list.get(0);
+		}
+		
+	}
+
+	public EcmUiRelation getObjectByTypeName(String typeName) {
+		List<EcmUiRelation> list = mapper.selectByCondition("TYPE_NAME ='"+typeName+"'");
+		if(list.size()<1) {
+			return null;
+		}else {
+			return list.get(0);
+		}
+	}
 }

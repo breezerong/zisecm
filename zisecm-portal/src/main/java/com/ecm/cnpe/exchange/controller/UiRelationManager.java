@@ -49,8 +49,17 @@ public class UiRelationManager extends ControllerAbstract{
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody EcmUiRelation form){
 		Map<String, Object> result = new HashMap<String,Object>();
-		service.newObject(form);
-		result.put("code", ActionContext.SUCESS);		
+		
+		EcmUiRelation obj = service.getObjectByName(form.getRelationName());
+		if(obj==null) {
+			service.newObject(form);
+			result.put("code", ActionContext.SUCESS);
+		}else {
+			result.put("code", ActionContext.FAILURE);
+			result.put("message", "关系名称不可重复");
+		}
+		
+				
 		return result;
 	}
 	
@@ -94,6 +103,18 @@ public class UiRelationManager extends ControllerAbstract{
 		map.put("data",queryService.executeSQL("", queryObject.getSqlString()));
 		map.put("valueField", queryObject.getValueColumn());
 		map.put("labelField", queryObject.getLabelColumn());
+		map.put("code", ActionContext.SUCESS);
+		return map;
+	}
+	
+	@ResponseBody
+	@PostMapping("/admin/uirelation/get")
+	public Map<String,Object> getRelation(@RequestBody String argStr){
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Map<String, Object> map = new HashMap<String, Object>();
+		EcmUiRelation relation  = service.getObjectByTypeName(args.get("typeName").toString());
+		
+		map.put("data",relation);
 		map.put("code", ActionContext.SUCESS);
 		return map;
 	}

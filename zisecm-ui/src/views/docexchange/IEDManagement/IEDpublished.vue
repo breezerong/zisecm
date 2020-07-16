@@ -99,24 +99,45 @@ export default {
                     project:"",
                 }
             },
+            relation:{},
             inputValueNum:'',
             hiddenInput:'hidden',
             typeName:"IED"
         }
     },
     mounted(){
+       
+        this.init()
         this.search()
     },
     methods: {
+        async init(){
+            let _self =  this
+            let url="/admin/uirelation/get"
+            var m = new Map();
+            m.set("typeName", "IED");
+            await axios.post(url,JSON.stringify(m)).then(function(response) {
+                let relationItem = response.data.data
+                console.log("init relation ")
+                console.log(relationItem)
+                _self.relation = relationItem
+            }).catch(function(error){
+                console.log(error);
+            })
+        },
         onSearchConditionChange:function(val){
             console.log(val)
         },
         onDataGridRowClick:function(row){
+
+            console.log("onDataGridRowClick")
+            console.log(this.relation)
             
             let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='设计文件' and CODING = '"+row.CODING+"')"
             this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
             this.$refs.rfDg.condition=this.tables.rfDg.condition
             console.log(this.tables.rfDg.condition)
+            this.$refs.rfDg.gridViewName=this.relation.gridName
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
             
