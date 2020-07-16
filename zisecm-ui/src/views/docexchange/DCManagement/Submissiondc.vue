@@ -101,7 +101,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="filters.title" placeholder="编码或标题"></el-input>
+                    <el-input v-model="filters.title" placeholder="编码或标题" @keyup.enter.native='searchItem'></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="searchItem">查询</el-button>
@@ -122,6 +122,10 @@
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
                     $refs.relevantDoc])">删除</el-button>
                 </el-form-item>
+                <el-form-item>
+                    <MountFile :selectedItem="selectedItems" @refresh='searchItem'>替换文件</MountFile>
+                </el-form-item>
+                
                 <el-form-item>
                     <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
                 </el-form-item>
@@ -157,6 +161,9 @@
                   <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
+                    <MountFile :selectedItem="selectedTransferDocItems" @refresh='refreshTransferDocData'>替换文件</MountFile>
+                </el-form-item>
+                <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">删除</el-button>
                 </el-form-item>
               </el-form>
@@ -184,6 +191,9 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">导入</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>替换文件</MountFile>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">删除</el-button>
@@ -244,6 +254,7 @@ import DataGrid from "@/components/DataGrid";
 import BatchImport from '@/components/controls/ImportDocument';
 import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
+import MountFile from '@/components/MountFile.vue';
 export default {
     name: "Submissiondc",
     data(){
@@ -293,7 +304,14 @@ export default {
         }
     },
     methods: {
-        
+        refreshTransferDocData(){
+             this.$refs.transferDoc.loadGridData();
+        },
+        refreshReleventDocData(){
+           
+            this.$refs.relevantDoc.loadGridData();
+        },
+
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {
@@ -478,7 +496,12 @@ export default {
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
             }
             if(_self.filters.title!=''){
-                key+=" and C_CONTENT like '%"+_self.filters.title+"%'";
+                key+=" and (C_CONTENT like '%"+_self.filters.title+"%' "
+                +"or C_FROM like '%"+_self.filters.title+"%' "
+                +"or C_TO like '%"+_self.filters.title+"%' "
+                +"or CODING like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +")";
             }
             if(key!=''){
                 _self.$refs.mainDataGrid.condition=key;
@@ -657,7 +680,8 @@ export default {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
         DataSelect:DataSelect,
-        BatchImport:BatchImport
+        BatchImport:BatchImport,
+        MountFile:MountFile
     }
 }
 </script>
