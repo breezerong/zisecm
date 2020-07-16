@@ -195,7 +195,7 @@
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                  <el-button type="primary" @click="beforeCreateDocItem('设计文件','相关文件')">新建</el-button>
+                  <el-button type="primary" @click="beforeCreateDocItem('相关文件','相关文件')">新建</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">导入</el-button>
@@ -296,6 +296,7 @@ export default {
             subContractor:[],
             checkList:[],
             contractorCheckVisible:false,
+            relation:{}
         }
     },
     created(){
@@ -451,7 +452,10 @@ export default {
             "FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
             "DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、"+
             "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复".indexOf(row.TYPE_NAME)!=-1){
-                _self.$refs.relevantDoc.loadGridData();
+                // _self.$refs.relevantDoc.loadGridData();
+                _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
+                    _self.relation=val;
+                });	
             }
             if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
                  _self.$refs.attachmentDoc.loadGridData();
@@ -469,7 +473,7 @@ export default {
         },
         beforeCreateDocItem(typeName,relationName) {
                 let _self = this;
-                if(typeName!='设计文件'){
+                if(typeName!='设计文件'&&typeName!='相关文件'){
                     _self.parentId='';
                                      
                 }
@@ -482,6 +486,11 @@ export default {
                         _self.$refs.ShowProperty.myItemId = "";
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
+                        if(typeName=='相关文件'){
+                            _self.$refs.ShowProperty.formName=_self.relation.formName;
+                        }else{
+                            _self.$refs.ShowProperty.formName="";
+                        }
                         _self.typeName=typeName;
                         // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
                         _self.$refs.ShowProperty.loadFormInfo();

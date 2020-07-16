@@ -301,7 +301,8 @@ export default {
       // itemDataList:[],
       columnList:[],
       sysColumnInfo:[],
-      itemCount:0
+      itemCount:0,
+      formName:''
     };
   },
   props: {
@@ -363,38 +364,38 @@ export default {
   methods: {
     
     // 加载表格样式
-    loadGridInfo() {
-      let _self = this;
-      _self.loading = true;
-      var m = new Map();
-      m.set("gridName", _self.gridViewName);
-      m.set("lang", _self.currentLanguage);
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: "/dc/getGridViewInfo"
-        })
-        .then(function(response) {
-          _self.showFields = [];
-          _self.columnList = response.data.data;
-          _self.sysColumnInfo=response.data.data;
-          _self.columnList.forEach(element => {
-            if (element.visibleType == 1) {
-              _self.showFields.push(element.attrName);
-            }
-          });
-          _self.tableHeight = "100%";
-          _self.loading = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
-    },
+    // loadGridInfo() {
+    //   let _self = this;
+    //   _self.loading = true;
+    //   var m = new Map();
+    //   m.set("gridName", _self.gridViewName);
+    //   m.set("lang", _self.currentLanguage);
+    //   _self
+    //     .axios({
+    //       headers: {
+    //         "Content-Type": "application/json;charset=UTF-8"
+    //       },
+    //       method: "post",
+    //       data: JSON.stringify(m),
+    //       url: "/dc/getGridViewInfo"
+    //     })
+    //     .then(function(response) {
+    //       _self.showFields = [];
+    //       _self.columnList = response.data.data;
+    //       _self.sysColumnInfo=response.data.data;
+    //       _self.columnList.forEach(element => {
+    //         if (element.visibleType == 1) {
+    //           _self.showFields.push(element.attrName);
+    //         }
+    //       });
+    //       _self.tableHeight = "100%";
+    //       _self.loading = false;
+    //     })
+    //     .catch(function(error) {
+    //       console.log(error);
+    //       _self.loading = false;
+    //     });
+    // },
     // 加载表格数据
     loadGridData() {
       let _self = this;
@@ -628,7 +629,13 @@ export default {
         .then(function(response) {
           _self.columnList = response.data.customGridInfo;
           _self.sysColumnInfo=response.data.sysGridInfo;
-          
+           _self.columnList.forEach(element => {
+            if (element.visibleType == 1) {
+              _self.showFields.push(element.attrName);
+            }
+          });
+          _self.tableHeight = "100%";
+          _self.loading = false;
         })
         .catch(function(error) {
           console.log(error);
@@ -816,6 +823,11 @@ export default {
         if (_self.$refs.ShowProperty) {
           _self.$refs.ShowProperty.myItemId = indata.ID;
           _self.typeName=indata.TYPE_NAME;
+          if(_self.typeName=='相关文件'){
+              _self.$refs.ShowProperty.formName=_self.formName;
+          }else{
+              _self.$refs.ShowProperty.formName="";
+          }
           _self.$refs.ShowProperty.loadFormInfo();
         }
       }, 10);
