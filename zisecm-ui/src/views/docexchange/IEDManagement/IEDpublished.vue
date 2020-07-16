@@ -118,15 +118,13 @@ export default {
             m.set("typeName", "IED");
             await axios.post(url,JSON.stringify(m)).then(function(response) {
                 let relationItem = response.data.data
-                console.log("init relation ")
-                console.log(relationItem)
                 _self.relation = relationItem
             }).catch(function(error){
                 console.log(error);
             })
         },
         onSearchConditionChange:function(val){
-            console.log(val)
+            this.search(val)
         },
         onDataGridRowClick:function(row){
 
@@ -168,7 +166,7 @@ export default {
             }
             ExcelUtil.export(params)
         },
-        search(){
+        search(condition){
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
             let orS = ""
@@ -190,7 +188,9 @@ export default {
             if(user.userType==2 && user.company!=null){
                 k1+=" AND C_COMPANY='"+user.company +"'"
             }
-
+            if(condition != undefined && condition.length>0){
+                k1 += " and "+condition 
+            }
             console.log(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
