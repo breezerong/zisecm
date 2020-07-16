@@ -91,7 +91,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="filters.title" placeholder="编码或标题"></el-input>
+                    <el-input v-model="filters.title" placeholder="编码或标题" @keyup.enter.native='searchItem'></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
@@ -135,6 +135,7 @@
                 :isshowCustom="true"
                 condition=" status='已确认'"
                 @rowclick="rowClick"
+                :isEditProperty="false"
                 @selectchange="selectChange"
                 ></DataGrid>
         </el-row>
@@ -171,6 +172,7 @@
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="selectChangeTransferDoc"
                 >
                     <template slot="sequee" slot-scope="scope">
@@ -210,6 +212,7 @@
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -246,6 +249,7 @@
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
                 :isshowCustom="true"
+                :isEditProperty="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>
@@ -496,7 +500,12 @@ export default {
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
             }
             if(_self.filters.title!=''){
-                key+=" and C_CONTENT like '%"+_self.filters.title+"%'";
+                key+=" and (C_CONTENT like '%"+_self.filters.title+"%' "
+                +"or C_FROM like '%"+_self.filters.title+"%' "
+                +"or C_TO like '%"+_self.filters.title+"%' "
+                +"or CODING like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +")";
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";

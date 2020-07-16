@@ -61,6 +61,16 @@ public class SysConfig {
 		SysConfig.loginPath = loginPath;
 	}
 
+	public static String getSyncPath() {
+		return syncPath;
+	}
+
+	
+	@Value("${sync.path}")
+	public void setSyncPath(String syncPath) {
+		SysConfig.syncPath = syncPath;
+	}
+	
 
 	public static String getSingleQuotationMark() {
 		return singleQuotationMark;
@@ -97,6 +107,8 @@ public class SysConfig {
 	
 	
 	private static String loginPath;
+
+	private static String syncPath;
 	
 	
 	private static String singleQuotationMark;

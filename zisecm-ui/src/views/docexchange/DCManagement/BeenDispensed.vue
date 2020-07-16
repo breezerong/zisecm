@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <!-- 待接收文函 -->
+        <!-- 已分发 -->
         <!-- 创建附件 -->
         <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
             <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -68,7 +68,7 @@
             <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
                 <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <!-- <el-select v-model="filters.projectCode">
+                    <el-select v-model="filters.projectCode">
                     <el-option label="所有项目" value></el-option>
                     <el-option
                         v-for="item in projects"
@@ -77,17 +77,17 @@
                         :value="item">
                     </el-option>
                     
-                    </el-select> -->
-                    <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
-                    dataValueField="name" dataTextField="name"></DataSelect>
+                    </el-select>
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
-                    <el-option label="所有文函" value></el-option>
+                    <!-- <el-option label="所有文函" value></el-option>
                     <el-option label="传递单" value="传递单"></el-option>
                     <el-option label="图文传真" value="图文传真"></el-option>
                     <el-option label="会议纪要" value="会议纪要"></el-option>
-                    <el-option label="接口传递" value="接口传递"></el-option>
+                    <el-option label="接口传递" value="接口传递"></el-option> -->
+                    <el-option label="所有文函" value></el-option>
+                    <el-option v-for="(name,nameIndex) in childrenTypes" :key="'Type2_'+nameIndex" :label="name" :value="name"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -97,21 +97,25 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="onNextStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Receive')}}</el-button>
+                    <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
+                    <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
-                <!-- 驳回 -->
+                <!--导出Excel-->
                 <el-form-item>
-                    <!-- <el-button type="primary" @click="onPreviousStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
-                    <RejectButton :selectedItems="selectedItems" :isRejectByContractor="true" :refreshDataGrid="$refs.mainDataGrid" 
-                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
+                    <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
                 </el-form-item>
                 <!-- 打包下载 -->
-                <el-form-item>
+               <el-form-item>
                     <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
-                
+                <!-- 驳回 -->
+                <!-- <el-form-item> -->
+                    <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
+                    [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
+
+                    <!-- <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
+                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
+                </el-form-item> -->
                 <!-- <el-form-item>
                     <el-button type="warning" 
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
@@ -127,13 +131,14 @@
             <DataGrid
                 ref="mainDataGrid"
                 key="main"
-                dataUrl="/dc/getDocuments4Cnpe"
+                dataUrl="/dc/getDocuments"
                 v-bind:tableHeight="rightTableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 :isshowCustom="true"
-                condition=" stauts='待接收' and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
+                condition=" status!='新建' or status is not null or status !=''"
                 @rowclick="rowClick"
+                :isEditProperty="false"
                 @selectchange="selectChange"
                 ></DataGrid>
         </el-row>
@@ -156,11 +161,6 @@
                 <el-form-item>
                     <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
-                <!-- 驳回 -->
-                <el-form-item>
-                    <!-- <el-button type="primary" >{{$t('application.Rejected')}}</el-button> -->
-                    <RejectButton :selectedItems="selectedTransferDocItems" :isSubObj="true" :refreshDataGrid="$refs.transferDoc"></RejectButton>
-                </el-form-item>
                 
               </el-form>
             </el-col>
@@ -177,7 +177,12 @@
                 :isshowCustom="true"
                 :isEditProperty="false"
                 @selectchange="selectChangeTransferDoc"
-                ></DataGrid>
+                >
+                    <template slot="sequee" slot-scope="scope">
+                        <span :style="(scope.data.row['C_PROCESS_STATUS']!=null
+                        &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''">{{scope.data.$index+1}}</span>
+                    </template>
+                </DataGrid>
         </el-tab-pane>
         <el-tab-pane label="相关文件" name="t02">
           <el-row>
@@ -258,8 +263,8 @@
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
+import AddCondition from '@/views/record/AddCondition';
 import RejectButton from "@/components/RejectButton";
-import DataSelect from '@/components/ecm-data-select';
 export default {
     name: "Submissiondc",
     data(){
@@ -288,7 +293,9 @@ export default {
             fileList: [],
             uploading:false,
             selectedAttachment:[],
-            uploadUrl:''
+            uploadUrl:'',
+            advCondition:'',
+            hiddenInput:'hidden',
         }
     },
     created(){
@@ -306,7 +313,16 @@ export default {
         }
     },
     methods: {
-        
+        showReject:function(){
+            let roles= this.currentUser().roles;
+            for(let i in roles){
+                if(roles[i]=='CNPE_文控人员'){
+                    return true;
+                }
+            }
+            
+            return false;
+        },
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {
@@ -411,7 +427,7 @@ export default {
                 });
             },
         rowClick(row){
-           
+            
             this.selectRow=row;
             this.parentId=row.ID;
             let _self=this;
@@ -479,11 +495,9 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" stauts='待接收' and TO_NAME='@company'";
+            let key=" status!='新建' or status is not null or status !=''";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
-            }else{
-                key+=" and C_PROJECT_NAME = '@project'";
+                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
             }
             if(_self.filters.docType!=''){
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
@@ -496,9 +510,13 @@ export default {
                 +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
                 +")";
             }
+            if(_self.advCondition!=''){
+                key+="and ("+_self.advCondition+")";
+            }
             if(key!=''){
                 _self.$refs.mainDataGrid.condition=key;
             }
+            
             _self.$refs.mainDataGrid.loadGridData();
         },
         // 表格行选择
@@ -677,8 +695,8 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        RejectButton:RejectButton,
-        DataSelect:DataSelect,
+        AddCondition:AddCondition,
+        RejectButton:RejectButton
     }
 }
 </script>

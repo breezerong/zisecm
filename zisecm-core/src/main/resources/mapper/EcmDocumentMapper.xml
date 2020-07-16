@@ -45,7 +45,7 @@
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmDocument">
-    insert into ecm_document (IN,NAME, TITLE, 
+    insert into ecm_document (ID,NAME, TITLE, 
       FOLDER_ID, STATUS, CREATION_DATE, 
       CREATOR, TYPE_NAME, MODIFIER, 
       MODIFIED_DATE, REVISION,  

@@ -19,7 +19,7 @@
                 </el-form-item>
                 
                 <el-form-item>
-                    <el-input v-model="filters.title" placeholder="编码或标题"></el-input>
+                    <el-input v-model="filters.title" placeholder="编码或标题" @keyup.enter.native='searchItem'></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="searchItem">查询</el-button>
@@ -248,7 +248,12 @@ export default {
             }
             
             if(_self.filters.title!=''){
-                key+=" and C_CONTENT like '%"+_self.filters.title+"%'";
+                key+=" and (C_CONTENT like '%"+_self.filters.title+"%' "
+                +"or C_FROM like '%"+_self.filters.title+"%' "
+                +"or C_TO like '%"+_self.filters.title+"%' "
+                +"or CODING like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +")";
             }
             if(key!=''){
                 _self.$refs.mainDataGrid.condition=key;
