@@ -1,9 +1,11 @@
 <template>
   <el-container>
+
     <el-header>
       <slot name="header"></slot>
     </el-header>
     <el-main>
+      <slot></slot>
       <slot name="main" v-bind:layout="layout"></slot>
     </el-main>
   </el-container>
@@ -33,17 +35,17 @@ export default {
       _self.$emit("onLayoutResize",size)
     })
     this.layout.height = window.innerHeight/this.layout.split
-    
+
   },
   mounted(){
     /**
      * 跳转至权限提醒页
      */
-    if(!this.validataPermission()){        
+    if(!this.validataPermission()){
         let _self=this;
         _self.$nextTick(()=>{
             _self.$router.push({ path: '/NoPermission' })
-        })        
+        })
     }
   }
 }
