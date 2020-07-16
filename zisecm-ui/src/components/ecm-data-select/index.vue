@@ -1,8 +1,6 @@
 <template>
   <el-select v-model="svalue" @change="sChange" filterable >
-    <el-option v-if="includeAll" :value="allvalue" :label="$t('application.allProjects')">     
-    </el-option>
-    <el-option v-for="item in options" :key="item[valueField]" :label="item[textField]" :value="'\''+item[valueField]+'\''">
+    <el-option v-for="item in options" :key="item[valueField]" v-bind="item">
     </el-option>
   </el-select>
 </template>
@@ -61,21 +59,30 @@ export default {
     }
   },
   methods:{
-    initDataUrlOptions(){
+    async initDataUrlOptions(){
        let _self = this;
-       console.log(this.dataUrl)
-       axios.post(this.dataUrl, JSON.stringify(this.dataObj)).then(function(resp){
-        console.log(resp.data)
+       await axios.post(this.dataUrl, JSON.stringify(this.dataObj)).then(function(resp){
         _self.textField = _self.dataTextField
         _self.valueField = _self.dataValueField
-        _self.options = resp.data.data
+        let getOptions = resp.data.data
+        _self.options = []
         _self.allvalue=""
-        _self.options.forEach(function(item){
-          if(_self.allvalue.length>0){
-            _self.allvalue+=","
-          }
-          _self.allvalue+="'"+item[_self.dataValueField]+"'"
+        if(_self.includeAll){
+          getOptions.forEach(function(item){
+            if(_self.allvalue.length>0){
+              _self.allvalue+=","
+            }
+            _self.allvalue+="'"+item[_self.dataValueField]+"'"
+          })
+          _self.options.push({label:"所有项目",value:_self.allvalue})
+        }
+        getOptions.forEach(function(item){
+           _self.options.push({label:item[_self.dataTextField],value:"'"+item[_self.dataValueField]+"'"})
         })
+         if(_self.includeAll){
+          _self.svalue = _self.options[0].value
+        }
+        
       }).catch(function(error) {
         console.log(error);
       });
@@ -83,11 +90,8 @@ export default {
     initGridViewOptions(){
       let queryObj={}
       let _self = this;
-      console.log("queryName"+this.queryName)
       queryObj.queryName = this.queryName;
-      console.log(queryObj)
       axios.post("/query/getquery", JSON.stringify(queryObj)).then(function(resp){
-        console.log(resp.data)
         _self.textField = resp.data.labelField
         _self.valueField = resp.data.valueField
         _self.options = resp.data.data
@@ -107,9 +111,7 @@ export default {
       console.log("initDataUrlOptions");
       this.initDataUrlOptions();
     }
-    
   }
-
 }
 </script>
 
