@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.ecm.core.entity.EcmUiRelation;
+import com.ecm.core.entity.Pager;
 /**
  * <p>
  *  Mapper 接口
@@ -33,6 +34,8 @@ public interface EcmUiRelationMapper {
 	List<EcmUiRelation> selectAll();
 	
 	List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
+	
+	List<Map<String, Object>> executeSQL(Pager pager, @Param(value="sqlStr") String sqlStr);
 	
 	List<EcmUiRelation> selectByCondition(@Param(value="condition")String condition);
     
