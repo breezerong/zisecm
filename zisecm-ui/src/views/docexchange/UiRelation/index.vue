@@ -48,6 +48,7 @@
                 v-model="inputkey"
                 placeholder="请输入关键字"
                 prefix-icon="el-icon-search"
+                @input="changeValue"
               ></el-input>
             </el-col>
             <el-col :span="20" style="text-align:left;">
@@ -56,7 +57,7 @@
                 type="primary"
                 icon="el-icon-edit"
                 plain
-                @click="dialog.new.visible = true"
+                @click="addView()"
               >新建</el-button>
             </el-col>
           </el-row>
@@ -142,10 +143,10 @@ export default {
       }else{
         formObj.readonly=0
       }
+      
       let url = _self.dialog.new.title=='新建'?"/admin/uirelation/save":"/admin/uirelation/update"
-
-      axios.post(url, JSON.stringify(formObj))
-        .then(function(response) {
+      
+      axios.post(url,JSON.stringify(formObj)).then(function(response) {
           if(response.data.code == 1){
             _self.$message({message:"保存成功!", type:'success'});
             _self.loadTable();
@@ -183,10 +184,18 @@ export default {
         }
         return ret;
     },
+   changeValue: function(val) {
+     console.log(val)
+      this.inputkey = val
+      this.loadTable()
+    },
     loadTable:function(){
       let _self = this;
-      axios.post('/admin/uirelation/list').then(function(response) {
-        _self.$message("刷新成功!")
+      let condition = " GRID_NAME like '%"+_self.inputkey+"%' or TYPE_NAME like '%"+_self.inputkey+"%' or FORM_NAME like '%"+_self.inputkey+"%' or RELATION_NAME like '%"+_self.inputkey+"%' ";
+      console.log(condition)
+      var m = new Map();
+      m.set("condition", condition);
+      axios.post('/admin/uirelation/list',JSON.stringify(m)).then(function(response) {        
         _self.table.datalist =[]
         let resultlist = response.data.data
         resultlist.forEach(function(item){          
