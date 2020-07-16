@@ -3,11 +3,13 @@
         <template v-slot:header>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
-                    <DataSelect v-model="forms.headForm.plan" includeAll="true" dataUrl="/exchange/project/myproject" 
-                    dataValueField="code" dataTextField="name"></DataSelect>
-                    <el-select>
+                    <DataSelect @onSelectChange='onSelectChange' v-model="forms.headForm.project"  includeAll dataUrl="/exchange/project/myproject" 
+                    dataValueField="name" dataTextField="name"></DataSelect>
+                    <!-- <DataSelect v-model="forms.headForm.plan" includeAll="true" dataUrl="/dc/getDocuments" 
+                    dataValueField="code" dataTextField="name"></DataSelect> -->
+                    <!-- <el-select>
                         <el-option label="所有计划"></el-option>
-                    </el-select>
+                    </el-select> -->
                 </el-form-item>
                 <el-form-item>
                     <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或标题"></el-input>
@@ -24,14 +26,14 @@
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-135" @rowclick="onDataGridRowClick"></DataGrid>
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" @rowclick="onDataGridRowClick"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane label="相关IED" name="relationFiles">
-                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-135"></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -54,17 +56,18 @@ export default {
                 main:{
                     gridViewName:"PlanTaskGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"",
+                    condition:"TYPE_NAME='计划任务'",
                     isshowOption:true,
                     isshowCustom:true,
-                    tableHeight:"350"
                 },
                 rfDg:{
                     gridViewName:"IEDGrid",
-                    dataUrl:"",
+                    dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,
                     isshowCustom:true,
+                    isInitData:false,
+                    isshowicon:false,
                     tableHeight:"350"
                 }
             },
@@ -83,9 +86,7 @@ export default {
             typeName:"计划任务",
         }
     },
-    created(){
-         
-    },
+    
     mounted(){
        
         if(!this.validataPermission()){
@@ -99,11 +100,10 @@ export default {
     },
     methods: {
        onDataGridRowClick:function(row){
-            this.tables.rfDg.dataUrl="/dc/getDocuments"
             this.$refs.rfDg.condition="C_WBS_CODING='"+row.C_WBS_CODING+"'"
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
-            // this.$alert(row);
+            //this.$alert(row);
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
@@ -119,6 +119,7 @@ export default {
             }
             ExcelUtil.export(params)
         },
+        //编码和标题模糊查询
         search(){
             let _self = this
             let wheres = ["NAME","C_WBS_CODING"]
@@ -139,15 +140,32 @@ export default {
 
             _self.$refs.mainDataGrid.condition=k1
             // _self.$alert(_self.$refs.mainDataGrid.condition)
+            _self.$refs.rfDg.itemDataList=[]
             _self.$refs.mainDataGrid.loadGridData();
         },
+        //高级搜索
         searchItem(){
             let _self = this
             let key="";
             key = _self.advCondition;
             _self.$refs.mainDataGrid.condition=key;
-            _self.$alert(_self.$refs.mainDataGrid.condition)
+            // _self.$alert(_self.$refs.mainDataGrid.condition)
+            _self.$refs.mainDataGrid.loadGridInfo()
+            _self.$refs.mainDataGrid.loadGridData()
+            _self.$refs.rfDg.itemDataList=[]
+        },
+        //下拉菜单
+        onSelectChange(val){
+            let _self = this
+            // _self.$alert(val)
+            if(val==""){
+                _self.$refs.mainDataGrid.condition="";
+                _self.$alert(_self.$refs.mainDataGrid.condition)
+            }else{
+                _self.$refs.mainDataGrid.condition="TYPE_NAME='计划任务' and C_PROJECT_NAME="+val+"";
+            }
             _self.$refs.mainDataGrid.loadGridData();
+            _self.$refs.rfDg.itemDataList=[]
         }
     }, 
     props: {
@@ -162,8 +180,3 @@ export default {
     }
 }
 </script>
-<style scoped>
-.el-header{
-    height: auto;
-}
-</style>
