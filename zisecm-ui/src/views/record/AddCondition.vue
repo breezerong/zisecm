@@ -50,9 +50,11 @@
                 <el-input v-if="ConditionsType=='2'" v-model="item.val" :type="inputType1" ></el-input>
                 <el-date-picker
                 v-if="ConditionsType=='1'"
+                value-format="yyyy-MM-dd"
                 v-model="item.val"
                 type="date"
-                placeholder="选择日期">
+                placeholder="选择日期"
+                @change="dateChangebirthday">
                 </el-date-picker>
               </div>
             </el-col>
@@ -314,33 +316,6 @@ export default {
         });
     },
 
-
-
-
-    // loadColumnInfo(){
-    //   let _self = this;
-    //   _self.loading = true;
-    //   var m = new Map();
-    //   m.set('gridName','ArrangeInnerGrid');
-    //   m.set('lang',_self.currentLanguage);
-    //   _self.axios({
-    //     headers: {
-    //       "Content-Type": "application/json;charset=UTF-8"
-    //     },
-    //     method: 'post',
-    //     data: JSON.stringify(m),
-    //     url: "/dc/getGridViewInfo"
-    //   })
-    //     .then(function(response) {
-          
-    //       _self.columns = response.data.data;
-          
-    //     })
-    //     .catch(function(error) {
-    //       console.log(error);
-         
-    //     });
-    // },
   }
 };
 </script>
