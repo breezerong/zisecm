@@ -58,6 +58,7 @@ import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmService;
 import com.ecm.core.service.FolderPathService;
@@ -278,18 +279,23 @@ public class IEDImportService extends EcmService {
 					}else {
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
-						if(!StringUtils.isEmpty(itemPath)) {
-							File itemFile= new File(itemPath);
-							
-							if(itemFile.exists()) {
-								itemStream = new FileInputStream(itemFile);
-							}else {
-								if(!isReuse) {
-									sb.append("第").append(i+1).append("行文件不存在：").append(getCellValue(sheet.getRow(i).getCell(0))).append("\r\n");
-								}
-							}
-						}
+//						if(!StringUtils.isEmpty(itemPath)) {
+//							File itemFile= new File(itemPath);
+//							
+//							if(itemFile.exists()) {
+//								itemStream = new FileInputStream(itemFile);
+//							}else {
+//								if(!isReuse) {
+//									sb.append("第").append(i+1).append("行文件不存在：").append(getCellValue(sheet.getRow(i).getCell(0))).append("\r\n");
+//								}
+//							}
+//						}
 						try {
+							
+							checkDocument( token,   sheet.getRow(i), 
+									attrNames,
+									1,sheet.getRow(i).getLastCellNum());
+							
 							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
 									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 									null,null);
@@ -354,6 +360,44 @@ public class IEDImportService extends EcmService {
 		sb.append("成功行数:").append(sucessCount).append("\r\n");
 		sb.append("错误行数:").append(failedCount).append("\r\n");
 		return sb.toString();
+	}
+	
+	private boolean checkDocument(String token,  Row row, 
+			Map<Integer,String> attrNames,
+			int start,int end) throws Exception {
+		String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
+		if(submitType.equals("新增")) {
+			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
+			String cond = " TYPE_NAME='IED' and CODING='"+coding+"'";
+			try {
+				List<EcmDocument> list =documentService.getObjects(token, cond);
+				if(list.size()>0) {
+					throw new Exception("IED 已存在，编码："+coding);
+				}
+				
+				
+				String wbsCoding = row.getCell(getColumnIndex(attrNames, "C_WBS_CODING",start,end)).getStringCellValue();
+				String projectName = row.getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",start,end)).getStringCellValue();
+				if(!StringUtils.isEmpty(wbsCoding)) {
+					cond = " TYPE_NAME='计划任务' and C_WBS_CODING='"+wbsCoding+"' and C_PROJECT_NAME='"+projectName+"'";
+					list =documentService.getObjects(token, cond);
+					
+					if(list.size()==0) {
+						throw new Exception("WBS 编码不已存在，编码："+wbsCoding);
+					}
+				}
+				
+				
+			} catch (EcmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SqlDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return false;
 	}
 	
 	private String newDocument(String token, String typeName,FileInputStream itemStream,
