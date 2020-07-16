@@ -18,7 +18,6 @@ export default {
         step:250,
         split:1
       }
-
     }
   },
   methods:{
@@ -44,8 +43,7 @@ export default {
         let _self=this;
         _self.$nextTick(()=>{
             _self.$router.push({ path: '/NoPermission' })
-        })
-        
+        })        
     }
   }
 }

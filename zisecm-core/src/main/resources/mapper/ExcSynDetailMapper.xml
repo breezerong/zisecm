@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ecm.core.mapper.ExcSynDetailMapper">
-
+<mapper namespace="com.ecm.core.dao.ExcSynDetailMapper">
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ecm.core.entity.ExcSynDetail">
         <id column="ID" property="id" jdbcType="NVARCHAR" />
@@ -190,7 +189,7 @@
     where ID = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.ExcSynDetail">
-    update ecm_component
+    update exc_syn_detail
     set     
    		ID=#{id},
    		APP_NAME=#{appName},
@@ -198,13 +197,19 @@
    		BATCH_NUM=#{batchNum},
    		FROM_ID=#{fromId},
    		TO_ID=#{toId},
-   		CREATION_DATE=#{creationDate},
-   		EXPORT_DATE=#{exportDate},
+   		CREATION_DATE=#{creationDate,jdbcType=TIMESTAMP},
+    	EXPORT_DATE=#{exportDate,jdbcType=TIMESTAMP}, 		 
    		STAUTS=#{stauts},
-   		IMPORT_DATE=#{importDate},
+   		IMPORT_DATE=#{importDate,jdbcType=TIMESTAMP},
    		ERROR_MESSAGE=#{errorMessage}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
+    <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_syn_detail
+    where ${condition}
+  </select>
   
 </mapper>
 

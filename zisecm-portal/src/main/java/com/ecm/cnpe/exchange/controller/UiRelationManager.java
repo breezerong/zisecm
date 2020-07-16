@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +17,7 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.entity.EcmUiRelation;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.service.EcmUiRelationService;
 import com.ecm.core.service.QueryService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -25,11 +29,19 @@ public class UiRelationManager extends ControllerAbstract{
 	private EcmUiRelationService service;
 	
 	@PostMapping("/admin/uirelation/list")
-	public Map<String, Object> list(){
+	@ResponseBody
+	public Map<String, Object> list(@RequestBody String argStr){
 		Map<String, Object> result = new HashMap<String,Object>();
-		List<EcmUiRelation> rlist = service.selectAll();
-		result.put("code", ActionContext.SUCESS);
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String condition="";
+		if(args.containsKey("condition")) {
+			condition = args.get("condition").toString();
+		}
+		condition = StringUtils.isEmpty(condition)?" 1=1 ":condition;
+		List<EcmUiRelation> rlist = service.selectByCondition(condition);
 		result.put("data", rlist);
+		result.put("code", ActionContext.SUCESS);
+		
 		return result;
 	}
 	
