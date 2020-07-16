@@ -81,6 +81,7 @@ export default {
         })
          if(_self.includeAll){
           _self.svalue = _self.options[0].value
+          this.$emit("input", _self.svalue);
         }
         
       }).catch(function(error) {

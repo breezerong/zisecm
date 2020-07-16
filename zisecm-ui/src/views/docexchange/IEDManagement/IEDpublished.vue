@@ -161,7 +161,6 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-
             if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
