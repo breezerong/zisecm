@@ -93,6 +93,7 @@ export default {
       myItemId: this.itemId,
       myTypeName: this.typeName,
       myFolderId: this.folderId,
+      formName:"",
       parentDocId:'',
       clientPermission: 1
     };
@@ -189,6 +190,7 @@ export default {
       }
       var m = new Map();
       m.set('itemInfo',_self.myItemId+_self.myTypeName);//ID 或类型
+      m.set('formName',_self.formName);
       m.set('lang',_self.getLang());
       //console.log(_self.itemId+","+_self.myItemId+","+_self.myTypeName+","+_self.folderId);
       axios.post("/dc/getFormClassifications",JSON.stringify(m))

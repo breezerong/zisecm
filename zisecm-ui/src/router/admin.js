@@ -226,7 +226,7 @@ export const adminRouter =
     meta: {
       requireAuth: true,
       permit: 9,
-      title: '相关类型设置'
+      title: 'relationFileTypeSetting'
     },
     path: '/managercenter/uirelationmanager',
     component: () => import('@/views/docexchange/UiRelation/'),

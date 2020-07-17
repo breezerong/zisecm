@@ -1,16 +1,15 @@
 package com.ecm.core.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ecm.core.dao.EcmUiRelationMapper;
 import com.ecm.core.entity.EcmUiRelation;
 import com.ecm.core.entity.Pager;
-import com.ecm.core.dao.EcmUiRelationMapper;
 import com.ecm.icore.service.IEcmUiRelationService;
 /**
  * <p>
@@ -28,6 +27,11 @@ public class EcmUiRelationService  implements IEcmUiRelationService {
 	@Override
 	public List<EcmUiRelation> selectByCondition(String condition) {
 		return mapper.selectByCondition(condition);
+	}
+	
+	@Override
+	public List<EcmUiRelation> selectByCondition(Pager pager,String condition) {
+		return mapper.selectByCondition(pager,condition);
 	}
 	
 	@Override

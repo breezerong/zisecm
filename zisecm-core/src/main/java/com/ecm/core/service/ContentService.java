@@ -197,11 +197,13 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			throw new EcmException("Document already has content:"+toDocId); 
 		}
 		list = getObjects(token, fromDocId, 0);
-		for(EcmContent conent:list) {
-			conent.setInputStream(getContentStream( token, conent));
-			conent.createId();
-			conent.setParentId(toDocId);
-			this.newObject(token, conent);
+		if(list != null) {
+			for(EcmContent conent:list) {
+				conent.setInputStream(getContentStream( token, conent));
+				conent.createId();
+				conent.setParentId(toDocId);
+				this.newObject(token, conent);
+			}
 		}
 	}
 	/**

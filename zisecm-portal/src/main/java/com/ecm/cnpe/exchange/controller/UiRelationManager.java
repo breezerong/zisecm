@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmQuery;
@@ -37,9 +37,22 @@ public class UiRelationManager extends ControllerAbstract{
 		if(args.containsKey("condition")) {
 			condition = args.get("condition").toString();
 		}
+		
+		Pager pager = new Pager();
+		pager.setPageSize(10);
+		pager.setPageIndex(0);
+		if(args.containsKey("pager")) {
+			String pagerStr = args.get("pager").toString();
+			JSONObject json = JSON.parseObject(pagerStr);
+			pager.setPageIndex(json.getIntValue("currentPage"));
+			pager.setPageSize(json.getIntValue("pageSize"));
+		}
 		condition = StringUtils.isEmpty(condition)?" 1=1 ":condition;
-		List<EcmUiRelation> rlist = service.selectByCondition(condition);
+		
+		List<EcmUiRelation> rlist = service.selectByCondition(pager,condition);
+		pager.setTotal(service.selectByCondition(condition).size());
 		result.put("data", rlist);
+		result.put("pager", pager);
 		result.put("code", ActionContext.SUCESS);
 		
 		return result;

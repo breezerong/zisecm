@@ -819,14 +819,18 @@ public class EcmDcController extends ControllerAbstract {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String itemInfo = args.get("itemInfo").toString();
 		String lang = args.get("lang").toString();
+		String formName=args.get("formName").toString();
 		EcmDocument en = null;
 		List<EcmFormClassification> list = null;
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			en = documentService.getObjectById(getToken(), itemInfo);
-			EcmForm frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_EDIT");
+			if(formName==null||"".equals(formName)) {
+				formName=en.getTypeName();
+			}
+			EcmForm frm = CacheManagerOper.getEcmForms().get(formName + "_EDIT");
 			if (frm == null) {
-				frm = CacheManagerOper.getEcmForms().get(en.getTypeName() + "_1");
+				frm = CacheManagerOper.getEcmForms().get(formName + "_1");
 			}
 			list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
 			mp.put("code", ActionContext.SUCESS);

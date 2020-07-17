@@ -10,17 +10,21 @@
                     <el-button type="primary" @click="search()">查询</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="default" @click.native="exportData">Excel下载</el-button>
+                    <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition>
                 </el-form-item>
                 <el-form-item>
-                    <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition>
+                    <el-button type="primary" @click="onIEDChange()">变更</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click.native="exportData">Excel下载</el-button>
                 </el-form-item>
             </el-form>
         </template>
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" @rowclick="onDataGridRowClick"></DataGrid>
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" 
+                    @rowclick="onDataGridRowClick"  @selectchange="onSelectChange"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -102,7 +106,8 @@ export default {
             relation:{},
             inputValueNum:'',
             hiddenInput:'hidden',
-            typeName:"IED"
+            typeName:"IED",
+            selectedItems:[]
         }
     },
     mounted(){
@@ -118,25 +123,57 @@ export default {
             m.set("typeName", "IED");
             await axios.post(url,JSON.stringify(m)).then(function(response) {
                 let relationItem = response.data.data
-                console.log("init relation ")
-                console.log(relationItem)
                 _self.relation = relationItem
             }).catch(function(error){
                 console.log(error);
             })
         },
+        onIEDChange(){
+            if(this.selectedItems.length<1){
+                this.$message({ showClose: true, message: "没有选中变更项", duration: 2000, type: "warning"})
+                return
+            }
+            let include = false
+            let ids = []
+            this.selectedItems.forEach(function(item){
+                if(item.C_ITEM_STATUS2=='Y'){
+                    include = true
+                }
+                ids.push(item.ID)
+            })
+            if(include){
+                this.$message({ showClose: true, message: "状态显示为‘Y’为不可变更项，请取消此选项", duration: 2000, type: "warning"})
+                return
+            }
+            let submit = false
+            this.$confirm("提交IED变更，是否确定提交？","提示",{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(function(){
+                 submit = true
+            }).catch(function(){
+                 submit = false
+            })
+            if(submit){
+                axios.post("/exchange/ied/changeIED",ids).then(function(response){
+                    console.log(response)
+                }).catch(function(error){
+                    console.log(error)
+                })
+            }
+        },
+        onSelectChange(val) {
+        console.log(val);
+        this.selectedItems = val;
+        },
         onSearchConditionChange:function(val){
-            console.log(val)
+            this.search(val)
         },
         onDataGridRowClick:function(row){
-
-            console.log("onDataGridRowClick")
-            console.log(this.relation)
-            
             let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='设计文件' and CODING = '"+row.CODING+"')"
             this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
             this.$refs.rfDg.condition=this.tables.rfDg.condition
-            console.log(this.tables.rfDg.condition)
             this.$refs.rfDg.gridViewName=this.relation.gridName
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
@@ -146,7 +183,6 @@ export default {
             this.$refs.dfDg.itemDataList=[]
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
-
 
             let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='设计文件' and "+ this.tables.dfDg.condition;
             this.tables.tfDg.condition = "CODING IN ("+ dfDGCondition+")"
@@ -168,7 +204,7 @@ export default {
             }
             ExcelUtil.export(params)
         },
-        search(){
+        search(condition){
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
             let orS = ""
@@ -190,7 +226,9 @@ export default {
             if(user.userType==2 && user.company!=null){
                 k1+=" AND C_COMPANY='"+user.company +"'"
             }
-
+            if(condition != undefined && condition.length>0){
+                k1 += " and "+condition 
+            }
             console.log(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
