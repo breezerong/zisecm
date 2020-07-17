@@ -126,7 +126,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.value != undefined && _self.value>0){
+            if(_self.value != undefined &&_self.value!='所有项目'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
             let user = this.currentUser();
