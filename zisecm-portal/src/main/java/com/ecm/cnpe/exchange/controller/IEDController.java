@@ -66,12 +66,12 @@ public class IEDController  extends ControllerAbstract  {
 		for (String id : ids) {
 			try {
 				EcmDocument docObj = documentService.getObjectById(getToken(), id);
-				EcmDocument checkInDoc = documentService.checkIn(getToken(), id, null, docObj.isCurrent());
-				documentService.updateStatus(getToken(), docObj.getId(), "变更中");		
+				EcmDocument checkInDoc = documentService.checkIn(getToken(), id, null, false);
      			checkInDoc.addAttribute("C_ITEM_STATUS1", "修订");
 				checkInDoc.addAttribute("C_IS_RELEASED", 0);
-				checkInDoc.setCurrent(false);
+				
 				documentService.updateObject(getToken(), checkInDoc, null);
+				documentService.updateStatus(getToken(), docObj.getId(), "变更中");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -3,7 +3,8 @@
         <template v-slot:header>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
-                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>                  
+                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject"
+                     dataValueField="name" dataTextField="name" includeAll @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>                  
                 </el-form-item>
                 <el-form-item>
                     <el-input style="width:200px" v-model="inputValueNum" placeholder="外部编码、内部编码和中文标题"></el-input>
@@ -113,7 +114,7 @@ export default {
     mounted(){
        
         this.init()
-        this.search()
+        
     },
     methods: {
         async init(){
@@ -145,27 +146,26 @@ export default {
                 this.$message({ showClose: true, message: "状态显示为‘Y’为不可变更项，请取消此选项", duration: 2000, type: "warning"})
                 return
             }
-            let submit = false
-            this.$confirm("提交IED变更，是否确定提交？","提示",{
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(function(){
-                 submit = true
-            }).catch(function(){
-                 submit = false
-            })
-            if(submit){
+            
+            this.$confirm('提交IED变更，是否确定提交？', '提示', {confirmButtonText: '确定',cancelButtonText: '取消',type: 'warning'}).then(() => {
                 axios.post("/exchange/ied/changeIED",ids).then(function(response){
                     console.log(response)
                 }).catch(function(error){
                     console.log(error)
                 })
-            }
+            }).catch(() => {
+                
+            })
         },
         onSelectChange(val) {
         console.log(val);
         this.selectedItems = val;
+        },
+        onLoadnDataSuccess(select,options){
+            console.log("onLoadDataSuccess")
+            console.log(select)
+            console.log(options)
+            this.search()
         },
         onSearchConditionChange:function(val){
             this.search(val)
@@ -218,6 +218,9 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
+
+            console.log("Search()")
+            console.log(_self.forms.headForm.project)
             if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
