@@ -66,4 +66,34 @@ public class IEDController  extends ControllerAbstract  {
 		mp.put("id", id);
 		return mp;
 	}
+	
+	/**
+	 * 
+	 * @Title: changeIED
+	 * @author lsyl
+	 * @date:  2020年7月17日 上午10:39:19
+	 * @Description IED变更
+	 * @param ids
+	 * @return
+	 */
+	@PostMapping("/exchange/ied/changeIED")
+	@ResponseBody
+	public Map<String, Object> changeIED(@RequestBody List<String> ids){
+		Map<String, Object> result = new HashMap<String, Object>();		
+		for (String id : ids) {
+			try {
+				EcmDocument docObj = documentService.getObjectById(getToken(), id);
+				EcmDocument checkInDoc = documentService.checkIn(getToken(), id, null, docObj.isCurrent());
+				documentService.updateStatus(getToken(), id, "变更中");		
+     			checkInDoc.addAttribute("C_ITEM_STATUS1", "修订");
+				checkInDoc.addAttribute("C_IS_RELEASED", 0);
+				checkInDoc.setCurrent(false);
+				documentService.updateObject(getToken(), checkInDoc, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		result.put("code", ActionContext.SUCESS);
+		return result;		
+	}
 }
