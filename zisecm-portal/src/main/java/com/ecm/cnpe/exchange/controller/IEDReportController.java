@@ -40,30 +40,50 @@ import com.ecm.portal.controller.ControllerAbstract;
 
 @RestController
 
-public class IEDController  extends ControllerAbstract  {
+public class IEDReportController  extends ControllerAbstract  {
 	
 	@Autowired
 	private DocumentService documentService;
 	
-	@RequestMapping(value = "/exchange/ied/newIED", method = RequestMethod.POST)
+	@RequestMapping(value = "/exchange/ied/IEDReport", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> newIED(String metaData, MultipartFile uploadFile) throws Exception {
-		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		EcmContent en = null;
-		EcmDocument doc = new EcmDocument();
-		doc.setAttributes(args);
-		if (uploadFile != null) {
-			en = new EcmContent();
-			en.setName(uploadFile.getOriginalFilename());
-			en.setContentSize(uploadFile.getSize());
-			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
-			en.setInputStream(uploadFile.getInputStream());
-		}
-		String id = documentService.newObject(getToken(), doc, en);
-		
+	public Map<String, Object> IEDReport(@RequestBody String argStr) throws Exception {
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("id", id);
+		List<Map<String, Object> > outList = new ArrayList<Map<String, Object>>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			
+			Map<String, Object> projMap = new HashMap<String, Object>();
+			
+			String startDate = args.get("startDate").toString();
+			String endDate = args.get("endDate").toString();
+			List<String> projList = documentService.getSession(getToken()).getCurrentUser().getMyProjects();
+			for(String projName: projList) {
+				projMap = new HashMap<String, Object>();
+				projMap.put("projectName", projName);
+				String sql = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
+						projName +"'";
+				List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql);
+				int total = (int)list.get(0).get("iedCount");
+				projMap.put("iedCount", total);
+				
+				
+				int complted = total - 10;
+				projMap.put("completedCount", complted);
+				
+				projMap.put("completedPercent", ((double)complted)/total);
+				
+				outList.add(projMap);
+				
+			}
+			mp.put("data", outList);	
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+		}
+
 		return mp;
 	}
 }
