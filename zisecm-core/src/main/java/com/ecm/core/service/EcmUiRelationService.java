@@ -31,6 +31,11 @@ public class EcmUiRelationService  implements IEcmUiRelationService {
 	}
 	
 	@Override
+	public List<EcmUiRelation> selectByCondition(Pager pager,String condition) {
+		return mapper.selectByCondition(pager,condition);
+	}
+	
+	@Override
 	public List<EcmUiRelation> getAllObject(String token) {
 		return mapper.selectAll();
 	}

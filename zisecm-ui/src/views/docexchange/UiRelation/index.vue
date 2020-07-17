@@ -53,7 +53,12 @@
     </template>
     <template v-slot:main="{layout}">
       <el-main>
-        <el-table :data="table.datalist" border v-loading="loading" :height="layout.height-190">
+        <el-table :data="table.datalist" v-loading="loading" v-bind="table.info" :height="layout.height-190">
+          <el-table-column :label="$t('field.indexNumber')" key="#1" width="50">
+            <template slot-scope="scope">
+              <span>{{(table.pager.currentPage-1) * table.pager.pageSize + scope.$index+1}}</span>
+            </template>
+          </el-table-column>
           <el-table-column v-for="item in table.columns" v-bind="item" :key="item.prop"></el-table-column>
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
@@ -62,6 +67,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination v-bind="table.pager" :page-sizes="[10,20, 50, 100]"  layout="total, sizes, prev, pager, next, jumper" @size-change="onPagerSizeChange" @current-change="onPagerCurrentChange"></el-pagination>
       </el-main>
     </template>
   </DataLayout>
@@ -95,6 +101,11 @@ export default {
         description: ""
       },
       table:{
+        info:{
+          border:true,
+          stripe:true,
+          highlightCurrentRow:true
+        },
         columns:[
           {prop:"relationName",label:"相关名称"},
           {prop:"gridName",label:"表格名称"},
@@ -105,7 +116,12 @@ export default {
           {prop:"formName",label:"表单名称"},
           {prop:"description",label:"描述"}
         ],
-        datalist:[]
+        datalist:[],
+        pager:{
+          pageSize:20,
+          currentPage:1,
+          total:0
+        }
       }
     }
   },
@@ -166,34 +182,30 @@ export default {
           _self.dialog.new.loading = false
         });
     },
-    formatBoolean: function (row, column, cellValue) {
-        var ret = ''  //你想在页面展示的值
-        if (cellValue) {
-            ret = "是"  //根据自己的需求设定
-        } else {
-            ret = "否"
-        }
-        return ret;
-    },
-   changeValue: function(val) {
-     console.log(val)
+    changeValue: function(val) {
+      console.log(val)
       this.inputkey = val
       this.loadTable()
     },
     loadTable:function(){
       let _self = this;
       let condition = " GRID_NAME like '%"+_self.inputkey+"%' or TYPE_NAME like '%"+_self.inputkey+"%' or FORM_NAME like '%"+_self.inputkey+"%' or RELATION_NAME like '%"+_self.inputkey+"%' ";
-      console.log(condition)
+      let pagerParam = _self.table.pager;
+      pagerParam.currentPage=pagerParam.currentPage-1
       var m = new Map();
       m.set("condition", condition);
+      m.set("pager",pagerParam)
       axios.post('/admin/uirelation/list',JSON.stringify(m)).then(function(response) {
         _self.table.datalist =[]
         let resultlist = response.data.data
+        let pager = response.data.pager
         resultlist.forEach(function(item){
           item.readonly = item.readonly==1?true:false
           _self.table.datalist.push(item)
         })
-        console.log(_self.table.datalist)
+        _self.table.pager.pageSizes=pager.pageSize
+        _self.table.pager.currentPage=pager.pageIndex+1
+        _self.table.pager.total=pager.total
         _self.loading = false;
       })
       .catch(function(error) {
@@ -212,6 +224,15 @@ export default {
         formName: "",
         description: ""
       }
+    },
+    onPagerCurrentChange(val) {
+      this.table.pager.currentPage = val
+      this.loadTable();
+    },
+    // 分页 页数改变
+    onPagerSizeChange(val) {
+      this.table.pager.pageSize = val
+      this.loadTable();
     }
   },
   mounted(){

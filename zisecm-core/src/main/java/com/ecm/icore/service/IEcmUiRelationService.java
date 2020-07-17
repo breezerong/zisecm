@@ -19,6 +19,8 @@ public interface IEcmUiRelationService {
 	
 	public List<EcmUiRelation> selectByCondition(String condition);
 	
+	public List<EcmUiRelation> selectByCondition(Pager pager, String condition);
+	
 	public EcmUiRelation getObjectById(String id);
 	
 	public String newObject(EcmUiRelation obj);
