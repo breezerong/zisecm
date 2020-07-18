@@ -180,7 +180,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 2.2从指定目录导入数据到当前系统后，将结果信息文件到指定目录 完成DONE_ 错误ERR_
 	 */
 	public boolean writeJsonResult(File folder, String result) {
-		folder.renameTo(new File(getSyncPathPublic() + "/" + result + folder.getName()));
+		folder.renameTo(new File(getSyncPathPrivate() + "/" + result + folder.getName()));
 		return false;
 	}
 
