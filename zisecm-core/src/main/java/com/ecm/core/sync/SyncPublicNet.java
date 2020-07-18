@@ -86,10 +86,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 		}
 		writeJsonFile(resultObjList, folderName + ".json");
 		updateExcSynDetailStatus(excSynDetailObjList, "已导出", new Date());
-		String zipFileName = folderName + ".zip";
-		String abusoluteFolderPath = getSyncPathPublic() + "/" + folderName;
-		ZipUtil.zip(abusoluteFolderPath, abusoluteFolderPath+"/"+zipFileName);
-		writeMD5Info(zipFileName);
+		String abusoluteFolderPath = getSyncPathPublic() + "/" ;
+		String zipFilePath = abusoluteFolderPath+folderName + ".zip";
+		ZipUtil.zip(abusoluteFolderPath+ "/"+ folderName+ "/", zipFilePath);
+		writeMD5Info(zipFilePath);
 		return false;
 	}
 
@@ -97,10 +97,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * @param zipFileName
 	 * @throws IOException
 	 */
-	private void writeMD5Info(String zipFileName) throws IOException {
-		String md5 = generateZipFileMD5(zipFileName);
-		String md5FileName = zipFileName + ".MD5.txt";
-		FileWriter fw = new FileWriter(getSyncPathPublic() + "/" + md5FileName, true);
+	private void writeMD5Info(String zipFilePath) throws IOException {
+		String md5 = generateZipFileMD5(zipFilePath);
+		String md5FileName = zipFilePath + ".MD5.txt";
+		FileWriter fw = new FileWriter(md5FileName, true);
 		PrintWriter pw = new PrintWriter(fw);
 		pw.println(md5 + "\n"); // 字符串末尾不需要换行符
 		pw.close();
