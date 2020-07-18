@@ -61,14 +61,24 @@ public class SysConfig {
 		SysConfig.loginPath = loginPath;
 	}
 
-	public static String getSyncPath() {
-		return syncPath;
+	public static String getSyncPathPublic() {
+		return syncPathPublic;
 	}
 
+
 	
-	@Value("${sync.path}")
-	public void setSyncPath(String syncPath) {
-		SysConfig.syncPath = syncPath;
+	@Value("${sync.path.public}")
+	public void setSyncPathPublic(String syncPathPublic) {
+		SysConfig.syncPathPublic = syncPathPublic;
+	}
+	
+	public static String getSyncPathPrivate() {
+		return syncPathPrivate;
+	}
+	
+	@Value("${sync.path.private}")
+	public void setSyncPath(String syncPathPrivate) {
+		SysConfig.syncPathPrivate = syncPathPrivate;
 	}
 	
 
@@ -108,7 +118,8 @@ public class SysConfig {
 	
 	private static String loginPath;
 
-	private static String syncPath;
+	private static String syncPathPublic;
+	private static String syncPathPrivate;
 	
 	
 	private static String singleQuotationMark;
