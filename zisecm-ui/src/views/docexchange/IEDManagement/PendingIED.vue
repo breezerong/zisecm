@@ -163,7 +163,7 @@ export default {
     search(){
         let _self = this
         var k1 = "TYPE_NAME='IED' AND STATUS='审核中'"
-        let wheres = ["TITLE","C_IN_CODING"]
+        let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
            if(_self.input.trim().length>0){
                 wheres.forEach(function(item){

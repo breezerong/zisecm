@@ -142,7 +142,7 @@ export default {
        },
 
         onBatchImported(){
-            this.$refs.mainDataGrid.loadGridData();
+            this.gridObj.loadGridData();
         },
           handleChange(file, fileList) {
             this.fileList = fileList;
@@ -351,7 +351,7 @@ export default {
     },
     search(){
          let _self = this
-        let wheres = ["TITLE","C_IN_CODING"]
+        let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
         var k1="TYPE_NAME='IED' AND STATUS='新建'"
           if(_self.input.trim().length>0){
