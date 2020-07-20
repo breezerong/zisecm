@@ -13,7 +13,8 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期">
+                placeholder="开始日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -21,7 +22,8 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期">
+                placeholder="结束日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -67,7 +69,8 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期">
+                placeholder="开始日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -75,7 +78,8 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期">
+                placeholder="结束日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -120,7 +124,8 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期">
+                placeholder="开始日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -128,7 +133,8 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期">
+                placeholder="结束日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -173,7 +179,8 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期">
+                placeholder="开始日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -181,7 +188,8 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期">
+                placeholder="结束日期"
+                value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -321,6 +329,18 @@ export default {
         k1+=" AND C_PROJECT_NAME in (" + _self.overdueIED + ")";
       }
 
+      if(_self.startDate!= undefined && _self.endDate!= undefined){
+        k1+= " AND (C_ITEM_DATE BETWEEN '" + _self.startDate + "'" + " AND '" + _self.endDate + "'" + ")"
+      }
+
+      if(_self.startDate == undefined && _self.endDate!= undefined){
+        k1+= " AND (C_ITEM_DATE < '" + _self.endDate + "'" + ")"
+      }
+
+      if(_self.startDate!= undefined && _self.endDate == undefined){
+        k1+= " AND (C_ITEM_DATE > '" + _self.startDate + "'" + ")"
+      }
+
       let user = this.currentUser();
         if(user.userType==2 && user.company!=null){
           k1+=" AND C_COMPANY='"+user.company +"'"
@@ -340,6 +360,18 @@ export default {
         k2+=" AND C_PROJECT_NAME in ("+_self.uncompletedIED +")"
       }
 
+      if(_self.startDate!= undefined && _self.endDate!= undefined){
+        k2+= " AND (C_ITEM_DATE BETWEEN '" + _self.startDate + "'" + " AND '" + _self.endDate + "'" + ")"
+      }
+
+      if(_self.startDate == undefined && _self.endDate!= undefined){
+        k2+= " AND (C_ITEM_DATE < '" + _self.endDate + "'" + ")"
+      }
+
+      if(_self.startDate!= undefined && _self.endDate == undefined){
+        k2+= " AND (C_ITEM_DATE > '" + _self.startDate + "'" + ")"
+      }
+
       let user = this.currentUser();
         if(user.userType==2 && user.company!=null){
           k1+=" AND C_COMPANY='"+user.company +"'"
@@ -354,14 +386,26 @@ export default {
       let _self = this;
       
       var k3 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 = 'Y'"
+
+      if(_self.startDate!= undefined && _self.endDate!= undefined){
+        k3+= " AND (C_ITEM_DATE BETWEEN '" + _self.startDate + "'" + " AND '" + _self.endDate + "'" + ")"
+      }
+
+      if(_self.startDate == undefined && _self.endDate!= undefined){
+        k3+= " AND (C_ITEM_DATE < '" + _self.endDate + "'" + ")"
+      }
+
+      if(_self.startDate!= undefined && _self.endDate == undefined){
+        k3+= " AND (C_ITEM_DATE > '" + _self.startDate + "'" + ")"
+      }
       
       if(this.completedIED != undefined && this.completedIED.length>0){
         k3+=" AND C_PROJECT_NAME in ("+_self.completedIED +")"
       }
 
       let user = this.currentUser();
-        if(user.userType==2 && user.company!=null){
-          k1+=" AND C_COMPANY='"+user.company +"'"
+      if(user.userType==2 && user.company!=null){
+        k3+=" AND C_COMPANY='"+user.company +"'"
       }
 
       console.log(k3);
