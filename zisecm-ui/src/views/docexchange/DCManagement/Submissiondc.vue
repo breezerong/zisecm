@@ -3,7 +3,7 @@
         <!-- 待提交文函 -->
         <!-- 批量导入 -->
         <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
-            <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
+            <BatchImport ref="BatchImport"  @onImported="onBatchImported" tmpPath='/系统配置/导入模板/文函' v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
             <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
             </div>
@@ -110,7 +110,7 @@
                     <el-button type="primary" @click="clickNewItem">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/文函')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,
@@ -149,8 +149,8 @@
                 </DataGrid>
         </el-row>
          <el-row>
-      <el-tabs value="t01">
-        <el-tab-pane label="传递文件" name="t01">
+      <el-tabs  v-model="selectedTabName">
+        <el-tab-pane label="传递文件" name="t01" v-if="isShowDesgin">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -158,7 +158,7 @@
                   <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件')">导入</el-button>
+                  <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件','/系统配置/导入模板/设计文件')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                     <MountFile :selectedItem="selectedTransferDocItems" @refresh='refreshTransferDocData'>替换文件</MountFile>
@@ -182,16 +182,16 @@
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
-        <el-tab-pane label="相关文件" name="t02">
+        <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                   <el-button type="primary" @click="beforeCreateDocItem('相关文件','相关文件')">新建</el-button>
                 </el-form-item>
-                <el-form-item>
+                <!-- <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">导入</el-button>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                     <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>替换文件</MountFile>
                 </el-form-item>
@@ -215,16 +215,16 @@
                 ></DataGrid>
           
         </el-tab-pane>
-        <el-tab-pane label="附件" name="t03">
+        <el-tab-pane label="附件" name="t03" v-if='isShowAttachmentDoc'>
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                   <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
                 </el-form-item>
-                <el-form-item>
+                <!-- <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.attachmentDoc,true,'附件')">导入</el-button>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">删除</el-button>
                 </el-form-item>
@@ -287,7 +287,11 @@ export default {
             batchDialogVisible:false,
             gridObj:[],
             rightTableHeight: (window.innerHeight - 60)/2,
-            relation:{}
+            relation:{},
+            isShowDesgin:true,
+            isShowRelevant:true,
+            isShowAttachmentDoc:true,
+            selectedTabName:'t01'
         }
     },
     created(){
@@ -325,18 +329,20 @@ export default {
             }
             ExcelUtil.export(params)
         },
-        beforImport(obj,isSub,relationName){
+        beforImport(obj,isSub,relationName,path){
             this.gridObj=obj;
             this.batchDialogVisible=true;
             this.$nextTick(()=>{
                 if(isSub){
                     this.$refs.BatchImport.deliveryId=this.parentId;
                     this.$refs.BatchImport.relationName=relationName;
+                    
                 }else{
                     this.$refs.BatchImport.deliveryId='';
                     this.$refs.BatchImport.relationName='';
                 }
-                
+                this.$refs.BatchImport.tmpPath=path;
+                this.$refs.BatchImport.loadTemplate();
             })
             
             
@@ -428,6 +434,10 @@ export default {
             
             _self.$refs.attachmentDoc.parentId=row.ID;
             if(row.TYPE_NAME=='文件传递单'){
+                _self.isShowDesgin=true;
+                _self.isShowRelevant=false;
+               _self.isShowAttachmentDoc=false;
+               _self.selectedTabName='t01';
                 _self.$refs.transferDoc.loadGridData();
             }
             if("FU申请、FU通知单、作废通知单、CR澄清要求申请单"+
@@ -435,12 +445,21 @@ export default {
             "FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
             "DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、"+
             "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复".indexOf(row.TYPE_NAME)!=-1){
+                
                 _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
+                    _self.isShowDesgin=false;
+                    _self.isShowRelevant=true;
+                    _self.isShowAttachmentDoc=false;
+                    _self.selectedTabName='t02';
                 });
                 
             }
             if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+                _self.isShowDesgin=false;
+                _self.isShowRelevant=false;
+               _self.isShowAttachmentDoc=true;
+               _self.selectedTabName='t03';
                  _self.$refs.attachmentDoc.loadGridData();
             }
            

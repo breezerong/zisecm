@@ -42,9 +42,16 @@ export default{
 ```
 
 ### 输入属性
-|属性名称|属性说明|举例|
+|属性名称|属性说明|默认值|
 |---|---|---|
-|queryName|查询名称||
+|queryName|查询名称|-|
+|dataUrl|查询地址|-|
+|dataObj|查询参数，配合dataUrl，具体dataObj的使用需要以dataUrl调用的后台来决定|-|
+|dataValueField|dataUrl查询中定义option的value字段名|-|
+|dataTextField|dataUrl查询中定义option的显示字段名|-|
+|includeAll|默认全选，并将全部内容作为第一选项|false|
+|allDataOptionText|默认全选显示内容|-|
+|defaultIsNull|默认全选显示内容|false|
 
 ### 事件
 |事件名称|事件说明|事件参数|

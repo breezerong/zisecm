@@ -146,8 +146,8 @@
                 ></DataGrid>
         </el-row>
          <el-row>
-      <el-tabs value="t01">
-        <el-tab-pane label="传递文件" name="t01">
+      <el-tabs v-model="selectedTabName">
+        <el-tab-pane label="传递文件" name="t01" v-if="isShowDesgin">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -187,7 +187,7 @@
                     </template>
                 </DataGrid>
         </el-tab-pane>
-        <el-tab-pane label="相关文件" name="t02">
+        <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -220,7 +220,7 @@
                 ></DataGrid>
           
         </el-tab-pane>
-        <el-tab-pane label="附件" name="t03">
+        <el-tab-pane label="附件" name="t03" v-if='isShowAttachmentDoc'>
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -293,7 +293,11 @@ export default {
             gridObj:[],
             rightTableHeight: (window.innerHeight)/2,
             isShowMountFile:false,
-            relation:{}
+            relation:{},
+            isShowDesgin:true,
+            isShowRelevant:true,
+            isShowAttachmentDoc:true,
+            selectedTabName:'t01'
         }
     },
     created(){
@@ -432,6 +436,10 @@ export default {
             
             _self.$refs.attachmentDoc.parentId=row.ID;
             if(row.TYPE_NAME=='文件传递单'){
+                _self.isShowDesgin=true;
+                _self.isShowRelevant=false;
+               _self.isShowAttachmentDoc=false;
+               _self.selectedTabName='t01';
                 _self.$refs.transferDoc.loadGridData();
             }
             if("FU申请、FU通知单、作废通知单、CR澄清要求申请单"+
@@ -442,9 +450,17 @@ export default {
                 // _self.$refs.relevantDoc.loadGridData();
                 _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
-                });		
+                    _self.isShowDesgin=false;
+                    _self.isShowRelevant=true;
+                    _self.isShowAttachmentDoc=false;
+                    _self.selectedTabName='t02';
+                });	
             }
             if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+                _self.isShowDesgin=false;
+                _self.isShowRelevant=false;
+               _self.isShowAttachmentDoc=true;
+               _self.selectedTabName='t03';
                  _self.$refs.attachmentDoc.loadGridData();
             }
             

@@ -37,6 +37,12 @@ export default {
     includeAll:{
       type:Boolean,
       default:false
+    },
+    allDataOptionText:{
+      type:String,default:"所有内容"
+    },
+    defaultIsNull:{
+      type:Boolean,default:false
     }
   },
   data(){
@@ -74,13 +80,17 @@ export default {
             }
             _self.allvalue+="'"+item[_self.dataValueField]+"'"
           })
-          _self.options.push({label:"所有项目",value:_self.allvalue})
+          _self.options.push({label:_salf.allDataOptionText,value:_self.allvalue})
         }
         getOptions.forEach(function(item){
            _self.options.push({label:item[_self.dataTextField],value:"'"+item[_self.dataValueField]+"'"})
         })
-        if(_self.includeAll){
+        if(_self.includeAll && defaultIsNull==false){
           _self.svalue = _self.options[0].value
+          _self.$emit("input", _self.svalue);
+        }
+        if(defaultIsNull){
+          _self.svalue = ""
           _self.$emit("input", _self.svalue);
         }
         _self.$emit("onLoadnDataSuccess",_self.svalue,_self.options)
