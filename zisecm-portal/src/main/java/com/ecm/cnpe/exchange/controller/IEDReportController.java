@@ -61,14 +61,17 @@ public class IEDReportController  extends ControllerAbstract  {
 			for(String projName: projList) {
 				projMap = new HashMap<String, Object>();
 				projMap.put("projectName", projName);
-				String sql = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
+				String sql1 = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
 						projName +"'";
-				List<Map<String, Object>>  list = documentService.getMapList(getToken(), sql);
-				int total = (int)list.get(0).get("iedCount");
+				String sql2 = "select count(*) as completedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME='"+
+						projName +"'";
+				List<Map<String, Object>>  listTotal = documentService.getMapList(getToken(), sql1);
+				List<Map<String, Object>>  listCompleted = documentService.getMapList(getToken(), sql2);
+				
+				int total = (int)listTotal.get(0).get("iedCount");
 				projMap.put("iedCount", total);
 				
-				
-				int complted = total - 10;
+				int complted = (int)listCompleted.get(0).get("completedCount");
 				projMap.put("completedCount", complted);
 				
 				projMap.put("completedPercent", ((double)complted)/total);

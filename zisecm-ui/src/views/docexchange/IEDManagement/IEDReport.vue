@@ -1,19 +1,33 @@
 <template>
+  <DataLayout @onLayoutResize="onLayoutResize">
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="已超期IED" name="first">
       <el-container>
         <el-header>
           <el-row>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-            <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
-            <el-button type="primary" @click="search1()">查询</el-button>
+            <el-form :inline="true" :model="filters">
+              <el-form-item>
+                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="startDate"
+                  type="date"
+                placeholder="开始日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="endDate"
+                  type="date"
+                  align="right"
+                placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" @click="search1()">查询</el-button>
+              </el-form-item>
+            </el-form>
           </el-row>
         </el-header>
         <el-main>
@@ -21,12 +35,12 @@
             <el-col :span="24">
               <DataGrid
                 ref="mainDataGrid1"
-                tableHeight="350"
                 data-url="/dc/getDocuments"
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED'"
+                :tableHeight="tables.main.height"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -41,16 +55,29 @@
       <el-container>
         <el-header>
           <el-row>
-            <el-select v-model="value" placeholder="所有项目">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-            <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
-            <el-button type="primary" @click="search2()">查询</el-button>
+            <el-form :inline="true" :model="filters">
+              <el-form-item>
+                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="startDate"
+                  type="date"
+                placeholder="开始日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="endDate"
+                  type="date"
+                  align="right"
+                placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" @click="search2()">查询</el-button>
+              </el-form-item>
+            </el-form>
           </el-row>
         </el-header>
         <el-main>
@@ -58,12 +85,12 @@
             <el-col :span="24">
               <DataGrid
                 ref="mainDataGrid2"
-                tableHeight="350"
                 data-url="/dc/getDocuments"
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED'"
+                :tableHeight="tables.main.height"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -78,16 +105,32 @@
       <el-container>
         <el-header>
           <el-row>
-            <el-select v-model="value" placeholder="所有项目">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-            <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
-            <el-button type="primary" @click="search3()">查询</el-button>
+            <el-form :inline="true" :model="filters">
+              <el-form-item>
+                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="startDate"
+                  type="date"
+                placeholder="开始日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="endDate"
+                  type="date"
+                  align="right"
+                placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" @click="search3()">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click.native="exportData">Excel下载</el-button>
+              </el-form-item>
+            </el-form>
           </el-row>
         </el-header>
         <el-main>
@@ -95,12 +138,12 @@
             <el-col :span="24">
               <DataGrid
                 ref="mainDataGrid3"
-                tableHeight="350"
                 data-url="/dc/getDocuments"
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED'"
+                condition="TYPE_NAME='IED'" 
+                :tableHeight="tables.main.height"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -115,46 +158,32 @@
       <el-container>
         <el-header>
           <el-row>
- 
-            <el-button type="primary" @click="handleReport()">查询</el-button>
+            <el-form :inline="true" :model="filters">
+              <el-form-item>
+                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="startDate"
+                  type="date"
+                placeholder="开始日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-date-picker
+                  v-model="endDate"
+                  type="date"
+                  align="right"
+                placeholder="结束日期">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" @click="handleReport()">查询</el-button>
+              </el-form-item>
+            </el-form>
           </el-row>
         </el-header>
         <el-main>
-          <!-- <el-table 
-            :data="tabledata"
-            border
-            style="width: 100%"
-            :default-sort = "{prop: 'index', order: 'descending'}">
-                <el-table-column
-                type="index"
-                :index="indexMethod">
-                <el-table-column>
-                <el-table-column
-                prop="proname"
-                label="项目名"
-                sortable
-                width="120">
-                <el-table-column>
-                <el-table-column
-                prop="pronum"
-                label="计划数"
-                sortable
-                width="120">
-                <el-table-column>
-                <el-table-column
-                prop="completed"
-                label="完成数"
-                sortable
-                width="120">
-                <el-table-column>
-                <el-table-column
-                prop="comppercent"
-                label="完成百分比"
-                sortable
-                width="120">
-                <el-table-column>
-          <el-table>-->
-
           <el-table :data="reportData" style="width: 100%;" border>
             <el-table-column type="index" width="60"></el-table-column>
             <el-table-column prop="projectName" label="项目名" sortable width="220"></el-table-column>
@@ -172,11 +201,14 @@
       </el-container>
     </el-tab-pane>
   </el-tabs>
+  </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from "@/components/ecm-data-select";
+import DataLayout from '@/components/ecm-data-layout'
+import ExcelUtil from '@/utils/excel.js'
 export default {
   name: "IEDReport",
   data() {
@@ -184,66 +216,69 @@ export default {
       tables: {
         main: {
           gridName: "IEDReportGrid",
-          datalist: []
+          datalist: [],
+          height:"",
         }
       },
 
       activeName: "first",
       input: "",
+      value: "",
       ct_month: null,
       startDate: "",
       endDate: "",
       reportData: [],
-      options: [
-        {
-          value: "所有项目",
-          label: "所有项目"
-        },
-        {
-          value: "三门3、4号机组",
-          label: "三门3、4号机组"
-        },
-        {
-          value: "福清5、6号机组",
-          label: "福清5、6号机组"
-        },
-        {
-          value: "海南5、6号机组",
-          label: "海南5、6号机组"
-        },
-        {
-          value: "海阳5、6号机组",
-          label: "海阳5、6号机组"
-        },
-        {
-          value: "田湾7、8号机组",
-          label: "田湾7、8号机组"
-        }
-      ],
-      value: ""
+      Subcontractors:'',
+      selectedItems: [],
+      selectedItemId: "",
+      startDate: '',
+      endDate: '',
+
     };
   },
-  created() {},
+  created() {
+    window.addEventListener("resize",this.getHeight);
+  },
   mounted() {
-    if (!this.validataPermission()) {
+    if(!this.validataPermission()){
       //跳转至权限提醒页
-      let _self = this;
-      _self.$nextTick(() => {
-        _self.$router.push({ path: "/NoPermission" });
-      });
-    }
+      let _self=this;
+      _self.$nextTick(()=>{
+        _self.$router.push({ path: '/NoPermission' })
+      })
+      console.log(sessionStorage.data.data.groupname)
+    }   
+    this.getHeight();
+    this.fresh()
   },
   methods: {
+    onLayoutResize(size){
+      console.log(size)
+      this.tables.main.height = size - 180    
+    },
+    
+    getHeight() {
+      this.tables.main.tableHeight = window.innerHeight - 180+"px"  
+    },
+    
+    fresh(){
+      let _self = this
+      window.addEventListener("resize",this.getHeight);
+      _self.$refs.mainDataGrid.loadGridData();
+    },
+
     handleClick(tab, event) {
       console.log(tab, event);
     },
+
     percentFormatter (row, column) {
-        let p = row.completedPercent;
-        if(p){
-          return Math.round(p*10000)/100+'%';
-        }
-        return ''
+      let p = row.completedPercent;
+      if(p){
+        return Math.round(p*10000)/100+'%';
+      }
+      return ''
     },
+
     search1() {
       let _self = this;
       this.ct_month = new Date();
@@ -266,53 +301,23 @@ export default {
 
       clock += day + " ";
 
-      var k1 =
-        "TYPE_NAME='IED' AND C_PROJECT_NAME =" +
-        "'" +
-        this.value +
-        "'" +
-        "AND (C_IN_CODING LIKE '%" +
-        this.input +
-        "%' OR TITLE LIKE '%" +
-        this.input +
-        "%')" +
-        " AND C_ITEM4_DATE < ''" +
-        "'" +
-        this.clock +
-        "'''" +
-        " AND C_ITEM_STATUS2 IS NULL";
+      var k1 = "TYPE_NAME='IED'"
+      let wheres = ["TITLE","C_IN_CODING"]
+      let orS = ""
 
-      if (this.value != "" && this.input == "")
-        k1 =
-          "TYPE_NAME='IED' AND C_PROJECT_NAME =" +
-          "'" +
-          this.value +
-          "'" +
-          " AND C_ITEM4_DATE < " +
-          "'" +
-          this.clock +
-          "'" +
-          " AND C_ITEM_STATUS2 IS NULL";
-      if ((this.value = "" && this.input == ""))
-        k1 =
-          "TYPE_NAME='IED'" +
-          "AND C_ITEM4_DATE < " +
-          "'" +
-          this.clock +
-          "'" +
-          " AND C_ITEM_STATUS2 IS NULL";
-      if ((this.value = "" && this.input != ""))
-        k1 =
-          "TYPE_NAME='IED' AND (C_IN_CODING LIKE '%" +
-          this.input +
-          "%' OR TITLE LIKE '%" +
-          this.input +
-          "%')" +
-          " AND C_ITEM4_DATE < " +
-          "'" +
-          this.clock +
-          "'" +
-          " AND C_ITEM_STATUS2 IS NULL";
+      if(_self.input.trim().length>0){
+        wheres.forEach(function(item){
+        if(orS.length>0){
+          orS+=" OR "
+        }
+        orS+=item + " LIKE '%"+ _self.input+"%'"
+        })
+        k1+=" AND (" + orS + ")"
+      }
+
+      if(_self.value != undefined && _self.value!='所有项目'){
+        k1+=" AND C_PROJECT_NAME in ("+_self.value +")" + " AND C_ITEM4_DATE < '" + this.clock + "'" + " AND C_ITEM_STATUS2 IS NULL";
+      }
 
       console.log(k1);
       _self.$refs.mainDataGrid1.condition = k1;
@@ -321,39 +326,32 @@ export default {
 
     search2() {
       let _self = this;
-      var k2 =
-        "TYPE_NAME='IED' AND C_PROJECT_NAME =" +
-        "'" +
-        this.value +
-        "'" +
-        "AND (C_IN_CODING LIKE '%" +
-        this.input +
-        "%' OR TITLE LIKE '%" +
-        this.input +
-        "%')" +
-        "AND C_ITEM_STATUS2 IS NULL";
 
-      if (this.value != "" && this.input == "")
-        k2 =
-          "TYPE_NAME='IED' AND C_PROJECT_NAME =" +
-          "'" +
-          this.value +
-          "'" +
-          "AND C_ITEM_STATUS2 IS NULL";
-      if ((this.value = "" && this.input == ""))
-        k2 = "TYPE_NAME='IED'" + "AND C_ITEM_STATUS2 IS NULL";
-      if ((this.value = "" && this.input != ""))
-        k2 =
-          "TYPE_NAME='IED' AND (C_IN_CODING LIKE '%" +
-          this.input +
-          "%' OR TITLE LIKE '%" +
-          this.input +
-          "%')" +
-          "AND C_ITEM_STATUS2 IS NULL";
+      var k2 = "TYPE_NAME='IED'"
+      let wheres = ["TITLE","C_IN_CODING"]
+      let orS = ""
+
+      if(_self.input.trim().length>0){
+        wheres.forEach(function(item){
+        if(orS.length>0){
+          orS+=" OR "
+        }
+        orS+=item + " LIKE '%"+ _self.input+"%'"
+        })
+        k2+=" AND (" + orS + ")"
+      }
+
+      if(this.value != undefined && this.value!='所有项目'){
+        k2+=" AND C_PROJECT_NAME in ("+_self.value +")" + " AND C_ITEM_STATUS2 IS NULL"
+      }
+
+      if(this.value = undefined || this.value == '所有项目'){
+        k2+=" AND C_ITEM_STATUS2 IS NULL"
+      }
 
       console.log(k2);
-      _self.$refs.mainDataGrid2.condition = k2;
-      _self.$refs.mainDataGrid2.loadGridData();
+      _self.$refs.mainDataGrid1.condition = k2;
+      _self.$refs.mainDataGrid1.loadGridData();
     },
 
     search3() {
@@ -410,30 +408,19 @@ export default {
         });
     },
 
-    statistic() {
-      let _self = this;
-      _self.loading = true;
-
-      let url = "/admin/";
-
-      var m = new Map();
-      m.set("gridName", _self.gridViewName);
-      m.set("lang", _self.currentLanguage);
-
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-
-        method: "post",
-        data: JSON.stringify(m)
-      });
+    exportData(){
+        let dataUrl = "/exchange/doc/export"
+        var fileDate = new Date()
+        let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+        let params = {
+          gridName:this.tables.main.gridViewName,
+          lang:"zh-cn",
+          condition: this.$refs.mainDataGrid.condition,
+          filename:"IED_Report_"+fileDateStr+".xlsx",
+          sheetname:"Result"
+        }
+        ExcelUtil.export(params)
     },
-
-    //selectChange(val){
-    //   this.selectedItems = val;
-    //   console.log("");
-    //},
 
     cellMouseEnter(row, column, cell, event) {
       this.selectRow = row;
@@ -453,7 +440,8 @@ export default {
   components: {
     ShowProperty: ShowProperty,
     DataGrid: DataGrid,
-    DataSelect: DataSelect
+    DataSelect: DataSelect,
+    DataLayout:DataLayout,
   }
 };
 </script>
