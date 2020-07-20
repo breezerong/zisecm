@@ -1000,4 +1000,8 @@ export default {
     width: 2.5rem;
     height: 1.8rem;
     cursor: pointer; } */
+    .el-dropdown-link {
+      cursor: pointer;
+      color: #409EFF;
+    }
 </style>

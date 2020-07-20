@@ -75,12 +75,13 @@ public class ImportController extends ControllerAbstract{
 		return mp;
 	}
 	
-	@RequestMapping(value = "/import/getImportTemplates", method = RequestMethod.GET)
+	@RequestMapping(value = "/import/getImportTemplates", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getImportTemplates() throws Exception {
-		if(ImportController.imporFolderId==null) {
-			ImportController.imporFolderId = folderService.getObjectByPath(getToken(), "/系统配置/导入模板").getId();
-		}
+	public Map<String, Object> getImportTemplates(@RequestBody String path) throws Exception {
+//		if(ImportController.imporFolderId==null) {
+//			ImportController.imporFolderId = folderService.getObjectByPath(getToken(), "/系统配置/导入模板").getId();
+//		}
+		ImportController.imporFolderId = folderService.getObjectByPath(getToken(), path).getId();
 		String sql = "select ID,NAME from ecm_document where FOLDER_ID='"+ImportController.imporFolderId+"' and TYPE_NAME='模板'  order by NAME";
 		List<Map<String, Object>> objList = queryService.executeSQL(getToken(), sql);
 		Map<String, Object> mp = new HashMap<String, Object>();

@@ -1,5 +1,5 @@
 <template>
-    <DataLayout @onLayoutResize="onLayoutResize">
+    <DataLayout>
     
         <template v-slot:header>
             <el-row>
@@ -7,7 +7,7 @@
                <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
             <el-button type="primary" @click="search()">查询</el-button>
             <el-button type="success" @click="submit()">提交</el-button>
-            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,$refs.mainDataGrid)">删除</el-button>
+            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">删除</el-button>
             <el-button type="primary" @click.native="exportData">Excel下载</el-button>
             
             </el-row>
@@ -22,7 +22,7 @@
             isshowOption
             isshowCustom
             gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED' AND STATUS='已驳回'  " :tableHeight="tables.main.height"
+            condition="TYPE_NAME='IED' AND STATUS='已驳回'  " v-bind="tables.main":tableHeight="layout.height-180"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
@@ -63,7 +63,7 @@ export default {
     },
 
  created(){
-        window.addEventListener("resize",this.getHeight);
+
 
     },
 
@@ -79,15 +79,11 @@ export default {
             console.log(sessionStorage.data.data.groupname)
         }   
         
-            this.getHeight();
+
             this.fresh()
     },
 
     methods: {
-        onLayoutResize(size){
-            console.log(size)
-            this.tables.main.height = size - 180    
-        },
         fresh(){
           let _self = this
           console.log("123123")
@@ -114,7 +110,7 @@ export default {
         },
     search(){
         let _self = this
-        let wheres = ["TITLE","C_IN_CODING"]
+        let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
         var k1="TYPE_NAME='IED' AND STATUS='已驳回'"
          if(_self.input.trim().length>0){
@@ -152,10 +148,6 @@ export default {
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
-        },
-    getHeight() {
-            this.tables.main.tableHeight = window.innerHeight - 180+"px"
-  
         },
     },
     props: {

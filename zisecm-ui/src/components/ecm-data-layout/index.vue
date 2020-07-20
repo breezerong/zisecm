@@ -1,6 +1,5 @@
 <template>
   <el-container>
-
     <el-header>
       <slot name="header"></slot>
     </el-header>
