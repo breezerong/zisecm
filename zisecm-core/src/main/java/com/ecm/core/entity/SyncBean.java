@@ -1,12 +1,25 @@
 package com.ecm.core.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class SyncBean{
-    private List<Map<String, Object>> documents;;
-    private List<EcmRelation> relations;
+	private String beanType;
+    public String getBeanType() {
+		return beanType;
+	}
+	public void setBeanType(String beanType) {
+		this.beanType = beanType;
+	}
+	private List<Map<String, Object>> documents;;
+    private List<Map<String, Object>> transfers;;
+	public List<Map<String, Object>> getTransfers() {
+		return transfers;
+	}
+	public void setTransfers(List<Map<String, Object>> transfers) {
+		this.transfers = transfers;
+	}
+	private List<EcmRelation> relations;
 	public List<EcmContent> getContents() {
 		return contents;
 	}
