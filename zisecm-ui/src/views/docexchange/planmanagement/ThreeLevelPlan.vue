@@ -7,7 +7,7 @@
                     dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或计划名称"></el-input>
+                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或名称"></el-input>
                     <el-button type="primary" @click="search()">查询</el-button>
                 </el-form-item>
                 <el-form-item>
@@ -116,7 +116,7 @@ export default {
         //编码和标题模糊查询
         search(){
             let _self = this
-            let wheres = ["C_WBS_CODING","TITLE"]
+            let wheres = ["C_WBS_CODING","NAME"]
             let orS = ""
             var k1=" TYPE_NAME='计划任务'"
             if(_self.inputValueNum.trim().length>0){
