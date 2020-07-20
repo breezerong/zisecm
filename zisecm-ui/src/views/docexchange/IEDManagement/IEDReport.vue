@@ -27,6 +27,9 @@
               <el-form-item>
                   <el-button type="primary" @click="search1()">查询</el-button>
               </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click.native="exportDataOverdue">Excel下载</el-button>
+              </el-form-item>
             </el-form>
           </el-row>
         </el-header>
@@ -77,6 +80,9 @@
               </el-form-item>
               <el-form-item>
                   <el-button type="primary" @click="search2()">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click.native="exportDataunCompleted">Excel下载</el-button>
               </el-form-item>
             </el-form>
           </el-row>
@@ -129,7 +135,7 @@
                   <el-button type="primary" @click="search3()">查询</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportData">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataCompleted">Excel下载</el-button>
               </el-form-item>
             </el-form>
           </el-row>
@@ -315,7 +321,12 @@ export default {
         k1+=" AND C_PROJECT_NAME in (" + _self.overdueIED + ")";
       }
 
-    console.log(k1);
+      let user = this.currentUser();
+        if(user.userType==2 && user.company!=null){
+          k1+=" AND C_COMPANY='"+user.company +"'"
+      }
+
+      console.log(k1);
       _self.$refs.mainDataGrid1.condition = k1;
       _self.$refs.mainDataGrid1.loadGridData();
     },
@@ -329,6 +340,11 @@ export default {
         k2+=" AND C_PROJECT_NAME in ("+_self.uncompletedIED +")"
       }
 
+      let user = this.currentUser();
+        if(user.userType==2 && user.company!=null){
+          k1+=" AND C_COMPANY='"+user.company +"'"
+      }
+
       console.log(k2);
       _self.$refs.mainDataGrid2.condition = k2;
       _self.$refs.mainDataGrid2.loadGridData();
@@ -337,12 +353,15 @@ export default {
     search3() {
       let _self = this;
       
-      /* completedIED */
-
       var k3 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 = 'Y'"
       
       if(this.completedIED != undefined && this.completedIED.length>0){
         k3+=" AND C_PROJECT_NAME in ("+_self.completedIED +")"
+      }
+
+      let user = this.currentUser();
+        if(user.userType==2 && user.company!=null){
+          k1+=" AND C_COMPANY='"+user.company +"'"
       }
 
       console.log(k3);
@@ -367,7 +386,35 @@ export default {
         });
     },
 
-    exportData(){
+    exportDataOverdue(){
+        let dataUrl = "/exchange/doc/export"
+        var fileDate = new Date()
+        let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+        let params = {
+          gridName:"IEDReportGrid",
+          lang:"zh-cn",
+          condition: this.$refs.mainDataGrid1.condition,
+          filename:"IED_Report_Overdue"+fileDateStr+".xlsx",
+          sheetname:"Result"
+        }
+        ExcelUtil.export(params)
+    },
+
+    exportDataunCompleted(){
+        let dataUrl = "/exchange/doc/export"
+        var fileDate = new Date()
+        let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+        let params = {
+          gridName:"IEDReportGrid",
+          lang:"zh-cn",
+          condition: this.$refs.mainDataGrid2.condition,
+          filename:"IED_Report_unCompleted"+fileDateStr+".xlsx",
+          sheetname:"Result"
+        }
+        ExcelUtil.export(params)
+    },
+
+    exportDataCompleted(){
         let dataUrl = "/exchange/doc/export"
         var fileDate = new Date()
         let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
@@ -375,7 +422,7 @@ export default {
           gridName:"IEDReportGrid",
           lang:"zh-cn",
           condition: this.$refs.mainDataGrid3.condition,
-          filename:"IED_Report_"+fileDateStr+".xlsx",
+          filename:"IED_Report_Completed"+fileDateStr+".xlsx",
           sheetname:"Result"
         }
         ExcelUtil.export(params)
