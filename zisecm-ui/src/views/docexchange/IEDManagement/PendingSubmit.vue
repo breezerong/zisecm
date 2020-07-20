@@ -1,7 +1,6 @@
 <template>    
-      <DataLayout @onLayoutResize="onLayoutResize">
+      <DataLayout >
         <template v-slot:header>
-        <!-- 待提交文函 -->
         <!-- 批量导入 -->
         <el-dialog title="批量导入IED" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
@@ -61,15 +60,15 @@
             <el-button type="primary" @click="newArchiveItem('IED',selectedOneTransfer)" >新建</el-button>
             <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
              <el-button type="primary" @click.native="exportData">Excel下载</el-button>
-            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,$refs.mainDataGrid)">删除</el-button>
+            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">删除</el-button>
             </el-row>
         </template>
         
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">                   
-                    <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" isshowOption :tableHeight="tables.main.height"
-                    isshowCustom gridViewName="IEDGrid" condition="TYPE_NAME='IED' AND STATUS='新建' "
+                    <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" isshowOption v-bind="tables.main":tableHeight="layout.height-180"
+                    isshowCustom gridViewName="IEDGrid" condition="TYPE_NAME='IED'  "
                     @cellMouseEnter="cellMouseEnter"
                     @cellMouseleave="cellMouseleave"
                     @rowclick="rowClick" 
@@ -122,9 +121,7 @@ export default {
 
         }
     },
-    created(){
-        window.addEventListener("resize",this.getHeight);   //打开浏览器，当窗体发生变化，自动修改高度
-     
+    created(){     
     },
     mounted(){
         if(!this.validataPermission()){
@@ -135,17 +132,9 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }
-        this.getHeight();
         this.fresh()
     },
     methods: {
-        onLayoutResize(size){
-            console.log(size)
-            this.tables.main.height = size - 180    
-        },
-         getHeight() {
-            this.tables.main.tableHeight = window.innerHeight - 180+"px"  
-        },
         fresh(){
           let _self = this
           console.log("123123")
@@ -186,6 +175,8 @@ export default {
             });
             return formdata;
             },
+
+
              uploadData() {
             let _self = this;
             let formdata = _self.getFormData();
@@ -391,6 +382,7 @@ export default {
         
     },
         exportData(){
+            let _self = this
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()

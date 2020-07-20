@@ -1,5 +1,5 @@
 <template>    
-        <DataLayout @onLayoutResize="onLayoutResize">
+        <DataLayout >
         <template v-slot:header>
 
      <el-dialog title="驳回备注" :visible.sync="showDialog" width="80%" @close="showDialog=false">
@@ -64,7 +64,7 @@
             isshowOption
             isshowCustom
             gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED'  " :tableHeight="tables.main.height"
+            condition="TYPE_NAME='IED'  " :v-bind="tables.main":tableHeight="layout.height-180"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
@@ -125,7 +125,6 @@ export default {
         }
     },
     created(){
-      window.addEventListener("resize",this.getHeight);
     },
     mounted(){
         if(!this.validataPermission()){
@@ -136,18 +135,9 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }   
-             this.getHeight();
             this.fresh()
     },
-    methods: {
-
-        onLayoutResize(size){
-            console.log(size)
-            this.tables.main.height = size - 180    
-        },
-          getHeight() {
-            this.tables.main.tableHeight = window.innerHeight - 180+"px"  
-        },
+    methods: {    
         fresh(){
           let _self = this
         window.addEventListener("resize",this.getHeight);
@@ -197,6 +187,7 @@ export default {
         _self.fresh()
     },
       exportData(){
+            let _self = this
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
