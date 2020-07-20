@@ -68,6 +68,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/mybatis/spring/boot/mybatis-spring-boot-autoconfigure/2.1.0/mybatis-spring-boot-autoconfigure-2.1.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/mybatis/mybatis/3.5.2/mybatis-3.5.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/mybatis/mybatis-spring/2.0.2/mybatis-spring-2.0.2.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/microsoft/sqlserver/sqljdbc4/4.0/sqljdbc4-4.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/alibaba/druid/1.1.20/druid-1.1.20.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/itextpdf/itextpdf/5.5.13/itextpdf-5.5.13.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/mysql/mysql-connector-java/8.0.11/mysql-connector-java-8.0.11.jar" enabled="true" runInBatchMode="false"/>
@@ -127,4 +128,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/elasticsearch/plugin/rank-eval-client/7.3.2/rank-eval-client-7.3.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/elasticsearch/plugin/lang-mustache-client/7.3.2/lang-mustache-client-7.3.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/github/spullara/mustache/java/compiler/0.9.3/compiler-0.9.3.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/commons-io/commons-io/2.7/commons-io-2.7.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/ant/ant/1.9.15/ant-1.9.15.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/ant/ant-launcher/1.9.15/ant-launcher-1.9.15.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>
