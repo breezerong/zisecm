@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmUiRelation;
 import com.ecm.core.entity.Pager;
@@ -16,6 +17,7 @@ import com.ecm.core.entity.Pager;
  * @author Chen Shuo
  * @since 2020-06-22
  */
+@Component
 @Mapper
 public interface EcmUiRelationMapper {
 
@@ -38,5 +40,7 @@ public interface EcmUiRelationMapper {
 	List<Map<String, Object>> executeSQL(Pager pager, @Param(value="sqlStr") String sqlStr);
 	
 	List<EcmUiRelation> selectByCondition(@Param(value="condition")String condition);
+	
+	List<EcmUiRelation> selectByCondition(Pager pager,@Param(value="condition")String condition);
     
 }

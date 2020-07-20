@@ -5,14 +5,9 @@
                 <el-form-item >
                     <DataSelect @onSelectChange='onSelectChange' v-model="forms.headForm.project"  includeAll dataUrl="/exchange/project/myproject" 
                     dataValueField="name" dataTextField="name"></DataSelect>
-                    <!-- <DataSelect v-model="forms.headForm.plan" includeAll="true" dataUrl="/dc/getDocuments" 
-                    dataValueField="code" dataTextField="name"></DataSelect> -->
-                    <!-- <el-select>
-                        <el-option label="所有计划"></el-option>
-                    </el-select> -->
                 </el-form-item>
                 <el-form-item>
-                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或标题"></el-input>
+                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或计划名称"></el-input>
                     <el-button type="primary" @click="search()">查询</el-button>
                 </el-form-item>
                 <el-form-item>
@@ -76,8 +71,7 @@ export default {
             },
             forms:{
                 headForm:{
-                    project:"",
-                    plan:""
+                    project:""
                 }
             },
             advCondition:'',
@@ -122,7 +116,7 @@ export default {
         //编码和标题模糊查询
         search(){
             let _self = this
-            let wheres = ["NAME","C_WBS_CODING"]
+            let wheres = ["C_WBS_CODING","TITLE"]
             let orS = ""
             var k1=" TYPE_NAME='计划任务'"
             if(_self.inputValueNum.trim().length>0){
@@ -157,7 +151,7 @@ export default {
         //下拉菜单
         onSelectChange(val){
             let _self = this
-            // _self.$alert(val)
+            //  _self.$alert(val)
             if(val==""){
                 _self.$refs.mainDataGrid.condition="";
                 _self.$alert(_self.$refs.mainDataGrid.condition)

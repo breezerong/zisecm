@@ -23,13 +23,14 @@
     <result column="LIFECYCLE_STATUS" jdbcType="VARCHAR" property="lifecycleStatus" />
     <result column="LIFECYCLE_DIR" jdbcType="INTEGER" property="lifecycleDir" />
     <result column="C_PROJECT_NAME" jdbcType="VARCHAR" property="projectName" />
+    <result column="CODING" jdbcType="VARCHAR" property="coding" />
     
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, TITLE, FOLDER_ID, STATUS, CREATION_DATE, CREATOR, TYPE_NAME, MODIFIER, 
     MODIFIED_DATE, REVISION, ACL_NAME, FORMAT_NAME, 
     CONTENT_SIZE, ATTACHMENT_COUNT,SYSTEM_VERSION,VERSION_ID,
-    LIFECYCLE_NAME,LIFECYCLE_STATUS ,LIFECYCLE_DIR,C_PROJECT_NAME 
+    LIFECYCLE_NAME,LIFECYCLE_STATUS ,LIFECYCLE_DIR,C_PROJECT_NAME,CODING 
   </sql>
   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
 	${sqlStr}
@@ -50,7 +51,7 @@
       CREATOR, TYPE_NAME, MODIFIER, 
       MODIFIED_DATE, REVISION,  
        ACL_NAME, FORMAT_NAME, CONTENT_SIZE, ATTACHMENT_COUNT,
-       SYSTEM_VERSION,VERSION_ID,LIFECYCLE_NAME,LIFECYCLE_STATUS,C_PROJECT_NAME
+       SYSTEM_VERSION,VERSION_ID,LIFECYCLE_NAME,LIFECYCLE_STATUS,C_PROJECT_NAME,CODING
       )
     values ( #{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
       #{folderId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
@@ -59,7 +60,7 @@
       #{aclName,jdbcType=VARCHAR}, 
       #{formatName,jdbcType=VARCHAR}, #{contentSize,jdbcType=BIGINT}, #{attachmentCount,jdbcType=INTEGER},
       #{systemVersion,jdbcType=DOUBLE}, #{versionId,jdbcType=BIGINT},
-      #{lifecycleName,jdbcType=VARCHAR},#{lifecycleStatus,jdbcType=VARCHAR},#{projectName,jdbcType=VARCHAR}
+      #{lifecycleName,jdbcType=VARCHAR},#{lifecycleStatus,jdbcType=VARCHAR},#{projectName,jdbcType=VARCHAR},#{coding,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmDocument">

@@ -1,5 +1,5 @@
 <template>    
-        <DataLayout @onLayoutResize="onLayoutResize">
+        <DataLayout >
         <template v-slot:header>
 
      <el-dialog title="驳回备注" :visible.sync="showDialog" width="80%" @close="showDialog=false">
@@ -64,12 +64,22 @@
             isshowOption
             isshowCustom
             gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED'  " :tableHeight="tables.main.height"
+            condition="TYPE_NAME='IED'  " :v-bind="tables.main":tableHeight="layout.height-180"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
             @selectchange="selectChange"
-           ></DataGrid>
+           >
+            <template slot="sequee" slot-scope="scope">
+                  <el-popover trigger="hover" placement="top" width="50">
+                <div slot="reference" >
+            <span :style="(scope.data.row['C_ITEM_STATUS2']=='变更中')?{'background':'	#00FF00'}:''">{{scope.data.$index+1}}</span>
+                </div>
+                  
+                         <span>{{scope.data.row.C_ITEM_STATUS2}}</span>
+            </el-popover>
+            </template>
+           </DataGrid>
                 </el-col>
                 </el-row>
         </template>
@@ -115,7 +125,6 @@ export default {
         }
     },
     created(){
-      window.addEventListener("resize",this.getHeight);
     },
     mounted(){
         if(!this.validataPermission()){
@@ -126,22 +135,12 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }   
-             this.getHeight();
             this.fresh()
     },
-    methods: {
-
-        onLayoutResize(size){
-            console.log(size)
-            this.tables.main.height = size - 180    
-        },
-          getHeight() {
-            this.tables.main.tableHeight = window.innerHeight - 180+"px"  
-        },
+    methods: {    
         fresh(){
           let _self = this
         window.addEventListener("resize",this.getHeight);
-        console.log("现在所选中对象是"+_self.selectedItems)
         _self.$refs.mainDataGrid.loadGridData();
        },
         cellMouseEnter(row, column, cell, event){
@@ -164,7 +163,7 @@ export default {
     search(){
         let _self = this
         var k1 = "TYPE_NAME='IED' AND STATUS='审核中'"
-        let wheres = ["TITLE","C_IN_CODING"]
+        let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
            if(_self.input.trim().length>0){
                 wheres.forEach(function(item){
@@ -175,7 +174,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.value != undefined && _self.value>0){
+            if(_self.value != undefined &&_self.value!='所有项目'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
             if(_self.Subcontractors !='' ){
@@ -188,6 +187,7 @@ export default {
         _self.fresh()
     },
       exportData(){
+            let _self = this
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()

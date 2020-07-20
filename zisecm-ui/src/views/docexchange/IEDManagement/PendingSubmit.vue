@@ -1,7 +1,6 @@
 <template>    
-      <DataLayout @onLayoutResize="onLayoutResize">
+      <DataLayout >
         <template v-slot:header>
-        <!-- 待提交文函 -->
         <!-- 批量导入 -->
         <el-dialog title="批量导入IED" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
@@ -61,15 +60,15 @@
             <el-button type="primary" @click="newArchiveItem('IED',selectedOneTransfer)" >新建</el-button>
             <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
              <el-button type="primary" @click.native="exportData">Excel下载</el-button>
-            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,$refs.mainDataGrid)">删除</el-button>
+            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">删除</el-button>
             </el-row>
         </template>
         
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">                   
-                    <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" isshowOption :tableHeight="tables.main.height"
-                    isshowCustom gridViewName="IEDGrid" condition="TYPE_NAME='IED' AND STATUS='新建' "
+                    <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" isshowOption v-bind="tables.main":tableHeight="layout.height-180"
+                    isshowCustom gridViewName="IEDGrid" condition="TYPE_NAME='IED'  "
                     @cellMouseEnter="cellMouseEnter"
                     @cellMouseleave="cellMouseleave"
                     @rowclick="rowClick" 
@@ -122,9 +121,7 @@ export default {
 
         }
     },
-    created(){
-        window.addEventListener("resize",this.getHeight);   //打开浏览器，当窗体发生变化，自动修改高度
-     
+    created(){     
     },
     mounted(){
         if(!this.validataPermission()){
@@ -135,17 +132,9 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }
-        this.getHeight();
         this.fresh()
     },
     methods: {
-        onLayoutResize(size){
-            console.log(size)
-            this.tables.main.height = size - 180    
-        },
-         getHeight() {
-            this.tables.main.tableHeight = window.innerHeight - 180+"px"  
-        },
         fresh(){
           let _self = this
           console.log("123123")
@@ -153,7 +142,7 @@ export default {
        },
 
         onBatchImported(){
-            this.$refs.mainDataGrid.loadGridData();
+            this.gridObj.loadGridData();
         },
           handleChange(file, fileList) {
             this.fileList = fileList;
@@ -186,6 +175,8 @@ export default {
             });
             return formdata;
             },
+
+
              uploadData() {
             let _self = this;
             let formdata = _self.getFormData();
@@ -240,123 +231,119 @@ export default {
         }
         },10);
     },
-        saveItem() {
-      if (!this.$refs.ShowProperty.validFormValue()) {
-        return;
-      }
-      let _self = this;
-      var m = new Map();
-      let dataRows = this.$refs.ShowProperty.dataList;
-      var i;
-      for (i in dataRows) {
-        if (dataRows[i].attrName && dataRows[i].attrName != "") {
-          if (
-            dataRows[i].attrName != "FOLDER_ID" &&
-            dataRows[i].attrName != "ID"
-          ) {
-            m.set(dataRows[i].attrName, dataRows[i].defaultValue);
-          }
+        saveItem()
+        {
+        let _self = this;
+        if(!this.$refs.ShowProperty.validFormValue()){
+            return;
         }
-      }
-      if (_self.$refs.ShowProperty.myItemId != "") {
-        m.set("ID", _self.$refs.ShowProperty.myItemId);
-      }
-      if (_self.$refs.ShowProperty.myTypeName != "") {
-        m.set("TYPE_NAME", _self.$refs.ShowProperty.myTypeName);
-    
-      }
-      let formdata = new FormData();
-      formdata.append("metaData", JSON.stringify(m));
-
-      if (_self.$refs.ShowProperty.file != "") {
-        //console.log(_self.file);
-        formdata.append("uploadFile", _self.$refs.ShowProperty.file.raw);
-      }
-      // console.log(JSON.stringify(m));
-      if (_self.$refs.ShowProperty.myItemId == "") {
-        _self
-          .axios({
-            headers: {
-              "Content-Type": "multipart/form-data"
-              // x-www-form-urlencoded'
-              //"Content-Type": "application/json;charset=UTF-8"
-            },
-            method: "post",
-            data: formdata,
-            url: "/exchange/ied/newIED"
-          })
-          .then(function(response) {
+        var m = new Map();
+        var c;
+        for(c in _self.$refs.ShowProperty.dataList){
+            let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+            var i;
+            for (i in dataRows) {
+            if(dataRows[i].attrName && dataRows[i].attrName !='')
+            {
+                if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                {
+                var val = dataRows[i].defaultValue;
+                if(val && dataRows[i].isRepeat){
+                    var temp = "";
+                // console.log(val);
+                    for(let j=0,len=val.length;j<len;j++){
+                    temp = temp + val[j]+";";
+                    //console.log(temp);
+                    }
+                    temp = temp.substring(0,temp.length-1);
+                    val = temp;
+                    console.log(val);
+                }
+                m.set(dataRows[i].attrName, val);
+                }
+            }
+            }
+        }
+        if(_self.$refs.ShowProperty.myItemId!='')
+        {
+            m.set('ID',_self.$refs.ShowProperty.myItemId);
+        }
+        if(_self.$refs.ShowProperty.myTypeName!='')
+        {
+            m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
+            m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
+			m.set("parentDocId", _self.parentId);
+            m.set("relationName",_self.relationName);
+        }
+        let formdata = new FormData();
+        formdata.append("metaData",JSON.stringify(m));
+        
+        if(_self.$refs.ShowProperty.file!="")
+        {
+            //console.log(_self.file);
+            formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+        }
+        // console.log(JSON.stringify(m));
+        if(_self.$refs.ShowProperty.myItemId=='')
+        {
+            axios.post("/exchange/ied/newIED",formdata,{
+                'Content-Type': 'multipart/form-data'
+            })
+            .then(function(response) {
             let code = response.data.code;
             //console.log(JSON.stringify(response));
             if (code == 1) {
-              // _self.$message("创建成功!");
-              _self.$message({
-                showClose: true,
-                message: "创建成功!",
-                duration: 2000,
-                type: "success"
-              });
-              _self.propertyVisible = false;
+                // _self.$message("创建成功!");
+                _self.$message({
+                    showClose: true,
+                    message: "创建成功!",
+                    duration: 2000,
+                    type: "success"
+                });
+                _self.propertyVisible = false;
 
-              // _self.loadTransferGridData();
-              _self.loadGridData(null);
-            } else {
-              // _self.$message("新建失败!");
-              _self.$message({
-                showClose: true,
-                message: "新建失败!",
-                duration: 2000,
-                type: "warning"
-              });
+                // _self.loadTransferGridData();
+                _self.$refs.mainDataGrid.loadGridData();
+                
+                } 
+            else{
+			_self.$message({
+                    showClose: true,
+                    message: _self.$t('message.newFailured'),
+                    duration: 2000,
+                    type: "warning"
+                });
+                
             }
-          })
-          .catch(function(error) {
-            // _self.$message("新建失败!");
-            _self.$message({
-                showClose: true,
-                message: "新建失败!",
-                duration: 5000,
-                type: "error"
-              });
+            })
+            .catch(function(error) {
+            _self.$message(_self.$t('message.newFailured'));
             console.log(error);
-          });
-      } else {
-        _self
-          .axios({
-            headers: {
-              "Content-Type": "application/json;charset=UTF-8"
-            },
-            method: "post",
-            data: JSON.stringify(m),
-            url: "/dc/saveDocument"
-          })
-          .then(function(response) {
+            });
+        }
+        else
+        {
+            if(_self.$refs.ShowProperty.permit<5){
+            _self.$message(_self.$t('message.hasnoPermssion'));
+            return ;
+            }
+            axios.post("/dc/saveDocument",JSON.stringify(m))
+            .then(function(response) {
             let code = response.data.code;
             //console.log(JSON.stringify(response));
-            if (code == 1) {
-              _self.$emit("onSaved", "update");
-            } else {
-              // _self.$message("保存失败!");
-              _self.$message({
-                showClose: true,
-                message: "保存失败!",
-                duration: 5000,
-                type: "error"
-              });
+            if(code==1){
+                _self.$emit('onSaved','update');
             }
-          })
-          .catch(function(error) {
-            // _self.$message("保存失败!");
-            _self.$message({
-                showClose: true,
-                message: "保存失败!",
-                duration: 5000,
-                type: "error"
-              });
+            else{
+                _self.$message(_self.$t('message.saveFailured'));
+            }
+            })
+            .catch(function(error) {
+            _self.$message(_self.$t('message.saveFailured'));
             console.log(error);
-          });
-      }
-    },
+            });
+        }
+        },
 
      selectChange(val) {
       // console.log(JSON.stringify(val));
@@ -364,7 +351,7 @@ export default {
     },
     search(){
          let _self = this
-        let wheres = ["TITLE","C_IN_CODING"]
+        let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
         var k1="TYPE_NAME='IED' AND STATUS='新建'"
           if(_self.input.trim().length>0){
@@ -376,7 +363,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.value != undefined && _self.value>0){
+            if(_self.value != undefined ){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
             let user = this.currentUser();
@@ -395,6 +382,7 @@ export default {
         
     },
         exportData(){
+            let _self = this
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
