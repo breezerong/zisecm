@@ -19,6 +19,8 @@ public interface IEcmUiRelationService {
 	
 	public List<EcmUiRelation> selectByCondition(String condition);
 	
+	public List<EcmUiRelation> selectByCondition(Pager pager, String condition);
+	
 	public EcmUiRelation getObjectById(String id);
 	
 	public String newObject(EcmUiRelation obj);
@@ -28,4 +30,6 @@ public interface IEcmUiRelationService {
 	public boolean deleteObject(EcmUiRelation obj);
 	
 	public List<EcmUiRelation> selectAll();
+
+	public EcmUiRelation getObjectByName(String relationName);
 }

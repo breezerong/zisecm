@@ -1,6 +1,6 @@
-<template>
-  <div>
-    <el-dialog :title="dialog.new.title" :visible.sync="dialog.new.visible" v-loading="dialog.new.loading">     
+<template> 
+  <DataLayout>
+    <el-dialog :title="dialog.new.title" :visible.sync="dialog.new.visible" v-loading="dialog.new.loading">
       <el-form :model="form" label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -8,19 +8,19 @@
               <el-input v-model="form.relationName" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">            
+          <el-col :span="12">
             <el-form-item label="表格名称">
               <SQLSelect v-model="form.gridName" queryName="表格列表"></SQLSelect>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否只读">     
+            <el-form-item label="是否只读">
               <el-switch v-model="form.readonly"></el-switch>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="类型名称">
-               <SQLSelect v-model="form.typeName" queryName="文档类型"></SQLSelect>              
+              <SQLSelect v-model="form.typeName" queryName="文档类型"></SQLSelect>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -40,53 +40,43 @@
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-container>
-      <el-header>
-        <el-row class="topbar">
-            <el-col :span="4">
-              <el-input
-                v-model="inputkey"
-                placeholder="请输入关键字"
-                prefix-icon="el-icon-search"
-                @input="changeValue"
-              ></el-input>
-            </el-col>
-            <el-col :span="20" style="text-align:left;">
-              &nbsp; 
-              <el-button
-                type="primary"
-                icon="el-icon-edit"
-                plain
-                @click="addView()"
-              >新建</el-button>
-            </el-col>
-          </el-row>
-      </el-header>
+    
+    <template v-slot:header>
+      <el-form :inline="true" size="medium">
+        <el-form-item>
+          <el-input v-model="inputkey" placeholder="请输入关键字" prefix-icon="el-icon-search" @input="changeValue"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-edit" plain @click="addView()">新建</el-button>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template v-slot:main="{layout}">
       <el-main>
-        <el-table :data="table.datalist" border v-loading="loading">
-
-          <el-table-column prop="relationName" label="相关名称"></el-table-column>
-          <el-table-column prop="gridName" label="表格名称"></el-table-column>
-          <el-table-column prop="readonly" label="是否只读" :formatter="formatBoolean"></el-table-column>
-          <el-table-column prop="typeName" label="类型名称"></el-table-column>
-          <el-table-column prop="formName" label="表单名称"></el-table-column>
-          <el-table-column prop="description" label="描述"></el-table-column>
-         
-          <el-table-column label="操作" width="320">
+        <el-table :data="table.datalist" v-loading="loading" v-bind="table.info" :height="layout.height-190">
+          <el-table-column :label="$t('field.indexNumber')" key="#1" width="50">
             <template slot-scope="scope">
-                <el-button type="info" size="small" icon="edit" @click="editView(scope.row)">查看</el-button>
-                <el-button type="danger" size="small" icon="delete" @click="deleteItem(scope.row.id)">删除</el-button>
+              <span>{{(table.pager.currentPage-1) * table.pager.pageSize + scope.$index+1}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column v-for="item in table.columns" v-bind="item" :key="item.prop"></el-table-column>
+          <el-table-column label="操作" width="180">
+            <template slot-scope="scope">
+                <el-button type="info" size="mini" icon="edit" @click="editView(scope.row)">查看</el-button>
+                <el-button type="danger" size="mini" icon="delete" @click="deleteItem(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination v-bind="table.pager" :page-sizes="[10,20, 50, 100]"  layout="total, sizes, prev, pager, next, jumper" @size-change="onPagerSizeChange" @current-change="onPagerCurrentChange"></el-pagination>
       </el-main>
-    </el-container>
-  </div>
+    </template>
+  </DataLayout>
 </template>
 
 <script>
 import { SQLSelect } from './components'
-var components = { SQLSelect }
+import DataLayout from '@/components/ecm-data-layout'
+var components = { SQLSelect,DataLayout }
 export default {
   components:components,
   data(){
@@ -111,12 +101,32 @@ export default {
         description: ""
       },
       table:{
-        datalist:[]
+        info:{
+          border:true,
+          stripe:true,
+          highlightCurrentRow:true
+        },
+        columns:[
+          {prop:"relationName",label:"相关名称"},
+          {prop:"gridName",label:"表格名称"},
+          {prop:"readonly",label:"是否只读",formatter:function(row, column, cellValue){
+            return cellValue?"是":"否";
+          }},
+          {prop:"typeName",label:"类型名称"},
+          {prop:"formName",label:"表单名称"},
+          {prop:"description",label:"描述"}
+        ],
+        datalist:[],
+        pager:{
+          pageSize:20,
+          currentPage:1,
+          total:0
+        }
       }
     }
   },
   methods:{
-    addView:function(){      
+    addView:function(){
       this.form={
         id: "",
         relationName: "",
@@ -143,24 +153,21 @@ export default {
       }else{
         formObj.readonly=0
       }
-      
       let url = _self.dialog.new.title=='新建'?"/admin/uirelation/save":"/admin/uirelation/update"
-      
       axios.post(url,JSON.stringify(formObj)).then(function(response) {
           if(response.data.code == 1){
             _self.$message({message:"保存成功!", type:'success'});
             _self.loadTable();
           }else{
-            _self.$message.error('保存失败!');
+            _self.$message.error(response.data.code.message);
           }
-         
           _self.dialog.new.loading = false
           _self.dialog.new.visible = false
-        })
-        .catch(function(error) {
+        }).catch(function(error) {
           console.log(error);
           _self.dialog.new.loading = false
         });
+
     },
     deleteItem:function(id){
       console.log(id)
@@ -175,34 +182,30 @@ export default {
           _self.dialog.new.loading = false
         });
     },
-    formatBoolean: function (row, column, cellValue) {
-        var ret = ''  //你想在页面展示的值
-        if (cellValue) {
-            ret = "是"  //根据自己的需求设定
-        } else {
-            ret = "否"
-        }
-        return ret;
-    },
-   changeValue: function(val) {
-     console.log(val)
+    changeValue: function(val) {
+      console.log(val)
       this.inputkey = val
       this.loadTable()
     },
     loadTable:function(){
       let _self = this;
       let condition = " GRID_NAME like '%"+_self.inputkey+"%' or TYPE_NAME like '%"+_self.inputkey+"%' or FORM_NAME like '%"+_self.inputkey+"%' or RELATION_NAME like '%"+_self.inputkey+"%' ";
-      console.log(condition)
+      let pagerParam = _self.table.pager;
+      pagerParam.currentPage=pagerParam.currentPage-1
       var m = new Map();
       m.set("condition", condition);
-      axios.post('/admin/uirelation/list',JSON.stringify(m)).then(function(response) {        
+      m.set("pager",pagerParam)
+      axios.post('/admin/uirelation/list',JSON.stringify(m)).then(function(response) {
         _self.table.datalist =[]
         let resultlist = response.data.data
-        resultlist.forEach(function(item){          
+        let pager = response.data.pager
+        resultlist.forEach(function(item){
           item.readonly = item.readonly==1?true:false
           _self.table.datalist.push(item)
         })
-        console.log(_self.table.datalist)
+        _self.table.pager.pageSizes=pager.pageSize
+        _self.table.pager.currentPage=pager.pageIndex+1
+        _self.table.pager.total=pager.total
         _self.loading = false;
       })
       .catch(function(error) {
@@ -221,6 +224,15 @@ export default {
         formName: "",
         description: ""
       }
+    },
+    onPagerCurrentChange(val) {
+      this.table.pager.currentPage = val
+      this.loadTable();
+    },
+    // 分页 页数改变
+    onPagerSizeChange(val) {
+      this.table.pager.pageSize = val
+      this.loadTable();
     }
   },
   mounted(){

@@ -36,6 +36,10 @@
 	${sqlStr}
   </select>
   
+  <select id="searchToEntity" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	${sqlStr}
+  </select>
+  
   <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

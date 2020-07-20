@@ -69,7 +69,17 @@
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
             @selectchange="selectChange"
-           ></DataGrid>
+           >
+            <template slot="sequee" slot-scope="scope">
+                  <el-popover trigger="hover" placement="top" width="50">
+                <div slot="reference" >
+            <span :style="(scope.data.row['C_ITEM_STATUS2']=='变更中')?{'background':'	#00FF00'}:''">{{scope.data.$index+1}}</span>
+                </div>
+                  
+                         <span>{{scope.data.row.C_ITEM_STATUS2}}</span>
+            </el-popover>
+            </template>
+           </DataGrid>
                 </el-col>
                 </el-row>
         </template>
@@ -141,7 +151,6 @@ export default {
         fresh(){
           let _self = this
         window.addEventListener("resize",this.getHeight);
-        console.log("现在所选中对象是"+_self.selectedItems)
         _self.$refs.mainDataGrid.loadGridData();
        },
         cellMouseEnter(row, column, cell, event){
@@ -175,7 +184,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.value != undefined && _self.value>0){
+            if(_self.value != undefined &&_self.value!='所有项目'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
             if(_self.Subcontractors !='' ){

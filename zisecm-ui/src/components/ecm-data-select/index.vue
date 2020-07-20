@@ -79,11 +79,11 @@ export default {
         getOptions.forEach(function(item){
            _self.options.push({label:item[_self.dataTextField],value:"'"+item[_self.dataValueField]+"'"})
         })
-         if(_self.includeAll){
+        if(_self.includeAll){
           _self.svalue = _self.options[0].value
-          this.$emit("input", _self.svalue);
+          _self.$emit("input", _self.svalue);
         }
-        
+        _self.$emit("onLoadnDataSuccess",_self.svalue,_self.options)
       }).catch(function(error) {
         console.log(error);
       });
@@ -96,6 +96,7 @@ export default {
         _self.textField = resp.data.labelField
         _self.valueField = resp.data.valueField
         _self.options = resp.data.data
+        _self.$emit("onLoadnDataSuccess",_self.svalue,_self.options)
       }).catch(function(error) {
         console.log(error);
       });

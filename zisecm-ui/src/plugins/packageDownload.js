@@ -80,3 +80,22 @@ Vue.prototype.packDownloadByMain = function(selectedItems){
         //     console.log(error);
         //   });
     }
+    Vue.prototype.getRelatinItemByTypeName =function(typeName,gridObj,callback){
+      let _self =  this;
+      let url="/admin/uirelation/get"
+      var m = new Map();
+      m.set("typeName", typeName);
+      axios.post(url,JSON.stringify(m)).then(function(response) {
+          let relationItem = response.data.data;
+          // _self.relation = relationItem;
+          gridObj.gridViewName=relationItem.gridName;
+          gridObj.formName=relationItem.formName;
+          if(callback){
+            callback(relationItem);
+          }
+          gridObj.loadGridInfo();
+          gridObj.loadGridData();
+      }).catch(function(error){
+          console.log(error);
+      })
+  }
