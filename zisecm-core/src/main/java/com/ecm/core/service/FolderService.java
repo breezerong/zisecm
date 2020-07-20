@@ -169,6 +169,11 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 		}
 		return null;
 	}
+//	public List<EcmFolder> getFoldersByPath(String token,String path){
+//		String cond = " FOLDER_PATH like '"+path+"%'";
+//		return ecmFolderMapper.selectByParentId(cond);
+//	}
+	
 	@Override
 	public List<EcmFolder> getFoldersByParentId(String token,String parentId){
 		return ecmFolderMapper.selectByParentId(parentId);
