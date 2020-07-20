@@ -18,6 +18,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -175,12 +176,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 			sb.append(relations.get(i).getChildId());
 			sb.append("'");
 		}
-		List<Map<String, Object>> documents = null;
+		List<Map<String, Object>> documents = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> transfers = null;
 		String beanType = "create";
 		if ("提交".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
-			beanType = "create";
+			beanType = "create_提交";
 		} else if ("分发".equals(type)) {
 			transfers = excTransferMapper.executeSQL(
 					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS FROM exc_transfer where ID in('"
@@ -194,28 +195,34 @@ public class SyncPublicNet implements ISyncPublicNet {
 				}
 			}
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
-			beanType = "create";
+			beanType = "create_分发";
 		} else if ("CNPE驳回".equals(type)) {
-			documents = ecmDocumentMapper.executeSQL(
-					"select ID,STATUS,C_REJECT_COMMENT,C_REJECTOR,C_REJECT_DATE from ecm_document where ID='" + docId
-							+ "'");
-			beanType = "update";
+			String col = "ID,STATUS,C_REJECT_COMMENT,C_REJECTOR,C_REJECT_DATE";
+			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
+//			initResultList(documents, col);
+			beanType = "update_CNPE驳回";
 		} else if ("CNPE接收".equals(type)) {
-			documents = ecmDocumentMapper.executeSQL(
-					"select ID,STATUS,C_RECEIVER,C_RECEIVE_DATE from ecm_document where ID='" + docId + "'");
-			beanType = "update";
-		} else if ("申请解锁".equals(type)||"解锁".equals(type)) {
-			documents = ecmDocumentMapper.executeSQL(
-					"select ID,C_PROCESS_STATUS from ecm_document where ID='" + docId + "'");
-			beanType = "update";
+			String col = "ID,STATUS,C_RECEIVER,C_RECEIVE_DATE";
+			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
+//			initResultList(documents, col);
+			beanType = "update_CNPE接收";
+		} else if ("申请解锁".equals(type) || "解锁".equals(type)) {
+			String col = "ID,C_PROCESS_STATUS";
+			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
+//			initResultList(documents, col);
+			beanType = "update_解锁_申请解锁";
 		} else if ("分包商驳回".equals(type)) {
-			transfers = excTransferMapper.executeSQL(
-					"select ID,STATUS,REJECTER,REJECT_DATE,COMMENT from exc_transfer where ID in('" + docId + "') ");
-			beanType = "update";
+			String col = "ID,STATUS,REJECTER,REJECT_DATE,COMMENT";
+			transfers = excTransferMapper
+					.executeSQL("select " + col + " from exc_transfer where ID in('" + docId + "') ");
+//			initResultList(transfers, col);
+			beanType = "update_分包商驳回";
 		} else if ("分包商接收".equals(type)) {
-			transfers = excTransferMapper.executeSQL(
-					"select ID,STATUS,RECEIVER,RECEIVE_DATE from exc_transfer where ID in('" + docId + "') ");
-			beanType = "update";
+			String col = "ID,STATUS,RECEIVER,RECEIVE_DATE";
+			transfers = excTransferMapper
+					.executeSQL("select " + col + " from exc_transfer where ID in('" + docId + "') ");
+//			initResultList(transfers, col);
+			beanType = "update_分包商接收";
 		}
 
 		syncBean.setBeanType(beanType);
@@ -224,6 +231,20 @@ public class SyncPublicNet implements ISyncPublicNet {
 		List<EcmContent> contents = ecmContentMapper.selectByCondition(" PARENT_ID in(" + sb.toString() + ") ");
 		syncBean.setContents(contents);
 		return syncBean;
+	}
+
+	/**
+	 * @param resultList
+	 * @param col
+	 */
+	private void initResultList(List<Map<String, Object>> resultList, String col) {
+		for (int ii = 0; ii < resultList.size(); ii++) {
+			Map<String, Object> mp=resultList.get(ii);
+			String cols[] = col.replaceAll(" ", "").split(",");
+			for (int i = 0; i < cols.length; i++) {
+				mp.putIfAbsent(cols[i], null);
+			}
+		}
 	}
 
 	private void fatherToChild(Object father, Object child) {
@@ -346,24 +367,24 @@ public class SyncPublicNet implements ISyncPublicNet {
 			List<EcmContent> contents = en.getContents();
 			String beanType = en.getBeanType();
 			for (int i = 0; documents != null && i < documents.size(); i++) {
-				if ("create".equals(beanType)) {
+				if (beanType.startsWith("create")) {
 					documentService.newObject(token, documents.get(i));
-				} else if ("update".equals(beanType)) {
+				} else if (beanType.startsWith("update")) {
 					documentService.updateObject(token, documents.get(i));
 				}
 			}
 
 			for (int i = 0; transfers != null && i < transfers.size(); i++) {
-				if ("create".equals(beanType)) {
+				if (beanType.startsWith("create")) {
 					transferService.newObject(transfers.get(i));
-				} else if ("update".equals(beanType)) {
+				} else if (beanType.startsWith("update")) {
 					transferService.updateObject(transfers.get(i));
 				}
 
 			}
 
 			for (int i = 0; relations != null && i < relations.size(); i++) {
-				if ("create".equals(beanType)) {
+				if (beanType.startsWith("create")) {
 					relationService.newObject(token, relations.get(i));
 				}
 			}
