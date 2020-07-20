@@ -110,7 +110,7 @@ export default {
         },
     search(){
         let _self = this
-        let wheres = ["TITLE","C_IN_CODING"]
+        let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
         var k1="TYPE_NAME='IED' AND STATUS='已驳回'"
          if(_self.input.trim().length>0){
