@@ -179,6 +179,7 @@ public class ExcTransferServiceImpl  implements IExcTransferService {
 		} else {
 			isFirst = false;
 		}
+		sql=sql.substring(0, sql.length()-1);
 		sql += " where ID='" + id + "'";
 		mapper.executeSQL(sql);
 	}
