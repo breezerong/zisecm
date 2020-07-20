@@ -61,6 +61,7 @@ public class IEDReportController  extends ControllerAbstract  {
 			for(String projName: projList) {
 				projMap = new HashMap<String, Object>();
 				projMap.put("projectName", projName);
+				//IS_CURRENT=1 and C_IS_RELEASED=1
 				String sql1 = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
 						projName +"'";
 				String sql2 = "select count(*) as completedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME='"+

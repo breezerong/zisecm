@@ -7,7 +7,7 @@
           <el-row>
             <el-form :inline="true" :model="filters">
               <el-form-item>
-                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+                 <DataSelect v-model="overdueIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
               <el-form-item>
                 <el-date-picker
@@ -57,7 +57,8 @@
           <el-row>
             <el-form :inline="true" :model="filters">
               <el-form-item>
-                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+                 <DataSelect v-model="uncompletedIED" dataUrl="/exchange/project/myproject" 
+                 dataValueField="name" dataTextField="name" includeAll @onLoadnDataSuccess="onLoadnDataSuccess2"></DataSelect>
               </el-form-item>
               <el-form-item>
                 <el-date-picker
@@ -107,7 +108,7 @@
           <el-row>
             <el-form :inline="true" :model="filters">
               <el-form-item>
-                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+                 <DataSelect v-model="completedIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
               <el-form-item>
                 <el-date-picker
@@ -160,7 +161,7 @@
           <el-row>
             <el-form :inline="true" :model="filters">
               <el-form-item>
-                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+                 <DataSelect v-model="value4" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
               <el-form-item>
                 <el-date-picker
@@ -224,6 +225,9 @@ export default {
       activeName: "first",
       input: "",
       value: "",
+      uncompletedIED: "",
+      completedIED: "",
+      overdueIED: "",
       ct_month: null,
       startDate: "",
       endDate: "",
@@ -279,16 +283,20 @@ export default {
       return ''
     },
 
+    onLoadnDataSuccess2(select, option){
+      this.search2();
+    },
+
     search1() {
       let _self = this;
       this.ct_month = new Date();
 
-      this.ct_month.setTime(this.ct_month.getTime() - 3600 * 1000 * 24 * 30);
+      this.ct_month.setTime(this.ct_month.getTime());
 
       var now = this.ct_month;
 
       var year = now.getFullYear(); //年
-      var month = now.getMonth(); //月
+      var month = now.getMonth() + 1; //月
       var day = now.getDate(); //日
 
       var clock = year + "-";
@@ -301,25 +309,13 @@ export default {
 
       clock += day + " ";
 
-      var k1 = "TYPE_NAME='IED'"
-      let wheres = ["TITLE","C_IN_CODING"]
-      let orS = ""
+      var k1 = "TYPE_NAME='IED' AND C_ITEM4_DATE < '" + clock + "'" + " AND C_ITEM_STATUS2 IS NULL"
 
-      if(_self.input.trim().length>0){
-        wheres.forEach(function(item){
-        if(orS.length>0){
-          orS+=" OR "
-        }
-        orS+=item + " LIKE '%"+ _self.input+"%'"
-        })
-        k1+=" AND (" + orS + ")"
+      if(_self.overdueIED != undefined && _self.overdueIED!='所有项目'){
+        k1+=" AND C_PROJECT_NAME in (" + _self.overdueIED + ")";
       }
 
-      if(_self.value != undefined && _self.value!='所有项目'){
-        k1+=" AND C_PROJECT_NAME in ("+_self.value +")" + " AND C_ITEM4_DATE < '" + this.clock + "'" + " AND C_ITEM_STATUS2 IS NULL";
-      }
-
-      console.log(k1);
+    console.log(k1);
       _self.$refs.mainDataGrid1.condition = k1;
       _self.$refs.mainDataGrid1.loadGridData();
     },
@@ -327,64 +323,27 @@ export default {
     search2() {
       let _self = this;
 
-      var k2 = "TYPE_NAME='IED'"
-      let wheres = ["TITLE","C_IN_CODING"]
-      let orS = ""
-
-      if(_self.input.trim().length>0){
-        wheres.forEach(function(item){
-        if(orS.length>0){
-          orS+=" OR "
-        }
-        orS+=item + " LIKE '%"+ _self.input+"%'"
-        })
-        k2+=" AND (" + orS + ")"
-      }
-
-      if(this.value != undefined && this.value!='所有项目'){
-        k2+=" AND C_PROJECT_NAME in ("+_self.value +")" + " AND C_ITEM_STATUS2 IS NULL"
-      }
-
-      if(this.value = undefined || this.value == '所有项目'){
-        k2+=" AND C_ITEM_STATUS2 IS NULL"
+      var k2 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 IS NULL"
+      
+      if(this.uncompletedIED != undefined && this.uncompletedIED.length>0){
+        k2+=" AND C_PROJECT_NAME in ("+_self.uncompletedIED +")"
       }
 
       console.log(k2);
-      _self.$refs.mainDataGrid1.condition = k2;
-      _self.$refs.mainDataGrid1.loadGridData();
+      _self.$refs.mainDataGrid2.condition = k2;
+      _self.$refs.mainDataGrid2.loadGridData();
     },
 
     search3() {
       let _self = this;
-      var k3 =
-        "TYPE_NAME='IED' AND C_PROJECT_NAME =" +
-        "'" +
-        this.value +
-        "'" +
-        "AND (C_IN_CODING LIKE '%" +
-        this.input +
-        "%' OR TITLE LIKE '%" +
-        this.input +
-        "%')" +
-        "AND C_ITEM_STATUS2 = 'Y'";
+      
+      /* completedIED */
 
-      if (this.value != "" && this.input == "")
-        k3 =
-          "TYPE_NAME='IED' AND C_PROJECT_NAME =" +
-          "'" +
-          this.value +
-          "'" +
-          "AND C_ITEM_STATUS2 = 'Y'";
-      if ((this.value = "" && this.input == ""))
-        k3 = "TYPE_NAME='IED'" + "AND C_ITEM_STATUS2 = 'Y'";
-      if ((this.value = "" && this.input != ""))
-        k3 =
-          "TYPE_NAME='IED' AND (C_IN_CODING LIKE '%" +
-          this.input +
-          "%' OR TITLE LIKE '%" +
-          this.input +
-          "%')" +
-          "AND C_ITEM_STATUS2 = 'Y'";
+      var k3 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 = 'Y'"
+      
+      if(this.completedIED != undefined && this.completedIED.length>0){
+        k3+=" AND C_PROJECT_NAME in ("+_self.completedIED +")"
+      }
 
       console.log(k3);
       _self.$refs.mainDataGrid3.condition = k3;
@@ -413,9 +372,9 @@ export default {
         var fileDate = new Date()
         let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
         let params = {
-          gridName:this.tables.main.gridViewName,
+          gridName:"IEDReportGrid",
           lang:"zh-cn",
-          condition: this.$refs.mainDataGrid.condition,
+          condition: this.$refs.mainDataGrid3.condition,
           filename:"IED_Report_"+fileDateStr+".xlsx",
           sheetname:"Result"
         }
