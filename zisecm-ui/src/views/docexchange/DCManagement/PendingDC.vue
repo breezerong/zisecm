@@ -133,8 +133,8 @@
                 ></DataGrid>
         </el-row>
          <el-row>
-      <el-tabs value="t01">
-        <el-tab-pane label="传递文件" name="t01">
+      <el-tabs v-model="selectedTabName">
+        <el-tab-pane label="传递文件" name="t01" v-if="isShowDesgin">
           
           <!--列表-->
           <DataGrid
@@ -150,7 +150,7 @@
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
-        <el-tab-pane label="相关文件" name="t02">
+        <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant">
           
           <!--列表-->
           <DataGrid
@@ -167,7 +167,7 @@
                 ></DataGrid>
           
         </el-tab-pane>
-        <el-tab-pane label="附件" name="t03">
+        <el-tab-pane label="附件" name="t03" v-if='isShowAttachmentDoc'>
           
           <!--列表-->
           <DataGrid
@@ -225,6 +225,10 @@ export default {
             batchDialogVisible:false,
             gridObj:[],
             rightTableHeight: (window.innerHeight - 150)/2,
+            isShowDesgin:true,
+            isShowRelevant:true,
+            isShowAttachmentDoc:true,
+            selectedTabName:'t01'
         }
     },
     created(){
@@ -356,6 +360,10 @@ export default {
             
             _self.$refs.attachmentDoc.parentId=row.ID;
             if(row.TYPE_NAME=='文件传递单'){
+                _self.isShowDesgin=true;
+                _self.isShowRelevant=false;
+               _self.isShowAttachmentDoc=false;
+               _self.selectedTabName='t01';
                 _self.$refs.transferDoc.loadGridData();
             }
             if("FU申请、FU通知单、作废通知单、CR澄清要求申请单"+
@@ -363,10 +371,20 @@ export default {
             "FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
             "DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、"+
             "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复".indexOf(row.TYPE_NAME)!=-1){
-                _self.$refs.relevantDoc.loadGridData();
+                _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
+                    _self.relation=val;
+                    _self.isShowDesgin=false;
+                    _self.isShowRelevant=true;
+                    _self.isShowAttachmentDoc=false;
+                    _self.selectedTabName='t02';
+                });
             }
             if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
-                 _self.$refs.attachmentDoc.loadGridData();
+                _self.isShowDesgin=false;
+                _self.isShowRelevant=false;
+                _self.isShowAttachmentDoc=true;
+                _self.selectedTabName='t03';
+                _self.$refs.attachmentDoc.loadGridData();
             }
             
             

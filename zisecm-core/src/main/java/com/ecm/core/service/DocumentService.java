@@ -202,7 +202,6 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(sql!=null&&sql.contains("@project")) {
 			List<String> projectList= userObj.getMyProjects();
 			
-			
 			if(projectList==null||projectList.size()==0) {
 				sql=sql.replaceAll("'@project'", "''");
 				sql=sql.replaceAll("@project", "''");

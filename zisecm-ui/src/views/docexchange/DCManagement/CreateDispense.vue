@@ -15,7 +15,8 @@
         </el-dialog>
         <!-- 批量导入 -->
         <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
-            <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
+            <BatchImport ref="BatchImport"  @onImported="onBatchImported"  
+            tmpPath='/系统配置/导入模板/文函' v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
             <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
             </div>
@@ -123,7 +124,7 @@
                     <el-button type="primary" @click="clickNewItem">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/文函')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                     <MountFile :selectedItem="selectedItems" @refresh='searchItem'>替换文件</MountFile>
@@ -157,8 +158,8 @@
                 ></DataGrid>
         </el-row>
          <el-row>
-      <el-tabs value="t01">
-        <el-tab-pane label="传递文件" name="t01">
+      <el-tabs value="t01" v-model="selectedTabName">
+        <el-tab-pane label="传递文件" name="t01" v-if="isShowDesgin">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -166,7 +167,7 @@
                   <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件')">导入</el-button>
+                  <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件','/系统配置/导入模板/设计文件')">导入</el-button>
                 </el-form-item>
                 <el-form-item>
                     <MountFile :selectedItem="selectedTransferDocItems" @refresh='refreshTransferDocData'>替换文件</MountFile>
@@ -190,16 +191,16 @@
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
-        <el-tab-pane label="相关文件" name="t02">
+        <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                   <el-button type="primary" @click="beforeCreateDocItem('相关文件','相关文件')">新建</el-button>
                 </el-form-item>
-                <el-form-item>
+                <!-- <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">导入</el-button>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                     <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>替换文件</MountFile>
                 </el-form-item>
@@ -223,16 +224,16 @@
                 ></DataGrid>
           
         </el-tab-pane>
-        <el-tab-pane label="附件" name="t03">
+        <el-tab-pane label="附件" name="t03" v-if='isShowAttachmentDoc'>
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                   <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
                 </el-form-item>
-                <el-form-item>
+                <!-- <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.attachmentDoc,true,'附件')">导入</el-button>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">删除</el-button>
                 </el-form-item>
@@ -296,7 +297,11 @@ export default {
             subContractor:[],
             checkList:[],
             contractorCheckVisible:false,
-            relation:{}
+            relation:{},
+            isShowDesgin:true,
+            isShowRelevant:true,
+            isShowAttachmentDoc:true,
+            selectedTabName:'t01'
         }
     },
     created(){
@@ -342,7 +347,7 @@ export default {
             }
             ExcelUtil.export(params)
         },
-        beforImport(obj,isSub,relationName){
+        beforImport(obj,isSub,relationName,path){
             this.gridObj=obj;
             this.batchDialogVisible=true;
             this.$nextTick(()=>{
@@ -353,7 +358,8 @@ export default {
                     this.$refs.BatchImport.deliveryId='';
                     this.$refs.BatchImport.relationName='';
                 }
-                
+                this.$refs.BatchImport.tmpPath=path;
+                this.$refs.BatchImport.loadTemplate();
             })
             
             
@@ -444,6 +450,10 @@ export default {
             
             _self.$refs.attachmentDoc.parentId=row.ID;
             if(row.TYPE_NAME=='文件传递单'){
+                _self.isShowDesgin=true;
+                _self.isShowRelevant=false;
+               _self.isShowAttachmentDoc=false;
+               _self.selectedTabName='t01';
                 _self.$refs.transferDoc.loadGridData();
             }
             
@@ -455,9 +465,17 @@ export default {
                 // _self.$refs.relevantDoc.loadGridData();
                 _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
-                });	
+                    _self.isShowDesgin=false;
+                    _self.isShowRelevant=true;
+                    _self.isShowAttachmentDoc=false;
+                    _self.selectedTabName='t02';
+                });
             }
             if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+                _self.isShowDesgin=false;
+                _self.isShowRelevant=false;
+               _self.isShowAttachmentDoc=true;
+               _self.selectedTabName='t03';
                  _self.$refs.attachmentDoc.loadGridData();
             }
             
