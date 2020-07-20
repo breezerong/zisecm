@@ -174,7 +174,9 @@ export default {
             let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='设计文件' and CODING = '"+row.CODING+"')"
             this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
             this.$refs.rfDg.condition=this.tables.rfDg.condition
-            this.$refs.rfDg.gridViewName=this.relation.gridName
+            this.tables.rfDg.gridViewName="IEDRelationGrid"
+            this.$refs.rfDg.gridViewName=this.tables.rfDg.gridViewName
+            this.$refs.rfDg.itemDataList=[]
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
             
@@ -205,6 +207,10 @@ export default {
             ExcelUtil.export(params)
         },
         search(condition){
+            this.$refs.rfDg.itemDataList=[]
+            this.$refs.dfDg.itemDataList=[]
+            this.$refs.tfDg.itemDataList=[]
+            
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
             let orS = ""
@@ -218,7 +224,6 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-
             console.log("Search()")
             console.log(_self.forms.headForm.project)
             if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
@@ -233,6 +238,9 @@ export default {
                 k1 += " and "+condition 
             }
             console.log(k1)
+            _self.$refs.mainDataGrid.condition=k1
+            _self.$refs.mainDataGrid.loadGridData();
+
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
         }
