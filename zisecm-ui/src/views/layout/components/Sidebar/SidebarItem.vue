@@ -143,6 +143,9 @@ export default {
     }
   },
   created() {
+    //this.loadMenu();
+  },
+  mounted(){
     this.loadMenu();
   }
 };

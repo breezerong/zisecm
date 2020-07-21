@@ -44,12 +44,10 @@ export default {
                 mainGrid:{
                     columns:[
 						{prop:"wbs",label:"WBS编码",width:"380"},
-                        {prop:"name",label:"名称"},
-                        {prop:"projectName",label:"项目名称"},
-						{prop:"startDate",label:"开始时间"},
-						{prop:"endDate",label:"结束时间"},
-						{prop:"resource",label:"资源"},
-						{prop:"description",label:"说明"}
+                        {prop:"name",label:"名称",width:"250"},
+                        {prop:"projectName",label:"项目名称",width:"200"},
+						{prop:"startDate",label:"开始时间",width:"200"},
+						{prop:"endDate",label:"结束时间",width:"200"}
                     ],
                     data:[]
                     
@@ -93,8 +91,7 @@ export default {
             console.log(row)
             this.tables.relationIEDGrid.condition = " C_WBS_CODING like '"+row.wbs +"%'"
             this.$refs.relationIEDGrid.condition=this.tables.relationIEDGrid.condition
-            this.$refs.relationIEDGrid.itemDataList=[]
-            //this.$refs.relationIEDGrid.loadGridInfo()
+            this.$refs.relationIEDGrid.itemDataList=[]            
             this.$refs.relationIEDGrid.loadGridData()
         },
         loadData(tree, treeNode, resolve){
