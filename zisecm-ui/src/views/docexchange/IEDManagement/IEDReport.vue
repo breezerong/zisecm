@@ -1,5 +1,4 @@
 <template>
-  <DataLayout @onLayoutResize="onLayoutResize">
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="已超期IED" name="first">
       <el-container>
@@ -216,7 +215,6 @@
       </el-container>
     </el-tab-pane>
   </el-tabs>
-  </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
