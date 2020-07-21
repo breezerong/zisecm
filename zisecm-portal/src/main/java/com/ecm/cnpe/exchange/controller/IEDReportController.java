@@ -57,17 +57,35 @@ public class IEDReportController  extends ControllerAbstract  {
 			
 			String startDate = args.get("startDate").toString();
 			String endDate = args.get("endDate").toString();
-			List<String> projList = documentService.getSession(getToken()).getCurrentUser().getMyProjects();
+			
+			List<String> projList = documentService.getSession(getToken()).getCurrentUser().getMyProjects();					
+			
 			for(String projName: projList) {
 				projMap = new HashMap<String, Object>();
 				projMap.put("projectName", projName);
 
-				String sql1 = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
+				String sqlplancount = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
 						projName +"'";
-				String sql2 = "select count(*) as completedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME='"+
+				String sqlplancompleted = "select count(*) as completedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME='"+
 						projName +"'";
-				List<Map<String, Object>>  listTotal = documentService.getMapList(getToken(), sql1);
-				List<Map<String, Object>>  listCompleted = documentService.getMapList(getToken(), sql2);
+				
+				if(startDate!= null && endDate!= null) {
+					sqlplancount += " and (C_ITEM_DATE BETWEEN '" + startDate + "' and '" + endDate + "')";
+					sqlplancompleted += " and (C_ITEM_DATE BETWEEN '" + startDate + "' and '" + endDate + "')";
+				}
+				
+				if(startDate == null && endDate!= null) {
+					sqlplancount += " and (C_ITEM_DATE < '" + endDate + "')";
+					sqlplancompleted += " and (C_ITEM_DATE < '" + endDate + "')";
+				}
+				
+				if(startDate!= null && endDate == null) {
+					sqlplancount += " and (C_ITEM_DATE > '" + startDate + "')";
+					sqlplancompleted += " and (C_ITEM_DATE > '" + startDate + "')";
+				}
+				
+				List<Map<String, Object>>  listTotal = documentService.getMapList(getToken(), sqlplancount);
+				List<Map<String, Object>>  listCompleted = documentService.getMapList(getToken(), sqlplancompleted);
 				
 				int total = (int)listTotal.get(0).get("iedCount");
 				projMap.put("iedCount", total);
