@@ -1,40 +1,134 @@
 <template>
-    <div>
-        甘特图
-    </div>
+    <DataLayout>
+        <template v-slot:header>
+            <el-form :inline="true" :model="forms.headForm">
+                <el-form-item>
+                    <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject"
+                     dataValueField="name" dataTextField="name" includeAll @onLoadnDataSuccess="onLoadnDataSuccess" @onSelectChange="onSelectChange"></DataSelect>
+                </el-form-item>
+            </el-form>
+        </template>
+        <template v-slot:main="{layout}">
+            <el-row>
+				<el-col :span="24">
+					<el-table 
+                    :data="tables.mainGrid.data" ref="mainGrid" row-key="id" border stripe lazy  highlight-current-row
+                    :load="loadData" :height="layout.height/2-115" 
+                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+                    @row-click="onRowClick">
+						<el-table-column v-for="item in tables.mainGrid.columns" v-bind="item" :key="item.prop" highlight-current-row></el-table-column>
+				  </el-table>			
+				</el-col>
+			</el-row>
+			 <el-row>
+				<el-col :span="24">
+					<el-tabs v-model="tabs.tabAcitve">
+						<el-tab-pane name="relationIED" label="相关IED">
+							<DataGrid ref="relationIEDGrid" v-bind="tables.relationIEDGrid" :tableHeight="layout.height/2-115"></DataGrid>
+						</el-tab-pane>
+					</el-tabs>
+				</el-col>
+			</el-row>
+        </template>
+    </DataLayout>
 </template>
 <script type="text/javascript">
-import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
+import DataLayout from '@/components/ecm-data-layout'
+import DataSelect from '@/components/ecm-data-select'
 export default {
     name: "Gantt",
     data(){
         return{
-
+            tables:{
+                mainGrid:{
+                    columns:[
+						{prop:"wbs",label:"WBS编码",width:"380"},
+                        {prop:"name",label:"名称"},
+                        {prop:"projectName",label:"项目名称"},
+						{prop:"startDate",label:"开始时间"},
+						{prop:"endDate",label:"结束时间"},
+						{prop:"resource",label:"资源"},
+						{prop:"description",label:"说明"}
+                    ],
+                    data:[]
+                    
+                },
+                relationIEDGrid:{
+                    gridViewName:"PlantRelationIED",
+                    dataUrl:"/dc/getDocuments",
+                    condition:"",                    
+                    isshowOption:true,
+                    isshowCustom:true,
+                    isshowicon:false,
+                    isInitData:false                
+                }
+            },
+            forms:{
+                headForm:{
+                    project:"",
+                }
+            },
+            tabs:{
+                tabAcitve:"relationIED"
+            }
         }
     },
     created(){
 
     },
     mounted(){
-        if(!this.validataPermission()){
-            //跳转至权限提醒页
-            let _self=this;
-            _self.$nextTick(()=>{
-                _self.$router.push({ path: '/NoPermission' })
-            })
-            
-        }
+       
     },
     methods: {
-
+        onLoadnDataSuccess(select,options){
+            this.search()
+        },
+        onSelectChange(val){
+            console.log(val);
+            this.forms.headForm.project = val
+            this.search()
+        },
+        onRowClick(row, column, event){
+            console.log(row)
+            this.tables.relationIEDGrid.condition = " C_WBS_CODING like '"+row.wbs +"%'"
+            this.$refs.relationIEDGrid.condition=this.tables.relationIEDGrid.condition
+            this.$refs.relationIEDGrid.itemDataList=[]
+            //this.$refs.relationIEDGrid.loadGridInfo()
+            this.$refs.relationIEDGrid.loadGridData()
+        },
+        loadData(tree, treeNode, resolve){
+            console.log(tree.id)
+            let url = "/exchange/plant/list"
+            let parentId = tree.id
+            let param = {
+                id:parentId,
+                condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") "
+            }
+            axios.post(url,param).then(function(result){
+                resolve(result.data.data)
+            })
+        },
+        search(){
+            this.$refs.relationIEDGrid.itemDataList=[]
+            let _self = this
+            let url = "/exchange/plant/list"
+            let param = {
+                condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") "
+            }
+            axios.post(url,param).then(function(result){
+                _self.tables.mainGrid.data = result.data.data
+                console.log(_self.tables.mainGrid.data)
+            }).catch(function(error){
+                console.log(error)
+            })
+        }
     },
     props: {
         
     },
     components: {
-        ShowProperty:ShowProperty,
-        DataGrid:DataGrid
+        DataLayout:DataLayout,DataGrid:DataGrid,DataSelect:DataSelect
     }
 }
 </script>
