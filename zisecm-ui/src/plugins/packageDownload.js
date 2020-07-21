@@ -95,6 +95,7 @@ Vue.prototype.packDownloadByMain = function(selectedItems){
           }
           gridObj.loadGridInfo();
           gridObj.loadGridData();
+          
       }).catch(function(error){
           console.log(error);
       })

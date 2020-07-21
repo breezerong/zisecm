@@ -205,4 +205,143 @@ public class DocController  extends ControllerAbstract  {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 导出，cnpe
+	 * @param request
+	 * @param response
+	 * @param params
+	 */
+	@PostMapping("export4Report")
+	@ResponseBody
+	public void getExport4Report(HttpServletRequest request, HttpServletResponse response, @RequestBody DocParam params) {
+		ExcelUtil excelUtil = new ExcelUtil();
+		List<Object[]> datalist = new ArrayList<Object[]>();
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(params.getGridName());
+		gv.getGridViewItems();
+		StringBuffer columnsStr = new StringBuffer(" ID,");
+		
+		List<EcmGridViewItem> list = gv.getGridViewItems(params.getLang());
+		String[] titleName = new String[list.size() + 1];
+		String[] titleCNName = new String[list.size() + 1];
+		StringBuffer queryAttr = new StringBuffer();
+		titleName[0]="ID";
+		titleCNName[0]="ID";
+		for (int i = 1; i < list.size() + 1; i++) {
+			titleName[i] = list.get(i - 1).getAttrName();
+			titleCNName[i] = list.get(i - 1).getLabel();
+			queryAttr.append(list.get(i - 1).getAttrName());
+			queryAttr.append(",");
+		}
+		datalist.add(titleCNName);
+		
+		columnsStr.append(queryAttr.deleteCharAt(queryAttr.length() - 1).toString());
+		
+		
+		String sql="select "+ columnsStr.toString() +" from (" + 
+				"select a.*,b.id as rid from ecm_document a " + 
+				"left join ecm_document b on a.CODING=b.C_OTHER_CODING " + 
+				"where a.TYPE_NAME='图文传真' and a.C_ITEM_STATUS1='是' and a.C_ITEM1_DATE<=dateadd(day, -1, getdate()) " + 
+				") t where rid is null ";
+		
+		
+		
+		if (!StringUtils.isEmpty(params.getFolderId())) {
+			sql += " and folder_id='" + params.getFolderId() + "'";
+		}
+		if (!EcmStringUtils.isEmpty(params.getCondition())) {
+			sql += " and (" + params.getCondition() + ")";
+		}
+		if (!EcmStringUtils.isEmpty(params.getOrderBy())) {
+			sql += " order by " + params.getOrderBy();
+		} else {
+			sql += " " + gv.getOrderBy();
+		}
+		
+		String currentUser="";
+		LoginUser userObj=null;
+		try {
+			userObj=this.getSession().getCurrentUser();
+			currentUser = userObj.getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(sql!=null&&sql.contains("@currentuser")) {
+			sql=sql.replaceAll("@currentuser", currentUser);
+    	}
+		if(sql!=null&&sql.contains("@company")) {
+			sql=sql.replaceAll("@company", userObj.getCompany());
+	    }
+		if(sql!=null&&sql.contains("@project")) {
+			List<String> projectList= userObj.getMyProjects();
+			
+			if(projectList==null||projectList.size()==0) {
+				sql=sql.replaceAll("'@project'", "''");
+				sql=sql.replaceAll("@project", "''");
+			}else {
+				String whereProject=" (";
+				for(int i=0;i<projectList.size();i++) {
+					String project=projectList.get(i);
+					if(i==0) {
+						whereProject+="C_PROJECT_NAME ='"+project+"'";
+					}else {
+						whereProject+=" or C_PROJECT_NAME ='"+project+"'";
+					}
+					
+				}
+				whereProject+=")";
+				if(sql.contains("C_PROJECT_NAME in(@project)")) {
+					sql=sql.replaceAll("C_PROJECT_NAME in(@project)", whereProject);
+				} 
+				if(sql.contains("C_PROJECT_NAME in (@project)")) {
+					sql=sql.replaceAll("C_PROJECT_NAME in (@project)", whereProject);
+				} 
+				if(sql.contains("C_PROJECT_NAME in (@project) ")) {
+					sql=sql.replaceAll("C_PROJECT_NAME in (@project) ", whereProject);
+				} 
+				if(sql.contains("C_PROJECT_NAME='@project'")) {
+					sql=sql.replaceAll("C_PROJECT_NAME='@project'", whereProject);
+				}
+				if(sql.contains("C_PROJECT_NAME ='@project'")) {
+					sql=sql.replaceAll("C_PROJECT_NAME ='@project'", whereProject);
+				}
+				if(sql.contains("C_PROJECT_NAME = '@project'")) {
+					sql=sql.replaceAll("C_PROJECT_NAME = '@project'", whereProject);
+				}
+				if(sql.contains("C_PROJECT_NAME = '@project' ")) {
+					sql=sql.replaceAll("C_PROJECT_NAME = '@project' ", whereProject);
+				}
+			}
+			
+		}
+		
+		try {
+			List<Map<String,Object>> queryList =documentService.getMapList(getToken(), sql);
+			for (Map<String, Object> map : queryList) {
+				Object[] values = new Object[titleName.length];
+				for (int i = 0; i < titleName.length; i++) {
+					if (map.get(titleName[i]) != null) {
+						if (titleName[i].equals("C_DOC_DATE")) {
+							values[i] = DateUtils.DateToFolderPath((Date) map.get(titleName[i]), "-");
+						} else {
+							values[i] = map.get(titleName[i]);
+						}
+					} else {
+						values[i] = "";
+					}
+				}
+				datalist.add(values);
+			}
+		} catch (EcmException | AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			excelUtil.makeStreamExcel(params.getFilename(), params.getSheetname(),titleName, datalist, response, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
