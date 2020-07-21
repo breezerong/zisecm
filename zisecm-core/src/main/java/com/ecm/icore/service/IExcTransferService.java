@@ -1,7 +1,12 @@
 package com.ecm.icore.service;
 
 import com.ecm.core.entity.ExcTransfer;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -25,4 +30,10 @@ public interface IExcTransferService {
 	public boolean deleteObject(ExcTransfer obj);
 	
 	public List<ExcTransfer> selectAll();
+
+	List<Map<String, Object>> getObjectMap(String token, String condition);
+
+
+	String newObject(Map<String, Object> args) throws EcmException, AccessDeniedException, NoPermissionException;
+
 }
