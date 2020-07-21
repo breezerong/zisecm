@@ -80,16 +80,15 @@ export default {
             }
             _self.allvalue+="'"+item[_self.dataValueField]+"'"
           })
-          _self.options.push({label:_salf.allDataOptionText,value:_self.allvalue})
+          _self.options.push({label:_self.allDataOptionText,value:_self.allvalue})
         }
         getOptions.forEach(function(item){
            _self.options.push({label:item[_self.dataTextField],value:"'"+item[_self.dataValueField]+"'"})
         })
-        if(_self.includeAll && defaultIsNull==false){
+        if(_self.includeAll && _self.defaultIsNull==false){
           _self.svalue = _self.options[0].value
           _self.$emit("input", _self.svalue);
-        }
-        if(defaultIsNull){
+        }else if(_self.defaultIsNull){
           _self.svalue = ""
           _self.$emit("input", _self.svalue);
         }
