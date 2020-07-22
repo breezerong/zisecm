@@ -2482,6 +2482,9 @@ public class EcmDcController extends ControllerAbstract {
 				if(currentStatus==null||"".equals(currentStatus)) {
 					currentStatus="新建";
 				}
+				if("新建".equals(currentStatus)) {
+					doc.addAttribute("c_item_date", new Date());
+				}
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(nextStatus);
 				

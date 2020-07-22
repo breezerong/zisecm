@@ -85,7 +85,7 @@
                     </el-option>
                     
                     </el-select> -->
-                    <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    <DataSelect v-model="filters.projectCode" defaultIsNull :includeAll="true" dataUrl="/exchange/project/myproject" 
                     dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
@@ -182,7 +182,7 @@
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
-        <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant">
+        <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant" ref="relevantTab">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -423,36 +423,45 @@ export default {
                 console.log(error);
                 });
             },
+            changePage(key){
+                let _self=this;
+                _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
+                    _self.relation=val;
+                    // _self.$refs.relevantDoc.loadGridInfo();
+                    // _self.$refs.relevantDoc.loadGridData();
+                });
+            },
         rowClick(row){
-            
-            
             this.selectRow=row;
             this.parentId=row.ID;
             let _self=this;
-            _self.$refs.transferDoc.parentId=row.ID;
-            _self.$refs.relevantDoc.parentId=row.ID;
-            
-            _self.$refs.attachmentDoc.parentId=row.ID;
             if(row.TYPE_NAME=='文件传递单'){
                 _self.isShowDesgin=true;
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=false;
                _self.selectedTabName='t01';
-                _self.$refs.transferDoc.loadGridData();
+               _self.$nextTick(()=>{
+                   _self.$refs.transferDoc.parentId=row.ID;
+                    _self.$refs.transferDoc.loadGridData();
+               });
+               
             }
-            if("FU申请、FU通知单、作废通知单、CR澄清要求申请单"+
-            "CR澄清要求答复单、CR澄清要求关闭单、FCR现场变更申请单、FCR现场变更答复单、"+
-            "FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
+            if(("FU申请、FU通知单、作废通知单、CR澄清要求申请单、CR澄清要求答复单、CR澄清要求关闭单、FCR现场变更申请单、FCR现场变更答复单、FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
             "DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、"+
-            "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复".indexOf(row.TYPE_NAME)!=-1){
+            "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复").indexOf(row.TYPE_NAME)!=-1){
+                _self.selectedTabName='t02';
+                _self.isShowDesgin=false;
+                _self.isShowRelevant=true;
+                _self.isShowAttachmentDoc=false;
                 
-                _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
+                _self.$nextTick(()=>{
+                    _self.$refs.relevantDoc.parentId=row.ID;
+                    _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
-                    _self.isShowDesgin=false;
-                    _self.isShowRelevant=true;
-                    _self.isShowAttachmentDoc=false;
-                    _self.selectedTabName='t02';
-                });
+                    // _self.$refs.relevantDoc.loadGridInfo();
+                    // _self.$refs.relevantDoc.loadGridData();
+                    });
+                })
                 
             }
             if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
@@ -460,10 +469,11 @@ export default {
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;
                _self.selectedTabName='t03';
+               _self.$nextTick(()=>{
+               _self.$refs.attachmentDoc.parentId=row.ID;
                  _self.$refs.attachmentDoc.loadGridData();
+               });
             }
-           
-            
             
         },
         relevantDocSelect(val){
@@ -621,8 +631,14 @@ export default {
 
                 // _self.loadTransferGridData();
                 _self.$refs.mainDataGrid.loadGridData();
-                _self.$refs.transferDoc.loadGridData();
-                _self.$refs.relevantDoc.loadGridData();
+
+                if(_self.$refs.transferDoc!=undefined){
+                     _self.$refs.transferDoc.loadGridData();
+                }
+                if(_self.$refs.relevantDoc!=undefined){
+                    _self.$refs.relevantDoc.loadGridData();
+                }
+                
                 
                 } 
             else{

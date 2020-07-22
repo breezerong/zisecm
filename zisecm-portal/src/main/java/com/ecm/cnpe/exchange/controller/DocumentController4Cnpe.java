@@ -88,6 +88,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
 				excTransfer.setStauts(nextStatus);
 				excTransferService.newObject(excTransfer);
+				if("新建".equals(currentStatus)) {
+					doc.addAttribute("c_item_date", new Date());
+				}
 				doc.setStatus(nextStatus);
 				documentService.updateObject(getToken(), doc, null);
 			}
