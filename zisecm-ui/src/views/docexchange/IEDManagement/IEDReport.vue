@@ -173,7 +173,7 @@
           <el-row>
             <el-form :inline="true" :model="filters">
               <el-form-item>
-                 <DataSelect v-model="value4" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+                 <DataSelect v-model="iedPlanStatistic" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
               <el-form-item>
                 <el-date-picker
@@ -242,6 +242,7 @@ export default {
       uncompletedIED: "",
       completedIED: "",
       overdueIED: "",
+      iedPlanStatistic: "",
       ct_month: null,
       reportData: [],
       Subcontractors:'',
@@ -415,6 +416,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
+      m.set("iedPlanStatistic", _self.iedPlanStatistic);
       m.set("startDate", _self.startDate);
       m.set("endDate", _self.endDate);
       axios
