@@ -1,4 +1,5 @@
 <template>
+  <DataLayout @onLayoutResize="onLayoutResize">
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="已超期IED" name="first">
       <el-container>
@@ -172,14 +173,14 @@
           <el-row>
             <el-form :inline="true" :model="filters">
               <el-form-item>
-                 <DataSelect v-model="value4" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+                 <DataSelect v-model="iedPlanStatistic" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
               <el-form-item>
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期"
-                value-format="yyyy-MM-dd">
+                  placeholder="开始日期"
+                  value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -187,8 +188,8 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期"
-                value-format="yyyy-MM-dd">
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -215,12 +216,13 @@
       </el-container>
     </el-tab-pane>
   </el-tabs>
+  </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from "@/components/ecm-data-select";
-import DataLayout from '@/components/ecm-data-layout'
+import DataLayout from '@/components/ecm-data-layout';
 import ExcelUtil from '@/utils/excel.js'
 export default {
   name: "IEDReport",
@@ -240,9 +242,8 @@ export default {
       uncompletedIED: "",
       completedIED: "",
       overdueIED: "",
+      iedPlanStatistic: "",
       ct_month: null,
-      startDate: "",
-      endDate: "",
       reportData: [],
       Subcontractors:'',
       selectedItems: [],
@@ -415,6 +416,7 @@ export default {
       let _self = this;
       _self.loading = true;
       var m = new Map();
+      m.set("iedPlanStatistic", _self.iedPlanStatistic);
       m.set("startDate", _self.startDate);
       m.set("endDate", _self.endDate);
       axios
