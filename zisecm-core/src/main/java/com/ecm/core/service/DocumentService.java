@@ -247,8 +247,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(sql!=null&&sql.contains("'@data'")) {
 			sql=sql.replaceAll("'@data'", "GETDATE()");
 		}
+		System.out.println("[DocumentService.getObjects=>SQL]");
+		System.out.println(sql);
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
-		// TODO Auto-generated method stub
 		return list;
 	}
 	
