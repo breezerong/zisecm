@@ -55,8 +55,30 @@ public class IEDReportController  extends ControllerAbstract  {
 			
 			Map<String, Object> projMap = new HashMap<String, Object>();
 			
-			String startDate = args.get("startDate").toString();
-			String endDate = args.get("endDate").toString();
+			String startDate = this.getStrValue(args, "startDate");
+			String endDate = this.getStrValue(args, "endDate");
+			
+			String sqlplancountdate = new String();
+			String sqlplancompleteddate = new String();
+			
+			if(!StringUtils.isEmpty(startDate) && !StringUtils.isEmpty(endDate)) {
+				sqlplancountdate = " and (C_ITEM_DATE BETWEEN '" + startDate + "' and '" + endDate + "')";
+				sqlplancompleteddate = " and (C_ITEM_DATE BETWEEN '" + startDate + "' and '" + endDate + "')";
+			}
+			
+			if(StringUtils.isEmpty(startDate) && !StringUtils.isEmpty(endDate)) {
+				sqlplancountdate = " and (C_ITEM_DATE < '" + endDate + "')";
+				sqlplancompleteddate+= " and (C_ITEM_DATE < '" + endDate + "')";
+			}
+			
+			if(!StringUtils.isEmpty(startDate) && StringUtils.isEmpty(endDate)) {
+				sqlplancountdate = " and (C_ITEM_DATE > '" + startDate + "')";
+				sqlplancompleteddate = " and (C_ITEM_DATE > '" + startDate + "')";
+			}
+			if(StringUtils.isEmpty(startDate) && StringUtils.isEmpty(endDate)) {
+				sqlplancountdate = "";
+				sqlplancompleteddate = "";
+			}
 			
 			List<String> projList = documentService.getSession(getToken()).getCurrentUser().getMyProjects();					
 			
@@ -65,25 +87,10 @@ public class IEDReportController  extends ControllerAbstract  {
 				projMap.put("projectName", projName);
 
 				String sqlplancount = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
-						projName +"'";
+						projName +"'" + sqlplancountdate;
 				String sqlplancompleted = "select count(*) as completedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME='"+
-						projName +"'";
-				
-				if(startDate!= null && endDate!= null) {
-					sqlplancount += " and (C_ITEM_DATE BETWEEN '" + startDate + "' and '" + endDate + "')";
-					sqlplancompleted += " and (C_ITEM_DATE BETWEEN '" + startDate + "' and '" + endDate + "')";
-				}
-				
-				if(startDate == null && endDate!= null) {
-					sqlplancount += " and (C_ITEM_DATE < '" + endDate + "')";
-					sqlplancompleted += " and (C_ITEM_DATE < '" + endDate + "')";
-				}
-				
-				if(startDate!= null && endDate == null) {
-					sqlplancount += " and (C_ITEM_DATE > '" + startDate + "')";
-					sqlplancompleted += " and (C_ITEM_DATE > '" + startDate + "')";
-				}
-				
+						projName +"'" + sqlplancompleteddate;
+
 				List<Map<String, Object>>  listTotal = documentService.getMapList(getToken(), sqlplancount);
 				List<Map<String, Object>>  listCompleted = documentService.getMapList(getToken(), sqlplancompleted);
 				
@@ -107,5 +114,9 @@ public class IEDReportController  extends ControllerAbstract  {
 		}
 
 		return mp;
+	}
+	
+	private String getStrValue(Map<String, Object> args, String key) {
+		return (args.containsKey(key) && args.get(key)!=null)?args.get(key).toString():"";
 	}
 }
