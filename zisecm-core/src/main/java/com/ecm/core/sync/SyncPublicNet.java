@@ -90,7 +90,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * @throws Exception
 	 */
 
-	public List<ExcSynDetail> readExcSynDetail() throws Exception {
+	private List<ExcSynDetail> readExcSynDetail() throws Exception {
 		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService
 				.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('提交')  and status='新建' ");
 		TODOApplication.getNeedTOChange("同步数据清理，将 同一天多次修改，值只保留最后一次，将重复记录进行更新  ");
@@ -105,6 +105,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 
 	 * @throws Exception
 	 */
+	@Override
 	public boolean exportData(String type) throws IOException {
 //		List<ExcSynDetail> excSynDetailObjList = readExcSynDetail();
 		List<ExcSynDetail> excSynDetailObjList = new ArrayList<ExcSynDetail>();
@@ -313,7 +314,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 1.2.3
 	 * 
 	 */
-	public boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, Date updateDate) {
+	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, Date updateDate) {
 		ExcSynDetail en = new ExcSynDetail();
 		en.setId("excsyncdetailtest01");
 		en.setStauts(status);
@@ -325,7 +326,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 1.3.取内网返回结果
 	 */
-	public SyncBean readJsonResult(String fileName) {
+	private SyncBean readJsonResult(String fileName) {
 		List<SyncBean> objList = JSON.parseArray(readJsonFile(fileName), SyncBean.class);
 		SyncBean en = objList.get(0);
 		return en;
@@ -334,7 +335,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 1.4.将结果更新到外网系统
 	 */
-	public boolean updateExcSynDetail() {
+	private boolean updateExcSynDetail() {
 		//
 		updateExcSynDetailStatus(null, "已同步", new Date());
 		return false;
@@ -423,7 +424,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 2.2从指定目录导入数据到当前系统后，将结果信息文件到指定目录 完成DONE_ 错误ERR_
 	 */
-	public boolean writeJsonResult(File file, String result) {
+	private boolean writeJsonResult(File file, String result) {
 		file.renameTo(new File(getSyncPathPrivate() + "/" + result + file.getName()));
 		file.renameTo(new File(getSyncPathPrivate() + "/" + result + file.getName() + ".MD5.txt"));
 		return false;
@@ -468,7 +469,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		Files.write(ConfPath, jsonString.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
 	}
 
-	public InputStream getContentStream(EcmContent en) throws Exception {
+	private InputStream getContentStream(EcmContent en) throws Exception {
 		// TODO Auto-generated method stub
 		InputStream fis = null;
 		String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
@@ -478,7 +479,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		return fis;
 	}
 
-	public String getPrimaryFilePath(String objId) {
+	private String getPrimaryFilePath(String objId) {
 		// TODO Auto-generated method stub
 		List<EcmContent> list = ecmContentMapper.getContents(objId, 1);
 		if (list.size() > 0) {
@@ -489,7 +490,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		return null;
 	}
 
-	public String getFolderName() {
+	private String getFolderName() {
 		Date dt = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
 		return sdf.format(dt);
@@ -504,11 +505,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 	}
 
-	@Override
-	public boolean exportData() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	private String readFirstLine(String path) {// 路径
 		File file = new File(path);
