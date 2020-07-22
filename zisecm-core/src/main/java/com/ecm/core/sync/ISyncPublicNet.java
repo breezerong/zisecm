@@ -1,7 +1,10 @@
 package com.ecm.core.sync;
 
+import java.io.IOException;
+
 public interface ISyncPublicNet {
-	public boolean exportData() throws Exception;
 
 	boolean importData();
+
+	boolean exportData(String type) throws IOException;
 }
