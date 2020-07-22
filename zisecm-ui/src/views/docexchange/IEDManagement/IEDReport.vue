@@ -179,8 +179,8 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期"
-                value-format="yyyy-MM-dd">
+                  placeholder="开始日期"
+                  value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -188,8 +188,8 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期"
-                value-format="yyyy-MM-dd">
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
@@ -222,7 +222,7 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from "@/components/ecm-data-select";
-import DataLayout from '@/components/ecm-data-layout'
+import DataLayout from '@/components/ecm-data-layout';
 import ExcelUtil from '@/utils/excel.js'
 export default {
   name: "IEDReport",
@@ -243,8 +243,6 @@ export default {
       completedIED: "",
       overdueIED: "",
       ct_month: null,
-      startDate: "",
-      endDate: "",
       reportData: [],
       Subcontractors:'',
       selectedItems: [],

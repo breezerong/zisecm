@@ -51,7 +51,7 @@ export default {
                 main:{
                     gridViewName:"PlanTaskGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='计划任务'",
+                    condition:"TYPE_NAME='计划任务' AND C_PROJECT_NAME = '@project'",
                     isshowOption:true,
                     isshowCustom:true,
                 },
@@ -94,7 +94,7 @@ export default {
     },
     methods: {
        onDataGridRowClick:function(row){
-            this.$refs.rfDg.condition="C_WBS_CODING='"+row.C_WBS_CODING+"'"
+            this.$refs.rfDg.condition="C_WBS_CODING='"+row.C_WBS_CODING+"' AND C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
             //this.$alert(row);
@@ -116,9 +116,10 @@ export default {
         //编码和标题模糊查询
         search(){
             let _self = this
+            _self.$refs.rfDg.itemDataList=[]
             let wheres = ["C_WBS_CODING","NAME"]
             let orS = ""
-            var k1=" TYPE_NAME='计划任务'"
+            var k1=" TYPE_NAME='计划任务' AND C_PROJECT_NAME = '@project'"
             if(_self.inputValueNum.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){
@@ -134,7 +135,7 @@ export default {
 
             _self.$refs.mainDataGrid.condition=k1
             // _self.$alert(_self.$refs.mainDataGrid.condition)
-            _self.$refs.rfDg.itemDataList=[]
+           
             _self.$refs.mainDataGrid.loadGridData();
         },
         //高级搜索
@@ -142,7 +143,7 @@ export default {
             let _self = this
             let key="";
             key = _self.advCondition;
-            _self.$refs.mainDataGrid.condition=key;
+            _self.$refs.mainDataGrid.condition=key+" AND C_PROJECT_NAME='@project'";
             // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
@@ -151,13 +152,9 @@ export default {
         //下拉菜单
         onSelectChange(val){
             let _self = this
-            //  _self.$alert(val)
-            if(val==""){
-                _self.$refs.mainDataGrid.condition="";
-                _self.$alert(_self.$refs.mainDataGrid.condition)
-            }else{
-                _self.$refs.mainDataGrid.condition="TYPE_NAME='计划任务' and C_PROJECT_NAME="+val+"";
-            }
+            // _self.$alert(val)
+            _self.$refs.mainDataGrid.condition="TYPE_NAME='计划任务' and C_PROJECT_NAME in ("+val+")";
+            // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridData();
             _self.$refs.rfDg.itemDataList=[]
         }
