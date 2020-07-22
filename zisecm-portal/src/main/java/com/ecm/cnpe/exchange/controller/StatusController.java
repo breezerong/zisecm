@@ -1,0 +1,180 @@
+package com.ecm.cnpe.exchange.controller;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ecm.cnpe.exchange.entity.StatusEntity;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeInterface;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeRelevantDoc;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeTransfer;
+import com.ecm.common.util.JSONUtils;
+import com.ecm.core.ActionContext;
+import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.service.DocumentService;
+import com.ecm.portal.controller.ControllerAbstract;
+@Controller
+public class StatusController extends ControllerAbstract{
+	@Autowired
+	private DocumentService documentService;
+	@Autowired
+	private LogicOption4CnpeInterface logicOptionInterfaceService;
+	@Autowired
+	private LogicOption4CnpeRelevantDoc logicOptionRelevantService;
+	@Autowired
+	private LogicOption4CnpeTransfer logicOptionTransferService;
+	
+	/**
+	 * 下一状态
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/nextStatus", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> nextStatus(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			String strIsCnpeSend=args.get("isCnpeSend")!=null?args.get("isCnpeSend").toString():"";
+			
+			boolean isCnpeSend=false;
+			if("true".equals(strIsCnpeSend.toLowerCase())) {
+				isCnpeSend=true;
+			}
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			//
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)) {
+					currentStatus="新建";
+				}
+				if("新建".equals(currentStatus)) {
+					doc.addAttribute("c_item_date", new Date());
+				}
+				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
+				doc.setStatus(nextStatus);
+				if("IED".equals(doc.getTypeName())||"图文传真,会议纪要".contains(doc.getTypeName())) {
+					documentService.updateObject(getToken(), doc, null);
+				}else {
+					if("已确认".equals(nextStatus)) {
+						if("文件传递单".equals(doc.getTypeName())) {
+							logicOptionTransferService.transferOption(getToken(), doc);
+						}else if("接口传递单".equals(doc.getTypeName())||"接口意见单".equals(doc.getTypeName())) {
+							logicOptionInterfaceService.interfaceOption(getToken(), doc);
+						}else {
+							logicOptionRelevantService.relevantOption(getToken(),doc);
+						}
+					}
+					documentService.updateObject(getToken(), doc, null);
+					
+				}
+				
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+		}
+		
+		return mp;
+	}
+	
+	
+	
+	/**
+	 * 上一状态
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/previousStatus", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> previousStatus(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			String strIsCnpeSend=args.get("isCnpeSend")!=null?args.get("isCnpeSend").toString():"";
+			boolean isCnpeSend=false;
+			if("true".equals(strIsCnpeSend.toLowerCase())) {
+				isCnpeSend=true;
+			}
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			String rejectCommon=args.get("rejectCommon")!=null?args.get("rejectCommon").toString():"";
+			//
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
+					continue;
+				}
+				
+				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
+				doc.setStatus(previousStatus);
+				doc.addAttribute("C_REJECT_COMMENT", rejectCommon);
+				doc.addAttribute("C_REJECTOR", this.getSession().getCurrentUser().getUserName());
+				doc.addAttribute("C_REJECT_DATE", new Date());
+				documentService.updateObject(getToken(), doc, null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "操作失败请联系管理员！");
+		}
+		
+		return mp;
+	}
+	
+	
+	/**
+	 * 撤回
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/withdraw", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> withdraw(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			
+			//
+			for(String childId : list) {
+				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
+					continue;
+				}
+				
+				doc.setStatus("新建");
+				documentService.updateObject(getToken(), doc, null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "操作失败请联系管理员！");
+		}
+		
+		return mp;
+	}
+}
