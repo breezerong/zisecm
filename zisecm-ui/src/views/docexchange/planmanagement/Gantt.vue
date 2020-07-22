@@ -11,13 +11,21 @@
         <template v-slot:main="{layout}">
             <el-row>
 				<el-col :span="24">
-					<el-table 
+                    <wl-gantt ref="mainGrid" :data="tables.mainGrid.data" :edit="false" 
+                    border stripe lazy  highlight-current-row 
+                    start-date="2020-06-27 00:00:00" endDate="2024-08-01 00:00:00"
+                    :load="loadData" :height="layout.height/2-115" 
+                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+                     @row-click="onRowClick">
+                        <el-table-column prop="wbs" label="WBS" fixed prv="name"></el-table-column>
+                    </wl-gantt>
+					<!-- <el-table 
                     :data="tables.mainGrid.data" ref="mainGrid" row-key="id" border stripe lazy  highlight-current-row
                     :load="loadData" :height="layout.height/2-115" 
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                     @row-click="onRowClick">
 						<el-table-column v-for="item in tables.mainGrid.columns" v-bind="item" :key="item.prop" highlight-current-row></el-table-column>
-				  </el-table>			
+				  </el-table> -->		
 				</el-col>
 			</el-row>
 			 <el-row>
@@ -50,7 +58,6 @@ export default {
 						{prop:"endDate",label:"结束时间",width:"200"}
                     ],
                     data:[]
-                    
                 },
                 relationIEDGrid:{
                     gridViewName:"PlantRelationIED",
@@ -80,6 +87,7 @@ export default {
     },
     methods: {
         onLoadnDataSuccess(select,options){
+            console.log("DataSelect.onLoadnDataSuccess")
             this.search()
         },
         onSelectChange(val){
@@ -107,12 +115,14 @@ export default {
             })
         },
         search(){
-            this.$refs.relationIEDGrid.itemDataList=[]
+            console.log("[METHOD]search")
+            //this.$refs.relationIEDGrid.itemDataList=[]
             let _self = this
             let url = "/exchange/plant/list"
             let param = {
                 condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") "
             }
+            //console.log(condition)
             axios.post(url,param).then(function(result){
                 _self.tables.mainGrid.data = result.data.data
                 console.log(_self.tables.mainGrid.data)

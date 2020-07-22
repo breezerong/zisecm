@@ -1,10 +1,13 @@
 package com.ecm.cnpe.exchange.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,9 +28,9 @@ public class PlantMnanager extends ControllerAbstract {
 
 	private final String columns = "C_PROJECT_CODE projectCode,C_PROJECT_NAME projectName,C_DESIGN_UNIT designUnit,CODING coding,TITLE title," 
 			+ "C_WBS_CODING wbs,NAME name,C_ITEM1_DATE startDate,C_ITEM2_DATE endDate," 
-			+ "C_IN_CODING parentTask,C_OTHER_CODING predecessorTask,C_REF_CODING nextTask,"
-			+ "C_TYPE1 designType,MODIFIED_DATE dataTime,C_ITEM3_DATE actualStartDate," 
-			+ "C_ITEM4_DATE actualEndDate,C_DOUBLE1 finishPercentage,C_COUNT1 needDay,C_TYPE1 plantLevel,SYN_ID id";
+			+ "C_IN_CODING pid,C_OTHER_CODING pre,C_REF_CODING nextTask,"
+			+ "C_TYPE1 designType,MODIFIED_DATE dataTime,C_ITEM3_DATE realStartDate," 
+			+ "C_ITEM4_DATE realEndDate,C_DOUBLE1 finishPercentage,C_COUNT1 needDay,C_TYPE1 plantLevel,SYN_ID id";
 
 	@PostMapping("/exchange/plant/list")
 	@ResponseBody
@@ -41,9 +44,17 @@ public class PlantMnanager extends ControllerAbstract {
 			sql.append(" and (C_IN_CODING is null or C_IN_CODING='')");
 		}
 		
+		String startDate = "";
+		String endDate = "";
 		if(params.containsKey("condition")) {
 			sql.append(" and "+params.get("condition").toString());
+			startDate= getStartDate(params.get("condition").toString());
+			endDate = getEndDate(params.get("condition").toString());
+		}else {
+			startDate= getStartDate("");
+			endDate = getEndDate("");
 		}
+		
 		List<Map<String, Object>> list = null;
 		List<Map<String, Object>> resultList = new ArrayList<>();
 		try {
@@ -60,8 +71,56 @@ public class PlantMnanager extends ControllerAbstract {
 			e.printStackTrace();
 		}
 		result.put("data", resultList);
+		result.put("startDate", startDate);
+		result.put("endDate", endDate);
 		result.put("code", ActionContext.SUCESS);
 		return result;
+	}
+	
+	private String getStartDate(String condition) {
+		StringBuffer sql = new StringBuffer("select top 1 C_ITEM1_DATE startDate from ecm_document where TYPE_NAME='计划任务'");
+		if(!StringUtils.isEmpty(condition)) {
+			sql.append(" and ");
+			sql.append(condition);
+		}
+		sql.append(" order by  startDate");
+		List<Map<String, Object>> list = null;
+		try {
+			list = documentService.getMapList(getToken(), sql.toString());
+		} catch (EcmException | AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		
+		if(list!=null && list.size()>0) {
+			return list.get(0).get("startDate").toString();
+		}
+		Calendar calender = Calendar.getInstance();
+		calender.add(Calendar.DAY_OF_MONTH,-5);
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return fmt.format(calender.getTime());
+	}
+	
+	private String getEndDate(String condition) {
+		StringBuffer sql = new StringBuffer("select top 1 C_ITEM2_DATE endDate from ecm_document where TYPE_NAME='计划任务'");
+		if(!StringUtils.isEmpty(condition)) {
+			sql.append(" and ");
+			sql.append(condition);
+		}
+		sql.append(" order by  endDate desc");
+		List<Map<String, Object>> list = null;
+		try {
+			list = documentService.getMapList(getToken(), sql.toString());
+		} catch (EcmException | AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		
+		if(list!=null && list.size()>0) {
+			return list.get(0).get("endDate").toString();
+		}
+		Calendar calender = Calendar.getInstance();
+		calender.add(Calendar.DAY_OF_MONTH,-5);
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return fmt.format(calender.getTime());
 	}
 
 }
