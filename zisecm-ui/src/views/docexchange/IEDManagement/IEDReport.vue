@@ -197,6 +197,9 @@
               <el-form-item>
                   <el-button type="primary" @click="handleReport()">查询</el-button>
               </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click.native="exportDataStatistic">Excel下载</el-button>
+              </el-form-item>
             </el-form>
           </el-row>
         </el-header>
@@ -479,6 +482,10 @@ export default {
           sheetname:"Result"
         }
         ExcelUtil.export(params)
+    },
+
+    exportDataStatistic(){
+      
     },
 
     cellMouseEnter(row, column, cell, event) {
