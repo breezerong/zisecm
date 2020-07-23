@@ -60,14 +60,26 @@ public class ExcSynDetail extends EcmObject {
      * 导入时间
      */
     private Date importDate;
-
+    /**
+     * 目标公司
+     */
+    private String toCompany;
+    
     /**
      * 错误信息
      */
     private String errorMessage;
 
    
-    public String getAppName() {
+    public String getToCompany() {
+		return toCompany;
+	}
+
+	public void setToCompany(String toCompany) {
+		this.toCompany = toCompany;
+	}
+
+	public String getAppName() {
         return appName;
     }
 
