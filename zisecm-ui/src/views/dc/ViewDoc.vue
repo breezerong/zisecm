@@ -21,7 +21,7 @@
       </el-col>
       <el-col :span="4" style="float:right; text-align:right;">
         <template v-if="docObj!=null">
-          <el-button size="mini" icon="el-icon-shopping-cart-2" @click="borrowItem(docObj)">借阅</el-button>
+          <!-- <el-button size="mini" icon="el-icon-shopping-cart-2" @click="borrowItem(docObj)">借阅</el-button> -->
           <el-button v-if="doc.permit>=4" size="mini" icon="el-icon-download" @click="download()">下载</el-button>
         </template>
       </el-col>
@@ -67,7 +67,15 @@
               <el-button type="primary" plain @click="menuClick('关联文档')">关联文档</el-button><br/>
               <el-button type="primary" plain @click="menuClick('文档版本')">文档版本</el-button><br/>
               <el-button type="primary" plain @click="menuClick('格式副本')">格式副本</el-button><br/>
-              <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button><br/>
+              <!-- <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button><br/> -->
+              <template v-if="doc.typeName=='文件传递单'" >
+                <el-button type="primary" plain @click="menuClick('传递文件')">传递文件</el-button><br/>
+              </template>
+              <el-button type="primary" plain @click="menuClick('相关文件')">相关文件</el-button><br/>
+              <template v-if="revertType.indexOf(doc.typeName)!=-1">
+                <el-button type="primary" plain @click="menuClick('回复文件')">回复文件</el-button><br/>
+              </template>
+              <el-button type="primary" plain @click="menuClick('附件')">附  件</el-button><br/>
               <el-button v-if="doc.typeName=='图纸文件'" type="primary" plain @click="menuClick('变更信息')">变更( {{doc.changeCount}} )</el-button>
               </template>
             </div>
@@ -87,6 +95,19 @@
       </template>
        <template v-if="dialog.title=='格式副本'">
         <ViewRedition :docId="docId" :downloadEnable="doc.permit>=4"></ViewRedition>
+      </template>
+      <template v-if="dialog.title=='传递文件'">
+        <InTransferDoc :docId="docId"></InTransferDoc>
+      </template>
+      <template v-if="dialog.title=='相关文件'">
+        <RelevantDoc :docId="docId"></RelevantDoc>
+      </template>
+      <template v-if="dialog.title=='附件'">
+        <AttachmentFile :docId="docId"></AttachmentFile>
+      </template>
+      <template v-if="dialog.title=='回复文件'">
+        <!-- <AttachmentFile :docId="docId"></AttachmentFile> -->
+        <RevertFile :docId="docId"></RevertFile>
       </template>
       <template v-if="dialog.title=='利用信息'">
         <UseInfo :docId="docId"></UseInfo>
@@ -124,6 +145,10 @@ import CADViewerHtml5 from "./CADViewerHtml5.vue"
 import JTViewer from "./JTViewer2.vue"
 import ThreeDsViewer from "./ThreeDsViewer.vue"
 import Borrow from "@/components/form/Borrow.vue"
+import InTransferDoc from "@/views/dc/InTransferDoc.vue"
+import RelevantDoc from "@/views/dc/RelevantDoc.vue"
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
+import RevertFile from "@/views/dc/RevertFile.vue"
 import { timeout } from 'q'
 
 export default {
@@ -145,7 +170,11 @@ export default {
     CADViewerHtml5:CADViewerHtml5,
     JTViewer:JTViewer,
     Borrow:Borrow,
-    ThreeDsViewer: ThreeDsViewer
+    ThreeDsViewer: ThreeDsViewer,
+    InTransferDoc:InTransferDoc,
+    RelevantDoc:RelevantDoc,
+    AttachmentFile:AttachmentFile,
+    RevertFile:RevertFile
   },
   data(){
     return {
@@ -178,6 +207,7 @@ export default {
         visible:false
       },
       borrowDialogVisible:false,
+      revertType:""
     }
   },
   created(){
@@ -265,6 +295,16 @@ export default {
         }
       }
       //console.log(_self.viewerType);
+    },
+    getTypeNames(keyName) {
+        let _self = this;
+        axios
+            .post("/dc/getParameters", keyName)
+            .then(function(response) {
+              _self.revertType = response.data.data.RevertType;
+            }).catch(function(error) {
+              console.log(error);
+            });
     },
     download(){
       let url = this.axios.defaults.baseURL+"/dc/getContent?id="+this.doc.id+"&token="+sessionStorage.getItem('access-token')+"&action=download";
