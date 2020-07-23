@@ -241,9 +241,6 @@ export default {
         let _self = this
         var m = new Map();
         var temp = this.P6form.C_value
-       
-        temp.replace(/\'/g,"")
-        console.log(temp.replace(/\'/g,""))
         var c;
         m.set("C_TO",this.P6form.C_TO)
         m.set("CODING",this.P6form.CODING)
@@ -267,8 +264,10 @@ export default {
                     message: "创建成功!",
                     duration: 2000,
                     type: "success"
-                });}})
-            _self.$refs.mainDataGrid.loadGridData()
+                });
+                _self.$refs.mainDataGrid.loadGridData()
+                }})
+            
             },
       selectP6(row){
         console.log(row.C_PROJECT_NAME)
