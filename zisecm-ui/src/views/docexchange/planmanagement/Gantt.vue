@@ -13,7 +13,7 @@
 				<el-col :span="24">
                     <wl-gantt ref="mainGrid" :data="tables.mainGrid.data" :edit="false" 
                     border stripe lazy  highlight-current-row 
-                    start-date="2020-06-27 00:00:00" endDate="2024-08-01 00:00:00"
+                    :start-date="tables.mainGrid.startDate" :end-date="tables.mainGrid.endDate"
                     :load="loadData" :height="layout.height/2-115" 
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                      @row-click="onRowClick">
@@ -50,7 +50,9 @@ export default {
 						{prop:"startDate",label:"开始时间",width:"200"},
 						{prop:"endDate",label:"结束时间",width:"200"}
                     ],
-                    data:[]
+                    data:[],
+                    startDate:"",
+                    endDate:""
                 },
                 relationIEDGrid:{
                     gridViewName:"PlantRelationIED",
@@ -80,11 +82,9 @@ export default {
     },
     methods: {
         onLoadnDataSuccess(select,options){
-            console.log("DataSelect.onLoadnDataSuccess")
             this.search()
         },
         onSelectChange(val){
-            console.log(val);
             this.forms.headForm.project = val
             this.search()
         },
@@ -96,7 +96,6 @@ export default {
             this.$refs.relationIEDGrid.loadGridData()
         },
         loadData(tree, treeNode, resolve){
-            console.log(tree.id)
             let url = "/exchange/plant/list"
             let parentId = tree.id
             let param = {
@@ -108,17 +107,18 @@ export default {
             })
         },
         search(){
-            console.log("[METHOD]search")
-            //this.$refs.relationIEDGrid.itemDataList=[]
             let _self = this
             let url = "/exchange/plant/list"
             let param = {
                 condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") "
             }
-            //console.log(condition)
             axios.post(url,param).then(function(result){
                 _self.tables.mainGrid.data = result.data.data
-                console.log(_self.tables.mainGrid.data)
+                console.log("[Gantt.search]")
+                _self.tables.mainGrid.startDate = result.data.startDate
+                _self.tables.mainGrid.endDate = result.data.endDate
+                console.log(result.data.startDate)
+                console.log(result.data.endDate)
             }).catch(function(error){
                 console.log(error)
             })
@@ -128,7 +128,9 @@ export default {
         
     },
     components: {
-        DataLayout:DataLayout,DataGrid:DataGrid,DataSelect:DataSelect
+        DataLayout:DataLayout,
+        DataGrid:DataGrid,
+        DataSelect:DataSelect
     }
 }
 </script>

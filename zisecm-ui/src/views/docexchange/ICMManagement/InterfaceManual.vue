@@ -75,13 +75,13 @@
             <el-row>
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
-                        <el-tab-pane label="接口传递" name="passICM">
+                        <el-tab-pane label="接口传递" name="ICMPass">
                             <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">Excel下载</el-button>
-                            <DataGrid ref="PassICM" v-bind="tables.PassICM" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="ICMPass" v-bind="tables.ICMPass" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
-                        <el-tab-pane label="接口意见" name="SICM">
+                        <el-tab-pane label="接口意见" name="ICMComments">
                             <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">Excel下载</el-button>
-                            <DataGrid ref="SICM" v-bind="tables.SICM" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="ICMComments" v-bind="tables.ICMComments" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -110,29 +110,29 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                 },
-                PassICM:{
+                ICMPass:{
                     gridViewName:"ICMPassGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,
                     isshowCustom:true,
-                    // isInitData:false,
-                    // isshowicon:false,
+                    isInitData:false,
+                    isshowicon:false,
                     tableHeight:"350"
                 },
-                SICM:{
+                ICMComments:{
                     gridViewName:"ICMCommentsGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,
                     isshowCustom:true,
-                    // isInitData:false,
-                    // isshowicon:false,
+                    isInitData:false,
+                    isshowicon:false,
                     tableHeight:"350"
                 }
             },
             tabs:{
-                active:"passICM"
+                active:"ICMPass"
             },
             forms:{
                 headForm:{
@@ -152,6 +152,7 @@ export default {
             gridObj:[],
             importdialogVisible:false,
             uploading:false,
+            condition1:""
         }
     },
     mounted(){
@@ -167,33 +168,47 @@ export default {
     methods: {
         //单击行
         onDataGridRowClick:function(row){
-            this.$alert(row)
-            this.$refs.PassICM.condition="CODING='"+row.CODING+"'"
-            this.$alert(this.$refs.PassICM.condition)
-            this.$refs.PassICM.loadGridInfo()
-            this.$refs.PassICM.loadGridData()
+            var condition1 = "SELECT CHILD_ID from ecm_relation where PARENT_ID ='"+row.ID+"'"
+            var key="ID IN ("+condition1+")"
+            this.$refs.ICMPass.condition = key
+            this.$refs.ICMPass.gridViewName="ICMPassGrid"
+            this.$refs.ICMPass.itemDataList=[]
+            this.$refs.ICMPass.loadGridInfo()
+            this.$refs.ICMPass.loadGridData()
+
         },
         //下拉菜单
         onSelectChange(val){
             let _self = this
             //  _self.$alert(val)
             _self.$refs.mainDataGrid.condition="TYPE_NAME='ICM' and C_PROJECT_NAME in ("+val+")";
-            // _self.$alert(_self.$refs.mainDataGrid.condition)
+            _self.tables.main.condition="TYPE_NAME='ICM' and C_PROJECT_NAME in ("+val+")"
             _self.$refs.mainDataGrid.loadGridData();
-            _self.$refs.passICM.itemDataList=[]
-            _self.$refs.SICM.itemDataList=[]
+            _self.$refs.ICMPass.itemDataList=[]
+            _self.$refs.ICMComments.itemDataList=[]
         },
         //Excel下载
         exportData(typeName,gridViewName){
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+            var condition1
+            if(typeName =="ICM"){
+                condition1 = this.$refs.mainDataGrid.condition
+            }
+            if(typeName =="ICMPass"){
+                condition1 = this.$refs.ICMPass.condition
+            }
+            if(typeName =="ICMComments"){
+                condition1 = this.$refs.ICMComments.condition
+            }
+            this.$alert(condition1)
             let params = {
                 gridName:gridViewName,
                 lang:"zh-cn",
-                // condition: this.$refs.mainDataGrid.condition,
+                condition:condition1,
                 // condition:this.tables.main.condition,
-                filename:typeName+fileDateStr+".xlsx",
+                filename:typeName+"_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -216,11 +231,13 @@ export default {
             let _self = this
             let key="";
             key = _self.advCondition;
-            _self.$refs.mainDataGrid.condition=key;
+            // _self.$alert(_self.$refs.mainDataGrid.condition)
+            _self.$refs.mainDataGrid.condition+="and "+key
             // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
-            _self.$refs.rfDg.itemDataList=[]
+            _self.$refs.ICMPass.itemDataList=[]
+            _self.$refs.ICMComments.itemDataList=[]
         },
         //新建按钮
         newArchiveItem(typeName, selectedRow) {
