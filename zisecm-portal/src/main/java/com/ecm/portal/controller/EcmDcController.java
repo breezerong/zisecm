@@ -2453,10 +2453,6 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
-	
-	
-	
-	
 	private boolean needNewAcl(String docId) {
 		try {
 			EcmDocument doc = documentService.getObjectById(getToken(), docId);

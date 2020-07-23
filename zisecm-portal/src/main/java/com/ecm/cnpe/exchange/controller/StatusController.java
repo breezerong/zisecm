@@ -13,13 +13,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.cnpe.exchange.entity.StatusEntity;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeIED;
 import com.ecm.cnpe.exchange.service.LogicOption4CnpeInterface;
 import com.ecm.cnpe.exchange.service.LogicOption4CnpeRelevantDoc;
 import com.ecm.cnpe.exchange.service.LogicOption4CnpeTransfer;
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.ExcSynDetail;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.portal.controller.ControllerAbstract;
 @Controller
 public class StatusController extends ControllerAbstract{
@@ -31,6 +35,10 @@ public class StatusController extends ControllerAbstract{
 	private LogicOption4CnpeRelevantDoc logicOptionRelevantService;
 	@Autowired
 	private LogicOption4CnpeTransfer logicOptionTransferService;
+	@Autowired
+	private LogicOption4CnpeIED logicOptionCnpeIEDService;
+	@Autowired
+	private ExcSynDetailService detailService;
 	
 	/**
 	 * 下一状态
@@ -64,7 +72,15 @@ public class StatusController extends ControllerAbstract{
 				}
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(nextStatus);
-				if("IED".equals(doc.getTypeName())||"图文传真,会议纪要".contains(doc.getTypeName())) {
+				if("IED".equals(doc.getTypeName())) {
+					if("已生效".equals(nextStatus)) {
+						logicOptionCnpeIEDService.IEDOption(getToken(), doc);
+						OptionLogger.logger(detailService, doc, "接收", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+						
+					}
+					documentService.updateObject(getToken(), doc, null);
+					
+				}else if("图文传真,会议纪要".contains(doc.getTypeName())){
 					documentService.updateObject(getToken(), doc, null);
 				}else {
 					if("已确认".equals(nextStatus)) {
@@ -75,6 +91,10 @@ public class StatusController extends ControllerAbstract{
 						}else {
 							logicOptionRelevantService.relevantOption(getToken(),doc);
 						}
+						OptionLogger.logger(detailService, doc, "CNPE接收", 
+								doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+						
+						
 					}
 					documentService.updateObject(getToken(), doc, null);
 					
