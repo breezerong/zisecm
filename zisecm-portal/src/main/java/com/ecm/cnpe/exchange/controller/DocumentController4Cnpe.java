@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.cnpe.exchange.entity.StatusEntity;
 import com.ecm.cnpe.exchange.service.impl.DocumentService4Cnpe;
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.portal.controller.ControllerAbstract;
 
@@ -29,6 +31,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 	private DocumentService4Cnpe documentService;
 	@Autowired
 	private ExcTransferServiceImpl excTransferService;
+	
+	@Autowired
+	private ExcSynDetailService detailService;
 	
 	@RequestMapping(value = "/dc/getDocuments4Cnpe", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
@@ -136,6 +141,8 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, null, true);
 				doc.setStauts(nextStatus);
 				excTransferService.updateObject(doc);
+				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
+								
 			}
 			mp.put("code", ActionContext.SUCESS);
 			
@@ -222,6 +229,8 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				doc.setRejecter(this.getSession().getCurrentUser().getUserName());
 				doc.setRejectDate(new Date());
 				excTransferService.updateObject(doc);
+				OptionLogger.logger(detailService, doc, "分包商驳回", "CNPE");
+				
 			}
 			mp.put("code", ActionContext.SUCESS);
 			

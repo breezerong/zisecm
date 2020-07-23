@@ -85,18 +85,18 @@ public class LogicOption4CnpeInterface extends DocumentService{
 			throw new Exception("接口信息传递单或接口信息意见单为NULL");
 		}
 		
-		sql+=" and C_CODE1='"+interfaceDoc.getAttributeValue("C_CODE1")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE1").toString()+"'";
-		sql+=" and C_CODE2='"+interfaceDoc.getAttributeValue("C_CODE2")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE2").toString()+"'";
-		sql+=" and C_CODE3='"+interfaceDoc.getAttributeValue("C_CODE3")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE3").toString()+"'";
-		sql+=" and C_CODE4='"+interfaceDoc.getAttributeValue("C_CODE4")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE4").toString()+"'";
-		sql+=" and C_CODE5='"+interfaceDoc.getAttributeValue("C_CODE5")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE5").toString()+"'";
-		sql+=" and C_CODE6='"+interfaceDoc.getAttributeValue("C_CODE6")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE6").toString()+"'";
+		sql+=" and C_CODE1='"+(interfaceDoc.getAttributeValue("C_CODE1")==null?""
+				:interfaceDoc.getAttributeValue("C_CODE1").toString()+"'");
+		sql+=" and C_CODE2='"+(interfaceDoc.getAttributeValue("C_CODE2")==null?""
+				:interfaceDoc.getAttributeValue("C_CODE2").toString()+"'");
+		sql+=" and C_CODE3='"+(interfaceDoc.getAttributeValue("C_CODE3")==null?""
+				:interfaceDoc.getAttributeValue("C_CODE3").toString()+"'");
+		sql+=" and C_CODE4='"+(interfaceDoc.getAttributeValue("C_CODE4")==null?""
+				:interfaceDoc.getAttributeValue("C_CODE4").toString()+"'");
+		sql+=" and C_CODE5='"+(interfaceDoc.getAttributeValue("C_CODE5")==null?""
+				:interfaceDoc.getAttributeValue("C_CODE5").toString()+"'");
+		sql+=" and C_CODE6='"+(interfaceDoc.getAttributeValue("C_CODE6")==null?""
+				:interfaceDoc.getAttributeValue("C_CODE6").toString()+"'");
 		
 
 		
