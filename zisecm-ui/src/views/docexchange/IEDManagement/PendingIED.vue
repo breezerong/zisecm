@@ -22,21 +22,23 @@
             <el-row>
              <el-form :inline="true" :model="filters">
                  <el-form-item>
-                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
+                 <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
+                 @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                  </el-form-item>
                 <el-form-item>  
-          <el-select v-model="Subcontractors" placeholder="请选择">
-              <el-option
-                v-for="item in options1"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+        <el-select
+                    name="selectSubContractor"
+                    v-model="Subcontractor"
+                    placeholder="'分包商'"
+                    style="display:block;"
                 >
-                </el-option>
-                </el-select>
+                 <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
+                <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+                </div>
+        </el-select>
                 </el-form-item>
           <el-form-item>  
-          <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
+          <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
           </el-form-item>
             <el-form-item>  
                 <el-button type="primary" @click="search()">查询</el-button>
@@ -64,7 +66,7 @@
             isshowOption
             isshowCustom
             gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED'  " :v-bind="tables.main":tableHeight="layout.height-180"
+            condition="TYPE_NAME='IED' AND STATUS='审核中' " :v-bind="tables.main":tableHeight="layout.height-180"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
@@ -100,28 +102,26 @@ export default {
                 main:{
                     gridName:"IEDGrid",
                     dataList:[],
-                    height:""
+                    height:"",
+                    isInitData:false
+
                 },
-               itemDataList: [],
                loading: false,
                status : '已完成',
                selectedItems: [],
                selectedItemId: "",
             },
-            options1:[{ 
-                value:'动力院',
-                label:'动力院'},
-                {
-                value:'国核院',
-                label:'国核院'
+             Subcontractors:[{ 
+                 name:'',
                 }],
 
             value:'所有项目',
-            Subcontractors:'',
+            Subcontractor:'',
             input:'',
             batchDialogVisible:false,
             rejectComment:"",
             showDialog:false,
+            contractors:[],
         }
     },
     created(){
@@ -135,18 +135,54 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }   
-            this.fresh()
+        this.getSubContractors()
     },
     methods: {    
         fresh(){
           let _self = this
-        window.addEventListener("resize",this.getHeight);
         _self.$refs.mainDataGrid.loadGridData();
        },
+        getSubContractors(){
+        let _self = this   
+        let pm = new Map();
+        pm.set('configName', 'GetSubContractor');
+        // pm.set('parentId',"'"+p+"'");
+         _self
+            .axios({
+              headers: {
+                "Content-Type": "application/json;charset=UTF-8"
+              },
+              method: "post",
+              data: JSON.stringify(pm),
+              url: "/dc/getObjectsByConfigClauseNoPage"
+            })
+            .then(function(response) {
+                var i 
+                console.log(response.data.data)
+              _self.Subcontractors= response.data.data;
+              for(i=0;i<_self.Subcontractors.length;i++){
+                  _self.contractors[i]=_self.Subcontractors[i].NAME
+              }
+              console.log(_self.contractors)
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+
+        },
+
+
+
         cellMouseEnter(row, column, cell, event){
         this.selectRow=row;
  
         },
+        onLoadnDataSuccess(select,options){
+            console.log(select)
+            this.search()
+            this.getSubContractors()
+        },
+        
      rowClick(row){
       this.selectRow=row;
       console.log(row)
@@ -166,7 +202,8 @@ export default {
         let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
            if(_self.input.trim().length>0){
-                wheres.forEach(function(item){
+                wheres.forEach(function(item){ 
+
                     if(orS.length>0){
                         orS+=" OR "
                     }
@@ -177,14 +214,15 @@ export default {
             if(_self.value != undefined &&_self.value!='所有项目'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
-            if(_self.Subcontractors !='' ){
-                k1+=" AND C_COMPANY = '"+_self.Subcontractors+"'"
+            if(_self.Subcontractor !='' ){
+                k1+=" AND C_COMPANY = '"+_self.Subcontractor+"'"
             }
-      
+             let user = this.currentUser();
 
         console.log(k1)
         _self.$refs.mainDataGrid.condition=k1
         _self.fresh()
+        _self.getSubContractors()
     },
       exportData(){
             let _self = this

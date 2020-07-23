@@ -18,14 +18,7 @@
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                      @row-click="onRowClick">
                         <el-table-column prop="wbs" label="WBS" fixed prv="name"></el-table-column>
-                    </wl-gantt>
-					<!-- <el-table 
-                    :data="tables.mainGrid.data" ref="mainGrid" row-key="id" border stripe lazy  highlight-current-row
-                    :load="loadData" :height="layout.height/2-115" 
-                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-                    @row-click="onRowClick">
-						<el-table-column v-for="item in tables.mainGrid.columns" v-bind="item" :key="item.prop" highlight-current-row></el-table-column>
-				  </el-table> -->		
+                    </wl-gantt>	
 				</el-col>
 			</el-row>
 			 <el-row>

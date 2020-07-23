@@ -53,8 +53,9 @@
 
 
             <el-row>
-            <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
-            <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
+            <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
+             @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
+            <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
             <el-button type="primary" @click="search()" >查询</el-button>
             <el-button type="success" @click="submit()">提交</el-button>
             <el-button type="primary" @click="newArchiveItem('IED',selectedOneTransfer)" >新建</el-button>
@@ -67,8 +68,9 @@
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">                   
-                    <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" isshowOption v-bind="tables.main":tableHeight="layout.height-180"
-                    isshowCustom gridViewName="IEDGrid" condition="TYPE_NAME='IED'  "
+                    <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" 
+                    isshowOption v-bind="tables.main":tableHeight="layout.height-180"
+                    isshowCustom gridViewName="IEDGrid" 
                     @cellMouseEnter="cellMouseEnter"
                     @cellMouseleave="cellMouseleave"
                     @rowclick="rowClick" 
@@ -94,7 +96,8 @@ export default {
                 main:{
                     gridName:"IEDGrid",
                     dataList:[],
-                    height:""
+                    height:"",
+                    isInitData:false
                 },
               status:'',
             },
@@ -117,8 +120,7 @@ export default {
             uploadUrl:'',
             batchDialogVisible:false,
             gridObj:[],
-            propertyVisible:false
-
+            propertyVisible:false,
         }
     },
     created(){     
@@ -132,7 +134,6 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }
-        this.fresh()
     },
     methods: {
         fresh(){
@@ -140,6 +141,11 @@ export default {
           console.log("123123")
         _self.$refs.mainDataGrid.loadGridData();
        },
+       onLoadnDataSuccess(select,options){
+            console.log(select)
+            this.search()
+        },
+        
 
         onBatchImported(){
             this.gridObj.loadGridData();
@@ -211,6 +217,12 @@ export default {
                 console.log(error);
                 });
             },
+ onLoadDataSuccess(select,options){
+            console.log(select)
+            this.search()
+            },
+
+
  newArchiveItem(typeName, selectedRow) {
       let _self = this;
       _self.selectedItemId = "";
@@ -303,6 +315,7 @@ export default {
                 _self.propertyVisible = false;
 
                 // _self.loadTransferGridData();
+                _self.$refs.mainDataGrid.conditon=_self.k2
                 _self.$refs.mainDataGrid.loadGridData();
                 
                 } 
@@ -348,12 +361,13 @@ export default {
      selectChange(val) {
       // console.log(JSON.stringify(val));
       this.selectedItems = val;
+      console.log(this.selectedItems)
     },
-    search(){
+    search(condition){
          let _self = this
         let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
-        var k1="TYPE_NAME='IED' AND STATUS='新建'"
+        var k1="TYPE_NAME='IED' AND STATUS='新建' AND C_COMPANY='@company' "
           if(_self.input.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){
@@ -371,7 +385,7 @@ export default {
                 k1+=" AND C_COMPANY='"+user.company +"'"
             }
             console.log(k1)
-
+        _self.k2=k1
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
     },
