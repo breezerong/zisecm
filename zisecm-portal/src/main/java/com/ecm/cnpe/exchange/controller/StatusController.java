@@ -146,6 +146,15 @@ public class StatusController extends ControllerAbstract{
 				doc.addAttribute("C_REJECTOR", this.getSession().getCurrentUser().getUserName());
 				doc.addAttribute("C_REJECT_DATE", new Date());
 				documentService.updateObject(getToken(), doc, null);
+				if("IED".equals(doc.getTypeName())) {
+					OptionLogger.logger(detailService, doc, "驳回", 
+							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				}else {
+					OptionLogger.logger(detailService, doc, "CNPE驳回", 
+							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				}
+				
+				
 			}
 			mp.put("code", ActionContext.SUCESS);
 			
