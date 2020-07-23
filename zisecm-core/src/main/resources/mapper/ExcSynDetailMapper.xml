@@ -12,13 +12,14 @@
         <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
         <result column="EXPORT_DATE" property="exportDate" jdbcType="TIMESTAMP" />
         <result column="STAUTS" property="stauts" jdbcType="NVARCHAR" />
+        <result column="C_COMPANY" property="toCompany" jdbcType="NVARCHAR" />
         <result column="IMPORT_DATE" property="importDate" jdbcType="TIMESTAMP" />
         <result column="ERROR_MESSAGE" property="errorMessage" jdbcType="NVARCHAR" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, APP_NAME, ACTION_NAME, BATCH_NUM, FROM_ID, TO_ID, CREATION_DATE, EXPORT_DATE, STAUTS, IMPORT_DATE, ERROR_MESSAGE
+        ID, APP_NAME, ACTION_NAME, BATCH_NUM, FROM_ID, TO_ID, CREATION_DATE, EXPORT_DATE, STAUTS, IMPORT_DATE,C_COMPANY, ERROR_MESSAGE
     </sql>
 
 
@@ -56,6 +57,7 @@
 		    EXPORT_DATE,
 		    STAUTS,
 		    IMPORT_DATE,
+		    C_COMPANY,
 		    ERROR_MESSAGE
       )
     values (
@@ -69,6 +71,7 @@
     		 #{exportDate},
     		 #{stauts},
     		 #{importDate},
+    		 #{toCompany},
     		 #{errorMessage}
     	)
   </insert>
@@ -107,6 +110,9 @@
     	<if test="importDate != null">
     		 IMPORT_DATE,
     	</if>
+    	<if test="toCompany != null">
+    		C_COMPANY
+    	</if>
     	<if test="errorMessage != null">
     		 ERROR_MESSAGE,
     	</if>
@@ -141,6 +147,9 @@
     	</if>
     	<if test="importDate != null">
     		#{importDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="toCompany != null">
+    		#{toCompany,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="errorMessage != null">
     		#{errorMessage,jdbcType=NVARCHAR}, 		 
@@ -182,6 +191,9 @@
     	<if test="importDate != null">
     		IMPORT_DATE=#{importDate,jdbcType=TIMESTAMP}, 		 
     	</if>
+    	<if test="toCompany != null">
+    		C_COMPANY=#{toCompany,jdbcType=NVARCHAR}, 		 
+    	</if>
     	<if test="errorMessage != null">
     		ERROR_MESSAGE=#{errorMessage,jdbcType=NVARCHAR}, 		 
     	</if>
@@ -201,6 +213,7 @@
     	EXPORT_DATE=#{exportDate,jdbcType=TIMESTAMP}, 		 
    		STAUTS=#{stauts},
    		IMPORT_DATE=#{importDate,jdbcType=TIMESTAMP},
+    	C_COMPANY=#{toCompany,jdbcType=NVARCHAR}, 		 
    		ERROR_MESSAGE=#{errorMessage}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
