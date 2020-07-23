@@ -1,5 +1,8 @@
 <template>
-  <DataLayout @onLayoutResize="onLayoutResize">
+  <DataLayout>
+    <template v-slot:header style="height: auto;">
+    </template>
+    <template v-slot:main="{layout}">
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="已超期IED" name="first">
       <el-container>
@@ -44,8 +47,8 @@
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED'"
-                :tableHeight="tables.main.height"
+                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
+                :tableHeight="layout.height-180"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -62,8 +65,7 @@
           <el-row>
             <el-form :inline="true" :model="filters">
               <el-form-item>
-                 <DataSelect v-model="uncompletedIED" dataUrl="/exchange/project/myproject" 
-                 dataValueField="name" dataTextField="name" includeAll @onLoadnDataSuccess="onLoadnDataSuccess2"></DataSelect>
+                 <DataSelect v-model="uncompletedIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
               <el-form-item>
                 <el-date-picker
@@ -100,8 +102,8 @@
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED'"
-                :tableHeight="tables.main.height"
+                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
+                :tableHeight="layout.height-180"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -155,8 +157,8 @@
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED'" 
-                :tableHeight="tables.main.height"
+                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'" 
+                :tableHeight="layout.height - 180"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -216,6 +218,7 @@
       </el-container>
     </el-tab-pane>
   </el-tabs>
+    </template>
   </DataLayout>
 </template>
 <script type="text/javascript">
@@ -237,7 +240,6 @@ export default {
       },
 
       activeName: "first",
-      input: "",
       value: "",
       uncompletedIED: "",
       completedIED: "",
@@ -254,19 +256,15 @@ export default {
     };
   },
   created() {
-    window.addEventListener("resize",this.getHeight);
+    //window.addEventListener("resize",this.getHeight);
   },
   mounted() {
-    if(!this.validataPermission()){
-      //跳转至权限提醒页
-      let _self=this;
-      _self.$nextTick(()=>{
-        _self.$router.push({ path: '/NoPermission' })
-      })
-      console.log(sessionStorage.data.data.groupname)
-    }   
-    this.getHeight();
-    this.fresh()
+    this.init()  
+
+    if(this.checkData(startDate).length > 0 && this.checkData(endDate).length >0){
+
+    }
+
   },
   methods: {
     onLayoutResize(size){
@@ -274,31 +272,24 @@ export default {
       this.tables.main.height = size - 180    
     },
     
-    getHeight() {
-      this.tables.main.tableHeight = window.innerHeight - 180+"px"  
-    },
-    
-    fresh(){
-      let _self = this
-      window.addEventListener("resize",this.getHeight);
-      _self.$refs.mainDataGrid.loadGridData();
-    },
-
     handleClick(tab, event) {
       console.log(tab, event);
     },
 
     percentFormatter (row, column) {
       let p = row.completedPercent;
-      if(p){
+      if(p > 0.00){
         return Math.round(p*10000)/100+'%';
+      }
+      if(p == 0.00){
+        return p+"%";
       }
       return ''
     },
 
-    onLoadnDataSuccess2(select, option){
+/*     onLoadnDataSuccess2(select, option){
       this.search2();
-    },
+    }, */
 
     search1() {
       let _self = this;
@@ -322,13 +313,19 @@ export default {
 
       clock += day + " ";
 
-      var k1 = "TYPE_NAME='IED' AND C_ITEM4_DATE < '" + clock + "'" + " AND C_ITEM_STATUS2 IS NULL"
+      var k1 = "TYPE_NAME='IED' AND C_ITEM4_DATE < '" + clock + "'" + " AND C_ITEM_STATUS2 IS NULL AND C_ITEM_DATE IS NOT NULL"
 
       if(_self.overdueIED != undefined && _self.overdueIED!='所有项目'){
         k1+=" AND C_PROJECT_NAME in (" + _self.overdueIED + ")";
       }
 
-      if(_self.startDate!= undefined && _self.endDate!= undefined){
+      if(_self.startDate!= "" && _self.endDate!= ""){
+        k1+=""
+      }
+
+      if((_self.startDate!= undefined && _self.endDate!= undefined)
+      && (_self.startDate!= null && _self.endDate!= null) 
+      && (_self.startDate.length>0 && _self.endDate.length>0)){
         k1+= " AND (C_ITEM_DATE BETWEEN '" + _self.startDate + "'" + " AND '" + _self.endDate + "'" + ")"
       }
 
@@ -353,13 +350,19 @@ export default {
     search2() {
       let _self = this;
 
-      var k2 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 IS NULL"
+      var k2 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 IS NULL AND C_ITEM_DATE IS NOT NULL"
       
       if(this.uncompletedIED != undefined && this.uncompletedIED.length>0){
         k2+=" AND C_PROJECT_NAME in ("+_self.uncompletedIED +")"
       }
 
-      if(_self.startDate!= undefined && _self.endDate!= undefined){
+      if(_self.startDate!= "" && _self.endDate!= ""){
+        k2+=""
+      }
+
+      if((_self.startDate!= undefined && _self.endDate!= undefined)
+      && (_self.startDate!= null && _self.endDate!= null) 
+      && (_self.startDate.length>0 && _self.endDate.length>0)){
         k2+= " AND (C_ITEM_DATE BETWEEN '" + _self.startDate + "'" + " AND '" + _self.endDate + "'" + ")"
       }
 
@@ -373,7 +376,7 @@ export default {
 
       let user = this.currentUser();
         if(user.userType==2 && user.company!=null){
-          k1+=" AND C_COMPANY='"+user.company +"'"
+          k2+=" AND C_COMPANY='"+user.company +"'"
       }
 
       console.log(k2);
@@ -384,9 +387,15 @@ export default {
     search3() {
       let _self = this;
       
-      var k3 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 = 'Y'"
+      var k3 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 = 'Y' AND C_ITEM_DATE IS NOT NULL"
 
-      if(_self.startDate!= undefined && _self.endDate!= undefined){
+      if(_self.startDate!= "" && _self.endDate!= ""){
+        k3+=""
+      }
+
+      if((_self.startDate!= undefined && _self.endDate!= undefined)
+      && (_self.startDate!= null && _self.endDate!= null) 
+      && (_self.startDate.length>0 && _self.endDate.length>0)){
         k3+= " AND (C_ITEM_DATE BETWEEN '" + _self.startDate + "'" + " AND '" + _self.endDate + "'" + ")"
       }
 
@@ -496,4 +505,7 @@ export default {
 };
 </script>
 <style scoped>
+.el-header{
+    height: auto;
+}
 </style>

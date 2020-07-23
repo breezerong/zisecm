@@ -117,7 +117,13 @@ public class IEDReportController  extends ControllerAbstract  {
 				int FinishedCount = (int)listStatistic.get(0).get("FinishedCount");
 				projMap.put("completedCount", FinishedCount);
 				
-				projMap.put("completedPercent", (double)FinishedCount/PlantCount);
+				double completedPerc = (double)FinishedCount/PlantCount;
+				
+				if(PlantCount == 0 || FinishedCount ==0) {
+					completedPerc = 0.00;
+				}
+				
+				projMap.put("completedPercent", completedPerc);
 				
 				outList.add(projMap);
 			}
