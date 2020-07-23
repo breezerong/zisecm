@@ -3,8 +3,9 @@
     
         <template v-slot:header>
             <el-row>
-              <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
-               <el-input v-model="input" placeholder="内部编码或标题" style="width:200px"></el-input>
+              <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
+              @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
+               <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
             <el-button type="primary" @click="search()">查询</el-button>
             <el-button type="success" @click="submit()">提交</el-button>
             <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">删除</el-button>
@@ -22,7 +23,7 @@
             isshowOption
             isshowCustom
             gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED' AND STATUS='已驳回'  " v-bind="tables.main":tableHeight="layout.height-180"
+            v-bind="tables.main":tableHeight="layout.height-180"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
@@ -49,6 +50,7 @@ export default {
                     gridName:"IEDGrid",
                     dataList:[],
                     height:"",
+                    isInitData:false,
                 },
                itemDataList: [],
                loading: false,
@@ -58,7 +60,7 @@ export default {
     
             },
             value:'',
-            input:''
+            input:'',
         }
     },
 
@@ -79,8 +81,6 @@ export default {
             console.log(sessionStorage.data.data.groupname)
         }   
         
-
-            this.fresh()
     },
 
     methods: {
@@ -105,14 +105,19 @@ export default {
       this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
         this.fresh()
     },
+    onLoadnDataSuccess(select,options){
+            console.log(select)
+            this.search()
+        },
+
        onSearchConditionChange:function(val){
             console.log(val)
         },
-    search(){
+    search(condition){
         let _self = this
         let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
-        var k1="TYPE_NAME='IED' AND STATUS='已驳回'"
+        var k1="TYPE_NAME='IED' AND STATUS='已驳回' "
          if(_self.input.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){

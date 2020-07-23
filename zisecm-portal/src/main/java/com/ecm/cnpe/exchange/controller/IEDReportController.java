@@ -55,6 +55,7 @@ public class IEDReportController  extends ControllerAbstract  {
 			
 			Map<String, Object> projMap = new HashMap<String, Object>();
 			
+			String iedPlanStatistic = this.getStrValue(args, "iedPlanStatistic");
 			String startDate = this.getStrValue(args, "startDate");
 			String endDate = this.getStrValue(args, "endDate");
 			
@@ -80,30 +81,45 @@ public class IEDReportController  extends ControllerAbstract  {
 				sqlplancompleteddate = "";
 			}
 			
-			List<String> projList = documentService.getSession(getToken()).getCurrentUser().getMyProjects();					
+			String getProjName = "SELECT C_PROJECT_NAME FROM ecm_document WHERE C_PROJECT_NAME IN ("+
+					iedPlanStatistic+") GROUP BY C_PROJECT_NAME";
+			
+			List<Map<String, Object>> projListMap = documentService.getMapList(getToken(), getProjName);
+			List<String> projList = new ArrayList<String>();
+			
+			for(Map<String, Object> map : projListMap) {
+				for(String s : map.keySet()) {
+					projList.add((String) map.get(s));
+				}
+			}
+			
+			//List<String> projList = documentService.getSession(getToken()).getCurrentUser().getMyProjects();
 			
 			for(String projName: projList) {
 				projMap = new HashMap<String, Object>();
 				projMap.put("projectName", projName);
-
-				String sqlplancount = "select count(*) as iedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME='"+
-						projName +"'" + sqlplancountdate;
-				String sqlplancompleted = "select count(*) as completedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME='"+
-						projName +"'" + sqlplancompleteddate;
-
-				List<Map<String, Object>>  listTotal = documentService.getMapList(getToken(), sqlplancount);
-				List<Map<String, Object>>  listCompleted = documentService.getMapList(getToken(), sqlplancompleted);
 				
-				int total = (int)listTotal.get(0).get("iedCount");
-				projMap.put("iedCount", total);
+				String sqlplantotal = "select count(*) from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME = ('"+
+						projName +"')" + sqlplancountdate;
+				String sqlplanfinished = "select count(*) from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME = ('"+
+						projName +"')" + sqlplancompleteddate;
+						
+				String sqlplanstatistic = "select C_PROJECT_NAME, ("+
+						sqlplantotal+") as PlantCount, ("+
+						sqlplanfinished+") as FinishedCount from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME in ("+
+						iedPlanStatistic+")group by C_PROJECT_NAME";
 				
-				int complted = (int)listCompleted.get(0).get("completedCount");
-				projMap.put("completedCount", complted);
+				List<Map<String, Object>> listStatistic = documentService.getMapList(getToken(), sqlplanstatistic);
 				
-				projMap.put("completedPercent", ((double)complted)/total);
+				int PlantCount = (int)listStatistic.get(0).get("PlantCount");
+				projMap.put("iedCount", PlantCount);
+				
+				int FinishedCount = (int)listStatistic.get(0).get("FinishedCount");
+				projMap.put("completedCount", FinishedCount);
+				
+				projMap.put("completedPercent", (double)FinishedCount/PlantCount);
 				
 				outList.add(projMap);
-				
 			}
 			mp.put("data", outList);	
 			mp.put("code", ActionContext.SUCESS);
