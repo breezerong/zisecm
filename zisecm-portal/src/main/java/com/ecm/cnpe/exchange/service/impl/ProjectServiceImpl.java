@@ -28,7 +28,9 @@ public class ProjectServiceImpl extends EcmService implements ProjectService{
 		try {
 			StringBuffer sql = new StringBuffer();
 			IEcmSession session = this.getSession(token);
-			if(session.getCurrentUser().getClientPermission()==9 || session.getCurrentUser().getSystemPermission()==9) {
+			if(session.getCurrentUser().getClientPermission()==9 || 
+					session.getCurrentUser().getSystemPermission()==9
+					||"CNPE".equals(session.getCurrentUser().getCompany())) {
 				sql.append("select ed.ID,ed.CODING,ed.NAME from ecm_document ed where ed.TYPE_NAME='项目'");
 			}else {
 				sql.append("select ed.ID,ed.CODING,ed.NAME from ecm_document ed where ed.TYPE_NAME='项目' and "
