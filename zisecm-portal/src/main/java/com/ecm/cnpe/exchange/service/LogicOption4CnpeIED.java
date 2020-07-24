@@ -1,6 +1,8 @@
 package com.ecm.cnpe.exchange.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.DocumentService;
 
 
@@ -28,7 +31,30 @@ public class LogicOption4CnpeIED {
 	
 	@Transactional(rollbackFor = Exception.class)
 	public boolean IEDOption(String token,EcmDocument mainDoc) throws EcmException{
-		try {
+	List<EcmDocument> L1 = new ArrayList<EcmDocument>();							//从数据库中取旧版该文件的所有隶属文件
+	EcmDocument tempE1 = new EcmDocument();
+	String coding = mainDoc.getCoding();
+	String condition = "TYPE_NAME='IED' AND CODING= '" + coding +"'"+"AND IS_CURRENT=0";	
+	/*try {
+		L1 = documentService.getAllObject(condition);
+	} catch (AccessDeniedException | NoPermissionException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}/*/
+	/*if (L1.size()>0) {
+		for(int i = 0;i < L1.size();i++) {
+			L1.get(i).addAttribute("STATUS", "已变更"); 
+			try{
+						documentService.updateObject(token, L1.get(i), null);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	}
+	}/*/
+	
+		
+		try {				//修改当前版本
 			LoginUser user;
 			user = documentService.getCurrentUser(token);
 			Date d1 = new Date();
@@ -38,14 +64,11 @@ public class LogicOption4CnpeIED {
 			mainDoc.addAttribute("C_RECEIVE_DATE", d1);
 			mainDoc.addAttribute("C_RECEIVER",user.getUserName() );
 			documentService.updateObject(token, mainDoc, null);
-			System.out.println("已经做接收处理"+user);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		}
-	
-		return true;
-		
-		
+		}	
+	return true;
 	}
 }
+	
