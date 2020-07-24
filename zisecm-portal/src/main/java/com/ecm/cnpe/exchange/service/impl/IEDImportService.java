@@ -279,22 +279,22 @@ public class IEDImportService extends EcmService {
 					}else {
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
-//						if(!StringUtils.isEmpty(itemPath)) {
-//							File itemFile= new File(itemPath);
-//							
-//							if(itemFile.exists()) {
-//								itemStream = new FileInputStream(itemFile);
-//							}else {
-//								if(!isReuse) {
-//									sb.append("第").append(i+1).append("行文件不存在：").append(getCellValue(sheet.getRow(i).getCell(0))).append("\r\n");
-//								}
-//							}
-//						}
-						try {
+						/*if(!StringUtils.isEmpty(itemPath)) {
+							File itemFile= new File(itemPath);
 							
-							checkDocument( token,   sheet.getRow(i), 
+							if(itemFile.exists()) {
+								itemStream = new FileInputStream(itemFile);
+							}else {
+								if(!isReuse) {
+									sb.append("第").append(i+1).append("行文件不存在：").append(getCellValue(sheet.getRow(i).getCell(0))).append("\r\n");
+								}
+							}
+						}/*/
+						try {
+							checkDocument( token,sheet.getRow(i), 
 									attrNames,
 									1,sheet.getRow(i).getLastCellNum());
+							
 							
 							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
 									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
@@ -362,21 +362,24 @@ public class IEDImportService extends EcmService {
 		return sb.toString();
 	}
 	
+	
 	private boolean checkDocument(String token,  Row row, 
 			Map<Integer,String> attrNames,
 			int start,int end) throws Exception {
+		List<EcmDocument> list = new ArrayList<EcmDocument>();
 		String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
 		if(submitType.equals("新增")) {
 			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
 			String cond = " TYPE_NAME='IED' and CODING='"+coding+"'";
 			try {
-				List<EcmDocument> list =documentService.getObjects(token, cond);
-				if(list.size()>0) {
+			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
+			
+				if(result!=null&&result.size()>0) {
 					throw new Exception("IED 已存在，编码："+coding);
 				}
 				
 				
-				String wbsCoding = row.getCell(getColumnIndex(attrNames, "C_WBS_CODING",start,end)).getStringCellValue();
+				/*String wbsCoding = row.getCell(getColumnIndex(attrNames, "C_WBS_CODING",start,end)).getStringCellValue();
 				String projectName = row.getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",start,end)).getStringCellValue();
 				if(!StringUtils.isEmpty(wbsCoding)) {
 					cond = " TYPE_NAME='计划任务' and C_WBS_CODING='"+wbsCoding+"' and C_PROJECT_NAME='"+projectName+"'";
@@ -385,7 +388,7 @@ public class IEDImportService extends EcmService {
 					if(list.size()==0) {
 						throw new Exception("WBS 编码不已存在，编码："+wbsCoding);
 					}
-				}
+				}/*/
 				
 				
 			} catch (EcmException e) {
@@ -399,6 +402,7 @@ public class IEDImportService extends EcmService {
 		
 		return false;
 	}
+	
 	
 	private String newDocument(String token, String typeName,FileInputStream itemStream,
 			Row row, Map<String,Long> fileList,

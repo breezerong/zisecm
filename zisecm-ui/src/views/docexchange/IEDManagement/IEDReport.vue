@@ -47,7 +47,7 @@
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
+                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
                 :tableHeight="layout.height-180"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
@@ -102,7 +102,7 @@
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
+                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
                 :tableHeight="layout.height-180"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
@@ -157,7 +157,7 @@
                 isshowOption
                 isshowCustom
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'" 
+                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'" 
                 :tableHeight="layout.height - 180"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
@@ -196,6 +196,9 @@
               </el-form-item>
               <el-form-item>
                   <el-button type="primary" @click="handleReport()">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click.native="exportDataStatistic">Excel下载</el-button>
               </el-form-item>
             </el-form>
           </el-row>
@@ -260,11 +263,6 @@ export default {
   },
   mounted() {
     this.init()  
-
-    if(this.checkData(startDate).length > 0 && this.checkData(endDate).length >0){
-
-    }
-
   },
   methods: {
     onLayoutResize(size){
@@ -286,10 +284,6 @@ export default {
       }
       return ''
     },
-
-/*     onLoadnDataSuccess2(select, option){
-      this.search2();
-    }, */
 
     search1() {
       let _self = this;
@@ -447,7 +441,7 @@ export default {
           gridName:"IEDReportGrid",
           lang:"zh-cn",
           condition: this.$refs.mainDataGrid1.condition,
-          filename:"IED_Report_Overdue"+fileDateStr+".xlsx",
+          filename:"IED_Report_Overdue_"+fileDateStr+".xlsx",
           sheetname:"Result"
         }
         ExcelUtil.export(params)
@@ -461,7 +455,7 @@ export default {
           gridName:"IEDReportGrid",
           lang:"zh-cn",
           condition: this.$refs.mainDataGrid2.condition,
-          filename:"IED_Report_unCompleted"+fileDateStr+".xlsx",
+          filename:"IED_Report_unCompleted_"+fileDateStr+".xlsx",
           sheetname:"Result"
         }
         ExcelUtil.export(params)
@@ -475,10 +469,30 @@ export default {
           gridName:"IEDReportGrid",
           lang:"zh-cn",
           condition: this.$refs.mainDataGrid3.condition,
-          filename:"IED_Report_Completed"+fileDateStr+".xlsx",
+          filename:"IED_Report_Completed_"+fileDateStr+".xlsx",
           sheetname:"Result"
         }
         ExcelUtil.export(params)
+    },
+
+    exportDataStatistic(){
+      let _self = this;
+
+      import('@/utils/Export2Excel').then(excel => {
+        const tHeader = ['项目名', '计划数', '完成数', '完成百分比']
+        const filterVal = ['projectName', 'iedCount', 'completedCount', 'completedPercent']          
+        const list = _self.reportData
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "IED_Report_" +new Date().Format("yyyy-MM-dd")+ ".xlsx"
+        })
+      })
+    },
+
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]))
     },
 
     cellMouseEnter(row, column, cell, event) {
