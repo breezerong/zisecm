@@ -62,7 +62,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR,STATUS";
 	private String filterColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
-			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
+			+ "IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
 
 	@Autowired
 	private EcmDocumentMapper ecmDocument;
@@ -726,7 +726,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				} else {
 					isFirst = false;
 				}
-				if (args.get(key).toString().equalsIgnoreCase("true")) {
+				if (args.get(key).toString().equalsIgnoreCase("true")||args.get(key).toString().equalsIgnoreCase("1")) {
 					sql += " " + key.toString() + "=1";
 				} else {
 					sql += " " + key.toString() + "=0";
