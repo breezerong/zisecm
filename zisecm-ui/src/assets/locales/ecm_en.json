@@ -219,7 +219,8 @@
     "DispenseDc":"Dispense Dc",
     "ReceivingDcFromCnpe":"Receiving For Contractor",
     "ReceivedDcFromCnpe":"Received For Contractor",
-    "RejectDC":"Reject DC"
+    "RejectDC":"Reject DC",
+    "LogMonitor": "LogMonitor"
 },
 "message": {
     "saveSuccess":"Save Success",
