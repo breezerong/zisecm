@@ -868,6 +868,7 @@ export default {
       insert_days = true,
       week = false
     ) {
+      let _self = this;
       let months = [];
       if (insert_days) {
         // 无需 日 的模式
@@ -875,7 +876,7 @@ export default {
           // 需要 日 的模式
           let days = this.generationDays(year, i, isLeap, week);
           months.push({
-            name: `${i}月`,
+            name: `${i}`+_self.$t("application.month"),
             date: i,
             full_date: `${year}-${i}`,
             children: days,
@@ -887,7 +888,7 @@ export default {
       for (let i = start_num; i < end_num; i++) {
         // 需要 日 的模式
         months.push({
-          name: `${i}月`,
+          name: `${i}`+_self.$t("application.month"),
           date: i,
           full_date: `${year}-${i}`,
           id: uuidv4()
@@ -916,7 +917,7 @@ export default {
         for (let i = _day; i < dates_num; i += 7) {
           days.push({
             date: i,
-            name: `${i} D`,
+            name: `${i}`+_self.$t("application.day"),
             id: uuidv4(),
             full_date: `${year}-${month}-${i}`
           });
@@ -925,7 +926,7 @@ export default {
         for (let i = 1; i < dates_num; i++) {
           days.push({
             date: i,
-            name: `${i} D`,
+            name: `${i}`+_self.$t("application.day"),
             id: uuidv4(),
             full_date: `${year}-${month}-${i}`
           });
