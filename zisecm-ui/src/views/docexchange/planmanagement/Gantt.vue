@@ -12,13 +12,13 @@
             <el-row>
                 <!-- :end-date="tables.mainGrid.endDate" -->
 				<el-col :span="24">
-                    <ecm-gantt ref="mainGrid" :data="tables.mainGrid.data" :edit="false" width="100%"
+                    <ecm-gantt v-if="tables.mainGrid.enabled" ref="mainGrid" :data="tables.mainGrid.data" :edit="false" width="100%"
                     border stripe lazy  highlight-current-row
                     :start-date="tables.mainGrid.startDate" :end-date="tables.mainGrid.endDate"
                     :load="loadData" :height="layout.height/2-115"
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                      @row-click="onRowClick">
-                        <el-table-column prop="wbs" :label="$t('application.tcWbs')" fixed prv="name" width="280"></el-table-column>
+                        <el-table-column prop="wbs" :label="$t('application.wbs')" fixed prv="name" width="280"></el-table-column>
                     </ecm-gantt>
 				</el-col>
 			</el-row>
@@ -45,6 +45,7 @@ export default {
         return{
             tables:{
                 mainGrid:{
+                    enabled:false,
                     columns:[
                         {prop:"wbs",label: this.$t('application.tcWbs'),width:"380"},
                         {prop:"name",label:this.$t('application.tcName'),width:"250"},
@@ -121,6 +122,8 @@ export default {
                 console.log("[Gantt.search]")
                 _self.tables.mainGrid.startDate = result.data.startDate
                 _self.tables.mainGrid.endDate = result.data.endDate
+                
+                _self.tables.mainGrid.enabled=true
                 console.log(result.data.startDate)
                 console.log(result.data.endDate)
 
