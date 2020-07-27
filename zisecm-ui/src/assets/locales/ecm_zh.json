@@ -284,14 +284,9 @@
     "ReceivingDcFromCnpe":"分包商接收",
     "ReceivedDcFromCnpe":"分包商已接收",
     "RejectDC":"驳回文函",
-<<<<<<< HEAD
-    "BeenDispensed":"已分发"
-=======
     "BeenDispensed":"已分发",
     "LogMonitor": "日志监控",
     "icmfeedback":"延误反馈"
-
->>>>>>> 616aa6c9df5642fddb8f1d87462e03288d362d4b
 },
 "message": {
     "saveSuccess":"保存成功",
