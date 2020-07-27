@@ -10,15 +10,16 @@
         </template>
         <template v-slot:main="{layout}">
             <el-row>
+                <!-- :end-date="tables.mainGrid.endDate" -->
 				<el-col :span="24">
-                    <wl-gantt ref="mainGrid" :data="tables.mainGrid.data" :edit="false" 
-                    border stripe lazy  highlight-current-row 
+                    <ecm-gantt ref="mainGrid" :data="tables.mainGrid.data" :edit="false" width="100%"
+                    border stripe lazy  highlight-current-row
                     :start-date="tables.mainGrid.startDate" :end-date="tables.mainGrid.endDate"
-                    :load="loadData" :height="layout.height/2-115" 
+                    :load="loadData" :height="layout.height/2-115"
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                      @row-click="onRowClick">
-                        <el-table-column prop="wbs" label="WBS" fixed prv="name"></el-table-column>
-                    </wl-gantt>	
+                        <el-table-column prop="wbs" :label="$t('application.tcWbs')" fixed prv="name" width="280"></el-table-column>
+                    </ecm-gantt>
 				</el-col>
 			</el-row>
 			 <el-row>
@@ -37,6 +38,7 @@
 import DataGrid from "@/components/DataGrid";
 import DataLayout from '@/components/ecm-data-layout'
 import DataSelect from '@/components/ecm-data-select'
+import EcmGantt from '@/components/ecm-gantt'
 export default {
     name: "Gantt",
     data(){
@@ -44,11 +46,11 @@ export default {
             tables:{
                 mainGrid:{
                     columns:[
-						{prop:"wbs",label:"WBS编码",width:"380"},
-                        {prop:"name",label:"名称",width:"250"},
-                        {prop:"projectName",label:"项目名称",width:"200"},
-						{prop:"startDate",label:"开始时间",width:"200"},
-						{prop:"endDate",label:"结束时间",width:"200"}
+                        {prop:"wbs",label: this.$t('application.tcWbs'),width:"380"},
+                        {prop:"name",label:this.$t('application.tcName'),width:"250"},
+                        {prop:"projectName",this.$t('application.projectName'),width:"200"},
+                        {prop:"startDate",label:this.$t('application.startDate'),width:"200"},
+                        {prop:"endDate",label:this.$t('application.EndDate'),width:"200"}
                     ],
                     data:[],
                     startDate:"",
@@ -57,11 +59,11 @@ export default {
                 relationIEDGrid:{
                     gridViewName:"PlantRelationIED",
                     dataUrl:"/dc/getDocuments",
-                    condition:"",                    
+                    condition:"",
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
-                    isInitData:false                
+                    isInitData:false
                 }
             },
             forms:{
@@ -78,21 +80,23 @@ export default {
 
     },
     mounted(){
-       
+
     },
     methods: {
         onLoadnDataSuccess(select,options){
             this.search()
+            this.tables.mainGrid.doLayout()
         },
         onSelectChange(val){
             this.forms.headForm.project = val
             this.search()
+            this.tables.mainGrid.doLayout()
         },
         onRowClick(row, column, event){
             console.log(row)
             this.tables.relationIEDGrid.condition = " C_WBS_CODING like '"+row.wbs +"%'"
             this.$refs.relationIEDGrid.condition=this.tables.relationIEDGrid.condition
-            this.$refs.relationIEDGrid.itemDataList=[]            
+            this.$refs.relationIEDGrid.itemDataList=[]
             this.$refs.relationIEDGrid.loadGridData()
         },
         loadData(tree, treeNode, resolve){
@@ -119,18 +123,20 @@ export default {
                 _self.tables.mainGrid.endDate = result.data.endDate
                 console.log(result.data.startDate)
                 console.log(result.data.endDate)
+
             }).catch(function(error){
                 console.log(error)
             })
         }
     },
     props: {
-        
+
     },
     components: {
         DataLayout:DataLayout,
         DataGrid:DataGrid,
-        DataSelect:DataSelect
+        DataSelect:DataSelect,
+        EcmGantt:EcmGantt
     }
 }
 </script>
