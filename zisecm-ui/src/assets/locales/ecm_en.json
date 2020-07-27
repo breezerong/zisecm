@@ -151,7 +151,13 @@
     "exportExcel":"Export Excel",
     "requiredInput": "Required",
     "cannotEmpty": "Cannot Empty",
-    "BeenDispensed":"Been Dispensed"
+    "BeenDispensed":"Been Dispensed",
+    "index":"Index",
+    "wbsName":"Name",
+    "startDate":"Start Date",
+    "endDate":"End Date",
+    "wbs":"WBS Coding",
+    "projectName":"Project Name"
 },
 "skin": {
     "Blue": "Blue",
@@ -286,4 +292,16 @@
 "close": "Close",
 "closeOthers": "Close Others",
 "closeAll": "Close All"
-}}
+},
+"exchange":{
+    "plant":{
+        "gantt":{
+            "tcIndex":"Index",
+            "tcName":"Name",
+            "tcStartDate":"Start Date",
+            "tcEndDate":"End Date",
+            "tcWbs":"WBS Code"
+        }
+    }
+}
+}
