@@ -48,7 +48,7 @@ export default {
                     columns:[
                         {prop:"wbs",label: this.$t('application.tcWbs'),width:"380"},
                         {prop:"name",label:this.$t('application.tcName'),width:"250"},
-                        {prop:"projectName",this.$t('application.projectName'),width:"200"},
+                        {prop:"projectName",label:this.$t('application.projectName'),width:"200"},
                         {prop:"startDate",label:this.$t('application.startDate'),width:"200"},
                         {prop:"endDate",label:this.$t('application.EndDate'),width:"200"}
                     ],
