@@ -16,33 +16,21 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                <el-date-picker
-                  v-model="endDate"
-                  type="date"
-                  align="right"
-                  placeholder="结束日期"
-                  value-format="yyyy-MM-dd">
-                </el-date-picker>
+                <el-date-picker v-model="endDate" type="date" align="right" placeholder="结束日期" value-format="yyyy-MM-dd"> </el-date-picker>
               </el-form-item>
               <el-form-item>
                   <el-button type="primary" @click="handleReport()">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="icmDataStatistic()">Excel下载</el-button>
               </el-form-item>
             </el-form>
           </el-row>
         </template>
         <template v-slot:main="{layout}">
-          <el-table :data="reportData" style="width: 100%;" border :height="layout.height"> 
-                <el-table-column type="index" width="50"></el-table-column>
-                <el-table-column prop="projectName" label="项目名称"></el-table-column>
-                <el-table-column prop="shopenICMcount" label="应打开接口"></el-table-column>
-                <el-table-column prop="haopenICMcount" label="已打开接口"></el-table-column>
-                <el-table-column prop="odopenICMcount" label="逾期未打开接口"></el-table-column>
-                <el-table-column prop="shshutdownICMcount" label="应关闭接口"></el-table-column>
-                <el-table-column prop="hashutdownICMcount" label="已关闭接口"></el-table-column>
-                <el-table-column prop="odshutdownICMcount" label="逾期未关闭接口"></el-table-column>
-                <el-table-column prop="shreplyICMcount" label="应回复接口"></el-table-column>
-                <el-table-column prop="hareplyICMcount" label="已回复接口"></el-table-column>
-                <el-table-column prop="odreplyICMcount" label="逾期未回复接口"></el-table-column>
+          <el-table ref="mainTable" :data="tables.mainTable.data" border stripe :height="layout.height-160"> 
+                <el-table-column type="index" width="30" fixed></el-table-column>
+                <el-table-column v-for="item in tables.mainTable.columns" :key="item.prop" v-bind="item"></el-table-column>
           </el-table>
         </template>
     </DataLayout>
@@ -52,17 +40,29 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from '@/components/ecm-data-select';
 import DataLayout from '@/components/ecm-data-layout';
-import ExcelUtil from '@/utils/excel.js';
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 export default {
     name: "ICMReport",
     data(){
         return{
-            main:{
-                datalist: [],
-                height:"",
+            tables:{
+              mainTable:{
+                data:[],
+                columns:[
+                    {prop:"projectName",label:"项目名称",fixed:true},
+                    {prop:"shopenICMcount",label:"应打开接口",fixed:true},
+                    {prop:"haopenICMcount",label:"已打开接口",fixed:true},
+                    {prop:"odopenICMcount",label:"逾期未打开接口",fixed:true},
+                    {prop:"shshutdownICMcount",label:"应关闭接口",fixed:true},
+                    {prop:"hashutdownICMcount",label:"已关闭接口",fixed:true},
+                    {prop:"odshutdownICMcount",label:"逾期未关闭接口",fixed:true},
+                    {prop:"shreplyICMcount",label:"应回复接口",fixed:true},
+                    {prop:"hareplyICMcount",label:"已回复接口",fixed:true},
+                    {prop:"odreplyICMcount",label:"逾期未回复接口",fixed:true}
+                ]
+              }
             },
-
-            reportData:[],
             icmReportStatistc: '',
             startDate: '',
             endDate: '',
@@ -83,14 +83,6 @@ export default {
         }
     },
     methods: {
-        percentFormatter (row, column) {
-            let p = row.completedPercent;
-            if(p){
-                return Math.round(p*10000)/100+'%';
-            }
-            return ''
-        },
-
         handleReport(){
             let _self = this;
             _self.loading = true;
@@ -103,13 +95,38 @@ export default {
             axios
               .post("/exchange/icm/ICMReport", JSON.stringify(m))
               .then(function(response) {
-                _self.reportData = response.data.data;
+                _self.tables.mainTable.data = response.data.data
                 _self.loading = false;
               })
             .catch(function(error) {
                 console.log(error);
             });
-        }  
+        },
+        
+        icmDataStatistic(){
+          let _self = this;
+
+          import('@/utils/Export2Excel').then(excel => {
+            let tHeader = []
+            let filterVal = []
+            _self.tables.mainTable.columns.forEach(function(item){
+              tHeader.push(item.label)
+              filterVal.push(item.prop)
+            })
+            
+            const list = _self.tables.mainTable.data
+            const data = this.formatJson(filterVal, list)
+            excel.export_json_to_excel({
+              header: tHeader,
+              data,
+              filename: "ICM_Report_" +new Date().Format("yyyy-MM-dd")+ ".xlsx"
+            })
+          })
+        },
+
+        formatJson(filterVal, jsonData) {
+          return jsonData.map(v => filterVal.map(j => v[j]))
+        }
     },
 
     props: {

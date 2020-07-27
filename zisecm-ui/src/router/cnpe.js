@@ -250,4 +250,14 @@ export const cnpeRouter=
         name: '三级计划',
         component: () => import('@/views/docexchange/planmanagement/ThreeLevelPlan.vue')
     },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'LogMonitor'
+        },
+        path: '/cnpe/sys/logmonitor',
+        name: '日志监控',
+        component: () => import('@/views/docexchange/SysManagement/LogMonitor.vue')
+    },
 ]

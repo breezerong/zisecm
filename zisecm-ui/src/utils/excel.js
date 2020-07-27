@@ -46,7 +46,7 @@ var excel = {
     }).catch(function(error){
       console.log(error)
     })
-  }
+  },
 }
 
 export default excel

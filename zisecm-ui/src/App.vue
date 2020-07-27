@@ -30,7 +30,11 @@ export default {
   width: 140px;
 }
 .el-table td,.el-table th{
-  padding:4px 0 !important;
+  padding:1px 0 !important;
+}
+.el-form-item {
+  margin-top: 3px;
+  margin-bottom: 2px;
 }
 .el-input__inner {
   height: 36px;

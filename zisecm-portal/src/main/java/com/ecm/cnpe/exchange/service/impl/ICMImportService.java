@@ -67,7 +67,7 @@ import com.ecm.core.service.NumberService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
 @Service
-public class IEDImportService extends EcmService {
+public class ICMImportService extends EcmService {
 	@Autowired
 	private DocumentService documentService;
 	
@@ -100,7 +100,7 @@ public class IEDImportService extends EcmService {
 		int failedCount =0;
 		sb.append("开始导入:").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("TYPE_NAME", "导入批次");
+		map.put("TYPE_NAME", "ICM");
 		String number = numberService.getNumber(token, map);
 		String uploadFolder = CacheManagerOper.getEcmParameters().get("UploadFolder").getValue();
 		if(!uploadFolder.endsWith(File.separator))
@@ -111,15 +111,15 @@ public class IEDImportService extends EcmService {
 		File f = new File(uploadFolder);
 		f.mkdirs();
 		
-		if(IEDImportService.importExcelFolderId==null) {
-			IEDImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
+		if(ICMImportService.importExcelFolderId==null) {
+			ICMImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
 //			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
 		}
 		
 		EcmDocument doc = new EcmDocument();
 		doc.getAttributes().put("NAME", excelSrcFile.getOriginalFilename());
 		doc.getAttributes().put("CODING", number);
-		doc.setTypeName("导入批次");
+		doc.setTypeName("ICM");
 		doc.setFolderId(importExcelFolderId);
 		EcmContent content = new EcmContent();
 		content.setName(excelSrcFile.getOriginalFilename());
@@ -370,12 +370,12 @@ public class IEDImportService extends EcmService {
 		String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
 		if(submitType.equals("新增")) {
 			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-			String cond = " TYPE_NAME='IED' and CODING='"+coding+"'";
+			String cond = " TYPE_NAME='ICM' and CODING='"+coding+"'";
 			try {
 			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
 			
 				if(result!=null&&result.size()>0) {
-					throw new Exception("IED 已存在，编码："+coding);
+					throw new Exception("ICM 已存在，编码："+coding);
 				}
 				
 				
@@ -443,11 +443,11 @@ public class IEDImportService extends EcmService {
 		}else {
 			EcmDocument doc = new EcmDocument();
 			doc.setTypeName(typeName);
-			if(IEDImportService.importDocFolderId==null||"".equals(IEDImportService.importDocFolderId)) {
+			if(ICMImportService.importDocFolderId==null||"".equals(ICMImportService.importDocFolderId)) {
 //				ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
-				IEDImportService.importDocFolderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
+				ICMImportService.importDocFolderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
 			}
-			doc.setFolderId(IEDImportService.importDocFolderId);
+			doc.setFolderId(ICMImportService.importDocFolderId);
 			EcmContent content = null;
 			if(itemStream!=null) {
 				content = new EcmContent();
