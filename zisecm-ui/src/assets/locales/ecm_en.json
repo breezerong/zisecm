@@ -220,7 +220,8 @@
     "ReceivingDcFromCnpe":"Receiving For Contractor",
     "ReceivedDcFromCnpe":"Received For Contractor",
     "RejectDC":"Reject DC",
-    "LogMonitor": "LogMonitor"
+    "LogMonitor": "LogMonitor",
+    "icmfeedback":"icmfeedback"
 },
 "message": {
     "saveSuccess":"Save Success",

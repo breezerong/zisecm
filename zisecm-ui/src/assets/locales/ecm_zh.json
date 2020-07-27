@@ -279,7 +279,8 @@
     "ReceivedDcFromCnpe":"分包商已接收",
     "RejectDC":"驳回文函",
     "BeenDispensed":"已分发",
-    "LogMonitor": "日志监控"
+    "LogMonitor": "日志监控",
+    "icmfeedback":"延误反馈"
 
 },
 "message": {
