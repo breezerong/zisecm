@@ -134,6 +134,16 @@ export const cnpeRouter=
         meta: {
             requireAuth: true,
             permit: 1,
+            title:'icmfeedback'
+        },
+        path: 'cnpe/icmmanagement/icmfeedback',
+        name: '延误反馈',
+        component: () => import('@/views/docexchange/ICMManagement/icmfeedback.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
             title:'ICMReport'
         },
         path: '/cnpe/icmmanagement/icmreport',
@@ -249,5 +259,15 @@ export const cnpeRouter=
         path: '/cnpe/plan/threelevelplan',
         name: '三级计划',
         component: () => import('@/views/docexchange/planmanagement/ThreeLevelPlan.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'LogMonitor'
+        },
+        path: '/cnpe/sys/logmonitor',
+        name: '日志监控',
+        component: () => import('@/views/docexchange/SysManagement/LogMonitor.vue')
     },
 ]

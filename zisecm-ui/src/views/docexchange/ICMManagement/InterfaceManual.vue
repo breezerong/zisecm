@@ -7,26 +7,6 @@
                 <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
                 </div>
             </el-dialog>
-            <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
-                <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
-                    <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
-                    <el-upload
-                        :limit="100"
-                        :file-list="fileList"
-                        action
-                        :on-change="handleChange"
-                        :auto-upload="false"
-                        :multiple="true"
-                    >
-                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                    </el-upload>
-                    </div>
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="importdialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="uploadData()">开始导入</el-button>
-                </div>
-            </el-dialog>
             <!-- 新建窗口 -->
             <el-dialog
                 :title="dialogName+$t('application.property')"
@@ -47,6 +27,21 @@
                     <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
                 </div>
             </el-dialog>
+            <!-- 延误反馈 -->
+            <el-dialog :title="延误反馈" :visible.sync="Visible1" width="80%">
+                <ShowProperty
+                    ref="ShowProperty"
+                    @onSaved="onSaved"
+                    width="100%"
+                    :folderPath="foldtemerPath"
+                    v-bind:itemId="selectedItemId"
+                    v-bind:typeName="typeName"
+                ></ShowProperty>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="SaveFeedBack">{{$t('application.ok')}}</el-button>
+                    <el-button @click="Visible1 = false">{{$t('application.cancel')}}</el-button>
+                </div>
+            </el-dialog>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
                     <DataSelect @onSelectChange='onSelectChange' v-model="forms.headForm.project"  includeAll dataUrl="/exchange/project/myproject" 
@@ -63,6 +58,7 @@
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">Excel下载</el-button>
                     <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >新建</el-button>
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">导入</el-button>
+                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedOneTransfer)" >延误反馈</el-button>
                 </el-form-item>
             </el-form>
         </template>
@@ -96,7 +92,7 @@ import DataSelect from '@/components/ecm-data-select'
 import ExcelUtil from '@/utils/excel.js'
 import AddCondition from '@/views/record/AddCondition.vue'
 import DataLayout from '@/components/ecm-data-layout'
-import BatchImport from '@/components/controls/ImportDocument.vue'
+import BatchImport from '@/components/controls/ImportICM'
 
 export default {
     name: "InterfaceManual",
@@ -106,14 +102,14 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM'",
+                    condition:"TYPE_NAME='ICM'and C_COMPANY='@company'",
                     isshowOption:true,
                     isshowCustom:true,
                 },
                 ICMPass:{
                     gridViewName:"ICMPassGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"",
+                    condition:"C_COMPANY='@company'",
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
@@ -123,7 +119,7 @@ export default {
                 ICMComments:{
                     gridViewName:"ICMCommentsGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"",
+                    condition:"C_COMPANY='@company'",
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
@@ -152,7 +148,9 @@ export default {
             gridObj:[],
             importdialogVisible:false,
             uploading:false,
-            condition1:""
+            condition1:"",
+            selectedItems: [],
+            Visible1:false
         }
     },
     mounted(){
@@ -168,21 +166,28 @@ export default {
     methods: {
         //单击行
         onDataGridRowClick:function(row){
-            var condition1 = "SELECT CHILD_ID from ecm_relation where PARENT_ID ='"+row.ID+"'"
-            var key="ID IN ("+condition1+")"
-            this.$refs.ICMPass.condition = key
+            var condition1 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息传递单'and PARENT_ID ='"+row.ID+"'"
+            var key1="ID IN ("+condition1+")"
+            this.$refs.ICMPass.condition = key1
             this.$refs.ICMPass.gridViewName="ICMPassGrid"
             this.$refs.ICMPass.itemDataList=[]
             this.$refs.ICMPass.loadGridInfo()
             this.$refs.ICMPass.loadGridData()
 
+            var condition2 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息意见单'and PARENT_ID ='"+row.ID+"'"
+            var key2="ID IN ("+condition1+")"
+            this.$refs.ICMComments.condition = key2
+            this.$refs.ICMComments.gridViewName="ICMCommentsGrid"
+            this.$refs.ICMComments.itemDataList=[]
+            this.$refs.ICMComments.loadGridInfo()
+            this.$refs.ICMComments.loadGridData()
+
         },
         //下拉菜单
         onSelectChange(val){
             let _self = this
-            //  _self.$alert(val)
-            _self.$refs.mainDataGrid.condition="TYPE_NAME='ICM' and C_PROJECT_NAME in ("+val+")";
-            _self.tables.main.condition="TYPE_NAME='ICM' and C_PROJECT_NAME in ("+val+")"
+            _self.$refs.mainDataGrid.condition=_self.tables.main.condition+"and C_PROJECT_NAME in ("+val+")";
+            // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridData();
             _self.$refs.ICMPass.itemDataList=[]
             _self.$refs.ICMComments.itemDataList=[]
@@ -202,7 +207,7 @@ export default {
             if(typeName =="ICMComments"){
                 condition1 = this.$refs.ICMComments.condition
             }
-            this.$alert(condition1)
+            // this.$alert(condition1)
             let params = {
                 gridName:gridViewName,
                 lang:"zh-cn",
@@ -215,10 +220,9 @@ export default {
         },
         //接口号模糊查询
         search(){
-            // this.$refs.passICM.itemDataList=[]
-            // this.$refs.SICM.itemDataList=[]
+            this.$refs.ICMPass.itemDataList=[]
+            this.$refs.ICMComments.itemDataList=[]
             let _self = this
-            // _self.$alert("555")
             var k1="TYPE_NAME='ICM' AND C_PROJECT_NAME = '@project'"
             k1+=" AND C_CODE4 LIKE '%"+ _self.inputValueNum+"%'"
             // _self.$alert(k1)
@@ -232,7 +236,7 @@ export default {
             let key="";
             key = _self.advCondition;
             // _self.$alert(_self.$refs.mainDataGrid.condition)
-            _self.$refs.mainDataGrid.condition+="and "+key
+            _self.$refs.mainDataGrid.condition=key
             // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
@@ -307,7 +311,7 @@ export default {
             }
             // console.log(JSON.stringify(m));
             if(_self.$refs.ShowProperty.myItemId==''){
-                axios.post("/exchange/ied/newIED",formdata,{
+                axios.post("/exchange/ICM/newICM",formdata,{
                     'Content-Type': 'multipart/form-data'
                 })
                 .then(function(response) {
@@ -400,39 +404,125 @@ export default {
             });
             return formdata;
         },
-        uploadData() {
+        
+        //延误反馈
+        icmfeedback(typeName, selectedRow) {
             let _self = this;
-            let formdata = _self.getFormData();
-            console.log("UploadData getData");
-            console.log(formdata);
-            _self.uploading=true;
-            _self
-            .axios({
-            headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-            },
-            datatype: "json",
-            method: "post",
-            data: formdata,
-            url: _self.uploadUrl
-            })
-            .then(function(response) {
-            _self.importdialogVisible = false;
-            // _self.refreshData();
-            _self.uploading=false;
-            _self.$refs.mainDataGrid.loadGridData();
-            // _self.$message("导入成功!");
-            _self.$message({
-                    showClose: true,
-                    message: "导入成功!",
-                    duration: 2000,
-                    type: 'success'
+            _self.Visible1 = true;
+            setTimeout(()=>{
+                if(_self.$refs.ShowProperty){
+                    _self.$refs.ShowProperty.myItemId = "";
+                    _self.dialogName=typeName;
+                    _self.$refs.ShowProperty.myTypeName =typeName;
+                    _self.typeName=typeName;
+                    _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
+                    _self.$refs.ShowProperty.loadFormInfo();
+                }
+            },10);
+        },
+        SaveFeedBack(){
+            this.Visible1 = false
+            let _self = this;
+            if(!this.$refs.ShowProperty.validFormValue()){
+                return;
+            }
+            var m = new Map();
+            var c;
+            for(c in _self.$refs.ShowProperty.dataList){
+                let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+                var i;
+                for (i in dataRows) {
+                    if(dataRows[i].attrName && dataRows[i].attrName !=''){
+                        if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID'){
+                            var val = dataRows[i].defaultValue;
+                            if(val && dataRows[i].isRepeat){
+                                var temp = "";
+                                // console.log(val);
+                                for(let j=0,len=val.length;j<len;j++){
+                                    temp = temp + val[j]+";";
+                                    //console.log(temp);
+                                }
+                                temp = temp.substring(0,temp.length-1);
+                                val = temp;
+                                console.log(val);
+                            }
+                            m.set(dataRows[i].attrName, val);
+                        }
+                    }
+                }
+            }
+            if(_self.$refs.ShowProperty.myItemId!=''){
+                m.set('ID',_self.$refs.ShowProperty.myItemId);
+            }
+            if(_self.$refs.ShowProperty.myTypeName!=''){
+                m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
+                m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
+                m.set("parentDocId", _self.parentId);
+                m.set("relationName",_self.relationName);
+            }
+            let formdata = new FormData();
+            formdata.append("metaData",JSON.stringify(m));
+            if(_self.$refs.ShowProperty.file!=""){
+                //console.log(_self.file);
+                formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+            }
+            //  console.log(JSON.stringify(m));
+            if(_self.$refs.ShowProperty.myItemId==''){
+                axios.post("/exchange/ICM/FeedBack",formdata,{
+                    'Content-Type': 'multipart/form-data'
+                })
+                .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if (code == 1) {
+                        // _self.$message("反馈成功!");
+                        _self.$message({
+                            showClose: true,
+                            message: "反馈成功!",
+                            duration: 2000,
+                            type: "success"
+                        });
+                        _self.propertyVisible = false;
+                        // _self.loadTransferGridData();
+                        // _self.$refs.mainDataGrid.loadGridData();
+                        
+                    } 
+                    else{
+                    _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.newFailured'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                        
+                    }
+                })
+                .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
                 });
-            })
-            .catch(function(error) {
-            _self.uploading=false;
-            console.log(error);
-            });
+            }
+            else{
+                if(_self.$refs.ShowProperty.permit<5){
+                    _self.$message(_self.$t('message.hasnoPermssion'));
+                    return ;
+                }
+                axios.post("/dc/saveDocument",JSON.stringify(m))
+                .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if(code==1){
+                        _self.$emit('onSaved','update');
+                    }
+                    else{
+                        _self.$message(_self.$t('message.saveFailured'));
+                    }
+                })
+                .catch(function(error) {
+                    _self.$message(_self.$t('message.saveFailured'));
+                    console.log(error);
+                });
+            }
         }
     },
     props: {
