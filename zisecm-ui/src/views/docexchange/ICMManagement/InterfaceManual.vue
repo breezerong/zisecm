@@ -4,7 +4,7 @@
             <el-dialog title="批量导入ICM" :visible.sync="batchDialogVisible" width="80%" >
                 <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
                 <div slot="footer" class="dialog-footer">
-                <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
+                <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
                 </div>
             </el-dialog>
             <!-- 新建窗口 -->
@@ -49,15 +49,15 @@
                 </el-form-item>
                 <el-form-item>
                     <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入流水号"></el-input>
-                    <el-button type="primary" @click="search()">查询</el-button>
+                    <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:typeName="typeName" :inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="default" @click.native="exportData('ICM','ICMGrid')">Excel下载</el-button>
-                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >新建</el-button>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">导入</el-button>
+                    <el-button type="default" @click.native="exportData('ICM','ICMGrid')">{{$t('application.ExportExcel')}}</el-button>
+                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
                     <el-button type="primary" @click="icmfeedback('延误反馈',selectedOneTransfer)" >延误反馈</el-button>
                 </el-form-item>
             </el-form>
@@ -72,11 +72,11 @@
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane label="接口传递" name="ICMPass">
-                            <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">Excel下载</el-button>
+                            <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
                             <DataGrid ref="ICMPass" v-bind="tables.ICMPass" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane label="接口意见" name="ICMComments">
-                            <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">Excel下载</el-button>
+                            <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
                             <DataGrid ref="ICMComments" v-bind="tables.ICMComments" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>

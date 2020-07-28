@@ -3,9 +3,9 @@
     
         <template v-slot:header>
             <el-row>
-            <el-button type="primary" @click="search()">查询</el-button>
-            <el-button type="success" @click="submit()">提交</el-button>
-            <el-button type="primary" @click.native="exportData">Excel下载</el-button>
+            <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
+            <el-button type="success" @click="submit()">{{$t('application.close')}}</el-button>
+            <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             
             </el-row>
         </template>

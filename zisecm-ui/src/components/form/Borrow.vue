@@ -299,7 +299,7 @@
     </el-form>
 
     <div slot="footer" class="dialog-footer" style="text-align:center" v-if="istask==false">
-      <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
+      <el-button ref="borrowCancel" type="primary" @click="cancel()">{{$t('application.cancel')}}</el-button>
       <el-button ref="borrowStartwf" @click="startWorkflow(borrowForm)">启动流程</el-button>
     </div>
   </div>

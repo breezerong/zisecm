@@ -13,7 +13,7 @@
             </el-col>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="copyDialogVisible = false">取 消</el-button>
+            <el-button @click="copyDialogVisible = false">{{$t('application.cancel')}}</el-button>
             <el-button type="primary" @click="copyFolder(copyForm)">保存</el-button>
           </div>
         </el-dialog>
@@ -71,7 +71,7 @@
             </el-col>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
             <el-button type="primary" @click="additem(form)">添加</el-button>
             <el-button type="primary" @click="saveitem(form)">保存</el-button>
           </div>
@@ -89,7 +89,7 @@
               <el-col :span="20" style="text-align:left;">
                 &nbsp; 
                 <el-button type="primary" plain icon="el-icon-edit"  @click="dialogVisible = true">查看</el-button>
-                    <el-button type="primary" plain icon="el-icon-delete"  @click="delitem(currentData)">删除</el-button>
+                    <el-button type="primary" plain icon="el-icon-delete"  @click="delitem(currentData)">{{$t('application.delete')}}</el-button>
                     <el-button type="primary" plain icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
               </el-col>
             </el-row>

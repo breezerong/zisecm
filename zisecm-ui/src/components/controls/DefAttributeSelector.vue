@@ -28,7 +28,7 @@
                     </el-table>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="closeDialog()">取 消</el-button>
+        <el-button @click="closeDialog()">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-container>

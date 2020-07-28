@@ -21,7 +21,7 @@
     </el-row>
     <el-row>
       <el-button @click="addplus" icon="el-icon-plus">添加</el-button>
-      <el-button @click="removeminus" icon="el-icon-minus">删除</el-button>
+      <el-button @click="removeminus" icon="el-icon-minus">{{$t('application.delete')}}</el-button>
     </el-row>
       <el-row :key="index" v-for="(item,index) in formtips">
             <el-col :span='3' class="topbar-button">

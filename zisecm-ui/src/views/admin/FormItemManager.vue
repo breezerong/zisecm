@@ -3,7 +3,7 @@
     <el-dialog title="表单校验" :visible.sync="checkVisible"  width="80%">
       <FormItemCheck ref="FormItemCheck" :parentformid="parentid"></FormItemCheck>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="checkVisible = false">取 消</el-button>
+        <el-button @click="checkVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible" modal-append-to-body="false" width="86%">
@@ -159,7 +159,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -181,7 +181,7 @@
           </el-col>
           <el-col :span="16" style="text-align:left;">
             &nbsp; 
-            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建</el-button>
+            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">{{$t('application.new')}}</el-button>
             <el-button type="primary" plain icon="el-icon-check" @click="startcheck()">表单验证</el-button>
           </el-col>
         </el-row>
@@ -294,7 +294,7 @@
                 size="small"
                 icon="delete"
                 @click="delitem(scope.row)"
-              >删除</el-button>
+              >{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -9,7 +9,7 @@
                     <el-input></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button @click="save()">查询</el-button>
+                    <el-button @click="save()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button @click="save()">保存</el-button>

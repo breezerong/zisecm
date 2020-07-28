@@ -1,6 +1,5 @@
 <template>
     <div>
-        项目视图
         <el-container>
             <el-aside>
                 <el-tree
@@ -18,7 +17,9 @@
                         <el-col :span="24">
                         <el-form :inline="true" :model="filters" @submit.native.prevent>
                             <el-form-item>
-                                <el-input width="100px" v-model="filters.title" placeholder="发文号或标题" @keyup.enter.native='searchItem'></el-input>
+                                <el-input width="100px" v-model="filters.title" 
+                                :placeholder="$t('application.PostNumber')+$t('application.or')+$t('application.Title')" 
+                                @keyup.enter.native='searchItem'></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
@@ -27,7 +28,7 @@
                                 <AddCondition @sendMsg='searchItem' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
                             </el-form-item> 
                             <el-form-item>
-                                <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
                             </el-form-item> 
                          </el-form>
                         </el-col>
@@ -51,7 +52,7 @@
                     </el-row>
                     <el-row>
                         <el-tabs  v-model="selectedTabName">
-                            <el-tab-pane label="传递文件" name="t01" v-if="isShowDesgin">
+                            <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
                                 <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                             <!--列表-->
                             <DataGrid
@@ -86,7 +87,7 @@
                                     ></DataGrid>
                             
                             </el-tab-pane>
-                            <el-tab-pane label="附件" name="t03" v-if='isShowAttachmentDoc'>
+                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
                             <!-- 打包下载 -->
                             <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
                             
@@ -122,7 +123,7 @@
                                 <AddCondition @sendMsg='searchItemIED' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
                             </el-form-item>
                             <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.mainDataGridIED)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataByObj($refs.mainDataGridIED)">{{$t('application.ExportExcel')}}</el-button>
                             </el-form-item> 
                          </el-form>
                         </el-col>
@@ -166,7 +167,7 @@
                                 <AddCondition @sendMsg='searchItemPlan' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
                             </el-form-item> 
                             <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.PlanDataGrid)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataByObj($refs.PlanDataGrid)">{{$t('application.ExportExcel')}}</el-button>
                             </el-form-item> 
                          </el-form>
                         </el-col>
@@ -191,7 +192,7 @@
                     <el-row>
                         <el-tabs  value="t01">
                             <el-tab-pane label="相关IED" name="t01">
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.IEDGrid)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataByObj($refs.IEDGrid)">{{$t('application.ExportExcel')}}</el-button>
                                     <!--列表-->
                                     <DataGrid
                                             ref="IEDGrid"
@@ -214,7 +215,7 @@
                         <el-col :span="24">
                         <el-form :inline="true" :model="filters" @submit.native.prevent>
                             <el-form-item>
-                                <el-input width="100px" v-model="filtersICM.title" placeholder="发文号或标题" @keyup.enter.native='searchItemICM'></el-input>
+                                <el-input width="100px" v-model="filtersICM.title" :placeholder="$t('application.PostNumber')+$t('application.or')+$t('application.Title')"  @keyup.enter.native='searchItemICM'></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" v-on:click="searchItemICM">{{$t('application.SearchData')}}</el-button>
@@ -223,7 +224,7 @@
                                 <AddCondition @sendMsg='searchItemICM' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
                             </el-form-item> 
                             <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.ICMDataGrid)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataByObj($refs.ICMDataGrid)">{{$t('application.ExportExcel')}}</el-button>
                             </el-form-item> 
                          </el-form>
                         </el-col>
@@ -247,7 +248,7 @@
                     <el-row>
                         <el-tabs  value="t01">
                             <el-tab-pane label="接口传递" name="t01">
-                                <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMTransfer)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMTransfer)">{{$t('application.ExportExcel')}}</el-button>
                                     <!--列表-->
                                     <DataGrid
                                             ref="ICMTransfer"
@@ -264,7 +265,7 @@
                                     </el-tab-pane>
                             <el-tab-pane label="接口意见" name="t02">
                                 <!-- 导出Excel -->
-                                <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMComments)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMComments)">{{$t('application.ExportExcel')}}</el-button>
                                 
                                 <!--列表-->
                                 <DataGrid
@@ -289,7 +290,7 @@
                         <el-col :span="24">
                         <el-form :inline="true" :model="filters" @submit.native.prevent>
                             <el-form-item>
-                                <el-input width="100px" v-model="filtersDesign.title" placeholder="编码或标题" @keyup.enter.native='searchItemDesign'></el-input>
+                                <el-input width="100px" v-model="filtersDesign.title" :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')" @keyup.enter.native='searchItemDesign'></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" v-on:click="searchItemDesign">{{$t('application.SearchData')}}</el-button>
@@ -299,7 +300,7 @@
                                 <AddCondition @sendMsg='searchItemDesign' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
                             </el-form-item>
                             <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataDesign($refs.projDesignDoc)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataDesign($refs.projDesignDoc)">{{$t('application.ExportExcel')}}</el-button>
                             </el-form-item> 
                          </el-form>
                         </el-col>
@@ -319,7 +320,7 @@
                     <el-row>
                         <el-tabs  value="t01">
                             <el-tab-pane label="相关文件" name="t01">
-                                <el-button type="primary" v-on:click="exportDataSubTable($refs.projRelevantDoc)">导出Excel</el-button>
+                                <el-button type="primary" v-on:click="exportDataSubTable($refs.projRelevantDoc)">{{$t('application.ExportExcel')}}</el-button>
                                 <!--列表-->
                                 <DataGrid
                                         ref="projRelevantDoc"

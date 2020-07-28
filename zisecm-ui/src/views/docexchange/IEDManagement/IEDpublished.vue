@@ -8,7 +8,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-input style="width:200px" v-model="inputValueNum" placeholder="外部编码、内部编码和中文标题"></el-input>
-                    <el-button type="primary" @click="search()">查询</el-button>
+                    <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition>
@@ -17,7 +17,7 @@
                     <el-button type="primary" @click="onIEDChange()">变更</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click.native="exportData">Excel下载</el-button>
+                    <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
             </el-form>
         </template>

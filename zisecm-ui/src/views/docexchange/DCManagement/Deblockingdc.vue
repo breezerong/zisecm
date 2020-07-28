@@ -19,14 +19,14 @@
                 </el-form-item>
                 
                 <el-form-item>
-                    <el-input v-model="filters.title" placeholder="编码或标题" @keyup.enter.native='searchItem'></el-input>
+                    <el-input v-model="filters.title" :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')" @keyup.enter.native='searchItem'></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="searchItem">查询</el-button>
+                    <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 
                 <el-form-item>
-                    <el-button type="success" @click="unlock()">解锁</el-button>
+                    <el-button type="success" @click="unlock()">{{$t('application.unlock')}}</el-button>
                 </el-form-item>
                 
                 <el-form-item>
@@ -39,7 +39,7 @@
                     <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
+                    <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
             </el-col>

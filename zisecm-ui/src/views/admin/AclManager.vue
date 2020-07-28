@@ -9,7 +9,7 @@
     >
       <AclForm  ref="PermissionDialog" v-bind:id="currentId"></AclForm>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="permissionVisible = false">关闭</el-button>
+        <el-button @click="permissionVisible = false">{{$t('application.close')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog title="添加" :visible.sync="dialogVisible">
@@ -25,7 +25,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="saveItem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -39,7 +39,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogCopyVisible = false">取 消</el-button>
+        <el-button @click="dialogCopyVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="copyItem(formCopy)">确 定</el-button>
       </div>
     </el-dialog>
@@ -60,7 +60,7 @@
       </el-col>
       <el-col :span="18" style="text-align:left;">
         &nbsp; 
-        <el-button type="primary" icon="el-icon-edit" plain @click="newItem()">新建</el-button>
+        <el-button type="primary" icon="el-icon-edit" plain @click="newItem()">{{$t('application.new')}}</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -105,7 +105,7 @@
             size="small"
             icon="delete"
             @click="delItem(scope.row)"
-          >删除</el-button>
+          >{{$t('application.delete')}}</el-button>
         </template>
       </el-table-column>
     </el-table>

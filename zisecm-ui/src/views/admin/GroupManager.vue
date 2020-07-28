@@ -3,7 +3,7 @@
     <el-dialog title="选择用户" :visible.sync="selectUserDialogVisible" width="820px">
       <UserSelector ref="UserSelector" v-on:onuserselected="onuserselected" :noGroup="1"></UserSelector>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="selectUserDialogVisible = false">取 消</el-button>
+        <el-button @click="selectUserDialogVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog title="选择部门" :visible.sync="deptdialogVisible" width="360px">
@@ -13,7 +13,7 @@
         width="360px"
       ></DepartmentSelector>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="deptdialogVisible = false">取 消</el-button>
+        <el-button @click="deptdialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="deptSelect()">确 定</el-button>
       </div>
     </el-dialog>
@@ -100,7 +100,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="userdialogVisible = false">取 消</el-button>
+        <el-button @click="userdialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="addUser(userform)">确 定</el-button>
       </div>
     </el-dialog>
@@ -132,7 +132,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>

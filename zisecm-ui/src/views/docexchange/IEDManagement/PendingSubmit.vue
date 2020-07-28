@@ -5,10 +5,10 @@
         <el-dialog title="批量导入IED" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
-            <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
+            <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
             </div>
         </el-dialog>
-     <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+     <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
             <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
                 <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                 <el-upload
@@ -19,13 +19,13 @@
                     :auto-upload="false"
                     :multiple="true"
                 >
-                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                    <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
                 </el-upload>
                 </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="importdialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="uploadData()">开始导入</el-button>
+                <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+                <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
             </div>
         </el-dialog>
 
@@ -56,12 +56,12 @@
             <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
              @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
             <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
-            <el-button type="primary" @click="search()" >查询</el-button>
-            <el-button type="success" @click="submit()">提交</el-button>
-            <el-button type="primary" @click="newArchiveItem('IED',selectedOneTransfer)" >新建</el-button>
-            <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">导入</el-button>
-             <el-button type="primary" @click.native="exportData">Excel下载</el-button>
-            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">删除</el-button>
+            <el-button type="primary" @click="search()" >{{$t('application.SearchData')}}</el-button>
+            <el-button type="success" @click="submit()">{{$t('application.close')}}</el-button>
+            <el-button type="primary" @click="newArchiveItem('IED',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
+            <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">{{$t('application.Import')}}</el-button>
+             <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
+            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">{{$t('application.delete')}}</el-button>
             </el-row>
         </template>
         

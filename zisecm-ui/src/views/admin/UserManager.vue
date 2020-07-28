@@ -186,7 +186,7 @@
                 :auto-upload="false"
                 :multiple="false"
               >
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
               </el-upload>
             </el-form-item>
           </el-col>
@@ -197,7 +197,7 @@
         class="dialog-footer"
         v-if="clientPermission>=form.clientPermission || !isReadOnly"
       >
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -213,13 +213,13 @@
               :auto-upload="false"
               :multiple="false"
             >
-              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+              <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
             </el-upload>
           </el-form-item>
         </el-col>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="updateSignImage()">确 定</el-button>
       </div>
     </el-dialog>
@@ -240,7 +240,7 @@
           </el-col>
           <el-col :span="20" style="text-align:left;">
             &nbsp; 
-            <el-button type="primary" plain="true" icon="el-icon-edit" @click="newitem()">新建</el-button>
+            <el-button type="primary" plain="true" icon="el-icon-edit" @click="newitem()">{{$t('application.new')}}</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -309,7 +309,7 @@
                 type="danger"
                 plain
                 icon="el-icon-delete"
-                title="删除"
+                :title="$t('application.delete')"
                 @click="delitem(scope.row)"
               ></el-button>
             </template>
