@@ -54,12 +54,12 @@
                 <el-form-item>
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:typeName="typeName" :inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
-                <el-form-item v-if="roles">
+                <el-form-item v-if="roles1">
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">Excel下载</el-button>
                     <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >新建</el-button>
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">导入</el-button>
                 </el-form-item>
-                <el-form-item v-else-if="true">
+                <el-form-item v-if="roles2">
                     <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >延误反馈</el-button>
                 </el-form-item>
             </el-form>
@@ -161,7 +161,8 @@ export default {
             condition1:"",
             selectedItems:'',
             Visible1:false,
-            roles:false,
+            roles1:false,
+            roles2:false,
         }
     },
     mounted(){
@@ -173,20 +174,33 @@ export default {
             })
             
         }
-        this.roles=this.GetUserRoles('CNPE')
-        
+        let roles=this.GetUserRoles('CNPE')
+        if(roles==1){
+            this.roles1=true
+        }else if(roles==2){
+            this.roles2=true
+        }
     },
     methods: {
         GetUserRoles(rolename){
             console.log('GetUserRoles')
-            let result = false
+            let result = 0
             let CurrentUser=JSON.parse(sessionStorage.getItem("ecm-current-user"))
             console.log(CurrentUser.company+"_接口人员")
-            CurrentUser.roles.forEach(function(item){
-                if(item==rolename+"_接口人员"){
-                    result=true
-                }
-            })
+            if(CurrentUser.company==rolename){
+                CurrentUser.roles.forEach(function(item){
+                    if(item==CurrentUser.company+"_接口人员"){
+                        result=1
+                    }
+                })
+            }else{
+                CurrentUser.roles.forEach(function(item){
+                    if(item==CurrentUser.company+"_接口人员"){
+                        result=2
+                    }
+                })
+            }
+            
             console.log(result)
             return result
         },
