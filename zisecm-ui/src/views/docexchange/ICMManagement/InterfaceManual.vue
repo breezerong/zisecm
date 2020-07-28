@@ -108,7 +108,7 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM'and C_DESIGN_UNIT='@company'",
+                    condition:"TYPE_NAME='ICM'and C_PROJECT_NAME = '@project'",
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
@@ -117,7 +117,7 @@ export default {
                 ICMPass:{
                     gridViewName:"ICMPassGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"C_COMPANY='@company'",
+                    condition:"C_PROJECT_NAME = '@project'",
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
@@ -128,7 +128,7 @@ export default {
                 ICMComments:{
                     gridViewName:"ICMCommentsGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"C_COMPANY='@company'",
+                    condition:"C_PROJECT_NAME = '@project'",
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
@@ -192,6 +192,7 @@ export default {
         },
         //单击行
         onDataGridRowClick:function(row){
+            console.log(row)
             var condition1 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息传递单'and PARENT_ID ='"+row.ID+"'"
             var key1="ID IN ("+condition1+")"
             this.$refs.ICMPass.condition = key1
@@ -250,7 +251,7 @@ export default {
             this.$refs.ICMComments.itemDataList=[]
             let _self = this
             var k1="TYPE_NAME='ICM' AND C_PROJECT_NAME = '@project'"
-            k1+=" AND C_CODE4 LIKE '%"+ _self.inputValueNum+"%'"
+            k1+=" AND CODING LIKE '%"+ _self.inputValueNum+"%'"
             // _self.$alert(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridInfo();
