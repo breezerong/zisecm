@@ -100,7 +100,7 @@ public class ICMImportService extends EcmService {
 		int failedCount =0;
 		sb.append("开始导入:").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("TYPE_NAME", "ICM");
+		map.put("TYPE_NAME", "导入批次");
 		String number = numberService.getNumber(token, map);
 		String uploadFolder = CacheManagerOper.getEcmParameters().get("UploadFolder").getValue();
 		if(!uploadFolder.endsWith(File.separator))
@@ -370,12 +370,12 @@ public class ICMImportService extends EcmService {
 		String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
 		if(submitType.equals("新增")) {
 			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-			String cond = " TYPE_NAME='ICM' and CODING='"+coding+"'";
+			String cond = " TYPE_NAME='IED' and CODING='"+coding+"'";
 			try {
 			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
 			
 				if(result!=null&&result.size()>0) {
-					throw new Exception("ICM 已存在，编码："+coding);
+					throw new Exception("IED 已存在，编码："+coding);
 				}
 				
 				
