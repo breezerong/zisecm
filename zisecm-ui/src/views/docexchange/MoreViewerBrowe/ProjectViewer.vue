@@ -43,6 +43,7 @@
                             :isshowCustom="true"
                             :isInitData="false"
                             @rowclick="rowClick"
+                            :isEditProperty="false"
                             :isshowSelection="false"
                             >
                                 
@@ -62,6 +63,7 @@
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="true"
+                                    :isEditProperty="false"
                                     @selectchange="selectChangeTransferDoc"
                                     ></DataGrid>
                             </el-tab-pane>
@@ -79,6 +81,7 @@
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='相关文件'"
                                     :isshowCustom="true"
+                                    :isEditProperty="false"
                                     @selectchange="relevantDocSelect"
                                     ></DataGrid>
                             
@@ -97,6 +100,7 @@
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
                                     :isshowCustom="true"
+                                    :isEditProperty="false"
                                     @selectchange="attachmentDocSelect"
                                     ></DataGrid>
                             </el-tab-pane>
@@ -134,6 +138,7 @@
                                 @cellMouseEnter="cellMouseEnter"
                                 @rowclick="rowClick" 
                                 @selectchange="selectChange"
+                                :isEditProperty="false"
                                 >
                                 <template slot="sequee" slot-scope="scope">
                                     <el-popover trigger="hover" placement="top" width="50">
@@ -177,6 +182,7 @@
                             condition=" TYPE_NAME='计划任务' "
                             :isshowCustom="true"
                             :isInitData="false"
+                            :isEditProperty="false"
                             @rowclick="rowClickPlan"
                             :isshowSelection="false"
                             >
@@ -184,19 +190,20 @@
                     </el-row>
                     <el-row>
                         <el-tabs  value="t01">
-                            <el-tab-pane label="相关IED" name="t01" v-if="isShowDesgin">
+                            <el-tab-pane label="相关IED" name="t01">
                                 <el-button type="primary" v-on:click="exportDataByObj($refs.IEDGrid)">导出Excel</el-button>
-                            <!--列表-->
-                            <DataGrid
-                                    ref="IEDGrid"
-                                    key="IEDGrid"
-                                    dataUrl="/dc/getDocuments"
-                                    v-bind:tableHeight="rightTableHeight"
-                                    v-bind:isshowOption="true"
-                                    gridViewName="IEDGrid"
-                                    :isshowCustom="true"
-                                    @selectchange="icmTransferSelect"
-                                    ></DataGrid>
+                                    <!--列表-->
+                                    <DataGrid
+                                            ref="IEDGrid"
+                                            key="IEDGrid"
+                                            dataUrl="/dc/getDocuments"
+                                            v-bind:tableHeight="rightTableHeight"
+                                            v-bind:isshowOption="true"
+                                            gridViewName="IEDGrid"
+                                            :isshowCustom="true"
+                                            :isEditProperty="false"
+                                            @selectchange="icmTransferSelect"
+                                            ></DataGrid>
                             </el-tab-pane>
                            
                         </el-tabs>
@@ -231,6 +238,7 @@
                             gridViewName="ICMGrid"
                             :isshowCustom="true"
                             :isInitData="false"
+                            :isEditProperty="false"
                             @rowclick="rowClickICM"
                             :isshowSelection="false"
                             >
@@ -238,44 +246,96 @@
                     </el-row>
                     <el-row>
                         <el-tabs  value="t01">
-                            <el-tab-pane label="接口传递" name="t01" v-if="isShowDesgin">
+                            <el-tab-pane label="接口传递" name="t01">
                                 <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMTransfer)">导出Excel</el-button>
-                            <!--列表-->
-                            <DataGrid
-                                    ref="ICMTransfer"
-                                    key="ICMTransfer"
-                                    dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="rightTableHeight"
-                                    v-bind:isshowOption="true"
-                                    gridViewName="ICMPassGrid"
-                                    condition=" and a.NAME='传递接口'"
-                                    :isshowCustom="true"
-                                    @selectchange="icmTransferSelect"
-                                    ></DataGrid>
-                            </el-tab-pane>
-                            <el-tab-pane label="接口意见" name="t02" v-if="isShowRelevant" ref="relevantTab">
-                            <!-- 导出Excel -->
-                            <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMComments)">导出Excel</el-button>
-                            
-                            <!--列表-->
-                            <DataGrid
-                                    ref="ICMComments"
-                                    key="ICMComments"
-                                    dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="rightTableHeight"
-                                    v-bind:isshowOption="true"
-                                    gridViewName="ICMCommentsGrid"
-                                    condition=" and a.NAME='接口意见'"
-                                    :isshowCustom="true"
-                                    @selectchange="icmCommentsSelect"
-                                    ></DataGrid>
-                            
+                                    <!--列表-->
+                                    <DataGrid
+                                            ref="ICMTransfer"
+                                            key="ICMTransfer"
+                                            dataUrl="/dc/getDocuByRelationParentId"
+                                            v-bind:tableHeight="rightTableHeight"
+                                            v-bind:isshowOption="true"
+                                            gridViewName="ICMPassGrid"
+                                            condition=" and a.NAME='传递接口'"
+                                            :isshowCustom="true"
+                                            :isEditProperty="false"
+                                            @selectchange="icmTransferSelect"
+                                            ></DataGrid>
+                                    </el-tab-pane>
+                            <el-tab-pane label="接口意见" name="t02">
+                                <!-- 导出Excel -->
+                                <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMComments)">导出Excel</el-button>
+                                
+                                <!--列表-->
+                                <DataGrid
+                                        ref="ICMComments"
+                                        key="ICMComments"
+                                        dataUrl="/dc/getDocuByRelationParentId"
+                                        v-bind:tableHeight="rightTableHeight"
+                                        v-bind:isshowOption="true"
+                                        gridViewName="ICMCommentsGrid"
+                                        condition=" and a.NAME='接口意见'"
+                                        :isshowCustom="true"
+                                        :isEditProperty="false"
+                                        @selectchange="icmCommentsSelect"
+                                        ></DataGrid>
+                                
                             </el-tab-pane>
                         </el-tabs>
                     </el-row>
                 </template>
                 <template v-if="isDesign">
-                    
+                    <el-row>
+                        <el-col :span="24">
+                        <el-form :inline="true" :model="filters" @submit.native.prevent>
+                            <el-form-item>
+                                <el-input width="100px" v-model="filtersDesign.title" placeholder="编码或标题" @keyup.enter.native='searchItemDesign'></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" v-on:click="searchItemDesign">{{$t('application.SearchData')}}</el-button>
+                            </el-form-item>
+                            <el-form-item>
+                                <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
+                                <AddCondition @sendMsg='searchItemDesign' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" v-on:click="exportDataDesign($refs.projDesignDoc)">导出Excel</el-button>
+                            </el-form-item> 
+                         </el-form>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <DataGrid
+                            ref="projDesignDoc"
+                            key="projDesignDoc"
+                            dataUrl="/exchange/project/getDesignAtProjectView"
+                            v-bind:tableHeight="rightTableHeight"
+                            v-bind:isshowOption="true" v-bind:isshowSelection ="false"
+                            gridViewName="DrawingGrid"
+                            :isEditProperty="false"
+                            :isshowCustom="true"
+                            ></DataGrid>
+                    </el-row>
+                    <el-row>
+                        <el-tabs  value="t01">
+                            <el-tab-pane label="相关文件" name="t01">
+                                <el-button type="primary" v-on:click="exportDataSubTable($refs.projRelevantDoc)">导出Excel</el-button>
+                                <!--列表-->
+                                <DataGrid
+                                        ref="projRelevantDoc"
+                                        key="projRelevantDoc"
+                                        dataUrl="/dc/getDocuByRelationParentId"
+                                        v-bind:tableHeight="rightTableHeight"
+                                        v-bind:isshowOption="true"
+                                        gridViewName="DrawingGrid"
+                                        condition=" and a.NAME='相关文件'"
+                                        :isshowCustom="true"
+                                        :isEditProperty="false"
+                                        @selectchange="icmTransferSelect"
+                                        ></DataGrid>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </el-row>
                 </template>
             </el-main>
         </el-container>
@@ -405,6 +465,7 @@ export default {
             }
             ExcelUtil.export(params)
         },
+        //导出字表文件
         exportDataSubTable(gridObj){
             let dataUrl = "/exchange/doc/exportByParentId"
             let params = {
@@ -415,6 +476,20 @@ export default {
                 sheetname:"Result",
                 parentId:this.parentId,
                 URL:"/exchange/doc/exportByParentId"
+            }
+            ExcelUtil.export4Cnpe(params)
+        },
+        //导出设计文件
+        exportDataDesign(gridObj){
+            let dataUrl = "/exchange/doc/exportByParentId"
+            let params = {
+                gridName:gridObj.gridViewName,
+                lang:"zh-cn",
+                condition:gridObj.condition,
+                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                sheetname:"Result",
+                parentId:this.parentId,
+                URL:"/exchange/doc/exportDesignInProjView"
             }
             ExcelUtil.export4Cnpe(params)
         },
@@ -534,11 +609,42 @@ export default {
                     this.isIED=false;
                     this.isProject=false;
                     this.isICM=false;
+                    this.typeName=data.name;
+                    let user = this.currentUser();
+                    let _self=this;
+                    _self.$nextTick(()=>{
+                        if(user.userType==2 && user.company!=null){
+                            _self.$refs.projDesignDoc.condition=_self.condition=" and TYPE_NAME='"+_self.typeName+"' "
+                            +" and C_PROJECT_NAME = '"+_self.projectName+"' AND (C_COMPANY='"+user.company +"'"
+                            +" or C_TO like'%"+user.company+"%')";
+                        }else{
+                            _self.$refs.projDesignDoc.condition=_self.condition=" and TYPE_NAME='"+_self.typeName+"' "
+                            +"and C_PROJECT_NAME = '"+_self.projectName+"' ";
+                        }
+                        
+                        _self.$refs.projDesignDoc.loadGridData();
+                    });
                 }
             }
             
         },
-
+        searchItemDesign(){
+            let _self=this;
+            let key=" "+_self.condition;
+           
+            if(_self.filtersDesign.title!=''){
+                key+=" and (CODING like '%"+_self.filtersDesign.title+"%' "
+                +"or TITLE like '%"+_self.filtersDesign.title+"%' "
+                +")";
+            }
+            if(_self.advCondition!=''){
+                key+="and ("+_self.advCondition+")";
+            }
+            if(key!=''){
+                _self.$refs.projDesignDoc.condition=key;
+            }
+            _self.$refs.projDesignDoc.loadGridData();
+        },
         searchItemPlan(){
             let _self=this;
             let key=" "+_self.condition;
