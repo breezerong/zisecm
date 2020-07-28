@@ -54,18 +54,24 @@
                 <el-form-item>
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:typeName="typeName" :inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item v-if="roles">
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">Excel下载</el-button>
                     <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >新建</el-button>
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">导入</el-button>
-                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedOneTransfer)" >延误反馈</el-button>
+                </el-form-item>
+                <el-form-item v-else-if="true">
+                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >延误反馈</el-button>
                 </el-form-item>
             </el-form>
         </template>
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-155" @rowclick="onDataGridRowClick"></DataGrid>
+                    <DataGrid ref="mainDataGrid"
+                     v-bind="tables.main" 
+                     :tableHeight="layout.height/2-155" 
+                     @selectchange="selectChange"
+                     @rowclick="onDataGridRowClick"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -102,9 +108,11 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM'and C_COMPANY='@company'",
+                    condition:"TYPE_NAME='ICM'and C_DESIGN_UNIT='@company'",
+                    isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
+                    // isshowSelection:false
                 },
                 ICMPass:{
                     gridViewName:"ICMPassGrid",
@@ -114,6 +122,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
+                    isshowSelection:false,
                     tableHeight:"350"
                 },
                 ICMComments:{
@@ -124,6 +133,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
+                    isshowSelection:false,
                     tableHeight:"350"
                 }
             },
@@ -149,8 +159,9 @@ export default {
             importdialogVisible:false,
             uploading:false,
             condition1:"",
-            selectedItems: [],
-            Visible1:false
+            selectedItems:'',
+            Visible1:false,
+            roles:false,
         }
     },
     mounted(){
@@ -162,8 +173,23 @@ export default {
             })
             
         }
+        this.roles=this.GetUserRoles('CNPE')
+        
     },
     methods: {
+        GetUserRoles(rolename){
+            console.log('GetUserRoles')
+            let result = false
+            let CurrentUser=JSON.parse(sessionStorage.getItem("ecm-current-user"))
+            console.log(CurrentUser.company+"_接口人员")
+            CurrentUser.roles.forEach(function(item){
+                if(item==rolename+"_接口人员"){
+                    result=true
+                }
+            })
+            console.log(result)
+            return result
+        },
         //单击行
         onDataGridRowClick:function(row){
             var condition1 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息传递单'and PARENT_ID ='"+row.ID+"'"
@@ -297,18 +323,9 @@ export default {
             if(_self.$refs.ShowProperty.myItemId!=''){
                 m.set('ID',_self.$refs.ShowProperty.myItemId);
             }
-            if(_self.$refs.ShowProperty.myTypeName!=''){
-                m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
-                m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
-                m.set("parentDocId", _self.parentId);
-                m.set("relationName",_self.relationName);
-            }
+            m.set('TYPE_NAME','ICM');
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
-            if(_self.$refs.ShowProperty.file!=""){
-                //console.log(_self.file);
-                formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
-            }
             // console.log(JSON.stringify(m));
             if(_self.$refs.ShowProperty.myItemId==''){
                 axios.post("/exchange/ICM/newICM",formdata,{
@@ -342,27 +359,6 @@ export default {
                 })
                 .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
-                    console.log(error);
-                });
-            }
-            else{
-                if(_self.$refs.ShowProperty.permit<5){
-                    _self.$message(_self.$t('message.hasnoPermssion'));
-                    return ;
-                }
-                axios.post("/dc/saveDocument",JSON.stringify(m))
-                .then(function(response) {
-                    let code = response.data.code;
-                    //console.log(JSON.stringify(response));
-                    if(code==1){
-                        _self.$emit('onSaved','update');
-                    }
-                    else{
-                        _self.$message(_self.$t('message.saveFailured'));
-                    }
-                })
-                .catch(function(error) {
-                    _self.$message(_self.$t('message.saveFailured'));
                     console.log(error);
                 });
             }
@@ -404,21 +400,42 @@ export default {
             });
             return formdata;
         },
-        
+        selectChange(val){
+            this.selectedItems = val
+        },
         //延误反馈
-        icmfeedback(typeName, selectedRow) {
+        icmfeedback(typeName, selectedItems) {
+            
             let _self = this;
-            _self.Visible1 = true;
-            setTimeout(()=>{
-                if(_self.$refs.ShowProperty){
-                    _self.$refs.ShowProperty.myItemId = "";
-                    _self.dialogName=typeName;
-                    _self.$refs.ShowProperty.myTypeName =typeName;
-                    _self.typeName=typeName;
-                    _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
-                    _self.$refs.ShowProperty.loadFormInfo();
-                }
-            },10);
+            let selectid=''
+            if(selectedItems.length==1){
+                _self.Visible1 = true;
+                selectedItems.forEach(function(item){
+                    console.log(item.ID)
+                    selectid=item.ID
+                })
+                // console.log(a)
+                setTimeout(()=>{
+                    if(_self.$refs.ShowProperty){
+                        _self.$refs.ShowProperty.myItemId = "";
+                        _self.dialogName=typeName;
+                        _self.$refs.ShowProperty.myTypeName =typeName;
+                        _self.typeName=typeName;
+                        _self.$refs.ShowProperty.parentDocId=selectid
+                        _self.$refs.ShowProperty.loadFormInfo();
+                    }
+                },10);
+            }
+            else{
+                _self.$message({
+                            showClose: true,
+                            message: "请选择一条数据",
+                            duration: 2000,
+                            type: "warring"
+                        });
+            }
+            // console.log(selectedItems)
+            
         },
         SaveFeedBack(){
             this.Visible1 = false
@@ -450,23 +467,12 @@ export default {
                         }
                     }
                 }
+                
             }
-            if(_self.$refs.ShowProperty.myItemId!=''){
-                m.set('ID',_self.$refs.ShowProperty.myItemId);
-            }
-            if(_self.$refs.ShowProperty.myTypeName!=''){
-                m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
-                m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
-                m.set("parentDocId", _self.parentId);
-                m.set("relationName",_self.relationName);
-            }
+            m.set("ID",_self.$refs.ShowProperty.parentDocId)
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
-            if(_self.$refs.ShowProperty.file!=""){
-                //console.log(_self.file);
-                formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
-            }
-            //  console.log(JSON.stringify(m));
+            console.log(m)
             if(_self.$refs.ShowProperty.myItemId==''){
                 axios.post("/exchange/ICM/FeedBack",formdata,{
                     'Content-Type': 'multipart/form-data'
@@ -499,27 +505,6 @@ export default {
                 })
                 .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
-                    console.log(error);
-                });
-            }
-            else{
-                if(_self.$refs.ShowProperty.permit<5){
-                    _self.$message(_self.$t('message.hasnoPermssion'));
-                    return ;
-                }
-                axios.post("/dc/saveDocument",JSON.stringify(m))
-                .then(function(response) {
-                    let code = response.data.code;
-                    //console.log(JSON.stringify(response));
-                    if(code==1){
-                        _self.$emit('onSaved','update');
-                    }
-                    else{
-                        _self.$message(_self.$t('message.saveFailured'));
-                    }
-                })
-                .catch(function(error) {
-                    _self.$message(_self.$t('message.saveFailured'));
                     console.log(error);
                 });
             }
