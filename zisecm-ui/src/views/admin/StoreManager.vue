@@ -17,6 +17,12 @@
         <el-form-item label="执行类" :label-width="formLabelWidth">
           <el-input v-model="form.storeClass" auto-complete="off"></el-input>
         </el-form-item>
+        <el-form-item label="是否加密" :label-width="formLabelWidth">
+          <el-select v-model="form.encrypt">
+            <el-option label="否" :value="false"></el-option>
+            <el-option label="是" :value="true"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="存储路径" :label-width="formLabelWidth">
           <el-input v-model="form.storePath" auto-complete="off"></el-input>
         </el-form-item>
@@ -71,7 +77,10 @@
           </el-table-column>
           <el-table-column label="存储类型" width="120">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.storeType"></el-input>
+              <el-select v-model="scope.row.storeType">
+                <el-option label="路径存储" :value="0"></el-option>
+                <el-option label="扩展存储" :value="1"></el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="执行类" min-width="20%">
@@ -79,6 +88,15 @@
               <el-input v-model="scope.row.storeClass"></el-input>
             </template>
           </el-table-column>
+          <el-table-column label="是否加密" width="120">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.encrypt">
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          
           <el-table-column label="路径" min-width="20%">
             <template slot-scope="scope">
               <el-input v-model="scope.row.storePath"></el-input>
@@ -126,6 +144,8 @@ export default {
       tableHeight: window.innerHeight - 115,
       form: {
         name: "",
+        encrypt: false,
+        storeType: 0,
         description: "",
         condition: "",
         orderBy: ""
