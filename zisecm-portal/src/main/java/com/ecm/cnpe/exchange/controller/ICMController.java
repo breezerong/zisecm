@@ -30,20 +30,11 @@ public class ICMController  extends ControllerAbstract  {
 	
 	@RequestMapping(value = "/exchange/ICM/newICM", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> newICM(String metaData, MultipartFile uploadFile) throws Exception {
+	public Map<String, Object> newICM(String metaData) throws Exception {
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		EcmContent en = null;
 		EcmDocument doc = new EcmDocument();
 		doc.setAttributes(args);
-		if (uploadFile != null) {
-			en = new EcmContent();
-			en.setName(uploadFile.getOriginalFilename());
-			en.setContentSize(uploadFile.getSize());
-			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
-			en.setInputStream(uploadFile.getInputStream());
-		}
-		String id = documentService.newObject(getToken(), doc, en);
-		
+		String id = documentService.newObject(getToken(), doc, null);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);
@@ -51,23 +42,13 @@ public class ICMController  extends ControllerAbstract  {
 	}
 	@PostMapping("/exchange/ICM/FeedBack")
 	@ResponseBody
-	public Map<String, Object> FeedBack(String metaData, MultipartFile uploadFile) throws Exception{
+	public Map<String, Object> FeedBack(String metaData) throws Exception{
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		EcmContent en = null;
 		EcmDocument doc = new EcmDocument();
 		doc.setAttributes(args);
-		if (uploadFile != null) {
-			en = new EcmContent();
-			en.setName(uploadFile.getOriginalFilename());
-			en.setContentSize(uploadFile.getSize());
-			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
-			en.setInputStream(uploadFile.getInputStream());
-		}
-		String id = documentService.newObject(getToken(), doc, en);
-		
+		documentService.updateObject(getToken(), doc, null);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
-		mp.put("id", id);
-		return mp;		
+		return mp;	
 	}
 }

@@ -9,7 +9,7 @@
             </el-dialog>
             <!-- 新建窗口 -->
             <el-dialog
-                :title="dialogName+$t('application.property')"
+                :title="dialogName"
                 :visible.sync="propertyVisible"
                 @close="propertyVisible = false"
                 width="80%"
@@ -54,18 +54,24 @@
                 <el-form-item>
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:typeName="typeName" :inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item v-if="roles1">
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">{{$t('application.ExportExcel')}}</el-button>
-                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
-                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedOneTransfer)" >延误反馈</el-button>
+                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >新建</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">导入</el-button>
+                </el-form-item>
+                <el-form-item v-if="roles2">
+                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >延误反馈</el-button>
                 </el-form-item>
             </el-form>
         </template>
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-155" @rowclick="onDataGridRowClick"></DataGrid>
+                    <DataGrid ref="mainDataGrid"
+                     v-bind="tables.main" 
+                     :tableHeight="layout.height/2-155" 
+                     @selectchange="selectChange"
+                     @rowclick="onDataGridRowClick"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -102,28 +108,32 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM'and C_COMPANY='@company'",
+                    condition:"TYPE_NAME='ICM'and C_PROJECT_NAME = '@project'",
+                    isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
+                    // isshowSelection:false
                 },
                 ICMPass:{
                     gridViewName:"ICMPassGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"C_COMPANY='@company'",
+                    condition:"C_PROJECT_NAME = '@project'",
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
+                    isshowSelection:false,
                     tableHeight:"350"
                 },
                 ICMComments:{
                     gridViewName:"ICMCommentsGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"C_COMPANY='@company'",
+                    condition:"C_PROJECT_NAME = '@project'",
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
+                    isshowSelection:false,
                     tableHeight:"350"
                 }
             },
@@ -149,8 +159,10 @@ export default {
             importdialogVisible:false,
             uploading:false,
             condition1:"",
-            selectedItems: [],
-            Visible1:false
+            selectedItems:'',
+            Visible1:false,
+            roles1:false,
+            roles2:false,
         }
     },
     mounted(){
@@ -162,10 +174,40 @@ export default {
             })
             
         }
+        let roles=this.GetUserRoles('CNPE')
+        if(roles==1){
+            this.roles1=true
+        }else if(roles==2){
+            this.roles2=true
+        }
     },
     methods: {
+        //角色判断
+        GetUserRoles(rolename){
+            console.log('GetUserRoles')
+            let result = 0
+            let CurrentUser=JSON.parse(sessionStorage.getItem("ecm-current-user"))
+            console.log(CurrentUser.company+"_接口人员")
+            if(CurrentUser.company==rolename){
+                CurrentUser.roles.forEach(function(item){
+                    if(item==CurrentUser.company+"_接口人员"){
+                        result=1
+                    }
+                })
+            }else{
+                CurrentUser.roles.forEach(function(item){
+                    if(item==CurrentUser.company+"_接口人员"){
+                        result=2
+                    }
+                })
+            }
+            
+            console.log(result)
+            return result
+        },
         //单击行
         onDataGridRowClick:function(row){
+            console.log(row)
             var condition1 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息传递单'and PARENT_ID ='"+row.ID+"'"
             var key1="ID IN ("+condition1+")"
             this.$refs.ICMPass.condition = key1
@@ -224,7 +266,7 @@ export default {
             this.$refs.ICMComments.itemDataList=[]
             let _self = this
             var k1="TYPE_NAME='ICM' AND C_PROJECT_NAME = '@project'"
-            k1+=" AND C_CODE4 LIKE '%"+ _self.inputValueNum+"%'"
+            k1+=" AND CODING LIKE '%"+ _self.inputValueNum+"%'"
             // _self.$alert(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridInfo();
@@ -247,20 +289,9 @@ export default {
         newArchiveItem(typeName, selectedRow) {
             let _self = this;
             _self.selectedItemId = "";
-            _self.dialogName = typeName;
+            _self.dialogName = "新建ICM";
             _self.propertyVisible = true;
-            setTimeout(()=>{
-                if(_self.$refs.ShowProperty){
-                    _self.$refs.ShowProperty.myItemId = "";
-                    _self.dialogName=typeName;
-                    _self.$refs.ShowProperty.myTypeName =typeName;
-                    _self.typeName=typeName;
-                    _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
-                    _self.$refs.ShowProperty.folderPath = '/设计分包/传递单管理/ATOS';
-                    // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
-                    _self.$refs.ShowProperty.loadFormInfo();
-                }
-            },10);
+            _self.$refs.ShowProperty.loadFormInfo();
             //_self.$alert("111")
         },
         //新建保存
@@ -297,18 +328,9 @@ export default {
             if(_self.$refs.ShowProperty.myItemId!=''){
                 m.set('ID',_self.$refs.ShowProperty.myItemId);
             }
-            if(_self.$refs.ShowProperty.myTypeName!=''){
-                m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
-                m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
-                m.set("parentDocId", _self.parentId);
-                m.set("relationName",_self.relationName);
-            }
+            m.set('TYPE_NAME','ICM');
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
-            if(_self.$refs.ShowProperty.file!=""){
-                //console.log(_self.file);
-                formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
-            }
             // console.log(JSON.stringify(m));
             if(_self.$refs.ShowProperty.myItemId==''){
                 axios.post("/exchange/ICM/newICM",formdata,{
@@ -342,27 +364,6 @@ export default {
                 })
                 .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
-                    console.log(error);
-                });
-            }
-            else{
-                if(_self.$refs.ShowProperty.permit<5){
-                    _self.$message(_self.$t('message.hasnoPermssion'));
-                    return ;
-                }
-                axios.post("/dc/saveDocument",JSON.stringify(m))
-                .then(function(response) {
-                    let code = response.data.code;
-                    //console.log(JSON.stringify(response));
-                    if(code==1){
-                        _self.$emit('onSaved','update');
-                    }
-                    else{
-                        _self.$message(_self.$t('message.saveFailured'));
-                    }
-                })
-                .catch(function(error) {
-                    _self.$message(_self.$t('message.saveFailured'));
                     console.log(error);
                 });
             }
@@ -404,21 +405,44 @@ export default {
             });
             return formdata;
         },
-        
+        selectChange(val){
+            this.selectedItems = val
+        },
         //延误反馈
-        icmfeedback(typeName, selectedRow) {
+        icmfeedback(typeName, selectedItems) {
+            
             let _self = this;
-            _self.Visible1 = true;
-            setTimeout(()=>{
-                if(_self.$refs.ShowProperty){
-                    _self.$refs.ShowProperty.myItemId = "";
-                    _self.dialogName=typeName;
-                    _self.$refs.ShowProperty.myTypeName =typeName;
-                    _self.typeName=typeName;
-                    _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
-                    _self.$refs.ShowProperty.loadFormInfo();
-                }
-            },10);
+            let selectid=''
+            if(selectedItems.length==1){
+                _self.Visible1 = true;
+                selectedItems.forEach(function(item){
+                    console.log(item.ID)
+                    selectid=item.ID
+                })
+                //  _self.dialogName='延误反馈'
+                // _self.$refs.ShowProperty.loadFormInfo();
+                // console.log(a)
+                setTimeout(()=>{
+                    if(_self.$refs.ShowProperty){
+                        _self.$refs.ShowProperty.myItemId = "";
+                        _self.dialogName=typeName;
+                        _self.$refs.ShowProperty.myTypeName =typeName;
+                        _self.typeName=typeName;
+                        // _self.$refs.ShowProperty.parentDocId=selectid
+                        _self.$refs.ShowProperty.loadFormInfo();
+                    }
+                },10);
+            }
+            else{
+                _self.$message({
+                            showClose: true,
+                            message: "请选择一条数据",
+                            duration: 2000,
+                            type: "warring"
+                        });
+            }
+            // console.log(selectedItems)
+            
         },
         SaveFeedBack(){
             this.Visible1 = false
@@ -450,23 +474,12 @@ export default {
                         }
                     }
                 }
+                
             }
-            if(_self.$refs.ShowProperty.myItemId!=''){
-                m.set('ID',_self.$refs.ShowProperty.myItemId);
-            }
-            if(_self.$refs.ShowProperty.myTypeName!=''){
-                m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
-                m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
-                m.set("parentDocId", _self.parentId);
-                m.set("relationName",_self.relationName);
-            }
+            m.set("ID",_self.$refs.ShowProperty.parentDocId)
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
-            if(_self.$refs.ShowProperty.file!=""){
-                //console.log(_self.file);
-                formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
-            }
-            //  console.log(JSON.stringify(m));
+            console.log(m)
             if(_self.$refs.ShowProperty.myItemId==''){
                 axios.post("/exchange/ICM/FeedBack",formdata,{
                     'Content-Type': 'multipart/form-data'
@@ -499,27 +512,6 @@ export default {
                 })
                 .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
-                    console.log(error);
-                });
-            }
-            else{
-                if(_self.$refs.ShowProperty.permit<5){
-                    _self.$message(_self.$t('message.hasnoPermssion'));
-                    return ;
-                }
-                axios.post("/dc/saveDocument",JSON.stringify(m))
-                .then(function(response) {
-                    let code = response.data.code;
-                    //console.log(JSON.stringify(response));
-                    if(code==1){
-                        _self.$emit('onSaved','update');
-                    }
-                    else{
-                        _self.$message(_self.$t('message.saveFailured'));
-                    }
-                })
-                .catch(function(error) {
-                    _self.$message(_self.$t('message.saveFailured'));
                     console.log(error);
                 });
             }
