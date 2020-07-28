@@ -154,7 +154,13 @@
     "fullscreen": "全屏",
     "exportExcel":"导出Excel",
     "requiredInput": "必填",
-    "cannotEmpty": "不能为空"
+    "cannotEmpty": "不能为空",
+    "index":"Index",
+    "wbsName":"名称",
+    "startDate":"开始日期",
+    "endDate":"结束日期",
+    "wbs":"WBS编码",
+    "projectName":"项目名称"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -279,8 +285,8 @@
     "ReceivedDcFromCnpe":"分包商已接收",
     "RejectDC":"驳回文函",
     "BeenDispensed":"已分发",
-    "LogMonitor": "日志监控"
-
+    "LogMonitor": "日志监控",
+    "icmfeedback":"延误反馈"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -348,4 +354,5 @@
 "close": "关闭",
 "closeOthers": "关闭其它",
 "closeAll": "关闭所有"
-}}
+}
+}

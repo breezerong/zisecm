@@ -94,7 +94,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="filters.title" placeholder="编码或标题" @keyup.enter.native='searchItem'></el-input>
+                    <el-input v-model="filters.title" placeholder="发文号或标题" @keyup.enter.native='searchItem'></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
@@ -260,6 +260,7 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from '@/components/ecm-data-select';
+import ExcelUtil from '@/utils/excel.js'
 export default {
     name: "Submissiondc",
     data(){
