@@ -9,7 +9,7 @@
             </el-dialog>
             <!-- 新建窗口 -->
             <el-dialog
-                :title="dialogName+$t('application.property')"
+                :title="dialogName"
                 :visible.sync="propertyVisible"
                 @close="propertyVisible = false"
                 width="80%"
@@ -182,6 +182,7 @@ export default {
         }
     },
     methods: {
+        //角色判断
         GetUserRoles(rolename){
             console.log('GetUserRoles')
             let result = 0
@@ -288,20 +289,9 @@ export default {
         newArchiveItem(typeName, selectedRow) {
             let _self = this;
             _self.selectedItemId = "";
-            _self.dialogName = typeName;
+            _self.dialogName = "新建ICM";
             _self.propertyVisible = true;
-            setTimeout(()=>{
-                if(_self.$refs.ShowProperty){
-                    _self.$refs.ShowProperty.myItemId = "";
-                    _self.dialogName=typeName;
-                    _self.$refs.ShowProperty.myTypeName =typeName;
-                    _self.typeName=typeName;
-                    _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
-                    _self.$refs.ShowProperty.folderPath = '/设计分包/传递单管理/ATOS';
-                    // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
-                    _self.$refs.ShowProperty.loadFormInfo();
-                }
-            },10);
+            _self.$refs.ShowProperty.loadFormInfo();
             //_self.$alert("111")
         },
         //新建保存
@@ -429,6 +419,8 @@ export default {
                     console.log(item.ID)
                     selectid=item.ID
                 })
+                //  _self.dialogName='延误反馈'
+                // _self.$refs.ShowProperty.loadFormInfo();
                 // console.log(a)
                 setTimeout(()=>{
                     if(_self.$refs.ShowProperty){
@@ -436,7 +428,7 @@ export default {
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
                         _self.typeName=typeName;
-                        _self.$refs.ShowProperty.parentDocId=selectid
+                        // _self.$refs.ShowProperty.parentDocId=selectid
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
                 },10);
