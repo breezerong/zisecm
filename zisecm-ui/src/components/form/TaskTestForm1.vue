@@ -37,10 +37,10 @@
            </el-form>
 
     <div slot="footer" class="dialog-footer" style="text-align:center" v-if="istask==false">
-      <el-button ref="borrowCancel" type="primary" @click="cancel()">取 消</el-button>
+      <el-button ref="borrowCancel" type="primary" @click="cancel()">{{$t('application.cancel')}}</el-button>
       <el-button ref="borrowStartwf" @click="startWorkflow(taskForm)">启动流程</el-button>
     </div>
-    <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%" append-to-body>
+    <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%" append-to-body>
           
           <el-form size="mini" :label-width="formLabelWidth">
             
@@ -52,13 +52,13 @@
                 :on-change="handleChange"
                 :auto-upload="false"
                 :multiple="false">
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
               </el-upload>
             </div>
           </el-form> 
           <div slot="footer" class="dialog-footer">
-            <el-button @click="importdialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="uploadData(docId)">开始导入</el-button>
+            <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+            <el-button type="primary" @click="uploadData(docId)">{{$t('application.start')+$t('application.Import')}}</el-button>
           </div>
         </el-dialog>
   </div>

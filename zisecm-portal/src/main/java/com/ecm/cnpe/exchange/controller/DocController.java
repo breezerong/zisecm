@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ecm.cnpe.exchange.controller.param.DocParam;
+import com.ecm.cnpe.exchange.service.ProjectViewService;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
@@ -36,6 +37,8 @@ public class DocController  extends ControllerAbstract  {
 	
 	@Autowired
 	private DocumentService documentService;
+	@Autowired
+	private ProjectViewService projDesignService;
 	
 	@PostMapping("export")
 	@ResponseBody
@@ -205,6 +208,179 @@ public class DocController  extends ControllerAbstract  {
 			e.printStackTrace();
 		}
 	}
+	
+
+	@PostMapping("exportDesignInProjView")
+	@ResponseBody
+	public void exportDesignInProjView(HttpServletRequest request, HttpServletResponse response, @RequestBody DocParam params) {
+		ExcelUtil excelUtil = new ExcelUtil();
+		List<Object[]> datalist = new ArrayList<Object[]>();
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(params.getGridName());
+		gv.getGridViewItems();
+		StringBuffer columnsStr = new StringBuffer(" ID,");
+		
+		List<EcmGridViewItem> list = gv.getGridViewItems(params.getLang());
+		String[] titleName = new String[list.size() + 1];
+		String[] titleCNName = new String[list.size() + 1];
+		StringBuffer queryAttr = new StringBuffer();
+		titleName[0]="ID";
+		titleCNName[0]="ID";
+		for (int i = 1; i < list.size() + 1; i++) {
+			titleName[i] = list.get(i - 1).getAttrName();
+			titleCNName[i] = list.get(i - 1).getLabel();
+			queryAttr.append(list.get(i - 1).getAttrName());
+			queryAttr.append(",");
+		}
+		datalist.add(titleCNName);
+		String gvCondition=gv.getCondition();
+		if(gvCondition==null||"".equals(gvCondition)) {
+			gvCondition=" 1=1 ";
+		}else {
+			gvCondition=" "+gvCondition;
+		}
+		columnsStr.append(queryAttr.deleteCharAt(queryAttr.length() - 1).toString());
+		
+		
+		String currentUser="";
+		LoginUser userObj=null;
+		try {
+			userObj=this.getSession().getCurrentUser();
+			currentUser = userObj.getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String sql= (!EcmStringUtils.isEmpty(params.getCondition())?params.getCondition():"");
+		if(sql!=null&&sql.contains("@currentuser")) {
+			sql=sql.replaceAll("@currentuser", currentUser);
+    	}
+		if(sql!=null&&sql.contains("@company")) {
+			sql=sql.replaceAll("@company", userObj.getCompany());
+	    }
+		
+		
+		try {
+			List<Map<String,Object>> queryList =projDesignService.getDesignInProject(getToken(),sql);
+			for (Map<String, Object> map : queryList) {
+				Object[] values = new Object[titleName.length];
+				for (int i = 0; i < titleName.length; i++) {
+					if (map.get(titleName[i]) != null) {
+						if (titleName[i].equals("C_DOC_DATE")) {
+							values[i] = DateUtils.DateToFolderPath((Date) map.get(titleName[i]), "-");
+						} else {
+							values[i] = map.get(titleName[i]);
+						}
+					} else {
+						values[i] = "";
+					}
+				}
+				datalist.add(values);
+			}
+		} catch (EcmException | AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			excelUtil.makeStreamExcel(params.getFilename(), params.getSheetname(),titleName, datalist, response, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@PostMapping("exportByParentId")
+	@ResponseBody
+	public void exportByParentId(HttpServletRequest request, HttpServletResponse response, @RequestBody DocParam params) {
+		ExcelUtil excelUtil = new ExcelUtil();
+		List<Object[]> datalist = new ArrayList<Object[]>();
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(params.getGridName());
+		gv.getGridViewItems();
+		StringBuffer columnsStr = new StringBuffer(" ID,");
+		
+		List<EcmGridViewItem> list = gv.getGridViewItems(params.getLang());
+		String[] titleName = new String[list.size() + 1];
+		String[] titleCNName = new String[list.size() + 1];
+		StringBuffer queryAttr = new StringBuffer();
+		titleName[0]="ID";
+		titleCNName[0]="ID";
+		for (int i = 1; i < list.size() + 1; i++) {
+			titleName[i] = list.get(i - 1).getAttrName();
+			titleCNName[i] = list.get(i - 1).getLabel();
+			queryAttr.append(list.get(i - 1).getAttrName());
+			queryAttr.append(",");
+		}
+		datalist.add(titleCNName);
+		String gvCondition=gv.getCondition();
+		if(gvCondition==null||"".equals(gvCondition)) {
+			gvCondition=" 1=1 ";
+		}else {
+			gvCondition=" "+gvCondition;
+		}
+		columnsStr.append(queryAttr.deleteCharAt(queryAttr.length() - 1).toString());
+		
+		String sql = "select b.*,a.id as RELATION_ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
+				+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+				+ " and a.PARENT_ID='"+params.getParentId()+"' "+(!EcmStringUtils.isEmpty(params.getCondition())?params.getCondition():"")
+				+" order by a.ORDER_INDEX,b.CREATION_DATE";
+		
+		
+		
+//		if (!StringUtils.isEmpty(params.getFolderId())) {
+//			sql += " and folder_id='" + params.getFolderId() + "'";
+//		}
+//		if (!EcmStringUtils.isEmpty(params.getCondition())) {
+//			sql += " and (" + params.getCondition() + ")";
+//		}
+//		if (!EcmStringUtils.isEmpty(params.getOrderBy())) {
+//			sql += " order by " + params.getOrderBy();
+//		} else {
+//			sql += " " + gv.getOrderBy();
+//		}
+		
+		String currentUser="";
+		LoginUser userObj=null;
+		try {
+			userObj=this.getSession().getCurrentUser();
+			currentUser = userObj.getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(sql!=null&&sql.contains("@currentuser")) {
+			sql=sql.replaceAll("@currentuser", currentUser);
+    	}
+		if(sql!=null&&sql.contains("@company")) {
+			sql=sql.replaceAll("@company", userObj.getCompany());
+	    }
+		
+		
+		try {
+			List<Map<String,Object>> queryList =documentService.getMapList(getToken(), sql);
+			for (Map<String, Object> map : queryList) {
+				Object[] values = new Object[titleName.length];
+				for (int i = 0; i < titleName.length; i++) {
+					if (map.get(titleName[i]) != null) {
+						if (titleName[i].equals("C_DOC_DATE")) {
+							values[i] = DateUtils.DateToFolderPath((Date) map.get(titleName[i]), "-");
+						} else {
+							values[i] = map.get(titleName[i]);
+						}
+					} else {
+						values[i] = "";
+					}
+				}
+				datalist.add(values);
+			}
+		} catch (EcmException | AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			excelUtil.makeStreamExcel(params.getFilename(), params.getSheetname(),titleName, datalist, response, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/**
 	 * 导出，cnpe

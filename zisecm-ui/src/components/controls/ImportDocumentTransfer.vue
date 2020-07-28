@@ -13,7 +13,7 @@
       <el-col :span="16" style="text-align:left">
         <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">下载模板</el-button>
       
-        <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始导入</el-button>
+        <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">{{$t('application.start')+$t('application.Import')}}</el-button>
         &nbsp; &nbsp;
          <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
       </el-col>
@@ -35,7 +35,7 @@
             :multiple="false"
           >
           &nbsp; &nbsp;
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
           </el-upload>
           
         </el-form-item>
@@ -53,7 +53,7 @@
             style="width:400px;height:360px;overflow:scroll;"
           >
           &nbsp; &nbsp;
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
           </el-upload>
          </el-container>
         </el-form-item>

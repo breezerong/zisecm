@@ -69,7 +69,7 @@
               <el-button type="primary" plain @click="menuClick('格式副本')">格式副本</el-button><br/>
               <!-- <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button><br/> -->
               <template v-if="doc.typeName=='文件传递单'" >
-                <el-button type="primary" plain @click="menuClick('传递文件')">传递文件</el-button><br/>
+                <el-button type="primary" plain @click="menuClick('传递文件')">{{$t('application.TransferDoc')}}</el-button><br/>
               </template>
               <el-button type="primary" plain @click="menuClick('相关文件')">相关文件</el-button><br/>
               <template v-if="revertType.indexOf(doc.typeName)!=-1">
@@ -116,7 +116,7 @@
         <ChangeDocViewer :coding="doc.code" :revision="doc.revision"></ChangeDocViewer>
       </template>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialog.visible = false">取 消</el-button>
+        <el-button @click="dialog.visible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="dialogSubmit()">确 定</el-button>
       </span>
     </el-dialog>

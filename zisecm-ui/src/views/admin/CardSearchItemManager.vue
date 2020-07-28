@@ -8,13 +8,13 @@
         v-bind:formitemVisible="formitemVisible"
       ></FormItemSelector>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formitemVisible = false">取 消</el-button>
+        <el-button @click="formitemVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog title="卡片表单校验" :visible.sync="checkVisible" width="80%">
       <CardSearchItemCheck ref="CardSearchItemCheck" width="100%" :parentformid="parentId"></CardSearchItemCheck>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="checkVisible = false">取 消</el-button>
+        <el-button @click="checkVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible">
@@ -44,7 +44,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="addItem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -67,7 +67,7 @@
       </el-col>
       <el-col :span="16" style="text-algin:left;panding-left:20px;">
         &nbsp;
-          <el-button type="primary" plain icon="el-icon-edit" @click="newItem()">新建</el-button>
+          <el-button type="primary" plain icon="el-icon-edit" @click="newItem()">{{$t('application.new')}}</el-button>
           <el-button type="primary" plain icon="el-icon-check" @click="startCheck()">表单验证</el-button>
       </el-col>
     </el-row>
@@ -121,7 +121,7 @@
             size="small"
             icon="delete"
             @click="delItem(scope.row)"
-          >删除</el-button>
+          >{{$t('application.delete')}}</el-button>
         </template>
       </el-table-column>
     </el-table>

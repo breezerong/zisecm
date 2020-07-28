@@ -19,10 +19,10 @@
                 <el-date-picker v-model="endDate" type="date" align="right" placeholder="结束日期" value-format="yyyy-MM-dd"> </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="handleReport()">查询</el-button>
+                  <el-button type="primary" @click="handleReport()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="icmDataStatistic()">Excel下载</el-button>
+                <el-button type="primary" @click="icmDataStatistic()">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
           </el-row>

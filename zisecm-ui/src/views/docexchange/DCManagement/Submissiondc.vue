@@ -5,11 +5,11 @@
         <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" tmpPath='/系统配置/导入模板/文函' v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
-            <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
+            <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
             </div>
         </el-dialog>
         <!-- 创建附件 -->
-        <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+        <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
             <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
                 <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                 <el-upload
@@ -20,23 +20,23 @@
                     :auto-upload="false"
                     :multiple="true"
                 >
-                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                    <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
                 </el-upload>
                 </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="importdialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="uploadData()">开始导入</el-button>
+                <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+                <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
             </div>
         </el-dialog>
         <!-- 创建类型选择 -->
         <el-dialog :visible.sync="childrenTypeSelectVisible">
             <el-form>
-                <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+                <el-form-item :label="$('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
                 <el-select
                     name="selectName"
                     v-model="selectedChildrenType"
-                    placeholder="'请选择文件类型'"
+                    :placeholder="$t('application.selectFileType')"
                     style="display:block;"
                 >
                     <div v-for="(name,nameIndex) in childrenTypes" :key="'T2_'+nameIndex">
@@ -101,33 +101,34 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="filters.title" placeholder="编码或标题" @keyup.enter.native='searchItem'></el-input>
+                    <el-input v-model="filters.title" 
+                    :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')" @keyup.enter.native='searchItem'></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="searchItem">查询</el-button>
+                    <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="clickNewItem">新建</el-button>
+                    <el-button type="primary" @click="clickNewItem">{{$t('application.new')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/文函')">导入</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/文函')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,
                     [$refs.transferDoc,
-                    $refs.relevantDoc])">提交</el-button>
+                    $refs.relevantDoc])">{{$t('application.Submit')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="warning" 
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
-                    $refs.relevantDoc])">删除</el-button>
+                    $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <MountFile :selectedItem="selectedItems" @refresh='searchItem'>替换文件</MountFile>
+                    <MountFile :selectedItem="selectedItems" @refresh='searchItem'>{{$t('application.ReplaceDoc')}}</MountFile>
                 </el-form-item>
                 
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData">导出Excel</el-button>
+                    <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
             </el-col>
@@ -150,21 +151,21 @@
         </el-row>
          <el-row>
       <el-tabs  v-model="selectedTabName">
-        <el-tab-pane label="传递文件" name="t01" v-if="isShowDesgin">
+        <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                  <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
+                  <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">{{$t('application.new')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件','/系统配置/导入模板/设计文件')">导入</el-button>
+                  <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件','/系统配置/导入模板/设计文件')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <MountFile :selectedItem="selectedTransferDocItems" @refresh='refreshTransferDocData'>替换文件</MountFile>
+                    <MountFile :selectedItem="selectedTransferDocItems" @refresh='refreshTransferDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">删除</el-button>
+                  <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -187,16 +188,16 @@
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                  <el-button type="primary" @click="beforeCreateDocItem('相关文件','相关文件')">新建</el-button>
+                  <el-button type="primary" @click="beforeCreateDocItem('相关文件','相关文件')">{{$t('application.new')}}</el-button>
                 </el-form-item>
                 <!-- <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">导入</el-button>
+                  <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
                 </el-form-item> -->
                 <el-form-item>
-                    <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>替换文件</MountFile>
+                    <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">删除</el-button>
+                  <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -215,18 +216,18 @@
                 ></DataGrid>
           
         </el-tab-pane>
-        <el-tab-pane label="附件" name="t03" v-if='isShowAttachmentDoc'>
+        <el-tab-pane  :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                  <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
+                  <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">{{$t('application.new')}}</el-button>
                 </el-form-item>
                 <!-- <el-form-item>
-                  <el-button type="primary" @click="beforImport($refs.attachmentDoc,true,'附件')">导入</el-button>
+                  <el-button type="primary" @click="beforImport($refs.attachmentDoc,true,'附件')">{{$t('application.Import')}}</el-button>
                 </el-form-item> -->
                 <el-form-item>
-                  <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">删除</el-button>
+                  <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
               </el-form>
             </el-col>

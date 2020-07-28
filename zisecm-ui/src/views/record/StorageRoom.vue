@@ -3,7 +3,7 @@
         <el-dialog title="添加库房" :visible.sync="reuseVisible" width="80%">
             <AddStorageRoom ref="addStorageRoom" @onSaved='getAllStorageRoom'></AddStorageRoom>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="reuseVisible = false">取 消</el-button>
+                <el-button @click="reuseVisible = false">{{$t('application.cancel')}}</el-button>
                 <el-button type="primary" @click="saveStorageRoom()">确定</el-button>
             </div>
         </el-dialog>
@@ -11,7 +11,7 @@
             <AddStorageColumn ref="addStorageColumn" @onSaved="refreshColumn" 
             :roomCoding="selectRoomCoding"></AddStorageColumn>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="columnVisible = false">取 消</el-button>
+                <el-button @click="columnVisible = false">{{$t('application.cancel')}}</el-button>
                 <el-button type="primary" @click="saveStorageColumn()">确定</el-button>
             </div>
         </el-dialog>
@@ -19,7 +19,7 @@
             <AddStorageRow ref="addStorageRow" @onSaved="refreshRow" 
             :columnCoding="selectColumnCoding"></AddStorageRow>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="rowVisible = false">取 消</el-button>
+                <el-button @click="rowVisible = false">{{$t('application.cancel')}}</el-button>
                 <el-button type="primary" @click="saveStorageRow()">确定</el-button>
             </div>
         </el-dialog>
@@ -35,7 +35,7 @@
                             <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item @click.native="beforeCreateStorageRoom()">新增</el-dropdown-item>
                             <el-dropdown-item @click.native="beforeUpdateRoom()">查看/修改</el-dropdown-item>
-                            <el-dropdown-item @click.native="confirmDeleteStorageRoom()">删除</el-dropdown-item>
+                            <el-dropdown-item @click.native="confirmDeleteStorageRoom()">{{$t('application.delete')}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                         </el-col>
@@ -76,7 +76,7 @@
                             <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item @click.native="columnVisible=true">新增</el-dropdown-item>
                             <el-dropdown-item @click.native="beforeUpdateColumn">查看/修改</el-dropdown-item>
-                            <el-dropdown-item @click.native="confirmDeleteStorageColumn">删除</el-dropdown-item>
+                            <el-dropdown-item @click.native="confirmDeleteStorageColumn">{{$t('application.delete')}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </el-col>
@@ -102,7 +102,7 @@
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item @click.native="beforeCreateRow()">新增</el-dropdown-item>
                                 <el-dropdown-item @click.native="beforeUpdateRow">查看/修改</el-dropdown-item>
-                                <el-dropdown-item @click.native="confirmDeleteStorageRow">删除</el-dropdown-item>
+                                <el-dropdown-item @click.native="confirmDeleteStorageRow">{{$t('application.delete')}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </el-col>

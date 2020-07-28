@@ -6,10 +6,10 @@
               <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
               @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
-            <el-button type="primary" @click="search()">查询</el-button>
-            <el-button type="success" @click="submit()">提交</el-button>
-            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">删除</el-button>
-            <el-button type="primary" @click.native="exportData">Excel下载</el-button>
+            <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
+            <el-button type="success" @click="submit()">{{$t('application.close')}}</el-button>
+            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">{{$t('application.delete')}}</el-button>
+            <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             
             </el-row>
         </template>

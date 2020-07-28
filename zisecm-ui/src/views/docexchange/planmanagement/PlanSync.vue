@@ -7,14 +7,14 @@
                      dataValueField="name" dataTextField="name" includeAll  @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                <el-input style="width:200px" v-model="input" placeholder="编码或标题"></el-input>
-                <el-button type="primary" @click="search()">查询</el-button>
+                <el-input style="width:200px" v-model="input" :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')"></el-input>
+                <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                 <el-button type="primary" @click="create()">新建计划</el-button>
                 </el-form-item>
                 <el-form-item>
-                <el-button type="primary" @click="exportdata()">导出Excel</el-button>
+                <el-button type="primary" @click="exportdata()">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
  
@@ -51,7 +51,7 @@
     </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogCreatevisual = false">取 消</el-button>
+    <el-button @click="dialogCreatevisual = false">{{$t('application.cancel')}}</el-button>
     <el-button type="primary" @click="createNewPlan()">确 定</el-button>
     </div>
     </el-dialog>
@@ -60,7 +60,7 @@
        <el-row>
        <DataSelect v-model="P6form.value" dataUrl="/exchange/project/myproject"
        dataValueField="name" dataTextField="name" includeAll></DataSelect>
-       <el-input style="width:200px" v-model="P6input" placeholder="编码或标题"></el-input>
+       <el-input style="width:200px" v-model="P6input" :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')"></el-input>
        </el-row>
        <el-table :data="P6data" ref="P6" row-key="id" border>
         <el-table-column type="index" width="50" label="序号" align='center'>
@@ -81,7 +81,7 @@
        </el-table-column>
        </el-table>
     <div slot="footer" class="dialog-footer">
-    <el-button @click="closeDialog() ">取 消</el-button>
+    <el-button @click="closeDialog() ">{{$t('application.cancel')}}</el-button>
     </div>
     </el-dialog>
         </template>

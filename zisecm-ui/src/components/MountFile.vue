@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+        <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
             <el-row>
                 <el-col :span="20">
                     <el-progress :text-inside="true" :stroke-width="24" :percentage="progressNum" status="success"></el-progress>
@@ -18,7 +18,7 @@
                             :auto-upload="false"
                             :multiple="false"
                         >
-                            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                            <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
                         </el-upload>
                         </div>
                     </el-form>
@@ -26,8 +26,8 @@
             </el-row>
             
             <div slot="footer" class="dialog-footer">
-                <el-button @click="importdialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="uploadData()">开始导入</el-button>
+                <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+                <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
             </div>
         </el-dialog>
         <el-button

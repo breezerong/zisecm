@@ -32,7 +32,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="saveitem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -53,7 +53,7 @@
           </el-col>
           <el-col :span="20" style="text-align:left;">
             &nbsp; 
-            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建</el-button>
+            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">{{$t('application.new')}}</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -86,7 +86,7 @@
                   size="small"
                   icon="delete"
                   @click="delitem(scope.row)"
-                >删除</el-button>
+                >{{$t('application.delete')}}</el-button>
               </div>
             </template>
           </el-table-column>

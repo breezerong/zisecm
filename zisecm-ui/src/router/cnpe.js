@@ -134,6 +134,16 @@ export const cnpeRouter=
         meta: {
             requireAuth: true,
             permit: 1,
+            title:'icmfeedback'
+        },
+        path: 'cnpe/icmmanagement/icmfeedback',
+        name: '延误反馈',
+        component: () => import('@/views/docexchange/ICMManagement/icmfeedback.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
             title:'ICMReport'
         },
         path: '/cnpe/icmmanagement/icmreport',

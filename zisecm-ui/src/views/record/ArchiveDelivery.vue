@@ -3,17 +3,17 @@
     <el-dialog title="添加复用文件" :visible.sync="reuseVisible" width="80%">
       <AddReuse ref="addReuseModel"></AddReuse>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="reuseVisible = false">取 消</el-button>
+        <el-button @click="reuseVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
         <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectedOneTransfer.ID"></BatchImport>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="batchDialogVisible=false" size="medium">关闭</el-button>
+          <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
          </div>
       </el-dialog>
-    <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+    <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
       <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
         <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
           <el-upload
@@ -24,23 +24,23 @@
             :auto-upload="false"
             :multiple="false"
           >
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
           </el-upload>
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="importdialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="uploadData()">开始导入</el-button>
+        <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+        <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
       </div>
     </el-dialog>
 
     <el-dialog :visible.sync="typeSelectVisible">
       <el-form>
-        <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+        <el-form-item :label="$('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
           <el-select
             name="selectName"
             v-model="selectedTypeName"
-            placeholder="'请选择文件类型'"
+            :placeholder="$t('application.selectFileType')"
             style="display:block;"
           >
             <div v-for="(name,nameIndex) in typeNames" :key="'T_'+nameIndex">
@@ -58,11 +58,11 @@
 
     <el-dialog :visible.sync="childrenTypeSelectVisible">
       <el-form>
-        <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+        <el-form-item :label="$('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
           <el-select
             name="selectName"
             v-model="selectedChildrenType"
-            placeholder="'请选择文件类型'"
+            :placeholder="$t('application.selectFileType')"
             style="display:block;"
           >
             <div v-for="(name,nameIndex) in childrenTypes" :key="'T2_'+nameIndex">
@@ -251,7 +251,7 @@
             @click="beforeAddreuse()"
           >{{$t('application.addReuseFile')}}</el-button>
           
-          <el-button type="primary" plain size="small" title="删除" @click="onDeleleFileItem()">删除</el-button>
+          <el-button type="primary" plain size="small" title="删除" @click="onDeleleFileItem()">{{$t('application.delete')}}</el-button>
           <el-button
             type="primary"
             plain

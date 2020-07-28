@@ -35,8 +35,8 @@
           </el-select>
         </el-col>
         <el-col :span="8">
-          <el-button @click="showCreateName">新建</el-button>
-          <el-button @click="deleteGridView">删除</el-button>
+          <el-button @click="showCreateName">{{$t('application.new')}}</el-button>
+          <el-button @click="deleteGridView">{{$t('application.delete')}}</el-button>
         </el-col>
       </el-row>
         <el-transfer
@@ -99,7 +99,7 @@
           >{{item.label}}</el-checkbox>
         </el-checkbox-group>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="columnsInfo.dialogFormVisible=false" size="medium">取 消</el-button>
+          <el-button @click="columnsInfo.dialogFormVisible=false" size="medium">{{$t('application.cancel')}}</el-button>
           <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
         </div>
       </el-dialog>

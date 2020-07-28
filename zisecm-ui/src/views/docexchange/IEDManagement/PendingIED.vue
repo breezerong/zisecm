@@ -41,13 +41,13 @@
           <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
           </el-form-item>
             <el-form-item>  
-                <el-button type="primary" @click="search()">查询</el-button>
+                <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
             </el-form-item>
                 <el-form-item>  
             <el-button type="success" @click="submit()">接收</el-button>
                 </el-form-item>
                 <el-form-item>
-            <el-button type="primary" @click.native="exportData">Excel下载</el-button>
+            <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             </el-form-item>
         <el-form-item>  
         <el-button icon="el-icon-back" @click="clickShowDialog">驳回</el-button>

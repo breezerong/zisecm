@@ -56,10 +56,10 @@
                 </el-select>
               </el-form-item>
               <el-form-item>
-               <el-button :plain="true">开始统计</el-button>
+               <el-button :plain="true">{{$t('application.startStatistics')}}</el-button>
               </el-form-item>
               <el-form-item>
-               <el-button :plain="true">导出Excel</el-button>
+               <el-button :plain="true">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
           </el-col>
@@ -79,10 +79,10 @@
                <el-date-picker v-model="noReceiveData.endDate" type="date" placeholder="选择结束日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
               </el-form-item>
               <el-form-item>
-               <el-button :plain="true" @click="searchNoReceiveData">开始统计</el-button>
+               <el-button :plain="true" @click="searchNoReceiveData">{{$t('application.startStatistics')}}</el-button>
               </el-form-item>
               <el-form-item>
-               <el-button :plain="true" @click="exportData">导出Excel</el-button>
+               <el-button :plain="true" @click="exportData">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
           </el-col>

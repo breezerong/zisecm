@@ -54,13 +54,13 @@
               size="medium"
               icon="edit"
               @click="delItem(scope.row)"
-            >删除</el-button>
+            >{{$t('application.delete')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
       </el-row>
       <el-row style="v-align:right">
-         <el-button @click="showDialog=false">关闭</el-button>
+         <el-button @click="showDialog=false">{{$t('application.close')}}</el-button>
       </el-row>
     </el-dialog>
 </template>
