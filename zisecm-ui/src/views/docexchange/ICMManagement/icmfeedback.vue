@@ -2,12 +2,12 @@
     <DataLayout>
     
         <template v-slot:header>
-            <el-row>
-            <el-button type="primary" @click="search()">查询</el-button>
-            <el-button type="success" @click="submit()">提交</el-button>
-            <el-button type="primary" @click.native="exportData">Excel下载</el-button>
-            
-            </el-row>
+            <el-form inline="true">
+            <el-form-item><el-button type="primary" @click="search()">查询</el-button></el-form-item>
+            <el-form-item><el-button type="success" @click="submit()">提交</el-button></el-form-item>
+            <el-form-item><el-button type="primary" @click.native="exportData">Excel下载</el-button></el-form-item>
+            <el-form-item><AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition></el-form-item>
+            </el-form>
         </template>
         <template v-slot:main="{layout}">
                 <el-row>
@@ -19,7 +19,7 @@
             isshowOption
             isshowCustom
             gridViewName="反馈确认"
-            condition=''
+            condition='TYPE_NAME="ICM" AND C_PROCESS_STATUS="新建"'
             v-bind="tables.main":tableHeight="layout.height-180"
             @rowclick="rowClick" 
             @selectchange="selectChange"
@@ -36,6 +36,7 @@ import DataGrid from "@/components/DataGrid";
 import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
+import AddCondition from '@/views/record/AddCondition.vue'
 export default {
     name: "ICMFeedback",
     data(){
@@ -48,13 +49,14 @@ export default {
                 },
                itemDataList: [],
                loading: false,
-               status : '已完成',
-               selectedItems: [],
-               selectedItemId: "",
-    
+               status : '',
             },
+            selectedItems: [],
+            selectedItemId: "",
             value:'',
             input:'',
+            hiddenInput:'hidden',
+            typeName:"ICM",
         }
     },
 
@@ -78,11 +80,6 @@ export default {
     },
 
     methods: {
-        fresh(){
-          let _self = this
-          console.log("123123")
-        _self.$refs.mainDataGrid.loadGridData();
-       },
         cellMouseEnter(row, column, cell, event){
         this.selectRow=row;
  
@@ -96,20 +93,30 @@ export default {
       this.selectedItems = val;
     },
     submit(){
-      this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
-        this.fresh()
+        var ids =[]
+        var k = this.selectedItems.length           //获取当前Checkbox数组的长度
+        let _self = this
+        for(var i=0;i<k;i++)
+        {
+            ids[i] = this.selectedItems[i].ID
+        }
+        axios.post("/exchange/ICM/AcceptICMFeedback",JSON.Stringfy(ids)).then(function(response){
+            let code = response.data.code;
+            console.log("取到的数据"+code)
+             if (code == 1) {
+                _self.$message({
+                    showClose: true,
+                    message: "创建成功!",
+                    duration: 2000,
+                    type: "success"
+                });
+            _self.search()
+                }})
+        //this.search()
     },
-    onLoadnDataSuccess(select,options){
-            console.log(select)
-            this.search()
-        },
-
-       onSearchConditionChange:function(val){
-            console.log(val)
-        },
     search(condition){
         let _self = this
-        var k1="TYPE_NAME='延误反馈'  "
+        var k1="TYPE_NAME='ICM' AND C_PROCESS_STATUS='新建'"
         console.log(k1)
 
         _self.$refs.mainDataGrid.condition=k1
@@ -121,10 +128,10 @@ export default {
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
-                gridName:"IEDGrid",
+                gridName:"反馈确认",
                 lang:"zh-cn",
                 condition:_self.$refs.mainDataGrid.condition,
-                filename:"IED_Rejected_"+fileDateStr+".xlsx",
+                filename:"ICM_FeedBack_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -137,12 +144,16 @@ export default {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
         DataSelect:DataSelect,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        AddCondition:AddCondition,
     }
 }
 </script>
 <style scoped>
 .el-header{
     height: auto;
+}
+.el-form-item{
+    margin:0px
 }
 </style>

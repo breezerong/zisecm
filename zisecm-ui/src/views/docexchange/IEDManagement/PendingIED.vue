@@ -1,59 +1,53 @@
 <template>    
-        <DataLayout >
-        <template v-slot:header>
-
+        <DataLayout >    
      <el-dialog title="驳回备注" :visible.sync="showDialog" width="80%" @close="showDialog=false">
-            <el-input
-              type="textarea"
-              :rows="5"
-              placeholder="请输入内容"
-              v-model="rejectComment">
+     <el-input
+            type="textarea"
+            :rows="5"
+            placeholder="请输入内容"
+            v-model="rejectComment">
             </el-input>
             <div slot="footer" class="dialog-footer">
-                <el-button
-                @click="rejectByCnpe()"
-                >{{$t('application.ok')}}</el-button>
+            <el-button
+            @click="rejectByCnpe()"
+            >{{$t('application.ok')}}</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> 
+        <template v-slot:header>
 
-
-
-
-            <el-row>
-             <el-form :inline="true" :model="filters">
-                 <el-form-item>
+        <el-form :inline="true" :model="filters">
+                <el-form-item>
                  <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
                  @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                  </el-form-item>
                 <el-form-item>  
-        <el-select
+                <el-select
                     name="selectSubContractor"
                     v-model="Subcontractor"
                     placeholder="'分包商'"
                     style="display:block;"
                 >
-                 <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
+                <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
                 <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                 </div>
-        </el-select>
-                </el-form-item>
+            </el-select>
+            </el-form-item>
           <el-form-item>  
           <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
           </el-form-item>
-            <el-form-item>  
-                <el-button type="primary" @click="search()">查询</el-button>
-            </el-form-item>
-                <el-form-item>  
-            <el-button type="success" @click="submit()">接收</el-button>
-                </el-form-item>
-                <el-form-item>
-            <el-button type="primary" @click.native="exportData">Excel下载</el-button>
-            </el-form-item>
+        <el-form-item>  
+        <el-button type="primary" @click="search()">查询</el-button>
+        </el-form-item>
+        <el-form-item>  
+        <el-button type="success" @click="submit()">接收</el-button>
+        </el-form-item>
+        <el-form-item>
+        <el-button type="primary" @click.native="exportData">Excel下载</el-button>
+        </el-form-item>
         <el-form-item>  
         <el-button icon="el-icon-back" @click="clickShowDialog">驳回</el-button>
         </el-form-item>
         </el-form>
-        </el-row>
         </template>
 
              <template v-slot:main="{layout}">
@@ -61,7 +55,7 @@
                 <el-col :span="24">
                     <!--condition="TYPE_NAME='IED' AND C_COMPANY='@company' AND STATUS='审核中'">
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
-              <DataGrid ref="mainDataGrid" 
+            <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
             isshowOption
             isshowCustom
@@ -317,5 +311,8 @@ export default {
 <style scoped>
 .el-header{
     height: auto;
+}
+.el-form-item{
+    margin:0px
 }
 </style>

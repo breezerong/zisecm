@@ -14,7 +14,7 @@
                 <el-button type="primary" @click="create()">新建计划</el-button>
                 </el-form-item>
                 <el-form-item>
-                <el-button type="primary" @click="exportdata()">导出Excel</el-button>
+                <el-button type="primary" @click.native="exportData">Excel下载</el-button>
                 </el-form-item>
                 </el-form>
  
@@ -167,6 +167,7 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
+import ExcelUtil from '@/utils/excel.js'
 export default {
     name: "PlanSync",
     data(){
@@ -378,6 +379,22 @@ export default {
     let _self = this
     this.dialogCreatevisual=true
     },
+         exportData(){
+            let _self =this
+            let dataUrl = "/exchange/doc/export"
+            var fileDate = new Date()
+            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+            let params = {
+                gridName:"PlanGrid",
+                lang:"zh-cn",
+                condition:_self.$refs.mainDataGrid.condition,
+                filename:"Plan_Sync_"+fileDateStr+".xlsx",
+                sheetname:"Result"
+            }
+            ExcelUtil.export(params)
+        },
+      
+
      onLoadnDataSuccess(select,options){
             console.log(select)
             this.search()
@@ -397,5 +414,7 @@ export default {
 }
 </script>
 <style scoped>
-
+.el-form-item{
+  margin:0px
+}
 </style>

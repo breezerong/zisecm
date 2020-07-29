@@ -70,4 +70,19 @@ public class ICMController  extends ControllerAbstract  {
 		mp.put("id", id);
 		return mp;		
 	}
+	@RequestMapping(value ="/exchange/ICM/AcceptICMFeedback",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> FeedBack(@RequestBody String argStr) throws Exception{
+		List<String> ids = JSONUtils.stringToArray(argStr);
+		EcmDocument temp = new EcmDocument();
+		for(int i = 0;i < ids.size();i++){
+		temp = documentService.getObjectById(getToken(), ids.get(i));
+		temp.addAttribute("C_PROCESS_STATUS", "已确认");
+		documentService.updateObject(getToken(), temp, null);	
+		}
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		return mp;
+	}
+	
 }
