@@ -33,8 +33,8 @@ export default {
   padding:1px 0 !important;
 }
 .el-form-item {
-  margin-top: 3px;
-  margin-bottom: 2px;
+  margin-top: 3px !important;
+  margin-bottom: 2px !important;
 }
 .el-input__inner {
   height: 36px;
@@ -50,4 +50,13 @@ export default {
 .el-main {
     padding: 2px !important;
   }
+  .el-header {
+    padding: 0 15px !important;
+    box-sizing: border-box;
+}
+.el-tabs__header {
+    padding: 0;
+    position: relative;
+    margin: 0 0 2px !important;
+}
 </style>

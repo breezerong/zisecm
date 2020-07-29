@@ -252,7 +252,7 @@
               <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="用户名" width="120">
+          <el-table-column label="用户名" width="150">
             <template slot-scope="scope">
               <span>{{scope.row.name}}</span>
             </template>
@@ -338,7 +338,7 @@ export default {
       dataListFull: [],
       fileList: [],
       file: "",
-      tableHeight: window.innerHeight - 152,
+      tableHeight: window.innerHeight - 190,
       inputkey: "",
       loading: false,
       dialogVisible: false,
@@ -352,6 +352,7 @@ export default {
       selectedItems: [],
       currentPage: 1,
       clientPermission: 1,
+      systemPermission: 0,
       token: "",
       form: {
         id: "",
@@ -400,14 +401,14 @@ export default {
     if (psize) {
       _self.pageSize = parseInt(psize);
     }
-    var user = sessionStorage.getItem("access-user");
-    if (user) {
-      _self.clientPermission = sessionStorage.getItem(
-        "access-clientPermission"
-      );
-      _self.token = sessionStorage.getItem("access-token");
-    }
-    console.log(_self.clientPermission);
+    if (this.currentUser()) {
+        this.clientPermission = Number(
+          this.currentUser().clientPermission
+        );
+        this.systemPermission = Number(
+          this.currentUser().systemPermission
+        );
+      }
     _self.refreshData();
   },
   methods: {
