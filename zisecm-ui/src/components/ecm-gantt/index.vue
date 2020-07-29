@@ -77,7 +77,7 @@
                 scope.row[selfProps.name]
                 }}
               </span>
-              <span class="name-col-edit">
+              <!-- <span class="name-col-edit">
                 <i
                   class="el-icon-remove-outline name-col-icon task-remove"
                   @click="emitTaskRemove(scope.row)"
@@ -86,7 +86,7 @@
                   class="el-icon-circle-plus-outline name-col-icon task-add"
                   @click="emitTaskAdd(scope.row)"
                 ></i>
-              </span>
+              </span> -->
             </strong>
           </template>
         </el-table-column>
@@ -1037,13 +1037,13 @@ export default {
     },
     // 以下为输出数据函数 --------------------------------------------------------------输出数据------------------------------------
     // 删除任务
-    emitTaskRemove(item) {
+    /* emitTaskRemove(item) {
       this.$emit("taskRemove", item);
-    },
+    }, */
     // 添加任务
-    emitTaskAdd(item) {
+   /* emitTaskAdd(item) {
       this.$emit("taskAdd", item);
-    },
+    }, */
     // 任务名称更改
     emitNameChange(item) {
       this.$emit("nameChange", item);
