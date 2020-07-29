@@ -40,7 +40,7 @@
              <img style="width:100%;height:100%" :src="this.axios.defaults.baseURL+'/workflow/processDiagram?processId='+currentProcessId" >
             </div>
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="dialogVisible = false">关闭</el-button>
+            <el-button type="primary" @click="dialogVisible = false">{{$t('application.close')}}</el-button>
             <el-button @click="showprocessDiagram()">显示流程图</el-button>
           </div>
         </el-dialog>

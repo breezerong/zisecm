@@ -89,7 +89,7 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button @click="completetask(form)">完成任务</el-button>
       </div>
     </el-dialog>

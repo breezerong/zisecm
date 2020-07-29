@@ -36,7 +36,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialog.new.visible = false">取 消</el-button>
+        <el-button @click="dialog.new.visible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -47,7 +47,7 @@
           <el-input v-model="inputkey" placeholder="请输入关键字" prefix-icon="el-icon-search" @input="changeValue"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="el-icon-edit" plain @click="addView()">新建</el-button>
+          <el-button type="primary" icon="el-icon-edit" plain @click="addView()">{{$t('application.new')}}</el-button>
         </el-form-item>
       </el-form>
     </template>
@@ -63,7 +63,7 @@
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
                 <el-button type="info" size="mini" icon="edit" @click="editView(scope.row)">查看</el-button>
-                <el-button type="danger" size="mini" icon="delete" @click="deleteItem(scope.row.id)">删除</el-button>
+                <el-button type="danger" size="mini" icon="delete" @click="deleteItem(scope.row.id)">{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>

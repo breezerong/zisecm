@@ -157,7 +157,21 @@
     "startDate":"Start Date",
     "endDate":"End Date",
     "wbs":"WBS Coding",
-    "projectName":"Project Name"
+    "projectName":"Project Name",
+    "TransferDoc":"Transfer Document",
+    "PostNumber":"Post No.",
+    "Title":"Title",
+    "or":"or",
+    "ExportExcel":"Export Excel",
+    "Coding":"Code",
+    "Import":"Import",
+    "list":"List",
+    "ReplaceDoc":"Replace Documents",
+    "Attachment":"Attachment",
+    "applyForUnlock":"Apply For Unlock",
+    "handleComplete":"Handle Complete",
+    "unlock":"Unlock",
+    "startStatistics":"Start Statistics"
 },
 "skin": {
     "Blue": "Blue",

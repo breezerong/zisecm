@@ -160,7 +160,21 @@
     "startDate":"开始日期",
     "endDate":"结束日期",
     "wbs":"WBS编码",
-    "projectName":"项目名称"
+    "projectName":"项目名称",
+    "TransferDoc":"传递文件",
+    "PostNumber":"发文号",
+    "Title":"标题",
+    "or":"或",
+    "ExportExcel":"导出Excel",
+    "Coding":"编码",
+    "Import":"导入",
+    "list":"列表",
+    "ReplaceDoc":"替换文件",
+    "Attachment":"附件",
+    "applyForUnlock":"申请解锁",
+    "handleComplete":"处理完成",
+    "unlock":"解锁",
+    "startStatistics":"开始统计"
 },
 "skin": {
     "Blue": "天空蓝",

@@ -4,7 +4,7 @@
     <el-dialog width="80%" title="列表校验" :visible.sync="checkVisible">
       <GridViewItemCheck ref="GridViewItemCheck" width="560" :parentgridid="parentid"></GridViewItemCheck>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="checkVisible = false">取 消</el-button>
+        <el-button @click="checkVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog title="添加" :visible.sync="dialogVisible" :append-to-body="true" width="80%">
@@ -54,7 +54,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="saveItem(form,false)">确 定</el-button>
       </div>
     </el-dialog>
@@ -82,7 +82,7 @@
               icon="el-icon-edit"
               plain
               @click="newItem"
-            >新建</el-button>
+            >{{$t('application.new')}}</el-button>
             <el-button type="primary" plain icon="el-icon-check" @click="startcheck()">验证</el-button>
           </el-col>
         </el-row>
@@ -155,7 +155,7 @@
                 size="small"
                 icon="delete"
                 @click="delItem(scope.row)"
-              >删除</el-button>
+              >{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>

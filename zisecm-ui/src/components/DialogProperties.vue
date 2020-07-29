@@ -36,7 +36,7 @@
         </el-col>
       </template>
     </el-row>
-      <el-form-item style="float:left"  label="文件类型" >{{typeName}}</el-form-item>
+      <el-form-item style="float:left"  :label="$('application.fileType')" >{{typeName}}</el-form-item>
       <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;">
         <el-upload
         :limit="1"
@@ -45,7 +45,7 @@
         :on-change="handleChange"
         :auto-upload="false"
         :multiple="false">
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
         </el-upload>
       </div>
       <div>
@@ -53,7 +53,7 @@
       </div>
     </el-form>
     <!-- <div slot="footer" class="dialog-footer">
-        <el-button>取 消</el-button>
+        <el-button>{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="saveItem()">保存</el-button>
       </div> -->
   </div>

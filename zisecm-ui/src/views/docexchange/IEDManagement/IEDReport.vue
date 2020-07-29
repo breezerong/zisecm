@@ -6,8 +6,7 @@
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="已超期IED" name="first">
       <el-container>
-        <el-header>
-          <el-row>
+        <el-header style="height:auto;">
             <el-form :inline="true" :model="filters">
               <el-form-item>
                  <DataSelect v-model="overdueIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
@@ -30,13 +29,12 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="search1()">查询</el-button>
+                  <el-button type="primary" @click="search1()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataOverdue">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataOverdue">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
-          </el-row>
         </el-header>
         <el-main>
           <el-row>
@@ -61,8 +59,7 @@
     </el-tab-pane>
     <el-tab-pane label="未完成IED" name="second">
       <el-container>
-        <el-header>
-          <el-row>
+        <el-header style="height:auto;">
             <el-form :inline="true" :model="filters">
               <el-form-item>
                  <DataSelect v-model="uncompletedIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
@@ -85,13 +82,12 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="search2()">查询</el-button>
+                  <el-button type="primary" @click="search2()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataunCompleted">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataunCompleted">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
-          </el-row>
         </el-header>
         <el-main>
           <el-row>
@@ -116,8 +112,7 @@
     </el-tab-pane>
     <el-tab-pane label="已完成IED" name="third">
       <el-container>
-        <el-header>
-          <el-row>
+        <el-header style="height:auto;">
             <el-form :inline="true" :model="filters">
               <el-form-item>
                  <DataSelect v-model="completedIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
@@ -140,13 +135,12 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="search3()">查询</el-button>
+                  <el-button type="primary" @click="search3()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataCompleted">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataCompleted">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
-          </el-row>
         </el-header>
         <el-main>
           <el-row>
@@ -171,8 +165,7 @@
     </el-tab-pane>
     <el-tab-pane label="IED完成情况统计" name="forth">
       <el-container>
-        <el-header>
-          <el-row>
+        <el-header style="height:auto;">
             <el-form :inline="true" :model="filters">
               <el-form-item>
                  <DataSelect v-model="iedPlanStatistic" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
@@ -195,13 +188,12 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="handleReport()">查询</el-button>
+                  <el-button type="primary" @click="handleReport()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataStatistic">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataStatistic">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
-          </el-row>
         </el-header>
         <el-main>
           <el-table :data="reportData" style="width: 100%;" border>
@@ -521,5 +513,8 @@ export default {
 <style scoped>
 .el-header{
     height: auto;
+}
+.el-form-item{
+  margin-bottom: 0px;
 }
 </style>

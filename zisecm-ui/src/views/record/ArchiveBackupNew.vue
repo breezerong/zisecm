@@ -11,11 +11,11 @@
             
             <el-col :span="12" class="topbar-button">
                 <el-button type="primary" plain
-                size="small" icon="el-icon-circle-plus-outline" @click="onCreate">新建</el-button>
+                size="small" icon="el-icon-circle-plus-outline" @click="onCreate">{{$t('application.new')}}</el-button>
                 <el-button type="primary" plain
                 size="small" icon="el-icon-upload2" @click="release('制作中')">发布</el-button>
                 <el-button type="primary" plain
-                size="small" icon="el-icon-folder-delete" @click="onDeleleFileItem">删除</el-button>
+                size="small" icon="el-icon-folder-delete" @click="onDeleleFileItem">{{$t('application.delete')}}</el-button>
             </el-col>
             
         </el-row>

@@ -105,7 +105,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="saveItem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -153,12 +153,12 @@
                 size="small"
                 icon="edit"
                 @click="delItem(scope.row)"
-              >删除</el-button>
+              >{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="listDialogVisible = false">关闭</el-button>
+        <el-button @click="listDialogVisible = false">{{$t('application.close')}}</el-button>
       </div>
     </el-dialog>
     <el-container>

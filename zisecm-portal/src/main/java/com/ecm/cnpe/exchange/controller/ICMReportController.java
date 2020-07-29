@@ -115,21 +115,20 @@ public class ICMReportController extends ControllerAbstract{
 					projList.add((String) map.get(s));
 				}
 			}
+			
+			List<Map<String, Object>> listStatistic = documentService.getMapList(getToken(), sql.toString());
 	        
 	        for(String projName: projList) {
 				projMap = new HashMap<String, Object>();
-				projMap.put("projectName", projName);
+				projMap.put("projectName", projName);			
 				
-				List<Map<String, Object>> listStatistic = documentService.getMapList(getToken(), sql.toString());
-				
-				for(int i = 0; i < 9; i++) {
+		        for(int i = 0; i < 9; i++) {
 					int icmTableGain = (int)listStatistic.get(0).get(sqlSetColumn[i]);
 					projMap.put(icGainKey[i], icmTableGain);
 				}
-				
-				outList.add(projMap);
-							
 	        }
+			
+			outList.add(projMap);
 			
 			mp.put("data", outList);	
 			mp.put("code", ActionContext.SUCESS);

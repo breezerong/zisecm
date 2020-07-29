@@ -44,7 +44,7 @@
               icon="el-icon-search"
               plain
               @click="search"
-            >查询</el-button>
+            >{{$t('application.SearchData')}}</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -77,7 +77,7 @@
                 size="small"
                 icon="delete"
                 @click="delItem(scope.row)"
-              >删除</el-button>
+              >{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
           -->

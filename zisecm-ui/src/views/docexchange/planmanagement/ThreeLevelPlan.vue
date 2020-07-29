@@ -8,10 +8,10 @@
                 </el-form-item>
                 <el-form-item>
                     <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入WBS编码或名称"></el-input>
-                    <el-button type="primary" @click="search()">查询</el-button>
+                    <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="default" @click.native="exportData">Excel下载</el-button>
+                    <el-button type="default" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:typeName="typeName" :inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
@@ -171,3 +171,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.el-form-item{
+    margin-bottom: 0px;
+}
+</style>s
