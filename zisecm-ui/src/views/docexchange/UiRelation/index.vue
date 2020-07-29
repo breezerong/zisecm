@@ -60,9 +60,9 @@
             </template>
           </el-table-column>
           <el-table-column v-for="item in table.columns" v-bind="item" :key="item.prop"></el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column :label="$t('application.operation')" width="180">
             <template slot-scope="scope">
-                <el-button type="info" size="mini" icon="edit" @click="editView(scope.row)">查看</el-button>
+                <el-button type="info" size="mini" icon="edit" @click="editView(scope.row)">{{$t('application.view')}}</el-button>
                 <el-button type="danger" size="mini" icon="delete" @click="deleteItem(scope.row.id)">{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
@@ -114,7 +114,7 @@ export default {
           }},
           {prop:"typeName",label:"类型名称"},
           {prop:"formName",label:"表单名称"},
-          {prop:"description",label:"描述"}
+          {prop:"description",label:this.$t('application.description')}
         ],
         datalist:[],
         pager:{
