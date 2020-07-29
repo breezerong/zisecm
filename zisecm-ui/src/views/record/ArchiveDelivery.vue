@@ -36,7 +36,7 @@
 
     <el-dialog :visible.sync="typeSelectVisible">
       <el-form>
-        <el-form-item :label="$('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+        <el-form-item :label="$t('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
           <el-select
             name="selectName"
             v-model="selectedTypeName"
@@ -58,7 +58,7 @@
 
     <el-dialog :visible.sync="childrenTypeSelectVisible">
       <el-form>
-        <el-form-item :label="$('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+        <el-form-item :label="$t('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
           <el-select
             name="selectName"
             v-model="selectedChildrenType"
