@@ -151,7 +151,7 @@ export default {
     },
     typeName:{
       type: String,
-      default: ""
+      default: "所有"
     }
   },
   
