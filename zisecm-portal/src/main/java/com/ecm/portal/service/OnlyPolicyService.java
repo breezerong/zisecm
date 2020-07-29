@@ -6,24 +6,87 @@ import java.util.Map;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoOnlyPolicyException;
 import com.ecm.core.service.DocumentService;
 @Service
 @Scope("prototype")
 public class OnlyPolicyService extends DocumentService{
-	public boolean validateOnlyOne(String token,String typeName,Map<String,Object> data) {
+	/**
+	 * 验证数据唯一（主文件或子文件）
+	 * @param token
+	 * @param data
+	 * @return
+	 * @throws NoOnlyPolicyException
+	 * @throws EcmException
+	 */
+	public boolean validateOnlyOne(String token,Map<String,Object> data) throws NoOnlyPolicyException, EcmException {
 		
+		Object pid=data.get("parentDocId");
+		if(pid!=null&&!"".equals(pid.toString())) {
+			return validateChildOnly(token,data);
+		}
+		return validate(token,data);
 		
+	}
+	/**
+	 * 验证子文件数据唯一
+	 * @param token
+	 * @param data
+	 * @return
+	 * @throws NoOnlyPolicyException
+	 * @throws EcmException
+	 */
+	public boolean validateChildOnly(String token,Map<String,Object> data) throws NoOnlyPolicyException, EcmException {
+		String typeName=data.get("TYPE_NAME").toString();
+		String parentID=data.get("parentDocId").toString();
+		String sql="select * from ( " + 
+				"select a.*,b.PARENT_ID from ecm_document a,ecm_relation b "
+				+ "where a.id=b.CHILD_ID and a.TYPE_NAME='"+typeName+"' and b.parent_id='"+parentID+"'" + 
+				") t where  ";
 		
+//		if(!StringUtils.isEmpty(parentID)) {
+//			
+//		}
+		String condition=getConditionByConfig(token,data);
+		sql+=condition;
+		List<Map<String, Object>> result= this.getMapList(token, sql);
+		if(result==null||result.size()==0) {
+			return true;
+		}
 		return false;
 		
 	}
 	
-	
-	
-	private String getConditionByConfig(String token,String typeName,Map<String,Object> data) {
+	/**
+	 * 验证数据唯一
+	 * @param token
+	 * @param condition
+	 * @return
+	 * @throws NoOnlyPolicyException 
+	 */
+	public boolean validate(String token,Map<String,Object> data) throws NoOnlyPolicyException {
+		String condition=getConditionByConfig(token,data);
+		List<Map<String,Object>> result= this.getObjectMap(token, condition);
+		if(result!=null&&result.size()>0) {
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * 获取判断唯一的规则
+	 * @param token
+	 * @param data
+	 * @return
+	 * @throws NoOnlyPolicyException
+	 */
+	private String getConditionByConfig(String token,Map<String,Object> data) throws NoOnlyPolicyException {
+		String typeName=data.get("TYPE_NAME").toString();
 		String condition=" TYPE_NAME='唯一性规则' and SUB_TYPE='"+typeName+"'";
 		List<Map<String, Object>> onlyPolicys= this.getObjectMap(token, condition);
-		
+		if(onlyPolicys==null||onlyPolicys.size()==0) {
+			throw new NoOnlyPolicyException("此类型“"+typeName+"”没有唯一性规则！");
+		}
 		String docCondition=" TYPE_NAME='"+typeName+"'";
 		if(data.get("ID")!=null) {
 			docCondition+=" and ID !='"+data.get("ID").toString()+"'";
@@ -50,8 +113,5 @@ public class OnlyPolicyService extends DocumentService{
 		
 	}
 	
-	public boolean validateOnlyByParentID(String token,String typeName,String id) {
-		return false;
-		
-	}
+	
 }

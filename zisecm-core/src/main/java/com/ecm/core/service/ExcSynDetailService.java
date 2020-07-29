@@ -1,13 +1,17 @@
 package com.ecm.core.service;
 
 import com.ecm.core.entity.ExcSynDetail;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.dao.ExcSynDetailMapper;
 import com.ecm.icore.service.IExcSynDetailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 /**
  * <p>
@@ -75,5 +79,9 @@ public class ExcSynDetailService  implements IExcSynDetailService {
 	@Override
 	public List<ExcSynDetail> selectAll() {
 		return mapper.selectAll();
+	}
+	
+	public List<Map<String, Object>> getExcSynDetails(Pager pager,String sqlStr){
+		return mapper.executeSQL(pager, sqlStr);
 	}
 }
