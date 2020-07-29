@@ -53,7 +53,7 @@ public class ICMController  extends ControllerAbstract  {
 	}
 	@RequestMapping(value ="/exchange/ICM/AcceptICMFeedback",method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> FeedBack(@RequestBody String argStr) throws Exception{
+	public Map<String, Object> AcceptICMFeedback(@RequestBody String argStr) throws Exception{
 		List<String> ids = JSONUtils.stringToArray(argStr);
 		EcmDocument temp = new EcmDocument();
 		for(int i = 0;i < ids.size();i++){
