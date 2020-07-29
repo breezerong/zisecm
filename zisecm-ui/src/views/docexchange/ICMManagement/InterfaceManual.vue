@@ -420,7 +420,7 @@ export default {
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
                         _self.typeName=typeName;
-                        // _self.$refs.ShowProperty.parentDocId=selectid
+                        _self.$refs.ShowProperty.parentDocId=selectid
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
                 },10);
@@ -478,9 +478,7 @@ export default {
                 })
                 .then(function(response) {
                     let code = response.data.code;
-                    //console.log(JSON.stringify(response));
                     if (code == 1) {
-                        // _self.$message("反馈成功!");
                         _self.$message({
                             showClose: true,
                             message: "反馈成功!",
@@ -488,14 +486,11 @@ export default {
                             type: "success"
                         });
                         _self.propertyVisible = false;
-                        // _self.loadTransferGridData();
-                        // _self.$refs.mainDataGrid.loadGridData();
-                        
                     } 
                     else{
                     _self.$message({
                             showClose: true,
-                            message: _self.$t('message.newFailured'),
+                            message: _self.$t('message.failured'),
                             duration: 2000,
                             type: "warning"
                         });
@@ -503,7 +498,7 @@ export default {
                     }
                 })
                 .catch(function(error) {
-                    _self.$message(_self.$t('message.newFailured'));
+                    _self.$message(_self.$t('message.failured'));
                     console.log(error);
                 });
             }
