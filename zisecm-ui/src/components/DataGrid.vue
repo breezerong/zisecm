@@ -302,7 +302,8 @@ export default {
       columnList:[],
       sysColumnInfo:[],
       itemCount:0,
-      formName:''
+      formName:'',
+      currentLanguage:"zh-cn"
     };
   },
   props: {
@@ -354,6 +355,7 @@ export default {
   },
   mounted(){
     // this.ready();
+    this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     this.loadCustomName();
     this.loadGridInfo();
     if(this.isInitData){
@@ -446,7 +448,7 @@ export default {
       var m = new Map();
       m.set('gridName',_self.gridViewName);
       m.set('DESCRIPTION',_self.selectedName);
-      m.set("lang", "zh-cn");
+      m.set("lang", _self.currentLanguage);
       _self.axios({
             headers: {
             "Content-Type": "application/json;charset=UTF-8"
@@ -477,7 +479,7 @@ export default {
       let _self=this;
       var m = new Map();
       m.set('gridId',id);
-      m.set("lang", "zh-cn");
+      m.set("lang", _self.currentLanguage);
       _self.axios({
             headers: {
             "Content-Type": "application/json;charset=UTF-8"
@@ -616,7 +618,7 @@ export default {
       let _self = this;
       var m = new Map();
       m.set("gridName", _self.gridViewName);
-      m.set("lang", "zh-cn");
+      m.set("lang", _self.currentLanguage);
       _self
         .axios({
           headers: {
