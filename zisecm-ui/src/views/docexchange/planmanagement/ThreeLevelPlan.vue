@@ -27,7 +27,7 @@
             <el-row>
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
-                        <el-tab-pane label="相关IED" name="relationFiles">
+                        <el-tab-pane :label="$t('application.RelationIED')" name="relationFiles">
                             <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
