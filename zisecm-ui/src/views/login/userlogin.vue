@@ -115,6 +115,8 @@ export default {
               if (response.data.code == 1) {
                 _self.setCurrentUser(response.data.data);
                 sessionStorage.setItem("access-token", response.data.token);
+                sessionStorage.setItem("access-userName", response.data.data.userName);
+                sessionStorage.setItem("access-department",  response.data.data.department);
                 if (_self.rememberInfo) {
                   localStorage.setItem("ziecm-rememberInfo", "1");
                   localStorage.setItem("ziecm-ass12bn", _self.account.username);
