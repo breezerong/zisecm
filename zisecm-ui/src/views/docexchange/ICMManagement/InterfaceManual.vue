@@ -18,7 +18,7 @@
                 @onSaved="onSaved"
                 width="100%"
                 :folderPath="foldtemerPath"
-                v-bind:itemId="selectedItemId"
+                itemId="1"
                 v-bind:typeName="typeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
@@ -32,8 +32,7 @@
                 ref="ShowProperty"
                 @onSaved="onSaved"
                 width="100%"
-                :folderPath="foldtemerPath"
-                v-bind:itemId="selectedItemId"
+                itemId="1"
                 v-bind:typeName="typeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
@@ -108,7 +107,7 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM'and C_PROJECT_NAME = '@project'",
+                    condition:"TYPE_NAME='ICM' and C_DESIGN_UNIT='@company' and C_PROJECT_NAME='@project'",
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
@@ -217,7 +216,7 @@ export default {
             this.$refs.ICMPass.loadGridData()
 
             var condition2 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息意见单'and PARENT_ID ='"+row.ID+"'"
-            var key2="ID IN ("+condition1+")"
+            var key2="ID IN ("+condition2+")"
             this.$refs.ICMComments.condition = key2
             this.$refs.ICMComments.gridViewName="ICMCommentsGrid"
             this.$refs.ICMComments.itemDataList=[]
@@ -486,6 +485,7 @@ export default {
                             type: "success"
                         });
                         _self.propertyVisible = false;
+                        _self.$refs.mainDataGrid.loadGridData();
                     } 
                     else{
                     _self.$message({
