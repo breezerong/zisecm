@@ -2,12 +2,15 @@
     <DataLayout>
     
         <template v-slot:header>
-            <el-row>
-            <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
-            <el-button type="success" @click="submit()">{{$t('application.close')}}</el-button>
-            <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
-             <el-form-item><AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition></el-form-item>
-            </el-row>
+            <el-form inline="true">
+            <el-form-item>
+            <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
+            @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect></el-form-item>
+            <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
+            <el-form-item><el-button type="success" @click="submit()">{{$t('application.close')}}</el-button></el-form-item>
+            <el-form-item><el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button></el-form-item>
+            <el-form-item><AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition></el-form-item>
+            </el-form>
         </template>
         <template v-slot:main="{layout}">
                 <el-row>
