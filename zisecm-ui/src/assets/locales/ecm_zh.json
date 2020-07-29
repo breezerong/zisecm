@@ -174,7 +174,11 @@
     "applyForUnlock":"申请解锁",
     "handleComplete":"处理完成",
     "unlock":"解锁",
-    "startStatistics":"开始统计"
+    "startStatistics":"开始统计",
+    "InterfaceTransfer":"接口传递",
+    "InterfaceOpinion":"接口意见",
+    "RelationIED":"相关IED",
+    "Add":"添加"
 },
 "skin": {
     "Blue": "天空蓝",

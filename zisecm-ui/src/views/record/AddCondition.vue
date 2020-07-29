@@ -20,7 +20,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-button @click="addplus" icon="el-icon-plus">添加</el-button>
+      <el-button @click="addplus" icon="el-icon-plus">{{$t('application.Add')}}</el-button>
       <el-button @click="removeminus" icon="el-icon-minus">{{$t('application.delete')}}</el-button>
     </el-row>
       <el-row :key="index" v-for="(item,index) in formtips">
