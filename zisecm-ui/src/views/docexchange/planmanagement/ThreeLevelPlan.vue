@@ -171,3 +171,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.el-form-item{
+    margin-bottom: 0px;
+}
+</style>s

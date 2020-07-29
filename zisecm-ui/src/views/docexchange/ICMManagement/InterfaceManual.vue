@@ -1,54 +1,54 @@
 <template>
     <DataLayout >
+        <el-dialog title="批量导入ICM" :visible.sync="batchDialogVisible" width="80%" >
+            <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
+            <div slot="footer" class="dialog-footer">
+            <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+            </div>
+        </el-dialog>
+        <!-- 新建窗口 -->
+        <el-dialog
+            :title="dialogName"
+            :visible.sync="propertyVisible"
+            @close="propertyVisible = false"
+            width="80%"
+            >
+            <ShowProperty
+                ref="ShowProperty"
+                @onSaved="onSaved"
+                width="100%"
+                :folderPath="foldtemerPath"
+                v-bind:itemId="selectedItemId"
+                v-bind:typeName="typeName"
+            ></ShowProperty>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+            </div>
+        </el-dialog>
+        <!-- 延误反馈 -->
+        <el-dialog :title="延误反馈" :visible.sync="Visible1" width="80%">
+            <ShowProperty
+                ref="ShowProperty"
+                @onSaved="onSaved"
+                width="100%"
+                :folderPath="foldtemerPath"
+                v-bind:itemId="selectedItemId"
+                v-bind:typeName="typeName"
+            ></ShowProperty>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="SaveFeedBack">{{$t('application.ok')}}</el-button>
+                <el-button @click="Visible1 = false">{{$t('application.cancel')}}</el-button>
+            </div>
+        </el-dialog>
         <template v-slot:header>
-            <el-dialog title="批量导入ICM" :visible.sync="batchDialogVisible" width="80%" >
-                <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
-                <div slot="footer" class="dialog-footer">
-                <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
-                </div>
-            </el-dialog>
-            <!-- 新建窗口 -->
-            <el-dialog
-                :title="dialogName"
-                :visible.sync="propertyVisible"
-                @close="propertyVisible = false"
-                width="80%"
-                >
-                <ShowProperty
-                    ref="ShowProperty"
-                    @onSaved="onSaved"
-                    width="100%"
-                    :folderPath="foldtemerPath"
-                    v-bind:itemId="selectedItemId"
-                    v-bind:typeName="typeName"
-                ></ShowProperty>
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="saveItem">{{$t('application.save')}}</el-button>
-                    <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
-                </div>
-            </el-dialog>
-            <!-- 延误反馈 -->
-            <el-dialog :title="延误反馈" :visible.sync="Visible1" width="80%">
-                <ShowProperty
-                    ref="ShowProperty"
-                    @onSaved="onSaved"
-                    width="100%"
-                    :folderPath="foldtemerPath"
-                    v-bind:itemId="selectedItemId"
-                    v-bind:typeName="typeName"
-                ></ShowProperty>
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="SaveFeedBack">{{$t('application.ok')}}</el-button>
-                    <el-button @click="Visible1 = false">{{$t('application.cancel')}}</el-button>
-                </div>
-            </el-dialog>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
                     <DataSelect @onSelectChange='onSelectChange' v-model="forms.headForm.project"  includeAll dataUrl="/exchange/project/myproject" 
                     dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入流水号"></el-input>
+                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入编码"></el-input>
                     <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
@@ -56,11 +56,11 @@
                 </el-form-item>
                 <el-form-item v-if="roles1">
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">{{$t('application.ExportExcel')}}</el-button>
-                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >新建</el-button>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">导入</el-button>
+                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item v-if="roles2">
-                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >延误反馈</el-button>
+                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >{{$t('route.icmfeedback')}}</el-button>
                 </el-form-item>
             </el-form>
         </template>
@@ -530,3 +530,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+    .el-form-item{
+        margin-bottom: 0px;
+    }
+</style>
