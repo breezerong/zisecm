@@ -1,11 +1,11 @@
 <template>
     <div class="app-container">
         <!-- 创建分发 -->
-        <el-dialog title="分包商选择" :visible.sync="contractorCheckVisible" width="80%" >
+        <el-dialog title="分包商选择" :visible.sync="contractorCheckVisible" width="60%" >
             <el-checkbox-group v-model="checkList">
-                <div v-for="(itm,idx) in subContractor" :key="idx+'contractorCheck'">
-                    <el-checkbox :label="itm"></el-checkbox>
-                </div>
+                <template v-for="(itm,idx) in subContractor" >
+                    <el-checkbox :label="itm" :key="idx+'contractorCheck'"></el-checkbox>
+                </template>
             </el-checkbox-group>
             <div slot="footer" class="dialog-footer">
                 <el-button
@@ -773,9 +773,16 @@ export default {
                     if(response.data.code==1){
                       
                         _self.$refs.mainDataGrid.loadGridData();
-                        _self.$refs.transferDoc.itemDataList=[];
-                        _self.$refs.relevantDoc.itemDataList=[];
-                        _self.$refs.attachmentDoc.itemDataList=[];
+                        if(_self.$refs.transferDoc){
+                            _self.$refs.transferDoc.itemDataList=[];
+                        }
+                        if(_self.$refs.relevantDoc){
+                            _self.$refs.relevantDoc.itemDataList=[];
+                        }
+                        if(_self.$refs.attachmentDoc){
+                            _self.$refs.attachmentDoc.itemDataList=[];
+                        }
+                        
                         _self.$message({
                             showClose: true,
                             message: _self.$t("message.DispenseSuccess"),

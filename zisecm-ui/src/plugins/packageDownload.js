@@ -80,6 +80,7 @@ Vue.prototype.packDownloadByMain = function(selectedItems){
         //     console.log(error);
         //   });
     }
+    
     Vue.prototype.getRelatinItemByTypeName =function(typeName,gridObj,callback){
       let _self =  this;
       let url="/admin/uirelation/get"
@@ -100,3 +101,20 @@ Vue.prototype.packDownloadByMain = function(selectedItems){
           console.log(error);
       })
   }
+
+  Vue.prototype.validateData =function(data,callback){
+    let _self=this;
+    let url="/dc/validateOnly";
+    axios.post(url,JSON.stringify(data)).then(function(response) {
+        
+        if(response.data.code=='1'){
+          let isOk=response.data.isOk;
+          if(callback){
+            callback(isOk);
+          }
+        }
+    }).catch(function(error){
+        console.log(error);
+    })
+  }
+  

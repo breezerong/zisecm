@@ -11,6 +11,7 @@ import com.alibaba.druid.util.StringUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmDocumentMapper;
+import com.ecm.core.db.SqlUtils;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
@@ -70,12 +71,8 @@ public class DocumentService4Cnpe extends DocumentService{
 			sql += " " + gv.getOrderBy();
 		}
 		
-		if(sql!=null&&sql.contains("@currentuser")) {
-			sql=sql.replaceAll("@currentuser", currentUser);
-    	}
-		if(sql!=null&&sql.contains("@company")) {
-			sql=sql.replaceAll("@company", userObj.getCompany());
-	    }
+		sql=SqlUtils.replaceSql(sql, userObj);
+		
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
 		return list;

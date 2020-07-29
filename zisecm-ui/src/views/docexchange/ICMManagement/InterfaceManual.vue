@@ -57,7 +57,7 @@
                 <el-form-item v-if="roles1">
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">{{$t('application.ExportExcel')}}</el-button>
                     <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
-                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
+                    <el-button type="primary" @click="beforImport($refs.mainDataGrid,'/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item v-if="roles2">
                     <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >{{$t('route.icmfeedback')}}</el-button>
@@ -77,11 +77,11 @@
             <el-row>
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
-                        <el-tab-pane label="接口传递" name="ICMPass">
+                        <el-tab-pane :label="$t('application.InterfaceTransfer')" name="ICMPass">
                             <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
                             <DataGrid ref="ICMPass" v-bind="tables.ICMPass" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
-                        <el-tab-pane label="接口意见" name="ICMComments">
+                        <el-tab-pane :label="$t('application.InterfaceOpinion')" name="ICMComments">
                             <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
                             <DataGrid ref="ICMComments" v-bind="tables.ICMComments" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
@@ -375,18 +375,10 @@ export default {
             this.fileList = fileList;
         },
         //导入按钮
-        beforImport(obj,isSub,relationName,path){
+        beforImport(obj,path){
             this.gridObj=obj;
             this.batchDialogVisible=true;
             this.$nextTick(()=>{
-                if(isSub){
-                    this.$refs.BatchImport.deliveryId=this.parentId;
-                    this.$refs.BatchImport.relationName=relationName;
-                    
-                }else{
-                    this.$refs.BatchImport.deliveryId='';
-                    this.$refs.BatchImport.relationName='';
-                }
                 this.$refs.BatchImport.tmpPath=path;
                 this.$refs.BatchImport.loadTemplate();
             })

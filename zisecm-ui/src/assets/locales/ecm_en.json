@@ -171,7 +171,11 @@
     "applyForUnlock":"Apply For Unlock",
     "handleComplete":"Handle Complete",
     "unlock":"Unlock",
-    "startStatistics":"Start Statistics"
+    "startStatistics":"Start Statistics",
+    "InterfaceTransfer":"Interface transfer",
+    "InterfaceOpinion":"Interface opinion",
+    "RelationIED":"Relation IED",
+    "Add":"Add"
 },
 "skin": {
     "Blue": "Blue",
