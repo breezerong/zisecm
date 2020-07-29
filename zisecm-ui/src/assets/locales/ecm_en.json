@@ -151,7 +151,27 @@
     "exportExcel":"Export Excel",
     "requiredInput": "Required",
     "cannotEmpty": "Cannot Empty",
-    "BeenDispensed":"Been Dispensed"
+    "BeenDispensed":"Been Dispensed",
+    "index":"Index",
+    "wbsName":"Name",
+    "startDate":"Start Date",
+    "endDate":"End Date",
+    "wbs":"WBS Coding",
+    "projectName":"Project Name",
+    "TransferDoc":"Transfer Document",
+    "PostNumber":"Post No.",
+    "Title":"Title",
+    "or":"or",
+    "ExportExcel":"Export Excel",
+    "Coding":"Code",
+    "Import":"Import",
+    "list":"List",
+    "ReplaceDoc":"Replace Documents",
+    "Attachment":"Attachment",
+    "applyForUnlock":"Apply For Unlock",
+    "handleComplete":"Handle Complete",
+    "unlock":"Unlock",
+    "startStatistics":"Start Statistics"
 },
 "skin": {
     "Blue": "Blue",
@@ -220,7 +240,8 @@
     "ReceivingDcFromCnpe":"Receiving For Contractor",
     "ReceivedDcFromCnpe":"Received For Contractor",
     "RejectDC":"Reject DC",
-    "LogMonitor": "LogMonitor"
+    "LogMonitor": "LogMonitor",
+    "icmfeedback":"icmfeedback"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -287,4 +308,16 @@
 "close": "Close",
 "closeOthers": "Close Others",
 "closeAll": "Close All"
-}}
+},
+"exchange":{
+    "plant":{
+        "gantt":{
+            "tcIndex":"Index",
+            "tcName":"Name",
+            "tcStartDate":"Start Date",
+            "tcEndDate":"End Date",
+            "tcWbs":"WBS Code"
+        }
+    }
+}
+}

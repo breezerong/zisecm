@@ -21,7 +21,7 @@
     </el-row>
     <el-row>
       <el-button @click="addplus" icon="el-icon-plus">添加</el-button>
-      <el-button @click="removeminus" icon="el-icon-minus">删除</el-button>
+      <el-button @click="removeminus" icon="el-icon-minus">{{$t('application.delete')}}</el-button>
     </el-row>
       <el-row :key="index" v-for="(item,index) in formtips">
             <el-col :span='3' class="topbar-button">
@@ -72,7 +72,7 @@
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="6">
-      <el-button icon="el-icon-search" @click="clickShowDialog(typeName)">高级搜索</el-button>
+      <el-button icon="el-icon-search" @click="clickShowDialog(typeName)">{{$t('route.advSearch')}}</el-button>
     </el-col>
   </el-row>
 </div>
@@ -151,7 +151,7 @@ export default {
     },
     typeName:{
       type: String,
-      default: ""
+      default: "所有"
     }
   },
   

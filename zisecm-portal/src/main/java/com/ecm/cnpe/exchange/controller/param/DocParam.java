@@ -16,6 +16,18 @@ public class DocParam {
 	
 	private String orderBy;
 	
+	private String parentId;
+	
+	
+	
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
 	public String getGridName() {
 		return gridName;
 	}

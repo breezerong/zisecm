@@ -29,10 +29,10 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="search1()">查询</el-button>
+                  <el-button type="primary" @click="search1()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataOverdue">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataOverdue">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
         </el-header>
@@ -82,10 +82,10 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="search2()">查询</el-button>
+                  <el-button type="primary" @click="search2()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataunCompleted">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataunCompleted">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
         </el-header>
@@ -135,10 +135,10 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="search3()">查询</el-button>
+                  <el-button type="primary" @click="search3()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataCompleted">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataCompleted">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
         </el-header>
@@ -188,10 +188,10 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                  <el-button type="primary" @click="handleReport()">查询</el-button>
+                  <el-button type="primary" @click="handleReport()">{{$t('application.SearchData')}}</el-button>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click.native="exportDataStatistic">Excel下载</el-button>
+                <el-button type="primary" @click.native="exportDataStatistic">{{$t('application.ExportExcel')}}</el-button>
               </el-form-item>
             </el-form>
         </el-header>

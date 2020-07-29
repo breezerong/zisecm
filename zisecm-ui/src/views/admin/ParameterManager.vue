@@ -2,7 +2,7 @@
   <div>
     <el-dialog title="选择属性" :visible.sync="categoryVisible">
       <div slot="footer" class="dialog-footer">
-        <el-button @click="categoryVisible = false">取 消</el-button>
+        <el-button @click="categoryVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog title="添加" :visible.sync="dialogVisible">
@@ -22,7 +22,7 @@
         <el-button @click="showcategory('')">选择属性</el-button>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -48,7 +48,7 @@
               icon="el-icon-edit"
               plain="true"
               @click="dialogVisible = true"
-            >新建</el-button>
+            >{{$t('application.new')}}</el-button>
           </el-col>
         </el-row>
       </el-header>
@@ -86,7 +86,7 @@
                 size="small"
                 icon="delete"
                 @click="del(scope.row)"
-              >删除</el-button>
+              >{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>

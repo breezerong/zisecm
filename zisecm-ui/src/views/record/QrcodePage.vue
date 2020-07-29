@@ -35,7 +35,7 @@
         <div id="qrcodeshow" ref="qrCodeUrl"></div> <!-- 创建一个div，并设置id为qrcode -->
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogQrcodeVisible = false">关闭</el-button>
+        <el-button type="primary" @click="dialogQrcodeVisible = false">{{$t('application.close')}}</el-button>
       </span>
     </el-dialog>
   </div>

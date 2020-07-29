@@ -3,7 +3,7 @@
      <el-dialog title="批量导入文档" :visible.sync="importDialogVisible" width="60%" >
         <ImportDocument ref="ImportDocument"  @onImported="onImported" width="100%" v-bind:deliveryId="deliveryId"></ImportDocument>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="importDialogVisible=false" size="medium">关闭</el-button>
+          <el-button @click="importDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
          </div>
       </el-dialog>
     <el-form label-width="120px" @submit.native.prevent>
@@ -52,7 +52,7 @@
           </el-form-item>
         </el-col>
          <el-col :span="6">
-           <el-button type="primary" plain icon="save" @click="getPath()">提交</el-button> 
+           <el-button type="primary" plain icon="save" @click="getPath()">{{$t('application.close')}}</el-button> 
          </el-col>
       </el-row>
     </el-form>
@@ -119,7 +119,7 @@
               :on-change="handleChange1"
               :auto-upload="false"
               :multiple="false">
-              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+              <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
             </el-upload>
           </el-form-item>
         </el-col>
@@ -132,12 +132,12 @@
               :on-change="handleChange2"
               :auto-upload="false"
               :multiple="true">
-              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+              <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
             </el-upload>
           </el-form-item>
         </el-col>
          <el-col :span="8">
-           <el-button type="primary" plain icon="save" @click="batchImport()">导入</el-button> 
+           <el-button type="primary" plain icon="save" @click="batchImport()">{{$t('application.Import')}}</el-button> 
            <el-button type="primary" plain icon="save" @click="importDialogVisible=true">批量导入</el-button> 
          </el-col>
       </el-row>

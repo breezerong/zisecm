@@ -22,7 +22,7 @@
       
     </el-dialog>
 
-    <el-dialog title="导入" :visible.sync="importdialogVisible" width="70%">
+    <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
           
           <el-form size="mini" :label-width="formLabelWidth">
             
@@ -34,21 +34,21 @@
                 :on-change="handleChange"
                 :auto-upload="false"
                 :multiple="false">
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
               </el-upload>
             </div>
           </el-form> 
           <div slot="footer" class="dialog-footer">
-            <el-button @click="importdialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="uploadData(uploadID)">开始导入</el-button>
+            <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+            <el-button type="primary" @click="uploadData(uploadID)">{{$t('application.start')+$t('application.Import')}}</el-button>
           </div>
         </el-dialog>
 
     <el-dialog :visible.sync="childrenTypeSelectVisible">
       <el-form>
-          <el-form-item label="文件类型" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+          <el-form-item :label="$('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
                 <el-select  name="selectName"
-                v-model="selectedChildrenType" placeholder="'请选择文件类型'" 
+                v-model="selectedChildrenType" :placeholder="$t('application.selectFileType')"
                 style="display:block;">
                       <div v-for="(name,nameIndex) in childrenTypes">
                         <el-option :label="name" :value="name" :key="nameIndex"></el-option>
@@ -132,7 +132,7 @@
                       <!-- <el-button type="primary" plain size="small"  @click="childrenTypeSelectVisible=true">{{$t('application.createDocument')}}</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.addReuseFile')"  @click="reuseVisible=true">{{$t('application.addReuseFile')}}</el-button>
                       
-                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
+                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">{{$t('application.delete')}}</el-button>
                       <el-button type="primary" plain size="small" title="挂载文件"  @click="importdialogVisible=true;uploadUrl='/dc/mountFile'">挂载文件</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="importdialogVisible=true;uploadUrl='/dc/addRendition'">格式副本</el-button> -->
                       <el-button type="primary" plain size="small"  @click="beforeCreateFile">著录</el-button>
@@ -166,7 +166,7 @@
                       <el-button type="primary" :loading="makeBoxLoading" plain size="small" title="自动建盒"  @click="autoPutInBox">自动建盒</el-button>
                       <el-button type="primary" :loading="autoArchiveLoading" plain size="small" title="自动组卷"  @click="autoArchive">自动组卷</el-button>
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedOneOutItem);uploadUrl='/dc/addRendition'">格式副本</el-button>
-                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">删除</el-button>
+                      <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">{{$t('application.delete')}}</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
                       v-bind:columnList="outerGridList" v-bind:itemCount="outerCount" :isshowOption="true"
                       :isshowSelection ="true"

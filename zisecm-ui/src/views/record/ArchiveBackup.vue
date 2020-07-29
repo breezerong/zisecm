@@ -12,7 +12,7 @@
                     </template>
                     <el-menu-item index="201" @click="changeTab('新建')">
                       <i class="el-icon-folder-add"></i>
-                      <span slot="title">新建</span>
+                      <span slot="title">{{$t('application.new')}}</span>
                     </el-menu-item>
                     <el-menu-item index="202" @click="changeTab('制作中')">
                       <i class="el-icon-refresh-left"></i>

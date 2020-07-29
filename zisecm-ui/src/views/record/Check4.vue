@@ -25,7 +25,7 @@
             ></el-date-picker>
             <el-button type="primary" plain  @click="startCheck">开始检查</el-button>
             &nbsp;
-            <el-button type="primary" plain  @click="exortExcel">导出Excel</el-button>
+            <el-button type="primary" plain  @click="exortExcel">{{$t('application.ExportExcel')}}</el-button>
             <!--
             <el-button type="primary" @click="searchAll">所有数据</el-button>
             -->

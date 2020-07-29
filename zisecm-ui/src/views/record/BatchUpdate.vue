@@ -27,7 +27,7 @@
                 :auto-upload="false"
                 :multiple="false"
               >
-                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
               </el-upload>
             </el-form-item>
           </el-col>

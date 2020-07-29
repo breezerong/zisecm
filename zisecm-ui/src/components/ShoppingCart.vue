@@ -24,7 +24,7 @@
              <router-link  ref="borrowRouteLink" to="/borroworder"></router-link>
            <!-- <el-button  v-if="formId!=''" @click="addToFormFromShopingCart()" style="float:left">添加到表单</el-button> -->
            <div v-if="formId==''">
-            <el-button type="primary" @click="cancel(false)">取 消</el-button>
+            <el-button type="primary" @click="cancel(false)">{{$t('application.cancel')}}</el-button>
             <el-button @click="cleanShopingCart()">清空借阅单</el-button>
             <el-button @click="removeShopingCart()">移除所选</el-button>
              <el-button @click="showDrawingItem()">调晒</el-button>

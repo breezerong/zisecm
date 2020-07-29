@@ -28,7 +28,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">开始导入</el-button>
+            <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">{{$t('application.start')+$t('application.Import')}}</el-button>
           </el-col>
         </el-row>
       </el-form>

@@ -8,7 +8,7 @@
         :groupId="selectedItemId"
       ></UserSelector>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="selectUserDialogVisible = false">取 消</el-button>
+        <el-button @click="selectUserDialogVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
     </el-dialog>
     <el-dialog :title.sync="dialogtitle" :visible.sync="dialogVisible">
@@ -33,7 +33,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
@@ -94,7 +94,7 @@
                 size="small"
                 icon="delete"
                 @click="delitem(scope.row)"
-              >删除</el-button>
+              >{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>

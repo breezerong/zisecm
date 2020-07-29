@@ -113,7 +113,7 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button v-if="ecmCfgActivity.enableDelegate==true" @click="showOrHiddenDelegate()">{{delegateButton}}</el-button>
          <el-button  @click="claim(currentData)">认领任务</el-button>
        <el-button @click="completetask(form)">完成任务</el-button>
