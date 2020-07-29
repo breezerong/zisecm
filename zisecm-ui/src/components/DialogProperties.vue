@@ -36,7 +36,7 @@
         </el-col>
       </template>
     </el-row>
-      <el-form-item style="float:left"  :label="$('application.fileType')" >{{typeName}}</el-form-item>
+      <el-form-item style="float:left"  :label="$t('application.fileType')" >{{typeName}}</el-form-item>
       <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;">
         <el-upload
         :limit="1"

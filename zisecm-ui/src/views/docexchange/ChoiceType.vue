@@ -2,7 +2,7 @@
     <div>
         <el-form ref="form" :model="form" label-width="80px">
             <el-row>
-                <el-form-item :label="$('application.fileType')">
+                <el-form-item :label="$t('application.fileType')">
                     <el-radio-group v-model="form.choiceTypeName" v-for="(name,nameIndex) in typeNames" 
                     :key="'T_'+nameIndex" @change="radioGroupChange()">
                         <el-radio :label="name">{{name}}</el-radio>
