@@ -38,7 +38,6 @@
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
             isshowOption
-            isshowCustom
             gridViewName="反馈确认"
             condition='TYPE_NAME="ICM" AND C_PROCESS_STATUS="新建"'
             v-bind="tables.main":tableHeight="layout.height-180"
@@ -66,6 +65,11 @@ export default {
                 main:{
                     dataList:[],
                     height:"",
+                    isshowoption:true,
+                    isshowCustom:false,
+                    isShowPropertyButton:true,
+                    isShowMoreOption:false,
+                    isShowChangeList:false,
                     isInitData:false,
                 },
                itemDataList: [],

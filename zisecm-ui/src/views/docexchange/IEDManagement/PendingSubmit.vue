@@ -70,7 +70,7 @@
                 <el-col :span="24">                   
                     <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" 
                     isshowOption v-bind="tables.main":tableHeight="layout.height-180"
-                    isshowCustom gridViewName="IEDGrid" 
+                    gridViewName="IEDGrid" 
                     @cellMouseEnter="cellMouseEnter"
                     @cellMouseleave="cellMouseleave"
                     @rowclick="rowClick" 
@@ -97,7 +97,11 @@ export default {
                     gridName:"IEDGrid",
                     dataList:[],
                     height:"",
-                    isInitData:false
+                    isInitData:false,
+                    isshowCustom:false,
+                    isShowPropertyButton:true,
+                    isShowMoreOption:false,
+                    isShowChangeList:false
                 },
               status:'',
             },
@@ -186,8 +190,6 @@ export default {
              uploadData() {
             let _self = this;
             let formdata = _self.getFormData();
-            console.log("UploadData getData");
-            console.log(formdata);
             _self.uploading=true;
             _self
                 .axios({

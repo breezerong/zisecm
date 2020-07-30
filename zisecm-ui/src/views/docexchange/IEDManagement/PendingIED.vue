@@ -57,10 +57,8 @@
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
-            isshowOption
-            isshowCustom
-            gridViewName="IEDGrid"
-            condition="TYPE_NAME='IED' AND STATUS='审核中' " :v-bind="tables.main":tableHeight="layout.height-180"
+            isshowOption v-bind="tables.main":tableHeight="layout.height-180"
+            gridViewName="IEDGrid" 
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
@@ -97,8 +95,12 @@ export default {
                     gridName:"IEDGrid",
                     dataList:[],
                     height:"",
-                    isInitData:false
-
+                    isInitData:false,
+                    isshowoption:true,
+                    isshowCustom:false,
+                    isShowPropertyButton:true,
+                    isShowMoreOption:false,
+                    isShowChangeList:false
                 },
                loading: false,
                status : '已完成',
