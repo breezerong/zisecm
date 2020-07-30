@@ -137,6 +137,7 @@
                 condition=" status='待确认'"
                 @rowclick="rowClick"
                 :isEditProperty="false"
+                showOptions="查看内容"
                 @selectchange="selectChange"
                 ></DataGrid>
         </el-row>
