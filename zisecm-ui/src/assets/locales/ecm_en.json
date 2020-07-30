@@ -188,7 +188,8 @@
     "relationName":"Relation Name",
     "formName":"Form Name",
     "gridName":"Grid Name",
-    "isReadOnly":"is Read Only"
+    "isReadOnly":"is Read Only",
+    "change":"Change"
 },
 "skin": {
     "Blue": "Blue",
