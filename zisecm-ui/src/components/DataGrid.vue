@@ -202,22 +202,24 @@
             
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
-              <el-dropdown trigger="click" style="overflow:visible">
-                <el-button
-                type="primary"
-                plain
-                size="small"
-                title="列表选择"
-                icon="el-icon-more"
-              ></el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <!-- <el-button v-for="(item,idx) in customNames" :key="idx+'cc'">{{item.description}}</el-button> -->
-                  <el-dropdown-item v-for="(item,idx) in customList"
-                  :key="idx+'_Cz'"
-                   @click.native="showCustomInfo(item.id)">{{item.description}}</el-dropdown-item>
-                  
-                </el-dropdown-menu>
-              </el-dropdown>
+              <template v-if="isShowChangeList">
+                <el-dropdown trigger="click" style="overflow:visible">
+                  <el-button
+                  type="primary"
+                  plain
+                  size="small"
+                  title="列表选择"
+                  icon="el-icon-more"
+                ></el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <!-- <el-button v-for="(item,idx) in customNames" :key="idx+'cc'">{{item.description}}</el-button> -->
+                    <el-dropdown-item v-for="(item,idx) in customList"
+                    :key="idx+'_Cz'"
+                    @click.native="showCustomInfo(item.id)">{{item.description}}</el-dropdown-item>
+                    
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
               <el-button v-if="isshowCustom" icon="el-icon-setting" size="small" @click="showEditColumn" title="自定义列表"></el-button>
               
             </template>
@@ -330,7 +332,8 @@ export default {
     parentId:{type:String,default:""},
     isShowMoreOption:{type:Boolean,default:true},//是否显示功能菜单
     isShowPropertyButton:{type:Boolean,default:true},//是否显示属性按钮
-    showOptions:{type:String,default:"查看内容,查看属性,加入购物车,升版"}//功能菜单显示控制
+    showOptions:{type:String,default:"查看内容,查看属性,加入购物车,升版"},//功能菜单显示控制
+    isShowChangeList:{type:Boolean,default:true}//是否显示列表选择
   },
   watch: {
     showFields(val, oldVal) {
