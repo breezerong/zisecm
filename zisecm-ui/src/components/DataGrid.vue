@@ -233,10 +233,10 @@
                     icon="el-icon-more"
                   ></el-button>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item icon="el-icon-reading" @click.native="showItemContent(selectedRow)">查看内容</el-dropdown-item>
-                      <el-dropdown-item icon="el-icon-info" @click.native="showItemProperty(selectedRow)">查看属性</el-dropdown-item>
-                      <el-dropdown-item icon="el-icon-circle-plus-outline" @click.native="addToShoppingCar([selectedRow])">加入购物车</el-dropdown-item>
-                      <el-dropdown-item icon="el-icon-check" @click.native="upgrade(selectedRow)">升版</el-dropdown-item>
+                      <el-dropdown-item v-if="showOptions.indexOf('查看内容')!=-1" icon="el-icon-reading" @click.native="showItemContent(selectedRow)">查看内容</el-dropdown-item>
+                      <el-dropdown-item v-if="showOptions.indexOf('查看属性')!=-1" icon="el-icon-info" @click.native="showItemProperty(selectedRow)">查看属性</el-dropdown-item>
+                      <el-dropdown-item v-if="showOptions.indexOf('加入购物车')!=-1" icon="el-icon-circle-plus-outline" @click.native="addToShoppingCar([selectedRow])">加入购物车</el-dropdown-item>
+                      <el-dropdown-item v-if="showOptions.indexOf('升版')!=-1" icon="el-icon-check" @click.native="upgrade(selectedRow)">升版</el-dropdown-item>
                       
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -310,12 +310,12 @@ export default {
     };
   },
   props: {
-    isInitData: { type: Boolean, default: true },
+    isInitData: { type: Boolean, default: true },//是否初始化数据
     itemDataList: { type: Array, default: null },
-    isEditProperty:{ type: Boolean, default: true },
+    isEditProperty:{ type: Boolean, default: true },//属性页面中是否显示保存按钮
     // sysColumnInfo:{type: Array, default: null},
     // columnList: { type: Array, default: null },
-    isshowicon: { type: Boolean, default: true },
+    isshowicon: { type: Boolean, default: true },//是否显示图标
     isshowOption: { type: Boolean, default: false },
     isshowSelection: { type: Boolean, default: true },
     tableHeight: { type: [String, Number], default: window.innerHeight - 408 },
@@ -328,8 +328,9 @@ export default {
     condition:{type:String,default:""},
     dataUrl:{type:String,default:""},
     parentId:{type:String,default:""},
-    isShowMoreOption:{type:Boolean,default:true},
-    isShowPropertyButton:{type:Boolean,default:true}
+    isShowMoreOption:{type:Boolean,default:true},//是否显示功能菜单
+    isShowPropertyButton:{type:Boolean,default:true},//是否显示属性按钮
+    showOptions:{type:String,default:"查看内容,查看属性,加入购物车,升版"}//功能菜单显示控制
   },
   watch: {
     showFields(val, oldVal) {

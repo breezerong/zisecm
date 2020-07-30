@@ -153,6 +153,7 @@
                 gridViewName="DCTransferGrid"
                 condition=" (status='' or status='新建') and C_COMPANY='@company'"
                 :isshowCustom="true"
+                showOptions="查看内容"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 ></DataGrid>
