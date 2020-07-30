@@ -53,6 +53,7 @@ export default {
                     dataUrl:"/dc/getDocuments",
                     condition:"TYPE_NAME='计划任务' AND C_PROJECT_NAME = '@project'",
                     isshowOption:true,
+                    isShowMoreOption:false,
                     isshowCustom:true,
                 },
                 rfDg:{
@@ -60,9 +61,9 @@ export default {
                     dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,
+                    isShowMoreOption:false,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false,
                     tableHeight:"350"
                 }
             },
