@@ -178,10 +178,8 @@ export default {
     methods: {
         //角色判断
         GetUserRoles(rolename){
-            console.log('GetUserRoles')
             let result = 0
             let CurrentUser=JSON.parse(sessionStorage.getItem("ecm-current-user"))
-            console.log(CurrentUser.company+"_接口人员")
             if(CurrentUser.company==rolename){
                 CurrentUser.roles.forEach(function(item){
                     if(item==CurrentUser.company+"_接口人员"){
@@ -195,13 +193,10 @@ export default {
                     }
                 })
             }
-            
-            console.log(result)
             return result
         },
         //单击行
         onDataGridRowClick:function(row){
-            console.log(row)
             var condition1 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息传递单'and PARENT_ID ='"+row.ID+"'"
             var key1="ID IN ("+condition1+")"
             this.$refs.ICMPass.condition = key1
@@ -223,7 +218,6 @@ export default {
         onSelectChange(val){
             let _self = this
             _self.$refs.mainDataGrid.condition=_self.tables.main.condition+"and C_PROJECT_NAME in ("+val+")";
-            // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridData();
             _self.$refs.ICMPass.itemDataList=[]
             _self.$refs.ICMComments.itemDataList=[]
@@ -243,12 +237,10 @@ export default {
             if(typeName =="ICMComments"){
                 condition1 = this.$refs.ICMComments.condition
             }
-            // this.$alert(condition1)
             let params = {
                 gridName:gridViewName,
                 lang:"zh-cn",
                 condition:condition1,
-                // condition:this.tables.main.condition,
                 filename:typeName+"_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
@@ -261,7 +253,6 @@ export default {
             let _self = this
             var k1="TYPE_NAME='ICM' AND C_PROJECT_NAME = '@project'"
             k1+=" AND CODING LIKE '%"+ _self.inputValueNum+"%'"
-            // _self.$alert(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
@@ -311,14 +302,11 @@ export default {
                             var val = dataRows[i].defaultValue;
                             if(val && dataRows[i].isRepeat){
                                 var temp = "";
-                                // console.log(val);
                                 for(let j=0,len=val.length;j<len;j++){
                                     temp = temp + val[j]+";";
-                                    //console.log(temp);
                                 }
                                 temp = temp.substring(0,temp.length-1);
                                 val = temp;
-                                console.log(val);
                             }
                             m.set(dataRows[i].attrName, val);
                         }
@@ -331,14 +319,12 @@ export default {
             m.set('TYPE_NAME','ICM');
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
-            // console.log(JSON.stringify(m));
             if(_self.$refs.ShowProperty.myItemId==''){
                 axios.post("/exchange/ICM/newICM",formdata,{
                     'Content-Type': 'multipart/form-data'
                 })
                 .then(function(response) {
                     let code = response.data.code;
-                    //console.log(JSON.stringify(response));
                     if (code == 1) {
                         // _self.$message("创建成功!");
                         _self.$message({
@@ -405,22 +391,33 @@ export default {
             
             let _self = this;
             let selectid=''
+            let status=''
             if(selectedItems.length==1){
-                _self.Visible1 = true;
                 selectedItems.forEach(function(item){
-                    console.log(item.ID)
                     selectid=item.ID
+                    status=item.C_PROCESS_STATUS
                 })
-                setTimeout(()=>{
-                    if(_self.$refs.ShowProperty){
-                        _self.$refs.ShowProperty.myItemId = "";
-                        _self.dialogName=typeName;
-                        _self.$refs.ShowProperty.myTypeName =typeName;
-                        _self.dialogtypeName=typeName;
-                        _self.$refs.ShowProperty.parentDocId=selectid
-                        _self.$refs.ShowProperty.loadFormInfo();
-                    }
-                },10);
+                if(status=='新建'){
+                    _self.$message({
+                    showClose: true,
+                    message: "此接口已提交反馈",
+                    duration: 2000,
+                    type: "warring"
+                });
+                }else{
+                    _self.Visible1 = true;
+                    setTimeout(()=>{
+                        if(_self.$refs.ShowProperty){
+                            _self.$refs.ShowProperty.myItemId = "";
+                            _self.dialogName=typeName;
+                            _self.$refs.ShowProperty.myTypeName =typeName;
+                            _self.dialogtypeName=typeName;
+                            _self.$refs.ShowProperty.parentDocId=selectid
+                            _self.$refs.ShowProperty.loadFormInfo();
+                        }
+                    },10);
+                }
+                
             }
             else{
                 _self.$message({
@@ -430,7 +427,6 @@ export default {
                     type: "warring"
                 });
             }
-            // console.log(selectedItems)
             
         },
         SaveFeedBack(){
@@ -450,14 +446,11 @@ export default {
                             var val = dataRows[i].defaultValue;
                             if(val && dataRows[i].isRepeat){
                                 var temp = "";
-                                // console.log(val);
                                 for(let j=0,len=val.length;j<len;j++){
                                     temp = temp + val[j]+";";
-                                    //console.log(temp);
                                 }
                                 temp = temp.substring(0,temp.length-1);
                                 val = temp;
-                                console.log(val);
                             }
                             m.set(dataRows[i].attrName, val);
                         }
@@ -468,7 +461,6 @@ export default {
             m.set("ID",_self.$refs.ShowProperty.parentDocId)
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
-            console.log(m)
             if(_self.$refs.ShowProperty.myItemId==''){
                 axios.post("/exchange/ICM/FeedBack",formdata,{
                     'Content-Type': 'multipart/form-data'
