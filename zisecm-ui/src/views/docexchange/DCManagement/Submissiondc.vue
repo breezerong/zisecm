@@ -193,9 +193,9 @@
                 <!-- <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
                 </el-form-item> -->
-                <el-form-item>
+                <!-- <el-form-item>
                     <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
@@ -212,6 +212,8 @@
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
                 :isshowCustom="true"
+                :isshowicon="false"
+                :isShowMoreOption="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -465,7 +467,7 @@ export default {
                 })
                 
             }
-            if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+            if("图文传真,会议纪要,接口信息意见单,接口信息传递单".indexOf(row.TYPE_NAME)!=-1){
                 _self.isShowDesgin=false;
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;
