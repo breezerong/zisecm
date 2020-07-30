@@ -169,7 +169,7 @@ export default {
             
             this.$confirm('提交IED变更，是否确定提交？', '提示', {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
                 axios.post("/exchange/ied/changeIED",ids).then(function(response){
-                    console.log(response)
+                    this.search()
                 }).catch(function(error){
                     console.log(error)
                 })
@@ -178,13 +178,9 @@ export default {
             })
         },
         onSelectChange(val) {
-        console.log(val);
-        this.selectedItems = val;
+            this.selectedItems = val;
         },
         onLoadnDataSuccess(select,options){
-            console.log("onLoadDataSuccess")
-            console.log(select)
-            console.log(options)
             this.search()
         },
         onSearchConditionChange:function(val){
@@ -244,8 +240,6 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            console.log("Search()")
-            console.log(_self.forms.headForm.project)
             if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
@@ -257,16 +251,12 @@ export default {
             if(condition != undefined && condition.length>0){
                 k1 += " and "+condition 
             }
-            console.log(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
 
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
         }
-    },
-    props: {
-
     },
     components: {
         ShowProperty:ShowProperty,
