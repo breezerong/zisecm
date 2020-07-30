@@ -283,7 +283,6 @@ export default {
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
                 },10);
-            //_self.$alert("111")
         },
         //新建保存
         saveItem(){
@@ -326,10 +325,9 @@ export default {
                 .then(function(response) {
                     let code = response.data.code;
                     if (code == 1) {
-                        // _self.$message("创建成功!");
                         _self.$message({
                             showClose: true,
-                            message: "创建成功!",
+                            message: _self.$t('message.newSuccess'),
                             duration: 2000,
                             type: "success"
                         });
@@ -470,7 +468,7 @@ export default {
                     if (code == 1) {
                         _self.$message({
                             showClose: true,
-                            message: "反馈成功!",
+                            message: _self.$t("message.commitSuccess"),
                             duration: 2000,
                             type: "success"
                         });
