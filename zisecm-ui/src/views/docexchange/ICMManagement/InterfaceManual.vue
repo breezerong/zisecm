@@ -74,11 +74,11 @@
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.InterfaceTransfer')" name="ICMPass">
                             <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMPass" v-bind="tables.ICMPass" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.InterfaceOpinion')" name="ICMComments">
                             <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMComments" v-bind="tables.ICMComments" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="ICMComments" showOptions="查看内容" v-bind="tables.ICMComments" :tableHeight="layout.height/2-155"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -107,7 +107,7 @@ export default {
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
-                    // isshowSelection:false
+                    isShowMoreOption:false,
                 },
                 ICMPass:{
                     gridViewName:"ICMPassGrid",
