@@ -37,6 +37,7 @@ public class ICMReportController extends ControllerAbstract{
 			Map<String, Object> projMap = new HashMap<String, Object>();
 			
 			String icmReportStatistc = this.getStrValue(args, "icmReportStatistc");
+			//List<String> companyName = JSONUtils.stringToArray(icmReportStatistc);
 			String startDate = this.getStrValue(args, "startDate");
 			String endDate = this.getStrValue(args, "endDate");
 			
@@ -102,33 +103,24 @@ public class ICMReportController extends ControllerAbstract{
 				sql.append(column);
 			}
 			
-			sql.append(" from ecm_document ed where TYPE_NAME='ICM' group by C_PROJECT_NAME");
-			
-			String getProjName = "SELECT C_PROJECT_NAME FROM ecm_document WHERE C_PROJECT_NAME IN ("+
-					icmReportStatistc+") GROUP BY C_PROJECT_NAME";
-			
-			List<Map<String, Object>> projListMap = documentService.getMapList(getToken(), getProjName);
-			List<String> projList = new ArrayList<String>();
-			
-			for(Map<String, Object> map : projListMap) {
-				for(String s : map.keySet()) {
-					projList.add((String) map.get(s));
-				}
-			}
-			
-			List<Map<String, Object>> listStatistic = documentService.getMapList(getToken(), sql.toString());
+			sql.append(" from ecm_document ed where TYPE_NAME='ICM' and C_PROJECT_NAME in (");
+			sql.append(icmReportStatistc);
+			sql.append(") group by C_PROJECT_NAME");
+			//sql.append(" from ecm_document ed where TYPE_NAME='ICM' and C_PROJECT_NAME = ed.C_PROJECT_NAME group by C_PROJECT_NAME");
 	        
-	        for(String projName: projList) {
+			List<Map<String, Object>> listStatistic = documentService.getMapList(getToken(), sql.toString());
+			
+	        for(Map<String, Object> item : listStatistic) {
 				projMap = new HashMap<String, Object>();
-				projMap.put("projectName", projName);			
+				projMap.put("projectName", item.get("C_PROJECT_NAME"));		
 				
 		        for(int i = 0; i < 9; i++) {
-					int icmTableGain = (int)listStatistic.get(0).get(sqlSetColumn[i]);
+					int icmTableGain = (int)item.get(sqlSetColumn[i]);
 					projMap.put(icGainKey[i], icmTableGain);
 				}
+		        
+		        outList.add(projMap);
 	        }
-			
-			outList.add(projMap);
 			
 			mp.put("data", outList);	
 			mp.put("code", ActionContext.SUCESS);

@@ -182,7 +182,14 @@
     "InterfaceTransfer":"Interface transfer",
     "InterfaceOpinion":"Interface opinion",
     "RelationIED":"Relation IED",
-    "Add":"Add"
+    "Add":"Add",
+    "yes":"Yes",
+    "no":"No",
+    "relationName":"Relation Name",
+    "formName":"Form Name",
+    "gridName":"Grid Name",
+    "isReadOnly":"is Read Only",
+    "change":"Change"
 },
 "skin": {
     "Blue": "Blue",
@@ -313,6 +320,7 @@
     "signImageSize":"56X26, 100dpi, jpg",
     "differentPassword":"New password cannot be comfirmed.",
     "cannotChangePassword":"User password cannot be changed.",
+    "operationFaild":"Operation Faild",
     "warehousingSuccess":"Warehousing is successful",
     "warehousingFail":"Warehousing is failed",
     "pleaseSelectOneTransfer":"Please select a transfer",

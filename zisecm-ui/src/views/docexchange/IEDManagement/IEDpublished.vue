@@ -13,8 +13,8 @@
                 <el-form-item>
                     <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition>
                 </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="onIEDChange()">变更</el-button>
+                <el-form-item v-if="changeEnable">
+                    <el-button type="primary" @click="onIEDChange()">{{$t('application.change')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
@@ -62,7 +62,7 @@ export default {
                     gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1",                    
-                    isshowOption:true,
+                    isshowOption:false,
                     isshowCustom:true,
                     isshowicon:false,
                     isInitData:false
@@ -108,7 +108,8 @@ export default {
             inputValueNum:'',
             hiddenInput:'hidden',
             typeName:"IED",
-            selectedItems:[]
+            selectedItems:[],
+            changeEnable:false
         }
     },
     mounted(){
@@ -128,6 +129,16 @@ export default {
             }).catch(function(error){
                 console.log(error);
             })
+
+            let user = this.currentUser();
+            let role = user.company+"_计划人员"
+            if(user.company!="CNPE"){
+                user.roles.forEach(function(item){
+                    if(item==role){
+                        _self.changeEnable = true
+                    }
+                })
+            }
         },
         onIEDChange(){
             if(this.selectedItems.length<1){
@@ -136,14 +147,22 @@ export default {
             }
             let include = false
             let ids = []
+            let hasChanging = false
             this.selectedItems.forEach(function(item){
                 if(item.C_ITEM_STATUS2=='Y'){
                     include = true
+                }
+                if(item.STATUS=='变更中'){
+                    hasChanging=true
                 }
                 ids.push(item.ID)
             })
             if(include){
                 this.$message({ showClose: true, message: "状态显示为‘Y’为不可变更项，请取消此选项", duration: 2000, type: "warning"})
+                return
+            }
+            if(hasChanging){
+                this.$message({ showClose: true, message: "变更中选项不能再次变更，请取消此选项", duration: 2000, type: "warning"})
                 return
             }
             

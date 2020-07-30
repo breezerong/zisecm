@@ -86,7 +86,7 @@ export default {
         handleReport(){
             let _self = this;
             _self.loading = true;
-            
+
             var m = new Map();
             m.set("icmReportStatistc", _self.icmReportStatistc);
             m.set("startDate", _self.startDate);

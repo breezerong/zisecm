@@ -179,7 +179,15 @@
     "InterfaceTransfer":"接口传递",
     "InterfaceOpinion":"接口意见",
     "RelationIED":"相关IED",
-    "Add":"添加"
+    "Add":"添加",
+    "yes":"是",
+    "no":"否",
+    "relationName":"相关名称",
+    "formName":"表单名称",
+    "gridName":"表格名称",
+    "isReadOnly":"是否只读",
+    "change":"变更"
+
 },
 "skin": {
     "Blue": "天空蓝",
