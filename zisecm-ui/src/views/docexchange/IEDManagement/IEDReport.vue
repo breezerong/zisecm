@@ -46,7 +46,7 @@
                 isshowCustom
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
-                :tableHeight="layout.height-180"
+                :tableHeight="layout.height-210"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -99,7 +99,7 @@
                 isshowCustom
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
-                :tableHeight="layout.height-180"
+                :tableHeight="layout.height-210"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
@@ -152,7 +152,7 @@
                 isshowCustom
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'" 
-                :tableHeight="layout.height - 180"
+                :tableHeight="layout.height - 210"
                 @cellMouseEnter="cellMouseEnter"
                 @cellMouseleave="cellMouseleave"
                 @rowclick="rowClick"
