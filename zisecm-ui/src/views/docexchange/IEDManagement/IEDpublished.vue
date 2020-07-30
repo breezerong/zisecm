@@ -62,7 +62,7 @@ export default {
                     gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1",                    
-                    isshowOption:false,
+                    isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
                     isInitData:false
