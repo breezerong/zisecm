@@ -185,7 +185,8 @@
     "relationName":"相关名称",
     "formName":"表单名称",
     "gridName":"表格名称",
-    "isReadOnly":"是否只读"
+    "isReadOnly":"是否只读",
+    "change":"变更"
 
 },
 "skin": {
