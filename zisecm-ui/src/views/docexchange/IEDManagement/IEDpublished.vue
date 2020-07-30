@@ -61,11 +61,12 @@ export default {
                 main:{
                     gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1",                    
+                    condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 ",//AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')",                    
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
-                    isInitData:false
+                    isInitData:false,
+                    isShowMoreOption:false
                 },
                 rfDg:{
                     gridViewName:"IEDGrid",
@@ -166,7 +167,7 @@ export default {
                 return
             }
             
-            this.$confirm('提交IED变更，是否确定提交？', '提示', {confirmButtonText: '确定',cancelButtonText: '取消',type: 'warning'}).then(() => {
+            this.$confirm('提交IED变更，是否确定提交？', '提示', {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
                 axios.post("/exchange/ied/changeIED",ids).then(function(response){
                     console.log(response)
                 }).catch(function(error){
@@ -233,7 +234,7 @@ export default {
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
             let orS = ""
-            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 "
+            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 "// AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')"
             if(_self.inputValueNum.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){
