@@ -4,10 +4,28 @@
         <template v-slot:header>
             <el-form inline="true">
             <el-form-item>
-            <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
-            @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect></el-form-item>
+            <DataSelect v-model="value" dataUrl="/exchange/project/myproject" 
+            dataValueField="name" dataTextField="name" includeAll
+            @onLoadnDataSuccess="onLoadnDataSuccess"
+            ></DataSelect></el-form-item>
+            <el-form-item>
+                  <el-select
+                    name="selectCProcessStatus"
+                    v-model="Cstatus"
+                    placeholder="反馈状态"
+                    style="display:block;"
+                >
+            <el-option
+             v-for="item in processStatus"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+                </el-option>
+                </div>
+            </el-select>
+            </el-form-item>
             <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
-            <el-form-item><el-button type="success" @click="submit()">{{$t('application.close')}}</el-button></el-form-item>
+            <el-form-item><el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button></el-form-item>
             <el-form-item><el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button></el-form-item>
             <el-form-item><AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition></el-form-item>
             </el-form>
@@ -54,10 +72,18 @@ export default {
                loading: false,
                status : '',
             },
+            processStatus:[{
+                label : "新建",
+                value : "新建",
+            },
+            {
+                label : "已确认",
+                value : "已确认",
+            }],
             selectedItems: [],
             selectedItemId: "",
             value:'',
-            input:'',
+            Cstatus:'新建',
             hiddenInput:'hidden',
             typeName:"ICM",
         }
@@ -83,6 +109,10 @@ export default {
     },
 
     methods: {
+
+        onLoadnDataSuccess(v,o){
+            this.search();
+        },
         cellMouseEnter(row, column, cell, event){
         this.selectRow=row;
  
@@ -103,7 +133,7 @@ export default {
         {
             ids[i] = this.selectedItems[i].ID
         }
-        axios.post("/exchange/ICM/AcceptICMFeedback",JSON.Stringfy(ids)).then(function(response){
+        axios.post("/exchange/ICM/AcceptICMFeedback",JSON.stringify(ids)).then(function(response){
             let code = response.data.code;
             console.log("取到的数据"+code)
              if (code == 1) {
@@ -117,11 +147,16 @@ export default {
                 }})
         //this.search()
     },
-    search(condition){
+    search(){
         let _self = this
-        var k1="TYPE_NAME='ICM' AND C_PROCESS_STATUS='新建'"
+        var k1="TYPE_NAME='ICM'"
+         if(_self.value != undefined &&_self.value!='所有项目'){
+                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
+            }
+        if(_self.Cstatus != undefined && _self.Cstatus != null){
+                k1+="AND C_PROCESS_STATUS = '"+_self.Cstatus+"'"
+        }
         console.log(k1)
-
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
     },

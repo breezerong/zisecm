@@ -1,35 +1,35 @@
-<template> 
+<template>
   <DataLayout>
     <el-dialog :title="dialog.new.title" :visible.sync="dialog.new.visible" v-loading="dialog.new.loading">
-      <el-form :model="form" label-width="80px">
+      <el-form :model="form" label-width="120px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="相关名称">
+            <el-form-item :label="$t('application.relationName')">
               <el-input v-model="form.relationName" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="表格名称">
+            <el-form-item :label="$t('application.gridName')">
               <SQLSelect v-model="form.gridName" queryName="表格列表"></SQLSelect>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否只读">
+            <el-form-item :label="$t('application.isReadOnly')">
               <el-switch v-model="form.readonly"></el-switch>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="类型名称">
+            <el-form-item :label="$t('application.type')">
               <SQLSelect v-model="form.typeName" queryName="文档类型"></SQLSelect>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="表单名称">
+            <el-form-item :label="$t('application.formName')">
               <SQLSelect v-model="form.formName" queryName="表单列表"></SQLSelect>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="描述">
+            <el-form-item :label="$t('application.description')">
               <el-input type="textarea" v-model="form.description" auto-complete="off"></el-input>
             </el-form-item>
           </el-col>
@@ -37,14 +37,14 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialog.new.visible = false">{{$t('application.cancel')}}</el-button>
-        <el-button type="primary" @click="additem(form)">确 定</el-button>
+        <el-button type="primary" @click="additem(form)">{{$t('application.ok')}}</el-button>
       </div>
     </el-dialog>
-    
+
     <template v-slot:header>
       <el-form :inline="true" size="medium">
         <el-form-item>
-          <el-input v-model="inputkey" placeholder="请输入关键字" prefix-icon="el-icon-search" @input="changeValue"></el-input>
+          <el-input v-model="inputkey" prefix-icon="el-icon-search" @input="changeValue"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-edit" plain @click="addView()">{{$t('application.new')}}</el-button>
@@ -60,9 +60,9 @@
             </template>
           </el-table-column>
           <el-table-column v-for="item in table.columns" v-bind="item" :key="item.prop"></el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column :label="$t('application.operation')" width="180">
             <template slot-scope="scope">
-                <el-button type="info" size="mini" icon="edit" @click="editView(scope.row)">查看</el-button>
+                <el-button type="info" size="mini" icon="edit" @click="editView(scope.row)">{{$t('application.view')}}</el-button>
                 <el-button type="danger" size="mini" icon="delete" @click="deleteItem(scope.row.id)">{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
@@ -107,14 +107,12 @@ export default {
           highlightCurrentRow:true
         },
         columns:[
-          {prop:"relationName",label:"相关名称"},
-          {prop:"gridName",label:"表格名称"},
-          {prop:"readonly",label:"是否只读",formatter:function(row, column, cellValue){
-            return cellValue?"是":"否";
-          }},
-          {prop:"typeName",label:"类型名称"},
-          {prop:"formName",label:"表单名称"},
-          {prop:"description",label:"描述"}
+          {prop:"relationName",label:this.$t('application.relationName')},
+          {prop:"gridName",label:this.$t('application.gridName')},
+          {prop:"readonly",label:this.$t('application.isReadOnly'),formatter:this.formatterReadOnly},
+          {prop:"typeName",label:this.$t('application.type')},
+          {prop:"formName",label:this.$t('application.formName')},
+          {prop:"description",label:this.$t('application.description')}
         ],
         datalist:[],
         pager:{
@@ -126,6 +124,9 @@ export default {
     }
   },
   methods:{
+    formatterReadOnly:function(row, column, cellValue){
+      return cellValue?this.$t('application.yes'):this.$t('application.no');
+    },
     addView:function(){
       this.form={
         id: "",
@@ -136,11 +137,11 @@ export default {
         formName: "",
         description: ""
       }
-      this.dialog.new.title='新建'
+      this.dialog.new.title=this.$t('application.new')
       this.dialog.new.visible=true
     },
     editView:function(row){
-      this.dialog.new.title='编辑'
+      this.dialog.new.title=this.$t('application.edit')
       this.dialog.new.visible=true
       this.form = row
     },
@@ -153,10 +154,10 @@ export default {
       }else{
         formObj.readonly=0
       }
-      let url = _self.dialog.new.title=='新建'?"/admin/uirelation/save":"/admin/uirelation/update"
+      let url = _self.dialog.new.title==this.$t('application.new')?"/admin/uirelation/save":"/admin/uirelation/update"
       axios.post(url,JSON.stringify(formObj)).then(function(response) {
           if(response.data.code == 1){
-            _self.$message({message:"保存成功!", type:'success'});
+            _self.$message({message:_self.$('message.saveSuccess'), type:'success'});
             _self.loadTable();
           }else{
             _self.$message.error(response.data.code.message);
@@ -174,7 +175,7 @@ export default {
       let _self = this;
       axios.post("/admin/uirelation/delete", id)
         .then(function(response) {
-          _self.$message("删除成功!");
+          _self.$message(_self.$('message.deleteSuccess'));
           _self.loadTable();
         })
         .catch(function(error) {
@@ -209,7 +210,7 @@ export default {
         _self.loading = false;
       })
       .catch(function(error) {
-        _self.$message("刷新失败!");
+        _self.$message(_self.$('message.operationFaild'));
         console.log(error);
         _self.loading = false;
       });

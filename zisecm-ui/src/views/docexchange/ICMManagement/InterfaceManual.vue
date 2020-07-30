@@ -10,16 +10,13 @@
         <el-dialog
             :title="dialogName"
             :visible.sync="propertyVisible"
-            @close="propertyVisible = false"
             width="80%"
             >
             <ShowProperty
                 ref="ShowProperty"
-                @onSaved="onSaved"
                 width="100%"
-                :folderPath="foldtemerPath"
-                v-bind:itemId="selectedItemId"
-                v-bind:typeName="typeName"
+                itemId="1"
+                v-bind:typeName="dialogtypeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="saveItem">{{$t('application.save')}}</el-button>
@@ -30,11 +27,9 @@
         <el-dialog :title="延误反馈" :visible.sync="Visible1" width="80%">
             <ShowProperty
                 ref="ShowProperty"
-                @onSaved="onSaved"
                 width="100%"
-                :folderPath="foldtemerPath"
-                v-bind:itemId="selectedItemId"
-                v-bind:typeName="typeName"
+                itemId="1"
+                v-bind:typeName="dialogtypeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="SaveFeedBack">{{$t('application.ok')}}</el-button>
@@ -56,7 +51,7 @@
                 </el-form-item>
                 <el-form-item v-if="roles1">
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">{{$t('application.ExportExcel')}}</el-button>
-                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
+                    <el-button type="primary" @click="newArchiveItem('ICM')" >{{$t('application.new')}}</el-button>
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,'/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item v-if="roles2">
@@ -108,7 +103,7 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM'and C_PROJECT_NAME = '@project'",
+                    condition:"TYPE_NAME='ICM' and C_DESIGN_UNIT='@company' and C_PROJECT_NAME='@project'",
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
@@ -121,7 +116,6 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false,
                     isshowSelection:false,
                     tableHeight:"350"
                 },
@@ -132,7 +126,6 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false,
                     isshowSelection:false,
                     tableHeight:"350"
                 }
@@ -163,6 +156,7 @@ export default {
             Visible1:false,
             roles1:false,
             roles2:false,
+            dialogtypeName:'',
         }
     },
     mounted(){
@@ -217,7 +211,7 @@ export default {
             this.$refs.ICMPass.loadGridData()
 
             var condition2 = "SELECT CHILD_ID from ecm_relation where TYPE_NAME='接口信息意见单'and PARENT_ID ='"+row.ID+"'"
-            var key2="ID IN ("+condition1+")"
+            var key2="ID IN ("+condition2+")"
             this.$refs.ICMComments.condition = key2
             this.$refs.ICMComments.gridViewName="ICMCommentsGrid"
             this.$refs.ICMComments.itemDataList=[]
@@ -286,12 +280,18 @@ export default {
             _self.$refs.ICMComments.itemDataList=[]
         },
         //新建按钮
-        newArchiveItem(typeName, selectedRow) {
+        newArchiveItem(typeName) {
             let _self = this;
-            _self.selectedItemId = "";
-            _self.dialogName = "新建ICM";
             _self.propertyVisible = true;
-            _self.$refs.ShowProperty.loadFormInfo();
+            setTimeout(()=>{
+                    if(_self.$refs.ShowProperty){
+                        _self.$refs.ShowProperty.myItemId = "";
+                        _self.dialogName=typeName;
+                        _self.$refs.ShowProperty.myTypeName =typeName;
+                        _self.dialogtypeName=typeName;
+                        _self.$refs.ShowProperty.loadFormInfo();
+                    }
+                },10);
             //_self.$alert("111")
         },
         //新建保存
@@ -411,27 +411,24 @@ export default {
                     console.log(item.ID)
                     selectid=item.ID
                 })
-                //  _self.dialogName='延误反馈'
-                // _self.$refs.ShowProperty.loadFormInfo();
-                // console.log(a)
                 setTimeout(()=>{
                     if(_self.$refs.ShowProperty){
                         _self.$refs.ShowProperty.myItemId = "";
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
-                        _self.typeName=typeName;
-                        // _self.$refs.ShowProperty.parentDocId=selectid
+                        _self.dialogtypeName=typeName;
+                        _self.$refs.ShowProperty.parentDocId=selectid
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
                 },10);
             }
             else{
                 _self.$message({
-                            showClose: true,
-                            message: "请选择一条数据",
-                            duration: 2000,
-                            type: "warring"
-                        });
+                    showClose: true,
+                    message: "请选择一条数据",
+                    duration: 2000,
+                    type: "warring"
+                });
             }
             // console.log(selectedItems)
             
@@ -478,9 +475,7 @@ export default {
                 })
                 .then(function(response) {
                     let code = response.data.code;
-                    //console.log(JSON.stringify(response));
                     if (code == 1) {
-                        // _self.$message("反馈成功!");
                         _self.$message({
                             showClose: true,
                             message: "反馈成功!",
@@ -488,14 +483,12 @@ export default {
                             type: "success"
                         });
                         _self.propertyVisible = false;
-                        // _self.loadTransferGridData();
-                        // _self.$refs.mainDataGrid.loadGridData();
-                        
+                        _self.$refs.mainDataGrid.loadGridData();
                     } 
                     else{
                     _self.$message({
                             showClose: true,
-                            message: _self.$t('message.newFailured'),
+                            message: _self.$t('message.failured'),
                             duration: 2000,
                             type: "warning"
                         });
@@ -503,7 +496,7 @@ export default {
                     }
                 })
                 .catch(function(error) {
-                    _self.$message(_self.$t('message.newFailured'));
+                    _self.$message(_self.$t('message.failured'));
                     console.log(error);
                 });
             }

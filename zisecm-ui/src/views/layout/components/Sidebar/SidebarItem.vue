@@ -66,7 +66,7 @@
 	          </el-menu-item>
 	        </el-submenu>
       </template>
-    <AdminMenu :isNest="isNest"></AdminMenu>
+    <AdminMenu v-if="clientPermission>4" :isNest="isNest"></AdminMenu>
   </div>
 </template>
 
@@ -80,7 +80,8 @@ export default {
   },
   data() {
     return {
-      dataList: []
+      dataList: [],
+      clientPermission: 0
     };
   },
   props: {
@@ -143,9 +144,15 @@ export default {
     }
   },
   created() {
+
     //this.loadMenu();
   },
   mounted(){
+    if (this.currentUser()) {
+        this.clientPermission = Number(
+          this.currentUser().clientPermission
+        );
+      }
     this.loadMenu();
   }
 };

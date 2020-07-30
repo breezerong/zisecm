@@ -39,7 +39,7 @@
                 <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
             </el-form-item>
                 <el-form-item>  
-            <el-button type="success" @click="submit()">接收</el-button>
+            <el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button>
                 </el-form-item>
                 <el-form-item>
             <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>

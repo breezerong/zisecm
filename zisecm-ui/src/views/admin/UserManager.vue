@@ -225,10 +225,6 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
         <el-row class="topbar">
           <el-col :span="4">
             <el-input
@@ -252,7 +248,7 @@
               <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="用户名" width="120">
+          <el-table-column label="用户名" width="150">
             <template slot-scope="scope">
               <span>{{scope.row.name}}</span>
             </template>
@@ -338,7 +334,7 @@ export default {
       dataListFull: [],
       fileList: [],
       file: "",
-      tableHeight: window.innerHeight - 152,
+      tableHeight: window.innerHeight - 190,
       inputkey: "",
       loading: false,
       dialogVisible: false,
@@ -352,6 +348,7 @@ export default {
       selectedItems: [],
       currentPage: 1,
       clientPermission: 1,
+      systemPermission: 0,
       token: "",
       form: {
         id: "",
@@ -400,14 +397,14 @@ export default {
     if (psize) {
       _self.pageSize = parseInt(psize);
     }
-    var user = sessionStorage.getItem("access-user");
-    if (user) {
-      _self.clientPermission = sessionStorage.getItem(
-        "access-clientPermission"
-      );
-      _self.token = sessionStorage.getItem("access-token");
-    }
-    console.log(_self.clientPermission);
+    if (this.currentUser()) {
+        this.clientPermission = Number(
+          this.currentUser().clientPermission
+        );
+        this.systemPermission = Number(
+          this.currentUser().systemPermission
+        );
+      }
     _self.refreshData();
   },
   methods: {
@@ -601,30 +598,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header,
-.el-footer {
-  background-color: #e8eaeb;
-  height: 68px !important;
-}
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
-}
+
 </style>

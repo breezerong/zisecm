@@ -119,7 +119,7 @@ public class IEDImportService extends EcmService {
 		EcmDocument doc = new EcmDocument();
 		doc.getAttributes().put("NAME", excelSrcFile.getOriginalFilename());
 		doc.getAttributes().put("CODING", number);
-		doc.setTypeName("导入批次");
+		doc.setTypeName("ICM");
 		doc.setFolderId(importExcelFolderId);
 		EcmContent content = new EcmContent();
 		content.setName(excelSrcFile.getOriginalFilename());
@@ -195,7 +195,7 @@ public class IEDImportService extends EcmService {
 					//存在子对象
 					boolean isReuse = false;
 					try {
-						isReuse = sheet.getRow(i).getCell(getColumnIndex(attrNames, "DESIGN_REUSE",1,sheet.getLastRowNum())).getStringCellValue().equals("复用");
+						isReuse = sheet.getRow(i).getCell(getColumnIndex(attrNames, "DESIGN_REUSE",1,sheet.getRow(i).getLastCellNum())).getStringCellValue().equals("复用");
 					}catch(Exception ex) {
 						
 					}
@@ -367,13 +367,15 @@ public class IEDImportService extends EcmService {
 			Map<Integer,String> attrNames,
 			int start,int end) throws Exception {
 		List<EcmDocument> list = new ArrayList<EcmDocument>();
-		String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
+		System.out.println("有多少列"+end);
+		int index  = getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end);
+		Cell cell = row.getCell(index);
+		String submitType= cell.getStringCellValue();
 		if(submitType.equals("新增")) {
 			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
 			String cond = " TYPE_NAME='IED' and CODING='"+coding+"'";
 			try {
 			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
-			
 				if(result!=null&&result.size()>0) {
 					throw new Exception("IED 已存在，编码："+coding);
 				}
@@ -398,8 +400,8 @@ public class IEDImportService extends EcmService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 		
+		}
 		return false;
 	}
 	
