@@ -53,9 +53,11 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" C_PROCESS_STATUS='申请解锁'"
-                :isshowCustom="true"
                 @rowclick="rowClick"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @selectchange="selectChange"
                 ></DataGrid>
         </el-row>
@@ -96,7 +98,7 @@ export default {
             uploadUrl:'',
             batchDialogVisible:false,
             gridObj:[],
-            rightTableHeight: (window.innerHeight)/2,
+            rightTableHeight: (window.innerHeight-180),
             advCondition:"",
         }
     },
