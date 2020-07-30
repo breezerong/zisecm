@@ -13,6 +13,7 @@
                 <el-form-item>
                 <el-button type="primary" @click="create()">新建计划</el-button>
                 </el-form-item>
+                 <el-form-item><el-button type="primary" @click="syncing()">开始同步</el-button></el-form-item>
                 <el-form-item>
                 <el-button type="primary"  @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
@@ -44,7 +45,7 @@
                     placeholder="分包商"
                     style="display:block;"
                 >
-                 <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
+                <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
                 <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                 </div>
         </el-select>
@@ -101,7 +102,7 @@
             <el-row>
                 <el-col :span="24">
                 <el-tabs v-model="tabs.active">
-                <el-tab-pane label="同步计划" name="sync">
+                <el-tab-pane label="同步日志" name="sync">
                 <el-table  
                 :data="tabledata"
                 style="width: 100%"
@@ -139,9 +140,6 @@
         prop="executeDate"
         label="同步结束时间"
         width="200">
-      </el-table-column>
-      <el-table-column width='100'>
-      <el-button size="mini" @click="check()">查看</el-button>
       </el-table-column>
       </el-table>
          <el-pagination
@@ -216,7 +214,7 @@ export default {
             dialogCreatevisual:false,
             formLabelWidth: '120px',
             contractors:[],
-           Subcontractors:[{ 
+            Subcontractors:[{ 
                  name:'',
                 }],
              tabs:{

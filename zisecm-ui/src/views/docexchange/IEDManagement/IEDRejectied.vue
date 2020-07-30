@@ -7,7 +7,7 @@
               @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
             <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
-            <el-button type="success" @click="submit()">{{$t('application.close')}}</el-button>
+            <el-button type="success" @click="submit()">{{$t('application.Submit')}}</el-button>
             <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">{{$t('application.delete')}}</el-button>
             <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             
