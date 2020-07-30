@@ -21,7 +21,6 @@
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
             isshowOption
-            isshowCustom
             gridViewName="IEDGrid"
             v-bind="tables.main":tableHeight="layout.height-180"
             @cellMouseEnter="cellMouseEnter"
@@ -51,6 +50,10 @@ export default {
                     dataList:[],
                     height:"",
                     isInitData:false,
+                    isshowCustom:false,
+                    isShowPropertyButton:true,
+                    isShowMoreOption:false,
+                    isShowChangeList:false
                 },
                itemDataList: [],
                loading: false,

@@ -6,11 +6,11 @@
       :close-on-click-modal="false"
       @open="getTypeNames('AdvSearchTypes')"
       @close="closeDialog"
-      title="查询条件"
+      :title="$t('application.SearchData')"
       width="60%"
     >
     <el-row>
-      <el-col>请选择类型<font style="color:red;">*</font>：</el-col>
+      <el-col>{{$t('application.selectFileType')}}<font style="color:red;">*</font>：</el-col>
       <el-col>
         <el-select v-model="typeName" @change="refreshData(typeName)">
           <div v-for="options in typeNameOptions">
@@ -62,7 +62,7 @@
     
     
     <div style="text-align:right">
-        <el-button   @click="onOk">确定</el-button>
+        <el-button   @click="onOk">{{$t('application.ok')}}</el-button>
     </div>
          
   </el-dialog>
