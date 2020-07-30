@@ -142,7 +142,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 condition=" (status='' or status is null or status='新建') and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
-                :isshowCustom="true"
+                :isshowCustom="false"
+                :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 >
@@ -179,7 +182,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
-                :isshowCustom="true"
+                :isshowCustom="false"
+                :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
@@ -211,9 +217,11 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
-                :isshowCustom="true"
-                :isshowicon="false"
                 :isShowMoreOption="false"
+		        :isshowCustom="false"
+                :isEditProperty="false"
+                :isShowChangeList="false"
+		        :isshowicon="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -243,7 +251,11 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
-                :isshowCustom="true"
+                :isShowMoreOption="false"
+		        :isshowCustom="false"
+                :isEditProperty="false"
+                :isShowChangeList="false"
+		        :isshowicon="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>

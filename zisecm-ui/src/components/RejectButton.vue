@@ -75,7 +75,10 @@ export default {
                      if(_self.cleanSubDataGrids!=null){
                         
                          _self.cleanSubDataGrids.forEach(element => {
-                                element.itemDataList=[];
+                             if(element){
+                                 element.itemDataList=[];
+                             }
+                                
                             });
                     }
                     _self.$message({
@@ -186,7 +189,10 @@ export default {
                     if(_self.cleanSubDataGrids!=null){
                         
                          _self.cleanSubDataGrids.forEach(element => {
-                                element.itemDataList=[];
+                             if(element){
+                                 element.itemDataList=[];
+                             }
+                                
                             });
                     }
                    
