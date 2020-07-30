@@ -10,16 +10,13 @@
         <el-dialog
             :title="dialogName"
             :visible.sync="propertyVisible"
-            @close="propertyVisible = false"
             width="80%"
             >
             <ShowProperty
                 ref="ShowProperty"
-                @onSaved="onSaved"
                 width="100%"
-                :folderPath="foldtemerPath"
                 itemId="1"
-                v-bind:typeName="typeName"
+                v-bind:typeName="dialogtypeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="saveItem">{{$t('application.save')}}</el-button>
@@ -30,10 +27,9 @@
         <el-dialog :title="延误反馈" :visible.sync="Visible1" width="80%">
             <ShowProperty
                 ref="ShowProperty"
-                @onSaved="onSaved"
                 width="100%"
                 itemId="1"
-                v-bind:typeName="typeName"
+                v-bind:typeName="dialogtypeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="SaveFeedBack">{{$t('application.ok')}}</el-button>
@@ -55,7 +51,7 @@
                 </el-form-item>
                 <el-form-item v-if="roles1">
                     <el-button type="default" @click.native="exportData('ICM','ICMGrid')">{{$t('application.ExportExcel')}}</el-button>
-                    <el-button type="primary" @click="newArchiveItem('ICM',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
+                    <el-button type="primary" @click="newArchiveItem('ICM')" >{{$t('application.new')}}</el-button>
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,'/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item v-if="roles2">
@@ -120,7 +116,6 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false,
                     isshowSelection:false,
                     tableHeight:"350"
                 },
@@ -131,7 +126,6 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false,
                     isshowSelection:false,
                     tableHeight:"350"
                 }
@@ -162,6 +156,7 @@ export default {
             Visible1:false,
             roles1:false,
             roles2:false,
+            dialogtypeName:'',
         }
     },
     mounted(){
@@ -285,12 +280,18 @@ export default {
             _self.$refs.ICMComments.itemDataList=[]
         },
         //新建按钮
-        newArchiveItem(typeName, selectedRow) {
+        newArchiveItem(typeName) {
             let _self = this;
-            _self.selectedItemId = "";
-            _self.dialogName = "新建ICM";
             _self.propertyVisible = true;
-            _self.$refs.ShowProperty.loadFormInfo();
+            setTimeout(()=>{
+                    if(_self.$refs.ShowProperty){
+                        _self.$refs.ShowProperty.myItemId = "";
+                        _self.dialogName=typeName;
+                        _self.$refs.ShowProperty.myTypeName =typeName;
+                        _self.dialogtypeName=typeName;
+                        _self.$refs.ShowProperty.loadFormInfo();
+                    }
+                },10);
             //_self.$alert("111")
         },
         //新建保存
@@ -410,15 +411,12 @@ export default {
                     console.log(item.ID)
                     selectid=item.ID
                 })
-                //  _self.dialogName='延误反馈'
-                // _self.$refs.ShowProperty.loadFormInfo();
-                // console.log(a)
                 setTimeout(()=>{
                     if(_self.$refs.ShowProperty){
                         _self.$refs.ShowProperty.myItemId = "";
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
-                        _self.typeName=typeName;
+                        _self.dialogtypeName=typeName;
                         _self.$refs.ShowProperty.parentDocId=selectid
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
@@ -426,11 +424,11 @@ export default {
             }
             else{
                 _self.$message({
-                            showClose: true,
-                            message: "请选择一条数据",
-                            duration: 2000,
-                            type: "warring"
-                        });
+                    showClose: true,
+                    message: "请选择一条数据",
+                    duration: 2000,
+                    type: "warring"
+                });
             }
             // console.log(selectedItems)
             
