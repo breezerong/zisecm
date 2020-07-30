@@ -112,7 +112,7 @@ public class ICMImportService extends EcmService {
 		f.mkdirs();
 		
 		if(ICMImportService.importExcelFolderId==null) {
-			ICMImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
+			ICMImportService.importExcelFolderId = folderService.getObjectByPath(token, "/设计分包/ICM").getId();
 //			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
 		}
 		
