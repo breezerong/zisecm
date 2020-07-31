@@ -39,7 +39,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column v-for="item in tables.mainTable.columns" :key="item.prop" v-bind="item"></el-table-column>
-                <el-table-column label="操作">
+                <el-table-column :label="$t('application.operation')">
                    <template slot-scope="scope">
                        <el-button @click="handClick(scope.row)"  size="small">{{$t('application.checkFile')}}</el-button>
                    </template>
@@ -69,12 +69,12 @@ export default {
                 mainTable:{
                     data:[],
                     columns:[
-                        {prop:"typeName", label:"事件名称"},
-                        {prop:"createdTime", label:"创建时间", sortable:true},
-                        {prop:"executedTime", label:"执行时间", sortable:true},
-                        {prop:"finishedTime", label:"完成时间", sortable:true},
-                        {prop:"logStatus", label:"状态"},
-                        {prop:"errorMessage", label:"错误信息"}
+                        {prop:"typeName", label:this.$t('application.appName')},
+                        {prop:"createdTime", label:this.$t('application.creationDate'), sortable:true},
+                        {prop:"executedTime", label:this.$t('application.exportDate'), sortable:true},
+                        {prop:"finishedTime", label:this.$t('application.importDate'), sortable:true},
+                        {prop:"logStatus", label:this.$t('application.status')},
+                        {prop:"errorMessage", label:this.$t('application.errorMessage')}
                     ]
                 }
             },
@@ -85,8 +85,14 @@ export default {
             currentPage: 1,
             pageSize: 10,
             itemCount:0,
+            language:""
         }
     },
+    
+    mounted(){
+        this.language = localStorage.getItem("localeLanguage") || "zh-cn";
+    },
+
     methods:{
         LoadTable(){
 
@@ -165,6 +171,7 @@ export default {
 
         handleSizeChange(val) {
             this.pageSize = val;
+            this.currentPage = 1;
             localStorage.setItem("docPageSize", val);
             this.handleReport();
         },
@@ -172,6 +179,19 @@ export default {
             this.currentPage = val;
             this.handleReport();
         }
+    },
+
+    watch:{
+        '$store.state.app.language':function(){
+            this.tables.mainTable.columns=[
+                {prop:"typeName", label:this.$t('application.appName')},
+                {prop:"createdTime", label:this.$t('application.creationDate'), sortable:true},
+                {prop:"executedTime", label:this.$t('application.exportDate'), sortable:true},
+                {prop:"finishedTime", label:this.$t('application.importDate'), sortable:true},
+                {prop:"logStatus", label:this.$t('application.status')},
+                {prop:"errorMessage", label:this.$t('application.errorMessage')}
+            ]
+        } 
     },
 
     components: {

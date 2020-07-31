@@ -11,7 +11,7 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                  placeholder="开始日期"
+                  :placeholder="$t('application.startDate')"
                   value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
