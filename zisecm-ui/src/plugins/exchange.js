@@ -47,10 +47,14 @@ export function onDeleleItem(selectedItems,dataGridObj) {
           }
       })
       .then(function(response) {
-        dataGridObj.forEach(element => {
-            element.loadGridData();
-        });
-        
+        if(dataGridObj!=null&&dataGridObj!=undefined){
+            dataGridObj.forEach(element => {
+                if(element){
+                    element.loadGridData();
+                }
+                
+            });
+        }
         _self.$message({
             showClose: true,
             message: _self.$t("message.deleteSuccess"),
@@ -90,14 +94,17 @@ export function onDeleleItem(selectedItems,dataGridObj) {
         .then(function(response) {
             if(response.data.code==1){
                 mainDataGridObj.loadGridData();
-                if(dataGridObj!=null||dataGridObj!=undefined){
+                if(dataGridObj!=null&&dataGridObj!=undefined){
                     dataGridObj.forEach(element => {
-                        element.itemDataList=[];
+                        if(element){
+                            element.itemDataList=[];
+                        }
+                        
                     });
                 }
                 _self.$message({
                     showClose: true,
-                    message: _self.$t("message.commitSuccess"),
+                    message: _self.$t("message.operationSuccess"),
                     duration: 2000,
                     type: 'success'
                 });
@@ -198,9 +205,12 @@ export function onDeleleItem(selectedItems,dataGridObj) {
         .then(function(response) {
             if(response.data.code==1){
                 mainDataGridObj.loadGridData();
-                if(dataGridObj!=null||dataGridObj!=undefined){
+                if(dataGridObj!=null&&dataGridObj!=undefined){
                     dataGridObj.forEach(element => {
-                        element.itemDataList=[];
+                        if(element){
+                            element.itemDataList=[];
+                        }
+                        
                     });
                 }
                 _self.$message({
@@ -253,9 +263,12 @@ export function onDeleleItem(selectedItems,dataGridObj) {
         .then(function(response) {
             if(response.data.code==1){
                 mainDataGridObj.loadGridData();
-                if(dataGridObj!=null||dataGridObj!=undefined){
+                if(dataGridObj!=null&&dataGridObj!=undefined){
                     dataGridObj.forEach(element => {
-                        element.itemDataList=[];
+                        if(element){
+                            element.itemDataList=[];
+                        }
+                        
                     });
                 }
                 _self.$message({
@@ -308,9 +321,12 @@ export function onDeleleItem(selectedItems,dataGridObj) {
         .then(function(response) {
             if(response.data.code==1){
                 mainDataGridObj.loadGridData();
-                if(dataGridObj!=null||dataGridObj!=undefined){
+                if(dataGridObj!=null&&dataGridObj!=undefined){
                     dataGridObj.forEach(element => {
-                        element.itemDataList=[];
+                        if(element){
+                            element.itemDataList=[];
+                        }
+                        
                     });
                 }
                 

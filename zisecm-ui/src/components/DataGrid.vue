@@ -202,52 +202,57 @@
             
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
-              <el-dropdown trigger="click" style="overflow:visible">
-                <el-button
-                type="primary"
-                plain
-                size="small"
-                title="列表选择"
-                icon="el-icon-more"
-              ></el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <!-- <el-button v-for="(item,idx) in customNames" :key="idx+'cc'">{{item.description}}</el-button> -->
-                  <el-dropdown-item v-for="(item,idx) in customList"
-                  :key="idx+'_Cz'"
-                   @click.native="showCustomInfo(item.id)">{{item.description}}</el-dropdown-item>
-                  
-                </el-dropdown-menu>
-              </el-dropdown>
+              <template v-if="isShowChangeList">
+                <el-dropdown trigger="click" style="overflow:visible">
+                  <el-button
+                  type="primary"
+                  plain
+                  size="small"
+                  title="列表选择"
+                  icon="el-icon-more"
+                ></el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <!-- <el-button v-for="(item,idx) in customNames" :key="idx+'cc'">{{item.description}}</el-button> -->
+                    <el-dropdown-item v-for="(item,idx) in customList"
+                    :key="idx+'_Cz'"
+                    @click.native="showCustomInfo(item.id)">{{item.description}}</el-dropdown-item>
+                    
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
               <el-button v-if="isshowCustom" icon="el-icon-setting" size="small" @click="showEditColumn" title="自定义列表"></el-button>
               
             </template>
             <template slot-scope="scope">
-              
-              <el-dropdown trigger="click">
-                <el-button
-                type="primary"
-                plain
-                size="small"
-                :title="$t('application.more')"
-                icon="el-icon-more"
-              ></el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item icon="el-icon-reading" @click.native="showItemContent(selectedRow)">查看内容</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-info" @click.native="showItemProperty(selectedRow)">查看属性</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-circle-plus-outline" @click.native="addToShoppingCar([selectedRow])">加入购物车</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-check" @click.native="upgrade(selectedRow)">升版</el-dropdown-item>
-                  
-                </el-dropdown-menu>
-              </el-dropdown>
-              <!-- showItemContent(scope.row) -->
-              <el-button
-                type="primary"
-                plain
-                size="small"
-                :title="$t('application.property')"
-                icon="el-icon-info"
-                @click="showItemProperty(scope.row)"
-              ></el-button>
+              <slot name="optionButton" :data="scope">
+                <template v-if="isShowMoreOption">
+                  <el-dropdown trigger="click">
+                    <el-button
+                    type="primary"
+                    plain
+                    size="small"
+                    :title="$t('application.more')"
+                    icon="el-icon-more"
+                  ></el-button>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item v-if="showOptions.indexOf('查看内容')!=-1" icon="el-icon-reading" @click.native="showItemContent(selectedRow)">查看内容</el-dropdown-item>
+                      <el-dropdown-item v-if="showOptions.indexOf('查看属性')!=-1" icon="el-icon-info" @click.native="showItemProperty(selectedRow)">查看属性</el-dropdown-item>
+                      <el-dropdown-item v-if="showOptions.indexOf('加入购物车')!=-1" icon="el-icon-circle-plus-outline" @click.native="addToShoppingCar([selectedRow])">加入购物车</el-dropdown-item>
+                      <el-dropdown-item v-if="showOptions.indexOf('升版')!=-1" icon="el-icon-check" @click.native="upgrade(selectedRow)">升版</el-dropdown-item>
+                      
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </template>
+                <!-- showItemContent(scope.row) -->
+                <el-button v-if="isShowPropertyButton"
+                  type="primary"
+                  plain
+                  size="small"
+                  :title="$t('application.property')"
+                  icon="el-icon-info"
+                  @click="showItemProperty(scope.row)"
+                ></el-button>
+              </slot>
             </template>
           </el-table-column>
         </el-table>
@@ -307,12 +312,12 @@ export default {
     };
   },
   props: {
-    isInitData: { type: Boolean, default: true },
+    isInitData: { type: Boolean, default: true },//是否初始化数据
     itemDataList: { type: Array, default: null },
-    isEditProperty:{ type: Boolean, default: true },
+    isEditProperty:{ type: Boolean, default: true },//属性页面中是否显示保存按钮
     // sysColumnInfo:{type: Array, default: null},
     // columnList: { type: Array, default: null },
-    isshowicon: { type: Boolean, default: true },
+    isshowicon: { type: Boolean, default: true },//是否显示图标
     isshowOption: { type: Boolean, default: false },
     isshowSelection: { type: Boolean, default: true },
     tableHeight: { type: [String, Number], default: window.innerHeight - 408 },
@@ -324,7 +329,11 @@ export default {
     isshowCustom:{type:Boolean,default:false},
     condition:{type:String,default:""},
     dataUrl:{type:String,default:""},
-    parentId:{type:String,default:""}
+    parentId:{type:String,default:""},
+    isShowMoreOption:{type:Boolean,default:true},//是否显示功能菜单
+    isShowPropertyButton:{type:Boolean,default:true},//是否显示属性按钮
+    showOptions:{type:String,default:"查看内容,查看属性,加入购物车,升版"},//功能菜单显示控制
+    isShowChangeList:{type:Boolean,default:true}//是否显示列表选择
   },
   watch: {
     showFields(val, oldVal) {

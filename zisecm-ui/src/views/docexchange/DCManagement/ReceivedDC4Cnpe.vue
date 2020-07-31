@@ -133,8 +133,10 @@
                 v-bind:tableHeight="rightTableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
-                :isshowCustom="true"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 condition=" stauts='已接收' and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
@@ -176,8 +178,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
-                :isshowCustom="true"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
@@ -211,8 +215,11 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
-                :isshowCustom="true"
+                :isShowMoreOption="false"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                :isShowChangeList="false"
+                :isshowicon="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -248,8 +255,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
-                :isshowCustom="true"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>
@@ -450,7 +459,7 @@ export default {
                 })
                 
             }
-            if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+            if("图文传真,会议纪要,接口信息意见单,接口信息传递单".indexOf(row.TYPE_NAME)!=-1){
                 _self.isShowDesgin=false;
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;

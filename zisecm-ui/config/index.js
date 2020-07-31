@@ -31,8 +31,8 @@ module.exports = {
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
-    cacheBusting: true,
-
+    //cacheBusting: true,
+    cacheBusting: false,
     cssSourceMap: true,
     //改完后要重启
     //以下相当于访问http://localhost:8080/zisecm

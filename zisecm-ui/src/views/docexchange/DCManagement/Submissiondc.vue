@@ -142,7 +142,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 condition=" (status='' or status is null or status='新建') and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
-                :isshowCustom="true"
+                :isshowCustom="false"
+                :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 >
@@ -179,7 +182,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
-                :isshowCustom="true"
+                :isshowCustom="false"
+                :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
@@ -193,9 +199,9 @@
                 <!-- <el-form-item>
                   <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
                 </el-form-item> -->
-                <el-form-item>
+                <!-- <el-form-item>
                     <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                   <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
@@ -211,7 +217,11 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
-                :isshowCustom="true"
+                :isShowMoreOption="false"
+		        :isshowCustom="false"
+                :isEditProperty="false"
+                :isShowChangeList="false"
+		        :isshowicon="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -241,7 +251,11 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
-                :isshowCustom="true"
+                :isShowMoreOption="false"
+		        :isshowCustom="false"
+                :isEditProperty="false"
+                :isShowChangeList="false"
+		        :isshowicon="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>
@@ -465,7 +479,7 @@ export default {
                 })
                 
             }
-            if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+            if("图文传真,会议纪要,接口信息意见单,接口信息传递单".indexOf(row.TYPE_NAME)!=-1){
                 _self.isShowDesgin=false;
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;

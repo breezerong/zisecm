@@ -112,7 +112,7 @@ public class ICMImportService extends EcmService {
 		f.mkdirs();
 		
 		if(ICMImportService.importExcelFolderId==null) {
-			ICMImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
+			ICMImportService.importExcelFolderId = folderService.getObjectByPath(token, "/设计分包/ICM").getId();
 //			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
 		}
 		
@@ -366,31 +366,16 @@ public class ICMImportService extends EcmService {
 	private boolean checkDocument(String token,  Row row, 
 			Map<Integer,String> attrNames,
 			int start,int end) throws Exception {
-		List<EcmDocument> list = new ArrayList<EcmDocument>();
-		String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
-		if(submitType.equals("新增")) {
-			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-			String cond = " TYPE_NAME='IED' and CODING='"+coding+"'";
-			try {
-			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
-			
-				if(result!=null&&result.size()>0) {
-					throw new Exception("IED 已存在，编码："+coding);
+			List<EcmDocument> list = new ArrayList<EcmDocument>();
+			String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
+			if(submitType.equals("新增")) {
+				String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
+				String cond = " TYPE_NAME='ICM' and CODING='"+coding+"'";
+				try {
+					List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
+					if(result!=null&&result.size()>0) {
+					throw new Exception("ICM 已存在，编码："+coding);
 				}
-				
-				
-				/*String wbsCoding = row.getCell(getColumnIndex(attrNames, "C_WBS_CODING",start,end)).getStringCellValue();
-				String projectName = row.getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",start,end)).getStringCellValue();
-				if(!StringUtils.isEmpty(wbsCoding)) {
-					cond = " TYPE_NAME='计划任务' and C_WBS_CODING='"+wbsCoding+"' and C_PROJECT_NAME='"+projectName+"'";
-					list =documentService.getObjects(token, cond);
-					
-					if(list.size()==0) {
-						throw new Exception("WBS 编码不已存在，编码："+wbsCoding);
-					}
-				}/*/
-				
-				
 			} catch (EcmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -671,180 +656,6 @@ public class ICMImportService extends EcmService {
 	
 	public String importOnServer(String token, String scanFolder, int folderCount) throws Exception {
 		// TODO Auto-generated method stub
-		/*
-		StringBuilder sb = new StringBuilder();
-		int sucessCount =0;
-		int failedCount =0;
-		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("TYPE_NAME", "移交单");
-		String number = numberService.getNumber(token, map);
-		
-		sb.append("开始导入:").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
-		
-		String uploadFolder = CacheManagerOper.getEcmParameters().get("UploadFolder").getValue();
-		if(!uploadFolder.endsWith(File.separator))
-		{
-			uploadFolder += File.separator;
-		}
-		uploadFolder += getSession(token).getCurrentUser().getLoginName()+File.separator+number+File.separator;
-		File f = new File(uploadFolder);
-		f.mkdirs();
-		
-		if(ImportService.importExcelFolderId==null) {
-			ImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/移交单").getId();
-			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
-		}
-		
-		EcmDocument doc = new EcmDocument();
-		doc.getAttributes().put("NAME", number);
-		doc.getAttributes().put("CODING", number);
-		doc.setTypeName("导入批次");
-		doc.setFolderId(importExcelFolderId);
-		EcmContent content = new EcmContent();
-		content.setName(excelSrcFile.getOriginalFilename());
-		content.setContentSize(excelSrcFile.getSize());
-		content.setFormatName(FileUtils.getExtention(excelSrcFile.getOriginalFilename()).toLowerCase());
-		content.setInputStream(excelSrcFile.getInputStream());
-		doc.getAttributes().put("FORMAT_NAME", content.getFormatName());
-		doc.getAttributes().put("CONTENT_SIZE", content.getContentSize());
-		
-		documentService.newObject(token, doc, content);
-		
-		excelSrcFile.getInputStream().close();
-		
-		Map<String,Long> fileList = new HashMap<String,Long>();
-		//先存储文件到本地
-		for(MultipartFile file: files) {
-			String name = file.getOriginalFilename();
-			String itemPath = uploadFolder +name;
-			writeToLocal(itemPath,file.getInputStream());
-			file.getInputStream().close();
-			fileList.put(name,file.getSize());
-		}
-		
-		String excelFile = content.getFilePath();
-		String storePath = CacheManagerOper.getEcmStores().get(content.getStoreName()).getStorePath();
-		
-		
-		//List<Object[]> rows = excelUtil.read(storePath+excelFile, 0);
-		
-		FileInputStream fis = new FileInputStream(storePath+excelFile);
-
-		Workbook workbook = WorkbookFactory.create(fis);
-		if (fis != null) {
-			fis.close();
-		}
-		Sheet sheet = workbook.getSheetAt(0);
-		try {
-			
-			//第一行第一列为类型名称
-			String parentType = sheet.getRow(0).getCell(0).getStringCellValue();
-			//第一行第n列为子对象类型名称，没有不要填写值
-			String childType = null;
-			int childStartIndex =0;
-			for(int i=1;i<=sheet.getRow(0).getLastCellNum();i++) {
-				if(sheet.getRow(0).getCell(i)!=null && !StringUtils.isEmpty(sheet.getRow(0).getCell(i).getStringCellValue())) {
-					childType = sheet.getRow(0).getCell(i).getStringCellValue();
-					childStartIndex = i;
-					break;
-				}
-			}
-			//第二行第一列为父子相同字段值定义，{父字段名称1}:{子字段名称1};{父字段名称2}:{子字段名称2}
-			String sameFields = (sheet.getRow(1).getCell(0)!=null?sheet.getRow(1).getCell(0).getStringCellValue():"");
-			Map<String,Object> sameValues = new HashMap<String,Object>();
-			//第三行字段名称
-			Map<Integer,String> attrNames = new HashMap<Integer,String>();
-			for(int i=0;i<=sheet.getRow(2).getLastCellNum();i++) {
-				if(sheet.getRow(2).getCell(i)!=null && !StringUtils.isEmpty(sheet.getRow(2).getCell(i).getStringCellValue())) {
-					attrNames.put(i, sheet.getRow(2).getCell(i).getStringCellValue());
-				}
-			}
-			String newId = null;
-			
-			//第四行为中文标签，第五行位值
-			for (int i = 4; i <= sheet.getLastRowNum(); i++) {
-				try {
-					content = null;
-					//存在子对象
-					
-					if(childStartIndex>1) {
-						//2、3列至少一个不为空
-						if((sheet.getRow(i).getCell(1)!=null&&!StringUtils.isEmpty(sheet.getRow(i).getCell(1).getStringCellValue()))
-								||(sheet.getRow(i).getCell(2)!=null&&!StringUtils.isEmpty(sheet.getRow(i).getCell(2).getStringCellValue()))) {
-							sameValues = new HashMap<String,Object>();
-							newId = null;
-							newId = newDocument( token, parentType,null, sheet.getRow(i),  fileList, attrNames,null,number, 1,childStartIndex-1,sameValues,sameFields);
-							if(!StringUtils.isEmpty(newId)) {
-								newRelation(token, deliveryId, newId, i,null);
-							}
-						}
-						String itemPath = uploadFolder +sheet.getRow(i).getCell(0).getStringCellValue();
-						FileInputStream itemStream = null;
-						if(!StringUtils.isEmpty(itemPath)) {
-							File itemFile= new File(itemPath);
-							
-							if(itemFile.exists()) {
-								itemStream = new FileInputStream(itemFile);
-							}else {
-								sb.append("第").append(i+1).append("行文件不存在：").append(sheet.getRow(i).getCell(0).getStringCellValue()).append("\r\n");;
-							}
-						}
-						String tempId = null;
-						try {
-							tempId = newDocument( token, childType,itemStream, sheet.getRow(i),  fileList, attrNames,newId,number, childStartIndex,sheet.getRow(i).getLastCellNum(),sameValues,null);
-						}
-						finally {
-							//删除缓存文件
-							if(itemStream!=null) {
-								itemStream.close();
-								f = new File(itemPath);
-								f.delete();
-							}
-						}
-					}else {
-						String itemPath = uploadFolder +sheet.getRow(i).getCell(0).getStringCellValue();
-						FileInputStream itemStream = null;
-						if(!StringUtils.isEmpty(itemPath)) {
-							File itemFile= new File(itemPath);
-							
-							if(itemFile.exists()) {
-								itemStream = new FileInputStream(itemFile);
-							}else {
-								sb.append("第").append(i+1).append("行文件不存在：").append(sheet.getRow(i).getCell(0).getStringCellValue()).append("\r\n");;
-							}
-						}
-						try {
-							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  fileList, attrNames,null, number, 1,sheet.getRow(i).getLastCellNum(),null,null);
-							if(!StringUtils.isEmpty(newId)) {
-								newRelation(token, deliveryId, newId, i,null);
-							}
-						}
-						finally {
-							//删除缓存文件
-							if(itemStream!=null) {
-								itemStream.close();
-								f = new File(itemPath);
-								f.delete();
-							}
-						}
-					}
-					sucessCount ++;
-				}catch(Exception ex) {
-					ex.printStackTrace();
-					sb.append("第").append(i+1).append("行导入错误：").append(ex.getMessage()).append("\r\n");;
-					failedCount ++;
-				}
-			}
-		}finally {
-			if(workbook != null) {
-				workbook.close();
-			}
-		}
-		sb.append("完成导入:").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
-		sb.append("成功行数:").append(sucessCount).append("\r\n");
-		sb.append("错误行数:").append(failedCount).append("\r\n");
-		return sb.toString();
-		*/
 		return null;
 	}
 	

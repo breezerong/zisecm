@@ -13,6 +13,7 @@
                 <el-form-item>
                 <el-button type="primary" @click="create()">新建计划</el-button>
                 </el-form-item>
+                 <el-form-item><el-button type="primary" @click="syncing()">开始同步</el-button></el-form-item>
                 <el-form-item>
                 <el-button type="primary"  @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
@@ -44,7 +45,7 @@
                     placeholder="分包商"
                     style="display:block;"
                 >
-                 <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
+                <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
                 <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                 </div>
         </el-select>
@@ -92,7 +93,7 @@
                     condition="TYPE_NAME='计划'"
                     gridViewName="PlanGrid"
                     isshowOption
-                    :v-bind="tables.main"
+                    v-bind="tables.main"
                     @rowclick="rowClick" 
                     :tableHeight="layout.height/2-115" 
                     ></DataGrid>
@@ -101,7 +102,7 @@
             <el-row>
                 <el-col :span="24">
                 <el-tabs v-model="tabs.active">
-                <el-tab-pane label="同步计划" name="sync">
+                <el-tab-pane label="同步日志" name="sync">
                 <el-table  
                 :data="tabledata"
                 style="width: 100%"
@@ -140,9 +141,6 @@
         label="同步结束时间"
         width="200">
       </el-table-column>
-      <el-table-column width='100'>
-      <el-button size="mini" @click="check()">查看</el-button>
-      </el-table-column>
       </el-table>
          <el-pagination
         background
@@ -172,6 +170,18 @@ export default {
     name: "PlanSync",
     data(){
         return{
+   tables:{
+                main:{
+                isInitData:false,
+                isshowoption:true,
+                isshowCustom:false,
+                isShowPropertyButton:true,
+                isShowMoreOption:false,
+                isShowChangeList:false
+                }
+                },
+
+
         P6columns:[
 						{prop:"C_PROJECT_ID",label:"项目号", width:'100'},
 						{prop:"C_CODING",label:"计划编码",width:'240'},
@@ -196,11 +206,6 @@ export default {
       },
           value:'',
           dialogP6visual:false,
-        tables:{
-                main:{
-                isInitData:false
-                }
-                },
             tabledata: [{
             appName:'123',
             }
@@ -216,7 +221,7 @@ export default {
             dialogCreatevisual:false,
             formLabelWidth: '120px',
             contractors:[],
-           Subcontractors:[{ 
+            Subcontractors:[{ 
                  name:'',
                 }],
              tabs:{

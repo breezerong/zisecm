@@ -786,7 +786,7 @@ export default {
                 })
                 
             }
-            if("图文传真,会议纪要".indexOf(row.TYPE_NAME)!=-1){
+            if("图文传真,会议纪要,接口信息意见单,接口信息传递单".indexOf(row.TYPE_NAME)!=-1){
                 _self.isShowDesgin=false;
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;
