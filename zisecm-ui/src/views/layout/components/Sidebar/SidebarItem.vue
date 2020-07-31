@@ -154,7 +154,12 @@ export default {
         );
       }
     this.loadMenu();
-  }
+  },
+  watch:{
+    '$store.state.app.language':function(nv,ov){
+      this.loadMenu()
+    }
+  },
 };
 </script>
 <style scoped>
