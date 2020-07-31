@@ -27,6 +27,8 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.alibaba.fastjson.JSON;
+
  public class ExcelUtil {
 
 	// excel文件路径
@@ -186,6 +188,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 		XSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data , hideFirstRow);
 		os.flush();
 		workbook.write(os);
+//		os.flush();
 		workbook.close();
 	}
 // 	/**

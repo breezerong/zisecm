@@ -3,6 +3,7 @@ package com.ecm.cnpe.exchange.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.druid.util.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.ecm.cnpe.exchange.controller.param.DocParam;
 import com.ecm.cnpe.exchange.service.ProjectViewService;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
@@ -29,6 +32,7 @@ import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.portal.controller.ControllerAbstract;
 
 @RestController
@@ -39,6 +43,113 @@ public class DocController  extends ControllerAbstract  {
 	private DocumentService documentService;
 	@Autowired
 	private ProjectViewService projDesignService;
+	@Autowired
+	private ExcSynDetailService synDetailService;
+	private final String queryBase = "SELECT ID,APP_NAME, CREATION_DATE, EXPORT_DATE, IMPORT_DATE, STAUTS, ERROR_MESSAGE FROM exc_syn_detail";
+	
+	@PostMapping("exportTC")
+	@ResponseBody
+	public void getExportExcelTC(HttpServletRequest request, HttpServletResponse response, @RequestBody String argStr) {
+		ExcelUtil excelUtil = new ExcelUtil();
+		List<Object[]> datalist = new ArrayList<Object[]>();
+		
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		
+		String dataType = this.getStrValue(args, "dataType");
+		String startDate = this.getStrValue(args, "startDate");
+		String endDate = this.getStrValue(args, "endDate");
+		String title = this.getStrValue(args, "titlename");
+		List<String> titlename = JSONUtils.stringToArray(title);
+		String titlecn = this.getStrValue(args, "titlecnname");
+		List<String> titlecnname = JSONUtils.stringToArray(titlecn);
+		//String lang = this.getStrValue(args, "lang");
+		String filename = this.getStrValue(args, "filename");
+		String sheetname = this.getStrValue(args, "sheetname");
+		
+		String[] titleName = new String[titlename.size()+1];
+		String[] titleCNName = new String[titlecnname.size()+1];
+
+		titleName[0]="ID";
+		titleCNName[0]="ID";
+		for (int i = 1; i < titlename.size() + 1; i++) {
+			titleName[i] = titlename.get(i - 1);
+			titleCNName[i] = titlecnname.get(i - 1);
+		}
+		datalist.add(titleCNName);
+		
+		String timeCheck = new String();
+		
+		if(!StringUtils.isEmpty(startDate) && !StringUtils.isEmpty(endDate)) {
+			timeCheck = setSQLTimeSE(startDate, endDate, dataType);
+		}
+		if(StringUtils.isEmpty(startDate) && !StringUtils.isEmpty(endDate)) {
+			timeCheck = setSQLTimeE(endDate, dataType);
+		}
+		if(!StringUtils.isEmpty(startDate) && StringUtils.isEmpty(endDate)) {
+			timeCheck = setSQLTimeS(startDate, dataType);
+		}
+		if(StringUtils.isEmpty(startDate) && StringUtils.isEmpty(endDate)) {
+			timeCheck = setSQLTimeEmp();
+		}
+		
+		String tcListSQL = new String();
+		
+		if(dataType.equals("TCSync")) {
+			tcListSQL = queryBase+" WHERE APP_NAME = 'TC' AND ACTION_NAME = '接收'"+
+					       timeCheck;
+		}
+		if(dataType.equals("TCPush")){
+			tcListSQL = queryBase+" WHERE APP_NAME = 'TC' AND ACTION_NAME = '发送'"+
+						   timeCheck;
+		}
+		if(dataType.equals("NetSync")) {
+			tcListSQL = queryBase+" WHERE APP_NAME = 'DOCEX'"+
+						   timeCheck;
+		}
+		String sql="select * from ("+tcListSQL+") t ORDER BY EXPORT_DATE DESC";
+		
+		try {
+			List<Map<String, Object>> getTCList = synDetailService.getExcSynDetails(sql);
+			
+			Map<String, Object> projMap = new HashMap<String, Object>();
+			
+			for (Map<String, Object> item : getTCList) {
+				projMap = new HashMap<String, Object>();
+				projMap.put("ID",item.get("ID").toString());
+				projMap.put("typeName", (item.get("APP_NAME")==null)?"":item.get("APP_NAME").toString());				
+				
+				projMap.put("createdTime", (item.get("CREATION_DATE")==null)?"":item.get("CREATION_DATE").toString());
+				
+				projMap.put("executedTime", (item.get("EXPORT_DATE")==null)?"":item.get("EXPORT_DATE").toString());
+				
+				projMap.put("finishedTime", (item.get("IMPORT_DATE")==null)?"":item.get("IMPORT_DATE").toString());
+				
+				projMap.put("logStatus", (item.get("STAUTS")==null)?"":item.get("STAUTS").toString());
+				
+				projMap.put("errorMessage", (item.get("ERROR_MESSAGE")==null)?"":item.get("ERROR_MESSAGE").toString());
+				
+				Object[] values = new Object[titleName.length];
+				for (int i = 0; i < titleName.length; i++) {
+					if (projMap.get(titleName[i]) != null) {						
+						values[i] = projMap.get(titleName[i]);						
+					} else {
+						values[i] = "";
+					}
+				}
+				datalist.add(values);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			excelUtil.makeStreamExcel(filename, sheetname, titleName, datalist, response, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@PostMapping("export")
 	@ResponseBody
@@ -518,6 +629,38 @@ public class DocController  extends ControllerAbstract  {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String getStrValue(Map<String, Object> args, String key) {
+		return (args.containsKey(key) && args.get(key)!=null)?args.get(key).toString():"";
+	}
+	
+	private String setSQLTimeSE(String key1, String key2, String key3) {
+		if(key3 == "NetSync") {
+			return " and (CREATION_DATE BETWEEN '" + key1 + "' and '" + key2 + "')";
+		}else{
+			return " and (EXPORT_DATE BETWEEN '" + key1 + "' and '" + key2 + "')";
+		}
+	}
+	
+	private String setSQLTimeE(String key1, String key2) {
+		if(key2 == "NetSync") {
+			return " and (CREATION_DATE < '" + key1 + "')";
+		}else{
+			return " and (EXPORT_DATE < '" + key1 + "')";
+		}
+	}
+	
+	private String setSQLTimeS(String key1, String key2) {
+		if(key2 == "NetSync") {
+			return " and (CREATION_DATE > '" + key1 + "')";
+		}else {
+			return " and (EXPORT_DATE > '" + key1 + "')";
+		}	
+	}
+	
+	private String setSQLTimeEmp() {
+		return "";
 	}
 	
 }
