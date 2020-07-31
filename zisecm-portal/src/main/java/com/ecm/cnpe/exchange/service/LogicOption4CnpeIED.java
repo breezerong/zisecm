@@ -35,23 +35,13 @@ public class LogicOption4CnpeIED {
 	EcmDocument tempE1 = new EcmDocument();
 	String coding = mainDoc.getCoding();
 	String condition = "TYPE_NAME='IED' AND CODING= '" + coding +"'"+"AND IS_CURRENT=0";	
-	/*try {
+	try {
 		L1 = documentService.getAllObject(condition);
 	} catch (AccessDeniedException | NoPermissionException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
-	}/*/
-	/*if (L1.size()>0) {
-		for(int i = 0;i < L1.size();i++) {
-			L1.get(i).addAttribute("STATUS", "已变更"); 
-			try{
-						documentService.updateObject(token, L1.get(i), null);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 	}
-	}/*/
+
 	
 		
 		try {				//修改当前版本
