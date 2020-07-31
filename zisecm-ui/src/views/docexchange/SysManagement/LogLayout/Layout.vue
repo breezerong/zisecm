@@ -7,7 +7,7 @@
                     <el-date-picker
                         v-model="startDate"
                         type="date"
-                        placeholder="开始日期"
+                        :placeholder="$t('application.startDate')"
                         value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
@@ -16,15 +16,15 @@
                         v-model="endDate"
                         type="date"
                         align="right"
-                        placeholder="结束日期"
+                        :placeholder="$t('application.endDate')"
                         value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="handleReport()">查询</el-button>
+                    <el-button type="primary" @click="handleReport()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="tcDataExcel()">Excel导出</el-button>
+                    <el-button type="primary" @click="tcDataExcel()">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
             </el-row>
@@ -41,7 +41,7 @@
                 <el-table-column v-for="item in tables.mainTable.columns" :key="item.prop" v-bind="item"></el-table-column>
                 <el-table-column label="操作">
                    <template slot-scope="scope">
-                       <el-button @click="handClick(scope.row)"  size="small">查看文件</el-button>
+                       <el-button @click="handClick(scope.row)"  size="small">{{$t('application.checkFile')}}</el-button>
                    </template>
                 </el-table-column>
             </el-table>
