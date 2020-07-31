@@ -16,7 +16,12 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                <el-date-picker v-model="endDate" type="date" align="right" placeholder="结束日期" value-format="yyyy-MM-dd"> </el-date-picker>
+                <el-date-picker 
+                v-model="endDate" 
+                type="date" align="right" 
+                :placeholder="$t('application.endDate')"
+                value-format="yyyy-MM-dd"> 
+                </el-date-picker>
               </el-form-item>
               <el-form-item>
                   <el-button type="primary" @click="handleReport()">{{$t('application.SearchData')}}</el-button>
