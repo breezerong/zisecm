@@ -81,6 +81,10 @@ public class ExcSynDetailService  implements IExcSynDetailService {
 		return mapper.selectAll();
 	}
 	
+	public List<Map<String, Object>> getExcSynDetails(String sqlStr){
+		return mapper.executeSQL(sqlStr);
+	}
+	
 	public List<Map<String, Object>> getExcSynDetails(Pager pager,String sqlStr){
 		return mapper.executeSQL(pager, sqlStr);
 	}

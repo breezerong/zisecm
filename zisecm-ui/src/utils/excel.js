@@ -8,6 +8,7 @@ var excel = {
   export:function(params){
     let url = "/exchange/doc/export"
     axios.post(url,params,{ responseType: "blob"}).then(function(res){
+      console.log(res)
       let fileName = res.headers["content-disposition"].split(";")[1].split("=")[1].replace(/\"/g, "");
       let type = res.headers["content-type"];
       let blob = new Blob([res.data], { type: type });

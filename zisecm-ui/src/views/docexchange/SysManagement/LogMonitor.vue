@@ -1,30 +1,29 @@
 <template>
-    <div>
-        日志监控
-    </div>
+    <el-tabs v-model="activeName">
+        <el-tab-pane label="从TC同步" name="TCSync">
+            <TCSyncGrid></TCSyncGrid>
+        </el-tab-pane>
+        <el-tab-pane label="推送到TC" name="TCPush">
+            <TCPushGrid></TCPushGrid>
+        </el-tab-pane>
+        <el-tab-pane label="内外网同步" name="NetSync">
+            <NetSyncGrid></NetSyncGrid>
+        </el-tab-pane>
+    </el-tabs>
 </template>
 <script type="text/javascript">
-import ShowProperty from "@/components/ShowProperty";
-import DataGrid from "@/components/DataGrid";
+import {TCSyncGrid, TCPushGrid, NetSyncGrid} from './LogLayout/'
 export default {
-    name: "SSCviewer",
     data(){
         return{
-
+            activeName: "TCSync",
         }
     },
     created(){
 
     },
     mounted(){
-        if(!this.validataPermission()){
-            //跳转至权限提醒页
-            let _self=this;
-            _self.$nextTick(()=>{
-                _self.$router.push({ path: '/NoPermission' })
-            })
-            
-        }
+        
     },
     methods: {
 
@@ -33,8 +32,9 @@ export default {
         
     },
     components: {
-        ShowProperty:ShowProperty,
-        DataGrid:DataGrid
+        TCSyncGrid, 
+        TCPushGrid, 
+        NetSyncGrid
     }
 }
 </script>

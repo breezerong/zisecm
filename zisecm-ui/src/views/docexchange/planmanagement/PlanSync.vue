@@ -93,7 +93,7 @@
                     condition="TYPE_NAME='计划'"
                     gridViewName="PlanGrid"
                     isshowOption
-                    :v-bind="tables.main"
+                    v-bind="tables.main"
                     @rowclick="rowClick" 
                     :tableHeight="layout.height/2-115" 
                     ></DataGrid>
@@ -170,6 +170,18 @@ export default {
     name: "PlanSync",
     data(){
         return{
+   tables:{
+                main:{
+                isInitData:false,
+                isshowoption:true,
+                isshowCustom:false,
+                isShowPropertyButton:true,
+                isShowMoreOption:false,
+                isShowChangeList:false
+                }
+                },
+
+
         P6columns:[
 						{prop:"C_PROJECT_ID",label:"项目号", width:'100'},
 						{prop:"C_CODING",label:"计划编码",width:'240'},
@@ -194,11 +206,6 @@ export default {
       },
           value:'',
           dialogP6visual:false,
-        tables:{
-                main:{
-                isInitData:false
-                }
-                },
             tabledata: [{
             appName:'123',
             }

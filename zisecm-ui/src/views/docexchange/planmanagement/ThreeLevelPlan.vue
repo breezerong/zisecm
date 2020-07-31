@@ -98,7 +98,6 @@ export default {
             this.$refs.rfDg.condition="C_WBS_CODING='"+row.C_WBS_CODING+"' AND C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
-            //this.$alert(row);
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
@@ -135,7 +134,6 @@ export default {
             }
 
             _self.$refs.mainDataGrid.condition=k1
-            // _self.$alert(_self.$refs.mainDataGrid.condition)
            
             _self.$refs.mainDataGrid.loadGridData();
         },
@@ -145,7 +143,6 @@ export default {
             let key="";
             key = _self.advCondition;
             _self.$refs.mainDataGrid.condition=key+" AND C_PROJECT_NAME='@project'";
-            // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
             _self.$refs.rfDg.itemDataList=[]
@@ -153,9 +150,7 @@ export default {
         //下拉菜单
         onSelectChange(val){
             let _self = this
-            // _self.$alert(val)
             _self.$refs.mainDataGrid.condition="TYPE_NAME='计划任务' and C_PROJECT_NAME in ("+val+")";
-            // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.loadGridData();
             _self.$refs.rfDg.itemDataList=[]
         }
