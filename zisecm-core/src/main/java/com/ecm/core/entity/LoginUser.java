@@ -39,6 +39,28 @@ public class LoginUser {
 	private String company;
 	
 	/**
+	 * 公司代码
+	 */
+	private String companyCode;
+	
+	public String getCompanyCode() {
+		return companyCode;
+	}
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+	public String getCompanyCode1() {
+		return companyCode1;
+	}
+	public void setCompanyCode1(String companyCode1) {
+		this.companyCode1 = companyCode1;
+	}
+	/**
+	 * 短码
+	 */
+	private String companyCode1;
+	
+	/**
 	 * 用户类型，1：总包商，2：分包商
 	 */
 	private int userType=0;

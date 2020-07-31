@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,13 @@ import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.PermissionContext.SystemPermission;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmGroupItemMapper;
 import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
 import com.ecm.core.dao.EcmUserMapper;
 import com.ecm.core.db.DBFactory;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
 import com.ecm.core.entity.EcmUser;
@@ -63,6 +66,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 	@Autowired
 	private EcmGroupUserMapper ecmGroupUserMapper;
+	
+	@Autowired
+	private EcmDocumentMapper ecmDocumentMapper;
 
 	private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -117,7 +123,20 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		cuser.setDepartment(ecmUser.getGroupName());
 		cuser.setMyProjects(this.getMyProject(ecmUser.getLoginName()));
 		bindUserRoles(cuser);
+		bindUserComapny(cuser);
 		return cuser;
+	}
+	
+	private void bindUserComapny(LoginUser cuser) {
+		if (cuser == null || StringUtils.isEmpty(cuser.getCompany())) {
+			return;
+		}
+		String sql = "select NAME,CODING,C_CODE1 from ecm_document where TYPE_NAME='公司'  and NAME='"+cuser.getCompany()+"'";
+		List<Map<String,Object>> list = ecmDocumentMapper.executeSQL(sql);
+		if(list != null && list.size()>0) {
+			cuser.setCompanyCode((String)list.get(0).get("CODING"));
+			cuser.setCompanyCode1((String)list.get(0).get("C_CODE1"));
+		}
 	}
 
 	private void bindUserRoles(LoginUser cuser) {
