@@ -1,12 +1,12 @@
 <template>
-  <div class="login-container pull-height" @keyup.enter.native="handleLogin" v-title :data-title="$t('application.name')">
+  <div class="login-container pull-height" v-title :data-title="$t('application.name')">
     <div class="login-info text-white animated fadeInLeft">
       <div class="logo" style="margin-top:-426px">
           <img src="../../../static/img/logo.png" width="160px" height="160px" alt="logo" style="vertical-align: middle;" />
       </div>
       <h2 class="login-info-title">{{$t("application.name")}}</h2>
       <ul class="login-info-list">
-        <li class="login-info-item" v-for="item in website.info.list">
+        <li class="login-info-item" v-for="item in website.info.list" :key="item">
           <i class="el-icon-check"></i>&nbsp;{{item}}
         </li>
       </ul>
