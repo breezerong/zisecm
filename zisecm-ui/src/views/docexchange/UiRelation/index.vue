@@ -120,7 +120,8 @@ export default {
           currentPage:1,
           total:0
         }
-      }
+      },
+      language:""
     }
   },
   methods:{
@@ -236,7 +237,20 @@ export default {
       this.loadTable();
     }
   },
+  watch:{
+    '$store.state.app.language':function(nv,ov){
+      this.table.columns=[
+          {prop:"relationName",label:this.$t('application.relationName')},
+          {prop:"gridName",label:this.$t('application.gridName')},
+          {prop:"readonly",label:this.$t('application.isReadOnly'),formatter:this.formatterReadOnly},
+          {prop:"typeName",label:this.$t('application.type')},
+          {prop:"formName",label:this.$t('application.formName')},
+          {prop:"description",label:this.$t('application.description')}
+        ]
+    }
+  },
   mounted(){
+    this.language = localStorage.getItem("localeLanguage") || "zh-cn";
     this.loadTable()
   }
 }

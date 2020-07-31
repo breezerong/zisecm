@@ -25,7 +25,8 @@ export default {
   methods: {
     handleSetLanguage(lang) {
       this.$i18n.locale = lang
-      this.localStorage.setItem('localeLanguage', lang)
+
+      localStorage.setItem('localeLanguage', lang)
       this.$store.dispatch('setLanguage', lang)
       this.$message({
         message: 'switch language success',
