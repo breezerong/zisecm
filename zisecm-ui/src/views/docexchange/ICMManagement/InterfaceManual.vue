@@ -158,6 +158,7 @@ export default {
             roles1:false,
             roles2:false,
             dialogtypeName:'',
+            selectiteam:[]
         }
     },
     mounted(){
@@ -227,6 +228,10 @@ export default {
         //下拉菜单
         onSelectChange(val){
             let _self = this
+            this.selectiteam = val
+            if(_self.inputValueNum!=''){
+                _self.tables.main.condition=_self.tables.main.condition+" AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+            }
             _self.$refs.mainDataGrid.condition=_self.tables.main.condition+"and C_PROJECT_NAME in ("+val+")";
             _self.$refs.mainDataGrid.loadGridData();
             _self.$refs.ICMPass.itemDataList=[]
@@ -261,9 +266,12 @@ export default {
             this.$refs.ICMPass.itemDataList=[]
             this.$refs.ICMComments.itemDataList=[]
             let _self = this
-            var k1="TYPE_NAME='ICM' AND C_PROJECT_NAME = '@project'"
-            k1+=" AND CODING LIKE '%"+ _self.inputValueNum+"%'"
-            _self.$refs.mainDataGrid.condition=k1
+            if(_self.selectiteam!=''){
+                _self.$refs.mainDataGrid.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"
+            }
+            if(_self.inputValueNum!=''){
+                _self.$refs.mainDataGrid.condition+=" AND CODING LIKE '%"+ _self.inputValueNum+"%'"
+            }
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
         },
