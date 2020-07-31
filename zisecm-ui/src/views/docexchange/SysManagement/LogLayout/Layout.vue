@@ -7,7 +7,7 @@
                     <el-date-picker
                         v-model="startDate"
                         type="date"
-                        placeholder="开始日期"
+                        :placeholder="$t('application.startDate')"
                         value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
@@ -16,15 +16,15 @@
                         v-model="endDate"
                         type="date"
                         align="right"
-                        placeholder="结束日期"
+                        :placeholder="$t('application.endDate')"
                         value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="handleReport()">查询</el-button>
+                    <el-button type="primary" @click="handleReport()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="tcDataExcel()">Excel导出</el-button>
+                    <el-button type="primary" @click="tcDataExcel()">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
             </el-row>
@@ -41,7 +41,7 @@
                 <el-table-column v-for="item in tables.mainTable.columns" :key="item.prop" v-bind="item"></el-table-column>
                 <el-table-column label="操作">
                    <template slot-scope="scope">
-                       <el-button @click="handClick(scope.row)"  size="small">查看文件</el-button>
+                       <el-button @click="handClick(scope.row)"  size="small">{{$t('application.checkFile')}}</el-button>
                    </template>
                 </el-table-column>
             </el-table>
@@ -102,8 +102,6 @@ export default {
             m.set("endDate", _self.endDate);
             m.set("pageSize", _self.pageSize);
             m.set("pageIndex", _self.currentPage - 1);
-           console.log("handleReport")
-           console.log(m)
 
             axios.post("/doc/tc/TCMonitor", JSON.stringify(m))
               .then(function(response) {
@@ -128,7 +126,7 @@ export default {
             m.set("dataType", this.dataType);
             m.set("startDate", this.startDate);
             m.set("endDate", this.endDate);
-            console.log(m)
+
             let tAttr = []
             let tHeader = [] 
             _self.tables.mainTable.columns.forEach(function(item){
@@ -136,57 +134,12 @@ export default {
                 tAttr.push(item.prop)
                 tHeader.push(item.label)
             }) 
-            console.log(tAttr)
             m.set("titlename", tAttr);
             m.set("titlecnname", tHeader);
             m.set("filename", "LOG_Monitor_"+this.dataType+"_"+new Date().Format("yyyy-MM-dd")+".xlsx");
             m.set("sheetname", "Result");
-            console.log(m)
 
-            let url = "/exchange/doc/export"
-            axios.post(dataUrl,JSON.stringify(m),{ responseType: "blob"}).then(function(res){
-            console.log(res)
-            let fileName = res.headers["content-disposition"].split(";")[1].split("=")[1].replace(/\"/g, "");
-            let type = res.headers["content-type"];
-            let blob = new Blob([res.data], { type: type });
-            // IE
-            if (window.navigator.msSaveBlob) {
-                window.navigator.msSaveBlob(blob, fileName);
-            } else {
-                var link = document.createElement("a");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = fileName;
-                link.click();
-                //释放内存
-                window.URL.revokeObjectURL(link.href);
-            }
-            }).catch(function(error){
-            console.log(error)
-            })
-
-
-
-
-            /* axios.post(dataUrl, JSON.stringify(m),{ responseType: "blob"})
-                .then(function(res){
-                    console.log("xxx="+res)
-                    let fileName = res.headers["content-disposition"].split(";")[1].split("=")[1].replace(/\"/g, "");
-                    let type = res.headers["content-type"];
-                    let blob = new Blob([res.data], { type: type });
-                    // IE
-                    if (window.navigator.msSaveBlob) {
-                        window.navigator.msSaveBlob(blob, fileName);
-                    } else {
-                        var link = document.createElement("a");
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = fileName;
-                        link.click();
-                        //释放内存
-                        window.URL.revokeObjectURL(link.href);
-                    }
-                }).catch(function(error) {
-                    console.log(error);
-                });  */
+            ExcelUtil.exportTC(m,dataUrl)
         },
 
         showItemContent(id) {

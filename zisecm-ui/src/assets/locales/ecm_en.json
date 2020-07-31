@@ -189,7 +189,8 @@
     "formName":"Form Name",
     "gridName":"Grid Name",
     "isReadOnly":"is Read Only",
-    "change":"Change"
+    "change":"Change",
+    "checkFile":"Check File"
 },
 "skin": {
     "Blue": "Blue",

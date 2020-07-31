@@ -186,8 +186,8 @@
     "formName":"表单名称",
     "gridName":"表格名称",
     "isReadOnly":"是否只读",
-    "change":"变更"
-
+    "change":"变更",
+    "checkFile":"查看文件"
 },
 "skin": {
     "Blue": "天空蓝",

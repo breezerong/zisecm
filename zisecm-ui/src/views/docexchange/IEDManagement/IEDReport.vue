@@ -15,7 +15,7 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期"
+                :placeholder="$t('application.startDate')"
                 value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -24,7 +24,7 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期"
+                :placeholder="$t('application.endDate')"
                 value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -42,8 +42,11 @@
               <DataGrid
                 ref="mainDataGrid1"
                 data-url="/dc/getDocuments"
-                isshowOption
-                isshowCustom
+                :isShowMoreOption="true"
+                showOptions="查看内容,升版"
+                :isshowOption="true"
+                :isshowCustom="false"
+                :isshowicon="false"
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
                 :tableHeight="layout.height-210"
@@ -68,7 +71,7 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期"
+                :placeholder="$t('application.startDate')"
                 value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -77,7 +80,7 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期"
+                :placeholder="$t('application.endDate')"
                 value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -95,8 +98,11 @@
               <DataGrid
                 ref="mainDataGrid2"
                 data-url="/dc/getDocuments"
-                isshowOption
-                isshowCustom
+                :isShowMoreOption="true"
+                showOptions="查看内容,升版"
+                :isshowOption="true"
+                :isshowCustom="false"
+                :isshowicon="false"
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
                 :tableHeight="layout.height-210"
@@ -121,7 +127,7 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                placeholder="开始日期"
+                :placeholder="$t('application.startDate')"
                 value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -130,7 +136,7 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                placeholder="结束日期"
+                :placeholder="$t('application.endDate')"
                 value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -148,8 +154,11 @@
               <DataGrid
                 ref="mainDataGrid3"
                 data-url="/dc/getDocuments"
-                isshowOption
-                isshowCustom
+                :isShowMoreOption="true"
+                showOptions="查看内容,升版"
+                :isshowOption="true"
+                :isshowCustom="false"
+                :isshowicon="false"
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'" 
                 :tableHeight="layout.height - 210"
@@ -174,7 +183,7 @@
                 <el-date-picker
                   v-model="startDate"
                   type="date"
-                  placeholder="开始日期"
+                  :placeholder="$t('application.startDate')"
                   value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -183,7 +192,7 @@
                   v-model="endDate"
                   type="date"
                   align="right"
-                  placeholder="结束日期"
+                  :placeholder="$t('application.endDate')"
                   value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
