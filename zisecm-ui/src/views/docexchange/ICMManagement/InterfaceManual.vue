@@ -1,6 +1,6 @@
 <template>
     <DataLayout >
-        <el-dialog title="批量导入ICM" :visible.sync="batchDialogVisible" width="80%" >
+        <el-dialog :title="$t('application.Import') + ' ICM'" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
             <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
@@ -103,10 +103,11 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM' and C_DESIGN_UNIT='@company' and C_PROJECT_NAME='@project'",
+                    condition:"TYPE_NAME='ICM' and C_PROJECT_NAME='@project'",
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
+                    isInitData:false,
                     isShowMoreOption:false,
                 },
                 ICMPass:{
@@ -174,8 +175,16 @@ export default {
         }else if(roles==2){
             this.roles2=true
         }
+        this.loadsuccess();
     },
     methods: {
+        loadsuccess(){
+            if(this.currentUser().company!='CNPE'){
+                this.tables.main.condition+=" AND (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"')"
+            }
+            this.$refs.mainDataGrid.condition = this.tables.main.condition
+            this.$refs.mainDataGrid.loadGridData()
+        },
         //角色判断
         GetUserRoles(rolename){
             let result = 0
@@ -192,6 +201,7 @@ export default {
                         result=2
                     }
                 })
+                
             }
             return result
         },
