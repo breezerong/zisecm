@@ -357,7 +357,12 @@ export default {
 			},
 			selectedColumns(val){
 				this.$emit('input', val);
-			}
+      },
+      
+      '$store.state.app.language':function(nv,ov){
+        this.currentLanguage=nv;
+        this.loadGridInfo();
+      }
   },
   components: {
     ShowProperty: ShowProperty

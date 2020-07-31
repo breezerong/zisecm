@@ -36,6 +36,7 @@ export default{
         */
         '$store.state.app.language':function(newValue,oldValue){
             //DataGrid处理方法
+            this.currentLanguage=newValue
             this.refs.mainTable.loadGridInfo()
             //自定义表处理方法
             this.table.columns=[
