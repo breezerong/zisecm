@@ -95,6 +95,7 @@
                     isshowOption
                     v-bind="tables.main"
                     @rowclick="rowClick" 
+                     @selectchange="selectChange"
                     :tableHeight="layout.height/2-115" 
                     ></DataGrid>
                 </el-col>
@@ -227,6 +228,7 @@ export default {
              tabs:{
                 active:"sync"
             },
+            selectedItems:[],
         }
     },
     created(){
@@ -275,6 +277,31 @@ export default {
                 }})
             
             },
+            syncing(){          //新建同步日志方法
+            let _self = this;
+            var m = [];
+            var mess
+            let tab = _self.selectedItems;
+            console.log(_self.selectedItems)
+            var i;
+            for (i in tab) {
+                m.push(tab[i]["ID"]);
+            }
+            let mp=new Map();
+            mp.set("ids",m);
+            axios.post("/exchange/exchange/createBatch",JSON.stringify(mp),{
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            }).then(function(response) {
+             console.log(response)
+             mess = response.data
+              _self.$alert(mess,{dangerouslyUseHTMLString:true});
+              _self.search()
+              
+            }
+            )
+            },
       selectP6(row){
         console.log(row.C_PROJECT_NAME)
         this.P6form.ID=row.C_PROJECT_ID
@@ -311,16 +338,11 @@ export default {
     rowClick(row){
       let _self = this;
       var m = new Map();
-      m.set("C_PROJECTNAME",row['C_PROJECT_NAME']);
-      m.set("NAME", row['NAME']);
+      m.set("ID",row['ID']);
        axios
         .post("/exchange/ied/getBatch", JSON.stringify(m)).then(function(response){
            _self.tabledata = response.data.data
            
-           //_self.tabledata.push({"appName":'123123124'})
-           console.log("response.data")
-           console.log(response.data.data)
-           console.log(_self.tabledata)
         }).catch(function(error) {
           console.log(error);
         });
@@ -398,7 +420,10 @@ export default {
             }
             ExcelUtil.export(params)
         },
-      
+      selectChange(val) {
+      // console.log(JSON.stringify(val));
+      this.selectedItems = val;
+    },
 
      onLoadnDataSuccess(select,options){
             console.log(select)
