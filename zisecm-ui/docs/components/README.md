@@ -7,3 +7,5 @@
 ## [动态组件](./dynamic/index.md)
 
 ## [动态路由](./router/README.md)
+
+## [监听语言切换](./watch/README.md)

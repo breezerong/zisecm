@@ -157,15 +157,9 @@ export default {
   },
   watch:{
     '$store.state.app.language':function(nv,ov){
-        this.currentLanguage=nv;
-        if (this.currentUser()) {
-            this.clientPermission = Number(
-              this.currentUser().clientPermission
-            );
-          }
-        this.loadMenu();
-      }
-  }
+      this.loadMenu()
+    }
+  },
 };
 </script>
 <style scoped>
