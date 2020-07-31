@@ -1,0 +1,36 @@
+{
+	"syncwbs":{
+		"wbs":{
+			"default":{
+				"TYPE_NAME":"计划任务"
+			},
+			"mapper":{			
+				"object_name":"NAME",
+				"element_mail":"email",
+				"element_age":"age"
+			}
+		}
+	},
+	"syncproject":{	
+		"icm":{
+			"default":{
+				"TYPE_NAME":"ICM"
+			},
+			"mapper":{			
+				"object_name":"NAME",
+				"element_mail":"email",
+				"element_age":"age"
+			}
+		},
+		"ied":{
+			"default":{
+				"TYPE_NAME":"IED"
+			},
+			"mapper":{			
+				"object_name":"NAME",
+				"element_mail":"email",
+				"element_age":"age"
+			}
+		}
+	}
+}
