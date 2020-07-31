@@ -62,7 +62,6 @@ public class DocController  extends ControllerAbstract  {
 		List<String> titlename = JSONUtils.stringToArray(title);
 		String titlecn = this.getStrValue(args, "titlecnname");
 		List<String> titlecnname = JSONUtils.stringToArray(titlecn);
-		//String lang = this.getStrValue(args, "lang");
 		String filename = this.getStrValue(args, "filename");
 		String sheetname = this.getStrValue(args, "sheetname");
 		
