@@ -190,7 +190,8 @@
     "gridName":"Grid Name",
     "isReadOnly":"is Read Only",
     "change":"Change",
-    "checkFile":"Check File"
+    "checkFile":"Check File",
+    "relevant":"Relevant Doc"
 },
 "skin": {
     "Blue": "Blue",
