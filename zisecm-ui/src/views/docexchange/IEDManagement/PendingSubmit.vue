@@ -304,7 +304,9 @@ export default {
                 'Content-Type': 'multipart/form-data'
             })
             .then(function(response) {
+            console.log(response)
             let code = response.data.code;
+            var mess = response.data.mess;
             //console.log(JSON.stringify(response));
             if (code == 1) {
                 // _self.$message("创建成功!");
@@ -320,7 +322,23 @@ export default {
                 _self.$refs.mainDataGrid.conditon=_self.k2
                 _self.$refs.mainDataGrid.loadGridData();
                 
-                } 
+                }
+            else if(code == 0){
+                _self.$message({
+                    showClose: true,
+                    message: mess,
+                    duration: 2000,
+                    type: "error"
+                });
+            } 
+             else if(code == 3){
+                _self.$message({
+                    showClose: true,
+                    message: mess,
+                    duration: 2000,
+                    type: "error"
+                });
+            } 
             else{
 			_self.$message({
                     showClose: true,
