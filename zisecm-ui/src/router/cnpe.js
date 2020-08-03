@@ -146,10 +146,30 @@ export const cnpeRouter=
             permit: 1,
             title:'userManagement'
         },
-        path: '/cnpe/projectmanagement/projectsList',
+        path: '/cnpe/userManagement/userLists',
         name: '用户管理',
         component: () => import('@/views/docexchange/Management/UserManagement/UserLists.vue')
     },
+    {
+        meta: {
+          requireAuth: true,
+          permit: 5,
+          title: 'roleManager'
+        },
+        path: '/cnpe/managercenter/rolemanager',
+        component: () => import('@/views/docexchange/Management/UserManagement/RoleManager.vue'),
+        name: '角色管理'
+    },
+    {
+        meta: {
+          requireAuth: true,
+          permit: 5,
+          title: 'companyManage'
+        },
+        path: '/cnpe/managercenter/companyManage',
+        component: () => import('@/views/docexchange/Management/CompanyManagement/CompanyManager.vue'),
+        name: '公司管理'
+      },
     {
         meta: {
             requireAuth: true,

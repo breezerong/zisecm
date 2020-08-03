@@ -305,7 +305,8 @@
     "icmfeedback":"icmfeedback",
     "projectManagement":"ProjectManagement",
     "userManagement":"User Management",
-    "feedbackManagement":"Feedback Management"
+    "feedbackManagement":"Feedback Management",
+    "companyManage":"Company Management"
 },
 "message": {
     "saveSuccess":"Save Success",

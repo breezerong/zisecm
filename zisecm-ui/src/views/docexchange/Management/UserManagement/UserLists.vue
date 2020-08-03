@@ -287,27 +287,31 @@
           </el-table-column>
           <el-table-column label="操作" width="240">
             <template slot-scope="scope">
-              <el-button
-                type="primary"
-                plain
-                icon="el-icon-info"
-                title="属性"
-                @click="edititem(scope.row)"
-              ></el-button>
-              <el-button
-                type="primary"
-                plain
-                icon="el-icon-refresh"
-                title="更新签名"
-                @click="addimage(scope.row)"
-              ></el-button>
-              <el-button
-                type="danger"
-                plain
-                icon="el-icon-delete"
-                :title="$t('application.delete')"
-                @click="delitem(scope.row)"
-              ></el-button>
+                <template v-if="isShow(scope.row)">
+                    <el-button
+                    type="primary"
+                    plain
+                    icon="el-icon-info"
+                    title="属性"
+                    @click="edititem(scope.row)"
+                    ></el-button>
+                    <el-button
+                        type="primary"
+                        plain
+                        icon="el-icon-refresh"
+                        title="更新签名"
+                        @click="addimage(scope.row)"
+                    ></el-button>
+                    <el-button
+                        type="danger"
+                        plain
+                        icon="el-icon-delete"
+                        :title="$t('application.delete')"
+                        @click="delitem(scope.row)"
+                    ></el-button>
+                </template>
+              
+              
             </template>
           </el-table-column>
         </el-table>
@@ -329,6 +333,7 @@ export default {
   name: "UserManager",
   permit: 9,
   data() {
+     
     return {
       dataList: [],
       dataListFull: [],
@@ -405,19 +410,23 @@ export default {
           this.currentUser().systemPermission
         );
       }
+      
     _self.refreshData();
   },
   methods: {
+      isShow(row){
+          return row.companyName==this.currentUser().company;
+      },
     handleChange(file, fileList) {
       this.file = file;
     },
     refreshData() {
       let _self = this;
       var m = new Map();
-      var cond = "";
+      var cond = " (COMPANY_NAME ='"+this.currentUser().company+"' or COMPANY_NAME='CNPE')";
       if (_self.inputkey && _self.inputkey.length > 0) {
-        cond =
-          "NAME like '%" +
+        cond =+
+          " and NAME like '%" +
           _self.inputkey +
           "%' or LOGIN_NAME like '%" +
           _self.inputkey +
@@ -520,7 +529,7 @@ export default {
         systemPermissioin: "0",
         clientPermissioin: "1",
         groupName: "",
-        companyName: "",
+        companyName: this.currentUser().company,
         isActived: true
       };
       this.fileList = [];
