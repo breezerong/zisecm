@@ -1,6 +1,21 @@
 <template>
     <DataLayout>
         <template v-slot:header>
+            <el-dialog title='IED反馈':visible.sync="feedbackVisual" >
+                <el-form :model="forms.feedForm" :rules="rule" ref="feedForm" label-width="100px">
+                <el-form-item label="预计日期" prop="date" >
+                <el-date-picker type="date" placeholder="选择日期" v-model="forms.feedForm.date" style="width: 50%"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="进展说明" prop="comment">
+                <el-input type="textarea" v-model="forms.feedForm.comment" style="width: 50%;"></el-input>
+                </el-form-item>   
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                <el-button @click="feedbackVisual = false">{{$t('application.cancel')}}</el-button>
+                <el-button type="primary" @click="submit('feedForm')">确 定</el-button>
+                </div>
+            </el-dialog>
+
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item >
                     <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject"
@@ -25,7 +40,12 @@
             <el-row>
                 <el-col :span="24">
                     <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" 
-                    @rowclick="onDataGridRowClick"  @selectchange="onSelectChange"></DataGrid>
+                    @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
+                    <template slot="optionButton" slot-scope="scope">
+                    <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">反馈</el-button>
+                    </template>
+                    
+                    </DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -103,14 +123,30 @@ export default {
             forms:{
                 headForm:{
                     project:"",
-                }
+                },
+                feedForm:{
+                comment:"",
+                date:"",
+                user:"",
+                },
+
+            },
+            rule:{
+                date:[
+                     { required: true, message: '请选择预计日期', trigger: 'blur' },
+                ],
+                comment:[
+                     { required: true, message: '请输入进展说明', trigger: 'blur' },
+                ]
             },
             relation:{},
             inputValueNum:'',
             hiddenInput:'hidden',
             typeName:"IED",
             selectedItems:[],
-            changeEnable:false
+            changeEnable:false,
+            feedbackVisual:false,
+            id:"",
         }
     },
     mounted(){
@@ -256,7 +292,50 @@ export default {
 
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
-        }
+        },
+        IEDfeedback(row){
+        this.feedbackVisual=true
+        this.id = row.ID
+        console.log(this.id)
+        },
+        submit(feedForm){           //时间在后台方法中获取
+             this.$refs[feedForm].validate((valid) => {
+          if (valid) {
+            let _self = this
+            var user = this.currentUser()
+            
+            var m = new Map();
+            m.set("username",user.userName)
+            m.set("comment",this.forms.feedForm.comment)
+            m.set("date",this.forms.feedForm.date)
+            m.set("id",this.id)                     //id,后台更新数据用
+            let formdata = new FormData();
+            formdata.append("metaData",JSON.stringify(m));
+            this.feedbackVisual=false
+             axios.post("/exchange/ied/iedFeedback",formdata,{
+                'Content-Type': 'multipart/form-data'
+            }).then(function(response) {
+            let code = response.data.code;
+            if (code == 1) {
+                _self.$message({
+                    showClose: true,
+                    message: "反馈成功!",
+                    duration: 2000,
+                    type: "success"
+                });
+                _self.feedbackVisual=false;
+                }
+            else{
+                _self.$message({
+                    showClose: true,
+                    message: "反馈失败!",
+                    duration: 2000,
+                    type: "error"
+                });
+            }
+                })
+                }})
+        } 
     },
     components: {
         ShowProperty:ShowProperty,

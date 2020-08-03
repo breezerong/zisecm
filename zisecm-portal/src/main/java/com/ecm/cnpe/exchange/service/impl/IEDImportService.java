@@ -119,7 +119,7 @@ public class IEDImportService extends EcmService {
 		EcmDocument doc = new EcmDocument();
 		doc.getAttributes().put("NAME", excelSrcFile.getOriginalFilename());
 		doc.getAttributes().put("CODING", number);
-		doc.setTypeName("ICM");
+		doc.setTypeName("导入批次");
 		doc.setFolderId(importExcelFolderId);
 		EcmContent content = new EcmContent();
 		content.setName(excelSrcFile.getOriginalFilename());
@@ -367,7 +367,6 @@ public class IEDImportService extends EcmService {
 			Map<Integer,String> attrNames,
 			int start,int end) throws Exception {
 		List<EcmDocument> list = new ArrayList<EcmDocument>();
-		System.out.println("有多少列"+end);
 		int index  = getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end);
 		Cell cell = row.getCell(index);
 		String submitType= cell.getStringCellValue();
@@ -401,6 +400,34 @@ public class IEDImportService extends EcmService {
 				e.printStackTrace();
 			}
 		
+		}
+		if(submitType.equals("修订")){
+			try {
+			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
+			String cond = "select * from ecm_document where TYPE_NAME='IED' and CODING='"+coding+"'";
+			
+			List<Map<String,Object>> result =documentService.getMapList(token, cond);
+			System.out.println(result.size());
+			List<EcmDocument> newList=new ArrayList<>();
+			for(int i=0;i<result.size();i++){
+				String id;
+				EcmDocument temp = new EcmDocument();
+				temp.setAttributes(result.get(i));		//从List<Map<String,object>>里取出我们要的对象，然后取ID备用
+				id=temp.getId();
+				//newList.add(temp);
+				System.out.println("取到的ID"+id);
+			}
+			throw new Exception("检测到方法使用，编码："+coding);
+			
+			
+		}
+			catch (EcmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SqlDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
