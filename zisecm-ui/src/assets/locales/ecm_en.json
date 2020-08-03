@@ -191,7 +191,13 @@
     "isReadOnly":"is Read Only",
     "change":"Change",
     "checkFile":"Check File",
-    "relevant":"Relevant Doc"
+    "relevant":"Relevant Doc",
+    "appName":"App Name",
+    "creationDate":"Creation Date",
+    "exportDate":"Export Date",
+    "importDate":"Import Date",
+    "status":"Status",
+    "errorMessage":"Error Message"
 },
 "skin": {
     "Blue": "Blue",
