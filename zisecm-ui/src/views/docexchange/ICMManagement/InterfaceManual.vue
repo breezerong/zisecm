@@ -198,7 +198,7 @@ export default {
                 })
             }else{
                 CurrentUser.roles.forEach(function(item){
-                    if(item==CurrentUser.company+"_接口人员"){
+                    if(item=="分包商接口人员"){
                         result=2
                     }
                 })

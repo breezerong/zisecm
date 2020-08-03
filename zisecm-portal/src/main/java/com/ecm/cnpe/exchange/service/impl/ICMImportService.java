@@ -50,6 +50,7 @@ import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
@@ -112,20 +113,23 @@ public class ICMImportService extends EcmService {
 		f.mkdirs();
 		
 		if(ICMImportService.importExcelFolderId==null) {
-			ICMImportService.importExcelFolderId = folderService.getObjectByPath(token, "/设计分包/ICM").getId();
+			ICMImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
 //			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
 		}
 		
 		EcmDocument doc = new EcmDocument();
 		doc.getAttributes().put("NAME", excelSrcFile.getOriginalFilename());
 		doc.getAttributes().put("CODING", number);
-		doc.setTypeName("ICM");
+		doc.setTypeName("导入批次");
 		doc.setFolderId(importExcelFolderId);
 		EcmContent content = new EcmContent();
 		content.setName(excelSrcFile.getOriginalFilename());
 		content.setContentSize(excelSrcFile.getSize());
 		content.setFormatName(FileUtils.getExtention(excelSrcFile.getOriginalFilename()).toLowerCase());
 		content.setInputStream(excelSrcFile.getInputStream());
+		String folderId="";
+		folderId=folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+		content.setFields(folderId);
 		doc.getAttributes().put("FORMAT_NAME", content.getFormatName());
 		doc.getAttributes().put("CONTENT_SIZE", content.getContentSize());
 		
@@ -363,6 +367,12 @@ public class ICMImportService extends EcmService {
 	}
 	
 	
+	private String getToken() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	private boolean checkDocument(String token,  Row row, 
 			Map<Integer,String> attrNames,
 			int start,int end) throws Exception {
