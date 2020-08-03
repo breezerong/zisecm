@@ -184,7 +184,7 @@
                 @selectchange="selectChangeTransferDoc"
                 ></DataGrid>
         </el-tab-pane>
-        <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant">
+        <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
           <el-row>
             <el-col :span="24">
               <el-form :inline="true" :model="filters" @submit.native.prevent>

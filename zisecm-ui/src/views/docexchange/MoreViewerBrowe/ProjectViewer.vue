@@ -68,7 +68,7 @@
                                     @selectchange="selectChangeTransferDoc"
                                     ></DataGrid>
                             </el-tab-pane>
-                            <el-tab-pane label="相关文件" name="t02" v-if="isShowRelevant" ref="relevantTab">
+                            <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant" ref="relevantTab">
                             <!-- 打包下载 -->
                             <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
                             
@@ -319,7 +319,7 @@
                     </el-row>
                     <el-row>
                         <el-tabs  value="t01">
-                            <el-tab-pane label="相关文件" name="t01">
+                            <el-tab-pane :label="$t('application.relevant')" name="t01">
                                 <el-button type="primary" v-on:click="exportDataSubTable($refs.projRelevantDoc)">{{$t('application.ExportExcel')}}</el-button>
                                 <!--列表-->
                                 <DataGrid
