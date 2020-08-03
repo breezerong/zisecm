@@ -19,12 +19,7 @@ export default {
             activeName: "TCSync",
         }
     },
-    created(){
 
-    },
-    mounted(){
-        
-    },
     methods: {
 
     },

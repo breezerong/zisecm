@@ -11,7 +11,7 @@
         <i slot="prefix" class="icon-mima"></i>
       </el-input>
     </el-form-item>
-    <el-checkbox v-model="checked">{{$t("application.rememberLoginInfo")}}</el-checkbox>
+    <el-checkbox v-model="rememberInfo">{{$t("application.rememberLoginInfo")}}</el-checkbox>
     <el-form-item>
       <el-button type="primary" size="small" @click.native.prevent="handleLogin" class="login-submit">{{$t("application.login")}}</el-button>
     </el-form-item>
@@ -55,7 +55,6 @@ export default {
           // { validator: validaePass2 }
         ]
       },
-      checked: true,
       passwordType: 'password'
     };
   },
@@ -74,8 +73,10 @@ export default {
     var reinfo = localStorage.getItem("ziecm-rememberInfo");
     if (reinfo) {
       this.rememberInfo = reinfo == "1";
-      this.account.username = localStorage.getItem("ziecm-ass12bn");
-      this.account.password = localStorage.getItem("ziecm-ass12bp");
+      if(this.rememberInfo){
+        this.account.username = localStorage.getItem("ziecm-ass12bn");
+        this.account.password = localStorage.getItem("ziecm-ass12bp");
+      }
     }
     this.$refs.username.focus();
   },

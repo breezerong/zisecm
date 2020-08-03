@@ -1,6 +1,7 @@
 package com.ecm.cnpe.exchange.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,21 +53,54 @@ public class ExcSynBatchController  extends ControllerAbstract {
 	
 	@RequestMapping(value = "/exchange/ied/getBatch", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> IEDReport(@RequestBody String argStr) throws Exception {
+	public Map<String, Object> getBatch(@RequestBody String argStr) throws Exception {
 		
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		List<Map<String, Object> > outList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		//String projectname = args.get("C_PROJECTNAME").toString();
-		String name = args.get("NAME").toString();
+		String ID = args.get("ID").toString();
+		
+		String cond = "BATCH_NUM = '"+ID+"'";
 		//System.out.println("取到的数据是"+projectname);
-		List<ExcSynBatch> projList = batchService.selectAll();
+		List<ExcSynBatch> projList = batchService.selectByCondition(cond);
 		/*System.out.println("取到的List大小:"+projList.size());
 		for(int i=0;i<projList.size();i++) {
 			mp.put("'"+i+"'", projList);
 		}*/
 		mp.put("data", projList);
 		return mp;
-	
 	}
+	@RequestMapping(value = "/exchange/exchange/createBatch", method = RequestMethod.POST)
+	@ResponseBody
+	public String	createBatch(@RequestBody String argStr) throws Exception{
+		Date now = new Date();
+		StringBuilder K = new StringBuilder();
+		ExcSynBatch temp = new ExcSynBatch();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String idsStr=args.get("ids").toString();
+		List<String> list = JSONUtils.stringToArray(idsStr);
+		for(String childId : list) {
+		EcmDocument doc= documentService.getObjectById(getToken(), childId);
+		String id = doc.getId();	//获取联动ID，根据ID去查批次号，返回的list长度为0就说明数据库里没有同步日志，可以创建
+		String cond = "BATCH_NUM = '"+id+"'";//执行
+		List<ExcSynBatch> result=batchService.selectByCondition(cond);
+		if(result.size()==0) {
+			temp.setAppName("P6");
+			temp.setCreationDate(now);
+			temp.setActionName("同步");
+			temp.setStauts("新建");
+			temp.setBatchNum(childId);
+			batchService.newObject(temp);
+			
+		}
+		else if(result.size()>0) {
+			K.append("编号为"+doc.getName()+"的同步日志已经创建,创建失败").append("<br>");
+			continue;
+		}
+		}
+		K.append("新建日志完毕,出错结果如上,其余同步已完成");
+		return K.toString();
+	}
+	
 }
