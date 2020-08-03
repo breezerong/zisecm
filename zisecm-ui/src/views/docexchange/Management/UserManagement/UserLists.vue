@@ -67,7 +67,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item
               label="登录类型"
               style="float:left;"
@@ -83,8 +83,8 @@
                 </div>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          </el-col> -->
+          <!-- <el-col :span="12">
             <el-form-item
               label="客户端权限"
               style="float:left;"
@@ -102,8 +102,8 @@
                 </div>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="clientPermission>4">
+          </el-col> -->
+          <!-- <el-col :span="12" v-if="clientPermission>4">
             <el-form-item
               label="系统权限"
               style="float:left;"
@@ -119,7 +119,7 @@
                 </div>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="12">
             <el-form-item label="是否启用" style="float:left;" :label-width="formLabelWidth">
               <el-select
@@ -137,10 +137,11 @@
                 :autosize="true"
                 v-model="form.companyName"
                 :disabled="clientPermission<form.clientPermission"
+                readonly
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="默认组" :label-width="formLabelWidth">
               <el-input
                 :autosize="true"
@@ -166,7 +167,7 @@
             <el-form-item label="代理结束日期" :label-width="formLabelWidth">
               <el-date-picker v-model="form.delegateEnd" type="date" placeholder="选择日期" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss" ></el-date-picker>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="24">
             <el-form-item label="说明" :label-width="formLabelWidth">
               <el-input
