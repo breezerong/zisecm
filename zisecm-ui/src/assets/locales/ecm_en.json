@@ -296,7 +296,10 @@
     "ReceivedDcFromCnpe":"Received For Contractor",
     "RejectDC":"Reject DC",
     "LogMonitor": "LogMonitor",
-    "icmfeedback":"icmfeedback"
+    "icmfeedback":"icmfeedback",
+    "projectManagement":"ProjectManagement",
+    "userManagement":"User Management",
+    "feedbackManagement":"Feedback Management"
 },
 "message": {
     "saveSuccess":"Save Success",

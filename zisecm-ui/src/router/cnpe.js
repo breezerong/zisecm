@@ -134,9 +134,39 @@ export const cnpeRouter=
         meta: {
             requireAuth: true,
             permit: 1,
+            title:'projectManagement'
+        },
+        path: '/cnpe/projectmanagement/projectsList',
+        name: '项目管理',
+        component: () => import('@/views/docexchange/Management/ProjectManageMent/ProjectsList.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'userManagement'
+        },
+        path: '/cnpe/projectmanagement/projectsList',
+        name: '用户管理',
+        component: () => import('@/views/docexchange/Management/UserManagement/UserLists.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'feedbackManagement'
+        },
+        path: '/cnpe/feedbackManagement/feedback',
+        name: '问题反馈',
+        component: () => import('@/views/docexchange/Feedback/Feedback.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
             title:'icmfeedback'
         },
-        path: 'cnpe/icmmanagement/icmfeedback',
+        path: '/cnpe/icmmanagement/icmfeedback',
         name: '延误反馈',
         component: () => import('@/views/docexchange/ICMManagement/icmfeedback.vue')
     },
