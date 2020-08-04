@@ -1,7 +1,7 @@
 <template>
     <DataLayout>
         <template v-slot:header>
-            <el-dialog title='IED反馈':visible.sync="feedbackVisual" >
+            <el-dialog title='IED反馈' :visible.sync="feedbackVisual" >
                 <el-form :model="forms.feedForm" :rules="rule" ref="feedForm" label-width="100px">
                 <el-form-item label="预计日期" prop="date" >
                 <el-date-picker type="date" placeholder="选择日期" v-model="forms.feedForm.date" style="width: 50%"></el-date-picker>
