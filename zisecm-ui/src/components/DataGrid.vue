@@ -198,7 +198,7 @@
             </template>
           </template>
           </template>
-          <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="190">
+          <el-table-column v-if="isshowOption" fixed="right" :label="$t('application.operation')" width="190">
             
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
