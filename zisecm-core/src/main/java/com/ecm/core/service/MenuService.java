@@ -1,6 +1,7 @@
 package com.ecm.core.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 	/**
 	 * 是否包含角色
 	 * @param glist
-	 * @param roleName
+	 * @param roleName 单值，多值，正则表达式如：“*计划人员”
 	 * @return
 	 */
 	private boolean inGroup(List<EcmGroup> glist,String roleName) {
@@ -98,7 +99,21 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 			return true;
 		}
 		for(EcmGroup g: glist) {
-			if(g.getName().equalsIgnoreCase(roleName)) {
+			if(roleName.indexOf(";")>-1) {
+				String[] roleNames = roleName.split(";");
+				for(String role:roleNames) {
+					if(g.getName().equalsIgnoreCase(role)) {
+						return true;
+					}
+				}
+			}else if(roleName.indexOf("*")>-1){//正则表达式
+				roleName = "."+roleName+".*";
+				 boolean isMatch = Pattern.matches(roleName, g.getName());
+				 if(isMatch) {
+					 return true;
+				 }
+				
+			}else if(g.getName().equalsIgnoreCase(roleName)) {
 				return true;
 			}
 		}

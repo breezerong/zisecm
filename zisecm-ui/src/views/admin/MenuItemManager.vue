@@ -38,7 +38,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色" :label-width="formLabelWidth">
-              <RoleSelectInput v-model="form.roleName" v-bind:inputValue="form.roleName" ></RoleSelectInput>
+              <RoleSelectInput v-model="form.roleName" v-bind:inputValue="form.roleName" v-bind:isRepeat="true" ></RoleSelectInput>
             </el-form-item>
           </el-col>
           <el-col :span="12">
