@@ -306,7 +306,8 @@
     "projectManagement":"ProjectManagement",
     "userManagement":"User Management",
     "feedbackManagement":"Feedback Management",
-    "companyManage":"Company Management"
+    "companyManage":"Company Management",
+    "AddressList":"Address List"
 },
 "message": {
     "saveSuccess":"Save Success",

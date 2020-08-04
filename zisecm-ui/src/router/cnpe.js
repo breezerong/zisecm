@@ -152,6 +152,16 @@ export const cnpeRouter=
     },
     {
         meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'AddressList'
+        },
+        path: '/cnpe/userManagement/AddressList',
+        name: '通讯录',
+        component: () => import('@/views/docexchange/AddressList')
+    },
+    {
+        meta: {
           requireAuth: true,
           permit: 5,
           title: 'roleManager'

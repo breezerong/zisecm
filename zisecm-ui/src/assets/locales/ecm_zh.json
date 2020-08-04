@@ -327,7 +327,8 @@
     "projectManagement":"项目管理",
     "userManagement":"用户管理",
     "feedbackManagement":"问题反馈管理",
-    "companyManage":"公司管理"
+    "companyManage":"公司管理",
+    "AddressList":"通讯录"
 },
 "message": {
     "saveSuccess":"保存成功",
