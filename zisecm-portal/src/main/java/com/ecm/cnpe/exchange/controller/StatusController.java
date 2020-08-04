@@ -70,6 +70,7 @@ public class StatusController extends ControllerAbstract{
 				if("新建".equals(currentStatus)) {
 					doc.addAttribute("c_item_date", new Date());
 				}
+				
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(nextStatus);
 				if("IED".equals(doc.getTypeName())) {
@@ -91,13 +92,22 @@ public class StatusController extends ControllerAbstract{
 						}else {
 							logicOptionRelevantService.relevantOption(getToken(),doc);
 						}
-						OptionLogger.logger(detailService, doc, "CNPE接收", 
-								doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 						
 					}
 					documentService.updateObject(getToken(), doc, null);
 					
 				}
+				
+//				OptionLogger.logger(detailService, doc, "CNPE接收", 
+//						doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				if("驳回".equals(currentStatus)) {
+					OptionLogger.logger(detailService, doc, "驳回提交", 
+							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				}else {
+					OptionLogger.logger(detailService, doc, 
+							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				}
+				
 				
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -150,7 +160,7 @@ public class StatusController extends ControllerAbstract{
 					OptionLogger.logger(detailService, doc, "驳回", 
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}else {
-					OptionLogger.logger(detailService, doc, "CNPE驳回", 
+					OptionLogger.logger(detailService, doc,  
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}
 				

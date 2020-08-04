@@ -639,7 +639,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				continue;
 			}
 			if (en == null) {
-				throw new EcmException("Object :" + id + " ," + key.toString() + " is not exists.");
+				continue;
+//				throw new EcmException("Object :" + id + " ," + key.toString() + " is not exists.");
 			}
 			switch (en.getFieldType()) {
 			case 2:

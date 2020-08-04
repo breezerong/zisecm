@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ecm.cnpe.exchange.entity.StatusEntity;
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
@@ -69,6 +70,7 @@ import com.ecm.core.service.AclService;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
@@ -127,6 +129,9 @@ public class EcmDcController extends ControllerAbstract {
 	private Environment env;
 	@Autowired
 	private ExcTransferServiceImpl excTransferService;
+	
+	@Autowired
+	private ExcSynDetailService detailService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
 
@@ -2323,7 +2328,13 @@ public class EcmDcController extends ControllerAbstract {
 		for(String childId : list) {
 			
 			try {
+				EcmDocument dc= documentService.getObjectById(getToken(), childId);
+				
 				documentService.deleteObject(getToken(),childId);
+				if("驳回".equals(dc.getStatus())) {
+					OptionLogger.logger(detailService, dc, "驳回删除", 
+							dc.getAttributeValue("C_COMPANY")!=null?dc.getAttributeValue("C_COMPANY").toString():"");
+				}
 			}catch(NullPointerException nu) {
 				nu.printStackTrace();
 				continue;

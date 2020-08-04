@@ -28,13 +28,15 @@
           <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
             <el-form :inline="true" :model="filters" @submit.native.prevent>
               <el-form-item>
-                <el-select v-model="filters.projectCode" placeholder="选择项目">
+                <!-- <el-select v-model="filters.projectCode" placeholder="选择项目">
                   <el-option label="三门3、4号机组" value="1"></el-option>
                   <el-option label="福清5、6号机组" value="2"></el-option>
                   <el-option label="海南5、6号机组" value="3"></el-option>
                   <el-option label="台山3、4号机组" value="4"></el-option>
                   <el-option label="田湾7、8号机组" value="5"></el-option>
-                </el-select>
+                </el-select> -->
+                <DataSelect v-model="filters.projectCode" defaultIsNull :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="name" dataTextField="name"></DataSelect>
               </el-form-item>
               <el-form-item>
                <el-select v-model="filters.supplier" placeholder="请选择分包商">
@@ -90,7 +92,7 @@
                 ref="noReceiveGrid"
                 key="main"
                 dataUrl="/dc/getNoReceiveData"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="tableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCReportNoReceive"
                 :isshowCustom="true"
@@ -108,9 +110,9 @@
 
 <script>
 import util from '@/utils/table.js'
-import DataSelect from '@/components/ecm-data-select'
 import DataGrid from "@/components/DataGrid";
 import ExcelUtil from '@/utils/excel.js'
+import DataSelect from '@/components/ecm-data-select'
 export default {
   data() {
     return {

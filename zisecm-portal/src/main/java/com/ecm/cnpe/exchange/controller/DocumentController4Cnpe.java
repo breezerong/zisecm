@@ -141,7 +141,8 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, null, true);
 				doc.setStauts(nextStatus);
 				excTransferService.updateObject(doc);
-				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
+//				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
+				OptionLogger.logger(detailService, doc, "CNPE");
 								
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -229,7 +230,8 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				doc.setRejecter(this.getSession().getCurrentUser().getUserName());
 				doc.setRejectDate(new Date());
 				excTransferService.updateObject(doc);
-				OptionLogger.logger(detailService, doc, "分包商驳回", "CNPE");
+//				OptionLogger.logger(detailService, doc, "分包商驳回", "CNPE");
+				OptionLogger.logger(detailService, doc, "CNPE");
 				
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -261,6 +263,8 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			
 			doc.addAttribute("C_PROCESS_STATUS", "申请解锁");
 			documentService.updateObject(getToken(), doc, null);
+			OptionLogger.logger(detailService, doc, "申请解锁", 
+					doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 		}
 		mp.put("code", ActionContext.SUCESS);
 		return mp;

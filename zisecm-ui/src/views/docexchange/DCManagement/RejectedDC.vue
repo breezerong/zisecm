@@ -115,7 +115,7 @@
                 <el-form-item>
                     <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,
                     [$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.close')}}</el-button>
+                    $refs.relevantDoc])">{{$t('application.Submit')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <MountFile :selectedItem="selectedItems" @refresh='searchItem'>{{$t('application.ReplaceDoc')}}</MountFile>

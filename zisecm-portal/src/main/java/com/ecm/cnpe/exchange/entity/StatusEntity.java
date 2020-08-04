@@ -8,6 +8,9 @@ public class StatusEntity {
 	private static Map<String,String[]> dcStatusNoConfirming=new HashMap<>();
 	private static Map<String,String[]> dcStatusCnpeSend=new HashMap<>();
 	
+	public static Map<String,String> actions=new HashMap<>();
+	public static Map<String,String> actionsCnpe=new HashMap<>();
+	
 	private static Map<String,String[]> iedStatus=new HashMap<>(); 
 	
 	private static String typeNames="文件传递单,FU通知单,作废通知单,CR澄清要求答复单,FCR现场变更答复单,"
@@ -39,6 +42,13 @@ public class StatusEntity {
 		iedStatus.put("已驳回", new String[] {"","审核中"});
 		iedStatus.put("变更中", new String[] {"","已变更"});
 		
+		actionsCnpe.put("待确认", "提交");
+		actionsCnpe.put("已确认", "CNPE接收");
+		actionsCnpe.put("驳回","CNPE驳回");
+		
+		actions.put("待接收", "分发");
+		actions.put("已接收", "分包商接收");
+		actions.put("驳回","分包商驳回");
 	}
 	public static String getNextDcStatusValue(String key,String typeName,boolean isCnpeSend) {
 		/**
