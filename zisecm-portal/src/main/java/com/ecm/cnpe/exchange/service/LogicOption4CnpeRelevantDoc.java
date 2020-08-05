@@ -64,6 +64,86 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	}
 	
 	/**
+	 * 通过文函主文件删除相关文件关系
+	 * @param token
+	 * @param mainDoc
+	 * @return
+	 * @throws Exception 
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean relevantRejectOption(String token,EcmDocument mainDoc) throws Exception{
+		List<Map<String,Object>> relevantMaps= getChildsByParentID(token,mainDoc.getId(),"相关文件");
+		for(int j=0;relevantMaps!=null&&j<relevantMaps.size();j++) {
+			Map<String,Object> relevantMap= relevantMaps.get(j);
+			EcmDocument relevantDoc=new EcmDocument();
+			relevantDoc.setAttributes(relevantMap);
+//			execDesignDocByRelevant(token,relevantDoc);
+//			execIEDByRelevant(token,relevantDoc);
+//			relationService.deleteByChildIdAndRelationName(token, relevantDoc.getId(), "相关文件");
+//			relationService.deleteByCidPidAndRelationName(token, parentId, relevantDoc.getId(), "相关文件");
+			
+			deleteDesignDocByRelevant(token,relevantDoc);
+			deleteIEDByRelevant(token,relevantDoc);
+		}
+		return true;
+		
+	}
+	
+	/**
+	 * 通过相关文件删除与IED建立关联
+	 * @param token
+	 * @param relevantDoc
+	 * @return
+	 * @throws Exception 
+	 */
+	private boolean deleteIEDByRelevant(String token,EcmDocument relevantDoc) throws Exception {
+		String condition=" CODING='"+relevantDoc.getCoding()+"' and REVISION='"+relevantDoc.getRevision()+"' and TYPE_NAME='IED'";
+		List<Map<String, Object>> designDocList = getObjectMap(token,condition);
+		if(designDocList!=null&&designDocList.size()>0) {
+			EcmDocument designDoc=new EcmDocument();
+			designDoc.setAttributes(designDocList.get(0));
+//			EcmRelation relation=new EcmRelation();
+//			relation.setParentId(designDoc.getId());
+//			relation.setChildId(relevantDoc.getId());
+//			relation.setName("相关文件");
+//			relationService.newObject(token, relation);
+			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), relevantDoc.getId(), "相关文件");
+			
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * 通过相关文件的信息删除与设计文件关联
+	 * @param token
+	 * @param relevantDoc
+	 * @return
+	 * @throws Exception 
+	 */
+	private boolean deleteDesignDocByRelevant(String token,EcmDocument relevantDoc) throws Exception{
+		String condition=" CODING='"+relevantDoc.getCoding()+"' and REVISION='"+relevantDoc.getRevision()+"' and TYPE_NAME='设计文件'";
+		List<Map<String, Object>> designDocList = getObjectMap(token,condition);
+		if(designDocList!=null&&designDocList.size()>0) {
+			EcmDocument designDoc=new EcmDocument();
+			designDoc.setAttributes(designDocList.get(0));
+//			EcmRelation relation=new EcmRelation();
+//			relation.setParentId(designDoc.getId());
+//			relation.setChildId(relevantDoc.getId());
+//			relation.setName("相关文件");
+//			relationService.newObject(token, relation);
+			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), relevantDoc.getId(), "相关文件");
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
+	
+	/**
 	 * 通过parentId 获取
 	 * @param token
 	 * @param parentId 

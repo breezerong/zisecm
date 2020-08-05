@@ -30,6 +30,15 @@
     delete from ecm_relation
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteByChildAndRelationName" parameterType="java.lang.String">
+    delete from ecm_relation
+    where CHILD_ID = #{childId,jdbcType=VARCHAR} and NAME=#{relationName,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByCidPidAndRelationName" parameterType="java.lang.String">
+    delete from ecm_relation
+    where PARENT_ID=#{parentId,jdbcType=VARCHAR} and CHILD_ID = #{childId,jdbcType=VARCHAR} and NAME=#{relationName,jdbcType=VARCHAR}
+  </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmRelation">
     insert into ecm_relation (ID, NAME, DESCRIPTION, PARENT_ID, 
       CHILD_ID, CREATION_DATE, CREATOR,ORDER_INDEX

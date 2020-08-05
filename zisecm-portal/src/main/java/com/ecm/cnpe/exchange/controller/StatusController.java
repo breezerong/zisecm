@@ -156,11 +156,20 @@ public class StatusController extends ControllerAbstract{
 				doc.addAttribute("C_REJECTOR", this.getSession().getCurrentUser().getUserName());
 				doc.addAttribute("C_REJECT_DATE", new Date());
 				documentService.updateObject(getToken(), doc, null);
+				
+				if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
+					logicOptionInterfaceService.interfaceRejectOption(getToken(), doc);
+				}else if("文件传递单".equals(doc.getTypeName())){
+					//待扩展需求
+				}else {
+					logicOptionRelevantService.relevantRejectOption(getToken(),doc);
+				}
+				
 				if("IED".equals(doc.getTypeName())) {
 					OptionLogger.logger(detailService, doc, "驳回", 
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}else {
-					OptionLogger.logger(detailService, doc,  
+					OptionLogger.logger(detailService, doc,
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}
 				

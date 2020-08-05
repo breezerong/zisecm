@@ -62,6 +62,26 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 		// TODO Auto-generated method stub
 		return ecmRelationMapper.deleteByPrimaryKey(objId)>0;
 	}
+	/**
+	 * 通过childId和relatinName删除
+	 * @param childId
+	 * @param relationName
+	 * @return
+	 */
+	public boolean deleteByChildIdAndRelationName(String token,String childId,String relationName) throws Exception {
+		return ecmRelationMapper.deleteByChildAndRelationName(childId, relationName)>0;
+	}
+	
+	/**
+	 * 通过parentId,childId和relatinName删除
+	 * @param childId
+	 * @param relationName
+	 * @return
+	 */
+	public boolean deleteByCidPidAndRelationName(String token,String parentId,String childId,String relationName) throws Exception {
+		return ecmRelationMapper.deleteByCidPidAndRelationName(parentId,childId, relationName)>0;
+	}
+	
 	@Override
 	public String newObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub

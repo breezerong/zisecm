@@ -73,6 +73,32 @@ public class LogicOption4CnpeInterface extends DocumentService{
 	}
 	
 	/**
+	 * 通过接口对象处理接口对象包含（接口信息传递单，接口信息意见单）两种类型
+	 * @param token
+	 * @param interfaceDoc
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean interfaceRejectOption(String token,EcmDocument interfaceDoc) throws Exception {
+		EcmDocument icmDoc= getICMS(token,interfaceDoc);
+		EcmRelation relation=new EcmRelation();
+		relation.setChildId(interfaceDoc.getId());
+		relation.setParentId(icmDoc.getId());
+		String relationName="";
+		if("接口信息传递单".equals(interfaceDoc.getTypeName())) {
+			relationName="传递接口";
+			
+		}else {
+			relationName="接口意见";
+		}
+		return relationService.deleteByChildIdAndRelationName(token,interfaceDoc.getId(), relationName);//deleteObject(token, obj).newObject(token, relation);
+//		return true;
+		
+		
+	}
+	
+	/**
 	 * 获取ICM
 	 * @param token
 	 * @param interfaceDoc

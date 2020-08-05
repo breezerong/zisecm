@@ -25,7 +25,9 @@ export default {
 
     },
     methods:{
-
+        refresh(){
+            this.$refs.attachmentDoc.loadGridData();
+        }
     },
     components:{
         DataGrid:DataGrid

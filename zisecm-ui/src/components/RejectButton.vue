@@ -173,6 +173,7 @@ export default {
                 m.push(tab[i]["ID"]);
             }
             let mp=new Map();
+            mp.set("isCnpeSend","false");
             mp.set("ids",m);
             mp.set("rejectCommon",_self.rejectComment);
             axios.post("/dc/previousStatus",JSON.stringify(mp),{

@@ -15,7 +15,11 @@ public interface EcmRelationMapper {
 	List<EcmRelation> selectByCondition(@Param(value="condition")String condition);
 	
 	int deleteByPrimaryKey(String id);
-
+	
+	int deleteByChildAndRelationName(String childId,String relationName);
+	
+	int deleteByCidPidAndRelationName(String parentId,String childId,String relationName);
+	
 	int insert(EcmRelation record);
 
 	int insertSelective(EcmRelation record);

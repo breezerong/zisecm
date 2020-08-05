@@ -34,6 +34,7 @@ public class StatusEntity {
 		//
 		dcStatusCnpeSend.put("新建", new String[] {"","待接收"});
 		dcStatusCnpeSend.put("待接收", new String[] {"驳回","已接收"});
+		dcStatusCnpeSend.put("已接收", new String[] {"驳回",""});
 		dcStatusCnpeSend.put("驳回", new String[] {"","待接收"});
 		
 		//ied
