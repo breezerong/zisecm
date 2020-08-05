@@ -140,7 +140,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGridReject"
                 condition=" status='驳回' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
-                :isshowCustom="true"
+                :isshowCustom="false"
+                :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 ></DataGrid>

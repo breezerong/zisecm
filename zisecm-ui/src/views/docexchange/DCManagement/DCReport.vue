@@ -95,7 +95,10 @@
                 v-bind:tableHeight="tableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCReportNoReceive"
-                :isshowCustom="true"
+                :isshowCustom="false"
+                :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 >
