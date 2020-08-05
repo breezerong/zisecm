@@ -76,7 +76,7 @@
               <template v-if="('FU申请、FU通知单、作废通知单、CR澄清要求申请单、CR澄清要求答复单、CR澄清要求关闭单、'
               +'FCR现场变更申请单、FCR现场变更答复单、FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、'+
             'DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、'+
-            'TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复').indexOf(row.TYPE_NAME)!=-1">
+            'TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复').indexOf(doc.typeName)!=-1">
                 <el-button type="primary" plain @click="menuClick('相关文件')">相关文件</el-button><br/>
               </template>
               <template v-if="revertType.indexOf(doc.typeName)!=-1">
