@@ -225,24 +225,26 @@
             </template>
             <template slot-scope="scope">
               <slot name="optionButton" :data="scope">
-                <template v-if="isShowMoreOption">
-                  <el-dropdown trigger="click">
-                    <el-button
-                    type="primary"
-                    plain
-                    size="small"
-                    :title="$t('application.more')"
-                    icon="el-icon-more"
-                  ></el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item v-if="showOptions.indexOf('查看内容')!=-1" icon="el-icon-reading" @click.native="showItemContent(selectedRow)">查看内容</el-dropdown-item>
-                      <el-dropdown-item v-if="showOptions.indexOf('查看属性')!=-1" icon="el-icon-info" @click.native="showItemProperty(selectedRow)">查看属性</el-dropdown-item>
-                      <el-dropdown-item v-if="showOptions.indexOf('加入购物车')!=-1" icon="el-icon-circle-plus-outline" @click.native="addToShoppingCar([selectedRow])">加入购物车</el-dropdown-item>
-                      <el-dropdown-item v-if="showOptions.indexOf('升版')!=-1" icon="el-icon-check" @click.native="upgrade(selectedRow)">升版</el-dropdown-item>
-                      
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </template>
+                <slot name="customMoreOption" :data="scope">
+                  <template v-if="isShowMoreOption">
+                    <el-dropdown trigger="click">
+                      <el-button
+                      type="primary"
+                      plain
+                      size="small"
+                      :title="$t('application.more')"
+                      icon="el-icon-more"
+                    ></el-button>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item v-if="showOptions.indexOf('查看内容')!=-1" icon="el-icon-reading" @click.native="showItemContent(selectedRow)">查看内容</el-dropdown-item>
+                        <el-dropdown-item v-if="showOptions.indexOf('查看属性')!=-1" icon="el-icon-info" @click.native="showItemProperty(selectedRow)">查看属性</el-dropdown-item>
+                        <el-dropdown-item v-if="showOptions.indexOf('加入购物车')!=-1" icon="el-icon-circle-plus-outline" @click.native="addToShoppingCar([selectedRow])">加入购物车</el-dropdown-item>
+                        <el-dropdown-item v-if="showOptions.indexOf('升版')!=-1" icon="el-icon-check" @click.native="upgrade(selectedRow)">升版</el-dropdown-item>
+                        <slot name="dropdownItem" :data="scope"></slot>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </template>
+                </slot>
                 <!-- showItemContent(scope.row) -->
                 <el-button v-if="isShowPropertyButton"
                   type="primary"
