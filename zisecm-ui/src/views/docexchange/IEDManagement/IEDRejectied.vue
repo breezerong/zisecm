@@ -16,13 +16,12 @@
         <template v-slot:main="{layout}">
                 <el-row>
                 <el-col :span="24">
-                    <!--condition="creator='@currentuser' AND company='@company' AND status='已驳回'">
-                    <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
             isshowOption
             gridViewName="IEDGrid"
-            v-bind="tables.main":tableHeight="layout.height-180"
+            v-bind="tables.main"
+            :tableHeight="layout.height-180"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
@@ -89,7 +88,6 @@ export default {
     methods: {
         fresh(){
           let _self = this
-          console.log("123123")
         _self.$refs.mainDataGrid.loadGridData();
        },
         cellMouseEnter(row, column, cell, event){
@@ -98,7 +96,6 @@ export default {
         },
      rowClick(row){
       this.selectRow=row;
-      console.log(row)
     },
      selectChange(val) {
       // console.log(JSON.stringify(val));
@@ -109,7 +106,6 @@ export default {
         this.fresh()
     },
     onLoadnDataSuccess(select,options){
-            console.log(select)
             this.search()
         },
 

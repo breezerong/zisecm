@@ -195,6 +195,7 @@ export default {
     search(){
         let _self = this
         var k1 = "TYPE_NAME='IED' AND STATUS='审核中'"
+      
         let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
            if(_self.input.trim().length>0){
@@ -207,7 +208,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.value != undefined &&_self.value!='所有项目'){
+           if(_self.value != undefined &&_self.value!='所有项目'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
             if(_self.Subcontractor !='' ){

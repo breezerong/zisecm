@@ -8,8 +8,8 @@
             <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
             </div>
         </el-dialog>
-     <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
-            <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+        <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
+        <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
                 <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                 <el-upload
                     :limit="100"
@@ -35,7 +35,7 @@
             @close="propertyVisible = false"
             width="80%"
             >
-            <ShowProperty
+        <ShowProperty
         ref="ShowProperty"
         @onSaved="onSaved"
         width="100%"
@@ -43,15 +43,11 @@
         v-bind:itemId="selectedItemId"
         v-bind:typeName="typeName"
       ></ShowProperty>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="saveItem">{{$t('application.save')}}</el-button>
-                <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+            <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
-
-
-
-
             <el-row>
             <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
              @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
@@ -63,6 +59,42 @@
              <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">{{$t('application.delete')}}</el-button>
             </el-row>
+
+
+       <el-dialog 
+        title="IEDContrast"
+        :visible.sync="IEDcontrast"
+        @close="IEDcontrast = false"
+        width="80%">
+        <el-table
+        :data="ContrastData"
+        ref="IEDCon" row-key="id" >
+        <el-table-column
+        fixed
+        prop="C_IN_CODING"
+        label="内部编码"
+        width="150"
+        ></el-table-column>
+        <el-table-column
+        fixed
+        prop="CODING"
+        label="外部编码"
+        width="150"
+        ></el-table-column>
+        <el-table-column
+        fixed
+        prop="TITLE"
+        label="标题"
+        width="150"
+        ></el-table-column>
+        <el-table-column v-for="item in IEDcolumns" v-bind="item" :key="item"
+        :label="item.label"
+        :prop="item.attrName"></el-table-column>    
+        </el-table>
+         <div slot="footer" class="dialog-footer">
+         <el-button @click="IEDcontrast= false">{{$t('application.cancel')}}</el-button>
+         </div>
+        </el-dialog>
         </template>
         
         <template v-slot:main="{layout}">
@@ -75,7 +107,12 @@
                     @cellMouseleave="cellMouseleave"
                     @rowclick="rowClick" 
                     @selectchange="selectChange"
-                ></DataGrid>
+                >
+                <template slot="customMoreOption" slot-scope="scope">
+                <el-button type="primary" @click="goContrast(scope.data.row)" size="mini">对比</el-button>
+                </template>
+                
+                </DataGrid>
                 </el-col>
             </el-row>
         </template>
@@ -105,8 +142,13 @@ export default {
                 },
               status:'',
             },
-            
-
+            IEDcolumns:[],
+            ContrastData:[{
+                C_IN_CODING:'',
+                CODING:'',
+                TITLE:'',
+            }],
+            IEDcontrast:false,
             value:'',
             selectedOneTransfer:'',
             input:'',
@@ -125,6 +167,7 @@ export default {
             batchDialogVisible:false,
             gridObj:[],
             propertyVisible:false,
+            id:""
         }
     },
     created(){     
@@ -140,6 +183,32 @@ export default {
         }
     },
     methods: {
+        goContrast(row){
+            let _self = this
+            console.log(row)
+            this.IEDcontrast=true
+            this.id = row.ID
+            var m = new Map();
+            m.set("ID",this.id)
+            let formdata = new FormData();
+            formdata.append("metaData",JSON.stringify(m));
+             axios.post("/exchange/ied/iedContrast",formdata,{
+                'Content-Type': 'multipart/form-data'
+            }).then(function(response){
+                console.log(response.data)
+                _self.ContrastData=response.data
+                _self.getColumn()
+            })
+        },
+
+         getColumn(){
+             var _self = this
+            axios.post("/exchange/ied/getColumn").then(function(response){
+                 console.log(response.data)
+                _self.IEDcolumns=response.data
+            })
+        },
+
         fresh(){
           let _self = this
           console.log("123123")
@@ -397,7 +466,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.value != undefined ){
+            if(_self.value != undefined &&_self.value!='所有项目'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
             let user = this.currentUser();

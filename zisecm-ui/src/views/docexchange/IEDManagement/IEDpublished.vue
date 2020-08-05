@@ -41,7 +41,7 @@
                 <el-col :span="24">
                     <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" 
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
-                    <template slot="optionButton" slot-scope="scope">
+                    <template slot="customMoreOption" slot-scope="scope">
                     <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">反馈</el-button>
                     </template>
                     
