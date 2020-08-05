@@ -137,11 +137,13 @@
                 v-bind:tableHeight="rightTableHeight"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
-                :isshowCustom="true"
                 condition=" status!='新建' or status is not null or status !=''"
                 @rowclick="rowClick"
-                :isEditProperty="false"
                 @selectchange="selectChange"
+                :isshowCustom="false"
+                :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 ></DataGrid>
         </el-row>
          <el-row>
@@ -176,8 +178,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
-                :isshowCustom="true"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @selectchange="selectChangeTransferDoc"
                 >
                     <template slot="sequee" slot-scope="scope">
@@ -216,8 +220,11 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
-                :isshowCustom="true"
+                :isShowMoreOption="false"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                :isShowChangeList="false"
+                :isshowicon="false"
                 @selectchange="relevantDocSelect"
                 ></DataGrid>
           
@@ -253,8 +260,10 @@
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
-                :isshowCustom="true"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>
