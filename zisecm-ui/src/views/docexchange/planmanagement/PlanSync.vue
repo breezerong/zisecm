@@ -275,16 +275,6 @@ export default {
           console.log(error);
         });
     },
-
-
-
-
-
-
-
-
-
-
       createNewPlan(){                   //新建方法
         let _self = this
         var m = new Map();
@@ -317,6 +307,9 @@ export default {
                 }})
             
             },
+            rowClick(row){
+              console.log(row)            
+              },
             syncing(){          //新建同步日志方法
             let _self = this;
             var m = [];

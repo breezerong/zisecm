@@ -80,12 +80,16 @@ public class StatusController extends ControllerAbstract{
 						
 					}
 					documentService.updateObject(getToken(), doc, null);
+					//
 					/**
 					 * if(判断状态){
 					 * 	OptionLogger.logger(detailService, doc, "动作", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 					 * }
 					 */
-					
+					if("审核中".equals(nextStatus)) {
+						OptionLogger.logger(detailService, doc, "提交", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+					}
+					//
 				}else if("图文传真,会议纪要".contains(doc.getTypeName())){
 					documentService.updateObject(getToken(), doc, null);
 				}else {
