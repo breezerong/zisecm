@@ -108,7 +108,7 @@ export default {
       categoryVisible: false,
       currentIndex: -1,
       currentItem: "",
-      tableHeight: window.innerHeight - 115,
+      tableHeight: window.innerHeight - 135,
       form: {
         name: "",
         description: "",

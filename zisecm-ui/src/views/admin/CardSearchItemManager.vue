@@ -142,7 +142,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 115,
+      tableHeight: window.innerHeight - 135,
       inputkey: "",
       parentId: "",
       typeName: "",

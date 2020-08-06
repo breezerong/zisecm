@@ -86,6 +86,7 @@ export default {
           _self.$emit("input", _self.svalue);
         }else if(_self.defaultIsNull){
           _self.svalue = ""
+          _self.allvalue=""
           _self.$emit("input", _self.svalue);
         }
         _self.$emit("onLoadnDataSuccess",_self.svalue,_self.options)
