@@ -204,7 +204,8 @@
     "subICM":"ICM",
     "subPlan":"Plan",
     "subDC":"DC",
-    "subDesign":"DesignDoc"
+    "subDesign":"DesignDoc",
+    "iedfeedback":"IED Feedback"
 },
 "skin": {
     "Blue": "Blue",

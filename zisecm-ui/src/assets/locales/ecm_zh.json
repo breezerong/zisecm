@@ -201,7 +201,8 @@
     "subICM":"ICM",
     "subPlan":"计划",
     "subDC":"文函",
-    "subDesign":"设计文件"
+    "subDesign":"设计文件",
+    "iedfeedback":"IED反馈"
 },
 "skin": {
     "Blue": "天空蓝",

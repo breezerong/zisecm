@@ -1,7 +1,7 @@
 <template>
     <DataLayout>
         <template v-slot:header>
-            <el-dialog title='IED反馈' :visible.sync="feedbackVisual" >
+            <el-dialog :title="$t('application.iedfeedback')" :visible.sync="feedbackVisual" >
                 <el-form :model="forms.feedForm" :rules="rule" ref="feedForm" label-width="100px">
                 <el-form-item label="预计日期" prop="date" >
                 <el-date-picker type="date" placeholder="选择日期" v-model="forms.feedForm.date" style="width: 50%"></el-date-picker>
@@ -22,7 +22,7 @@
                      dataValueField="name" dataTextField="name" includeAll @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>                  
                 </el-form-item>
                 <el-form-item>
-                    <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('iedPublishedInputPlaceholder')"></el-input>
+                    <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.iedPublishedInputPlaceholder')"></el-input>
                     <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
