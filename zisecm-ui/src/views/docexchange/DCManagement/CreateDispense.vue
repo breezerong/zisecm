@@ -1,6 +1,7 @@
 <template>
-    <div class="app-container">
-        <!-- 创建分发 -->
+    <DataLayout>
+        <template v-slot:header>
+            <!-- 创建分发 -->
         <el-dialog title="分包商选择" :visible.sync="contractorCheckVisible" width="60%" >
             <el-checkbox-group v-model="checkList">
                 <template v-for="(itm,idx) in subContractor" >
@@ -84,23 +85,13 @@
                 <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
-        <el-row>
-            <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
-                <el-form :inline="true" :model="filters" @submit.native.prevent>
+		<el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-select v-model="filters.projectCode">
-                    <el-option label="所有项目" value></el-option>
-                    <el-option
-                        v-for="item in projects"
-                        :key="item+'_option'"
-                        :label="item"
-                        :value="item">
-                    </el-option>
-                    
-                    </el-select>
+                    <DataSelect v-model="filters.projectCode" :defaultIsNull="true" :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                    <el-select v-model="filters.docType">
+                    <el-select v-model="filters.docType" >
                     <!-- <el-option label="所有文函" value></el-option>
                     <el-option label="传递单" value="传递单"></el-option>
                     <el-option label="图文传真" value="图文传真"></el-option>
@@ -127,7 +118,8 @@
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/文函')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <MountFile :selectedItem="selectedItems" @refresh='searchItem'>{{$t('application.ReplaceDoc')}}</MountFile>
+                    <MountFile :selectedItem="selectedItems" @refresh='searchItem' 
+                    :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="success" v-on:click="beforeDispense()">分发</el-button>
@@ -138,17 +130,18 @@
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
+                    <el-button type="primary" :title="$t('application.ExportExcel')" v-on:click="exportData">{{$t('application.export')}}</el-button>
                 </el-form-item>
                 </el-form>
-            </el-col>
-        </el-row>
-        <el-row>
-            <DataGrid
+        </template>
+        <template v-slot:main="{layout}">
+            <el-row>
+                <el-col :span="24">
+                    <DataGrid
                 ref="mainDataGrid"
                 key="main"
                 dataUrl="/dc/getDocuments"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-130"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 condition=" (status='' or status='新建') and C_COMPANY='@company'"
@@ -157,9 +150,11 @@
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 ></DataGrid>
-        </el-row>
-         <el-row>
-      <el-tabs value="t01" v-model="selectedTabName">
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24">
+                    <el-tabs value="t01" v-model="selectedTabName">
         <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
           <el-row>
             <el-col :span="24">
@@ -184,7 +179,7 @@
                 ref="transferDoc"
                 key="transferDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
@@ -216,7 +211,7 @@
                 ref="relevantDoc"
                 key="relevantDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
@@ -248,7 +243,7 @@
                 ref="attachmentDoc"
                 key="attachmentDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
@@ -257,8 +252,10 @@
                 ></DataGrid>
         </el-tab-pane>
       </el-tabs>
-    </el-row>
-    </div>
+                </el-col>
+            </el-row>
+        </template>
+    </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
@@ -266,6 +263,8 @@ import DataGrid from "@/components/DataGrid";
 import BatchImport from '@/components/controls/ImportDocument';
 import ExcelUtil from '@/utils/excel.js'
 import MountFile from '@/components/MountFile.vue';
+import DataSelect from '@/components/ecm-data-select'
+import DataLayout from '@/components/ecm-data-layout'
 export default {
     name: "Submissiondc",
     data(){
@@ -538,9 +537,11 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" (status='' or status='新建')";
+            let key=" (status='' or status='新建') and C_COMPANY='@company' ";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
+            }else{
+                key+=" and C_PROJECT_NAME = '@project'";
             }
             if(_self.filters.docType!=''){
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
@@ -944,7 +945,9 @@ export default {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
         MountFile:MountFile,
-        BatchImport:BatchImport
+        BatchImport:BatchImport,
+        DataSelect:DataSelect,
+        DataLayout:DataLayout
     }
 }
 </script>
