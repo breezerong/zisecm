@@ -237,8 +237,6 @@ export default{
 	
 }
 .prob-cre{
-	background:#b4daffd8;
-	box-shadow: 10px 10px 5px grey;
 	width: 50%;
 	margin: 0 auto;
 	border-color: rgb(82, 82, 82);

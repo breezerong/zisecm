@@ -202,7 +202,10 @@
     "subPlan":"计划",
     "subDC":"文函",
     "subDesign":"设计文件",
-    "iedfeedback":"IED反馈"
+    "iedfeedback":"IED反馈",
+    "feedback":"反馈",
+    "EstimDate":"预计日期",
+    "ProgIntro":"进展说明"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -376,7 +379,9 @@
     "operationSuccess":"操作成功",
     "hasnoPermssion":"您没有权限",
     "inputQuestionLimit":"查询字段范围：标题",
-    "iedPublishedInputPlaceholder":"外部编码、内部编码和中文标题"
+    "iedPublishedInputPlaceholder":"外部编码、内部编码和中文标题",
+    "publishedChangeForY":"状态显示为‘Y’为不可变更项，请取消此选项",
+    "publishedChangeForChanging":"变更中选项不能再次变更，请取消此选项"
 },
 "field": {
     "indexNumber":"序号",
