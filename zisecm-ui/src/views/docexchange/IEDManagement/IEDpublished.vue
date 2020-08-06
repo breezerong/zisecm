@@ -104,7 +104,8 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false
+                    isshowicon:false,
+                    isEditProperty:false
                 },
                 tfDg:{
                     gridViewName:"TransferGrid",
@@ -114,7 +115,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
-                    tableHeight:"350"
+                    isEditProperty:false
                 },
             },
             tabs:{
