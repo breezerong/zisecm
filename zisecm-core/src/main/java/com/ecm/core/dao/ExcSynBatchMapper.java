@@ -3,6 +3,8 @@ package com.ecm.core.dao;
 import java.util.List;
 import java.util.Map;
 import com.ecm.core.entity.ExcSynBatch;
+import com.ecm.core.entity.Pager;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 /**
@@ -32,6 +34,8 @@ public interface ExcSynBatchMapper {
 	
 	List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
 	
-	List<ExcSynBatch> selectByCondition(@Param(value="condition")String condition);
+	List<ExcSynBatch> selectByCondition(Pager pager, @Param(value="condition")String condition);
+	
+	List<ExcSynBatch> getByCondition(@Param(value="condition")String condition);
     
 }

@@ -1,6 +1,8 @@
 package com.ecm.icore.service;
 
 import com.ecm.core.entity.ExcSynBatch;
+import com.ecm.core.entity.Pager;
+
 import java.util.List;
 
 /**
@@ -14,7 +16,9 @@ import java.util.List;
 public interface IExcSynBatchService {
 	public List<ExcSynBatch> getAllObject(String token);
 	
-	public List<ExcSynBatch> selectByCondition(String condition);
+	public List<ExcSynBatch> getByCondition(String condition);
+	
+	public List<ExcSynBatch> selectByCondition(Pager pager, String condition);
 	
 	public ExcSynBatch getObjectById(String id);
 	

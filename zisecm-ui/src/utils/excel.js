@@ -6,7 +6,7 @@ var excel = {
     }
    */
   exportTC: function (map, url) {
-    axios.post(dataUrl, JSON.stringify(m), { responseType: "blob" }).then(function (res) {
+    axios.post(url, JSON.stringify(map), { responseType: "blob" }).then(function (res) {
       console.log(res)
       let fileName = res.headers["content-disposition"].split(";")[1].split("=")[1].replace(/\"/g, "");
       let type = res.headers["content-type"];
