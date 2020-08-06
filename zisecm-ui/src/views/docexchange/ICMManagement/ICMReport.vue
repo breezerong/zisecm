@@ -2,7 +2,7 @@
     <DataLayout>
         <template v-slot:header>
           <el-row>
-            <el-form :inline="true" :model="filters">
+            <el-form :inline="true">
               <el-form-item>
                  <DataSelect v-model="icmReportStatistc" dataUrl="/exchange/project/myproject" 
                     dataValueField="name" dataTextField="name" includeAll></DataSelect>

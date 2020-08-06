@@ -89,7 +89,7 @@ export default {
                     isShowMoreOption:false
                 },
                 rfDg:{
-                    gridViewName:"IEDGrid",
+                    gridViewName:"IEDRelationGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,

@@ -196,7 +196,12 @@
     "exportDate":"执行时间",
     "importDate":"完成时间",
     "status":"状态",
-    "errorMessage":"错误信息"
+    "errorMessage":"错误信息",
+    "subIED":"IED",
+    "subICM":"ICM",
+    "subPlan":"计划",
+    "subDC":"文函",
+    "subDesign":"设计文件"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -368,7 +373,8 @@
     "ApplySuccess":"申请成功",
     "ApplyFaild":"申请失败",
     "operationSuccess":"操作成功",
-    "hasnoPermssion":"您没有权限"
+    "hasnoPermssion":"您没有权限",
+    "inputQuestionLimit":"查询字段范围：标题"
 },
 "field": {
     "indexNumber":"序号",

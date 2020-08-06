@@ -199,7 +199,12 @@
     "exportDate":"Export Date",
     "importDate":"Import Date",
     "status":"Status",
-    "errorMessage":"Error Message"
+    "errorMessage":"Error Message",
+    "subIED":"IED",
+    "subICM":"ICM",
+    "subPlan":"Plan",
+    "subDC":"DC",
+    "subDesign":"DesignDoc"
 },
 "skin": {
     "Blue": "Blue",
@@ -347,7 +352,8 @@
     "ApplySuccess":"Apply Success",
     "ApplyFaild":"Apply Faild",
     "operationSuccess":"Operation Success",
-    "hasnoPermssion":"You have no permission."
+    "hasnoPermssion":"You have no permission.",
+    "inputQuestionLimit":"Limited in Title"
 },
 "field": {
     "indexNumber":"S/N",
