@@ -42,6 +42,7 @@ import com.ecm.portal.archive.services.ArchiveRelationService;
 import com.ecm.portal.archive.services.ImportService;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.core.service.ExcSynBatchService;
+import com.ecm.core.service.ExcSynDetailService;
 
 @RestController
 
@@ -50,6 +51,10 @@ public class ExcSynBatchController  extends ControllerAbstract {
 	private ExcSynBatchService batchService;
 	@Autowired
 	private DocumentService documentService;
+	@Autowired
+	private ExcSynDetailService detailService;
+	
+	
 	
 	@RequestMapping(value = "/exchange/ied/getBatch", method = RequestMethod.POST)
 	@ResponseBody

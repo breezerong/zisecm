@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
@@ -20,6 +21,7 @@ import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -36,6 +38,11 @@ public class ICMController  extends ControllerAbstract  {
 	
 	@Autowired
 	private FolderPathService folderPathService;
+	
+	
+	@Autowired
+	private ExcSynDetailService detailService;
+	
 	
 	@RequestMapping(value = "/exchange/ICM/newICM", method = RequestMethod.POST)
 	@ResponseBody
@@ -79,6 +86,7 @@ public class ICMController  extends ControllerAbstract  {
 		temp = documentService.getObjectById(getToken(), ids.get(i));
 		temp.addAttribute("C_PROCESS_STATUS", "已确认");
 		documentService.updateObject(getToken(), temp, null);	
+		OptionLogger.logger(detailService, temp, "反馈确认", "CNPE");
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
