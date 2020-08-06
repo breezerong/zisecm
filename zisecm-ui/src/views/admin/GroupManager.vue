@@ -265,7 +265,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 125,
+      tableHeight: window.innerHeight - 135,
       inputkey: "",
       loading: false,
       dialogVisible: false,

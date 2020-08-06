@@ -94,7 +94,7 @@ export default {
       dialogVisible: false,
       listDialogVisible: false,
       listtableHeight: window.innerHeight - 420,
-      tableHeight: window.innerHeight - 115,
+      tableHeight: window.innerHeight - 135,
       form: {
         processId: "",
         processName: "",
