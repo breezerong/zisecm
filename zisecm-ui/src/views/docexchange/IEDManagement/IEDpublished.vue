@@ -1,18 +1,18 @@
 <template>
     <DataLayout>
         <template v-slot:header>
-            <el-dialog :title="$t('application.iedfeedback')" :visible.sync="feedbackVisual" >
+            <el-dialog :title="$t('application.iedfeedback')" :visible.sync="feedbackVisual" width="300">
                 <el-form :model="forms.feedForm" :rules="rule" ref="feedForm" label-width="100px">
-                <el-form-item label="预计日期" prop="date" >
-                <el-date-picker type="date" placeholder="选择日期" v-model="forms.feedForm.date" style="width: 50%"></el-date-picker>
+                <el-form-item :label="$t('application.EstimDate')" prop="date" >
+                <el-date-picker type="date" :placeholder="$t('application.selectDate')" v-model="forms.feedForm.date"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="进展说明" prop="comment">
-                <el-input type="textarea" v-model="forms.feedForm.comment" style="width: 50%;"></el-input>
+                <el-form-item :label="$t('application.ProgIntro')" prop="comment">
+                <el-input type="textarea" v-model="forms.feedForm.comment"></el-input>
                 </el-form-item>   
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                 <el-button @click="feedbackVisual = false">{{$t('application.cancel')}}</el-button>
-                <el-button type="primary" @click="submit('feedForm')">确 定</el-button>
+                <el-button type="primary" @click="submit('feedForm')">{{$t('application.ok')}}</el-button>
                 </div>
             </el-dialog>
 
@@ -39,10 +39,10 @@
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" 
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-100" 
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
                     <template slot="customMoreOption" slot-scope="scope">
-                    <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">反馈</el-button>
+                    <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
                     </template>
                     
                     </DataGrid>
@@ -52,13 +52,13 @@
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.relevant')" name="relationFiles">
-                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-140"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.designdoc')" name="designFile">
-                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="layout.height/2-140"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.transmitaldoc')" name="transmitals">
-                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="layout.height/2-140"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -86,7 +86,8 @@ export default {
                     isshowCustom:true,
                     isshowicon:false,
                     isInitData:false,
-                    isShowMoreOption:false
+                    isShowMoreOption:false,
+                    isEditProperty:false
                 },
                 rfDg:{
                     gridViewName:"IEDRelationGrid",
@@ -95,7 +96,9 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false
+                    isshowicon:false,
+                    isEditProperty:false,
+                    showOptions:'查看内容'
                 },
                 dfDg:{
                     gridViewName:"DrawingGrid",
@@ -105,7 +108,8 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
-                    isEditProperty:false
+                    isEditProperty:false,
+                    showOptions:'查看内容'
                 },
                 tfDg:{
                     gridViewName:"TransferGrid",
@@ -114,8 +118,9 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false,
-                    isEditProperty:false
+                    isshowicon:true,
+                    isEditProperty:false,
+                    showOptions:'查看内容'
                 },
             },
             tabs:{
@@ -146,6 +151,7 @@ export default {
             typeName:"IED",
             selectedItems:[],
             changeEnable:false,
+            editPropAble:false,
             feedbackVisual:false,
             id:"",
         }
@@ -176,7 +182,15 @@ export default {
                         _self.changeEnable = true
                     }
                 })
+            }else{
+                user.roles.forEach(function(item){
+                    if(item==role){
+                        _self.tables.main.isEditProperty=true
+                        _self.tables.rfDg.isEditProperty=true
+                    }
+                })
             }
+            console.log(role)
         },
         onIEDChange(){
             if(this.selectedItems.length<1){
@@ -196,11 +210,13 @@ export default {
                 ids.push(item.ID)
             })
             if(include){
-                this.$message({ showClose: true, message: "状态显示为‘Y’为不可变更项，请取消此选项", duration: 2000, type: "warning"})
+                let msg = this.$t('message.publishedChangeForY')
+                this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
                 return
             }
             if(hasChanging){
-                this.$message({ showClose: true, message: "变更中选项不能再次变更，请取消此选项", duration: 2000, type: "warning"})
+                let msg = this.$t('message.publishedChangeForChanging')
+                this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
                 return
             }
             
@@ -277,7 +293,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
+            if(_self.forms.headForm.project != undefined){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
 

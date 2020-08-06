@@ -64,7 +64,8 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
-                    isInitData:false
+                    isInitData:false,
+                    isShowMoreOption:false,
                 }
             },
             forms:{
@@ -90,6 +91,7 @@ export default {
         },
         onSelectChange(val){
             this.forms.headForm.project = val
+            this.$refs.relationIEDGrid.itemDataList=[]
             this.search()
             this.tables.mainGrid.doLayout()
         },
@@ -117,15 +119,12 @@ export default {
             let param = {
                 condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") "
             }
+            _self.tables.mainGrid.data=[]
             axios.post(url,param).then(function(result){
                 _self.tables.mainGrid.data = result.data.data
-                console.log("[Gantt.search]")
                 _self.tables.mainGrid.startDate = result.data.startDate
-                _self.tables.mainGrid.endDate = result.data.endDate
-                
+                _self.tables.mainGrid.endDate = result.data.endDate                
                 _self.tables.mainGrid.enabled=true
-                console.log(result.data.startDate)
-                console.log(result.data.endDate)
 
             }).catch(function(error){
                 console.log(error)

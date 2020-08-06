@@ -43,7 +43,7 @@
                     dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                    <el-input style="width:200px" v-model="inputValueNum" placeholder="请输入编码"></el-input>
+                    <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.pleaseInput')+$t('field.coding')"></el-input>
                     <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
@@ -74,7 +74,7 @@
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.InterfaceTransfer')" name="ICMPass">
                             <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-125"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.InterfaceOpinion')" name="ICMComments">
                             <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
@@ -109,6 +109,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isShowMoreOption:false,
+                    isEditProperty:false
                 },
                 ICMPass:{
                     gridViewName:"ICMPassGrid",
@@ -158,7 +159,9 @@ export default {
             roles1:false,
             roles2:false,
             dialogtypeName:'',
-            selectiteam:[]
+            selectiteam:[],
+            selectCondition:'',
+            searchCondition:''
         }
     },
     mounted(){
@@ -172,11 +175,17 @@ export default {
         }
         let roles=this.GetUserRoles('CNPE')
         if(roles==1){
+            this.tables.main.isEditProperty=true
             this.roles1=true
         }else if(roles==2){
             this.roles2=true
         }
         this.loadsuccess();
+    },
+    watch:{
+        inputValueNum:function(){
+            this.search();
+        }
     },
     methods: {
         loadsuccess(){
@@ -230,7 +239,7 @@ export default {
             let _self = this
             this.selectiteam = val
             if(_self.inputValueNum!=''){
-                _self.tables.main.condition=_self.tables.main.condition+" AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+                _self.tables.main.condition="C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
             }
             _self.$refs.mainDataGrid.condition=_self.tables.main.condition+"and C_PROJECT_NAME in ("+val+")";
             _self.$refs.mainDataGrid.loadGridData();
@@ -267,11 +276,12 @@ export default {
             this.$refs.ICMComments.itemDataList=[]
             let _self = this
             if(_self.selectiteam!=''){
-                _self.$refs.mainDataGrid.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"
+                _self.tables.main.condition="C_PROJECT_NAME='@project' and C_PROJECT_NAME in ("+this.selectiteam+")"
             }
             if(_self.inputValueNum!=''){
-                _self.$refs.mainDataGrid.condition+=" AND CODING LIKE '%"+ _self.inputValueNum+"%'"
+                _self.tables.main.condition+="C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'"
             }
+            _self.$refs.mainDataGrid.condition=_self.tables.main.condition
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
         },
@@ -398,9 +408,6 @@ export default {
                 formdata.append("uploadFile", file.raw, file.name);
             });
             return formdata;
-        },
-        selectChange(val){
-            this.selectedItems = val
         },
         //延误反馈
         icmfeedback(typeName, selectedItems) {
