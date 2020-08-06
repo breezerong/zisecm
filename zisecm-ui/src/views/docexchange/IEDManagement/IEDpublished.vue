@@ -39,7 +39,7 @@
         <template v-slot:main="{layout}">
             <el-row>
                 <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-115" 
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-100" 
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
                     <template slot="customMoreOption" slot-scope="scope">
                     <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
@@ -52,13 +52,13 @@
                 <el-col :span="24">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.relevant')" name="relationFiles">
-                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-140"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.designdoc')" name="designFile">
-                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="layout.height/2-140"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.transmitaldoc')" name="transmitals">
-                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="layout.height/2-140"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -97,7 +97,8 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
-                    isEditProperty:false
+                    isEditProperty:false,
+                    showOptions:'查看内容'
                 },
                 dfDg:{
                     gridViewName:"DrawingGrid",
@@ -107,7 +108,8 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
-                    isEditProperty:false
+                    isEditProperty:false,
+                    showOptions:'查看内容'
                 },
                 tfDg:{
                     gridViewName:"TransferGrid",
@@ -116,8 +118,9 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isInitData:false,
-                    isshowicon:false,
-                    isEditProperty:false
+                    isshowicon:true,
+                    isEditProperty:false,
+                    showOptions:'查看内容'
                 },
             },
             tabs:{
@@ -290,7 +293,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
+            if(_self.forms.headForm.project != undefined){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
 
