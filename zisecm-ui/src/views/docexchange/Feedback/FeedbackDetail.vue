@@ -5,21 +5,25 @@
 			:key="item.id"
 			 v-for="item in cre"
 			 style="margin-top:100px; border-radius: 10px;">
-				<el-col style="border-bottom-style:solid; ">
+			 	<el-col >
 					<div style="text-align: right;">
 						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">回复</el-button>
 					</div>
 				</el-col>
-				<el-col :span="row.left">
-					<div>创建人：{{item.CREATOR}}</div>
-                    <div>时间:{{item.CREATION_DATE}}</div>
-				</el-col>
-				<el-col :span="row.center">
-					<div style="border-bottom-style:solid;border-width: 1px;" class="div-left">标题：{{item.TITLE}}</div>
-					<div class="div-left">内容：{{item.C_CONTENT}}</div>
+				<el-col>
+					<el-row>
+						<el-col :span="row.left">
+							<div>创建人：{{item.CREATOR}}</div>
+							<div>时间:{{item.CREATION_DATE}}</div>
+						</el-col>
+						<el-col :span="row.center">
+							<div class="div-left">标题：{{item.TITLE}}</div>
+							<div class="div-left">内容：{{item.C_CONTENT}}</div>
+						</el-col>
+					</el-row>
 				</el-col>
 				<el-col>
-					<el-row class="prob-awns"
+					<el-row
 					:key="item.id"
 					v-for="item in awns.slice((currentPage-1)*10,currentPage*10)">
 						<el-col :span="row.left">
@@ -29,7 +33,7 @@
 							</div>
 						</el-col>
 						<el-col :span="row.center">
-							<div>{{item.C_CONTENT}}</div>
+							<div class="div-left" style="padding:10px">{{item.C_CONTENT}}</div>
 						</el-col>
 					</el-row>
 					<el-pagination
@@ -39,25 +43,25 @@
 						layout="total,prev, pager, next"
 						:total="awns.length">
 					</el-pagination>
-						
-					<el-row v-if="reable" style="padding:20px;border-top-style:solid;">
-							<el-col :span="row.left" style="text-align:left">问题回复：</el-col>
-							<el-form>
-								<el-row>
-									<el-col :span="24">
-										<el-input
-										type="textarea"
-										placeholder="问题描述不能少于5个字符"
-										v-model="form.content"
-										></el-input>
-									</el-col>
-								</el-row>
-							</el-form>
-							<el-button @click="saveFormData">确定</el-button>
-							<el-button @click="cancel">取消</el-button>
+				</el-col>
+				<el-col v-if="reable" style="padding:20px;">
+					<el-row>
+						<el-col :span="row.left" style="text-align:left;padding:20px;1px;1px;1px;">问题回复：</el-col>
+						<el-col :span="24" style="text-align: left;padding:5px;">
+							<el-input
+							type="textarea"
+							placeholder="问题描述不能少于5个字符"
+							v-model="form.content"
+							style="padding:20px;"
+							></el-input>
+						</el-col>
+						<el-col>
+							<el-button @click="saveFormData" size="medium">确定</el-button>
+							<el-button @click="cancel" size="medium">取消</el-button>
+						</el-col>
 					</el-row>
 				</el-col>
-				<el-col style="border-top-style:solid; ">
+				<el-col>
 					<div style="text-align: right;">
 						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">回复</el-button>
 					</div>
@@ -99,7 +103,6 @@ export default{
 		});
 	},
 	mounted(){
-		this.docId = this.$route.query.id;
 		this.init()
 	},
 	methods:{
@@ -131,6 +134,7 @@ export default{
 			};
 		},
 		init(){
+			this.docId = this.$route.query.id;
 			this.search()
 		},
 		//回复查看
@@ -186,6 +190,7 @@ export default{
 							duration: 2000,
 							type: "success"
 						});
+						_self.refresh()
 					} 
 					else{
 						_self.$message({
@@ -199,10 +204,9 @@ export default{
 					_self.$message("回复失败");
 					console.log(error);
 				});
-				this.form.content=""
-				this.search()
-				this.reable=false
-				this.replay=true
+				_self.form.content=""
+				_self.reable=false
+				_self.replay=true
 			}else{
 				this.$message("回复内容不少于5个字符");
 			}
@@ -227,8 +231,7 @@ export default{
 </script>
 <style scoped>
 .el-row{
-	/* border:solid; */
-	border-style:solid;
+	border-style:solid; 
 	border-width: 1px;
 	padding: 0px;
 	
@@ -241,9 +244,6 @@ export default{
 	border-color: rgb(82, 82, 82);
 }
 .prob-awns{
-	background:#b4daff57;
-	box-shadow: 10px 10px 5px grey;
-	width: 50%;
 	margin: 0 auto;
 	border-color: rgb(82, 82, 82);
 }
@@ -253,7 +253,6 @@ export default{
 }
 .el-col{
 	/* border-left-style:solid; */
-	border-width: 1px;
 	text-align: center;
 }
 

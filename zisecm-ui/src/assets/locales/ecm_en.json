@@ -353,7 +353,8 @@
     "ApplyFaild":"Apply Faild",
     "operationSuccess":"Operation Success",
     "hasnoPermssion":"You have no permission.",
-    "inputQuestionLimit":"Limited in Title"
+    "inputQuestionLimit":"Limited in Title",
+    "iedPublishedInputPlaceholder":"ExternalCode, InternalCode and Title"
 },
 "field": {
     "indexNumber":"S/N",

@@ -34,7 +34,7 @@ public class FeedbackController  extends ControllerAbstract  {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String id = args.get("C_FROM_CODING").toString();
 			String sql="select CREATOR,CREATION_DATE,C_CONTENT,TITLE from ecm_document where ";
-			sql+="FOLDER_ID='"+id+"' ORDER BY CREATION_DATE";
+			sql+="C_FROM_CODING='"+id+"' ORDER BY CREATION_DATE";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);

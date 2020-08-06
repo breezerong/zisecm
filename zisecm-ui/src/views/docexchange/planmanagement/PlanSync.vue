@@ -33,13 +33,12 @@
     <el-input v-model="P6form.C_PROJECT_NAME" width='120px' style="width:200px" disabled="true"></el-input>
     </el-form-item>
     </el-row>
-
     <el-form-item label="项目" :label-width="formLabelWidth">
-      <DataSelect v-model="P6form.C_value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name"
-      ></DataSelect>
+    <DataSelect v-model="P6form.C_value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name"
+    ></DataSelect>
     </el-form-item>
     <el-form-item label="分包商" :label-width="formLabelWidth" style="">
-      <el-select
+                <el-select
                     name="selectSubContractor"
                     v-model="P6form.C_TO"
                     placeholder="分包商"
@@ -48,7 +47,7 @@
                 <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
                 <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                 </div>
-        </el-select>
+    </el-select>
     </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -56,6 +55,13 @@
     <el-button type="primary" @click="createNewPlan()">确 定</el-button>
     </div>
     </el-dialog>
+    <el-dialog>
+
+    </el-dialog>
+
+
+
+
 
     <el-dialog title="从P6选择" :visible.sync="dialogP6visual">
        <el-row>
@@ -71,7 +77,7 @@
       </template>
       </el-table-column>
        <el-table-column v-for="item in P6columns" v-bind="item" :key="item.prop" highlight-current-row></el-table-column>
-       <el-table-column width="120">
+       <el-table-column width="120" fixed="left">
        <template slot-scope="scope">
         <el-button
           @click="selectP6(scope.row)"
@@ -181,7 +187,7 @@ export default {
                 isShowChangeList:false
                 }
                 },
-
+                IEDcontrast:false,
 
         P6columns:[
 						{prop:"C_PROJECT_ID",label:"项目号", width:'100'},
@@ -193,11 +199,6 @@ export default {
           C_CODING:'FSK45',
           C_PROJECT_ID:'MK25'
         }],
-        pages: {
-        page: 1,
-        size: 10,
-        total: 100
-      },
       P6form:{
         C_PROJECT_NAME:'',
         CODING:'',
@@ -207,9 +208,9 @@ export default {
       },
           value:'',
           dialogP6visual:false,
-            tabledata: [{
-            appName:'123',
-            }
+          tabledata: [{
+          appName:'123',
+          }
         ],
         form:[{
           id:''
@@ -218,7 +219,8 @@ export default {
             input:'',
             currentPage: 1,
             itemCount:0,
-            pageSize: 20,
+            pageSize: 10,
+            
             dialogCreatevisual:false,
             formLabelWidth: '120px',
             contractors:[],
@@ -229,6 +231,7 @@ export default {
                 active:"sync"
             },
             selectedItems:[],
+            ID:'',
         }
     },
     created(){
@@ -245,6 +248,42 @@ export default {
         this.getSubContractors()
     },
     methods: {
+    handleSizeChange(val){
+      this.pageSize = val;
+      this.freshtable()
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      //console.log('handleCurrentChange', val);
+      // this.$emit("pagechange", this.currentPage);
+      this.freshtable();
+    },
+    freshtable(){
+      let _self = this;
+      var m = new Map();
+      m.set("ID",this.ID)
+      m.set("pagesize",this.pageSize)
+      m.set("currentpage",this.currentPage-1)
+      //console.log(m)
+      axios
+        .post("/exchange/ied/getBatch", JSON.stringify(m)).then(function(response){
+          console.log(response.data.itemCount)
+           _self.tabledata = response.data.data
+           _self.itemCount = response.data.itemCount
+        }).catch(function(error) {
+          console.log(error);
+        });
+    },
+
+
+
+
+
+
+
+
+
+
       createNewPlan(){                   //新建方法
         let _self = this
         var m = new Map();
@@ -320,32 +359,15 @@ export default {
         getIndex($index) {
         //表格序号
         return (this.page.currentPage - 1) * this.page.pageSize + $index + 1
-      },
-      handleSizeChange(val) {
-      this.pageSize = val;
-      localStorage.setItem("docPageSize", val);
-      //console.log('handleSizeChange', val);
-      // this.$emit("pagesizechange", this.pageSize);
-      this.freshtable();
-      },  
-                        
-      handleCurrentChange(val) {
-      this.currentPage = val;
-      //console.log('handleCurrentChange', val);
-      // this.$emit("pagechange", this.currentPage);
-      this.freshtable();
-    },
+      }, 
     rowClick(row){
+      console.log(row)
       let _self = this;
       var m = new Map();
+      this.ID = row['ID']
       m.set("ID",row['ID']);
-       axios
-        .post("/exchange/ied/getBatch", JSON.stringify(m)).then(function(response){
-           _self.tabledata = response.data.data
-           
-        }).catch(function(error) {
-          console.log(error);
-        });
+      m.set("pageSize",this.pageSize)
+      this.freshtable()
     },
      getSubContractors(){
         let _self = this   
