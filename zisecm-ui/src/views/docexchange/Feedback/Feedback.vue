@@ -9,21 +9,21 @@
     </el-dialog>
     <template v-slot:header>
       <el-form :inline="true">
-        <el-button v-text="iedNum" v-show="textShow" type="text" @click="iedType"></el-button>
-        <el-button v-text="icmNum" v-show="textShow" type="text" @click="icmType"></el-button>
-        <el-button v-text="planNum" v-show="textShow" type="text" @click="planType"></el-button>
-        <el-button v-text="dcNum" v-show="textShow" type="text" @click="dcType"></el-button>
-        <el-button v-text="designNum" v-show="textShow" type="text" @click="docType"></el-button>
+        <el-button type="text" @click="iedType">{{$t('application.subIED')}}({{options.iedNum.count}})</el-button>
+        <el-button type="text" @click="icmType">{{$t('application.subICM')}}({{options.icmNum.count}})</el-button>
+        <el-button type="text" @click="planType">{{$t('application.subPlan')}}({{options.planNum.count}})</el-button>
+        <el-button type="text" @click="dcType">{{$t('application.subDC')}}({{options.dcNum.count}})</el-button>
+        <el-button type="text" @click="docType">{{$t('application.subDesign')}}({{options.designNum.count}})</el-button>
       </el-form>
       <el-form :inline="true">
         <el-form-item>
-          <el-input style="width:200px" v-model="inputValueNum" placeholder="标题"></el-input>
+          <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.inputQuestionLimit')"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="FuzzySearch">查询</el-button>
+          <el-button type="primary" @click="FuzzySearch">{{$t('application.clientPermission1')}}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="beforeCreateDocItem('问题沟通')">新建</el-button>
+          <el-button type="primary" @click="beforeCreateDocItem('问题沟通')">{{$t('application.new')}}</el-button>
         </el-form-item>
       </el-form>
     </template>
@@ -71,16 +71,13 @@ export default {
       dialogtypeName: "",
       propertyVisible: false,
 
-      form: {
-        options: [{}],
+      options:{
+        iedNum:{count:""},
+        icmNum:{count:""},
+        planNum:{count:""},
+        dcNum:{count:""},
+        designNum:{count:""}
       },
-
-      textShow: true,
-      iedNum: "",
-      icmNum: "",
-      planNum: "",
-      dcNum: "",
-      designNum: "",
       inputValueNum: "",
 
       formLabelWidth: "120px",
@@ -88,6 +85,7 @@ export default {
   },
 
   mounted() {
+    this.language = localStorage.getItem("localeLanguage") || "zh-cn";
     this.loadStatistic();
   },
 
@@ -97,26 +95,26 @@ export default {
       _self.loading = true;
       var m = new Map();
 
-      _self.iedNum = "IED";
-      _self.icmNum = "ICM";
-      _self.planNum = "计划";
-      _self.dcNum = "文函";
-      _self.designNum = "设计文件";
+      let iedTy = "IED";
+      let icmTy = "ICM";
+      let planTy = "计划";
+      let dcNumTy = "文函";
+      let designTy = "设计文件";
 
-      m.set("iedType", _self.iedNum);
-      m.set("icmType", _self.icmNum);
-      m.set("planType", _self.planNum);
-      m.set("dcNum", _self.dcNum);
-      m.set("designType", _self.designNum);
+      m.set("iedType", iedTy);
+      m.set("icmType", icmTy);
+      m.set("planType", planTy);
+      m.set("dcNum", dcNumTy);
+      m.set("designType", designTy);
 
       axios
         .post("/exchange/ques/FeedBack", JSON.stringify(m))
         .then(function (response) {
-          _self.iedNum = "IED(" + response.data.iedst + ")";
-          _self.icmNum = "ICM(" + response.data.icmst + ")";
-          _self.planNum = "计划(" + response.data.planst + ")";
-          _self.dcNum = "文函(" + response.data.dcst + ")";
-          _self.designNum = "设计文件(" + response.data.designst + ")";
+          _self.options.iedNum.count = response.data.iedst;
+          _self.options.icmNum.count = response.data.icmst;
+          _self.options.planNum.count = response.data.planst;
+          _self.options.dcNum.count = response.data.dcst;
+          _self.options.designNum.count = response.data.designst;
           _self.loading = false;
         })
         .catch(function (error) {
@@ -273,6 +271,12 @@ export default {
       _self.$refs.feedbackGrid.loadGridData();
     },
   },
+
+  watch:{
+    '$store.state.app.language':function(){
+    }
+  },
+
   components: {
     ShowProperty: ShowProperty,
     DataGrid: DataGrid,
