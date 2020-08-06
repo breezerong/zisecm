@@ -205,7 +205,10 @@
     "subPlan":"Plan",
     "subDC":"DC",
     "subDesign":"DesignDoc",
-    "iedfeedback":"IED Feedback"
+    "iedfeedback":"IED Feedback",
+    "feedback":"Feedback",
+    "EstimDate":"Estim Date",
+    "ProgIntro":"Prog Intro"
 },
 "skin": {
     "Blue": "Blue",
@@ -355,7 +358,9 @@
     "operationSuccess":"Operation Success",
     "hasnoPermssion":"You have no permission.",
     "inputQuestionLimit":"Limited in Title",
-    "iedPublishedInputPlaceholder":"ExternalCode, InternalCode and Title"
+    "iedPublishedInputPlaceholder":"ExternalCode, InternalCode and Title",
+    "publishedChangeForY":"The status is displayed as 'Y' and cannot be changed. Please cancel this option",
+    "publishedChangeForChanging":"'Changing' option cannot be changed again. Please cancel this option"
 },
 "field": {
     "indexNumber":"S/N",
