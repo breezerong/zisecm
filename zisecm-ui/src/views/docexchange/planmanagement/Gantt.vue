@@ -64,7 +64,8 @@ export default {
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
-                    isInitData:false
+                    isInitData:false,
+                    isShowMoreOption:false,
                 }
             },
             forms:{
@@ -90,6 +91,7 @@ export default {
         },
         onSelectChange(val){
             this.forms.headForm.project = val
+            this.$refs.relationIEDGrid.itemDataList=[]
             this.search()
             this.tables.mainGrid.doLayout()
         },

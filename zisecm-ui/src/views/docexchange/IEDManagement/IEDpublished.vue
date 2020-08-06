@@ -107,7 +107,8 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowicon:false,
-                    isEditProperty:false
+                    isEditProperty:false,
+                    showOptions:'查看内容'
                 },
                 tfDg:{
                     gridViewName:"TransferGrid",
