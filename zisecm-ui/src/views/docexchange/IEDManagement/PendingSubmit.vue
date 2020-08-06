@@ -53,9 +53,9 @@
              @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
             <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
             <el-button type="primary" @click="search()" >{{$t('application.SearchData')}}</el-button>
-            <el-button type="success" @click="submit()">{{$t('application.Submit')}}</el-button>
             <el-button type="primary" @click="newArchiveItem('IED',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
             <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">{{$t('application.Import')}}</el-button>
+            <el-button type="success" @click="submit()">{{$t('application.Submit')}}</el-button>
              <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">{{$t('application.delete')}}</el-button>
             </el-row>
@@ -101,7 +101,7 @@
             <el-row>
                 <el-col :span="24">                   
                     <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" 
-                    isshowOption v-bind="tables.main":tableHeight="layout.height-180"
+                    isshowOption v-bind="tables.main":tableHeight="layout.height-161"
                     gridViewName="IEDGrid" 
                     @cellMouseEnter="cellMouseEnter"
                     @cellMouseleave="cellMouseleave"
@@ -138,7 +138,8 @@ export default {
                     isshowCustom:false,
                     isShowPropertyButton:true,
                     isShowMoreOption:false,
-                    isShowChangeList:false
+                    isShowChangeList:false,
+                    isshowicon:false
                 },
               status:'',
             },
@@ -201,7 +202,7 @@ export default {
             })
         },
 
-         getColumn(){
+        getColumn(){
              var _self = this
             axios.post("/exchange/ied/getColumn").then(function(response){
                  console.log(response.data)
@@ -466,9 +467,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            if(_self.value != undefined &&_self.value!='所有项目'){
-                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
-            }
+        
             let user = this.currentUser();
             if(user.userType==2 && user.company!=null){
                 k1+=" AND C_COMPANY='"+user.company +"'"

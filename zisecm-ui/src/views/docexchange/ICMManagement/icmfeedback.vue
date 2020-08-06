@@ -25,7 +25,7 @@
             </el-select>
             </el-form-item>
             <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
-            <el-form-item><el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button></el-form-item>
+            <el-form-item><el-button type="success" @click="submit()">{{$t('application.ok')}}</el-button></el-form-item>
             <el-form-item><el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button></el-form-item>
             <el-form-item><AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition></el-form-item>
             </el-form>
@@ -40,7 +40,7 @@
             isshowOption
             gridViewName="反馈确认"
             condition='TYPE_NAME="ICM" AND C_PROCESS_STATUS="新建"'
-            v-bind="tables.main":tableHeight="layout.height-180"
+            v-bind="tables.main":tableHeight="layout.height-166"
             @rowclick="rowClick" 
             @selectchange="selectChange"
            ></DataGrid>
@@ -71,6 +71,7 @@ export default {
                     isShowMoreOption:false,
                     isShowChangeList:false,
                     isInitData:false,
+                    isshowicon:false
                 },
                itemDataList: [],
                loading: false,

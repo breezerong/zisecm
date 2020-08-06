@@ -1,7 +1,7 @@
 <template>
   <el-select v-model="svalue" @change="sChange" filterable >
-    <el-option v-for="item in options" :key="item[valueField]" v-bind="item">
-    </el-option>
+    <el-option v-if="includeAll" :label="$t('application.all')" :value="allvalue"></el-option>
+    <el-option v-for="item in options" :key="item[valueField]" v-bind="item"></el-option>
   </el-select>
 </template>
 
@@ -37,9 +37,6 @@ export default {
     includeAll:{
       type:Boolean,
       default:false
-    },
-    allDataOptionText:{
-      type:String,default:"所有内容"
     },
     defaultIsNull:{
       type:Boolean,default:false
@@ -80,13 +77,12 @@ export default {
             }
             _self.allvalue+="'"+item[_self.dataValueField]+"'"
           })
-          _self.options.push({label:_self.allDataOptionText,value:_self.allvalue})
         }
         getOptions.forEach(function(item){
            _self.options.push({label:item[_self.dataTextField],value:"'"+item[_self.dataValueField]+"'"})
         })
         if(_self.includeAll && _self.defaultIsNull==false){
-          _self.svalue = _self.options[0].value
+          _self.svalue = _self.allvalue
           _self.$emit("input", _self.svalue);
         }else if(_self.defaultIsNull){
           _self.svalue = ""

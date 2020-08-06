@@ -1208,6 +1208,41 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			throw new EcmException("Document is locked by :" + doc.getLockOwner());
 		}
 	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void newRevisionTo(String token, String docId, Map<String, Object> attrMap, String toId, boolean isCurrent) throws Exception {
+		EcmDocument doc = this.getObjectById(token, docId);
+		if (doc == null) {
+			throw new EcmException("Document is not exits:" + docId);
+		}
+		EcmDocument toDoc = this.getObjectById(token, toId);
+		if (toDoc == null) {
+			throw new EcmException("Document is not exits:" + toId);
+		}
+		if (getPermit(token, docId) < ObjectPermission.WRITE_CONTENT) {
+			throw new NoPermissionException(
+					"User " + getSession(token).getCurrentUser().getUserName() + " has no read permission:" + docId);
+		}
+		if (getPermit(token, toId) < ObjectPermission.WRITE_CONTENT) {
+			throw new NoPermissionException(
+					"User " + getSession(token).getCurrentUser().getUserName() + " has no read permission:" + toId);
+		}
+		
+		if(attrMap != null) {
+			for(String key: attrMap.keySet()) {
+				doc.getAttributes().put(key, attrMap.get(key));
+			}
+		}
+		doc.addAttribute("VERSION_ID", toDoc.getAttributeValue("VERSION_ID"));
+		doc.addAttribute("SYSTEM_VERSION", toDoc.getSystemVersion()+1);
+		doc.setCurrent(isCurrent);
+		this.updateObject(token, doc, null);
+		if(isCurrent) {
+			toDoc.setCurrent(false);
+			this.updateObject(token, toDoc, null);
+		}
+	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)

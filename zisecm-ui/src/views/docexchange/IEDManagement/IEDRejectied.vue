@@ -21,7 +21,7 @@
             isshowOption
             gridViewName="IEDGrid"
             v-bind="tables.main"
-            :tableHeight="layout.height-180"
+            :tableHeight="layout.height-166"
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
             @rowclick="rowClick" 
@@ -52,7 +52,8 @@ export default {
                     isshowCustom:false,
                     isShowPropertyButton:true,
                     isShowMoreOption:false,
-                    isShowChangeList:false
+                    isShowChangeList:false,
+                    isshowicon:false
                 },
                itemDataList: [],
                loading: false,
