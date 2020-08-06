@@ -1,7 +1,7 @@
 <template>
   <DataLayout>
     <el-dialog :title="dialogName" :visible.sync="propertyVisible" width="80%">
-      <ShowProperty ref="ShowProperty" width="100%" itemid="1" v-bind:typeName="dialogtypeName"></ShowProperty>
+      <ShowProperty ref="ShowProperty" width="100%" itemId="1" v-bind:typeName="dialogtypeName"></ShowProperty>
       <div slot="footer" class="dialog-footer">
         <el-button @click="saveItem">{{$t('application.save')}}</el-button>
         <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
@@ -193,7 +193,8 @@ export default {
               });
               _self.propertyVisible = false;
               // _self.loadTransferGridData();
-              _self.$refs.mainDataGrid.loadGridData();
+              _self.$refs.feedbackGrid.loadGridData();
+              _self.loadStatistic();
             } else {
               _self.$message({
                 showClose: true,
@@ -208,7 +209,6 @@ export default {
             console.log(error);
           });
       }
-      _self.$refs.feedbackGrid.loadGridData();
     },
 
     showItemContent(indata) {
