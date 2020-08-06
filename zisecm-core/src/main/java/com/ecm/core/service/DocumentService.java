@@ -1211,7 +1211,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public EcmDocument checkIn(String token, String docId, EcmContent content, boolean isCurrent) throws Exception {
+	public EcmDocument checkIn(String token, String docId,Map<String, Object> attrMap, EcmContent content, boolean isCurrent) throws Exception {
 		EcmDocument doc = this.getObjectById(token, docId);
 		if (doc == null) {
 			throw new EcmException("Document is not exits:" + docId);
@@ -1221,6 +1221,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no read permission:" + docId);
 		}
 		IEcmSession session = getSession(token);
+		if(attrMap != null) {
+			for(String key: attrMap.keySet()) {
+				doc.getAttributes().put(key, attrMap.get(key));
+			}
+		}
 		doc.createId();
 		doc.setCreationDate(new Date());
 		doc.setCreator(session.getCurrentUser().getUserName());

@@ -1075,7 +1075,7 @@ public class EcmDcController extends ControllerAbstract {
 				en.setContentSize(uploadFile.getSize());
 				en.setInputStream(uploadFile.getInputStream());
 			}
-			documentService.checkIn(getToken(), id, en, isCurrent);
+			documentService.checkIn(getToken(), id,null, en, isCurrent);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
 			mp.put("code", ActionContext.FAILURE);

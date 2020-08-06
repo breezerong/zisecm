@@ -278,12 +278,14 @@ public interface IDocumentService {
 	 * 签入
 	 * @param token
 	 * @param docId 文档Id
+	 * @param attrMap 需要修改属性
 	 * @param content 电子文件，如果为空，从上一版继承主格式
 	 * @param isCurrent 是否当前版本
 	 * @return
 	 * @throws Exception
 	 */
-	EcmDocument checkIn(String token, String docId, EcmContent content, boolean isCurrent) throws Exception;
+	EcmDocument checkIn(String token, String docId, Map<String, Object> attrMap, EcmContent content, boolean isCurrent)
+			throws Exception;
 	/**
 	 * 获取所有版本文档
 	 * @param token
@@ -324,4 +326,5 @@ public interface IDocumentService {
 			throws AccessDeniedException, NoPermissionException;
 	boolean promote(String token, String id) throws NoPermissionException, AccessDeniedException, Exception;
 	boolean demote(String token, String id) throws NoPermissionException, AccessDeniedException, Exception;
+	
 }
