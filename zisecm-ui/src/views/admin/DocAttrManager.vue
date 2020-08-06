@@ -112,7 +112,7 @@ export default {
       loading: false,
       dialogVisible: false,
       isNew: false,
-      tableHeight: window.innerHeight - 115,
+      tableHeight: window.innerHeight - 135,
       form: {
         name: "",
         description: "",
