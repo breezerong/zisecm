@@ -73,13 +73,13 @@ public class FeedbackController  extends ControllerAbstract  {
 			doc.setAttributes(args);
 			doc.setAclName(Parentargs.getAclName());
 			doc.setFolderId(Parentargs.getFolderId());
-//			String id = documentService.newObject(getToken(), doc, null);
+			String id = documentService.newObject(getToken(), doc, null);
 			EcmDocument temp = new EcmDocument();
 			temp = documentService.getObjectById(getToken(), args.get("C_FROM_CODING").toString());
 			temp.addAttribute("C_ITEM_STATUS", "已回复");
-//			documentService.updateObject(getToken(), temp, null);
+			documentService.updateObject(getToken(), temp, null);
 			mp.put("code", ActionContext.SUCESS);
-//			mp.put("id", id);
+			mp.put("id", id);
 		}catch(AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
