@@ -68,16 +68,8 @@
             <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
                 <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-select v-model="filters.projectCode">
-                    <el-option label="所有项目" value></el-option>
-                    <el-option
-                        v-for="item in projects"
-                        :key="item+'_option'"
-                        :label="item"
-                        :value="item">
-                    </el-option>
-                    
-                    </el-select>
+                   <DataSelect v-model="filters.projectCode" defaultIsNull :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
@@ -276,6 +268,7 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import AddCondition from '@/views/record/AddCondition';
 import RejectButton from "@/components/RejectButton";
+import DataSelect from '@/components/ecm-data-select'
 import ExcelUtil from '@/utils/excel.js'
 export default {
     name: "Submissiondc",
@@ -533,7 +526,9 @@ export default {
             let _self=this;
             let key=" status!='新建' or status is not null or status !=''";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
+            }else{
+                key+=" and C_PROJECT_NAME = '@project'";
             }
             if(_self.filters.docType!=''){
                 key+=" and TYPE_NAME = '"+_self.filters.docType+"'";
@@ -732,6 +727,7 @@ export default {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
         AddCondition:AddCondition,
+        DataSelect:DataSelect,
         RejectButton:RejectButton
     }
 }

@@ -31,6 +31,22 @@ public class SynDetailService extends EcmObjectService<ExcSynDetail> implements 
 	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		
 		ExcSynDetail en = (ExcSynDetail)obj;
+		String ignoreCompany = "动力院";
+		String inCompany = "CNPE";
+		String toCompany = en.getToCompany();
+		//动力院发CNPE
+		if(inCompany.equalsIgnoreCase(toCompany)) {
+			if(getSession(token).getCurrentUser().getCompany().equals(ignoreCompany)) {
+				return null;
+			}
+		}
+		//CNPE发动力院
+		else if(ignoreCompany.equalsIgnoreCase(toCompany)) {
+			if(getSession(token).getCurrentUser().getCompany().equals(inCompany)) {
+				return null;
+			}
+		}
+		
 		if(StringUtils.isEmpty(en.getId())) {
 			en.createId();
 		}

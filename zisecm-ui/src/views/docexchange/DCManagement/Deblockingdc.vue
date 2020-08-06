@@ -6,16 +6,8 @@
             <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
                 <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-select v-model="filters.projectCode">
-                    <el-option label="所有项目" value></el-option>
-                    <el-option
-                        v-for="item in projects"
-                        :key="item+'_option'"
-                        :label="item"
-                        :value="item">
-                    </el-option>
-                    
-                    </el-select>
+                    <DataSelect v-model="filters.projectCode" defaultIsNull :includeAll="true" dataUrl="/exchange/project/myproject" 
+                    dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 
                 <el-form-item>
@@ -70,6 +62,7 @@ import DataGrid from "@/components/DataGrid";
 import BatchImport from '@/components/controls/ImportDocument';
 import ExcelUtil from '@/utils/excel.js';
 import AddCondition from '@/views/record/AddCondition';
+import DataSelect from '@/components/ecm-data-select'
 export default {
     name: "Submissiondc",
     data(){
@@ -246,7 +239,9 @@ export default {
             let _self=this;
             let key=" C_PROCESS_STATUS='申请解锁'";
             if(_self.filters.projectCode!=''){
-                key+=" and C_PROJECT_NAME = '"+_self.filters.projectCode+"'";
+                key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
+            }else{
+                key+=" and C_PROJECT_NAME = '@project'";
             }
             
             if(_self.filters.title!=''){
@@ -292,7 +287,8 @@ export default {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
         AddCondition:AddCondition,
-        BatchImport:BatchImport
+        BatchImport:BatchImport,
+        DataSelect:DataSelect,
     }
 }
 </script>

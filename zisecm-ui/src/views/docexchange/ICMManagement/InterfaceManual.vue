@@ -182,11 +182,6 @@ export default {
         }
         this.loadsuccess();
     },
-    watch:{
-        inputValueNum:function(){
-            this.search();
-        }
-    },
     methods: {
         loadsuccess(){
             if(this.currentUser().company!='CNPE'){
@@ -238,13 +233,7 @@ export default {
         onSelectChange(val){
             let _self = this
             this.selectiteam = val
-            if(_self.inputValueNum!=''){
-                _self.tables.main.condition="C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
-            }
-            _self.$refs.mainDataGrid.condition=_self.tables.main.condition+"and C_PROJECT_NAME in ("+val+")";
-            _self.$refs.mainDataGrid.loadGridData();
-            _self.$refs.ICMPass.itemDataList=[]
-            _self.$refs.ICMComments.itemDataList=[]
+            this.search()
         },
         //Excel下载
         exportData(typeName,gridViewName){
@@ -275,13 +264,9 @@ export default {
             this.$refs.ICMPass.itemDataList=[]
             this.$refs.ICMComments.itemDataList=[]
             let _self = this
-            if(_self.selectiteam!=''){
-                _self.tables.main.condition="C_PROJECT_NAME='@project' and C_PROJECT_NAME in ("+this.selectiteam+")"
-            }
-            if(_self.inputValueNum!=''){
-                _self.tables.main.condition+="C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'"
-            }
+            _self.tables.main.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"+"and C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
             _self.$refs.mainDataGrid.condition=_self.tables.main.condition
+            _self.tables.main.condition="TYPE_NAME='ICM' and C_PROJECT_NAME='@project'"
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
         },
