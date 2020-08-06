@@ -1,5 +1,43 @@
 <template>    
-        <DataLayout >    
+        <DataLayout >
+    <el-dialog 
+        title="IEDContrast"
+        :visible.sync="IEDcontrast"
+        @close="IEDcontrast = false"
+        width="80%">
+        <el-table
+        :data="ContrastData"
+        ref="IEDCon" row-key="id" >
+        <el-table-column
+        fixed
+        prop="C_IN_CODING"
+        label="内部编码"
+        width="150"
+        ></el-table-column>
+        <el-table-column
+        fixed
+        prop="CODING"
+        label="外部编码"
+        width="150"
+        ></el-table-column>
+        <el-table-column
+        fixed
+        prop="TITLE"
+        label="标题"
+        width="150"
+        ></el-table-column>
+        <el-table-column v-for="item in IEDcolumns" v-bind="item" :key="item"
+        :label="item.label"
+        :prop="item.attrName"></el-table-column>    
+        </el-table>
+         <div slot="footer" class="dialog-footer">
+         <el-button @click="IEDcontrast= false">{{$t('application.cancel')}}</el-button>
+         </div>
+        </el-dialog>
+
+
+
+
      <el-dialog title="驳回备注" :visible.sync="showDialog" width="80%" @close="showDialog=false">
      <el-input
             type="textarea"
@@ -69,10 +107,13 @@
                 <div slot="reference" >
             <span :style="(scope.data.row['C_ITEM_STATUS2']=='变更中')?{'background':'	#00FF00'}:''">{{scope.data.$index+1}}</span>
                 </div>
-                  
                          <span>{{scope.data.row.C_ITEM_STATUS2}}</span>
             </el-popover>
             </template>
+            <template slot="customMoreOption" slot-scope="scope">
+            <el-button type="primary" @click="goContrast(scope.data.row)" size="mini">对比</el-button>
+            </template>
+
            </DataGrid>
                 </el-col>
                 </el-row>
@@ -110,7 +151,12 @@ export default {
              Subcontractors:[{ 
                  name:'',
                 }],
-
+             IEDcolumns:[],
+            ContrastData:[{
+            C_IN_CODING:'',
+            CODING:'',
+            TITLE:'',
+            }],
             value:'所有项目',
             Subcontractor:'',
             input:'',
@@ -118,6 +164,8 @@ export default {
             rejectComment:"",
             showDialog:false,
             contractors:[],
+            id:"",
+            IEDcontrast:false,
         }
     },
     created(){
@@ -133,11 +181,39 @@ export default {
         }   
         this.getSubContractors()
     },
-    methods: {    
+    methods: { 
+        goContrast(row){
+            let _self = this
+            console.log(row)
+            this.IEDcontrast=true
+            this.id = row.ID
+            var m = new Map();
+            m.set("ID",this.id)
+            let formdata = new FormData();
+            formdata.append("metaData",JSON.stringify(m));
+             axios.post("/exchange/ied/iedContrast",formdata,{
+                'Content-Type': 'multipart/form-data'
+            }).then(function(response){
+                console.log(response.data)
+                _self.ContrastData=response.data
+                _self.getColumn()
+            })
+        },
+        getColumn(){
+             var _self = this
+            axios.post("/exchange/ied/getColumn").then(function(response){
+                 console.log(response.data)
+                _self.IEDcolumns=response.data
+            })
+        },
+
+        
+
+
         fresh(){
           let _self = this
         _self.$refs.mainDataGrid.loadGridData();
-       },
+        },
         getSubContractors(){
         let _self = this   
         let pm = new Map();
@@ -208,9 +284,7 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-           if(_self.value != undefined &&_self.value!='所有项目'){
-                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
-            }
+          
             if(_self.Subcontractor !='' ){
                 k1+=" AND C_COMPANY = '"+_self.Subcontractor+"'"
             }

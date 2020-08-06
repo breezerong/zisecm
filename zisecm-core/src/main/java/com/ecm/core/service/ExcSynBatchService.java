@@ -2,6 +2,7 @@ package com.ecm.core.service;
 
 import com.ecm.core.dao.ExcSynBatchMapper;
 import com.ecm.core.entity.ExcSynBatch;
+import com.ecm.core.entity.Pager;
 import com.ecm.icore.service.IExcSynBatchService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,14 @@ public class ExcSynBatchService  implements IExcSynBatchService {
 	private ExcSynBatchMapper mapper;
 
 	@Override
-	public List<ExcSynBatch> selectByCondition(String condition) {
-		return mapper.selectByCondition(condition);
+	public List<ExcSynBatch> selectByCondition(Pager pager, String condition) {
+		return mapper.selectByCondition(pager, condition);
+	}
+	
+	
+	@Override
+	public List<ExcSynBatch> getByCondition(String condition) {
+		return mapper.getByCondition( condition);
 	}
 	
 	@Override

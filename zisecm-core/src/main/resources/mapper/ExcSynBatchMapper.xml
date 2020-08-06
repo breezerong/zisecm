@@ -35,6 +35,16 @@
     from exc_syn_batch order by ID
   </select>
   
+  
+  <select id="getByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exc_syn_batch
+    where ${condition}
+  </select>
+  
+  
+  
   <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
