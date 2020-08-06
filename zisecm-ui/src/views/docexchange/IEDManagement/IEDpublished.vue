@@ -157,9 +157,7 @@ export default {
         }
     },
     mounted(){
-       
         this.init()
-        
     },
     methods: {
         async init(){
@@ -176,9 +174,9 @@ export default {
 
             let user = this.currentUser();
             let role = user.company+"_计划人员"
-            if(user.company!="CNPE"){
+            if(user.company!="CNPE"){               
                 user.roles.forEach(function(item){
-                    if(item==role){
+                    if(item=='分包商计划人员'){
                         _self.changeEnable = true
                     }
                 })
