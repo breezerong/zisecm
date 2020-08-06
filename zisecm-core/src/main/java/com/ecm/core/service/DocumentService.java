@@ -541,7 +541,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			case 3:// 布尔
 			{
 				fieldStr += key.toString() + ",";
-				if (args.get(key).toString().equals("true")) {
+				if (args.get(key).toString().equalsIgnoreCase("true")||args.get(key).toString().equalsIgnoreCase("1")){
 					valueStr += "1,";
 				} else {
 					valueStr += "0,";
