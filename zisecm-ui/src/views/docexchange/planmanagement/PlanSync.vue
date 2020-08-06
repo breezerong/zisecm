@@ -113,7 +113,7 @@
                 <el-table  
                 :data="tabledata"
                 style="width: 100%"
-                :height="layout.height/2-115"
+                :height="layout.height/2-124"
                 @row-click="onRowClick">
                     
         <el-table-column :label="$t('field.indexNumber')" key="#1" width="70">
@@ -184,7 +184,8 @@ export default {
                 isshowCustom:false,
                 isShowPropertyButton:true,
                 isShowMoreOption:false,
-                isShowChangeList:false
+                isShowChangeList:false,
+                isshowicon:false
                 }
                 },
                 IEDcontrast:false,

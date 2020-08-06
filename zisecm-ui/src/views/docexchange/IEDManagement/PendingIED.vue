@@ -58,18 +58,6 @@
                  <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
                  @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                  </el-form-item>
-                <el-form-item>  
-                <el-select
-                    name="selectSubContractor"
-                    v-model="Subcontractor"
-                    placeholder="'分包商'"
-                    style="display:block;"
-                >
-                <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
-                <el-option :label="name" :value="name" :key="nameIndex"></el-option>
-                </div>
-            </el-select>
-            </el-form-item>
           <el-form-item>  
           <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
           </el-form-item>
@@ -83,7 +71,7 @@
             <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             </el-form-item>
         <el-form-item>  
-        <el-button icon="el-icon-back" @click="clickShowDialog">驳回</el-button>
+        <el-button type="warning" @click="clickShowDialog">驳回</el-button>
         </el-form-item>
         </el-form>
         </template>
@@ -95,7 +83,7 @@
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
-            isshowOption v-bind="tables.main":tableHeight="layout.height-180"
+            isshowOption v-bind="tables.main":tableHeight="layout.height-167"
             gridViewName="IEDGrid" 
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
@@ -141,7 +129,8 @@ export default {
                     isshowCustom:false,
                     isShowPropertyButton:true,
                     isShowMoreOption:false,
-                    isShowChangeList:false
+                    isShowChangeList:false,
+                    isshowicon:false
                 },
                loading: false,
                status : '已完成',
@@ -283,10 +272,6 @@ export default {
                     orS+=item + " LIKE '%"+ _self.input+"%'"
                 })
                 k1+=" AND (" + orS + ")"
-            }
-          
-            if(_self.Subcontractor !='' ){
-                k1+=" AND C_COMPANY = '"+_self.Subcontractor+"'"
             }
              let user = this.currentUser();
 
