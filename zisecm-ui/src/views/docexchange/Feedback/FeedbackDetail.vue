@@ -1,59 +1,67 @@
 <template>
 	<div>
 		<template v-if="this.hasData" >
-			<div style="text-align: right;">
-				<el-button v-if="replay" @click="reAwnClick"  type="primary">回复</el-button>
-			</div>
-			<el-row class="prob-awns"
+			<el-row class="prob-cre"
 			:key="item.id"
-			 v-for="item in cre">
+			 v-for="item in cre"
+			 style="margin-top:100px; border-radius: 10px;">
+				<el-col style="border-bottom-style:solid; ">
+					<div style="text-align: right;">
+						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">回复</el-button>
+					</div>
+				</el-col>
 				<el-col :span="row.left">
 					<div>创建人：{{item.CREATOR}}</div>
                     <div>时间:{{item.CREATION_DATE}}</div>
 				</el-col>
 				<el-col :span="row.center">
-					<div style="border-bottom-style:solid;border-width: 1px;">标题：{{item.TITLE}}</div>
-					<div>内容：{{item.C_CONTENT}}</div>
+					<div style="border-bottom-style:solid;border-width: 1px;" class="div-left">标题：{{item.TITLE}}</div>
+					<div class="div-left">内容：{{item.C_CONTENT}}</div>
 				</el-col>
-			</el-row>
-			<el-row class="prob-awns"
-			:key="item.id"
-			 v-for="item in awns.slice((currentPage-1)*10,currentPage*10)">
-				<el-col :span="row.left">
-					<div>
-					<div>回复人:{{item.CREATOR}}</div>
-                    <div>时间:{{item.CREATION_DATE}}</div>
+				<el-col>
+					<el-row class="prob-awns"
+					:key="item.id"
+					v-for="item in awns.slice((currentPage-1)*10,currentPage*10)">
+						<el-col :span="row.left">
+							<div>
+							<div>回复人:{{item.CREATOR}}</div>
+							<div>时间:{{item.CREATION_DATE}}</div>
+							</div>
+						</el-col>
+						<el-col :span="row.center">
+							<div>{{item.C_CONTENT}}</div>
+						</el-col>
+					</el-row>
+					<el-pagination
+						@current-change="handleCurrentChange"
+						:current-page="currentPage"
+						hide-on-single-page
+						layout="total,prev, pager, next"
+						:total="awns.length">
+					</el-pagination>
+						
+					<el-row v-if="reable" style="padding:20px;border-top-style:solid;">
+							<el-col :span="row.left" style="text-align:left">问题回复：</el-col>
+							<el-form>
+								<el-row>
+									<el-col :span="24">
+										<el-input
+										type="textarea"
+										placeholder="问题描述不能少于5个字符"
+										v-model="form.content"
+										></el-input>
+									</el-col>
+								</el-row>
+							</el-form>
+							<el-button @click="saveFormData">确定</el-button>
+							<el-button @click="cancel">取消</el-button>
+					</el-row>
+				</el-col>
+				<el-col style="border-top-style:solid; ">
+					<div style="text-align: right;">
+						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">回复</el-button>
 					</div>
 				</el-col>
-				<el-col :span="row.center">
-					<div>{{item.C_CONTENT}}</div>
-				</el-col>
-			</el-row>
-			<el-pagination
-				@current-change="handleCurrentChange"
-				:current-page="currentPage"
-				hide-on-single-page
-				layout="total,prev, pager, next"
-				:total="awns.length">
-			</el-pagination>
-				<div style="text-align: right;">
-					<el-button v-if="replay" @click="reAwnClick" type="primary" >回复</el-button>
-				</div>
-			<el-row v-if="reable" style="padding:20px;">
-					<div>问题回复：</div>
-					<el-form>
-						<el-row>
-							<el-col :span="24">
-								<el-input
-								type="textarea"
-								placeholder="问题描述不能少于5个字符"
-								v-model="form.content"
-								></el-input>
-							</el-col>
-						</el-row>
-					</el-form>
-					<el-button @click="saveFormData">确定</el-button>
-					<el-button @click="cancel">取消</el-button>
 			</el-row>
 		</template>
 		<template>
@@ -67,8 +75,8 @@ export default{
 	data(){
 		return{
 			row:{
-				left:4,
-				center:20
+				left:8,
+				center:16
 			},
 			form:{
 				content:""
@@ -91,8 +99,7 @@ export default{
 		});
 	},
 	mounted(){
-		this.docId = ""
-		// this.$route.query.id;
+		this.docId = this.$route.query.id;
 		this.init()
 	},
 	methods:{
@@ -156,7 +163,6 @@ export default{
 			.catch(function(error) {
 				console.log(error);
 			});
-			
 		},
 		//回复保存
 		saveFormData(){
@@ -221,13 +227,34 @@ export default{
 </script>
 <style scoped>
 .el-row{
-	border:solid;
+	/* border:solid; */
+	border-style:solid;
 	border-width: 1px;
 	padding: 0px;
+	
+}
+.prob-cre{
+	background:#b4daffd8;
+	box-shadow: 10px 10px 5px grey;
+	width: 50%;
+	margin: 0 auto;
+	border-color: rgb(82, 82, 82);
+}
+.prob-awns{
+	background:#b4daff57;
+	box-shadow: 10px 10px 5px grey;
+	width: 50%;
+	margin: 0 auto;
+	border-color: rgb(82, 82, 82);
+}
+.div-left{
+	border-left-style:solid;
+	border-width: 1px;
 }
 .el-col{
-	border-left-style:solid;
+	/* border-left-style:solid; */
 	border-width: 1px;
 	text-align: center;
 }
+
 </style>
