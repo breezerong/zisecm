@@ -214,9 +214,8 @@ export default {
     },
 
     showItemContent(indata) {
-      console.log(indata)
-      let condition = indata.ID
-      console.log(indata.ID)
+      let currentRow = indata.data.row;
+      let condition = currentRow.ID
       let href = this.$router.resolve({
         path: "/FeedBackDetail",
         query: {
