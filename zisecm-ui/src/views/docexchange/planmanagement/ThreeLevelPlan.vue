@@ -55,6 +55,8 @@ export default {
                     isshowOption:true,
                     isShowMoreOption:false,
                     isshowCustom:true,
+                    isshowicon:false,
+                    isEditProperty:false
                 },
                 rfDg:{
                     gridViewName:"IEDGrid",
@@ -64,7 +66,8 @@ export default {
                     isShowMoreOption:false,
                     isshowCustom:true,
                     isInitData:false,
-                    tableHeight:"350"
+                    tableHeight:"350",
+                    isEditProperty:false
                 }
             },
             tabs:{
@@ -92,10 +95,13 @@ export default {
             })
             
         }
+        if(this.currentUser().company=='CNPE'){
+            this.tables.main.isEditProperty=true
+        }
     },
     methods: {
        onDataGridRowClick:function(row){
-            this.$refs.rfDg.condition="C_WBS_CODING='"+row.C_WBS_CODING+"' AND C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
+            this.$refs.rfDg.condition="C_WBS_CODING='"+row.C_WBS_CODING+"'"
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
         },
