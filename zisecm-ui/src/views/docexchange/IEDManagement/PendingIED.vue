@@ -83,7 +83,7 @@
                     <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
-            isshowOption v-bind="tables.main":tableHeight="layout.height-167"
+            isshowOption v-bind="tables.main":tableHeight="layout.height-170"
             gridViewName="IEDGrid" 
             @cellMouseEnter="cellMouseEnter"
             @cellMouseleave="cellMouseleave"
