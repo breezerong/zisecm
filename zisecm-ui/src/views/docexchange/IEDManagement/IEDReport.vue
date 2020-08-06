@@ -1,13 +1,13 @@
 <template>
   <DataLayout>
-    <template v-slot:header style="height: auto;">
+    <template v-slot:header style="height: auto">
     </template>
     <template v-slot:main="{layout}">
-  <el-tabs v-model="activeName" @tab-click="handleClick">
+  <el-tabs v-model="activeName">
     <el-tab-pane label="已超期IED" name="first">
       <el-container>
         <el-header style="height:auto;">
-            <el-form :inline="true" :model="filters">
+            <el-form :inline="true">
               <el-form-item>
                  <DataSelect v-model="overdueIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
@@ -42,18 +42,13 @@
               <DataGrid
                 ref="mainDataGrid1"
                 data-url="/dc/getDocuments"
-                :isShowMoreOption="true"
-                showOptions="查看内容,升版"
+                :isShowMoreOption="false"
                 :isshowOption="true"
                 :isshowCustom="false"
                 :isshowicon="false"
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
                 :tableHeight="layout.height-210"
-                @cellMouseEnter="cellMouseEnter"
-                @cellMouseleave="cellMouseleave"
-                @rowclick="rowClick"
-                @selectchange="selectChange"
               ></DataGrid>
             </el-col>
           </el-row>
@@ -63,7 +58,7 @@
     <el-tab-pane label="未完成IED" name="second">
       <el-container>
         <el-header style="height:auto;">
-            <el-form :inline="true" :model="filters">
+            <el-form :inline="true">
               <el-form-item>
                  <DataSelect v-model="uncompletedIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
@@ -98,18 +93,13 @@
               <DataGrid
                 ref="mainDataGrid2"
                 data-url="/dc/getDocuments"
-                :isShowMoreOption="true"
-                showOptions="查看内容,升版"
+                :isShowMoreOption="false"
                 :isshowOption="true"
                 :isshowCustom="false"
                 :isshowicon="false"
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
                 :tableHeight="layout.height-210"
-                @cellMouseEnter="cellMouseEnter"
-                @cellMouseleave="cellMouseleave"
-                @rowclick="rowClick"
-                @selectchange="selectChange"
               ></DataGrid>
             </el-col>
           </el-row>
@@ -119,7 +109,7 @@
     <el-tab-pane label="已完成IED" name="third">
       <el-container>
         <el-header style="height:auto;">
-            <el-form :inline="true" :model="filters">
+            <el-form :inline="true">
               <el-form-item>
                  <DataSelect v-model="completedIED" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
@@ -154,18 +144,13 @@
               <DataGrid
                 ref="mainDataGrid3"
                 data-url="/dc/getDocuments"
-                :isShowMoreOption="true"
-                showOptions="查看内容,升版"
+                :isShowMoreOption="false"
                 :isshowOption="true"
                 :isshowCustom="false"
                 :isshowicon="false"
                 gridViewName="IEDReportGrid"
                 condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'" 
                 :tableHeight="layout.height - 210"
-                @cellMouseEnter="cellMouseEnter"
-                @cellMouseleave="cellMouseleave"
-                @rowclick="rowClick"
-                @selectchange="selectChange"
               ></DataGrid>
             </el-col>
           </el-row>
@@ -175,7 +160,7 @@
     <el-tab-pane label="IED完成情况统计" name="forth">
       <el-container>
         <el-header style="height:auto;">
-            <el-form :inline="true" :model="filters">
+            <el-form :inline="true">
               <el-form-item>
                  <DataSelect v-model="iedPlanStatistic" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll></DataSelect>
               </el-form-item>
@@ -256,23 +241,20 @@ export default {
       selectedItemId: "",
       startDate: '',
       endDate: '',
-
+      language:""
     };
   },
   created() {
     //window.addEventListener("resize",this.getHeight);
   },
   mounted() {
-    this.init()  
+    this.init()
+    this.language = localStorage.getItem("localeLanguage") || "zh-cn"
   },
   methods: {
     onLayoutResize(size){
       console.log(size)
       this.tables.main.height = size - 180    
-    },
-    
-    handleClick(tab, event) {
-      console.log(tab, event);
     },
 
     percentFormatter (row, column) {
@@ -496,16 +478,6 @@ export default {
       return jsonData.map(v => filterVal.map(j => v[j]))
     },
 
-    cellMouseEnter(row, column, cell, event) {
-      this.selectRow = row;
-      console.log(row);
-    },
-
-    rowClick(row) {
-      this.selectRow = row;
-      console.log("123123123");
-    },
-
     indexMethod(index) {
       return index * 1;
     }
@@ -520,9 +492,6 @@ export default {
 };
 </script>
 <style scoped>
-.el-header{
-    height: auto;
-}
 .el-form-item{
   margin-bottom: 0px;
 }

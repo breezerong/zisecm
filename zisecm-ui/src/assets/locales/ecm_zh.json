@@ -201,7 +201,8 @@
     "subICM":"ICM",
     "subPlan":"计划",
     "subDC":"文函",
-    "subDesign":"设计文件"
+    "subDesign":"设计文件",
+    "iedfeedback":"IED反馈"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -374,7 +375,8 @@
     "ApplyFaild":"申请失败",
     "operationSuccess":"操作成功",
     "hasnoPermssion":"您没有权限",
-    "inputQuestionLimit":"查询字段范围：标题"
+    "inputQuestionLimit":"查询字段范围：标题",
+    "iedPublishedInputPlaceholder":"外部编码、内部编码和中文标题"
 },
 "field": {
     "indexNumber":"序号",
