@@ -189,6 +189,8 @@
     "change":"变更",
     "checkFile":"查看文件",
     "relevant":"相关文件",
+    "designdoc":"设计文件",
+    "transmitaldoc":"传递单",
     "appName":"事件名称",
     "creationDate":"创建时间",
     "exportDate":"执行时间",
