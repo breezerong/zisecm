@@ -2,6 +2,7 @@ package com.ecm.cnpe.exchange.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,20 +122,29 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 	 */
 	public String upgradIED(String token,EcmDocument oldIED,EcmDocument doc) throws Exception {
 		
-		oldIED.setModifiedDate(new Date());
-		oldIED.setModifier(getCurrentUser(token).getUserName());
-		oldIED.setCurrent(false);
-		updateObject(token, oldIED, null);
-		//复制一条新IED并将其current改为true,版本改为新版本
-		oldIED.setCurrent(true);
-		oldIED.setRevision(doc.getRevision());
-		oldIED.addAttribute("C_SEND_DATE", doc.getAttributeValue("C_ITEM_DATE"));
-		oldIED.addAttribute("C_REF_CODING", doc.getAttributeValue("CODING"));
-		oldIED.addAttribute("C_ITEM_STATUS2", "Y");
-		String newDocId= newObject(token, oldIED, null);
-		contentService.copyContent(token, oldIED.getId(), newDocId, 1);
+//		oldIED.setModifiedDate(new Date());
+//		oldIED.setModifier(getCurrentUser(token).getUserName());
+//		oldIED.setCurrent(false);
+//		updateObject(token, oldIED, null);
+//		//复制一条新IED并将其current改为true,版本改为新版本
+//		oldIED.setCurrent(true);
+//		oldIED.setRevision(doc.getRevision());
+//		oldIED.addAttribute("C_SEND_DATE", doc.getAttributeValue("C_ITEM_DATE"));
+//		oldIED.addAttribute("C_REF_CODING", doc.getAttributeValue("CODING"));
+//		oldIED.addAttribute("C_ITEM_STATUS2", "Y");
+//		String newDocId= newObject(token, oldIED, null);
+//		contentService.copyContent(token, oldIED.getId(), newDocId, 1);
+//		
+		Map<String,Object> attrMap=new HashMap<String, Object>();
+		attrMap.put("REVISION",doc.getRevision());
+		attrMap.put("C_SEND_DATE", doc.getAttributeValue("C_ITEM_DATE"));
+		attrMap.put("C_REF_CODING", doc.getAttributeValue("CODING"));
+		attrMap.put("C_ITEM_STATUS2", "Y");
 		
-		return newDocId;
+		EcmDocument checkInDoc= checkIn(token, oldIED.getId(),attrMap, null, false);
+		
+		
+		return checkInDoc.getId();
 		
 	}
 	/**
@@ -142,25 +152,27 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 	 * @param token
 	 * @param newDoc
 	 * @return
-	 * @throws AccessDeniedException 
-	 * @throws EcmException 
-	 * @throws NoPermissionException 
+	 * @throws Exception 
 	 */
-	public boolean upgradDesignDocument(String token,EcmDocument newDoc) throws AccessDeniedException, NoPermissionException, EcmException {
+	public boolean upgradDesignDocument(String token,EcmDocument newDoc) throws Exception {
 		String coding =newDoc.getCoding();
 		String condition=" CODING='"+coding+"' and IS_CURRENT=1 and TYPE_NAME='设计文件'";
 		List<Map<String, Object>> result= getObjectMap(token, condition);
 		if(result!=null&&result.size()>0) {
 			EcmDocument oldDoc = new EcmDocument();
 			oldDoc.setAttributes(result.get(0));
-			oldDoc.setCurrent(false);
-			oldDoc.setModifiedDate(new Date());
-			oldDoc.setModifier(getCurrentUser(token).getUserName());
-			updateObject(token, oldDoc, null);
-			newDoc.setCurrent(true);
-			newDoc.setModifiedDate(new Date());
-			newDoc.setModifier(getCurrentUser(token).getUserName());
-			updateObject(token, newDoc, null);
+//			oldDoc.setCurrent(false);
+//			oldDoc.setModifiedDate(new Date());
+//			oldDoc.setModifier(getCurrentUser(token).getUserName());
+//			updateObject(token, oldDoc, null);
+//			newDoc.setSystemVersion(oldDoc.getSystemVersion()+1);
+//			newDoc.addAttribute("", value);
+//			newDoc.setCurrent(true);
+//			newDoc.setModifiedDate(new Date());
+//			newDoc.setModifier(getCurrentUser(token).getUserName());
+//			updateObject(token, newDoc, null);
+//			checkIn(token, oldDoc.getId(),newDoc.getAttributes(), null, false);
+			newRevisionTo(token, newDoc.getId(),  null,oldDoc.getId(), true);
 		}else {
 			newDoc.setCurrent(true);
 			newDoc.setModifiedDate(new Date());
