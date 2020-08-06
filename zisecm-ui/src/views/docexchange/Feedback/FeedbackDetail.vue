@@ -183,14 +183,14 @@ export default{
 					} 
 					else{
 						_self.$message({
-							message: "回复失败1",
+							message: "回复失败",
 							duration: 2000,
 							type: "warning"
 						});
 					}
 				})
 				.catch(function(error) {
-					_self.$message("回复失败2");
+					_self.$message("回复失败");
 					console.log(error);
 				});
 				this.form.content=""
