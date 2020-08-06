@@ -13,7 +13,7 @@
                 >{{$t('application.ok')}}</el-button>
             </div>
         </el-dialog>
-        <el-button icon="el-icon-back" @click="clickShowDialog">驳回</el-button>
+        <el-button type="warning" @click="clickShowDialog">驳回</el-button>
 
     </div>
 </template>

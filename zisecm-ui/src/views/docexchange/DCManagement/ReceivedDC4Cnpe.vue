@@ -1,6 +1,7 @@
 <template>
-    <div class="app-container">
-        <!-- 待接收文函 -->
+    <DataLayout>
+        <template v-slot:header>
+            <!-- 待接收文函 -->
         <!-- 创建附件 -->
         <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
             <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -64,9 +65,7 @@
                 <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
-        <el-row>
-            <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
-                <el-form :inline="true" :model="filters" @submit.native.prevent>
+		<el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                     <!-- <el-select v-model="filters.projectCode">
                     <el-option label="所有项目" value></el-option>
@@ -123,14 +122,15 @@
                     <el-button type="primary" v-on:click="getData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item> 
                 </el-form>
-            </el-col>
-        </el-row>
-        <el-row>
-            <DataGrid
+        </template>
+        <template v-slot:main="{layout}">
+            <el-row>
+                <el-col :span="24">
+                    <DataGrid
                 ref="mainDataGrid"
                 key="main"
                 dataUrl="/dc/getDocuments4Cnpe"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-130"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 :isshowCustom="false"
@@ -141,9 +141,11 @@
                 @rowclick="rowClick"
                 @selectchange="selectChange"
                 ></DataGrid>
-        </el-row>
-         <el-row>
-      <el-tabs v-model="selectedTabName">
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24">
+                    <el-tabs v-model="selectedTabName">
         <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
           <el-row>
             <el-col :span="24">
@@ -174,7 +176,7 @@
                 ref="transferDoc"
                 key="transferDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
@@ -211,7 +213,7 @@
                 ref="relevantDoc"
                 key="relevantDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
@@ -251,7 +253,7 @@
                 ref="attachmentDoc"
                 key="attachmentDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
@@ -263,14 +265,17 @@
                 ></DataGrid>
         </el-tab-pane>
       </el-tabs>
-    </el-row>
-    </div>
+                </el-col>
+            </el-row>
+        </template>
+    </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from '@/components/ecm-data-select';
 import ExcelUtil from '@/utils/excel.js'
+import DataLayout from '@/components/ecm-data-layout'
 export default {
     name: "Submissiondc",
     data(){
@@ -714,6 +719,7 @@ export default {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
         DataSelect:DataSelect,
+        DataLayout:DataLayout
     }
 }
 </script>
