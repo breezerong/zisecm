@@ -326,5 +326,21 @@ public interface IDocumentService {
 			throws AccessDeniedException, NoPermissionException;
 	boolean promote(String token, String id) throws NoPermissionException, AccessDeniedException, Exception;
 	boolean demote(String token, String id) throws NoPermissionException, AccessDeniedException, Exception;
+	/**
+	 * 
+	 * @Title: 合并到其他文件版本
+	 * @author Haihong Rong
+	 * @date:   2020年8月6日 下午2:34:44 
+	 * @Description:       
+	 * @param token
+	 * @param docId 文档ID
+	 * @param attrMap 需要修改的属性
+	 * @param toId 被合并文档ID
+	 * @param isCurrent 是否当前版本
+	 * @return
+	 * @throws Exception
+	 */
+	void newRevisionTo(String token, String docId, Map<String, Object> attrMap, String toId, boolean isCurrent)
+			throws Exception;
 	
 }
