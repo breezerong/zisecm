@@ -233,7 +233,10 @@ public class IEDController  extends ControllerAbstract  {
 	            &&!nowKey.equals("CODING")&&!nowKey.equals("TITLE")&&!nowKey.equals("ID")
 	            &&!nowKey.equals("SUB_TYPE")&&!nowKey.equals("REVISION")&&!nowKey.equals("FUStatus")
 	            &&!nowKey.equals("CREATOR")&&!nowKey.equals("OWNER_NAME")&&!nowKey.equals("C_IS_RELEASED")
-	            &&!nowKey.equals("VERSION_ID")&&!nowKey.equals("IS_CURRENT"))  {//若两个map中相同key对应的value不相等
+	            &&!nowKey.equals("VERSION_ID")&&!nowKey.equals("IS_CURRENT")&&!nowKey.equals("MODIFIER")
+	            &&!nowKey.equals("MODIFIED_DATE")&&!nowKey.equals("ACL_NAME")&&!nowKey.equals("LOCK_OWNER")
+	            &&!nowKey.equals("LOCK_CLIENT")&&!nowKey.equals("FOLDER_ID")&&!nowKey.equals("SYSTEM_VERSION")
+	            &&!nowKey.equals("C_BATCH_CODE")&&!nowKey.equals("TYPE_NAME"))  {//若两个map中相同key对应的value不相等
 	               //String key = (String) iter1.next();			//取key,下面取value,然后把结果不同的key&value put进对应的Map
 	              tempsave[i]=nowKey;
 	              i++;
