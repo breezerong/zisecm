@@ -35,23 +35,23 @@ public class QuestionStatisticController extends ControllerAbstract  {
 		String dcNum = this.getStrValue(args, "dcNum");
 		String designType = this.getStrValue(args, "designType");
 		
-		String sqlied = "select count(*) as iedcount from  ecm_document ed where TYPE_NAME = '"+
+		String sqlied = "select count(*) as iedcount from  ecm_document ed where SUB_TYPE = '"+
 				iedType +"' and C_ITEM_STATUS = '新建'";
-		String sqlicm = "select count(*) as iedcount from  ecm_document ed where TYPE_NAME = '"+
+		String sqlicm = "select count(*) as iedcount from  ecm_document ed where SUB_TYPE = '"+
 				icmType +"' and C_ITEM_STATUS = '新建'";
-		String sqlplan = "select count(*) as iedcount from  ecm_document ed where TYPE_NAME = '"+
+		String sqlplan = "select count(*) as iedcount from  ecm_document ed where SUB_TYPE = '"+
 				planType +"' and C_ITEM_STATUS = '新建'";
-		String sqldc = "select count(*) as iedcount from  ecm_document ed where TYPE_NAME = '"+
+		String sqldc = "select count(*) as iedcount from  ecm_document ed where SUB_TYPE = '"+
 				dcNum +"' and C_ITEM_STATUS = '新建'";
-		String sqldesign = "select count(*) as iedcount from  ecm_document ed where TYPE_NAME = '"+
+		String sqldesign = "select count(*) as iedcount from  ecm_document ed where SUB_TYPE = '"+
 				designType +"' and C_ITEM_STATUS = '新建'";
 		
-		String sqlStatistic = "select TYPE_NAME, ("+
+		String sqlStatistic = "select SUB_TYPE, ("+
 				sqlied+") as iedst, ("+
 				sqlicm+") as icmst, ("+
 				sqlplan+") as planst, ("+
 				sqldc+") as dcst, ("+
-				sqldesign+") as designst from ecm_document ed where TYPE_NAME = ed.TYPE_NAME and C_ITEM_STATUS = '新建'  group by TYPE_NAME";
+				sqldesign+") as designst from ecm_document ed where SUB_TYPE = ed.SUB_TYPE and C_ITEM_STATUS = '新建'  group by SUB_TYPE";
 		
 		try {
 			List<Map<String, Object>> listStatistic = documentService.getMapList(getToken(), sqlStatistic);

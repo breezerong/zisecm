@@ -109,6 +109,16 @@ const router = new Router({
       ]
     },
     {
+      meta: {
+        requireAuth: true,
+        permit: 3
+      },
+      path: "/FeedbackDetail",
+      name: "问题详情",
+      component: () =>
+        import(/* webpackChunkName: "home1" */ "@/views/docexchange/Feedback/FeedbackDetail.vue"),
+    },
+    {
       path: "/login",
       name: "login",
       component: () => import(/* webpackChunkName: "Login" */ "@/views/login")
