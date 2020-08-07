@@ -1,10 +1,8 @@
 <template>
-    <div class="app-container">
-        <!-- 待解锁文函 -->
-        
-        <el-row>
-            <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
-                <el-form :inline="true" :model="filters" @submit.native.prevent>
+<!-- 待解锁文函 -->
+    <DataLayout>
+        <template v-slot:header>
+            <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                     <DataSelect v-model="filters.projectCode" defaultIsNull :includeAll="true" dataUrl="/exchange/project/myproject" 
                     dataValueField="name" dataTextField="name"></DataSelect>
@@ -34,14 +32,15 @@
                     <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
-            </el-col>
-        </el-row>
-        <el-row>
-            <DataGrid
+        </template>
+        <template v-slot:main="{layout}">
+            <el-row>
+                <el-col :span="24">
+                    <DataGrid
                 ref="mainDataGrid"
                 key="main"
                 dataUrl="/dc/getDocuments"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height-166"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" C_PROCESS_STATUS='申请解锁'"
@@ -52,9 +51,11 @@
                 :isShowChangeList="false"
                 @selectchange="selectChange"
                 ></DataGrid>
-        </el-row>
-         
-    </div>
+                </el-col>
+            </el-row>
+            
+        </template>
+    </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
@@ -62,7 +63,8 @@ import DataGrid from "@/components/DataGrid";
 import BatchImport from '@/components/controls/ImportDocument';
 import ExcelUtil from '@/utils/excel.js';
 import AddCondition from '@/views/record/AddCondition';
-import DataSelect from '@/components/ecm-data-select'
+import DataSelect from '@/components/ecm-data-select';
+import DataLayout from '@/components/ecm-data-layout'
 export default {
     name: "Submissiondc",
     data(){
@@ -289,6 +291,7 @@ export default {
         AddCondition:AddCondition,
         BatchImport:BatchImport,
         DataSelect:DataSelect,
+        DataLayout:DataLayout
     }
 }
 </script>

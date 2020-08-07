@@ -1,6 +1,7 @@
 <template>
-    <div class="app-container">
-        <!-- 待提交文函 -->
+    <DataLayout>
+        <template v-slot:header>
+            <!-- 待提交文函 -->
         <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="90%" :before-close="handleClose">      
             <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
         </el-dialog>
@@ -96,9 +97,7 @@
                 <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
-        <el-row>
-            <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
-                <el-form :inline="true" :model="filters" @submit.native.prevent>
+		<el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                     <!-- <el-select v-model="filters.projectCode">
                     <el-option label="所有项目" value></el-option>
@@ -149,21 +148,22 @@
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <MountFile :selectedItem="selectedItems" @refresh='searchItem'>{{$t('application.ReplaceDoc')}}</MountFile>
+                    <MountFile :selectedItem="selectedItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
                 </el-form-item>
                 
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
+                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.export')}}</el-button>
                 </el-form-item>
                 </el-form>
-            </el-col>
-        </el-row>
-        <el-row>
-            <DataGrid
+        </template>
+        <template v-slot:main="{layout}">
+            <el-row>
+                <el-col :span="24">
+                    <DataGrid
                 ref="mainDataGrid"
                 key="main"
                 dataUrl="/dc/getDocuments"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-130"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DCTransferGrid"
                 condition=" (status='' or status is null or status='新建') and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
@@ -176,9 +176,11 @@
                 >
                     
                 </DataGrid>
-        </el-row>
-         <el-row>
-      <el-tabs  v-model="selectedTabName">
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="24">
+                    <el-tabs  v-model="selectedTabName">
         <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
           <el-row>
             <el-col :span="24">
@@ -206,7 +208,7 @@
                 ref="transferDoc"
                 key="transferDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='设计文件'"
@@ -242,7 +244,7 @@
                 ref="relevantDoc"
                 key="relevantDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="DrawingGrid"
                 condition=" and a.NAME='相关文件'"
@@ -276,22 +278,24 @@
                 ref="attachmentDoc"
                 key="attachmentDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="rightTableHeight"
+                v-bind:tableHeight="layout.height/2-160"
                 v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
-                :isShowMoreOption="false"
-		        :isshowCustom="false"
+                :isshowCustom="false"
                 :isEditProperty="false"
+                showOptions="查看内容"
                 :isShowChangeList="false"
-		        :isshowicon="false"
                 @selectchange="attachmentDocSelect"
                 ></DataGrid>
         </el-tab-pane>
       </el-tabs>
-    </el-row>
-    </div>
+                </el-col>
+            </el-row>
+        </template>
+    </DataLayout>
 </template>
+
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
@@ -300,6 +304,7 @@ import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
 import MountFile from '@/components/MountFile.vue';
 import AttachmentFile from "@/views/dc/AttachmentFile.vue"
+import DataLayout from '@/components/ecm-data-layout'
 export default {
     name: "Submissiondc",
     data(){
@@ -858,7 +863,8 @@ export default {
         DataSelect:DataSelect,
         BatchImport:BatchImport,
         MountFile:MountFile,
-        AttachmentFile:AttachmentFile
+        AttachmentFile:AttachmentFile,
+        DataLayout:DataLayout
     }
 }
 </script>
