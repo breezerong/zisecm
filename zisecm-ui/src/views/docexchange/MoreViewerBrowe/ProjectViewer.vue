@@ -640,6 +640,7 @@ export default {
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";
+                _self.advCondition='';
             }
             if(key!=''){
                 _self.$refs.projDesignDoc.condition=key;
@@ -657,6 +658,7 @@ export default {
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";
+                _self.advCondition='';
             }
             if(key!=''){
                 _self.$refs.PlanDataGrid.condition=key;
@@ -682,6 +684,7 @@ export default {
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";
+                _self.advCondition='';
             }
             if(key!=''){
                 _self.$refs.ICMDataGrid.condition=key;
@@ -702,6 +705,7 @@ export default {
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";
+                _self.advCondition='';
             }
             if(key!=''){
                 _self.$refs.mainDataGridIED.condition=key;
@@ -722,6 +726,7 @@ export default {
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";
+                _self.advCondition='';
             }
             if(key!=''){
                 _self.$refs.mainDataGrid.condition=key;

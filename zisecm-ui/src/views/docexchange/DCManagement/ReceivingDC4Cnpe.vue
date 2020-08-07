@@ -81,12 +81,14 @@
                     dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                    <el-select v-model="filters.docType">
-                    <el-option label="所有文函" value></el-option>
+                   <el-select v-model="filters.docType">
+                    <!-- <el-option label="所有文函" value></el-option>
                     <el-option label="传递单" value="传递单"></el-option>
                     <el-option label="图文传真" value="图文传真"></el-option>
                     <el-option label="会议纪要" value="会议纪要"></el-option>
-                    <el-option label="接口传递" value="接口传递"></el-option>
+                    <el-option label="接口传递" value="接口传递"></el-option> -->
+                    <el-option label="所有文函" value></el-option>
+                    <el-option v-for="(name,nameIndex) in childrenTypes" :key="'Type2_'+nameIndex" :label="name" :value="name"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>

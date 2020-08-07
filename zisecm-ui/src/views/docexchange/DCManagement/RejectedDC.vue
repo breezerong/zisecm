@@ -117,7 +117,7 @@
                     $refs.relevantDoc])">{{$t('application.Submit')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <MountFile :selectedItem="selectedItems" @refresh='searchItem'>{{$t('application.ReplaceDoc')}}</MountFile>
+                    <MountFile :selectedItem="selectedItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="warning" 
@@ -125,7 +125,7 @@
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
+                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.export')}}</el-button>
                 </el-form-item>
                 </el-form>
         </template>

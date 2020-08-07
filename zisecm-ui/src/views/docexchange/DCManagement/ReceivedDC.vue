@@ -546,6 +546,7 @@ export default {
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";
+                _self.advCondition='';
             }
             if(key!=''){
                 _self.$refs.mainDataGrid.condition=key;

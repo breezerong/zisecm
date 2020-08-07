@@ -95,7 +95,9 @@
                 </el-form-item>
                 <!--导出Excel-->
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
+                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">
+                        {{$t('application.export')}}
+                    </el-button>
                 </el-form-item>
                 <!-- 打包下载 -->
                <el-form-item>
@@ -529,7 +531,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status!='新建' or status is not null or status !=''";
+            let key=" (status!='新建' or status is not null or status !='')";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{
@@ -548,6 +550,7 @@ export default {
             }
             if(_self.advCondition!=''){
                 key+="and ("+_self.advCondition+")";
+                _self.advCondition='';
             }
             if(key!=''){
                 _self.$refs.mainDataGrid.condition=key;
