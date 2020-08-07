@@ -66,7 +66,8 @@
                      v-bind="tables.main" 
                      :tableHeight="layout.height/2-155" 
                      @selectchange="selectChange"
-                     @rowclick="onDataGridRowClick"></DataGrid>
+                     @rowclick="onDataGridRowClick"
+                     @onPropertiesSaveSuccess="onPropertiesSaveSuccess"></DataGrid>
                 </el-col>
             </el-row>
             <el-row>
@@ -500,6 +501,15 @@ export default {
                     console.log(error);
                 });
             }
+        },
+        onPropertiesSaveSuccess(data){
+            let formdata = new FormData();
+            formdata.append("metaData",JSON.stringify(data));
+            axios.post("/exchange/ICM/UpdataICMLogger",formdata)
+                .catch(function(error) {
+                    _self.$message(_self.$t('message.failured'));
+                    console.log(error);
+                });
         }
     },
     props: {
