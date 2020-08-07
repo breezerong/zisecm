@@ -274,7 +274,9 @@ export default {
                 k1+=" AND (" + orS + ")"
             }
              let user = this.currentUser();
-
+             if(_self.value != undefined &&_self.value!='所有项目'){
+                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
+            }
         console.log(k1)
         _self.$refs.mainDataGrid.condition=k1
         _self.fresh()
