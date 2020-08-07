@@ -348,6 +348,7 @@ export default {
           //console.log(JSON.stringify(response));
           if(code==1){
             _self.$emit('onSaved','new');
+            _self.$emit("onSaveSuccess",m);
           }
           else{
              _self.$message(_self.$t('message.newFailured'));
@@ -370,6 +371,7 @@ export default {
           //console.log(JSON.stringify(response));
           if(code==1){
             _self.$emit('onSaved','update');
+            _self.$emit("onSaveSuccess",m);
           }
           else{
              _self.$message(_self.$t('message.saveFailured'));
