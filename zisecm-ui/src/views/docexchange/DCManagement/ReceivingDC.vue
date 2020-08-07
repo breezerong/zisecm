@@ -312,7 +312,8 @@ export default {
     },
     created(){
         this.loadOptionList("项目","");
-        this.getTypeNamesByMainList("DCTypeConfig");
+        // this.getTypeNamesByMainList("DCTypeConfig");
+        this.getTypeNamesByMainList("DCTypeSubContractor");
     },
     mounted(){
         if(!this.validataPermission()){

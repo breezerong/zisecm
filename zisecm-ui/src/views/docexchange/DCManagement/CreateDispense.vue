@@ -319,7 +319,9 @@ export default {
     created(){
         this.loadOptionList("项目","");
         // this.subContractor=this.loadSelectOption("分包商","")
-        this.getTypeNamesByMainList("DCTypeConfig");
+        // this.getTypeNamesByMainList("DCTypeConfig");
+        this.getTypeNamesByMainList("DCTypeCNPE");
+        
     },
     mounted(){
         if(!this.validataPermission()){

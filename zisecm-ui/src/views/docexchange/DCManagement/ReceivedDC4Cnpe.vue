@@ -313,7 +313,8 @@ export default {
     },
     created(){
         this.loadOptionList("项目","");
-        this.getTypeNamesByMainList("DCTypeConfig");
+        // this.getTypeNamesByMainList("DCTypeConfig");
+        this.getTypeNamesByMainList("DCTypeCNPE");
     },
     mounted(){
         if(!this.validataPermission()){
