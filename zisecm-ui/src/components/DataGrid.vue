@@ -73,7 +73,10 @@
           v-bind:itemId="selectedItemId"
         ></ShowProperty>
         <div slot="footer" class="dialog-footer">
-          <el-button v-if="isEditProperty" @click="saveItem()">{{$t('application.save')}}</el-button>
+          <slot name="saveButton" :data="propertiesData">
+            <el-button v-if="isEditProperty" @click="saveItem()">{{$t('application.save')}}</el-button>
+          </slot>
+          
           <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
         </div>
       </el-dialog>
@@ -310,7 +313,8 @@ export default {
       sysColumnInfo:[],
       itemCount:0,
       formName:'',
-      currentLanguage:"zh-cn"
+      currentLanguage:"zh-cn",
+      propertiesData:[]
     };
   },
   props: {
@@ -380,7 +384,13 @@ export default {
     
   },
   methods: {
-    
+    getPropertiesData(){
+      this.$nextTick(()=>{
+        this.propertiesData=this.$ref.ShowProperty.getFormData();
+        
+      });
+      
+    },
     // 加载表格样式
     // loadGridInfo() {
     //   let _self = this;
@@ -847,6 +857,7 @@ export default {
               _self.$refs.ShowProperty.formName="";
           }
           _self.$refs.ShowProperty.loadFormInfo();
+          _self.getPropertiesData();
         }
       }, 10);
     },

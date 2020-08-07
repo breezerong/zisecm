@@ -238,6 +238,55 @@ export default {
       }
       return ret;
     },
+    getFormData(){
+      let _self = this;
+      var m = new Map();
+      var c;
+      for(c in _self.dataList){
+        let dataRows = _self.dataList[c].ecmFormItems;
+        var i;
+        for (i in dataRows) {
+          if(dataRows[i].attrName && dataRows[i].attrName !='')
+          {
+            if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+            {
+              var val = dataRows[i].defaultValue;
+              if(val && dataRows[i].isRepeat){
+                var temp = "";
+              // console.log(val);
+                for(let j=0,len=val.length;j<len;j++){
+                  temp = temp + val[j]+";";
+                  //console.log(temp);
+                }
+                temp = temp.substring(0,temp.length-1);
+                val = temp;
+                //console.log(val);
+              }
+              m.set(dataRows[i].attrName, val);
+            }
+          }
+        }
+      }
+      if(_self.myItemId!='')
+      {
+        m.set('ID',_self.myItemId);
+      }
+      if(_self.myTypeName!='')
+      {
+        m.set('TYPE_NAME',_self.myTypeName);
+        m.set('FOLDER_ID',_self.myFolderId);
+      }
+      let formdata = new FormData();
+      formdata.append("metaData",JSON.stringify(m));
+      
+      if(_self.file!="")
+      {
+        //console.log(_self.file);
+        formdata.append("uploadFile",_self.file.raw);
+      }
+      return formdata;
+    },
+
     saveItem()
     {
       let _self = this;
