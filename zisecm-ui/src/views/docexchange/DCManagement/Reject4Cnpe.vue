@@ -82,6 +82,13 @@
                     
                     </el-select>
                 </el-form-item>
+                <el-form-item style="width:100px;">
+                    <el-select v-model="filters.status">
+                    <el-option label="所有" value></el-option>
+                    <el-option label="已作废" value="已作废"></el-option>
+                    <el-option label="驳回" value="驳回"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item>
                     <el-input v-model="filters.title" :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')" @keyup.enter.native='searchItem'></el-input>
                 </el-form-item>
@@ -271,6 +278,7 @@ export default {
                 docType: "",
                 coding: "",
                 title: "",
+                status:"驳回",
                 limit: 10
             },
             projects:[],
@@ -507,7 +515,12 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" stauts='驳回' ";
+            let key="";
+            if(_self.filters.status!=''){
+                key=" stauts='"+_self.filters.status+"'";
+            }else{
+                 key=" (stauts='驳回' or stauts='已作废')";
+            }
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{

@@ -140,7 +140,7 @@ public class DocumentService4Cnpe extends DocumentService{
 		
 		
 		String sql="select a.ID from exc_transfer a,ecm_document b where a.doc_id=b.ID "
-				+ "and TO_NAME='"+userObj.getCompany()+"' and b.ID ='"+docId+"' ";
+				+" and b.ID ='"+docId+"' ";
 		
 		
 		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
@@ -185,8 +185,10 @@ public class DocumentService4Cnpe extends DocumentService{
 				this.updateObject(token, doc,null);
 			}
 			ExcTransfer excTransfer= getOneExcTransferByDocId(token, docId);
-			excTransfer.setStauts("已处理");
+			excTransfer.setStauts("已作废");
 			excTransferService.updateObject(excTransfer);
+//			String sql="update ecm_document set status='已作废' where id='"+docId+"'";
+//			ecmDocument.executeSQL(sql);
 		}
 		return true;
 		
