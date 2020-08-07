@@ -33,7 +33,7 @@
 							</div>
 						</el-col>
 						<el-col :span="row.center">
-							<div class="div-left" style="padding:10px">{{item.C_CONTENT}}</div>
+							<div class="div-left" style="padding:10px;">{{item.C_CONTENT}}</div>
 						</el-col>
 					</el-row>
 					<el-pagination
@@ -49,7 +49,7 @@
 						<el-col :span="row.left" style="text-align:left;padding:20px;1px;1px;1px;">问题回复：</el-col>
 						<el-col :span="24" style="text-align: left;padding:5px;">
 							<el-input
-							type="textarea"
+							type="textarea" rows="10"
 							placeholder="问题描述不能少于5个字符"
 							v-model="form.content"
 							style="padding:20px;"
@@ -248,10 +248,18 @@ export default{
 .div-left{
 	border-left-style:solid;
 	border-width: 1px;
+	text-align: left;
+	white-space: pre-line;
 }
 .el-col{
 	/* border-left-style:solid; */
 	text-align: center;
 }
+
+
+.textarea {
+  white-space: pre-line;  
+}
+
 
 </style>
