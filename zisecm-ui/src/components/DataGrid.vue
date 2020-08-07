@@ -68,6 +68,7 @@
         <ShowProperty
           ref="ShowProperty"
           @onSaved="onSaved"
+          @onSaveSuccess="onPropertiesSaveSuccess"
           width="100%"
           :typeName="typeName"
           v-bind:itemId="selectedItemId"
@@ -384,6 +385,9 @@ export default {
     
   },
   methods: {
+    onPropertiesSaveSuccess(props){
+      this.$emit("onPropertiesSaveSuccess",props)
+    },
     getPropertiesData(){
       this.$nextTick(()=>{
         this.propertiesData=this.$ref.ShowProperty.getFormData();
