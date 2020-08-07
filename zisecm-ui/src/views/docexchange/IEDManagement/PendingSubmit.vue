@@ -101,7 +101,7 @@
             <el-row>
                 <el-col :span="24">                   
                     <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" 
-                    isshowOption v-bind="tables.main":tableHeight="layout.height-161"
+                    isshowOption v-bind="tables.main":tableHeight="layout.height-163"
                     gridViewName="IEDGrid" 
                     @cellMouseEnter="cellMouseEnter"
                     @cellMouseleave="cellMouseleave"
@@ -389,7 +389,7 @@ export default {
                 _self.propertyVisible = false;
 
                 // _self.loadTransferGridData();
-                _self.$refs.mainDataGrid.conditon=_self.k2
+                //_self.$refs.mainDataGrid.conditon=_self.k2
                 _self.$refs.mainDataGrid.loadGridData();
                 
                 }
@@ -454,10 +454,11 @@ export default {
       console.log(this.selectedItems)
     },
     search(condition){
-         let _self = this
+        var k1
+        let _self = this
         let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
-        var k1="TYPE_NAME='IED' AND STATUS='新建' AND C_COMPANY='@company' "
+        var k1="TYPE_NAME='IED' AND STATUS='新建' "
           if(_self.input.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){
@@ -468,12 +469,13 @@ export default {
                 k1+=" AND (" + orS + ")"
             }
         
+             if(_self.value != undefined &&_self.value!='所有项目'){
+                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
+            }
             let user = this.currentUser();
             if(user.userType==2 && user.company!=null){
                 k1+=" AND C_COMPANY='"+user.company +"'"
             }
-            console.log(k1)
-        _self.k2=k1
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
     },
@@ -484,7 +486,7 @@ export default {
         
     },
         exportData(){
-            let _self = this
+            let _self =this
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
@@ -492,7 +494,7 @@ export default {
                 gridName:"IEDGrid",
                 lang:"zh-cn",
                 condition:_self.$refs.mainDataGrid.condition,
-                filename:"IED_Pending_Submit_"+fileDateStr+".xlsx",
+                filename:"IED_PendingSubmit_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)

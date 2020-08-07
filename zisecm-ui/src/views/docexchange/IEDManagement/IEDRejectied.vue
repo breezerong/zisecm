@@ -146,7 +146,7 @@ export default {
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
-                gridName:"IEDGrid",
+                gridName:"IEDRejectGrid",
                 lang:"zh-cn",
                 condition:_self.$refs.mainDataGrid.condition,
                 filename:"IED_Rejected_"+fileDateStr+".xlsx",
