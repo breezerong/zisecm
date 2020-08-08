@@ -16,16 +16,19 @@
     </userTask>
     <userTask id="jiaohe" name="校核" default="flow10" flowable:assignee="${jiaohe}" flowable:formFieldValidation="true">
       <extensionElements>
+        <flowable:taskListener event="create" delegateExpression="${StartBJSPExecutorListener}"></flowable:taskListener>
         <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
       </extensionElements>
     </userTask>
     <userTask id="shenhe" name="审核" default="flow11" flowable:assignee="${shenhe}" flowable:formFieldValidation="true">
       <extensionElements>
+        <flowable:taskListener event="create" delegateExpression="${StartBJSPExecutorListener}"></flowable:taskListener>
         <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
       </extensionElements>
     </userTask>
     <userTask id="pizhun" name="批准" default="flow13" flowable:assignee="${pizhun}" flowable:formFieldValidation="true">
       <extensionElements>
+        <flowable:taskListener event="create" delegateExpression="${StartBJSPExecutorListener}"></flowable:taskListener>
         <modeler:initiator-can-complete xmlns:modeler="http://flowable.org/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
       </extensionElements>
     </userTask>
