@@ -510,7 +510,10 @@ export default {
                     _self.$message(_self.$t('message.failured'));
                     console.log(error);
                 });
-        }
+        },
+        selectChange(val) {
+            this.selectedItems = val;
+        },
     },
     props: {
         
