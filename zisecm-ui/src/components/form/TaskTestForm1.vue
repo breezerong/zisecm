@@ -1,6 +1,6 @@
      <template>
   <div>
-    <el-form ref="taskForm" :model="taskForm" style="width:100%" >
+    <el-form  :model="taskForm" style="width:100%" >
       <el-row style="width:100%">
         <div >
            <el-col style="padding-top:3px;">
@@ -71,7 +71,7 @@ export default {
   components: {
     UserSelectInput: UserSelectInput
   },
-  name: "BorrwoForm",
+  name: "taskTestForm",
   data() {
     return {
       gridviewName: "borrowGrid",
@@ -87,20 +87,6 @@ export default {
       importdialogVisible:false,
        fileList:[],
      componentName: "borrow", 
-      taskForm: {
-        C_DRAFTER: sessionStorage.getItem("access-userName"),
-        C_DESC1: sessionStorage.getItem("access-department"),
-        TITLE: "",
-        SUB_TYPE: "在线浏览",
-        C_START_DATE: new Date(),
-        C_END_DATE: new Date(),
-        C_REVIEWER1: "",
-        C_REVIEWER2: "",
-        C_REVIEWER3: "",
-        C_COMMENT: "",
-        C_CREATION_UNIT: "",
-        STATUS: ""
-      },
       expireTimeOption: this.dateCheck(),
       defaultProps: {
         children: "children",
@@ -113,6 +99,7 @@ export default {
       currentRootGroupData: ""
    };
   },
+  
     props: {
       //输入框默认显示值
       formId: {
@@ -124,8 +111,8 @@ export default {
         default: ""
       },
       istask: {
-        type: String,
-        default: "0"
+        type: Number,
+        default: 0
       },
       processDefinitionId: {
         type: String,
@@ -136,8 +123,15 @@ export default {
         default: ""
       },
       formEditPermision: {
-        type: String,
-        default: "0"
+        type: Number ,
+        default: 0
+      },
+      taskForm:{
+        type: Object  ,
+        default: function () {
+            return {}
+        }
+
       }
     },
   created() {
@@ -153,7 +147,7 @@ export default {
   },
 
   methods: {
-    getApprovalUserList(){
+     getApprovalUserList(){
             let _self = this;
        var m = new Map();
       m.set("processDefinitionId", _self.processDefinitionId);

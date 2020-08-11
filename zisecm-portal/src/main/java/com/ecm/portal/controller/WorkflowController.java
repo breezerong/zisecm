@@ -165,7 +165,7 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = customWorkflowService.startWorkflow(getSession(), args);
+			result = customWorkflowService.terminateWorkflow(getSession(), args);
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

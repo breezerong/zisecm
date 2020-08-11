@@ -329,7 +329,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 
 			// 是否本部门文档
 			varMap.put("departmentDoc",
-					ecmObject.getAttributes().get("C_CREATION_UNIT").equals(ecmObject.getAttributes().get("C_DESC1")));
+					ecmObject.getAttributes().get("C_DEPARTMENT").equals(ecmObject.getAttributes().get("C_DESC1")));
 
 			// 批次文件是否有商密文件
 			String fileTopestSecurityLevel = varMap.get("fileTopestSecurityLevel") == null ? ""

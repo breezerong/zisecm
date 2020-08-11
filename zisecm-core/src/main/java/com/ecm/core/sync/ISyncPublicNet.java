@@ -6,5 +6,5 @@ public interface ISyncPublicNet {
 
 	boolean importData();
 
-	boolean exportData(String type) throws IOException;
+	boolean exportData(String type) throws IOException, Exception;
 }

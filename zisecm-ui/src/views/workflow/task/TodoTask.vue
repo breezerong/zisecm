@@ -27,12 +27,14 @@
       </el-form>
       <el-divider content-position="left">表单信息</el-divider>
      <taskTestForm1 
+           v-model="taskForm"
           :formId="form.formId"
-          :docId="currentData.docId"
+          :docId="form.formId"
           :istask="1"
           :processDefinitionId="currentData.processDefinitionId"
           :activityName="currentData.name"
          :formEditPermision="formEditPermision"
+         @click="click"
         ></taskTestForm1> 
       <el-divider content-position="left">流转意见</el-divider>
       <el-table :data="taskList" border v-loading="loading" style="width: 100%">
@@ -202,6 +204,7 @@ export default {
         message: "",
         delegateTaskUserId: ""
       },
+      taskForm:{},
       formLabelWidth: "120px",
       taskList: [],
       formEditPermision: 0,
@@ -217,7 +220,10 @@ export default {
     _self.refreshData();
   },
   methods: {
-    refreshData() {
+      click(value) {
+      this.taskForm = value;
+    },
+  refreshData() {
       let _self = this;
       _self.selectedItems = [];
       _self.loading = true;
@@ -274,7 +280,11 @@ export default {
       _self.itemCount = val;
       _self.loading = false;
     },
-    completetask(indata) {
+     getFormdataMap() {
+      let _self = this;
+      return  _self.taskForm;
+    },
+   completetask(indata) {
       let _self = this;
       if (_self.isCompleteSelected) {
         _self.form.taskId = [];
@@ -287,7 +297,7 @@ export default {
       _self.loading = true;
       if (_self.formEditPermision == 1) {
           if(_self.currentData.processDefinitionId.split(":")[0]=="BianJiaoShenPi"){
-            let  docMap=_self.$refs.formRouter.getFormdataMap();
+            let  docMap=_self.getFormdataMap();
               axios.post("/dc/saveDocument", docMap).then(function(response) {
                   _self.completetaskFinal(_self);
                 }).catch(function(error) {
