@@ -30,6 +30,7 @@
            v-model="taskForm"
           :formId="form.formId"
           :docId="form.formId"
+          :taskForm="formData"
           :istask="1"
           :processDefinitionId="currentData.processDefinitionId"
           :activityName="currentData.name"
@@ -205,6 +206,7 @@ export default {
         delegateTaskUserId: ""
       },
       taskForm:{},
+      formData:{},
       formLabelWidth: "120px",
       taskList: [],
       formEditPermision: 0,
@@ -282,7 +284,7 @@ export default {
     },
      getFormdataMap() {
       let _self = this;
-      return  _self.taskForm;
+      return  _self.formData;
     },
    completetask(indata) {
       let _self = this;
@@ -296,7 +298,7 @@ export default {
 
       _self.loading = true;
       if (_self.formEditPermision == 1) {
-          if(_self.currentData.processDefinitionId.split(":")[0]=="BianJiaoShenPi"){
+          // if(_self.currentData.processDefinitionId.split(":")[0]=="BianJiaoShenPi"){
             let  docMap=_self.getFormdataMap();
               axios.post("/dc/saveDocument", docMap).then(function(response) {
                   _self.completetaskFinal(_self);
@@ -304,17 +306,17 @@ export default {
                   console.log(error);
                   _self.loading = false;
                 });
-          }else{
-              axios
-                .post("/dc/saveBorrowForm", new Map())
-                .then(function(response) {
-                  _self.completetaskFinal(_self);
-                })
-                .catch(function(error) {
-                  console.log(error);
-                  _self.loading = false;
-                });
-          }
+          // }else{
+          //     axios
+          //       .post("/dc/saveBorrowForm", new Map())
+          //       .then(function(response) {
+          //         _self.completetaskFinal(_self);
+          //       })
+          //       .catch(function(error) {
+          //         console.log(error);
+          //         _self.loading = false;
+          //       });
+          // }
       } else {
             _self.completetaskFinal(_self);
       }
@@ -429,7 +431,21 @@ showOrHiddenDelegate(){
           //       formEditPermision: _self.formEditPermision
           //     }
           //   });
-            var m = new Map();
+          axios.post("/dc/getDocumentById", indata.formId).then(function(response) {
+            let result = response.data;
+            if (result.code == 1) {
+              _self.formData = result.data;
+            }
+          });
+          axios
+            .post("/dc/getFormRelateDocument", indata.formId)
+            .then(function(response) {
+              let result = response.data;
+              if (result.code == 1) {
+                _self.tabledata = result.data;
+              }
+            });
+          var m = new Map();
             m.set("processInstanceId", indata.processInstanceId);
             axios
               .post("/workflow/getWorkflowTask", JSON.stringify(m))
