@@ -21,7 +21,7 @@
         </el-col>
          <el-col :span="8">
            <el-button type="primary" plain icon="save" @click="deployProcess()">发布流程</el-button> 
-           <el-button type="primary" plain icon="save" @click="sstartWorkflow('process_borrow')">启动借阅流程</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow('BianJiaoShenPi')">启动编校审批流程</el-button> 
            <el-button type="primary" plain icon="save" @click="testWorkflow()">完成任务</el-button> 
          </el-col>
@@ -92,9 +92,9 @@ export default {
           break;
       
         default:
-           m.set("processName", processInstanceKey);
          break;
       }
+      m.set("processInstanceKey", processInstanceKey);
       axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
         console.log(response);  
         _self.loading = false;
