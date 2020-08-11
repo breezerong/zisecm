@@ -305,11 +305,6 @@ export default {
                   _self.loading = false;
                 });
           }else{
-              let a = _self.$refs.formRouter.validateBorrowForm(_self);
-              if (typeof a == "undefined") {
-                _self.loading = false;
-                return;
-              }
               axios
                 .post("/dc/saveBorrowForm", new Map())
                 .then(function(response) {
