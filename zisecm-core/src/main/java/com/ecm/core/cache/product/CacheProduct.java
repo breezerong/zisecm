@@ -149,6 +149,7 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 //		syncPublicNet.exportData("接收");
 
 //		syncPublicNet.importData();
+		//syncPublicNet.UpdateImportResultStatus();
 	}
 
 }
