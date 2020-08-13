@@ -642,9 +642,17 @@ export default {
                 _self.propertyVisible = false;
 
                 // _self.loadTransferGridData();
-                _self.$refs.mainDataGrid.loadGridData();
-                _self.$refs.transferDoc.loadGridData();
-                _self.$refs.relevantDoc.loadGridData();
+                
+                if(_self.$refs.mainDataGrid){
+                    _self.$refs.mainDataGrid.loadGridData();
+                }
+                if(_self.$refs.transferDoc){
+                    _self.$refs.transferDoc.loadGridData();
+                }
+                if(_self.$refs.relevantDoc){
+                    _self.$refs.relevantDoc.loadGridData();
+                }
+                
                 
                 } else {
                 // _self.$message("新建失败!");
