@@ -271,6 +271,13 @@ export default {
       
       if(_self.formtips.length==0){
         sql=" TYPE_NAME='"+_self.typeName+"'";
+        _self.$message({
+          showClose: true,
+          message: "未添加查询条件",
+          duration: 2000,
+          type: "warring"
+        });
+        return;
       }
       _self.inputValue=sql;
       _self.$emit("change", _self.inputValue);

@@ -26,6 +26,7 @@ import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.db.SqlUtils;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.LoginUser;
@@ -195,7 +196,8 @@ public class DocController  extends ControllerAbstract  {
 			sql.append(" order by ID desc");
 		}
 		try {
-			List<Map<String,Object>> queryList =documentService.getMapList(getToken(), sql.toString());
+			String sqlAfter=SqlUtils.replaceSql(sql.toString(), this.getSession().getCurrentUser());
+			List<Map<String,Object>> queryList =documentService.getMapList(getToken(), sqlAfter);
 			for (Map<String, Object> map : queryList) {
 				Object[] values = new Object[titleName.length];
 				for (int i = 0; i < titleName.length; i++) {
