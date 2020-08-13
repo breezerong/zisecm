@@ -91,21 +91,13 @@ public class ICMController  extends ControllerAbstract  {
 		return mp;	
 	}
 	
-	@PostMapping("/exchange/ICM/UpdataICM")
+	@PostMapping("/exchange/ICM/UpdataICMLogger")
 	@ResponseBody
-	public Map<String, Object> UpdataICM(String metaData) throws Exception{
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			Map<String, Object> args = JSONUtils.stringToMap(metaData);
-			EcmDocument doc = new EcmDocument();
-			doc.setAttributes(args);
-			documentService.updateObject(getToken(), doc, null);
-			OptionLogger.logger(detailService,doc, "修改","CNPE");
-			mp.put("code", ActionContext.SUCESS);
-		}catch (AccessDeniedException e) {
-			mp.put("code", ActionContext.TIME_OUT);
-		}
-		return mp;	
+	public void UpdataICMLogger(String metaData) throws Exception{
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		EcmDocument doc = new EcmDocument();
+		doc.setAttributes(args);
+		OptionLogger.logger(detailService,doc, "修改","CNPE");
 	}
 	
 	@RequestMapping(value ="/exchange/ICM/AcceptICMFeedback",method = RequestMethod.POST)

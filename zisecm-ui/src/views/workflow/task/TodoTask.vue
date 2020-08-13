@@ -26,14 +26,27 @@
         >{{dateFormat(currentData.createTime,'')}}</el-form-item>
       </el-form>
       <el-divider content-position="left">表单信息</el-divider>
-     <taskTestForm1 
+     <!-- <taskTestForm1 
+           v-model="taskForm"
           :formId="form.formId"
-          :docId="currentData.docId"
+          :docId="form.formId"
+          :taskForm="formData"
           :istask="1"
           :processDefinitionId="currentData.processDefinitionId"
           :activityName="currentData.name"
          :formEditPermision="formEditPermision"
-        ></taskTestForm1> 
+         @click="click"
+        ></taskTestForm1>  -->
+         <component :is="taskName"
+            v-model="taskForm"
+            :formId="form.formId"
+            :docId="form.formId"
+            :istask="1"
+            :processDefinitionId="currentData.processDefinitionId"
+            :activityName="currentData.name"
+            :formEditPermision="formEditPermision"
+          @click="click" >
+         </component>
       <el-divider content-position="left">流转意见</el-divider>
       <el-table :data="taskList" border v-loading="loading" style="width: 100%">
         <el-table-column label="序号" width="65">
@@ -169,16 +182,21 @@
 // });
 import UserSelectInput from "@/components/controls/UserSelectInput";
 import TaskTestForm1 from "@/components/form/TaskTestForm1.vue";
+import EditTask from "@/views/workflow/task/EditTask.vue";
+import DocViewTask from "@/views/workflow/task/DocViewTask.vue";
 export default {
   name: "TodoTask",
   permit: 1,
    components: {
     UserSelectInput: UserSelectInput,
-    TaskTestForm1: TaskTestForm1
+    TaskTestForm1: TaskTestForm1,
+    EditTask : EditTask,
+    DocViewTask : DocViewTask
   },
  data() {
     return {
       currentData: [],
+      taskName: 'EditTask',
       taskTableData: [],
       dataList: [],
       dataListFull: [],
@@ -202,6 +220,8 @@ export default {
         message: "",
         delegateTaskUserId: ""
       },
+      taskForm:{},
+      formData:{},
       formLabelWidth: "120px",
       taskList: [],
       formEditPermision: 0,
@@ -217,7 +237,10 @@ export default {
     _self.refreshData();
   },
   methods: {
-    refreshData() {
+      click(value) {
+      this.taskForm = value;
+    },
+  refreshData() {
       let _self = this;
       _self.selectedItems = [];
       _self.loading = true;
@@ -274,7 +297,11 @@ export default {
       _self.itemCount = val;
       _self.loading = false;
     },
-    completetask(indata) {
+     getFormdataMap() {
+      let _self = this;
+      return  _self.formData;
+    },
+   completetask(indata) {
       let _self = this;
       if (_self.isCompleteSelected) {
         _self.form.taskId = [];
@@ -286,30 +313,25 @@ export default {
 
       _self.loading = true;
       if (_self.formEditPermision == 1) {
-          if(_self.currentData.processDefinitionId.split(":")[0]=="BianJiaoShenPi"){
-            let  docMap=_self.$refs.formRouter.getFormdataMap();
+          // if(_self.currentData.processDefinitionId.split(":")[0]=="BianJiaoShenPi"){
+            let  docMap=_self.getFormdataMap();
               axios.post("/dc/saveDocument", docMap).then(function(response) {
                   _self.completetaskFinal(_self);
                 }).catch(function(error) {
                   console.log(error);
                   _self.loading = false;
                 });
-          }else{
-              let a = _self.$refs.formRouter.validateBorrowForm(_self);
-              if (typeof a == "undefined") {
-                _self.loading = false;
-                return;
-              }
-              axios
-                .post("/dc/saveBorrowForm", new Map())
-                .then(function(response) {
-                  _self.completetaskFinal(_self);
-                })
-                .catch(function(error) {
-                  console.log(error);
-                  _self.loading = false;
-                });
-          }
+          // }else{
+          //     axios
+          //       .post("/dc/saveBorrowForm", new Map())
+          //       .then(function(response) {
+          //         _self.completetaskFinal(_self);
+          //       })
+          //       .catch(function(error) {
+          //         console.log(error);
+          //         _self.loading = false;
+          //       });
+          // }
       } else {
             _self.completetaskFinal(_self);
       }
@@ -411,6 +433,7 @@ showOrHiddenDelegate(){
         .post("/workflow/getEcmCfgActivity", JSON.stringify(m))
         .then(function(response) {
           _self.ecmCfgActivity= response.data.data;
+          _self.taskName = response.data.data.componentName;
           // _self.$router.replace({
           //     // path: response.data.data.component.url,
           //     path: "/taskTestForm1",
@@ -424,7 +447,21 @@ showOrHiddenDelegate(){
           //       formEditPermision: _self.formEditPermision
           //     }
           //   });
-            var m = new Map();
+          axios.post("/dc/getDocumentById", indata.formId).then(function(response) {
+            let result = response.data;
+            if (result.code == 1) {
+              _self.formData = result.data;
+            }
+          });
+          axios
+            .post("/dc/getFormRelateDocument", indata.formId)
+            .then(function(response) {
+              let result = response.data;
+              if (result.code == 1) {
+                _self.tabledata = result.data;
+              }
+            });
+          var m = new Map();
             m.set("processInstanceId", indata.processInstanceId);
             axios
               .post("/workflow/getWorkflowTask", JSON.stringify(m))

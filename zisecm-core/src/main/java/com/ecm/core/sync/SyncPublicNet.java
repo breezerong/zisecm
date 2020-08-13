@@ -20,8 +20,10 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -90,9 +92,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * @throws Exception
 	 */
 
-	private List<ExcSynDetail> readExcSynDetail() throws Exception {
-		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService
-				.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('提交')  and status='新建' ");
+	private List<ExcSynDetail> readExcSynDetail(String actionName) throws Exception {
+//		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('"+actionName+"')  and status='新建' ");
+		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(
+				" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName + "')  and status not in('已同步','已导出') ");
 		TODOApplication.getNeedTOChange("同步数据清理，将 同一天多次修改，值只保留最后一次，将重复记录进行更新  ");
 		return excSynDetailObjList;
 
@@ -101,15 +104,17 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 1.2.1.导出需要同步的数据到指定目录
 	 * 
-	 * @throws IOException
-	 * 
 	 * @throws Exception
 	 */
 	@Override
-	public boolean exportData(String type) throws IOException {
-//		List<ExcSynDetail> excSynDetailObjList = readExcSynDetail();
-		List<ExcSynDetail> excSynDetailObjList = new ArrayList<ExcSynDetail>();
+	public boolean exportData(String actionName) throws Exception {
+		List<ExcSynDetail> excSynDetailObjList = readExcSynDetail(actionName);
 		List<String> docIds = new ArrayList<String>();
+		for (Iterator iterator = excSynDetailObjList.iterator(); iterator.hasNext();) {
+			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
+			docIds.add(excSynDetail.getFromId());
+		}
+		docIds = docIds.stream().distinct().collect(Collectors.toList());
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		String token = null;
@@ -119,33 +124,39 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 			List<SyncBean> resultObjList = new ArrayList<SyncBean>();
 			folderName = getFolderName();
-			if ("提交".equals(type)) {
-				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc");
-				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc_1");
-			} else if ("CNPE驳回".equals(type)) {
-				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc");
-				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc_1");
-			} else if ("CNPE接收".equals(type)) {
-				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc");
-				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc_1");
-			} else if ("分发".equals(type)) {
-				docIds.add("04b34fabc9d7449586a67a5fa8b0ea38");
-				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
-			} else if ("分包商驳回".equals(type)) {
-				docIds.add("04b34fabc9d7449586a67a5fa8b0ea38");
-				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
-			} else if ("分包商接收".equals(type)) {
-				docIds.add("04b34fabc9d7449586a67a5fa8b0ea38");
-				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
-			}
+//			if ("提交".equals(actionName)) {
+//				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc");
+//				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc_1");
+//			} else if ("CNPE驳回".equals(actionName)) {
+//				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc");
+//				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc_1");
+//			} else if ("CNPE接收".equals(actionName)) {
+//				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc");
+//				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc_1");
+//			} else if ("分发".equals(actionName)) {
+//				docIds.add("04b34fabc9d7449586a67a5fa8b0ea38");
+//				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
+//			} else if ("分包商驳回".equals(actionName)) {
+//				docIds.add("04b34fabc9d7449586a67a5fa8b0ea38");
+//				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
+//			} else if ("分包商接收".equals(actionName)) {
+//				docIds.add("04b34fabc9d7449586a67a5fa8b0ea38");
+//				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
+//			}
 
 			for (int i = 0; i < docIds.size(); i++) {
-				SyncBean sb = generateSyncBean(token, type, docIds.get(i));
-				exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
+				SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
+				TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
+				// exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
 				resultObjList.add(sb);
 			}
 			TODOApplication.getNeedTOChange("需要根据不同类型，生成不同的json文件");
 			writeJsonFile(resultObjList, folderName + ".json");
+			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName, new Date());
+			String abusoluteFolderPath = getSyncPathPublic() + "/";
+			String zipFilePath = abusoluteFolderPath + folderName + ".zip";
+			ZipUtil.zip(abusoluteFolderPath + "/" + folderName + "/", zipFilePath);
+			writeMD5Info(zipFilePath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,11 +164,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 			if (null != token)
 				authService.logout(token);
 		}
-		updateExcSynDetailStatus(excSynDetailObjList, "已导出", new Date());
-		String abusoluteFolderPath = getSyncPathPublic() + "/";
-		String zipFilePath = abusoluteFolderPath + folderName + ".zip";
-		ZipUtil.zip(abusoluteFolderPath + "/" + folderName + "/", zipFilePath);
-		writeMD5Info(zipFilePath);
 		return false;
 	}
 
@@ -183,6 +189,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 		if ("提交".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_提交";
+		} else if ("新建".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "create_新建";
+		} else if ("修改".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "update_修改";
 		} else if ("分发".equals(type)) {
 			transfers = excTransferMapper.executeSQL(
 					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS FROM exc_transfer where ID in('"
@@ -224,7 +236,19 @@ public class SyncPublicNet implements ISyncPublicNet {
 					.executeSQL("select " + col + " from exc_transfer where ID in('" + docId + "') ");
 //			initResultList(transfers, col);
 			beanType = "update_分包商接收";
+		} else if ("驳回".equals(type)) {
+			String col = "ID,STATUS,C_REJECTER,C_REJECT_DATE,C_REJECT_COMMENT";
+			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
+//			initResultList(transfers, col);
+			beanType = "update_驳回";
+		} else if ("接收".equals(type)) {
+			String col = "ID,STATUS,C_RECEIVER,C_RECEIVE_DATE";
+			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
+//			initResultList(transfers, col);
+			beanType = "update_接收";
 		}
+		TODOApplication.getNeedTOChange("问题反馈类型需要增加...");
+		TODOApplication.getNeedTOChange("用户同步问题...");
 
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
@@ -314,13 +338,18 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 1.2.3
 	 * 
 	 */
-	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, Date updateDate) {
-		ExcSynDetail en = new ExcSynDetail();
-		en.setId("excsyncdetailtest01");
-		en.setStauts(status);
-		en.setExportDate(updateDate);
-		excSynDetailMapper.updateByPrimaryKey(en);
-		return false;
+	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, String batchNum,
+			Date updateDate) {
+		for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
+			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
+			excSynDetail.setId(excSynDetail.getId());
+			excSynDetail.setStauts(status);
+			excSynDetail.setBatchNum(batchNum);
+			excSynDetail.setExportDate(updateDate);
+			excSynDetailMapper.updateByPrimaryKey(excSynDetail);
+
+		}
+		return true;
 	}
 
 	/**
@@ -328,6 +357,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 */
 	private SyncBean readJsonResult(String fileName) {
 		List<SyncBean> objList = JSON.parseArray(readJsonFile(fileName), SyncBean.class);
+		TODOApplication.getNeedTOChange("返回所有对象");
 		SyncBean en = objList.get(0);
 		return en;
 	}
@@ -335,9 +365,19 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 1.4.将结果更新到外网系统
 	 */
-	private boolean updateExcSynDetail() {
+	public boolean UpdateImportResultStatus() {
 		//
-		updateExcSynDetailStatus(null, "已同步", new Date());
+		File fileDirectory = new File(getSyncPathPrivate());
+		List<File> zipFileList = new ArrayList<File>();
+		for (File temp : fileDirectory.listFiles()) {
+			if (!temp.isDirectory() && temp.getName().endsWith("zip") && temp.getName().startsWith("DONE")) {
+				zipFileList.add(temp);
+			}
+		}
+		for (int i = 0; i < zipFileList.size(); i++) {
+
+		}
+		updateExcSynDetailStatus(null, "已同步", "", new Date());
 		return false;
 	}
 
@@ -349,12 +389,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 		File fileDirectory = new File(getSyncPathPrivate());
 		List<File> zipFileList = new ArrayList<File>();
 		for (File temp : fileDirectory.listFiles()) {
-			if (!temp.isDirectory() && temp.getName().endsWith("zip")) {
+			if (!temp.isDirectory() && temp.getName().endsWith("zip") && (!temp.getName().startsWith("DONE") && !temp.getName().startsWith("ERROR"))) {
 				zipFileList.add(temp);
 			}
 		}
-		TODOApplication.getNeedTOChange("导入文件时，需要根据情况导入文件及相关关系");
-		TODOApplication.getNeedTOChange("导入文件时，冲突处理：当导入数据时，发现同一天数据同时被内外网修改");
+//		TODOApplication.getNeedTOChange("导入文件时，需要根据情况导入文件及相关关系");
+//		TODOApplication.getNeedTOChange("导入文件时，冲突处理：当导入数据时，发现同一天数据同时被内外网修改");
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		String token = null;
@@ -374,6 +414,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				List<EcmRelation> relations = en.getRelations();
 				List<EcmContent> contents = en.getContents();
 				String beanType = en.getBeanType();
+				TODOApplication.getNeedTOChange("驳回提交，需要删除目标系统的...");
 				for (int i = 0; documents != null && i < documents.size(); i++) {
 					if (beanType.startsWith("create")) {
 						documentService.newObject(token, documents.get(i));
@@ -406,6 +447,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
 
 				writeJsonResult(zipFileList.get(0), "DONE_");
+				TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
 			} else {
 				writeJsonResult(zipFileList.get(0), "ERROR_MD5_");
 			}
@@ -505,13 +547,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 	}
 
-
 	private String readFirstLine(String path) {// 路径
 		File file = new File(path);
 		String result = "";
-		BufferedReader br=null;
+		BufferedReader br = null;
 		try {
-			 br = new BufferedReader(new InputStreamReader(new FileInputStream(file), DEFAULT_CHARSET));// 构造一个BufferedReader类来读取文件
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), DEFAULT_CHARSET));// 构造一个BufferedReader类来读取文件
 			String s = null;
 			result = br.readLine();
 			br.close();

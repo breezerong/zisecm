@@ -191,6 +191,7 @@ export default {
             console.log(role)
         },
         onIEDChange(){
+            let _self =  this
             if(this.selectedItems.length<1){
                 this.$message({ showClose: true, message: "没有选中变更项", duration: 2000, type: "warning"})
                 return
@@ -220,7 +221,7 @@ export default {
             
             this.$confirm('提交IED变更，是否确定提交？', '提示', {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
                 axios.post("/exchange/ied/changeIED",ids).then(function(response){
-                    this.search()
+                    _self.search()
                 }).catch(function(error){
                     console.log(error)
                 })

@@ -25,6 +25,7 @@ import com.ecm.core.cache.manager.impl.CacheManagerEcmSuggestion;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmSystemEvent;
 import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
+import com.ecm.core.sync.SyncPublicNet;
 
 /**
  * 
@@ -83,7 +84,9 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	
 	@Autowired
 	private CacheManagerCfgActivity cacheManagerCfgActivity;//活动配置
-	
+
+	@Autowired
+	SyncPublicNet syncPublicNet;
 	//@Autowired
 	//private PdfSignService pdfService;
 
@@ -135,6 +138,18 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 		
 		logger.info("Complete load cache: "+ (new Date()).toString());
 		//pdfService.run();
+//		syncPublicNet.exportData("提交");
+//		syncPublicNet.exportData("CNPE驳回");
+//		syncPublicNet.exportData("CNPE接收");
+//		syncPublicNet.exportData("分发");
+//		syncPublicNet.exportData("分包商驳回");
+//		syncPublicNet.exportData("新建");
+//		syncPublicNet.exportData("修改");
+//		syncPublicNet.exportData("驳回");
+//		syncPublicNet.exportData("接收");
+
+//		syncPublicNet.importData();
+		//syncPublicNet.UpdateImportResultStatus();
 	}
 
 }

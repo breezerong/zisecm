@@ -99,9 +99,9 @@ public class IEDReportController  extends ControllerAbstract  {
 				projMap = new HashMap<String, Object>();
 				projMap.put("projectName", projName);
 				
-				String sqlplantotal = "select count(*) from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_PROJECT_NAME = ('"+
+				String sqlplantotal = "select count(*) from ecm_document where TYPE_NAME='IED' and C_PROJECT_NAME = ('"+
 						projName +"')" + sqlplancountdate;
-				String sqlplanfinished = "select count(*) from ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 and C_ITEM_STATUS2='Y' and C_PROJECT_NAME = ('"+
+				String sqlplanfinished = "select count(*) from ecm_document where TYPE_NAME='IED' and C_ITEM_STATUS2='Y' and C_PROJECT_NAME = ('"+
 						projName +"')" + sqlplancompleteddate;
 						
 				String sqlplanstatistic = "select C_PROJECT_NAME, ("+

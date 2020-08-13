@@ -12,13 +12,18 @@
 				</el-col>
 				<el-col>
 					<el-row>
+						<div class="item_title">标题：{{item.TITLE}}</div>
+					</el-row>
+					<el-row>
+						<div class="item_content" style="background: #f7f7fd;">类型：{{item.SUB_TYPE}} &nbsp;  &nbsp; 回复数：{{awns.length}}</div>
+					</el-row>
+					<el-row style="background: #f7f7fd;">
 						<el-col :span="row.left">
-							<div>创建人：{{item.CREATOR}}</div>
-							<div>时间:{{item.CREATION_DATE}}</div>
+							<div class="item_content">创建人：{{item.CREATOR}} &nbsp; <i class="el-icon-info"></i></div>
+							<div class="item_content">时间:{{item.CREATION_DATE}}</div>
 						</el-col>
 						<el-col :span="row.center">
-							<div class="div-left">标题：{{item.TITLE}}</div>
-							<div class="div-left">内容：{{item.C_CONTENT}}</div>
+							<div class="div-left item_content">{{item.C_CONTENT}}</div>
 						</el-col>
 					</el-row>
 				</el-col>
@@ -26,14 +31,14 @@
 					<el-row
 					:key="item.id"
 					v-for="item in awns.slice((currentPage-1)*10,currentPage*10)">
-						<el-col :span="row.left">
+						<el-col :span="row.left" class="topic_l">
 							<div>
-							<div>回复人:{{item.CREATOR}}</div>
-							<div>时间:{{item.CREATION_DATE}}</div>
+							<div class="item_content">回复人:{{item.CREATOR}} &nbsp; <i class="el-icon-info"></i></div>
+							<div class="item_content">时间:{{item.CREATION_DATE}}</div>
 							</div>
 						</el-col>
 						<el-col :span="row.center">
-							<div class="div-left" style="padding:10px">{{item.C_CONTENT}}</div>
+							<div class="div-left item_content" style="padding:10px;">{{item.C_CONTENT}}</div>
 						</el-col>
 					</el-row>
 					<el-pagination
@@ -49,7 +54,7 @@
 						<el-col :span="row.left" style="text-align:left;padding:20px;1px;1px;1px;">问题回复：</el-col>
 						<el-col :span="24" style="text-align: left;padding:5px;">
 							<el-input
-							type="textarea"
+							type="textarea" rows="10"
 							placeholder="问题描述不能少于5个字符"
 							v-model="form.content"
 							style="padding:20px;"
@@ -79,8 +84,8 @@ export default{
 	data(){
 		return{
 			row:{
-				left:8,
-				center:16
+				left:6,
+				center:18
 			},
 			form:{
 				content:""
@@ -234,24 +239,58 @@ export default{
 	border-style:solid; 
 	border-width: 1px;
 	padding: 0px;
-	
+	border-color: rgb(160, 160, 160);
 }
 .prob-cre{
-	width: 50%;
+	width: 70%;
 	margin: 0 auto;
-	border-color: rgb(82, 82, 82);
+	margin-top: 10px !important;
+	border-color: rgb(120, 120, 120);
 }
 .prob-awns{
 	margin: 0 auto;
-	border-color: rgb(82, 82, 82);
+	border-color: rgb(160, 160, 160);
+}
+.item_title {
+    width: 100%;
+    font-size: 24px;
+    color: #222226;
+    font-weight: 700;
+    line-height: 36px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    word-break: break-all;
+}
+.item_content {
+    width: 100%;
+    color: #222226;
+    line-height: 36px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    word-break: break-all;
+}
+.topic_l {
+    background: linear-gradient(180deg,#f9fbfc 0,#fff 100%);
+    box-shadow: inset -1px 0 0 #f2f3f4;
+    display: table-cell;
+    position: relative;
+    border-collapse: collapse;
 }
 .div-left{
 	border-left-style:solid;
 	border-width: 1px;
+	text-align: left;
+	white-space: pre-line;
 }
 .el-col{
 	/* border-left-style:solid; */
 	text-align: center;
 }
+
+
+.textarea {
+  white-space: pre-line;  
+}
+
 
 </style>
