@@ -94,7 +94,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 	private List<ExcSynDetail> readExcSynDetail(String actionName) throws Exception {
 //		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('"+actionName+"')  and status='新建' ");
-		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('"+actionName+"') ");
+		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(
+				" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName + "')  and status not in('已同步','已导出') ");
 		TODOApplication.getNeedTOChange("同步数据清理，将 同一天多次修改，值只保留最后一次，将重复记录进行更新  ");
 		return excSynDetailObjList;
 
@@ -113,7 +114,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
 			docIds.add(excSynDetail.getFromId());
 		}
- 		docIds=docIds.stream().distinct().collect(Collectors.toList());
+		docIds = docIds.stream().distinct().collect(Collectors.toList());
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		String token = null;
@@ -146,12 +147,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 			for (int i = 0; i < docIds.size(); i++) {
 				SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
 				TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
-				//exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
+				// exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
 				resultObjList.add(sb);
 			}
 			TODOApplication.getNeedTOChange("需要根据不同类型，生成不同的json文件");
 			writeJsonFile(resultObjList, folderName + ".json");
-			updateExcSynDetailStatus(excSynDetailObjList, "已导出", new Date());
+			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName, new Date());
 			String abusoluteFolderPath = getSyncPathPublic() + "/";
 			String zipFilePath = abusoluteFolderPath + folderName + ".zip";
 			ZipUtil.zip(abusoluteFolderPath + "/" + folderName + "/", zipFilePath);
@@ -246,6 +247,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 //			initResultList(transfers, col);
 			beanType = "update_接收";
 		}
+		TODOApplication.getNeedTOChange("问题反馈类型需要增加...");
+		TODOApplication.getNeedTOChange("用户同步问题...");
 
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
@@ -335,15 +338,16 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 1.2.3
 	 * 
 	 */
-	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, Date updateDate) {
+	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, String batchNum,
+			Date updateDate) {
 		for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
 			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
-			ExcSynDetail en = new ExcSynDetail();
-			en.setId(excSynDetail.getId());
-			en.setStauts(status);
-			en.setExportDate(updateDate);
-			excSynDetailMapper.updateByPrimaryKey(en);
-			
+			excSynDetail.setId(excSynDetail.getId());
+			excSynDetail.setStauts(status);
+			excSynDetail.setBatchNum(batchNum);
+			excSynDetail.setExportDate(updateDate);
+			excSynDetailMapper.updateByPrimaryKey(excSynDetail);
+
 		}
 		return true;
 	}
@@ -353,6 +357,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 */
 	private SyncBean readJsonResult(String fileName) {
 		List<SyncBean> objList = JSON.parseArray(readJsonFile(fileName), SyncBean.class);
+		TODOApplication.getNeedTOChange("返回所有对象");
 		SyncBean en = objList.get(0);
 		return en;
 	}
@@ -360,9 +365,19 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 1.4.将结果更新到外网系统
 	 */
-	private boolean updateExcSynDetail() {
+	public boolean UpdateImportResultStatus() {
 		//
-		updateExcSynDetailStatus(null, "已同步", new Date());
+		File fileDirectory = new File(getSyncPathPrivate());
+		List<File> zipFileList = new ArrayList<File>();
+		for (File temp : fileDirectory.listFiles()) {
+			if (!temp.isDirectory() && temp.getName().endsWith("zip") && temp.getName().startsWith("DONE")) {
+				zipFileList.add(temp);
+			}
+		}
+		for (int i = 0; i < zipFileList.size(); i++) {
+
+		}
+		updateExcSynDetailStatus(null, "已同步", "", new Date());
 		return false;
 	}
 
@@ -374,12 +389,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 		File fileDirectory = new File(getSyncPathPrivate());
 		List<File> zipFileList = new ArrayList<File>();
 		for (File temp : fileDirectory.listFiles()) {
-			if (!temp.isDirectory() && temp.getName().endsWith("zip")) {
+			if (!temp.isDirectory() && temp.getName().endsWith("zip") && (!temp.getName().startsWith("DONE") && !temp.getName().startsWith("ERROR"))) {
 				zipFileList.add(temp);
 			}
 		}
-		TODOApplication.getNeedTOChange("导入文件时，需要根据情况导入文件及相关关系");
-		TODOApplication.getNeedTOChange("导入文件时，冲突处理：当导入数据时，发现同一天数据同时被内外网修改");
+//		TODOApplication.getNeedTOChange("导入文件时，需要根据情况导入文件及相关关系");
+//		TODOApplication.getNeedTOChange("导入文件时，冲突处理：当导入数据时，发现同一天数据同时被内外网修改");
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		String token = null;
@@ -399,6 +414,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				List<EcmRelation> relations = en.getRelations();
 				List<EcmContent> contents = en.getContents();
 				String beanType = en.getBeanType();
+				TODOApplication.getNeedTOChange("驳回提交，需要删除目标系统的...");
 				for (int i = 0; documents != null && i < documents.size(); i++) {
 					if (beanType.startsWith("create")) {
 						documentService.newObject(token, documents.get(i));
@@ -431,6 +447,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
 
 				writeJsonResult(zipFileList.get(0), "DONE_");
+				TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
 			} else {
 				writeJsonResult(zipFileList.get(0), "ERROR_MD5_");
 			}
@@ -530,13 +547,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 	}
 
-
 	private String readFirstLine(String path) {// 路径
 		File file = new File(path);
 		String result = "";
-		BufferedReader br=null;
+		BufferedReader br = null;
 		try {
-			 br = new BufferedReader(new InputStreamReader(new FileInputStream(file), DEFAULT_CHARSET));// 构造一个BufferedReader类来读取文件
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), DEFAULT_CHARSET));// 构造一个BufferedReader类来读取文件
 			String s = null;
 			result = br.readLine();
 			br.close();

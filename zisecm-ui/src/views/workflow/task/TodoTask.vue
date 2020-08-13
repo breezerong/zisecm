@@ -26,7 +26,7 @@
         >{{dateFormat(currentData.createTime,'')}}</el-form-item>
       </el-form>
       <el-divider content-position="left">表单信息</el-divider>
-     <taskTestForm1 
+     <!-- <taskTestForm1 
            v-model="taskForm"
           :formId="form.formId"
           :docId="form.formId"
@@ -36,7 +36,17 @@
           :activityName="currentData.name"
          :formEditPermision="formEditPermision"
          @click="click"
-        ></taskTestForm1> 
+        ></taskTestForm1>  -->
+         <component :is="taskName"
+            v-model="taskForm"
+            :formId="form.formId"
+            :docId="form.formId"
+            :istask="1"
+            :processDefinitionId="currentData.processDefinitionId"
+            :activityName="currentData.name"
+            :formEditPermision="formEditPermision"
+          @click="click" >
+         </component>
       <el-divider content-position="left">流转意见</el-divider>
       <el-table :data="taskList" border v-loading="loading" style="width: 100%">
         <el-table-column label="序号" width="65">
@@ -172,16 +182,21 @@
 // });
 import UserSelectInput from "@/components/controls/UserSelectInput";
 import TaskTestForm1 from "@/components/form/TaskTestForm1.vue";
+import EditTask from "@/views/workflow/task/EditTask.vue";
+import DocViewTask from "@/views/workflow/task/DocViewTask.vue";
 export default {
   name: "TodoTask",
   permit: 1,
    components: {
     UserSelectInput: UserSelectInput,
-    TaskTestForm1: TaskTestForm1
+    TaskTestForm1: TaskTestForm1,
+    EditTask : EditTask,
+    DocViewTask : DocViewTask
   },
  data() {
     return {
       currentData: [],
+      taskName: 'EditTask',
       taskTableData: [],
       dataList: [],
       dataListFull: [],
@@ -418,6 +433,7 @@ showOrHiddenDelegate(){
         .post("/workflow/getEcmCfgActivity", JSON.stringify(m))
         .then(function(response) {
           _self.ecmCfgActivity= response.data.data;
+          _self.taskName = response.data.data.componentName;
           // _self.$router.replace({
           //     // path: response.data.data.component.url,
           //     path: "/taskTestForm1",
