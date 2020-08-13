@@ -728,12 +728,23 @@ export default {
                 }
             })
             .then(function(response) {
-                _self.$message({
-                    showClose: true,
-                    message: _self.$t("message.operationSuccess"),
-                    duration: 2000,
-                    type: 'success'
-                });
+                if(response.data.code==1){
+                     _self.$message({
+                        showClose: true,
+                        message: _self.$t("message.operationSuccess"),
+                        duration: 2000,
+                        type: 'success'
+                    });
+                    _self.searchItem();
+                }else{
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t("message.operationFaild"),
+                        duration: 5000,
+                        type: 'error'
+                    });
+                }
+               
             })
             .catch(function(error) {
                 

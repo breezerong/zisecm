@@ -37,20 +37,20 @@
             <el-row>
                 <el-col :span="24">
                     <DataGrid
-                ref="mainDataGrid"
-                key="main"
-                dataUrl="/dc/getDocuments"
-                v-bind:tableHeight="layout.height-166"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="DrawingGrid"
-                condition=" C_PROCESS_STATUS='申请解锁'"
-                @rowclick="rowClick"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                showOptions="查看内容"
-                :isShowChangeList="false"
-                @selectchange="selectChange"
-                ></DataGrid>
+                        ref="mainDataGrid"
+                        key="main"
+                        dataUrl="/dc/getDocuments"
+                        v-bind:tableHeight="layout.height-166"
+                        v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                        gridViewName="DrawingGrid"
+                        condition=" C_PROCESS_STATUS='申请解锁'"
+                        @rowclick="rowClick"
+                        :isshowCustom="false"
+                        :isEditProperty="false"
+                        showOptions="查看内容"
+                        :isShowChangeList="false"
+                        @selectchange="selectChange"
+                        ></DataGrid>
                 </el-col>
             </el-row>
             
