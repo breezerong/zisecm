@@ -220,7 +220,7 @@
         </el-col>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
+        <el-button @click="sdialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" @click="updateSignImage()">确 定</el-button>
       </div>
     </el-dialog>
@@ -426,8 +426,7 @@ export default {
       var m = new Map();
       var cond = " (COMPANY_NAME ='"+this.currentUser().company+"' or COMPANY_NAME='CNPE')";
       if (_self.inputkey && _self.inputkey.length > 0) {
-        cond =+
-          " and NAME like '%" +
+        cond +=" and NAME like '%" +
           _self.inputkey +
           "%' or LOGIN_NAME like '%" +
           _self.inputkey +
