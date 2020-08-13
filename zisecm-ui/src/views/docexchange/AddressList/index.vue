@@ -135,27 +135,32 @@
           </el-table-column>
           <el-table-column label="用户名" width="150">
             <template slot-scope="scope">
-              <span>{{scope.row.name}}</span>
+              <span>{{scope.row.NAME}}</span>
             </template>
           </el-table-column>
           <el-table-column label="登录名" width="120">
             <template slot-scope="scope">
-              <span>{{scope.row.loginName}}</span>
+              <span>{{scope.row.LOGIN_NAME}}</span>
             </template>
           </el-table-column>
           <el-table-column label="邮件" min-width="15%">
             <template slot-scope="scope">
-              <span>{{scope.row.email}}</span>
+              <span>{{scope.row.EMAIL}}</span>
             </template>
           </el-table-column>
           <el-table-column label="电话" min-width="10%">
             <template slot-scope="scope">
-              <span>{{scope.row.phone}}</span>
+              <span>{{scope.row.PHONE}}</span>
             </template>
           </el-table-column>
           <el-table-column label="说明" min-width="15%">
             <template slot-scope="scope">
-              <span>{{scope.row.description}}</span>
+              <span>{{scope.row.DESCRIPTION}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属项目" min-width="15%">
+            <template slot-scope="scope">
+              <span>{{scope.row.C_PROJECT_NAME}}</span>
             </template>
           </el-table-column>
           <!--
@@ -303,11 +308,11 @@ export default {
       }
       if (_self.inputkey && _self.inputkey.length > 0) {
         cond +=(
-          " and NAME like '%" +
+          " and (NAME like '%" +
           _self.inputkey +
           "%' or LOGIN_NAME like '%" +
           _self.inputkey +
-          "%'");
+          "%' or C_PROJECT_NAME like '%"+_self.inputkey+"%')");
       }
       m.set("condition", cond);
       m.set("pageSize", _self.pageSize);
@@ -315,7 +320,7 @@ export default {
       
       // console.log('pagesize:', _self.pageSize);
       axios
-        .post("/admin/getUsers", JSON.stringify(m))
+        .post("/admin/getUserList", JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
