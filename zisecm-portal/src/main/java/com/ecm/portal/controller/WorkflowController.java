@@ -238,6 +238,7 @@ public class WorkflowController extends ControllerAbstract {
 			map.put("name", task.getName());
 			map.put("createTime", task.getCreateTime());
 			map.put("endTime", task.getEndTime());
+			map.put("processDefinitionId", task.getProcessDefinitionId());
 //		        getTaskApprovalResult(task.getId(), map);
 
 //		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
@@ -423,6 +424,7 @@ public class WorkflowController extends ControllerAbstract {
 			map = new HashMap<>();
 			map.put("id", process.getId());
 			map.put("processInstanceId", process.getId());
+			map.put("processDefinitionId", process.getId());
 			processInstanceIdSet.add(process.getId());
 			map.put("name", process.getName());
 			map.put("startUser", process.getStartUserId());

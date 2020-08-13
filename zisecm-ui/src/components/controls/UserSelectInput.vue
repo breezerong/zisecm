@@ -83,7 +83,7 @@
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="4">
-      <el-button icon="el-icon-user-solid" @click="clickShowDialog">{{$t('application.select')}}</el-button>
+      <el-button :disabled="buttonType" icon="el-icon-user-solid" @click="clickShowDialog">{{$t('application.select')}}</el-button>
     </el-col>
   </el-container>
 </template>
@@ -127,6 +127,10 @@ export default {
     noGroup: {
       type: String,
       noGroup: "0"
+    },
+    buttonType:{
+      type: Boolean,
+      default:false
     }
   },
   // computed:{
