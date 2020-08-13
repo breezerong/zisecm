@@ -2217,6 +2217,9 @@ public class EcmDcController extends ControllerAbstract {
 							String childId=idObj.get("CHILD_ID").toString();
 							String relationName=idObj.get("NAME").toString();
 							EcmDocument childDoc= documentService.getObjectById(getToken(), childId);
+							if(childDoc==null) {
+								continue;
+							}
 							String childCoding=childDoc.getCoding();
 							String childRevision=childDoc.getRevision();
 							List<EcmContent> enList= contentMapper.getContents(childId, 1);
