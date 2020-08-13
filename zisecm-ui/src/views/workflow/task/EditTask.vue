@@ -10,7 +10,7 @@
                 v-model="taskForm[approver.formAttribute]"
                 v-bind:inputValue="taskForm[approver.formAttribute]"
                 v-bind:roleName="approver.roleName"
-                
+                :buttonType = "formEnableType != 'TodoTask'"
               ></UserSelectInput>
             </el-form-item>
           </div>
@@ -22,13 +22,14 @@
                 :autosize="{minRows:3}"
                 v-model="taskForm.TITLE"
                 auto-complete="off"
+                :disabled="formEnableType != 'TodoTask'"
               ></el-input>
             </el-form-item>
           </el-col>   
           <el-col>
              <el-form-item label="文件" :label-width="formLabelWidth" style="text-align:left">
                 <el-button @click="viewdoc(docId)">查看文件</el-button>
-                 <el-button @click="importdialogVisible=true">上传文件</el-button>
+                <el-button v-if="formEnableType == 'TodoTask'" @click="importdialogVisible=true">上传文件</el-button>
             </el-form-item>
           </el-col>   
 
@@ -75,6 +76,7 @@ export default {
   data() {
     return {
       gridviewName: "borrowGrid",
+      test:true,
       gridList: [],
       currentLanguage: "zh-cn",
       dataList: [],
@@ -126,17 +128,21 @@ export default {
         type: Number ,
         default: 0
       },
+      formEnableType:{
+        type : String,
+        default: "",
+        required: true
+      },
       taskForm:{
         type: Object  ,
         default: function () {
             return {}
         }
-
       }
     },
   created() {
     let _self = this
-
+    
     _self.getApprovalUserList();
     // _self.loadGridView();
     _self.loadData();

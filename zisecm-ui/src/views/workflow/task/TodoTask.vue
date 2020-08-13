@@ -45,6 +45,7 @@
             :processDefinitionId="currentData.processDefinitionId"
             :activityName="currentData.name"
             :formEditPermision="formEditPermision"
+            :formEnableType = "this.$options.name"
           @click="click" >
          </component>
       <el-divider content-position="left">流转意见</el-divider>
@@ -196,7 +197,7 @@ export default {
  data() {
     return {
       currentData: [],
-      taskName: 'EditTask',
+      taskName: '',
       taskTableData: [],
       dataList: [],
       dataListFull: [],
