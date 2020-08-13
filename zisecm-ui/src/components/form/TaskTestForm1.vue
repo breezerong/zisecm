@@ -181,21 +181,21 @@ export default {
         });
     },
     loadData() {
-      let _self = this;
-      axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
-        let result = response.data;
-        if (result.code == 1) {
-          _self.taskForm = result.data;
-        }
-      });
-      axios
-        .post("/dc/getFormRelateDocument", _self.formId)
-        .then(function(response) {
-          let result = response.data;
-          if (result.code == 1) {
-            _self.tabledata = result.data;
-          }
-        });
+      // let _self = this;
+      // axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
+      //   let result = response.data;
+      //   if (result.code == 1) {
+      //     _self.taskForm = result.data;
+      //   }
+      // });
+      // axios
+      //   .post("/dc/getFormRelateDocument", _self.formId)
+      //   .then(function(response) {
+      //     let result = response.data;
+      //     if (result.code == 1) {
+      //       _self.tabledata = result.data;
+      //     }
+      //   });
     },
     selectChange(selection) {
       this.selectedItemList = [];
