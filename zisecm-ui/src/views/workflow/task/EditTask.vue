@@ -16,7 +16,7 @@
           </div>
           </el-col>
           <el-col>
-            <el-form-item label="备注" :label-width="formLabelWidth" style="text-align:left">
+            <!-- <el-form-item label="备注" :label-width="formLabelWidth" style="text-align:left">
               <el-input
                 type="textarea"
                 :autosize="{minRows:3}"
@@ -24,7 +24,13 @@
                 auto-complete="off"
                 :disabled="formEnableType != 'TodoTask'"
               ></el-input>
-            </el-form-item>
+            </el-form-item> -->
+            <ShowProperty
+            ref="ShowProperty"
+            width="100%"
+            :itemId ="formId"
+            :typeName="inputTypeName"
+            ></ShowProperty>
           </el-col>   
           <el-col>
              <el-form-item label="文件" :label-width="formLabelWidth" style="text-align:left">
@@ -68,15 +74,18 @@
 
 <script type="text/javascript">
 import UserSelectInput from "@/components/controls/UserSelectInput";
+import ShowProperty from "@/components/ShowProperty"
 export default {
   components: {
-    UserSelectInput: UserSelectInput
+    UserSelectInput : UserSelectInput,
+    ShowProperty : ShowProperty
   },
   name: "EditTask",
   data() {
     return {
       gridviewName: "borrowGrid",
       test:true,
+      inputTypeName:'',
       gridList: [],
       currentLanguage: "zh-cn",
       dataList: [],
@@ -128,6 +137,9 @@ export default {
         type: Number ,
         default: 0
       },
+      typeName:{
+        type: String
+      },
       formEnableType:{
         type : String,
         default: "",
@@ -145,6 +157,7 @@ export default {
     
     _self.getApprovalUserList();
     // _self.loadGridView();
+    _self.getDocument();
     _self.loadData();
   },
   mounted() {
@@ -165,6 +178,15 @@ export default {
         });
      
     },
+    getDocument(){
+      let _self = this;
+      axios.post("/dc/getDocument",_self.formId)
+      .then(
+        function(response){
+          _self.inputTypeName = response.data.data.TYPE_NAME;
+        }
+      )
+    },
     dateCheck() {
       let _self = this;
       return {
@@ -173,7 +195,6 @@ export default {
         }
       };
     },
-
     loadGridView() {
       let _self = this;
       var m = new Map();

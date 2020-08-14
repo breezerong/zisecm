@@ -37,7 +37,9 @@
          :formEditPermision="formEditPermision"
          @click="click"
         ></taskTestForm1>  -->
-         <component :is="taskName"
+         <component 
+          ref="propertiesComp"
+         :is="taskName"
             v-model="taskForm"
             :formId="form.formId"
             :docId="form.formId"
@@ -304,6 +306,7 @@ export default {
     },
    completetask(indata) {
       let _self = this;
+      _self.$refs.propertiesComp.$refs.ShowProperty.saveItem();
       if (_self.isCompleteSelected) {
         _self.form.taskId = [];
         _self.form.formId = [];

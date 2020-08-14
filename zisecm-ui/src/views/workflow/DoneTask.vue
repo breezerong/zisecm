@@ -5,6 +5,7 @@
       <!-- <router-view ref="formRouter"></router-view> -->
       <component
         :is="taskName"
+        :typeName="taskName"
         :formId="currentFormId"
         :docId="currentFormId"
         :istask="1"
@@ -115,7 +116,7 @@
 // $.ajaxSetup({
 //   contentType: "application/json"
 // });
-import EditTask from "@/views/workflow/task/EditTask.vue";
+import EditTask from "@/views/workflow/task/DocViewTask.vue";
 import DocViewTask from "@/views/workflow/task/DocViewTask.vue";
 export default {
   name: "DoneTask",

@@ -16,7 +16,7 @@
           </div>
           </el-col>
           <el-col>
-            <el-form-item label="备注" :label-width="formLabelWidth" style="text-align:left">
+            <!-- <el-form-item label="备注" :label-width="formLabelWidth" style="text-align:left">
               <el-input
                 type="textarea"
                 :autosize="{minRows:3}"
@@ -24,7 +24,13 @@
                 auto-complete="off"
                 :disabled="formEnableType != 'TodoTask'"
               ></el-input>
-            </el-form-item>
+            </el-form-item> -->
+            <ShowPropertyReadOnly
+            ref="ShowProperty"
+            width="100%"
+            :itemId ="formId"
+            :typeName="typeName"
+            ></ShowPropertyReadOnly>
           </el-col>   
           <el-col>
              <el-form-item label="文件" :label-width="formLabelWidth" style="text-align:left">
@@ -68,9 +74,11 @@
 
 <script type="text/javascript">
 import UserSelectInput from "@/components/controls/UserSelectInput";
+import ShowPropertyReadOnly from "@/components/ShowPropertyReadOnly";
 export default {
   components: {
-    UserSelectInput: UserSelectInput
+    UserSelectInput: UserSelectInput,
+    ShowPropertyReadOnly: ShowPropertyReadOnly
   },
   name: "DocViewTask",
   data() {
@@ -127,6 +135,9 @@ export default {
         type: Number ,
         default: 0
       },
+      typeName:{
+        type: String
+      },
       formEnableType:{
         type : String,
         default: "",
@@ -173,7 +184,6 @@ export default {
         }
       };
     },
-
     loadGridView() {
       let _self = this;
       var m = new Map();
