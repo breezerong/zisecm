@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -29,6 +31,9 @@ public class QuestionImportController extends ControllerAbstract {
 	
 	@Autowired
 	private FolderPathService folderPathService;
+	
+	@Autowired
+	private ExcSynDetailService detailService;
 	
 	@RequestMapping(value = "/exchange/Ques/newQues", method = RequestMethod.POST)
 	@ResponseBody
@@ -48,6 +53,9 @@ public class QuestionImportController extends ControllerAbstract {
 		doc.setFolderId(folderId);
 		doc.setAclName(folder.getAclName());
 		String id = documentService.newObject(getToken(), doc, null);
+		EcmDocument temp = new EcmDocument();
+		temp = documentService.getObjectById(getToken(), id);
+		OptionLogger.logger(detailService, temp, "反馈确认", "CNPE");
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);
