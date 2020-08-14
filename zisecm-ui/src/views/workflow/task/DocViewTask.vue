@@ -16,7 +16,7 @@
           </div>
           </el-col>
           <el-col>
-            <el-form-item label="备注" :label-width="formLabelWidth" style="text-align:left">
+            <!-- <el-form-item label="备注" :label-width="formLabelWidth" style="text-align:left">
               <el-input
                 type="textarea"
                 :autosize="{minRows:3}"
@@ -24,7 +24,13 @@
                 auto-complete="off"
                 :disabled="formEnableType != 'TodoTask'"
               ></el-input>
-            </el-form-item>
+            </el-form-item> -->
+            <ShowPropertyReadOnly
+            ref="ShowProperty"
+            width="100%"
+            :itemId ="formId"
+            :typeName="typeName"
+            ></ShowPropertyReadOnly>
           </el-col>   
           <el-col>
              <el-form-item label="文件" :label-width="formLabelWidth" style="text-align:left">
@@ -39,7 +45,7 @@
 
     <div slot="footer" class="dialog-footer" style="text-align:center" v-if="istask==false">
       <el-button ref="borrowCancel" type="primary" @click="cancel()">{{$t('application.cancel')}}</el-button>
-      <el-button ref="borrowStartwf" @click="startWorkflow(taskForm)">启动流程</el-button>
+      <!-- <el-button ref="borrowStartwf" @click="startWorkflow(taskForm)">启动流程</el-button> -->
     </div>
     <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%" append-to-body>
           
@@ -68,9 +74,11 @@
 
 <script type="text/javascript">
 import UserSelectInput from "@/components/controls/UserSelectInput";
+import ShowPropertyReadOnly from "@/components/ShowPropertyReadOnly";
 export default {
   components: {
-    UserSelectInput: UserSelectInput
+    UserSelectInput: UserSelectInput,
+    ShowPropertyReadOnly: ShowPropertyReadOnly
   },
   name: "DocViewTask",
   data() {
@@ -127,6 +135,9 @@ export default {
         type: Number ,
         default: 0
       },
+      typeName:{
+        type: String
+      },
       formEnableType:{
         type : String,
         default: "",
@@ -173,7 +184,6 @@ export default {
         }
       };
     },
-
     loadGridView() {
       let _self = this;
       var m = new Map();
@@ -188,20 +198,20 @@ export default {
     },
     loadData() {
       let _self = this;
-      axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
-        let result = response.data;
-        if (result.code == 1) {
-          _self.taskForm = result.data;
-        }
-      });
-      axios
-        .post("/dc/getFormRelateDocument", _self.formId)
-        .then(function(response) {
-          let result = response.data;
-          if (result.code == 1) {
-            _self.tabledata = result.data;
-          }
-        });
+      // axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
+      //   let result = response.data;
+      //   if (result.code == 1) {
+      //     _self.taskForm = result.data;
+      //   }
+      // });
+      // axios
+      //   .post("/dc/getFormRelateDocument", _self.formId)
+      //   .then(function(response) {
+      //     let result = response.data;
+      //     if (result.code == 1) {
+      //       _self.tabledata = result.data;
+      //     }
+      //   });
     },
     selectChange(selection) {
       this.selectedItemList = [];
