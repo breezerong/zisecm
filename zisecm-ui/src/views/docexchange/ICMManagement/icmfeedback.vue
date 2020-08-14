@@ -136,7 +136,8 @@ export default {
         let _self = this
         console.log("长度："+k)
          if(_self.selectedItems.length==0){
-            _self.$message({message:"请选择ICM!",duration: 2000,showClose: true,type: "info"})
+             let msg = this.$t('message.pleaseSelectICM')
+            _self.$message({message:msg,duration: 2000,showClose: true,type: "info"})
         }
 
 

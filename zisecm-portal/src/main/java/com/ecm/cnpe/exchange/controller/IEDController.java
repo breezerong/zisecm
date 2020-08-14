@@ -24,12 +24,20 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.FolderPathService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.core.service.FolderService;
 
 @RestController
 
 public class IEDController  extends ControllerAbstract  {
+	
+	@Autowired
+	private FolderService folderService;
+	@Autowired
+	private FolderPathService folderPathService;
 	
 	@Autowired
 	private DocumentService documentService;
@@ -82,9 +90,9 @@ public class IEDController  extends ControllerAbstract  {
 			String WBSitem2date = o1.toString();					//WBS转换转换
 			String IEDitem2date = o2.toString();					//IED的转换
 			Date WBS =df.parse(WBSitem2date);
-			System.out.println("WBS:"+WBSitem2date);
+			//System.out.println("WBS:"+WBSitem2date);
 			Date IED =df.parse(IEDitem2date);
-			System.out.println("IED:"+IEDitem2date);
+			//System.out.println("IED:"+IEDitem2date);
 			boolean before = WBS.before(IED);
 			if(before == true) {
 				Map<String, Object> mp3 = new HashMap<String, Object>();		
@@ -101,6 +109,17 @@ public class IEDController  extends ControllerAbstract  {
 			mp.put("mess","IED已存在，不可重复创建,外部编号为 "+coding);
 			return mp;	
 		}/*/
+		Object fid= args.get("folderId");
+		String folderId="";
+		if(fid==null) {
+			folderId = folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+		}else {
+			folderId=fid.toString();
+		}
+		EcmFolder folder = folderService.getObjectById(getToken(), folderId);
+		doc.setFolderId(folderId);
+		doc.setAclName(folder.getAclName());
+		
 		String id = documentService.newObject(getToken(), doc, en);
 		
 		Map<String, Object> mp = new HashMap<String, Object>();	

@@ -11,9 +11,9 @@
                 <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                <el-button type="primary" @click="create()">新建计划</el-button>
+                <el-button type="primary" @click="create()">{{$t('application.new')}}</el-button>
                 </el-form-item>
-                 <el-form-item><el-button type="primary" @click="syncing()">开始同步</el-button></el-form-item>
+                 <el-form-item><el-button type="primary" @click="syncing()">{{$t('application.sync')}}</el-button></el-form-item>
                 <el-form-item>
                 <el-button type="primary"  @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
@@ -52,7 +52,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
     <el-button @click="dialogCreatevisual = false">{{$t('application.cancel')}}</el-button>
-    <el-button type="primary" @click="createNewPlan()">确 定</el-button>
+    <el-button type="primary" @click="createNewPlan()">{{$t('application.ok')}}</el-button>
     </div>
     </el-dialog>
     <el-dialog>
@@ -123,29 +123,30 @@
         </slot>
         </template>
         </el-table-column>
+        <!--应用名称--->
         <el-table-column
         prop="appName"
-        label="应用名称"
+        :label="$t('application.appname')"
         width="150">
       </el-table-column>
       <el-table-column
         prop="newCount"
-        label="新增数量"
+        :label="$t('application.appname')"
         width="100">
       </el-table-column>
       <el-table-column
         prop="updateCount"
-        label="更新数量"
+        :label="$t('application.newcount')"
         width="100">
       </el-table-column>
       <el-table-column
         prop="creationDate"
-        label="同步开始时间"
+        :label="$t('application.SyncCreationDate')"
         width="200">
       </el-table-column>
       <el-table-column
         prop="executeDate"
-        label="同步结束时间"
+        :label=="$t('application.SyncEexecuteDate')"
         width="200">
       </el-table-column>
       </el-table>
@@ -314,6 +315,11 @@ export default {
             let _self = this;
             var m = [];
             var mess
+            if(this.selectedItems.length==0){
+              let msg = this.$t('message.pleaseSelectSync')
+              _self.$message({message:msg,duration: 2000,showClose: true,type: "warning"})
+              return
+            }
             let tab = _self.selectedItems;
             console.log(_self.selectedItems)
             var i;

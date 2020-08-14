@@ -59,7 +59,7 @@
                  @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                  </el-form-item>
           <el-form-item>  
-          <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
+          <el-input v-model="input" :placeholder="$t('message.iedPublishedInputPlaceholder')" style="width:200px"></el-input>
           </el-form-item>
             <el-form-item>  
                 <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
@@ -134,8 +134,6 @@ export default {
                 },
                loading: false,
                status : '已完成',
-               selectedItems: [],
-               selectedItemId: "",
             },
              Subcontractors:[{ 
                  name:'',
@@ -155,6 +153,8 @@ export default {
             contractors:[],
             id:"",
             IEDcontrast:false,
+            selectedItems: [],
+            selectedItemId: "",
         }
     },
     created(){
@@ -254,8 +254,13 @@ export default {
       console.log(this.selectedItems)
     },
     submit(){
-      this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
-        this.fresh()
+    if(this.selectedItems.length==0){
+        let msg = this.$t('message.pleaseSelectIED')
+        this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
+        return
+    }
+    this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)        
+    this.search()
     },
     search(){
         let _self = this
