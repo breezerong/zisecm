@@ -45,7 +45,7 @@
 
     <div slot="footer" class="dialog-footer" style="text-align:center" v-if="istask==false">
       <el-button ref="borrowCancel" type="primary" @click="cancel()">{{$t('application.cancel')}}</el-button>
-      <el-button ref="borrowStartwf" @click="startWorkflow(taskForm)">启动流程</el-button>
+      <!-- <el-button ref="borrowStartwf" @click="startWorkflow(taskForm)">启动流程</el-button> -->
     </div>
     <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%" append-to-body>
           
@@ -198,20 +198,20 @@ export default {
     },
     loadData() {
       let _self = this;
-      axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
-        let result = response.data;
-        if (result.code == 1) {
-          _self.taskForm = result.data;
-        }
-      });
-      axios
-        .post("/dc/getFormRelateDocument", _self.formId)
-        .then(function(response) {
-          let result = response.data;
-          if (result.code == 1) {
-            _self.tabledata = result.data;
-          }
-        });
+      // axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
+      //   let result = response.data;
+      //   if (result.code == 1) {
+      //     _self.taskForm = result.data;
+      //   }
+      // });
+      // axios
+      //   .post("/dc/getFormRelateDocument", _self.formId)
+      //   .then(function(response) {
+      //     let result = response.data;
+      //     if (result.code == 1) {
+      //       _self.tabledata = result.data;
+      //     }
+      //   });
     },
     selectChange(selection) {
       this.selectedItemList = [];

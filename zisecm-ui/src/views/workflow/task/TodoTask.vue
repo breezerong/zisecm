@@ -43,6 +43,7 @@
             v-model="taskForm"
             :formId="form.formId"
             :docId="form.formId"
+            :taskForm="formData"
             :istask="1"
             :processDefinitionId="currentData.processDefinitionId"
             :activityName="currentData.name"
