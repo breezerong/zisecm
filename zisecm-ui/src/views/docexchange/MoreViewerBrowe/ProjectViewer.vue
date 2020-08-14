@@ -139,6 +139,7 @@
                                 @cellMouseEnter="cellMouseEnter"
                                 @rowclick="rowClick" 
                                 @selectchange="selectChange"
+                                :isInitData="false"
                                 :isEditProperty="false"
                                 >
                                 <template slot="sequee" slot-scope="scope">
@@ -201,6 +202,7 @@
                                             v-bind:tableHeight="rightTableHeight"
                                             v-bind:isshowOption="true"
                                             gridViewName="IEDGrid"
+                                            :isInitData="false"
                                             :isshowCustom="true"
                                             :isEditProperty="false"
                                             @selectchange="icmTransferSelect"
@@ -315,6 +317,7 @@
                             gridViewName="DrawingGrid"
                             :isEditProperty="false"
                             :isshowCustom="true"
+                            :isInitData="false"
                             ></DataGrid>
                     </el-row>
                     <el-row>
@@ -363,8 +366,8 @@ export default {
             isShowAttachmentDoc:true,
             parentId:"",
             selectedTabName:'t01',
-            rightTableHeight: (window.innerHeight - 60)/2,
-            rightTableHeightIED:window.innerHeight - 60,
+            rightTableHeight: window.innerHeight/2-150,
+            rightTableHeightIED:window.innerHeight - 175,
             advCondition:"",
             filters: {
                 title: ""
@@ -516,13 +519,15 @@ export default {
                     +"and (STATUS is not null and STATUS!='' and STATUS!='新建')"
                     +" and C_PROJECT_NAME = '"+this.projectName+"' AND (C_COMPANY='"+user.company +"'"
                     +" or C_TO like'%"+user.company+"%')";
+                    this.$refs.mainDataGrid.loadGridData();
                 }else{
                     this.$refs.mainDataGrid.condition=this.condition=" TYPE_NAME='"+this.typeName+"' "
                     +"and (STATUS is not null and STATUS!='' and STATUS!='新建') "
                     +"and C_PROJECT_NAME = '"+this.projectName+"' ";
+                    this.$refs.mainDataGrid.loadGridData();
                 }
                 
-                this.$refs.mainDataGrid.loadGridData();
+                
                 let _self=this;
                 if(_self.$refs.transferDoc){
                     _self.$refs.transferDoc.itemDataList=[];
@@ -549,12 +554,14 @@ export default {
                             _self.$refs.ICMDataGrid.condition=_self.condition=" TYPE_NAME='"+_self.typeName+"' "
                             +" and C_PROJECT_NAME = '"+_self.projectName+"' AND (C_COMPANY='"+user.company +"'"
                             +" or C_TO like'%"+user.company+"%')";
+                            _self.$refs.ICMDataGrid.loadGridData();
                         }else{
                             _self.$refs.ICMDataGrid.condition=_self.condition=" TYPE_NAME='"+_self.typeName+"' "
                             +"and C_PROJECT_NAME = '"+_self.projectName+"' ";
+                            _self.$refs.ICMDataGrid.loadGridData();
                         }
                     
-                        _self.$refs.ICMDataGrid.loadGridData();
+                        
                     });
                     
                 }else if(node.data.name=='计划'){
@@ -571,12 +578,14 @@ export default {
                             _self.$refs.PlanDataGrid.condition=_self.condition=" TYPE_NAME='计划任务' "
                             +" and C_PROJECT_NAME = '"+_self.projectName+"' AND (C_COMPANY='"+user.company +"'"
                             +" or C_TO like'%"+user.company+"%')";
+                            _self.$refs.PlanDataGrid.loadGridData();
                         }else{
                             _self.$refs.PlanDataGrid.condition=_self.condition=" TYPE_NAME='计划任务' "
                             +"and C_PROJECT_NAME = '"+_self.projectName+"' ";
+                            _self.$refs.PlanDataGrid.loadGridData();
                         }
                         
-                        _self.$refs.PlanDataGrid.loadGridData();
+                        
                     });
                 }else if(node.data.name=='IED'){
                     this.isDC=false;
@@ -589,17 +598,21 @@ export default {
                     let _self=this;
                     _self.$nextTick(()=>{
                         if(user.userType==2 && user.company!=null){
-                            _self.$refs.mainDataGridIED.condition=_self.condition=" TYPE_NAME='"+_self.typeName+"' "
+                            _self.condition=" TYPE_NAME='"+_self.typeName+"' "
                             +"and (STATUS is not null and STATUS!='' and STATUS!='新建')"
                             +" and C_PROJECT_NAME = '"+_self.projectName+"' AND (C_COMPANY='"+user.company +"'"
                             +" or C_TO like'%"+user.company+"%')";
+                            _self.$refs.mainDataGridIED.condition=_self.condition;
+                            _self.$refs.mainDataGridIED.loadGridData();
                         }else{
-                            _self.$refs.mainDataGridIED.condition=_self.condition=" TYPE_NAME='"+_self.typeName+"' "
+                            _self.condition=" TYPE_NAME='"+_self.typeName+"' "
                             +"and (STATUS is not null and STATUS!='' and STATUS!='新建') "
                             +"and C_PROJECT_NAME = '"+_self.projectName+"' ";
+                            _self.$refs.mainDataGridIED.condition=_self.condition;
+                            _self.$refs.mainDataGridIED.loadGridData();
                         }
                         
-                        _self.$refs.mainDataGridIED.loadGridData();
+                        
                     });
                     
                     
@@ -618,12 +631,14 @@ export default {
                             _self.$refs.projDesignDoc.condition=_self.condition=" and TYPE_NAME='"+_self.typeName+"' "
                             +" and C_PROJECT_NAME = '"+_self.projectName+"' AND (C_COMPANY='"+user.company +"'"
                             +" or C_TO like'%"+user.company+"%')";
+                            _self.$refs.projDesignDoc.loadGridData();
                         }else{
                             _self.$refs.projDesignDoc.condition=_self.condition=" and TYPE_NAME='"+_self.typeName+"' "
                             +"and C_PROJECT_NAME = '"+_self.projectName+"' ";
+                            _self.$refs.projDesignDoc.loadGridData();
                         }
                         
-                        _self.$refs.projDesignDoc.loadGridData();
+                        
                     });
                 }
             }
@@ -714,6 +729,9 @@ export default {
         },
         searchItem(){
             let _self=this;
+            if(_self.condition==''){
+                _self.condition=" C_PROJECT_NAME ='@project'"
+            }
             let key=" "+_self.condition;
            
             if(_self.filters.title!=''){

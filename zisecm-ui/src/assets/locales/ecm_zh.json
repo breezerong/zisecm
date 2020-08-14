@@ -381,7 +381,9 @@
     "inputQuestionLimit":"查询字段范围：标题",
     "iedPublishedInputPlaceholder":"外部编码、内部编码和中文标题",
     "publishedChangeForY":"状态显示为‘Y’为不可变更项，请取消此选项",
-    "publishedChangeForChanging":"变更中选项不能再次变更，请取消此选项"
+    "publishedChangeForChanging":"变更中选项不能再次变更，请取消此选项",
+    "publishedChangeSuccessed":"提交变更成功",
+    "publishedNonSelected":"请选中变更项"
 },
 "field": {
     "indexNumber":"序号",

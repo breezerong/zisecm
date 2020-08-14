@@ -238,6 +238,34 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		List<EcmUser> list = ecmUserMapper.searchToEntity(pager, sql);
 		return list;
 	}
+	
+	public List<Map<String,Object>> getUserList(String token, Pager pager, boolean noGroup, String condition) {
+
+		String sql="SELECT * FROM (" + 
+				"	select id,name,description,LOGIN_NAME as loginName,phone,CREATION_DATE,CREATOR,email,MODIFIER,"
+				+ "MODIFIED_DATE,IS_ACTIVED as isActived,GROUP_NAME as groupName,PASSWORD as password,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,"
+				+ "SYSTEM_PERMISSION,LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,SIGN_IMAGE,"
+				+ "DELEGATE_USER as delegateUser,DELEGATE_START as delegateStart,DELEGATE_END as delegateEnd,COMPANY_NAME as companyName,"
+				+ "projectName= STUFF((select projectName+',' from (" + 
+				"select a.*,d.NAME as projectName from ecm_user a,ecm_group_user b,ecm_group c,ecm_document d" + 
+				" where a.ID=b.USER_ID and b.GROUP_ID=c.ID and c.NAME=d.NAME and d.TYPE_NAME='项目'" + 
+				") x where x.id=t.id for xml path('')), 1, 0, '') from(" + 
+				"select a.*,d.NAME as projectName from ecm_user a,ecm_group_user b,ecm_group c,ecm_document d " + 
+				"where a.ID=b.USER_ID and b.GROUP_ID=c.ID and c.NAME=d.NAME and d.TYPE_NAME='项目'" + 
+				")t GROUP BY ID,NAME,DESCRIPTION,LOGIN_NAME,PHONE,CREATION_DATE,CREATOR,EMAIL,MODIFIER,MODIFIED_DATE,IS_ACTIVED,GROUP_NAME,PASSWORD,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,SYSTEM_PERMISSION,LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,SIGN_IMAGE,DELEGATE_USER,DELEGATE_START,DELEGATE_END,COMPANY_NAME" + 
+				") ta where 1=1 ";
+		
+		if (!EcmStringUtils.isEmpty(condition)) {
+			sql += " and" + condition;
+		}
+		List<Map<String,Object>> list = ecmUserMapper.searchToMap(pager, sql);
+		return list;
+	}
+
+
+
+	
+	
 
 	@Override
 	public List<EcmUser> getGroupUsers(String token, String groupId) {

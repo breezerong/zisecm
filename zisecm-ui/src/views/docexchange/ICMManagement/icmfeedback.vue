@@ -134,6 +134,12 @@ export default {
         var ids =[]
         var k = this.selectedItems.length           //获取当前Checkbox数组的长度
         let _self = this
+        console.log("长度："+k)
+         if(_self.selectedItems.length==0){
+            _self.$message({message:"请选择ICM!",duration: 2000,showClose: true,type: "info"})
+        }
+
+
         for(var i=0;i<k;i++)
         {
             ids[i] = this.selectedItems[i].ID
@@ -141,7 +147,7 @@ export default {
         axios.post("/exchange/ICM/AcceptICMFeedback",JSON.stringify(ids)).then(function(response){
             let code = response.data.code;
             console.log("取到的数据"+code)
-             if (code == 1) {
+             if (code == 1 &&_self.selectedItems.length!=0) {
                 _self.$message({
                     showClose: true,
                     message: "创建成功!",
