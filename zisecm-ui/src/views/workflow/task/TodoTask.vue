@@ -303,7 +303,7 @@ export default {
     },
      getFormdataMap() {
       let _self = this;
-      return  _self.formData;
+      return  _self.taskForm;
     },
    completetask(indata) {
       let _self = this;
