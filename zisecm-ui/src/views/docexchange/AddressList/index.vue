@@ -81,7 +81,12 @@
               ></el-input> -->
             </el-form-item>
           </el-col>
-         
+          <el-col :span="12">
+            <el-form-item label="所属项目" :label-width="formLabelWidth">
+              <div>{{form.projectName}}</div>
+             
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
             <el-form-item label="说明" :label-width="formLabelWidth">
                 <div>
@@ -100,7 +105,6 @@
       <div
         slot="footer"
         class="dialog-footer"
-        v-if="clientPermission>=form.clientPermission || !isReadOnly"
       >
         <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
         <el-button type="primary" v-if="showTextBox()" @click="additem(form)">确 定</el-button>
@@ -156,6 +160,11 @@
           <el-table-column label="说明" min-width="15%">
             <template slot-scope="scope">
               <span>{{scope.row.description}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属项目" min-width="15%">
+            <template slot-scope="scope">
+              <span>{{scope.row.projectName}}</span>
             </template>
           </el-table-column>
           <!--
@@ -236,7 +245,8 @@ export default {
         passwordConfirm: "",
         delegateUser: "",
         delegateStart: null,
-        delegateEnd: null
+        delegateEnd: null,
+        projectName:''
       },
       sysOptions: [
         { label: "无", value: 0 },
@@ -297,17 +307,17 @@ export default {
       var m = new Map();
       var cond = "";
       if(this.currentUser().company!='CNPE'){
-       cond= " (COMPANY_NAME ='"+this.currentUser().company+"' or COMPANY_NAME='CNPE')";
+       cond= " (companyName ='"+this.currentUser().company+"' or companyName='CNPE')";
       }else{
         cond=" 1=1 ";
       }
       if (_self.inputkey && _self.inputkey.length > 0) {
         cond +=(
-          " and NAME like '%" +
+          " and (NAME like '%" +
           _self.inputkey +
-          "%' or LOGIN_NAME like '%" +
+          "%' or loginName like '%" +
           _self.inputkey +
-          "%'");
+          "%' or projectName like '%"+_self.inputkey+"%')");
       }
       m.set("condition", cond);
       m.set("pageSize", _self.pageSize);
@@ -315,7 +325,7 @@ export default {
       
       // console.log('pagesize:', _self.pageSize);
       axios
-        .post("/admin/getUsers", JSON.stringify(m))
+        .post("/admin/getUserList", JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
@@ -408,7 +418,8 @@ export default {
         clientPermissioin: "1",
         groupName: "",
         companyName: this.currentUser().company,
-        isActived: true
+        isActived: true,
+        projectName:''
       };
       this.fileList = [];
       this.dialogVisible = true;

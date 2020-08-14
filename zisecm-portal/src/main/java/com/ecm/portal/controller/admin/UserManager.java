@@ -79,6 +79,35 @@ public class UserManager extends ControllerAbstract {
 	}
 
 	/**
+	 * 获取所有用户
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/admin/getUserList", method = RequestMethod.POST)
+	public Map<String, Object> getUserList(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String noGroup = "";
+			if (args.get("noGroup") != null) {
+				noGroup = args.get("noGroup").toString();
+			}
+			Pager pager = new Pager();
+			pager.setPageIndex(Integer.parseInt(args.get("pageIndex").toString()));
+			pager.setPageSize(Integer.parseInt(args.get("pageSize").toString()));
+			List<Map<String,Object>> list = userService.getUserList(getToken(), pager, "1".equals(noGroup),
+					args.get("condition").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	/**
 	 * 获取部门所有用户
 	 * 
 	 * @return

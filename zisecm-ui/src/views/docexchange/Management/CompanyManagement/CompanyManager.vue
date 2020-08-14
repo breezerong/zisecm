@@ -140,7 +140,7 @@ export default {
         
         searchItem(){
             let _self=this;
-            let key=" TYPE_NAME='项目' ";
+            let key=" TYPE_NAME='公司' ";
          
             if(_self.filters.title!=''){
                 key+=" and (NAME like '%"+_self.filters.title+"%' "
