@@ -187,11 +187,12 @@ public class IEDController  extends ControllerAbstract  {
 		Map<String, Object> current = new HashMap<String,Object>();
 		List<Map<String,Object>> contrast = new ArrayList<Map<String,Object>>();
 		String id = args.get("ID").toString();
+		System.out.println(id);
 		this.IDS = args.get("ID").toString();
 		EcmDocument temp = new EcmDocument();
 		temp = documentService.getObjectById(getToken(), id);
 		String Coding = temp.getCoding();
-		String cond = "TYPE_NAME = 'IED' AND IS_CURRENT = 1 AND CODING = '"+Coding+"'";
+		String cond = "TYPE_NAME = 'IED' AND STATUS='变更中' AND CODING = '"+Coding+"'";
 		List<Map<String,Object>> result = documentService.getObjectMap(getToken(), cond);
 		now=documentService.getObjectMapById(getToken(), id);		//获取当前IED的map
 		for(int i = 0; i < result.size();i++) {
@@ -216,7 +217,7 @@ public class IEDController  extends ControllerAbstract  {
 		Map<String, Object> now = new HashMap<String,Object>();
 		Map<String, Object> current = new HashMap<String,Object>();
 		String Coding = temp.getCoding();
-		String cond = "TYPE_NAME = 'IED' AND IS_CURRENT = 1 AND CODING = '"+Coding+"'";
+		String cond = "TYPE_NAME = 'IED' AND STATUS='变更中' AND CODING = '"+Coding+"'";
 		now=documentService.getObjectMapById(getToken(),this.IDS);		//获取当前IED的map
 		List<Map<String,Object>> result = documentService.getObjectMap(getToken(), cond);
 		for(int i = 0; i < result.size();i++) {
