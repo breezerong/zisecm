@@ -424,7 +424,7 @@ public class WorkflowController extends ControllerAbstract {
 			map = new HashMap<>();
 			map.put("id", process.getId());
 			map.put("processInstanceId", process.getId());
-			map.put("processDefinitionId", process.getId());
+			map.put("processDefinitionId", process.getProcessDefinitionId());
 			processInstanceIdSet.add(process.getId());
 			map.put("name", process.getName());
 			map.put("startUser", process.getStartUserId());

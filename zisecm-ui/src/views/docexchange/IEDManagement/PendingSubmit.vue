@@ -51,13 +51,13 @@
             <el-row>
             <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
              @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
-            <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
+            <el-input v-model="input" :placeholder="$t('message.iedPublishedInputPlaceholder')" style="width:200px"></el-input>
             <el-button type="primary" @click="search()" >{{$t('application.SearchData')}}</el-button>
             <el-button type="primary" @click="newArchiveItem('IED',selectedOneTransfer)" >{{$t('application.new')}}</el-button>
             <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">{{$t('application.Import')}}</el-button>
             <el-button type="success" @click="submit()">{{$t('application.Submit')}}</el-button>
              <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
-            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">{{$t('application.delete')}}</el-button>
+            <el-button type="warning" @click="Delete()">{{$t('application.delete')}}</el-button>
             </el-row>
 
 
@@ -168,7 +168,8 @@ export default {
             batchDialogVisible:false,
             gridObj:[],
             propertyVisible:false,
-            id:""
+            id:"",
+            selectedItems:[]
         }
     },
     created(){     
@@ -211,8 +212,7 @@ export default {
         },
 
         fresh(){
-          let _self = this
-          console.log("123123")
+        let _self = this
         _self.$refs.mainDataGrid.loadGridData();
        },
        onLoadnDataSuccess(select,options){
@@ -476,13 +476,31 @@ export default {
             if(user.userType==2 && user.company!=null){
                 k1+=" AND C_COMPANY='"+user.company +"'"
             }
+            console.log(k1);
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
     },
+    Delete(){
+        let _self = this
+    if(this.selectedItems.length==0){
+    let msg = this.$t('message.pleaseSelectIED')
+    this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
+    return
+    }
+    this.onDeleleItem(this.selectedItems,[_self.$refs.mainDataGrid])
+    
+    },
+
+
     submit(){
-      let _self = this
-      this.onNextStatus(this.selectedItems,_self.$refs.mainDataGrid)
-        this.fresh()
+    let _self = this
+    if(this.selectedItems.length==0){
+    let msg = this.$t('message.pleaseSelectIED')
+    this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
+    return
+    }
+    this.onNextStatus(this.selectedItems,_self.$refs.mainDataGrid)
+  
         
     },
         exportData(){

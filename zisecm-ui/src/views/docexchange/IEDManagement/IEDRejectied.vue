@@ -5,10 +5,10 @@
             <el-row>
               <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
               @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
-               <el-input v-model="input" placeholder="外部编码、内部编码或标题" style="width:200px"></el-input>
+               <el-input v-model="input" :placeholder="$t('message.iedPublishedInputPlaceholder')" style="width:200px"></el-input>
             <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
             <el-button type="success" @click="submit()">{{$t('application.Submit')}}</el-button>
-            <el-button type="warning" v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid])">{{$t('application.delete')}}</el-button>
+            <el-button type="warning" @click="Delete()">{{$t('application.delete')}}</el-button>
             <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             
             </el-row>
@@ -102,6 +102,18 @@ export default {
       // console.log(JSON.stringify(val));
       this.selectedItems = val;
     },
+    Delete(){
+    let _self = this
+    if(this.selectedItems.length==0){
+    let msg = this.$t('message.pleaseSelectIED')
+    this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
+    return
+    }
+    this.onDeleleItem(this.selectedItems,[_self.$refs.mainDataGrid])
+    
+    },
+
+
     submit(){
       this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
         this.fresh()
@@ -140,6 +152,8 @@ export default {
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
     },
+
+
       exportData(){
             let _self =this
             let dataUrl = "/exchange/doc/export"

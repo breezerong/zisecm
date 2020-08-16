@@ -80,8 +80,7 @@ export default {
             tables:{
                 main:{
                     gridViewName:"IEDGrid",
-                    dataUrl:"/dc/getDocuments",
-                    condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 ",//AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')",                    
+                    dataUrl:"/dc/getDocuments",                    
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
@@ -193,7 +192,8 @@ export default {
         onIEDChange(){
             let _self =  this
             if(this.selectedItems.length<1){
-                this.$message({ showClose: true, message: "没有选中变更项", duration: 2000, type: "warning"})
+                let msg = this.$t('message.publishedNonSelected')
+                this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
                 return
             }
             let include = false
@@ -218,9 +218,12 @@ export default {
                 this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
                 return
             }
-            
-            this.$confirm('提交IED变更，是否确定提交？', '提示', {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
+            let alert = this.$t('message.publishedAlert')
+            let msg1 = this.$t('message.publishedChangeConfirm')
+            this.$confirm(msg1,alert, {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
                 axios.post("/exchange/ied/changeIED",ids).then(function(response){
+                     let msg = _self.$t('message.publishedChangeSuccessed')
+                    _self.$message({showClose: true, message: msg, duration: 2000, type: "success"})
                     _self.search()
                 }).catch(function(error){
                     console.log(error)
@@ -282,7 +285,7 @@ export default {
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
             let orS = ""
-            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 "// AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')"
+            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND STATUS='已生效'"// AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')"
             if(_self.inputValueNum.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){

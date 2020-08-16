@@ -24,12 +24,20 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.FolderPathService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.core.service.FolderService;
 
 @RestController
 
 public class IEDController  extends ControllerAbstract  {
+	
+	@Autowired
+	private FolderService folderService;
+	@Autowired
+	private FolderPathService folderPathService;
 	
 	@Autowired
 	private DocumentService documentService;
@@ -82,9 +90,9 @@ public class IEDController  extends ControllerAbstract  {
 			String WBSitem2date = o1.toString();					//WBS转换转换
 			String IEDitem2date = o2.toString();					//IED的转换
 			Date WBS =df.parse(WBSitem2date);
-			System.out.println("WBS:"+WBSitem2date);
+			//System.out.println("WBS:"+WBSitem2date);
 			Date IED =df.parse(IEDitem2date);
-			System.out.println("IED:"+IEDitem2date);
+			//System.out.println("IED:"+IEDitem2date);
 			boolean before = WBS.before(IED);
 			if(before == true) {
 				Map<String, Object> mp3 = new HashMap<String, Object>();		
@@ -101,6 +109,17 @@ public class IEDController  extends ControllerAbstract  {
 			mp.put("mess","IED已存在，不可重复创建,外部编号为 "+coding);
 			return mp;	
 		}/*/
+		Object fid= args.get("folderId");
+		String folderId="";
+		if(fid==null) {
+			folderId = folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+		}else {
+			folderId=fid.toString();
+		}
+		EcmFolder folder = folderService.getObjectById(getToken(), folderId);
+		doc.setFolderId(folderId);
+		doc.setAclName(folder.getAclName());
+		
 		String id = documentService.newObject(getToken(), doc, en);
 		
 		Map<String, Object> mp = new HashMap<String, Object>();	
@@ -126,10 +145,12 @@ public class IEDController  extends ControllerAbstract  {
 		for (String id : ids) {
 			try {
 				EcmDocument docObj = documentService.getObjectById(getToken(), id);
+				EcmDocument newDoc = documentService.getObjectById(getToken(), id);
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("C_ITEM_STATUS1", "修订");
 				map.put("C_IS_RELEASED", 0);
-				documentService.checkIn(getToken(), id, map, null, false);
+				newDoc=documentService.checkIn(getToken(), id, map, null, false);
+				documentService.updateStatus(getToken(), newDoc.getId(), "新建");
 				documentService.updateStatus(getToken(), docObj.getId(), "变更中");
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -166,11 +187,12 @@ public class IEDController  extends ControllerAbstract  {
 		Map<String, Object> current = new HashMap<String,Object>();
 		List<Map<String,Object>> contrast = new ArrayList<Map<String,Object>>();
 		String id = args.get("ID").toString();
+		System.out.println(id);
 		this.IDS = args.get("ID").toString();
 		EcmDocument temp = new EcmDocument();
 		temp = documentService.getObjectById(getToken(), id);
 		String Coding = temp.getCoding();
-		String cond = "TYPE_NAME = 'IED' AND IS_CURRENT = 1 AND CODING = '"+Coding+"'";
+		String cond = "TYPE_NAME = 'IED' AND STATUS='变更中' AND CODING = '"+Coding+"'";
 		List<Map<String,Object>> result = documentService.getObjectMap(getToken(), cond);
 		now=documentService.getObjectMapById(getToken(), id);		//获取当前IED的map
 		for(int i = 0; i < result.size();i++) {
@@ -195,7 +217,7 @@ public class IEDController  extends ControllerAbstract  {
 		Map<String, Object> now = new HashMap<String,Object>();
 		Map<String, Object> current = new HashMap<String,Object>();
 		String Coding = temp.getCoding();
-		String cond = "TYPE_NAME = 'IED' AND IS_CURRENT = 1 AND CODING = '"+Coding+"'";
+		String cond = "TYPE_NAME = 'IED' AND STATUS='变更中' AND CODING = '"+Coding+"'";
 		now=documentService.getObjectMapById(getToken(),this.IDS);		//获取当前IED的map
 		List<Map<String,Object>> result = documentService.getObjectMap(getToken(), cond);
 		for(int i = 0; i < result.size();i++) {
