@@ -96,6 +96,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				if("新建".equals(currentStatus)) {
 					doc.addAttribute("c_item_date", new Date());
 				}
+				doc.addAttribute("C_IS_RELEASED", 1);
 				doc.setStatus(nextStatus);
 				documentService.updateObject(getToken(), doc, null);
 			}
