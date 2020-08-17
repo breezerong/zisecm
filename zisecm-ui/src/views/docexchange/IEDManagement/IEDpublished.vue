@@ -80,8 +80,7 @@ export default {
             tables:{
                 main:{
                     gridViewName:"IEDGrid",
-                    dataUrl:"/dc/getDocuments",
-                    condition:"  TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 ",//AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')",                    
+                    dataUrl:"/dc/getDocuments",                    
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
@@ -219,8 +218,9 @@ export default {
                 this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
                 return
             }
-            
-            this.$confirm('提交IED变更，是否确定提交？', '提示', {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
+            let alert = this.$t('message.publishedAlert')
+            let msg1 = this.$t('message.publishedChangeConfirm')
+            this.$confirm(msg1,alert, {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
                 axios.post("/exchange/ied/changeIED",ids).then(function(response){
                      let msg = _self.$t('message.publishedChangeSuccessed')
                     _self.$message({showClose: true, message: msg, duration: 2000, type: "success"})

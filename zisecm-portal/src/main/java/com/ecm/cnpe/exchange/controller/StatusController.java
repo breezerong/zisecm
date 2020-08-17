@@ -101,7 +101,7 @@ public class StatusController extends ControllerAbstract{
 						}else {
 							logicOptionRelevantService.relevantOption(getToken(),doc);
 						}
-						
+						doc.addAttribute("C_IS_RELEASED", 1);
 					}
 					documentService.updateObject(getToken(), doc, null);
 					

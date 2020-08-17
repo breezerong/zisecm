@@ -5,10 +5,47 @@
         <el-col :span="16">
           <el-card :body-style="{ height: '120px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">基本信息</span>
+              <span style="float: left;" class="ecmtitle">{{$t('route.fullTextSearch')}}</span>
             </div>
             <div>
-              <ecm-data-icons :option="projectData1"></ecm-data-icons>
+              <el-row style="padding-top:5px;padding-bottom:5px;">
+                <!-- <el-autocomplete
+                  class="inline-input"
+                  v-loading="loading"
+                  prefix-icon="el-icon-search"
+                  :fetch-suggestions="querySearch"
+                  :placeholder="$t('application.placeholderSearch')"
+                  :trigger-on-focus="false"
+                  @keyup.enter.native="jumpToFullSearch"
+                  style="width:80%;"
+                  v-model="inputkey"
+                ></el-autocomplete> -->
+                <el-input prefix-icon="el-icon-search" @keyup.enter.native="jumpToFullSearch"
+                  style="width:80%;"
+                  v-model="inputkey" :placeholder="$t('application.placeholderSearch')"></el-input>
+                <el-checkbox :label="$t('application.propertyOnly')" v-model="propertyOnly"></el-checkbox>
+              </el-row>
+              <el-row>
+                <el-row style="padding-top:5px;padding-bottom:5px;float:left;text-align:left;">
+                  <span class="ecmcontent">{{$t('application.docTypeName')}}</span>
+                  <el-checkbox
+                    :indeterminate="isIndeterminate"
+                    v-model="checkAll"
+                    @change="handleCheckAllChange"
+                  >{{$t('application.selectAll')}}</el-checkbox>
+                </el-row>
+                <el-row style="padding-top:5px;padding-bottom:5px;float:left;text-align:left;">
+                <el-checkbox-group v-model="checkedCards">
+                  <el-checkbox
+                    v-for="card in cards"
+                    :label="card.name"
+                    :key="card.id"
+                    checked
+                    @change="handleCheckedTypeChange"
+                  >{{card.name}}</el-checkbox>
+                </el-checkbox-group>
+                </el-row>
+              </el-row>
             </div>
           </el-card>
           <el-card :body-style="{ height: '180px' }">
@@ -142,40 +179,9 @@
   </el-container>
 </template>
 <script>
-import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
 export default {
-  components: {
-    ecmDataIcons
-  },
   data() {
     return {
-       projectData1: {
-        color: 'rgb(63, 161, 255)',
-        span: 6,
-        data: [
-          {
-            title: '三级计划',
-            count: 125,
-            color: 'rgb(63, 161, 255)',
-            icon: 'el-icon-s-order',
-            url: '/proj/planview'
-          },
-          {
-            title: 'IED',
-            count: 876,
-            color: 'rgb(63, 161, 255)',
-            icon: 'el-icon-s-unfold',
-            url: '/ied/releaseied'
-          },
-          {
-            title: 'ICM',
-            count: 26871,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document',
-            url: '/doc/donedoc'
-          }
-        ]
-      },
       jumpPath: {
         search: "",
         todolist: "/workflow/todotask",

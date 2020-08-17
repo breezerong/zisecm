@@ -208,7 +208,15 @@
     "iedfeedback":"IED Feedback",
     "feedback":"Feedback",
     "EstimDate":"Estim Date",
-    "ProgIntro":"Prog Intro"
+    "ProgIntro":"Prog Intro",
+    "sync":"Start Sync",
+    "appname":"AppName",
+    "updatecount":"Update Count",
+    "newcount":"New Count",
+    "SyncCreationDate":"Sync Start Date",
+    "SyncEexecuteDate":"Sync End Date"
+
+
 },
 "skin": {
     "Blue": "Blue",
@@ -362,7 +370,12 @@
     "publishedChangeForY":"The status is displayed as 'Y' and cannot be changed. Please cancel this option",
     "publishedChangeForChanging":"'Changing' option cannot be changed again. Please cancel this option",
     "publishedChangeSuccessed":"Selected Items is now Successfully changed ",
-    "publishedNonSelected":"Please select items for change"
+    "publishedNonSelected":"Please select items for change",
+    "publishedChangeConfirm":"Please confirm that you want to submit the current selected items for IED change",
+    "publishedAlert":"Caution!",
+    "pleaseSelectIED":"Please Select IEDs for operate",
+    "pleaseSelectICM":"Please Selcet ICMs for operate",
+    "pleaseSelectSync":"Please Select Plans for Sync"
 },
 "field": {
     "indexNumber":"S/N",
