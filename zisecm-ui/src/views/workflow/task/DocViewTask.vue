@@ -153,8 +153,9 @@ export default {
     },
   created() {
     let _self = this
-
-    _self.getApprovalUserList();
+    if(_self.processDefinitionId != null && _self.processDefinitionId != ""){
+      _self.getApprovalUserList();
+    }
     // _self.loadGridView();
     _self.loadData();
   },

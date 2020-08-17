@@ -2,16 +2,13 @@
   <div>
     <el-form ref="borrowForm" :model="borrowForm" style="width:100%" :rules="rules">
       <el-row style="width:100%">
-        <div v-if="(istask==1 && formEditPermision==0)||istask==0">
+        <div >
           <el-col>
             <el-form-item
               label="借阅单号"
               :label-width="formLabelWidth"
               style="float:left"
             >{{borrowForm.CODING}}</el-form-item>
-            <el-form-item :label-width="formLabelWidth" style="float:right">
-              <el-button @click="getBorrowHelpDoc()">帮助</el-button>
-            </el-form-item>
           </el-col>
           <el-col>
             <el-form-item label="姓名" :label-width="formLabelWidth" style="float:left">
@@ -117,22 +114,6 @@
               </el-table-column>
             </el-table>
           </el-col>
-          <el-col
-            v-if="istask==1 && formEditPermision==1"
-            slot="footer"
-            style="float:left;padding-top:10px;padding-bottom:10px;width:100%;height:100%"
-          >
-            <el-button @click="showOrCloseShopingCart()" style>{{showOrCloseShopingCartLabel}}</el-button>
-            <div v-if="vshowShopingCart==true">
-              <ShowShopingCart
-                ref="ShowShopingCart"
-                width="100%"
-                v-bind:formId="formId"
-                v-bind:excludeRows="tabledata"
-              ></ShowShopingCart>
-              <el-button ref="add" style="float:left" @click="addToFormFromShopingCart()">添加到表单</el-button>
-            </div>
-          </el-col>
            <el-col style="padding-top:3px;">
             <div v-for="(approver,index)  in approvalUserList" :key="'approver_'+index">
             <el-form-item :label="approver.activityName"  :label-width="formLabelWidth" style="float:left">
@@ -155,153 +136,8 @@
             </el-form-item>
           </el-col>
         </div>
-        <div v-if="istask==1 && formEditPermision==0">
-          <el-col>
-            <el-form-item
-              label="借阅单号"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.CODING}}</el-form-item>
-            <el-form-item :label-width="formLabelWidth" style="float:right">
-              <el-button @click="getBorrowHelpDoc()">帮助</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col>
-            <el-form-item
-              label="姓名"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.C_DRAFTER}}</el-form-item>
-            <el-form-item
-              label="电话"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.TITLE}}</el-form-item>
-            <el-form-item
-              label="用户部门"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.C_DESC1}}</el-form-item>
-            <el-form-item
-              label="编制部门"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.C_CREATION_UNIT}}</el-form-item>
-            <!-- <el-form-item label="日期" :label-width="formLabelWidth" style="float:left">
-                  {{borrowForm." :formatter="dateFormatter" auto-complete="off"></el-input> 
-                </el-form-item>
-                  <el-form-item label="文件归档单位" :label-width="formLabelWidth" style="float:left">
-                  {{borrowForm.cCreationUnit" auto-complete="off"></el-input>
-            </el-form-item>-->
-          </el-col>
-          <el-col>
-            <el-form-item
-              label="借阅类型"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.SUB_TYPE}}</el-form-item>
-          </el-col>
-          <el-col class="topbar-button">
-            <el-form-item
-              label="借阅开始时间"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{dateFormat(borrowForm.C_START_DATE)}}</el-form-item>
-            <el-form-item
-              label="借阅结束时间"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{dateFormat(borrowForm.C_END_DATE)}}</el-form-item>
-           <el-form-item :label-width="formLabelWidth" style="float:right">
-              <el-button
-              v-show="borrowForm.SUB_TYPE=='下载' && borrowForm.STATUS=='已完成' "
-              ref="downloadAllFile"
-              @click="downloadAllFile()"
-            >打包下载</el-button>
-            </el-form-item>
-            
-          </el-col>
-          <el-col>
-            <el-table :data="tabledata">
-              <el-table-column type="index" label="#" width="50"></el-table-column>
-              <el-table-column prop="id" label="id" v-if="1==2" min-width="15%" sortable></el-table-column>
-              <el-table-column width="40">
-                <template slot-scope="scope">
-                  <img
-                    v-if="scope.row.TYPE_NAME=='图册'"
-                    :src="'./static/img/drawing.gif'"
-                    :title="scope.row.TYPE_NAME"
-                    border="0"
-                  />
-                  <img
-                    v-else-if="scope.row.TYPE_NAME=='卷盒'"
-                    :src="'./static/img/box.gif'"
-                    :title="scope.row.TYPE_NAME"
-                    border="0"
-                  />
-                   <img
-                  v-else-if="scope.row.FORMAT_NAME==null || scope.row.FORMAT_NAME==''"
-                  :src="'./static/img/format/f_undefined_16.gif'"
-                  title="无电子文件"
-                  border="0"
-                />
-                <img
-                  v-else
-                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
-                  :title="scope.row.FORMAT_NAME"
-                  border="0"
-                />
-                </template>
-              </el-table-column>>
-              <template v-for="item in gridList">
-                <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
-                  <template slot-scope="scope">
-                    <template
-                      v-if="item.attrName=='C_ARCHIVE_DATE'"
-                    >{{dateFormat(scope.row.C_ARCHIVE_DATE)}}</template>
-                    <template v-else>{{scope.row[item.attrName]}}</template>
-                  </template>
-                </el-table-column>
-              </template>
-              <el-table-column align="right">
-                <template slot-scope="scope">
-                  <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
-          <el-col>
-            <el-form-item
-              label="申请人领导"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.C_REVIEWER1}}</el-form-item>
-            <el-form-item
-              label="形成部门领导"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.C_REVIEWER2}}</el-form-item>
-            <el-form-item
-              label="分管领导"
-              :label-width="formLabelWidth"
-              style="float:left"
-            >{{borrowForm.C_REVIEWER3}}</el-form-item>
-          </el-col>
-          <el-col>
-            <el-form-item
-              label="借阅目的"
-              :label-width="formLabelWidth"
-              style="text-align:left"
-            >{{borrowForm.C_COMMENT}}</el-form-item>
-          </el-col>
-        </div>
       </el-row>
     </el-form>
-
-    <div slot="footer" class="dialog-footer" style="text-align:center" v-if="istask==false">
-      <el-button ref="borrowCancel" type="primary" @click="cancel()">{{$t('application.cancel')}}</el-button>
-      <el-button ref="borrowStartwf" @click="startWorkflow(borrowForm)">启动流程</el-button>
-    </div>
   </div>
 </template>
 
@@ -378,7 +214,7 @@ export default {
       formEditPermision: 0,
       processDefinitionId: "",
       activityName: "",
-      vshowShopingCart: false,
+     vshowShopingCart: false,
       showOrCloseShopingCartLabel: "从借阅单添加",
       expireTimeOption: this.dateCheck(),
       defaultProps: {
@@ -393,17 +229,50 @@ export default {
     };
   },
 
+  props:{
+    activityName1: {
+        type: String,
+        default: ""
+      },
+    processDefinitionId1: {
+        type: String,
+        default: ""
+      },
+    formEditPermision1: {
+        type: Number ,
+        default: 0
+      },
+    istask1: {
+        type: Number,
+        default: 0
+      },
+    formId1: {
+        type: String,
+        default: ""
+      },
+    activityName1:{
+       type: String,
+       default: ""
+    }
+  },
   created() {
     let _self = this;
-    _self.formId = _self.$route.query.borrowFormId;
-    if (typeof _self.$route.query.istask != "undefined") {
-      _self.formEditPermision = _self.$route.query.formEditPermision;
-      _self.istask = _self.$route.query.istask;
-      _self.processDefinitionId = _self.$route.query.processDefinitionId;
-      _self.activityName = _self.$route.query.activityName;
+    // _self.formId = _self.$route.query.borrowFormId;
+    _self.formId = _self.formId1;
+  //   if (typeof _self.$route.query.istask != "undefined") {
+  //     _self.formEditPermision = _self.$route.query.formEditPermision;
+  //     _self.istask = _self.$route.query.istask;
+  //     _self.processDefinitionId = _self.$route.query.processDefinitionId;
+  //     _self.activityName = _self.$route.query.activityName;
+  // }
+    if (typeof _self.istask1 != "undefined") {
+      _self.formEditPermision = _self.formEditPermision1;
+      _self.istask = _self.istask1;
+      _self.processDefinitionId = _self.processDefinitionId1;
+      _self.activityName = _self.activityName1;
   }
     _self.getApprovalUserList();
-    // _self.loadGridView();
+    _self.loadGridView();
   },
   mounted() {
     let _self = this;
@@ -864,18 +733,6 @@ export default {
             });
         }, 1000);
       }
-    },
-    getBorrowHelpDoc() {
-      let _self = this;
-      axios.post("/dc/getBorrowHelpDoc", new Map()).then(function(response) {
-        let href = _self.$router.resolve({
-          path: "/viewdoc",
-          query: {
-            id: response.data.data
-          }
-        });
-        window.open(href.href, "_blank");
-      });
     },
     downloadAllFile() {
       let _self = this;
