@@ -265,9 +265,15 @@ export default {
             this.$refs.ICMPass.itemDataList=[]
             this.$refs.ICMComments.itemDataList=[]
             let _self = this
-            _self.tables.main.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"+"and C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
-            _self.$refs.mainDataGrid.condition=_self.tables.main.condition
-            _self.tables.main.condition="TYPE_NAME='ICM' and C_PROJECT_NAME='@project'"
+            //_self.tables.main.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"+"and C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+            if(_self.selectiteam  && _self.selectiteam.length>0){
+                _self.$refs.mainDataGrid.condition=_self.tables.main.condition + " and C_PROJECT_NAME in("+_self.selectiteam+") AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+            }else
+            {
+                _self.$refs.mainDataGrid.condition=_self.tables.main.condition + " and C_PROJECT_NAME = '@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+            }
+            
+            //_self.tables.main.condition="TYPE_NAME='ICM' and C_PROJECT_NAME='@project'"
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
         },
