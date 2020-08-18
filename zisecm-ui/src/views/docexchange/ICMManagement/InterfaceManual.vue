@@ -100,11 +100,12 @@ export default {
     name: "InterfaceManual",
     data(){
         return{
+            userCondition: '',
             tables:{
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM' and C_PROJECT_NAME='@project'",
+                    condition:" TYPE_NAME='ICM' ",
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
@@ -187,6 +188,7 @@ export default {
         loadsuccess(){
             if(this.currentUser().company!='CNPE'){
                 this.tables.main.condition+=" AND (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"')"
+                this.userCondition = " (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"') and "
             }
             this.$refs.mainDataGrid.condition = this.tables.main.condition
             this.$refs.mainDataGrid.loadGridData()
@@ -267,13 +269,13 @@ export default {
             let _self = this
             //_self.tables.main.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"+"and C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
             if(_self.selectiteam  && _self.selectiteam.length>0){
-                _self.$refs.mainDataGrid.condition=_self.tables.main.condition + " and C_PROJECT_NAME in("+_self.selectiteam+") AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME in("+_self.selectiteam+") AND CODING LIKE '%"+ _self.inputValueNum+"%'";
             }else
             {
-                _self.$refs.mainDataGrid.condition=_self.tables.main.condition + " and C_PROJECT_NAME = '@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME = '@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
             }
             
-            //_self.tables.main.condition="TYPE_NAME='ICM' and C_PROJECT_NAME='@project'"
+            _self.tables.main.condition=_self.$refs.mainDataGrid.condition
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
         },
