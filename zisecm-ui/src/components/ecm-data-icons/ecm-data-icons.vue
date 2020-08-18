@@ -36,6 +36,15 @@ export default {
       url: this.option.url || '/'
     }
   },
+  methods:{
+    refresh(){
+       this.span= this.option.span || 6;
+      this.data= this.option.data;
+      this.color= this.option.color || 'rgb(63, 161, 255)';
+      this.discount= this.option.discount || false;
+      this.url= this.option.url || '/';
+    }
+  },
   props: {
     option: {
       type: Object,
