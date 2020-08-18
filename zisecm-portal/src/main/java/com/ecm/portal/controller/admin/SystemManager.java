@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.impl.CacheManagerCfgActivity;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmAction;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmCardSearch;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmComponent;
@@ -68,6 +69,9 @@ public class SystemManager extends ControllerAbstract{
 	@Autowired
 	private CacheManagerEcmSuggestion cacheManagerEcmSuggestion;
 	
+	@Autowired
+	private CacheManagerCfgActivity cacheManagerCfgActivity;
+	
 	 @ResponseBody
 	 @RequestMapping("/admin/initAllCache")
 	 public   Map<String, Object>  initAllCache() {
@@ -85,6 +89,7 @@ public class SystemManager extends ControllerAbstract{
 		 cacheManagerEcmCardSearch.initAllCaches();
 		 cacheManagerEcmSuggestion.initAllCaches();
 		 cacheManagerEcmDefType.initAllCaches();
+		 cacheManagerCfgActivity.initAllCaches();
 		 SearchClient.getInstance().refreshCache();
 		 
 		 ESClient.getInstance().refreshCache();

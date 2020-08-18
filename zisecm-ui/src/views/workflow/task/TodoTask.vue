@@ -48,7 +48,7 @@
             :processDefinitionId="currentData.processDefinitionId"
             :activityName="currentData.name"
             :formEditPermision="formEditPermision"
-            :formEnableType = "this.$options.name"
+            :formEnableType ="this.$options.name"
           @click="click" >
          </component>
       <el-divider content-position="left">流转意见</el-divider>
@@ -188,6 +188,7 @@ import UserSelectInput from "@/components/controls/UserSelectInput";
 import TaskTestForm1 from "@/components/form/TaskTestForm1.vue";
 import EditTask from "@/views/workflow/task/EditTask.vue";
 import DocViewTask from "@/views/workflow/task/DocViewTask.vue";
+// import Borrow from "@/components/form/Borrow copy.vue";
 export default {
   name: "TodoTask",
   permit: 1,
@@ -196,6 +197,7 @@ export default {
     TaskTestForm1: TaskTestForm1,
     EditTask : EditTask,
     DocViewTask : DocViewTask
+    // Borrow : Borrow
   },
  data() {
     return {
