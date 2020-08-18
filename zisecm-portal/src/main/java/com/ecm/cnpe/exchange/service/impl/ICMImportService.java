@@ -294,11 +294,7 @@ public class ICMImportService extends EcmService {
 								}
 							}
 						}/*/
-						try {
-							checkDocument( token,sheet.getRow(i), 
-									attrNames,
-									1,sheet.getRow(i).getLastCellNum());
-							
+						try {							
 							
 							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
 									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
@@ -373,30 +369,6 @@ public class ICMImportService extends EcmService {
 	}
 
 
-	private boolean checkDocument(String token,  Row row, 
-			Map<Integer,String> attrNames,
-			int start,int end) throws Exception {
-			List<EcmDocument> list = new ArrayList<EcmDocument>();
-			String submitType= row.getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end)).getStringCellValue();
-			if(submitType.equals("新增")) {
-				String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-				String cond = " TYPE_NAME='ICM' and CODING='"+coding+"'";
-				try {
-					List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
-					if(result!=null&&result.size()>0) {
-					throw new Exception("ICM 已存在，编码："+coding);
-				}
-			} catch (EcmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SqlDeniedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return false;
-	}
 	
 	
 	private String newDocument(String token, String typeName,FileInputStream itemStream,
