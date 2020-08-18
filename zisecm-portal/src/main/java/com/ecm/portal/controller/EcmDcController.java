@@ -1133,6 +1133,25 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
+	
+	@RequestMapping(value = "/dc/getChildRelationFiles", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getChildRelationFiles(@RequestBody String id) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String sql = "select b.ID,a.NAME AS RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.C_SECURITY_LEVEL,b.CREATOR,b.CREATION_DATE,b.C_DOC_DATE" + 
+					"					from ecm_relation a, ecm_document b where a.NAME not like 'irel%' and ((a.CHILD_ID=b.ID" + 
+					"					and a.PARENT_ID='"+id+"')) order by b.CREATION_DATE";
+			// System.out.println(sql);
+			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
+			mp.put("data", list);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
 
 	@RequestMapping(value = "/dc/getDocUseInfo", method = RequestMethod.POST)
 	@ResponseBody

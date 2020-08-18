@@ -11,15 +11,14 @@
       </el-steps>
       <el-divider content-position="left">表单信息</el-divider>
       <!-- <router-view ref="formRouter"></router-view> -->
-      <component
-        :is="taskName"
+      <DocViewTask
         :formId="currentFormId"
         :docId="currentFormId"
         :istask="1"
         :processDefinitionId="currentData.processDefinitionId"
         :activityName="currentData.name"
         :formEnableType="this.$options.name"
-      ></component>
+      ></DocViewTask>
       <el-divider content-position="left">流转意见</el-divider>
       <el-table :data="taskList" border v-loading="loading" style="width: 100%">
         <el-table-column label="序号" width="65">
@@ -420,16 +419,16 @@ export default {
       _self.currentFormId = indata.formId;
       var m = new Map();
       var n = new Map();
-      n.set("processDefinitionId", indata.processDefinitionId);
-      n.set("activityName", indata.name);
-      axios
-        .post("/workflow/getEcmCfgActivity", JSON.stringify(n))
-        .then(function(response){
-          _self.taskName = response.data.data.componentName;
-        }).catch(function(error) {
-          console.log(error);
-          _self.loading = false;
-        });
+      // n.set("processDefinitionId", indata.processDefinitionId);
+      // n.set("activityName", indata.name);
+      // axios
+      //   .post("/workflow/getEcmCfgActivity", JSON.stringify(n))
+      //   .then(function(response){
+      //     _self.taskName = response.data.data.componentName;
+      //   }).catch(function(error) {
+      //     console.log(error);
+      //     _self.loading = false;
+      //   });
       m.set("processInstanceId", indata.id);
       _self.currentProcessId = indata.id;
       axios

@@ -168,7 +168,7 @@
                 gridViewName="DCTransferGrid"
                 condition=" (status='' or status is null or status='新建') and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
                 :isshowCustom="false"
-                :isEditProperty="false"
+                :isEditProperty="true"
                 showOptions="查看内容"
                 :isShowChangeList="false"
                 @rowclick="rowClick"

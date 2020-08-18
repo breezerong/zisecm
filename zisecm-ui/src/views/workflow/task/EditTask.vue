@@ -25,17 +25,32 @@
                 :disabled="formEnableType != 'TodoTask'"
               ></el-input>
             </el-form-item> -->
-            <ShowProperty
-            ref="ShowProperty"
-            width="100%"
-            :itemId ="formId"
-            :typeName="inputTypeName"
-            ></ShowProperty>
+            
+            <div>
+              <template v-if="inputTypeName=='借阅单'">
+                <Borrow
+                ref="borrow1"
+                :formId1 ="formId"
+                :activityName1 ="activityName"
+                :processDefinitionId1 ="processDefinitionId"
+                :istask1 ="istask"
+                :formEditPermision1 ="formEditPermision"
+                ></Borrow>
+              </template>
+              <template v-else>
+                <ShowProperty
+                ref="ShowProperty"
+                width="100%"
+                :itemId ="formId"
+                :typeName="inputTypeName"
+                ></ShowProperty>
+              </template>
+            </div>
           </el-col>   
           <el-col>
              <el-form-item label="文件" :label-width="formLabelWidth" style="text-align:left">
                 <el-button @click="viewdoc(docId)">查看文件</el-button>
-                <el-button v-if="formEnableType == 'TodoTask'" @click="importdialogVisible=true">上传文件</el-button>
+                <el-button v-if="formEnableType == 'TodoTask' && inputTypeName!='借阅单'" @click="importdialogVisible=true">上传文件</el-button>
             </el-form-item>
           </el-col>   
 
@@ -75,10 +90,12 @@
 <script type="text/javascript">
 import UserSelectInput from "@/components/controls/UserSelectInput";
 import ShowProperty from "@/components/ShowProperty"
+import Borrow from "@/components/form/Borrowcopy.vue";
 export default {
   components: {
     UserSelectInput : UserSelectInput,
-    ShowProperty : ShowProperty
+    ShowProperty : ShowProperty,
+    Borrow : Borrow
   },
   name: "EditTask",
   data() {
@@ -154,14 +171,17 @@ export default {
     },
   created() {
     let _self = this
-    
     _self.getApprovalUserList();
     // _self.loadGridView();
-    _self.getDocument();
+    
     _self.loadData();
   },
   mounted() {
    let _self = this;
+   _self.$nextTick(()=>{
+     _self.getDocument();
+   });
+  //  _self.getDocument();
     _self.bindDepartment();
   },
 
@@ -171,12 +191,11 @@ export default {
        var m = new Map();
       m.set("processDefinitionId", _self.processDefinitionId);
       m.set("activityName", _self.activityName);
-    axios
+      axios
         .post("/workflow/getApprovalUserList", JSON.stringify(m))
         .then(function(response) {
          _self.approvalUserList = response.data.data;
         });
-     
     },
     getDocument(){
       let _self = this;
