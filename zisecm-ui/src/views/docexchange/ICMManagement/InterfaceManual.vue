@@ -64,7 +64,7 @@
                 <el-col :span="24">
                     <DataGrid ref="mainDataGrid"
                      v-bind="tables.main" 
-                     :tableHeight="layout.height/2-155" 
+                     :tableHeight="layout.height/2-55" 
                      @selectchange="selectChange"
                      @rowclick="onDataGridRowClick"
                      @onPropertiesSaveSuccess="onPropertiesSaveSuccess"></DataGrid>
@@ -75,11 +75,11 @@
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.InterfaceTransfer')" name="ICMPass">
                             <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-125"></DataGrid>
+                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-225"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.InterfaceOpinion')" name="ICMComments">
                             <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMComments" showOptions="查看内容" v-bind="tables.ICMComments" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="ICMComments" showOptions="查看内容" v-bind="tables.ICMComments" :tableHeight="layout.height/2-225"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -121,7 +121,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowSelection:false,
-                    tableHeight:"350"
+                    tableHeight:"260"
                 },
                 ICMComments:{
                     gridViewName:"ICMCommentsGrid",
@@ -131,7 +131,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowSelection:false,
-                    tableHeight:"350"
+                    tableHeight:"260"
                 }
             },
             tabs:{
