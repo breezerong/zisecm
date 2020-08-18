@@ -105,7 +105,7 @@ export default {
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:" TYPE_NAME='ICM' ",
+                    condition:" C_PROJECT_NAME = '@project' ",
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
