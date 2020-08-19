@@ -13,20 +13,28 @@ public class SyncBean{
 	}
 	private List<Map<String, Object>> documents;;
     private List<Map<String, Object>> transfers;;
+	private List<EcmRelation> relations;
+	private List<EcmContent> contents;
+	private EcmUser ecmUser;
+	
+	public EcmUser getEcmUser() {
+		return ecmUser;
+	}
+	public void setEcmUser(EcmUser ecmUser) {
+		this.ecmUser = ecmUser;
+	}
 	public List<Map<String, Object>> getTransfers() {
 		return transfers;
 	}
 	public void setTransfers(List<Map<String, Object>> transfers) {
 		this.transfers = transfers;
 	}
-	private List<EcmRelation> relations;
 	public List<EcmContent> getContents() {
 		return contents;
 	}
 	public void setContents(List<EcmContent> contents) {
 		this.contents = contents;
 	}
-	private List<EcmContent> contents;
 	public List<Map<String, Object>> getDocuments() {
 		return documents;
 	}
