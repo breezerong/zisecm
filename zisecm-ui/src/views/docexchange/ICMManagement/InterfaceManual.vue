@@ -64,7 +64,7 @@
                 <el-col :span="24">
                     <DataGrid ref="mainDataGrid"
                      v-bind="tables.main" 
-                     :tableHeight="layout.height/2-155" 
+                     :tableHeight="layout.height/2-55" 
                      @selectchange="selectChange"
                      @rowclick="onDataGridRowClick"
                      @onPropertiesSaveSuccess="onPropertiesSaveSuccess"></DataGrid>
@@ -75,11 +75,11 @@
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.InterfaceTransfer')" name="ICMPass">
                             <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-125"></DataGrid>
+                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-225"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.InterfaceOpinion')" name="ICMComments">
                             <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMComments" showOptions="查看内容" v-bind="tables.ICMComments" :tableHeight="layout.height/2-155"></DataGrid>
+                            <DataGrid ref="ICMComments" showOptions="查看内容" v-bind="tables.ICMComments" :tableHeight="layout.height/2-225"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
@@ -100,11 +100,12 @@ export default {
     name: "InterfaceManual",
     data(){
         return{
+            userCondition: '',
             tables:{
                 main:{
                     gridViewName:"ICMGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"TYPE_NAME='ICM' and C_PROJECT_NAME='@project'",
+                    condition:" C_PROJECT_NAME = '@project' ",
                     isshowicon:false,
                     isshowOption:true,
                     isshowCustom:true,
@@ -120,7 +121,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowSelection:false,
-                    tableHeight:"350"
+                    tableHeight:"260"
                 },
                 ICMComments:{
                     gridViewName:"ICMCommentsGrid",
@@ -130,7 +131,7 @@ export default {
                     isshowCustom:true,
                     isInitData:false,
                     isshowSelection:false,
-                    tableHeight:"350"
+                    tableHeight:"260"
                 }
             },
             tabs:{
@@ -187,6 +188,7 @@ export default {
         loadsuccess(){
             if(this.currentUser().company!='CNPE'){
                 this.tables.main.condition+=" AND (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"')"
+                this.userCondition = " (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"') and "
             }
             this.$refs.mainDataGrid.condition = this.tables.main.condition
             this.$refs.mainDataGrid.loadGridData()
@@ -265,9 +267,15 @@ export default {
             this.$refs.ICMPass.itemDataList=[]
             this.$refs.ICMComments.itemDataList=[]
             let _self = this
-            _self.tables.main.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"+"and C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
-            _self.$refs.mainDataGrid.condition=_self.tables.main.condition
-            _self.tables.main.condition="TYPE_NAME='ICM' and C_PROJECT_NAME='@project'"
+            //_self.tables.main.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"+"and C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+            if(_self.selectiteam  && _self.selectiteam.length>0){
+                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME in("+_self.selectiteam+") AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+            }else
+            {
+                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME = '@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+            }
+            
+            _self.tables.main.condition=_self.$refs.mainDataGrid.condition
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
         },

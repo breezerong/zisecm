@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<confs>
+<!-- 	sourceTypeName：分包商系统的TYPE_NAME,
+		targetSystem:目标系统名称，用于区别tc和p6，
+		tcTypeName:对应其他系统的文件类型，
+		tcTableName: 目标系统表名-->
+		<conf sourceTypeName="文件传递单" targetSystem="tc" tcTypeName="文件传递单" tcTableName="K2_ItemTest">
+			<attributes>
+				<!--发文号 -->
+				<attribute sourceName="CODING" targetName="k2_Coding"></attribute>
+<!-- 				defaultValue：如果分包商系统没有此字段的对应值而目标系统需要一个固定值时，将值写在此 -->
+				<attribute sourceName="TITLE" targetName="k2_title" defaultValue=""></attribute>
+			</attributes>
+		</conf>
+	</confs>
+	
+</config>
