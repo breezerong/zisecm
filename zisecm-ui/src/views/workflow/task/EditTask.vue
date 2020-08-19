@@ -27,7 +27,7 @@
             </el-form-item> -->
             
             <div>
-              <template v-if="inputTypeName=='借阅单'">
+              <!-- <template v-if="inputTypeName=='借阅单'">
                 <Borrow
                 ref="borrow1"
                 :formId1 ="formId"
@@ -36,15 +36,14 @@
                 :istask1 ="istask"
                 :formEditPermision1 ="formEditPermision"
                 ></Borrow>
-              </template>
-              <template v-else>
+              </template> -->
+              
                 <ShowProperty
                 ref="ShowProperty"
                 width="100%"
                 :itemId ="formId"
                 :typeName="inputTypeName"
                 ></ShowProperty>
-              </template>
             </div>
           </el-col>   
           <el-col>
@@ -90,12 +89,12 @@
 <script type="text/javascript">
 import UserSelectInput from "@/components/controls/UserSelectInput";
 import ShowProperty from "@/components/ShowProperty"
-import Borrow from "@/components/form/Borrowcopy.vue";
+// import Borrow from "@/components/form/Borrowcopy.vue";
 export default {
   components: {
     UserSelectInput : UserSelectInput,
     ShowProperty : ShowProperty,
-    Borrow : Borrow
+    // Borrow : Borrow
   },
   name: "EditTask",
   data() {
