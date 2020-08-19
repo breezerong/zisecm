@@ -11,6 +11,7 @@
         :istask="1"
         :processDefinitionId="currentData.processDefinitionId"
         :activityName="currentData.name"
+        :formEditPermision=0
         :formEnableType="this.$options.name"
       ></component>
       <el-divider content-position="left">流转意见</el-divider>
@@ -118,12 +119,14 @@
 // });
 import EditTask from "@/views/workflow/task/DocViewTask.vue";
 import DocViewTask from "@/views/workflow/task/DocViewTask.vue";
+import borrow1 from "@/components/form/Borrow1.vue";
 export default {
   name: "DoneTask",
   permit: 1,
   components: {
     EditTask: EditTask,
     DocViewTask: DocViewTask,
+    borrow1:borrow1
   },
   data() {
     return {

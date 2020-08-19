@@ -1,29 +1,18 @@
 <template>
-     <div>  
-        <el-form inline="true" >
-        <el-row>
-          <el-col :span="2">
-            <el-form-item><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
-          </el-col>
-          <el-col :span="2">
-          <el-form-item><ecm-data-icons ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
-          </el-col>
-          <el-col :span="2">
-          <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
-          </el-col>
-          <el-col :span="2">
-          <el-form-item><ecm-data-icons ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
-          </el-col>
-          <el-col :span="2">
-          <el-form-item><ecm-data-icons ref="dataRejectIED" :option="projectDataRejectIED"></ecm-data-icons></el-form-item>
-          </el-col>
-          <el-col :span="2">
-          <el-form-item><ecm-data-icons ref="dataPendingSubmitIED" :option="projectDataPendingSubmitIED"></ecm-data-icons></el-form-item>
-          </el-col>
+     <div>
+      <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
+      dataValueField="name" dataTextField="name" @onSelectChange="onSelectChange"></DataSelect> 
+      
+      <el-row>
+      <el-col :span="2">
+      
+      <ecm-data-icons ref="dataDC" :option="projectDataDC"></ecm-data-icons>
+      <ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons>
+      </el-col>
+      <el-col :span="10" >
+      <div id="docChart1" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>
+      </el-col>
       </el-row> 
-      </el-form>
-      
-      
      </div>
 </template>
 <script type="text/javascript">
@@ -94,38 +83,6 @@ export default {
                 icon: 'el-icon-s-flag',}],
         },
 
-        projectDataPublishedIED: {
-        color: 'rgb(63, 161, 255)',
-        span: 6,
-        data:[{title: '计划数',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
-        },
-        projectDataPendingSubmitIED:{
-        color: 'rgb(63, 161, 255)',
-        span: 6,
-        data:[{title: '计划数',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
-        },
-        projectDataRejectIED:{
-        color: 'rgb(63, 161, 255)',
-        span: 6,
-        data:[{title: '计划数',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
-        },
-        projectDataPlanNum:{
-        color: 'rgb(63, 161, 255)',
-        span: 6,
-        data:[{title: '计划数',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
-        },
 
       inputValueNum: "",
 
@@ -135,16 +92,11 @@ export default {
 
   mounted() {
      let _self = this;
-    //_self.docChart1 = _self.echarts.init(document.getElementById('docChart1'));
-    //_self.initChart();
+    _self.docChart1 = _self.echarts.init(document.getElementById('docChart1'));
+    _self.initChart();
     _self.getIEDNum()
     _self.getDCNum()
     _self.getTPLANNum()
-    _self.getProjectNum()
-    _self.getPublishedIED()
-    _self.getPendingSubmitIED()
-    _self.getRejectIED()
-    _self.getPlanNum()
     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
@@ -201,88 +153,8 @@ export default {
             })
 
       },
-      getPublishedIED(){
-        let _self=this;
-        let mp=new Map();
-        let datas
-        mp.set('projectName','@project');
-        axios.post("/dc/getPublishedIED",JSON.stringify(mp))
-            .then(function(response) {
-                if(response.data.code==1){
-                datas = [{
-                title: '已发布IED',
-                count: response.data.data.num,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-claim',
-                url: '/cnpe/iedmanagement/IEDpublished'
-              }]
-            _self.projectDataPublishedIED.data = datas
-            _self.$refs.dataPublishedIED.refresh()
-      }
-            })
-      },
-      getPendingSubmitIED(){
-         let _self=this;
-        let mp=new Map();
-        let datas
-        mp.set('projectName','@project');
-        axios.post("/dc/getPendingSubmitIED",JSON.stringify(mp))
-            .then(function(response) {
-                if(response.data.code==1){
-                datas = [{
-                title: '待提交IED',
-                count: response.data.data.num,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-claim',
-                url: '/cnpe/iedmanagement/PendingSubmit'
-              }]
-              console.log(response.data.data)
-            _self.projectDataPendingSubmitIED.data = datas
-            _self.$refs.dataPendingSubmitIED.refresh()
-      }
-      })
-      },
-      getRejectIED(){
-         let _self=this;
-        let mp=new Map();
-        let datas
-        mp.set('projectName','@project');
-        axios.post("/dc/getRejectIED",JSON.stringify(mp))
-            .then(function(response) {
-                if(response.data.code==1){
-                datas = [{
-                title: '已驳回IED',
-                count: response.data.data.num,
-                color: 'rgb(255,0,0)',
-                icon: 'el-icon-s-claim',
-                url: '/cnpe/iedmanagement/RejectIED'
-              }]
-              console.log(response.data.data)
-            _self.projectDataRejectIED.data = datas
-            _self.$refs.dataRejectIED.refresh()
-      }
-      })
-      },
-      getPlanNum(){                 //获得计划数
-         let _self=this;
-        let mp=new Map();
-        let datas
-        mp.set('projectName','@project');
-        axios.post("/dc/getPlanNum",JSON.stringify(mp))
-            .then(function(response) {
-                if(response.data.code==1){
-                datas = [{
-                title: '计划数',
-                count: response.data.data.num,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-claim',
-              }]
-              console.log(response.data.data)
-            _self.projectDataPlanNum.data = datas
-            _self.$refs.dataPlanNum.refresh()
-      }
-      })
-      },
+
+
       getIEDNum(){      //获取IED数量
         let _self=this;
         let mp=new Map();

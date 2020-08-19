@@ -939,6 +939,7 @@ export default {
     },
     // 分页 页数改变
     handleSizeChange(val) {
+      this.currentPage=1;
       this.pageSize = val;
       localStorage.setItem("docPageSize", val);
       //console.log('handleSizeChange', val);

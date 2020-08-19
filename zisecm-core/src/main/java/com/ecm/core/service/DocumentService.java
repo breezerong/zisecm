@@ -48,6 +48,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
@@ -163,7 +164,16 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return getObjects(token,gridName==null?"":gridName.toString(),folderId==null?"":folderId.toString(),
 				pager,condition==null?"":condition.toString(),orderBy==null?"":orderBy.toString());
 	}
-
+	@Override
+	public List<EcmDocument> getObjects(String token, String condition) throws EcmException, SqlDeniedException {
+		// TODO Auto-generated method stub
+		return ecmDocument.getObjectsByCondition(condition);
+	}
+	
+	public List<EcmDocument> getObjects(String token,Pager page, String condition) throws EcmException, SqlDeniedException {
+		// TODO Auto-generated method stub
+		return ecmDocument.getObjectsByCondition(page,condition);
+	}
 	@Override
 	public List<Map<String, Object>> getObjects(String token, String gridName, String folderId, Pager pager,
 			String condition, String orderBy) {

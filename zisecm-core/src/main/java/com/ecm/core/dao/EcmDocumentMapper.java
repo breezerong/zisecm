@@ -28,4 +28,8 @@ public interface EcmDocumentMapper {
     List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
     
     List<Map<String, Object>> executeSQL(Pager pager, @Param(value="sqlStr") String sqlStr);
+    
+    List<EcmDocument> getObjectsByCondition(@Param(value="condition") String condition);
+    
+    List<EcmDocument> getObjectsByCondition(Pager pager,@Param(value="condition") String condition);
 }
