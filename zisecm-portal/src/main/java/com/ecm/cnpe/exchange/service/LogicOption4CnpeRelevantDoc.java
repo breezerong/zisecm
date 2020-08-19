@@ -30,13 +30,14 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	public boolean relevantOption(String token,List<String> mainDocIds) throws EcmException {
 		for(int i=0;i<mainDocIds.size();i++) {
 			String mainId= mainDocIds.get(i);
+			EcmDocument mainDoc=getObjectById(token, mainId);
 			List<Map<String,Object>> relevantMaps= getChildsByParentID(token,mainId,"相关文件");
 			for(int j=0;relevantMaps!=null&&j<relevantMaps.size();j++) {
 				Map<String,Object> relevantMap= relevantMaps.get(j);
 				EcmDocument relevantDoc=new EcmDocument();
 				relevantDoc.setAttributes(relevantMap);
-				execDesignDocByRelevant(token,relevantDoc);
-				execIEDByRelevant(token,relevantDoc);
+				execDesignDocByRelevant(token,relevantDoc,mainDoc);
+				execIEDByRelevant(token,relevantDoc,mainDoc);
 			}
 		}
 		return true;
@@ -56,8 +57,8 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 			Map<String,Object> relevantMap= relevantMaps.get(j);
 			EcmDocument relevantDoc=new EcmDocument();
 			relevantDoc.setAttributes(relevantMap);
-			execDesignDocByRelevant(token,relevantDoc);
-			execIEDByRelevant(token,relevantDoc);
+			execDesignDocByRelevant(token,relevantDoc,mainDoc);
+			execIEDByRelevant(token,relevantDoc,mainDoc);
 		}
 		return true;
 		
@@ -82,8 +83,8 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 //			relationService.deleteByChildIdAndRelationName(token, relevantDoc.getId(), "相关文件");
 //			relationService.deleteByCidPidAndRelationName(token, parentId, relevantDoc.getId(), "相关文件");
 			
-			deleteDesignDocByRelevant(token,relevantDoc);
-			deleteIEDByRelevant(token,relevantDoc);
+			deleteDesignDocByRelevant(token,relevantDoc,mainDoc.getId());
+			deleteIEDByRelevant(token,relevantDoc,mainDoc.getId());
 		}
 		return true;
 		
@@ -96,7 +97,7 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	 * @return
 	 * @throws Exception 
 	 */
-	private boolean deleteIEDByRelevant(String token,EcmDocument relevantDoc) throws Exception {
+	private boolean deleteIEDByRelevant(String token,EcmDocument relevantDoc,String mainId) throws Exception {
 		String condition=" CODING='"+relevantDoc.getCoding()+"' and REVISION='"+relevantDoc.getRevision()+"' and TYPE_NAME='IED'";
 		List<Map<String, Object>> designDocList = getObjectMap(token,condition);
 		if(designDocList!=null&&designDocList.size()>0) {
@@ -107,8 +108,9 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 //			relation.setChildId(relevantDoc.getId());
 //			relation.setName("相关文件");
 //			relationService.newObject(token, relation);
-			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), relevantDoc.getId(), "相关文件");
 			
+//			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), relevantDoc.getId(), "相关文件");
+			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), mainId, "相关文件");
 			return true;
 		}
 		
@@ -123,7 +125,7 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	 * @return
 	 * @throws Exception 
 	 */
-	private boolean deleteDesignDocByRelevant(String token,EcmDocument relevantDoc) throws Exception{
+	private boolean deleteDesignDocByRelevant(String token,EcmDocument relevantDoc,String mainId) throws Exception{
 		String condition=" CODING='"+relevantDoc.getCoding()+"' and REVISION='"+relevantDoc.getRevision()+"' and TYPE_NAME='设计文件'";
 		List<Map<String, Object>> designDocList = getObjectMap(token,condition);
 		if(designDocList!=null&&designDocList.size()>0) {
@@ -134,7 +136,9 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 //			relation.setChildId(relevantDoc.getId());
 //			relation.setName("相关文件");
 //			relationService.newObject(token, relation);
-			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), relevantDoc.getId(), "相关文件");
+			
+//			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), relevantDoc.getId(), "相关文件");
+			relationService.deleteByCidPidAndRelationName(token, designDoc.getId(), mainId, "相关文件");
 			return true;
 		}
 		
@@ -175,7 +179,7 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	 * @return
 	 * @throws EcmException 
 	 */
-	private boolean execDesignDocByRelevant(String token,EcmDocument relevantDoc) throws EcmException{
+	private boolean execDesignDocByRelevant(String token,EcmDocument relevantDoc,EcmDocument mainDoc) throws EcmException{
 		String condition=" CODING='"+relevantDoc.getCoding()+"' and REVISION='"+relevantDoc.getRevision()+"' and TYPE_NAME='设计文件'";
 		List<Map<String, Object>> designDocList = getObjectMap(token,condition);
 		if(designDocList!=null&&designDocList.size()>0) {
@@ -183,7 +187,8 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 			designDoc.setAttributes(designDocList.get(0));
 			EcmRelation relation=new EcmRelation();
 			relation.setParentId(designDoc.getId());
-			relation.setChildId(relevantDoc.getId());
+//			relation.setChildId(relevantDoc.getId());
+			relation.setChildId(mainDoc.getId());
 			relation.setName("相关文件");
 			relationService.newObject(token, relation);
 			return true;
@@ -199,7 +204,7 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	 * @return
 	 * @throws EcmException 
 	 */
-	private boolean execIEDByRelevant(String token,EcmDocument relevantDoc) throws EcmException {
+	private boolean execIEDByRelevant(String token,EcmDocument relevantDoc,EcmDocument mainDoc) throws EcmException {
 		String condition=" CODING='"+relevantDoc.getCoding()+"' and REVISION='"+relevantDoc.getRevision()+"' and TYPE_NAME='IED'";
 		List<Map<String, Object>> designDocList = getObjectMap(token,condition);
 		if(designDocList!=null&&designDocList.size()>0) {
@@ -207,7 +212,9 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 			designDoc.setAttributes(designDocList.get(0));
 			EcmRelation relation=new EcmRelation();
 			relation.setParentId(designDoc.getId());
-			relation.setChildId(relevantDoc.getId());
+//			relation.setChildId(relevantDoc.getId());
+			relation.setChildId(mainDoc.getId());
+			
 			relation.setName("相关文件");
 			relationService.newObject(token, relation);
 			return true;
