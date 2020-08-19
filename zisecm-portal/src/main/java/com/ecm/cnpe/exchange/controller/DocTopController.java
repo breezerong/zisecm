@@ -80,61 +80,84 @@ public class DocTopController extends ControllerAbstract  {
 			whereSql+=")";
 		}
 		String getLCompany=getSession().getCurrentUser().getCompany();
-//		String whereProject="C_PROJECT_NAME in("+projectList+")";
-		//CNPE基本信息
+		
 		String sqlSum = "select count(*) as sumNum from ecm_document ed where ed.TYPE_NAME='项目' "
 				+ "and ed.NAME in (select eg.NAME from ecm_group eg "
 				+ "where id in (select egu.group_id from ecm_group_user egu "
 				+ "where egu.USER_ID in (select id from ecm_user "
 				+ "where login_name='"
 				+  getLoginName +"')))";
-		String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and "+whereSql+" "
-				+ "and C_COMPANY='"+getSession().getCurrentUser().getCompany()+"'";
-		String sqlreceivedNumCnpe = "select count(*) as receivedNum from ecm_document "
-				+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( status='待确认')";
-		String sqldeBlockingNum = "select count(*) as deBlockingNum from ecm_document "
-				+ "where TYPE_NAME='设计文件' and ( C_PROCESS_STATUS='申请解锁')";
-		String sqldispenseNum = "select count(*) as dispenseNum from ecm_document "
-				+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( (status='' or status='新建') and C_COMPANY='"+getLCompany+"')";
-		String sqlRejectNum = "select count(*) as dcNum from ecm_document "
-				+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( STATUS='驳回') and (C_COMPANY='"+getLCompany+"')";
-		
-		//CNPE项目信息
-		String sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
-				+ "where TYPE_NAME!='计划任务' and("+whereSql+")";
-		String sqlIEDNum = "select count(*) as ThreePlanNum from ecm_document "
-				+ "where TYPE_NAME!='IED' and("+whereSql+")";
-		String sqlICMNum = "select count(*) as ThreePlanNum from ecm_document "
-				+ "where TYPE_NAME!='ICM' and("+whereSql+")";
-		
-		//分包商基本信息
-		String sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
-				+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( stauts='待接收' and "+whereSql+" and TO_NAME='"+getLCompany+"')";
-		
-		
-		String sqlList = "select ("+
-				sqlSum+") as sumNum, ("+
-				sqldcNum+") as dcNum,("+
-				sqlreceivedNumCnpe+") as receivedNumCnpe,("+
-				sqldeBlockingNum+") as deBlockingNum, ("+
-				sqldispenseNum+") as dispenseNum, ("+
-				sqlRejectNum+") as RejectNum ,("+
-				sqlThreePlanNum+") as ThreePlanNum,("+ 
-				sqlIEDNum+") as IEDNum, (" +
-				sqlICMNum+") as ICMNum from ecm_document";
+		String sqlList="";
+		String sqlThreePlanNum="",sqlIEDNum="",sqlICMNum="",sqlreceivedNum="";
+		sqlList="select ("+
+		sqlSum+") as sumNum, (";
+		if(getLCompany.equals("CNPE")==false) {
+			whereSql+=" and (C_COMPANY='"+getLCompany+"'";
+			//分包商项目信息
+			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
+					+ "where TYPE_NAME='计划任务' and("+whereSql+" or C_TO='"+getLCompany+"'))";;
+			sqlIEDNum = "select count(*) as IEDNum from ecm_document "
+					+ "where TYPE_NAME='IED' and("+whereSql+"))";
+			sqlICMNum = "select count(*) as ICMNum from ecm_document "
+					+ "where TYPE_NAME='ICM' and("+whereSql+")) ";
+				
+			//分包商基本信息
+			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and "+whereSql+")";
+			sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
+					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
+					+ "( STATUS='待接收' and "+whereSql+" or C_TO='"+getLCompany+"'))";
+			String sqlSubmissiondcNum="select count(*) as receivedNum from ecm_document "
+					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
+					+ "(status='' or status is null or status='新建') and "+whereSql+")";
+			sqlList += ""+
+					sqldcNum+") as dcNum,("+
+					sqlSubmissiondcNum+") as submissiondcNum,( ";
+		}else {
+			//CNPE基本信息
+			
+			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and "+whereSql+" ";
+			sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
+					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( status='待确认')";
+			String sqldeBlockingNum = "select count(*) as deBlockingNum from ecm_document "
+					+ "where TYPE_NAME='设计文件' and ( C_PROCESS_STATUS='申请解锁')";
+			String sqldispenseNum = "select count(*) as dispenseNum from ecm_document "
+					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and(status='' or status='新建')";
+			String sqlRejectNum = "select count(*) as dcNum from ecm_document "
+					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( STATUS='驳回')";
+			
+			//CNPE项目信息
+			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
+					+ "where TYPE_NAME='计划任务' and("+whereSql+")";
+			sqlIEDNum = "select count(*) as IEDNum from ecm_document "
+					+ "where TYPE_NAME='IED' and("+whereSql+")";
+			sqlICMNum = "select count(*) as ICMNum from ecm_document "
+					+ "where TYPE_NAME='ICM' and("+whereSql+") ";
+			
+			sqlList += ""+
+			sqldcNum+") as dcNum,("+
+			sqldeBlockingNum+") as deBlockingNum, ("+
+			sqldispenseNum+") as dispenseNum, ("+
+			sqlRejectNum+") as RejectNum,( ";
+		}
+		sqlList += ""+sqlThreePlanNum+") as ThreePlanNum,("+
+					sqlIEDNum+") as IEDNum, ("+
+					sqlICMNum+") as ICMNum,("+
+					sqlreceivedNum+") as receivedNum from ecm_document";
 		try {
 			List<Map<String, Object>> numList = ecmDocument.executeSQL(sqlList);
-			
-			mp.put("sumNum",numList.get(0).get("sumNum"));
-			mp.put("dcNum", numList.get(0).get("dcNum"));
-			mp.put("receivedNumCnpe",numList.get(0).get("receivedNumCnpe"));
-			mp.put("deBlockingNum",numList.get(0).get("deBlockingNum"));
-			mp.put("dispenseNum",numList.get(0).get("dispenseNum"));
-			mp.put("RejectNum",numList.get(0).get("RejectNum"));
-			//CNPE项目信息
+			//基本信息
+			mp.put("sumNum",numList.get(0).get("sumNum"));//项目
+			mp.put("dcNum", numList.get(0).get("dcNum"));//文函
+			mp.put("receivedNum",numList.get(0).get("receivedNum"));//待接收
+			mp.put("deBlockingNum",numList.get(0).get("deBlockingNum"));//待解锁
+			mp.put("dispenseNum",numList.get(0).get("dispenseNum"));//分发
+			mp.put("RejectNum",numList.get(0).get("RejectNum"));//驳回
+			mp.put("submissiondcNum",numList.get(0).get("submissiondcNum"));//待提交
+			//项目信息
 			mp.put("ThreePlanNum",numList.get(0).get("ThreePlanNum"));
 			mp.put("IEDNum",numList.get(0).get("IEDNum"));
 			mp.put("ICMNum",numList.get(0).get("ICMNum"));
+			
 			mp.put("code", ActionContext.SUCESS);
 		}catch(Exception ex) {
 			ex.printStackTrace();
@@ -191,6 +214,10 @@ public class DocTopController extends ControllerAbstract  {
 				
 			}
 			whereSql+=")";
+		}
+		String getLCompany=getSession().getCurrentUser().getCompany();
+		if(getLCompany.equals("CNPE")==false) {
+			whereSql+=" and (C_COMPANY='"+getLCompany+"' or C_TO='"+getLCompany+"')";
 		}
 		String sql="select STATUS,count(*) as c from ecm_document "
 				+ "where 1=1 "+whereSql+" and TYPE_NAME in('设计文件','文件传递单','FU申请','FU通知单','作废通知单','CR澄清要求申请单'," + 
