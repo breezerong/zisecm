@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.ecm.cnpe.exchange.entity.StatusEntity;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.ExcSynDetail;
 import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.service.ExcSynDetailService;
@@ -44,7 +45,47 @@ public class OptionLogger {
 		
 		detailService.newObject(detail);
 	}
-	
+	public static void loggerUser(ExcSynDetailService detailService,EcmUser user,
+			String companyName,String ActionName) {
+		ExcSynDetail detail=new ExcSynDetail();
+		detail.setAppName("DOCEX");
+		detail.setActionName(ActionName);
+		
+		detail.setFromId(user.getId());
+		detail.setCreationDate(new Date());
+		if(StringUtils.isEmpty(companyName)) {
+			detail.setToCompany(user.getCompanyName()!=null?user.getCompanyName():"");
+		}else {
+			detail.setToCompany(companyName);
+		}
+		
+		detailService.newObject(detail);
+	}
+	/**
+	 * 
+	 * @param detailService
+	 * @param user
+	 * @param groupName
+	 * @param companyName
+	 * @param ActionName
+	 */
+	public static void loggerGroup(ExcSynDetailService detailService,EcmUser user,String groupName,
+			String companyName,String ActionName) {
+		ExcSynDetail detail=new ExcSynDetail();
+		detail.setAppName("DOCEX");
+		detail.setActionName(ActionName);
+		
+		detail.setFromId(user.getLoginName());
+		detail.setToId(groupName);
+		detail.setCreationDate(new Date());
+		if(StringUtils.isEmpty(companyName)) {
+			detail.setToCompany(user.getCompanyName()!=null?user.getCompanyName():"");
+		}else {
+			detail.setToCompany(companyName);
+		}
+		
+		detailService.newObject(detail);
+	}
 	public static void logger(ExcSynDetailService detailService,ExcTransfer doc,String companyName) {
 		ExcSynDetail detail=new ExcSynDetail();
 		detail.setAppName("DOCEX");

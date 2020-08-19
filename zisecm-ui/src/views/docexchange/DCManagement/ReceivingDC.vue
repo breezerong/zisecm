@@ -128,7 +128,7 @@
                 :isInitData="true"
                 condition=" status='待确认'"
                 @rowclick="rowClick"
-                :isEditProperty="false"
+                :isEditProperty="true"
                 showOptions="查看内容"
                 :isShowChangeList="false"
                 @selectchange="selectChange"

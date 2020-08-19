@@ -547,8 +547,10 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 		String sql ="select a.* from ecm_user a, ecm_group_user b where b.GROUP_ID='"+id+"' and a.ID=b.USER_ID";
 		return ecmUserMapper.searchToEntity(sql);
 	}
-	
-	
+	@Override
+	public EcmGroup getObjectById(String token,String id) {
+		return ecmGroupMapper.selectByPrimaryKey(id);
+	}
 
 	
 }

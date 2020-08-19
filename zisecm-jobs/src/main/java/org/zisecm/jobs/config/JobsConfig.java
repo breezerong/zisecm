@@ -24,12 +24,12 @@ import org.thymeleaf.spring5.SpringWebFluxTemplateEngine;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
-@Configuration
-@ComponentScan({ "com.ecm.sso.*","com.ecm.core.dao", "com.ecm.core.db", "com.ecm.core.entity", 
-	"com.ecm.core.service",
-	"com.ecm.core.cache.*", "com.ecm.core.util","org.zisecm.jobs.business"})
-@MapperScan("com.ecm.core.dao")
-@PropertySource("classpath:application.properties")
+//@Configuration
+//@ComponentScan({ "com.ecm.sso.*","com.ecm.core.dao", "com.ecm.core.db", "com.ecm.core.entity", 
+//	"com.ecm.core.service",
+//	"com.ecm.core.cache.*", "com.ecm.core.util","org.zisecm.jobs.business"})
+//@MapperScan("com.ecm.core.dao")
+//@PropertySource("classpath:application.properties")
 public class JobsConfig {
 //	@Autowired
 //    private DataSourceProperties dataSourceProperties;

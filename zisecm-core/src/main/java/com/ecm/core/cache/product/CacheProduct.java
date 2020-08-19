@@ -85,8 +85,8 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	@Autowired
 	private CacheManagerCfgActivity cacheManagerCfgActivity;//活动配置
 
-	@Autowired
-	SyncPublicNet syncPublicNet;
+//	@Autowired
+//	SyncPublicNet syncPublicNet;
 	//@Autowired
 	//private PdfSignService pdfService;
 
