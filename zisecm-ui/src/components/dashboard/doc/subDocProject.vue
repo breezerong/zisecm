@@ -16,18 +16,13 @@ export default {
  data() {
     return {
         filters: {
-        projectCode: '',
-        startDate: null,
-        endDate: null,
-        supplier: '',
-        docType: '',
-        limit: 10
-      },
-      noReceiveData:{
-           projectCode: '',
-            startDate: null,
-            endDate: null,
-      },
+          projectCode: '',
+          startDate: null,
+          endDate: null,
+          supplier: '',
+          docType: '',
+          limit: 10
+        },
       showHidden: false,
       tableHeight: window.innerHeight - 210,
       dataList: [],
