@@ -102,11 +102,15 @@ public class DocTopController extends ControllerAbstract  {
 					+ "where TYPE_NAME='ICM' and("+whereSql+")) ";
 				
 			//分包商基本信息
-			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and "+whereSql+")";
-			sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
-					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
-					+ "( STATUS='待接收' and "+whereSql+" or C_TO='"+getLCompany+"'))";
-			String sqlSubmissiondcNum="select count(*) as receivedNum from ecm_document "
+			String sqldcNum = "select count(*) as dcNum from "
+					+ "(select a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
+					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
+					+ "C_IS_RELEASED=1 and "+whereSql+")";
+			sqlreceivedNum = "select count(*) as receivedNum from "
+					+ "(select a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STAUTS as STAUTS,b.TO_NAME "
+					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where C_ITEM_TYPE='文函' and "
+					+ "TYPE_NAME!='相关文件' and ( stauts='待接收' and("+whereSql+" or  TO_NAME='"+getLCompany+"')))";
+			String sqlSubmissiondcNum="select count(*) as submissiondcNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
 					+ "(status='' or status is null or status='新建') and "+whereSql+")";
 			sqlList += ""+
