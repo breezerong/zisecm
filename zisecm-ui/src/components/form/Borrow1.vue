@@ -2,7 +2,7 @@
   <div>
     <el-form ref="borrowForm" :model="borrowForm" style="width:100%" :rules="rules">
       <el-row style="width:100%">
-        <div >
+        <div v-if="formEditPermision==1">
           <el-col>
             <el-form-item
               label="借阅单号"
@@ -37,27 +37,27 @@
           </el-col>
           <el-col>
             <el-form-item
-              prop="C_START_DATE"
+              prop="C_ITEM1_DATE"
               label="借阅开始时间"
               :label-width="formLabelWidth"
               style="float:left"
             >
               <el-date-picker
                 :picker-options="expireTimeOption"
-                v-model="borrowForm.C_START_DATE"
+                v-model="borrowForm.C_ITEM1_DATE"
                 auto-complete="off"
                 value-format="yyyy-MM-dd HH:mm:ss"
               ></el-date-picker>
             </el-form-item>
             <el-form-item
-              prop="C_END_DATE"
+              prop="C_ITEM2_DATE"
               label="借阅结束时间"
               :label-width="formLabelWidth"
               style="float:left"
             >
               <el-date-picker
                 :picker-options="expireTimeOption"
-                v-model="borrowForm.C_END_DATE"
+                v-model="borrowForm.C_ITEM2_DATE"
                 auto-complete="off"
                 value-format="yyyy-MM-dd HH:mm:ss"
               ></el-date-picker>
@@ -136,6 +136,135 @@
             </el-form-item>
           </el-col>
         </div>
+        <!-- 分界线，以下为查看视图 -->
+        <div v-else>
+          <el-col>
+            <el-form-item
+              label="借阅单号"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.CODING}}</el-form-item>
+            <!-- <el-form-item :label-width="formLabelWidth" style="float:right">
+              <el-button @click="getBorrowHelpDoc()">帮助</el-button>
+            </el-form-item> -->
+          </el-col>
+          <el-col>
+            <el-form-item
+              label="姓名"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.C_DRAFTER}}</el-form-item>
+            <el-form-item
+              label="电话"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.TITLE}}</el-form-item>
+            <el-form-item
+              label="用户部门"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.C_DESC1}}</el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item
+              label="借阅类型"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.SUB_TYPE}}</el-form-item>
+          </el-col>
+          <el-col class="topbar-button">
+            <el-form-item
+              label="借阅开始时间"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{dateFormat(borrowForm.C_ITEM1_DATE)}}</el-form-item>
+            <el-form-item
+              label="借阅结束时间"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{dateFormat(borrowForm.C_ITEM2_DATE)}}</el-form-item>
+           <el-form-item :label-width="formLabelWidth" style="float:right">
+              <el-button
+              v-show="borrowForm.SUB_TYPE=='下载' && borrowForm.STATUS=='已完成' "
+              ref="downloadAllFile"
+              @click="downloadAllFile()"
+            >打包下载</el-button>
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-table :data="tabledata">
+              <el-table-column type="index" label="#" width="50"></el-table-column>
+              <el-table-column prop="id" label="id" v-if="1==2" min-width="15%" sortable></el-table-column>
+              <el-table-column width="40">
+                <template slot-scope="scope">
+                  <img
+                    v-if="scope.row.TYPE_NAME=='图册'"
+                    :src="'./static/img/drawing.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                  <img
+                    v-else-if="scope.row.TYPE_NAME=='卷盒'"
+                    :src="'./static/img/box.gif'"
+                    :title="scope.row.TYPE_NAME"
+                    border="0"
+                  />
+                   <img
+                  v-else-if="scope.row.FORMAT_NAME==null || scope.row.FORMAT_NAME==''"
+                  :src="'./static/img/format/f_undefined_16.gif'"
+                  title="无电子文件"
+                  border="0"
+                />
+                <img
+                  v-else
+                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                  :title="scope.row.FORMAT_NAME"
+                  border="0"
+                />
+                </template>
+              </el-table-column>>
+              <template v-for="item in gridList">
+                <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
+                  <template slot-scope="scope">
+                    <template
+                      v-if="item.attrName=='C_ARCHIVE_DATE'"
+                    >{{dateFormat(scope.row.C_ARCHIVE_DATE)}}</template>
+                    <template v-else>{{scope.row[item.attrName]}}</template>
+                  </template>
+                </el-table-column>
+              </template>
+              <el-table-column align="right">
+                <template slot-scope="scope">
+                  <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+          <el-col>
+            <el-form-item
+              label="申请人领导"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.C_REVIEWER1}}</el-form-item>
+            <el-form-item
+              label="形成部门领导"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.C_REVIEWER2}}</el-form-item>
+            <el-form-item
+              label="分管领导"
+              :label-width="formLabelWidth"
+              style="float:left"
+            >{{borrowForm.C_REVIEWER3}}</el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item
+              label="借阅目的"
+              :label-width="formLabelWidth"
+              style="text-align:left"
+            >{{borrowForm.C_COMMENT}}</el-form-item>
+          </el-col>
+        </div>
       </el-row>
     </el-form>
   </div>
@@ -170,8 +299,8 @@ export default {
         C_DESC1: sessionStorage.getItem("access-department"),
         TITLE: "",
         SUB_TYPE: "在线浏览",
-        C_START_DATE: new Date(),
-        C_END_DATE: new Date(),
+        C_ITEM1_DATE: new Date(),
+        C_ITEM2_DATE: new Date(),
         C_REVIEWER1: "",
         C_REVIEWER2: "",
         C_REVIEWER3: "",
@@ -192,7 +321,7 @@ export default {
         //   {required: true, message: this.$t("message.pleaseInput")+"编制部门", trigger: 'blur'},
         //     // { validator: validaePass2 }
         // ],
-        C_START_DATE: [
+        C_ITEM1_DATE: [
           {
             required: true,
             message: this.$t("message.pleaseInput") + "借阅开始时间",
@@ -200,7 +329,7 @@ export default {
           }
           // { validator: validaePass2 }
         ],
-        C_END_DATE: [
+        C_ITEM2_DATE: [
           {
             required: true,
             message: this.$t("message.pleaseInput") + "借阅结束时间",
@@ -209,11 +338,11 @@ export default {
           // { validator: validaePass2 }
         ]
       },
-      formId: "",
-      istask: 0,
-      formEditPermision: 0,
-      processDefinitionId: "",
-      activityName: "",
+      // formId: "",
+      // istask: 0,
+      // formEditPermision: 0,
+      // processDefinitionId: "",
+      // activityName: "",
      vshowShopingCart: false,
       showOrCloseShopingCartLabel: "从借阅单添加",
       expireTimeOption: this.dateCheck(),
@@ -230,47 +359,52 @@ export default {
   },
 
   props:{
-    activityName1: {
+    activityName: {
         type: String,
         default: ""
       },
-    processDefinitionId1: {
+      formEnableType:{
+        type : String,
+        default: "",
+        required: true
+      },
+      docId:{
+        type:String,
+        default:""
+        },
+    processDefinitionId: {
         type: String,
         default: ""
       },
-    formEditPermision1: {
+    formEditPermision: {
         type: Number ,
         default: 0
       },
-    istask1: {
+    istask: {
         type: Number,
         default: 0
       },
-    formId1: {
+    formId: {
         type: String,
         default: ""
-      },
-    activityName1:{
-       type: String,
-       default: ""
-    }
+      }
   },
   created() {
     let _self = this;
     // _self.formId = _self.$route.query.borrowFormId;
-    _self.formId = _self.formId1;
+    // _self.formId = _self.formId1;
   //   if (typeof _self.$route.query.istask != "undefined") {
   //     _self.formEditPermision = _self.$route.query.formEditPermision;
   //     _self.istask = _self.$route.query.istask;
   //     _self.processDefinitionId = _self.$route.query.processDefinitionId;
   //     _self.activityName = _self.$route.query.activityName;
   // }
-    if (typeof _self.istask1 != "undefined") {
-      _self.formEditPermision = _self.formEditPermision1;
-      _self.istask = _self.istask1;
-      _self.processDefinitionId = _self.processDefinitionId1;
-      _self.activityName = _self.activityName1;
-  }
+  //   if (typeof _self.istask1 != "undefined") {
+  //     _self.formEditPermision = _self.formEditPermision1;
+  //     _self.istask = _self.istask1;
+  //     _self.processDefinitionId = _self.processDefinitionId1;
+  //     _self.activityName = _self.activityName1;
+  // }
     _self.getApprovalUserList();
     _self.loadGridView();
   },
@@ -310,18 +444,19 @@ export default {
         .post("/dc/getGridViewInfo", JSON.stringify(m))
         .then(function(response) {
           _self.gridList = response.data.data;
-          if (typeof _self.formId == "undefined") {
-            _self.tabledata = _self.$route.query.tabledata;
-            _self.borrowForm.C_CREATION_UNIT =
-              _self.$route.query.C_ARCHIVE_UNIT;
-          } else {
-            _self.loadData();
-          }
+          _self.loadData();
+          // if (typeof _self.formId == "undefined") {
+          //   _self.tabledata = _self.$route.query.tabledata;
+          //   _self.borrowForm.C_CREATION_UNIT =
+          //     _self.$route.query.C_ARCHIVE_UNIT;
+          // } else {
+            
+          // }
         });
     },
     loadData() {
       let _self = this;
-      axios.post("/dc/getDocumentById", _self.formId).then(function(response) {
+      axios.post("/dc/getDocumentMapById", _self.formId).then(function(response) {
         let result = response.data;
         if (result.code == 1) {
           _self.borrowForm = result.data;
@@ -496,8 +631,8 @@ export default {
         }
 
         if (
-          new Date(_self.borrowForm.C_START_DATE).getTime() >
-          new Date(_self.borrowForm.C_END_DATE).getTime()
+          new Date(_self.borrowForm.C_ITEM1_DATE).getTime() >
+          new Date(_self.borrowForm.C_ITEM2_DATE).getTime()
         ) {
           gougou.$message({
             showClose: true,
@@ -579,7 +714,6 @@ export default {
     saveCurrentForm(m) {
       let _self = this;
       m = _self.getFormdataMap();
-
       axios
         .post("/dc/saveBorrowForm", m)
         .then(function(response) {

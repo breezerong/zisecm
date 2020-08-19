@@ -188,7 +188,7 @@ import UserSelectInput from "@/components/controls/UserSelectInput";
 import TaskTestForm1 from "@/components/form/TaskTestForm1.vue";
 import EditTask from "@/views/workflow/task/EditTask.vue";
 import DocViewTask from "@/views/workflow/task/DocViewTask.vue";
-// import Borrow from "@/components/form/Borrow copy.vue";
+import borrow1 from "@/components/form/Borrow1.vue";
 export default {
   name: "TodoTask",
   permit: 1,
@@ -196,8 +196,8 @@ export default {
     UserSelectInput: UserSelectInput,
     TaskTestForm1: TaskTestForm1,
     EditTask : EditTask,
-    DocViewTask : DocViewTask
-    // Borrow : Borrow
+    DocViewTask : DocViewTask,
+    borrow1 : borrow1,
   },
  data() {
     return {
@@ -309,7 +309,6 @@ export default {
     },
    completetask(indata) {
       let _self = this;
-      _self.$refs.propertiesComp.$refs.ShowProperty.saveItem();
       if (_self.isCompleteSelected) {
         _self.form.taskId = [];
         _self.form.formId = [];
@@ -317,9 +316,17 @@ export default {
           _self.form.taskId[i] = _self.selectedItems[i].id;
         }
       }
-
+      let  docMap=_self.getFormdataMap();
       _self.loading = true;
       if (_self.formEditPermision == 1) {
+        switch (_self.currentData.processDefinitionId.split(":")[0]) {
+        case "BianJiaoShenPi":
+          _self.$refs.propertiesComp.$refs.ShowProperty.saveItem();
+          break;
+        case "process_borrow":
+          _self.$refs.propertiesComp.saveCurrentForm();
+          break;
+        }
           // if(_self.currentData.processDefinitionId.split(":")[0]=="BianJiaoShenPi"){
             let  docMap=_self.getFormdataMap();
               axios.post("/dc/saveDocument", docMap).then(function(response) {
@@ -425,7 +432,11 @@ showOrHiddenDelegate(){
       _self.form.formId = indata.formId;
       _self.dialogVisible = true;
       _self.taskTableData = [];
-       _self.formEditPermision = 1;
+      if(indata.name == '借阅驳回' || indata.name == '编写'){
+        _self.formEditPermision = 1;
+      }else{
+        _self.formEditPermision = 0;
+      }
      if ("借阅驳回" == indata.name) {
         _self.rejectButton = "结束";
       } else {
