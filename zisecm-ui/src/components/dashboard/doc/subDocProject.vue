@@ -43,21 +43,21 @@ export default {
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
-            url: '/proj/planview'
+            url: '/cnpe/plan/threelevelplan'
           },
           {
             title: 'IED',
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
-            url: '/ied/releaseied'
+            url: '/cnpe/iedmanagement/IEDpublished'
           },
           {
             title: 'ICM',
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document',
-            url: '/doc/donedoc'
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
           }
         ]
       },

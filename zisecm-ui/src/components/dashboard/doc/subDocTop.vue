@@ -25,7 +25,7 @@ export default {
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document',
-            url: '/cnpe/DCManagement/receivedDC'
+            url: '/cnpe/DCManagement/ReceivedDC4Cnpe'
           },
           {
             title: '待接收文函',
@@ -39,7 +39,7 @@ export default {
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/IEDpublished'
+            url: '/cnpe/iedmanagement/pendingied'
           },
           {
             title: '驳回文函',
