@@ -114,6 +114,21 @@
               </el-table-column>
             </el-table>
           </el-col>
+          <!-- 是否添加购物车 -->
+          <el-col>
+            <template>
+              <el-button @click="showOrCloseShopingCart()">{{showOrCloseShopingCartLabel}}</el-button>
+            </template>
+            <div v-if="vshowShopingCart==true">
+              <ShowShopingCart
+                ref="ShowShopingCart"
+                width="100%"
+                v-bind:formId="formId"
+                v-bind:excludeRows="tabledata"
+              ></ShowShopingCart>
+              <el-button ref="add" style="float:left" @click="addToFormFromShopingCart()">添加到表单</el-button>
+            </div>
+          </el-col>
            <el-col style="padding-top:3px;">
             <div v-for="(approver,index)  in approvalUserList" :key="'approver_'+index">
             <el-form-item :label="approver.activityName"  :label-width="formLabelWidth" style="float:left">
@@ -144,9 +159,6 @@
               :label-width="formLabelWidth"
               style="float:left"
             >{{borrowForm.CODING}}</el-form-item>
-            <!-- <el-form-item :label-width="formLabelWidth" style="float:right">
-              <el-button @click="getBorrowHelpDoc()">帮助</el-button>
-            </el-form-item> -->
           </el-col>
           <el-col>
             <el-form-item
@@ -779,32 +791,32 @@ export default {
       allTableData = allTableData
         .concat(_self.tabledata)
         .concat(_self.$refs.ShowShopingCart.selectedItemList);
-      var C_ARCHIVE_UNIT = "";
+      // var C_ARCHIVE_UNIT = "";
       if (allTableData.length > 0) {
-        for (var i = 0; i < allTableData.length; i++) {
-          if (i == 0) {
-            if (typeof allTableData[i].C_ARCHIVE_UNIT == "undefined") {
-              _self.$message({
-                showClose: true,
-                message: "所借阅档案，归档单位为空，不能外借!",
-                duration: 5000,
-                type: "warning"
-              });
-              return;
-            }
-            C_ARCHIVE_UNIT = allTableData[i].C_ARCHIVE_UNIT;
-          } else {
-            if (C_ARCHIVE_UNIT != allTableData[i].C_ARCHIVE_UNIT) {
-              _self.$message({
-                showClose: true,
-                message: "所借阅档案，归档单位只能是同一个!",
-                duration: 5000,
-                type: "warning"
-              });
-              return;
-            }
-          }
-        }
+        // for (var i = 0; i < allTableData.length; i++) {
+        //   if (i == 0) {
+        //     if (typeof allTableData[i].C_ARCHIVE_UNIT == "undefined") {
+        //       _self.$message({
+        //         showClose: true,
+        //         message: "所借阅档案，归档单位为空，不能外借!",
+        //         duration: 5000,
+        //         type: "warning"
+        //       });
+        //       return;
+        //     }
+        //     C_ARCHIVE_UNIT = allTableData[i].C_ARCHIVE_UNIT;
+        //   } else {
+        //     if (C_ARCHIVE_UNIT != allTableData[i].C_ARCHIVE_UNIT) {
+        //       _self.$message({
+        //         showClose: true,
+        //         message: "所借阅档案，归档单位只能是同一个!",
+        //         duration: 5000,
+        //         type: "warning"
+        //       });
+        //       return;
+        //     }
+        //   }
+        // }
       } else {
         _self.$message({
           showClose: true,
