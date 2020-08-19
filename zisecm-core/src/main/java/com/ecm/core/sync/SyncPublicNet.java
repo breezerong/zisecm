@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,14 +23,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -468,7 +473,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 		for (File temp : fileDirectory.listFiles()) {
 			if (!temp.isDirectory() && temp.getName().endsWith("zip")
 					&& (!temp.getName().startsWith("DONE") && !temp.getName().startsWith("ERROR"))) {
-				zipFileList.add(temp);
+				if(new File(temp.getAbsolutePath()+".MD5.txt").exists()) {
+					zipFileList.add(temp);
+				}
 			}
 		}
 		IEcmSession ecmSession = null;
@@ -482,7 +489,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 			String zipMD5FileFullPath = zipFolderPath + zipFileList.get(0).getName() + ".MD5.txt";
 			String MD5_org = readFirstLine(zipMD5FileFullPath).replaceAll("[\\s\\t\\n\\r]", "");
 			if (generateZipFileMD5(zipFileFullPath).equals(MD5_org)) {
-				ZipUtil.unZip(zipFileFullPath, zipFolderPath);
+				unZip(zipFileFullPath, zipFolderPath);
 				List<SyncBean> syncBeanList = readJsonResult(zipFileList.get(0).toString().replace(".zip", "") + "/"
 						+ zipFileList.get(0).getName().replace(".zip", "") + ".json");
 				if (actionName.equals("导入用户")) {
@@ -490,18 +497,26 @@ public class SyncPublicNet implements ISyncPublicNet {
 						SyncBean en = (SyncBean) iterator.next();
 						String beanType = en.getBeanType();
 						EcmUser ecmUserObj=en.getEcmUser();
+						String userId=null;
+						String groupId=null;
 						switch (beanType) {
 						case "新建用户":
-							userService.newObject(token, en);
+							if(userService.getObjectById(token, ecmUserObj.getId())==null) {
+								userService.newObject(token, ecmUserObj);							
+							}
  							break;
 						case "修改用户":
-							userService.updateObject(token, en);
+							userService.updateObject(token, ecmUserObj);
 							break;
 						case "添加到角色":
-							groupService.addUserToGroup(token, ecmUserObj.getName(), ecmUserObj.getGroupName());
+							userId=userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+							groupId=groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+							groupService.addUserToGroup(token,  userId,groupId);
 							break;
 						case "移除用户":
-							groupService.removeUserFromRole(token, ecmUserObj.getName(), ecmUserObj.getGroupName());
+							userId=userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+							groupId=groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+							groupService.removeUserFromRole(token, userId,groupId);
 							break;
 						default:
 						}
@@ -618,10 +633,20 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private String readJsonFile(String filePath) {
 		Path ConfPath = Paths.get("", filePath);
 		String jsonString = "";
+		InputStream in=null;
 		try {
-			jsonString = FileUtils.readFileToString(ConfPath.toFile(), DEFAULT_CHARSET);
+			  in = FileUtils.openInputStream(ConfPath.toFile());
+	         jsonString= IOUtils.toString(in, Charsets.toCharset(DEFAULT_CHARSET));
 		} catch (Exception e) {
 			logger.error("读取文件失败{}", ConfPath.toAbsolutePath(), e);
+		}finally {
+			if (in!=null ) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return jsonString;
 	}
@@ -688,4 +713,33 @@ public class SyncPublicNet implements ISyncPublicNet {
 		return result;
 	}
 
+	/**
+	 *  @Description: 解压缩
+	 * @param src 需要解压的压缩文件
+	 * @param out 解压到的目录
+	 */
+	public static void unZip(String zipFilePath,String outFolder) throws IOException{
+		File src= new File(zipFilePath);
+		File out=new File(outFolder);
+		// 先创建要解压的文件
+		ZipFile zipFile=new ZipFile(src,"GB18030");
+		//通过entries()循环读取来得到文件。  hasMoreElemerts() 用来判断是否有元素
+		for(Enumeration<ZipEntry> entries = zipFile.getEntries(); entries.hasMoreElements();){
+			//可以连续地调用nextElement()方法来得到 Enumeration枚举对象中的元素
+			ZipEntry entry=entries.nextElement();
+			File file = new  File(out,entry.getName());
+			if(entry.isDirectory()){
+				file.mkdirs();
+			}else {
+				File parent = file.getParentFile();
+				if (!parent.exists()) {
+					parent.mkdirs();
+				}
+				try (FileOutputStream fos=new FileOutputStream(file)){
+					IOUtils.copy(zipFile.getInputStream(entry), new FileOutputStream(file));
+				}
+			}
+		}
+		zipFile.close();
+	}
 }
