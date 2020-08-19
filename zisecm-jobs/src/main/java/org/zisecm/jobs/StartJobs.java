@@ -19,7 +19,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 @SpringBootApplication
 @ComponentScan({ "com.ecm.sso.*","com.ecm.core.dao", "com.ecm.core.db", "com.ecm.core.entity", "com.ecm.core.service",
-		"com.ecm.core.cache.*", "com.ecm.core.util",  "org.zisecm.jobs.business" })
+		"com.ecm.core.cache.*", "com.ecm.core.util",  "org.zisecm.jobs.business","org.zisecm.jobs.*" })
 @MapperScan("com.ecm.core.dao")
 @EnableTransactionManagement
 @EnableScheduling

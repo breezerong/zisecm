@@ -23,13 +23,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -48,6 +51,8 @@ public class UserManager extends ControllerAbstract {
 	
 	@Autowired
 	private GroupService groupService;
+	@Autowired
+	private ExcSynDetailService detailService;
 
 	/**
 	 * 获取所有用户
@@ -343,6 +348,11 @@ public class UserManager extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			userService.updateObject(getToken(), obj);
+			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
+				OptionLogger.loggerUser(detailService, obj, obj.getCompanyName(),"修改用户");
+			}else {
+				OptionLogger.loggerUser(detailService, obj, "CNPE","修改用户");
+			}
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block
@@ -411,6 +421,12 @@ public class UserManager extends ControllerAbstract {
 				fileName = uploadFile.getOriginalFilename();
 			}
 			userService.newObject(getToken(), en, instream, fileName);
+			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
+				OptionLogger.loggerUser(detailService, en, en.getCompanyName(),"新建用户");
+			}else {
+				OptionLogger.loggerUser(detailService, en, "CNPE","新建用户");
+			}
+			
 			if (instream != null) {
 				instream.close();
 			}
@@ -510,6 +526,16 @@ public class UserManager extends ControllerAbstract {
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			groupService.removeUserFromRole(getToken(), args.get("userId").toString(), args.get("roleId").toString());
+			EcmUser user= userService.getObjectById(this.getToken(), args.get("userId").toString());
+			
+			EcmGroup group= groupService.getObjectById(getToken(), args.get("roleId").toString());
+			
+			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
+				OptionLogger.loggerGroup(detailService, user, group.getName(),user.getCompanyName(),"移除用户");
+			}else {
+				OptionLogger.loggerGroup(detailService, user, group.getName(),"CNPE","移除用户");
+			}
+			
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block
