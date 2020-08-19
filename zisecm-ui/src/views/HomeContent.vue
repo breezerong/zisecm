@@ -8,7 +8,15 @@
               <span style="float: left;" class="ecmtitle">基本信息</span>
             </div>
             <div>
-              <ecm-data-icons :option="projectData1"></ecm-data-icons>
+              <planTop v-if="isShowCNPEPlan"></planTop>
+            </div>
+          </el-card>
+          <el-card :body-style="{ height: '120px' }">
+            <div slot="header" class="clearfix" style="padding-bottom:5px;">
+              <span style="float: left;" class="ecmtitle">项目信息</span>
+            </div>
+            <div>
+              <planProject v-if="isShowCNPEPlan"></planProject>
             </div>
           </el-card>
           <el-card :body-style="{ height: '180px' }">
@@ -143,12 +151,28 @@
 </template>
 <script>
 import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
+import planTop from '@/components/dashboard/plan/planTop'
+import planProject from '@/components/dashboard/plan/planProject'
+import subPlanProject from '@/components/dashboard/plan/subPlanProject'
+import subPlanTop from '@/components/dashboard/plan/subPlanTop'
 export default {
   components: {
-    ecmDataIcons
+    ecmDataIcons,
+    planTop,
+    planProject,
+    subPlanProject,
+    subPlanTop
   },
   data() {
     return {
+      isShowCNPEPlan:true,
+      isShowCNPEJK:false,
+      isShowSubPlan:false,
+      isShowSubJK:false,
+      isShowCNPEWK:false,
+      isShowSubWK:false,
+      userType:'',
+
        projectData1: {
         color: 'rgb(63, 161, 255)',
         span: 6,
@@ -222,6 +246,7 @@ export default {
     _self.getDocument();
     _self.getCarousel();
     _self.getRegulation();
+    _self.getUserType();
   },
   methods: {
     //获取待办任务列表，最多五条
@@ -388,6 +413,7 @@ export default {
       this.dialogVisible = true
       let _self = this
       var userName = sessionStorage.getItem("access-userName")
+      console.log(sessionStorage)
       axios.post("/user/getGroupByUserName",userName).then(function(response){
         _self.groupData = response.data.data
       })
@@ -435,7 +461,17 @@ export default {
         path:'/dc/folderviewer',
           query: { folderName: folderName }
       });
-    }
+    },
+    getUserType(){
+      var tempGroup
+      tempGroup = this.currentUser().roles
+      this.userType = tempGroup[0]
+      console.log(this.userType)
+      console.log(this.currentUser().roles)
+      if(this.userType=='CNPE_计划人员'){
+        this.isShowCNPEPlan=true
+      }
+    },
   }
 };
 </script>
