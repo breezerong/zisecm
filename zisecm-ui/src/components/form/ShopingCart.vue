@@ -407,6 +407,14 @@ export default {
         for (var i = 0; i < _self.selectedItemList.length; i++) {
           addItemId.push(_self.selectedItemList[i].ID);
         }
+      }else{
+        _self.$message({
+          showClose: true,
+          message: "请勾选添加的文件!",
+          duration: 2000,
+          type: "success"
+          });
+          return;
       }
       m.set("documentIds",addItemId);
       m.set("formId",_self.formId);
@@ -418,7 +426,7 @@ export default {
           duration: 2000,
           type: "success"
           });
-
+          _self.loadGridView();
         })
         .catch(function(error) {
           console.log(error);

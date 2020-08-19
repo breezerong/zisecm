@@ -835,6 +835,7 @@ export default {
             let result = response.data;
             if (result.code == 1) {
               _self.tabledata = result.data;
+              _self.$refs.ShowShopingCart.loadGridView();
               if (_self.borrowForm.C_CREATION_UNIT != C_ARCHIVE_UNIT) {
                 _self.borrowForm.C_CREATION_UNIT = C_ARCHIVE_UNIT;
                 _self.borrowForm.C_REVIEWER2 = "";
@@ -873,6 +874,7 @@ export default {
             .post("/dc/getFormRelateDocument", _self.formId)
             .then(function(response) {
               let result = response.data;
+              _self.$refs.ShowShopingCart.loadGridView();
               if (result.code == 1) {
                 _self.tabledata = result.data;
               }
