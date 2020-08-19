@@ -1,25 +1,109 @@
 <template>
  <div>
-    
+    <ecm-data-icons :option="projectData"></ecm-data-icons>
  </div>
 </template>
 
-
 <script type="text/javascript">
+import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
 export default {
  name: "planTopDashBoard",
  data() {
     return {  
-        
+      projectData: {
+        color: 'rgb(63, 161, 255)',
+        span: 4,
+        data: [
+          {
+            title: '项目',
+            count:0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-warning',
+            url: ''
+          },
+          {
+            title: '计划',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: ''
+          },
+          {
+            title: '三级计划',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/DCManagement/receivingdc'
+          },
+          {
+            title: '已生效IED',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/iedmanagement/IEDpublished'
+          },
+          {
+            title: '文函',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/iedmanagement/pendingied'
+          },
+          {
+            title: 'ICM',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document-delete',
+            url: ''
+          },
+          {
+            title: '反馈ICM',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-delete',
+            url: ''
+          }
+        ]
+      },
+      a:[]
     };
   },
-  created() {
-    let _self = this;
+  mounted() {
+    this.loadStatistic();
   },
+
   methods: {
-     
+    loadStatistic(){
+      let _self = this;
+      let mp=new Map();
+      axios
+        axios.post("/exchange/homeTop/homeSumNum",JSON.stringify(mp))
+        .then(function (response) {
+          if(response.data.code==1){
+            console.log(response.data)
+              _self.a[0]=response.data.projectNum;
+              _self.a[1]=response.data.planNum;
+              _self.a[2]=response.data.thereplanNum;
+              _self.a[3]=response.data.iedNum;
+              _self.a[4]=response.data.dcNum;
+              _self.a[5]=response.data.icmNum;
+              _self.a[6]=response.data.feedbackicmNum;
+              let i=0
+              _self.projectData.data.forEach(function(item){
+                item.count=_self.a[i++];
+              })
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
   },
   
+  components: {
+    ecmDataIcons:ecmDataIcons
+  },
 };
 
 </script>
