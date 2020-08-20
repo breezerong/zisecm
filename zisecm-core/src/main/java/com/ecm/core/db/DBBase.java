@@ -22,6 +22,7 @@ public class DBBase {
 	public static String DB_SQLSERVER = "sqlserver";
 	public static String DB_MYSQL = "mysql";
 	public static String DB_POSTGRESQL = "postgresql";
+	public static String DB_DM = "dm";
 	
 	@Value("${spring.datasource.driver-class-name}")
 	public void setClassName(String name) {
@@ -43,6 +44,11 @@ public class DBBase {
 					dbType = DB_ORACLE;
 				}else if(className.toLowerCase().indexOf(DB_POSTGRESQL)>-1) {
 					dbType = DB_POSTGRESQL;
+				}
+				else if(className.toLowerCase().indexOf(":" + DB_DM + ":")>-1) {
+					dbType = DB_DM;
+				}else {
+					dbType = DB_ORACLE;
 				}
 			}else {
 				return DB_MYSQL;
@@ -79,5 +85,9 @@ public class DBBase {
 	 */
 	public static boolean isPostgreSql() {
 		return getDbType().equals(DB_POSTGRESQL);
+	}
+	
+	public static boolean isDmSql() {
+		return getDbType().equals(DB_DM);
 	}
 }

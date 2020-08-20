@@ -86,6 +86,8 @@ public class PageInterceptor implements Interceptor {
 			return getOraclePageSql(page, sqlBuffer);
 		} else if (DBBase.isSqlServer()) {
 			return getSqlserverPageSql(page, sqlBuffer);
+		} else if(DBBase.isDmSql()) {
+			return getDmPageSql(page, sqlBuffer);
 		}
 		return sqlBuffer.toString();
 	}
@@ -125,6 +127,15 @@ public class PageInterceptor implements Interceptor {
 	}
  
 	private String getOraclePageSql(Pager page, StringBuffer sqlBuffer) {
+		// 计算第一条记录的位置，Oracle分页是通过rownum进行的，而rownum是从1开始的
+		int offset = page.getPageIndex() * page.getPageSize() + 1;
+		sqlBuffer.insert(0, "select u.*, rownum r from (").append(") u where rownum < ")
+			.append(offset + page.getPageSize());
+		sqlBuffer.insert(0, "select * from (").append(") where r >= ").append(offset);
+		return sqlBuffer.toString();
+	}
+	
+	private String getDmPageSql(Pager page, StringBuffer sqlBuffer) {
 		// 计算第一条记录的位置，Oracle分页是通过rownum进行的，而rownum是从1开始的
 		int offset = page.getPageIndex() * page.getPageSize() + 1;
 		sqlBuffer.insert(0, "select u.*, rownum r from (").append(") u where rownum < ")
