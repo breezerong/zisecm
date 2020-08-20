@@ -16,13 +16,6 @@ export default {
         span: 4,
         data: [
           {
-            title: '项目',
-            count:0,
-            color: 'rgb(63, 161, 255)',
-            icon: 'el-icon-warning',
-            url: ''
-          },
-          {
             title: '文函',
             count: 0,
             color: 'rgb(63, 161, 255)',
@@ -71,18 +64,17 @@ export default {
   methods: {
     loadStatistic(){
       let _self = this;
-      let mp=new Map();
+      let mp=new Map()
       axios
         axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
         .then(function (response) {
           if(response.data.code==1){
             console.log(response.data)
-              _self.a[0]=response.data.sumNum;
-              _self.a[1]=response.data.dcNum;
-              _self.a[2]=response.data.receivedNum;
-              _self.a[3]=response.data.deBlockingNum;
-              _self.a[4]=response.data.dispenseNum;
-              _self.a[5]=response.data.RejectNum;
+              _self.a[0]=response.data.dcNum;
+              _self.a[1]=response.data.receivedNum;
+              _self.a[2]=response.data.deBlockingNum;
+              _self.a[3]=response.data.dispenseNum;
+              _self.a[4]=response.data.RejectNum;
               let i=0
               _self.projectData.data.forEach(function(item){
                 item.count=_self.a[i++];
