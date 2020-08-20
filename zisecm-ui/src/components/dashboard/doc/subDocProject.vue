@@ -1,10 +1,16 @@
 <template>
- <div>
-   <DataSelect @onSelectChange='onSelectChange' v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
+  <div>
+    <DataSelect @onSelectChange='onSelectChange' v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
                     dataValueField="name" dataTextField="name"></DataSelect>
-    <ecm-data-icons :option="projectData"></ecm-data-icons>
-    <div id="docChart1" :style="{height: divHeight, border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div> 
- </div>
+    <el-row>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectData"></ecm-data-icons>
+      </el-col>
+      <el-col  :span="20">
+        <div id="docChart1" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 
@@ -28,7 +34,8 @@ export default {
       dataList: [],
       total: 0,
       page: 1,
-      divHeight: '540px',
+      divWidth: '500px',
+      divHeight: '300px',
       docChart1: Object,
       docChartData1: {
         xAxisData: [],
@@ -36,7 +43,7 @@ export default {
       },
       projectData: {
         color: 'rgb(63, 161, 255)',
-        span: 6,
+        span: 24,
         data: [
           {
             title: '三级计划',
