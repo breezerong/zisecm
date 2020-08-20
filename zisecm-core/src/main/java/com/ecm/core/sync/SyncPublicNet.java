@@ -4,6 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,15 +21,20 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +50,21 @@ import com.ecm.core.dao.EcmRelationMapper;
 import com.ecm.core.dao.ExcSynDetailMapper;
 import com.ecm.core.dao.ExcTransferMapper;
 import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmRelation;
+import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.ExcSynDetail;
 import com.ecm.core.entity.SyncBean;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcTransferServiceImpl;
+import com.ecm.core.service.GroupService;
 import com.ecm.core.service.RelationService;
+import com.ecm.core.service.UserService;
 import com.ecm.core.util.SysConfig;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.IExcSynDetailService;
@@ -70,6 +83,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private EcmDocumentMapper ecmDocumentMapper;
 	@Autowired
 	private DocumentService documentService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private GroupService groupService;
 	@Autowired
 	private ExcTransferServiceImpl transferService;
 	@Autowired
@@ -95,8 +112,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private List<ExcSynDetail> readExcSynDetail(String actionName) throws Exception {
 //		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('"+actionName+"')  and status='新建' ");
 		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(
-				" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName + "')  and status not in('已同步','已导出') ");
-		TODOApplication.getNeedTOChange("同步数据清理，将 同一天多次修改，值只保留最后一次，将重复记录进行更新  ");
+				" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName + "')  and (stauts is null  or stauts not in('已同步','已导出'))  order by CREATION_DATE asc ");
 		return excSynDetailObjList;
 
 	}
@@ -108,6 +124,48 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 */
 	@Override
 	public boolean exportData(String actionName) throws Exception {
+		IEcmSession ecmSession = null;
+		String workflowSpecialUserName = env.getProperty("ecm.username");
+		String token = null;
+		try {
+			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+			token = ecmSession.getToken();
+			folderName = getFolderName();
+			List<SyncBean> resultObjList = new ArrayList<SyncBean>();
+
+			List<ExcSynDetail> excSynDetailObjList = null;
+			if (actionName.equals("导出用户")) {
+				excSynDetailObjList = exportUserInner(token, resultObjList);
+			} else {
+				excSynDetailObjList = exportDataInner(actionName, token, resultObjList);
+			}
+			TODOApplication.getNeedTOChange("需要根据不同类型，生成不同的json文件");
+			writeJsonFile(resultObjList, folderName + ".json");
+			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName, new Date());
+			String abusoluteFolderPath = getSyncPathPublic() + "/";
+			String zipFilePath = abusoluteFolderPath + folderName + ".zip";
+			ZipUtil.zip(abusoluteFolderPath + "/" + folderName + "/", zipFilePath);
+			writeMD5Info(zipFilePath);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (null != token)
+				authService.logout(token);
+		}
+		return false;
+	}
+
+	/**
+	 * @param actionName
+	 * @param token
+	 * @param resultObjList
+	 * @return
+	 * @throws Exception
+	 * @throws EcmException
+	 */
+	private List<ExcSynDetail> exportDataInner(String actionName, String token, List<SyncBean> resultObjList)
+			throws Exception, EcmException {
 		List<ExcSynDetail> excSynDetailObjList = readExcSynDetail(actionName);
 		List<String> docIds = new ArrayList<String>();
 		for (Iterator iterator = excSynDetailObjList.iterator(); iterator.hasNext();) {
@@ -115,15 +173,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 			docIds.add(excSynDetail.getFromId());
 		}
 		docIds = docIds.stream().distinct().collect(Collectors.toList());
-		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("ecm.username");
-		String token = null;
-		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
-			token = ecmSession.getToken();
-
-			List<SyncBean> resultObjList = new ArrayList<SyncBean>();
-			folderName = getFolderName();
 //			if ("提交".equals(actionName)) {
 //				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc");
 //				docIds.add("ef993cc172fe46c9b752fb0cf1c52cdc_1");
@@ -144,27 +193,51 @@ public class SyncPublicNet implements ISyncPublicNet {
 //				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
 //			}
 
-			for (int i = 0; i < docIds.size(); i++) {
-				SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
-				TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
-				// exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
-				resultObjList.add(sb);
-			}
-			TODOApplication.getNeedTOChange("需要根据不同类型，生成不同的json文件");
-			writeJsonFile(resultObjList, folderName + ".json");
-			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName, new Date());
-			String abusoluteFolderPath = getSyncPathPublic() + "/";
-			String zipFilePath = abusoluteFolderPath + folderName + ".zip";
-			ZipUtil.zip(abusoluteFolderPath + "/" + folderName + "/", zipFilePath);
-			writeMD5Info(zipFilePath);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (null != token)
-				authService.logout(token);
+		for (int i = 0; i < docIds.size(); i++) {
+			SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
+			TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
+			// exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
+			resultObjList.add(sb);
 		}
-		return false;
+		return excSynDetailObjList;
+	}
+
+	/**
+	 * @param token
+	 * @param resultObjList
+	 * @return
+	 * @throws Exception
+	 * @throws EcmException
+	 * @throws AccessDeniedException
+	 * @throws NoPermissionException
+	 */
+	private List<ExcSynDetail> exportUserInner(String token, List<SyncBean> resultObjList)
+			throws Exception, EcmException, AccessDeniedException, NoPermissionException {
+		List<ExcSynDetail> excSynDetailObjList = readExcSynDetail("新建用户','修改用户','添加到角色','移除用户");
+		EcmUser ecmUser = null;
+		for (Iterator iterator = excSynDetailObjList.iterator(); iterator.hasNext();) {
+			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
+			String type = excSynDetail.getActionName();
+			SyncBean syncBean = new SyncBean();
+			syncBean.setBeanType(type);
+			switch (type) {
+			case "新建用户":
+			case "修改用户":
+				ecmUser = userService.getObjectById(token, excSynDetail.getFromId());
+				break;
+			case "添加到角色":
+			case "移除用户":
+				ecmUser=new EcmUser();
+				ecmUser.setGroupName(excSynDetail.getToId());
+				ecmUser.setName(excSynDetail.getFromId());
+				break;
+			default:
+				break;
+			}
+			syncBean.setEcmUser(ecmUser);
+			resultObjList.add(syncBean);
+		}
+		return excSynDetailObjList;
 	}
 
 	/**
@@ -189,6 +262,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 		if ("提交".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_提交";
+		} else if ("驳回提交".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "update_驳回提交";
 		} else if ("新建".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建";
@@ -246,7 +322,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(transfers, col);
 			beanType = "update_接收";
+		} else if ("新建问题".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "create_新建问题";
+		} else if ("回复问题".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "create_回复问题";
 		}
+
 		TODOApplication.getNeedTOChange("问题反馈类型需要增加...");
 		TODOApplication.getNeedTOChange("用户同步问题...");
 
@@ -255,6 +338,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		syncBean.setTransfers(transfers);
 		List<EcmContent> contents = ecmContentMapper.selectByCondition(" PARENT_ID in(" + sb.toString() + ") ");
 		syncBean.setContents(contents);
+
 		return syncBean;
 	}
 
@@ -355,11 +439,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 	/**
 	 * 1.3.取内网返回结果
 	 */
-	private SyncBean readJsonResult(String fileName) {
+	private List<SyncBean> readJsonResult(String fileName) {
 		List<SyncBean> objList = JSON.parseArray(readJsonFile(fileName), SyncBean.class);
-		TODOApplication.getNeedTOChange("返回所有对象");
-		SyncBean en = objList.get(0);
-		return en;
+		return objList;
 	}
 
 	/**
@@ -385,16 +467,17 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 2.1从指定目录导入数据到当前系统
 	 */
 	@Override
-	public boolean importData() {
+	public boolean importData(String actionName) {
 		File fileDirectory = new File(getSyncPathPrivate());
 		List<File> zipFileList = new ArrayList<File>();
 		for (File temp : fileDirectory.listFiles()) {
-			if (!temp.isDirectory() && temp.getName().endsWith("zip") && (!temp.getName().startsWith("DONE") && !temp.getName().startsWith("ERROR"))) {
-				zipFileList.add(temp);
+			if (!temp.isDirectory() && temp.getName().endsWith("zip")
+					&& (!temp.getName().startsWith("DONE") && !temp.getName().startsWith("ERROR"))) {
+				if(new File(temp.getAbsolutePath()+".MD5.txt").exists()) {
+					zipFileList.add(temp);
+				}
 			}
 		}
-//		TODOApplication.getNeedTOChange("导入文件时，需要根据情况导入文件及相关关系");
-//		TODOApplication.getNeedTOChange("导入文件时，冲突处理：当导入数据时，发现同一天数据同时被内外网修改");
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		String token = null;
@@ -406,53 +489,49 @@ public class SyncPublicNet implements ISyncPublicNet {
 			String zipMD5FileFullPath = zipFolderPath + zipFileList.get(0).getName() + ".MD5.txt";
 			String MD5_org = readFirstLine(zipMD5FileFullPath).replaceAll("[\\s\\t\\n\\r]", "");
 			if (generateZipFileMD5(zipFileFullPath).equals(MD5_org)) {
-				ZipUtil.unZip(zipFileFullPath, zipFolderPath);
-				SyncBean en = readJsonResult(zipFileList.get(0).toString().replace(".zip", "") + "/"
+				unZip(zipFileFullPath, zipFolderPath);
+				List<SyncBean> syncBeanList = readJsonResult(zipFileList.get(0).toString().replace(".zip", "") + "/"
 						+ zipFileList.get(0).getName().replace(".zip", "") + ".json");
-				List<Map<String, Object>> documents = en.getDocuments();
-				List<Map<String, Object>> transfers = en.getTransfers();
-				List<EcmRelation> relations = en.getRelations();
-				List<EcmContent> contents = en.getContents();
-				String beanType = en.getBeanType();
-				TODOApplication.getNeedTOChange("驳回提交，需要删除目标系统的...");
-				for (int i = 0; documents != null && i < documents.size(); i++) {
-					if (beanType.startsWith("create")) {
-						documentService.newObject(token, documents.get(i));
-					} else if (beanType.startsWith("update")) {
-						documentService.updateObject(token, documents.get(i));
+				if (actionName.equals("导入用户")) {
+					for (Iterator iterator = syncBeanList.iterator(); iterator.hasNext();) {
+						SyncBean en = (SyncBean) iterator.next();
+						String beanType = en.getBeanType();
+						EcmUser ecmUserObj=en.getEcmUser();
+						String userId=null;
+						String groupId=null;
+						switch (beanType) {
+						case "新建用户":
+							if(userService.getObjectById(token, ecmUserObj.getId())==null) {
+								userService.newObject(token, ecmUserObj);							
+							}
+ 							break;
+						case "修改用户":
+							userService.updateObject(token, ecmUserObj);
+							break;
+						case "添加到角色":
+							userId=userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+							groupId=groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+							groupService.addUserToGroup(token,  userId,groupId);
+							break;
+						case "移除用户":
+							userId=userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+							groupId=groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+							groupService.removeUserFromRole(token, userId,groupId);
+							break;
+						default:
+						}
 					}
+				} else {
+					importDataInner(token, syncBeanList);
 				}
-
-				for (int i = 0; transfers != null && i < transfers.size(); i++) {
-					if (beanType.startsWith("create")) {
-						transferService.newObject(transfers.get(i));
-					} else if (beanType.startsWith("update")) {
-						transferService.updateObject(transfers.get(i));
-					}
-
-				}
-
-				for (int i = 0; relations != null && i < relations.size(); i++) {
-					if (beanType.startsWith("create")) {
-						relationService.newObject(token, relations.get(i));
-					}
-				}
-				for (int i = 0; contents != null && i < contents.size(); i++) {
-					BufferedInputStream fis = new BufferedInputStream(
-							new FileInputStream(contents.get(i).getFilePath()));
-					contents.get(i).setInputStream(fis);
-					contentService.newObject(token, contents.get(i));
-				}
-
-				TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
-
 				writeJsonResult(zipFileList.get(0), "DONE_");
-				TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
+
 			} else {
 				writeJsonResult(zipFileList.get(0), "ERROR_MD5_");
 			}
 			FileUtils.deleteDirectory(new File(zipFileList.get(0).toString().replace(".zip", "")));
 		} catch (Exception e) {
+			TODOApplication.getNeedTOChange("错误输出到文件好定位");
 			writeJsonResult(zipFileList.get(0), "ERROR_");
 			e.printStackTrace();
 		} finally {
@@ -461,6 +540,68 @@ public class SyncPublicNet implements ISyncPublicNet {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param token
+	 * @param syncBeanList
+	 * @throws EcmException
+	 * @throws AccessDeniedException
+	 * @throws NoPermissionException
+	 * @throws Exception
+	 * @throws FileNotFoundException
+	 */
+	private void importDataInner(String token, List<SyncBean> syncBeanList)
+			throws EcmException, AccessDeniedException, NoPermissionException, Exception, FileNotFoundException {
+		for (Iterator iterator = syncBeanList.iterator(); iterator.hasNext();) {
+			SyncBean en = (SyncBean) iterator.next();
+			List<Map<String, Object>> documents = en.getDocuments();
+			List<Map<String, Object>> transfers = en.getTransfers();
+			List<EcmRelation> relations = en.getRelations();
+			List<EcmContent> contents = en.getContents();
+			String beanType = en.getBeanType();
+			TODOApplication.getNeedTOChange("驳回提交，需要删除目标系统的...");
+			for (int i = 0; documents != null && i < documents.size(); i++) {
+				if (beanType.startsWith("create")) {
+					documentService.newObject(token, documents.get(i));
+					if (beanType.equals("create_回复问题")) {
+						EcmDocument edObj = documentService.getObjectById(token,
+								documents.get(i).get("C_FROM_CODING").toString());
+						edObj.addAttribute("C_ITEM_STATUS", "已回复");
+						documentService.updateObject(token, edObj);
+					}
+				} else if (beanType.startsWith("update")) {
+					documentService.updateObject(token, documents.get(i));
+					if (beanType.equals("create_驳回提交")) {
+						relationService.deleteAllRelationByParentId(token,
+								documents.get(i).get("ID").toString());
+					}
+				}
+			}
+
+			for (int i = 0; transfers != null && i < transfers.size(); i++) {
+				if (beanType.startsWith("create")) {
+					transferService.newObject(transfers.get(i));
+				} else if (beanType.startsWith("update")) {
+					transferService.updateObject(transfers.get(i));
+				}
+
+			}
+
+			for (int i = 0; relations != null && i < relations.size(); i++) {
+				if (beanType.startsWith("create")) {
+					relationService.newObject(token, relations.get(i));
+				}
+			}
+			for (int i = 0; contents != null && i < contents.size(); i++) {
+				BufferedInputStream fis = new BufferedInputStream(
+						new FileInputStream(contents.get(i).getFilePath()));
+				contents.get(i).setInputStream(fis);
+				contentService.newObject(token, contents.get(i));
+			}
+
+			TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
+		}
 	}
 
 	/**
@@ -492,10 +633,20 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private String readJsonFile(String filePath) {
 		Path ConfPath = Paths.get("", filePath);
 		String jsonString = "";
+		InputStream in=null;
 		try {
-			jsonString = FileUtils.readFileToString(ConfPath.toFile(), DEFAULT_CHARSET);
+			  in = FileUtils.openInputStream(ConfPath.toFile());
+	         jsonString= IOUtils.toString(in, Charsets.toCharset(DEFAULT_CHARSET));
 		} catch (Exception e) {
 			logger.error("读取文件失败{}", ConfPath.toAbsolutePath(), e);
+		}finally {
+			if (in!=null ) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return jsonString;
 	}
@@ -560,5 +711,35 @@ public class SyncPublicNet implements ISyncPublicNet {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	/**
+	 *  @Description: 解压缩
+	 * @param src 需要解压的压缩文件
+	 * @param out 解压到的目录
+	 */
+	public static void unZip(String zipFilePath,String outFolder) throws IOException{
+		File src= new File(zipFilePath);
+		File out=new File(outFolder);
+		// 先创建要解压的文件
+		ZipFile zipFile=new ZipFile(src,"GB18030");
+		//通过entries()循环读取来得到文件。  hasMoreElemerts() 用来判断是否有元素
+		for(Enumeration<ZipEntry> entries = zipFile.getEntries(); entries.hasMoreElements();){
+			//可以连续地调用nextElement()方法来得到 Enumeration枚举对象中的元素
+			ZipEntry entry=entries.nextElement();
+			File file = new  File(out,entry.getName());
+			if(entry.isDirectory()){
+				file.mkdirs();
+			}else {
+				File parent = file.getParentFile();
+				if (!parent.exists()) {
+					parent.mkdirs();
+				}
+				try (FileOutputStream fos=new FileOutputStream(file)){
+					IOUtils.copy(zipFile.getInputStream(entry), new FileOutputStream(file));
+				}
+			}
+		}
+		zipFile.close();
 	}
 }
