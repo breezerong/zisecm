@@ -541,8 +541,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 */
 	private void importUserInner(String token, List<SyncBean> syncBeanList)
 			throws EcmException, AccessDeniedException, NoPermissionException, Exception {
-		for (Iterator syncBeanIt = syncBeanList.iterator(); syncBeanIt.hasNext();) {
-			SyncBean en = (SyncBean) syncBeanIt.next();
+		for (Iterator<SyncBean> syncBeanIt = syncBeanList.iterator(); syncBeanIt.hasNext();) {
+			SyncBean en = syncBeanIt.next();
 			String beanType = en.getBeanType();
 			EcmUser ecmUserObj = en.getEcmUser();
 			String userId = null;
@@ -741,7 +741,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * @param src 需要解压的压缩文件
 	 * @param out 解压到的目录
 	 */
-	public static void unZip(String zipFilePath, String outFolder) throws IOException {
+	private static void unZip(String zipFilePath, String outFolder) throws IOException {
 		File src = new File(zipFilePath);
 		File out = new File(outFolder);
 		// 先创建要解压的文件
