@@ -1,6 +1,17 @@
 <template>
  <div>
-    <ecm-data-icons :option="projectData"></ecm-data-icons>
+    <el-row>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectData"></ecm-data-icons>
+      </el-col>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataDC"></ecm-data-icons>
+      </el-col>
+      <el-col :span="16">
+        <ecm-data-icons :option="projectDataOther"></ecm-data-icons>
+      </el-col>
+    </el-row>
+    
  </div>
 </template>
 <script type="text/javascript">
@@ -9,17 +20,10 @@ export default {
  name: "planTopDashBoard",
  data() {
     return {  
-      projectData: {
+      projectDataOther: {
         color: 'rgb(63, 161, 255)',
-        span: 4,
+        span: 6,
         data: [
-          {
-            title: '文函',
-            count: 0,
-            color: 'rgb(63, 161, 255)',
-            icon: 'el-icon-document',
-            url: '/cnpe/DCManagement/ReceivedDC4Cnpe'
-          },
           {
             title: '待接收文函',
             count: 0,
@@ -41,6 +45,32 @@ export default {
             icon: 'el-icon-document-delete',
             url: ''
           }
+        ]
+      },
+      projectDataDC: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '文函',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: '/cnpe/DCManagement/receivedDC'
+          },
+        ]
+      },
+      projectData: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '项目',
+            count:0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-warning',
+            url: ''
+          },
         ]
       },
       a:[]
@@ -65,7 +95,13 @@ export default {
               _self.a[1]=response.data.receivedNum;
               _self.a[2]=response.data.submissiondcNum;
               _self.a[3]=response.data.dispenseNum;
-              let i=0
+              _self.projectData.data.forEach(function(item){
+                item.count=response.data.sumNum;
+              })
+              _self.projectDataDC.data.forEach(function(item){
+                item.count=_self.a[0];
+              })
+              let i=1
               _self.projectData.data.forEach(function(item){
                 item.count=_self.a[i++];
               })

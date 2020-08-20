@@ -1,6 +1,17 @@
 <template>
   <div>
-    <ecm-data-icons :option="projectData"></ecm-data-icons>
+    <el-row>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectData"></ecm-data-icons>
+      </el-col>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataDC"></ecm-data-icons>
+      </el-col>
+      <el-col :span="16">
+        <ecm-data-icons :option="projectDataOther"></ecm-data-icons>
+      </el-col>
+    </el-row>
+    
   </div>
 </template>
 
@@ -11,7 +22,7 @@ export default {
  name: "planTopDashBoard",
  data() {
     return {  
-      projectData: {
+      projectDataOther: {
         color: 'rgb(63, 161, 255)',
         span: 4,
         data: [
@@ -52,6 +63,32 @@ export default {
           }
         ]
       },
+      projectData: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '项目',
+            count:0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-warning',
+            url: ''
+          },
+        ]
+      },
+      projectDataDC: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '文函',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: '/cnpe/DCManagement/receivedDC'
+          },
+        ]
+      },
       a:[]
     };
   },
@@ -75,8 +112,14 @@ export default {
               _self.a[2]=response.data.deBlockingNum;
               _self.a[3]=response.data.dispenseNum;
               _self.a[4]=response.data.RejectNum;
-              let i=0
               _self.projectData.data.forEach(function(item){
+                item.count=response.data.sumNum;
+              })
+              _self.projectDataDC.data.forEach(function(item){
+                item.count=_self.a[0];
+              })
+              let i=1
+              _self.projectDataOther.data.forEach(function(item){
                 item.count=_self.a[i++];
               })
           }
