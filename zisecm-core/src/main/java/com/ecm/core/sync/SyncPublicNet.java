@@ -111,8 +111,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 	private List<ExcSynDetail> readExcSynDetail(String actionName) throws Exception {
 //		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('"+actionName+"')  and status='新建' ");
-		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(
-				" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName + "')  and (stauts is null  or stauts not in('已同步','已导出'))  order by CREATION_DATE asc ");
+		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService
+				.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName
+						+ "')  and (stauts is null  or stauts not in('已同步','已导出'))  order by CREATION_DATE asc ");
 		return excSynDetailObjList;
 
 	}
@@ -227,7 +228,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				break;
 			case "添加到角色":
 			case "移除用户":
-				ecmUser=new EcmUser();
+				ecmUser = new EcmUser();
 				ecmUser.setGroupName(excSynDetail.getToId());
 				ecmUser.setName(excSynDetail.getFromId());
 				break;
@@ -426,7 +427,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 			Date updateDate) {
 		for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
 			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
-			excSynDetail.setId(excSynDetail.getId());
 			excSynDetail.setStauts(status);
 			excSynDetail.setBatchNum(batchNum);
 			excSynDetail.setExportDate(updateDate);
@@ -450,16 +450,15 @@ public class SyncPublicNet implements ISyncPublicNet {
 	public boolean UpdateImportResultStatus() {
 		//
 		File fileDirectory = new File(getSyncPathPrivate());
-		List<File> zipFileList = new ArrayList<File>();
+		String NetWorkEnv=CacheManagerOper.getEcmParameters().get("NetWorkEnv").getValue();
 		for (File temp : fileDirectory.listFiles()) {
-			if (!temp.isDirectory() && temp.getName().endsWith("zip") && temp.getName().startsWith("DONE")) {
-				zipFileList.add(temp);
+			String fileName= temp.getName();
+			if (!temp.isDirectory() && fileName.endsWith("zip") && fileName.startsWith("DONE_"+NetWorkEnv)) {				
+				excSynDetailMapper.executeSQL("update exc_syn_detail set STAUTS='已同步' where BATCH_NUM ='"+fileName.split("\\.")[0].substring(5)+"'");
+				temp.renameTo(new File(temp.getParent()+"/FINISH_"+fileName));
+				temp.renameTo(new File(temp.getParent()+"/FINISH_"+fileName+ ".MD5.txt"));
 			}
 		}
-		for (int i = 0; i < zipFileList.size(); i++) {
-
-		}
-		updateExcSynDetailStatus(null, "已同步", "", new Date());
 		return false;
 	}
 
@@ -470,10 +469,22 @@ public class SyncPublicNet implements ISyncPublicNet {
 	public boolean importData(String actionName) {
 		File fileDirectory = new File(getSyncPathPrivate());
 		List<File> zipFileList = new ArrayList<File>();
+		String ImportNetWorkEnv = "UNKNOW";
+		switch (CacheManagerOper.getEcmParameters().get("NetWorkEnv").getValue()) {
+		case "OUT":
+			ImportNetWorkEnv = "IN";
+			break;
+		case "IN":
+			ImportNetWorkEnv = "OUT";
+			break;
+		default:
+			break;
+		}
+
 		for (File temp : fileDirectory.listFiles()) {
-			if (!temp.isDirectory() && temp.getName().endsWith("zip")
-					&& (!temp.getName().startsWith("DONE") && !temp.getName().startsWith("ERROR"))) {
-				if(new File(temp.getAbsolutePath()+".MD5.txt").exists()) {
+			String fileName = temp.getName();
+			if (!temp.isDirectory() && fileName.endsWith("zip") && fileName.startsWith(ImportNetWorkEnv)) {
+				if (new File(temp.getAbsolutePath() + ".MD5.txt").exists()) {
 					zipFileList.add(temp);
 				}
 			}
@@ -496,27 +507,27 @@ public class SyncPublicNet implements ISyncPublicNet {
 					for (Iterator iterator = syncBeanList.iterator(); iterator.hasNext();) {
 						SyncBean en = (SyncBean) iterator.next();
 						String beanType = en.getBeanType();
-						EcmUser ecmUserObj=en.getEcmUser();
-						String userId=null;
-						String groupId=null;
+						EcmUser ecmUserObj = en.getEcmUser();
+						String userId = null;
+						String groupId = null;
 						switch (beanType) {
 						case "新建用户":
-							if(userService.getObjectById(token, ecmUserObj.getId())==null) {
-								userService.newObject(token, ecmUserObj);							
+							if (userService.getObjectById(token, ecmUserObj.getId()) == null) {
+								userService.newObject(token, ecmUserObj);
 							}
- 							break;
+							break;
 						case "修改用户":
 							userService.updateObject(token, ecmUserObj);
 							break;
 						case "添加到角色":
-							userId=userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
-							groupId=groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
-							groupService.addUserToGroup(token,  userId,groupId);
+							userId = userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+							groupId = groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+							groupService.addUserToGroup(token, userId, groupId);
 							break;
 						case "移除用户":
-							userId=userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
-							groupId=groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
-							groupService.removeUserFromRole(token, userId,groupId);
+							userId = userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+							groupId = groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+							groupService.removeUserFromRole(token, userId, groupId);
 							break;
 						default:
 						}
@@ -560,10 +571,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 			List<EcmRelation> relations = en.getRelations();
 			List<EcmContent> contents = en.getContents();
 			String beanType = en.getBeanType();
-			TODOApplication.getNeedTOChange("驳回提交，需要删除目标系统的...");
+//			TODOApplication.getNeedTOChange("驳回提交，需要删除目标系统的...");
 			for (int i = 0; documents != null && i < documents.size(); i++) {
 				if (beanType.startsWith("create")) {
-					documentService.newObject(token, documents.get(i));
+					if (documentService.getObjectById(token, documents.get(i).get("ID").toString()) == null) {
+						documentService.newObject(token, documents.get(i));
+					} else {
+						documentService.updateObject(token, documents.get(i));
+					}
 					if (beanType.equals("create_回复问题")) {
 						EcmDocument edObj = documentService.getObjectById(token,
 								documents.get(i).get("C_FROM_CODING").toString());
@@ -573,8 +588,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				} else if (beanType.startsWith("update")) {
 					documentService.updateObject(token, documents.get(i));
 					if (beanType.equals("create_驳回提交")) {
-						relationService.deleteAllRelationByParentId(token,
-								documents.get(i).get("ID").toString());
+						relationService.deleteAllRelationByParentId(token, documents.get(i).get("ID").toString());
 					}
 				}
 			}
@@ -594,10 +608,11 @@ public class SyncPublicNet implements ISyncPublicNet {
 				}
 			}
 			for (int i = 0; contents != null && i < contents.size(); i++) {
-				BufferedInputStream fis = new BufferedInputStream(
-						new FileInputStream(contents.get(i).getFilePath()));
-				contents.get(i).setInputStream(fis);
-				contentService.newObject(token, contents.get(i));
+				TODOApplication.getNeedTOChange("正式环境需取消注释");
+//				BufferedInputStream fis = new BufferedInputStream(
+//						new FileInputStream(contents.get(i).getFilePath()));
+//				contents.get(i).setInputStream(fis);
+//				contentService.newObject(token, contents.get(i));
 			}
 
 			TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
@@ -633,20 +648,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private String readJsonFile(String filePath) {
 		Path ConfPath = Paths.get("", filePath);
 		String jsonString = "";
-		InputStream in=null;
-		try {
-			  in = FileUtils.openInputStream(ConfPath.toFile());
-	         jsonString= IOUtils.toString(in, Charsets.toCharset(DEFAULT_CHARSET));
+		try (InputStream in = FileUtils.openInputStream(ConfPath.toFile())) {
+			jsonString = IOUtils.toString(in, Charsets.toCharset(DEFAULT_CHARSET));
 		} catch (Exception e) {
 			logger.error("读取文件失败{}", ConfPath.toAbsolutePath(), e);
-		}finally {
-			if (in!=null ) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		return jsonString;
 	}
@@ -686,7 +691,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private String getFolderName() {
 		Date dt = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
-		return sdf.format(dt);
+		return CacheManagerOper.getEcmParameters().get("NetWorkEnv").getValue() + "_" + sdf.format(dt);
 	}
 
 	private String generateZipFileMD5(String filePath) throws IOException {
@@ -701,12 +706,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private String readFirstLine(String path) {// 路径
 		File file = new File(path);
 		String result = "";
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), DEFAULT_CHARSET));// 构造一个BufferedReader类来读取文件
-			String s = null;
+		try (FileInputStream fis = new FileInputStream(file);
+				InputStreamReader isr = new InputStreamReader(fis, DEFAULT_CHARSET);
+				BufferedReader br = new BufferedReader(isr)) {// 构造一个BufferedReader类来读取文件
 			result = br.readLine();
-			br.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -714,29 +717,30 @@ public class SyncPublicNet implements ISyncPublicNet {
 	}
 
 	/**
-	 *  @Description: 解压缩
+	 * @Description: 解压缩
 	 * @param src 需要解压的压缩文件
 	 * @param out 解压到的目录
 	 */
-	public static void unZip(String zipFilePath,String outFolder) throws IOException{
-		File src= new File(zipFilePath);
-		File out=new File(outFolder);
+	public static void unZip(String zipFilePath, String outFolder) throws IOException {
+		File src = new File(zipFilePath);
+		File out = new File(outFolder);
 		// 先创建要解压的文件
-		ZipFile zipFile=new ZipFile(src,"GB18030");
-		//通过entries()循环读取来得到文件。  hasMoreElemerts() 用来判断是否有元素
-		for(Enumeration<ZipEntry> entries = zipFile.getEntries(); entries.hasMoreElements();){
-			//可以连续地调用nextElement()方法来得到 Enumeration枚举对象中的元素
-			ZipEntry entry=entries.nextElement();
-			File file = new  File(out,entry.getName());
-			if(entry.isDirectory()){
+		ZipFile zipFile = new ZipFile(src, "GB18030");
+		// 通过entries()循环读取来得到文件。 hasMoreElemerts() 用来判断是否有元素
+		for (Enumeration<ZipEntry> entries = zipFile.getEntries(); entries.hasMoreElements();) {
+			// 可以连续地调用nextElement()方法来得到 Enumeration枚举对象中的元素
+			ZipEntry entry = entries.nextElement();
+			File file = new File(out, entry.getName());
+			if (entry.isDirectory()) {
 				file.mkdirs();
-			}else {
+			} else {
 				File parent = file.getParentFile();
 				if (!parent.exists()) {
 					parent.mkdirs();
 				}
-				try (FileOutputStream fos=new FileOutputStream(file)){
-					IOUtils.copy(zipFile.getInputStream(entry), new FileOutputStream(file));
+				try (FileOutputStream fos = new FileOutputStream(file);
+						InputStream is = zipFile.getInputStream(entry);) {
+					IOUtils.copy(is, fos);
 				}
 			}
 		}

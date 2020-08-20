@@ -1,6 +1,30 @@
 <template>
  <div>
-    <ecm-data-icons :option="projectData"></ecm-data-icons>
+   <el-form inline="true">
+     <el-row>
+       <el-col :span="3">
+         <el-form-item><ecm-data-icons :option="projectData1"></ecm-data-icons></el-form-item>
+       </el-col>
+       <el-col :span="3">
+         <el-form-item><ecm-data-icons :option="projectData2"></ecm-data-icons></el-form-item>
+       </el-col>
+       <el-col :span="3">
+         <el-form-item><ecm-data-icons :option="projectData3"></ecm-data-icons></el-form-item>
+       </el-col>
+       <el-col :span="3">
+         <el-form-item><ecm-data-icons :option="projectData4"></ecm-data-icons></el-form-item>
+       </el-col>
+       <el-col :span="3">
+         <el-form-item><ecm-data-icons :option="projectData5"></ecm-data-icons></el-form-item>
+       </el-col>
+       <el-col :span="3">
+         <el-form-item><ecm-data-icons :option="projectData6"></ecm-data-icons></el-form-item>
+       </el-col>
+       <el-col :span="3">
+         <el-form-item><ecm-data-icons :option="projectData7"></ecm-data-icons></el-form-item>
+       </el-col>
+     </el-row>
+   </el-form>
  </div>
 </template>
 
@@ -10,9 +34,7 @@ export default {
  name: "planTopDashBoard",
  data() {
     return {  
-      projectData: {
-        color: 'rgb(63, 161, 255)',
-        span: 4,
+      projectData1: {
         data: [
           {
             title: '项目',
@@ -21,6 +43,10 @@ export default {
             icon: 'el-icon-warning',
             url: ''
           },
+        ]
+      },
+      projectData2: {
+        data: [
           {
             title: '计划',
             count: 0,
@@ -28,6 +54,10 @@ export default {
             icon: 'el-icon-document',
             url: ''
           },
+        ]
+      },
+      projectData3: {
+        data: [
           {
             title: '三级计划',
             count: 0,
@@ -35,6 +65,10 @@ export default {
             icon: 'el-icon-document-checked',
             url: '/cnpe/DCManagement/receivingdc'
           },
+        ]
+      },
+      projectData4: {
+        data: [
           {
             title: '已生效IED',
             count: 0,
@@ -42,6 +76,10 @@ export default {
             icon: 'el-icon-document-checked',
             url: '/cnpe/iedmanagement/IEDpublished'
           },
+        ]
+      },
+      projectData5: {
+        data: [
           {
             title: '文函',
             count: 0,
@@ -49,6 +87,10 @@ export default {
             icon: 'el-icon-document-checked',
             url: '/cnpe/iedmanagement/pendingied'
           },
+        ]
+      },
+      projectData6: {
+        data: [
           {
             title: 'ICM',
             count: 0,
@@ -56,6 +98,10 @@ export default {
             icon: 'el-icon-document-delete',
             url: ''
           },
+        ]
+      },
+      projectData7: {
+        data: [
           {
             title: '反馈ICM',
             count: 0,
@@ -88,9 +134,26 @@ export default {
               _self.a[4]=response.data.dcNum;
               _self.a[5]=response.data.icmNum;
               _self.a[6]=response.data.feedbackicmNum;
-              let i=0
-              _self.projectData.data.forEach(function(item){
-                item.count=_self.a[i++];
+              _self.projectData1.data.forEach(function(item){
+                item.count=_self.a[0];
+              })
+              _self.projectData2.data.forEach(function(item){
+                item.count=_self.a[1];
+              })
+              _self.projectData3.data.forEach(function(item){
+                item.count=_self.a[2];
+              })
+              _self.projectData4.data.forEach(function(item){
+                item.count=_self.a[3];
+              })
+              _self.projectData5.data.forEach(function(item){
+                item.count=_self.a[4];
+              })
+              _self.projectData6.data.forEach(function(item){
+                item.count=_self.a[5];
+              })
+              _self.projectData7.data.forEach(function(item){
+                item.count=_self.a[6];
               })
           }
           
