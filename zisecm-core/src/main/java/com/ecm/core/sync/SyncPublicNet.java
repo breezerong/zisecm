@@ -427,7 +427,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 			Date updateDate) {
 		for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
 			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
-			excSynDetail.setId(excSynDetail.getId());
 			excSynDetail.setStauts(status);
 			excSynDetail.setBatchNum(batchNum);
 			excSynDetail.setExportDate(updateDate);
@@ -451,16 +450,15 @@ public class SyncPublicNet implements ISyncPublicNet {
 	public boolean UpdateImportResultStatus() {
 		//
 		File fileDirectory = new File(getSyncPathPrivate());
-		List<File> zipFileList = new ArrayList<File>();
+		String NetWorkEnv=CacheManagerOper.getEcmParameters().get("NetWorkEnv").getValue();
 		for (File temp : fileDirectory.listFiles()) {
-			if (!temp.isDirectory() && temp.getName().endsWith("zip") && temp.getName().startsWith("DONE")) {
-				zipFileList.add(temp);
+			String fileName= temp.getName();
+			if (!temp.isDirectory() && fileName.endsWith("zip") && fileName.startsWith("DONE_"+NetWorkEnv)) {				
+				excSynDetailMapper.executeSQL("update exc_syn_detail set STAUTS='已同步' where BATCH_NUM ='"+fileName.split("\\.")[0].substring(5)+"'");
+				temp.renameTo(new File(temp.getParent()+"/FINISH_"+fileName));
+				temp.renameTo(new File(temp.getParent()+"/FINISH_"+fileName+ ".MD5.txt"));
 			}
 		}
-		for (int i = 0; i < zipFileList.size(); i++) {
-
-		}
-		updateExcSynDetailStatus(null, "已同步", "", new Date());
 		return false;
 	}
 
