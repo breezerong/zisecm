@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -59,7 +58,6 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
-import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.GroupService;
@@ -77,8 +75,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 	IExcSynDetailService iExcSynDetailService;
 	@Autowired
 	private EcmContentMapper ecmContentMapper;
-	@Autowired
-	private ContentService contentService;
 	@Autowired
 	private EcmDocumentMapper ecmDocumentMapper;
 	@Autowired
@@ -140,13 +136,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 			} else {
 				excSynDetailObjList = exportDataInner(actionName, token, resultObjList);
 			}
-			TODOApplication.getNeedTOChange("需要根据不同类型，生成不同的json文件");
 			writeJsonFile(resultObjList, folderName + ".json");
 			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName, new Date());
 			String abusoluteFolderPath = getSyncPathPublic() + "/";
-			String zipFilePath = abusoluteFolderPath + folderName + ".zip";
-			ZipUtil.zip(abusoluteFolderPath + "/" + folderName + "/", zipFilePath);
+			String folderFullPath = abusoluteFolderPath + folderName;
+			String zipFilePath = folderFullPath + ".zip";
+			ZipUtil.zip(folderFullPath + "/", zipFilePath);
 			writeMD5Info(zipFilePath);
+			FileUtils.deleteDirectory(new File(folderFullPath));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -169,8 +166,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 			throws Exception, EcmException {
 		List<ExcSynDetail> excSynDetailObjList = readExcSynDetail(actionName);
 		List<String> docIds = new ArrayList<String>();
-		for (Iterator iterator = excSynDetailObjList.iterator(); iterator.hasNext();) {
-			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
+		for (Iterator<ExcSynDetail> iterator = excSynDetailObjList.iterator(); iterator.hasNext();) {
+			ExcSynDetail excSynDetail = iterator.next();
 			docIds.add(excSynDetail.getFromId());
 		}
 		docIds = docIds.stream().distinct().collect(Collectors.toList());
@@ -216,8 +213,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 			throws Exception, EcmException, AccessDeniedException, NoPermissionException {
 		List<ExcSynDetail> excSynDetailObjList = readExcSynDetail("新建用户','修改用户','添加到角色','移除用户");
 		EcmUser ecmUser = null;
-		for (Iterator iterator = excSynDetailObjList.iterator(); iterator.hasNext();) {
-			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
+		for (Iterator<ExcSynDetail> iterator = excSynDetailObjList.iterator(); iterator.hasNext();) {
+			ExcSynDetail excSynDetail = iterator.next();
 			String type = excSynDetail.getActionName();
 			SyncBean syncBean = new SyncBean();
 			syncBean.setBeanType(type);
@@ -332,8 +329,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 		}
 
 		TODOApplication.getNeedTOChange("问题反馈类型需要增加...");
-		TODOApplication.getNeedTOChange("用户同步问题...");
-
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
 		syncBean.setTransfers(transfers);
@@ -425,8 +420,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 */
 	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, String batchNum,
 			Date updateDate) {
-		for (Iterator iterator = objList.iterator(); iterator.hasNext();) {
-			ExcSynDetail excSynDetail = (ExcSynDetail) iterator.next();
+		for (Iterator<ExcSynDetail> iterator = objList.iterator(); iterator.hasNext();) {
+			ExcSynDetail excSynDetail =iterator.next();
 			excSynDetail.setStauts(status);
 			excSynDetail.setBatchNum(batchNum);
 			excSynDetail.setExportDate(updateDate);
@@ -450,13 +445,16 @@ public class SyncPublicNet implements ISyncPublicNet {
 	public boolean UpdateImportResultStatus() {
 		//
 		File fileDirectory = new File(getSyncPathPrivate());
-		String NetWorkEnv=CacheManagerOper.getEcmParameters().get("NetWorkEnv").getValue();
+		String NetWorkEnv = CacheManagerOper.getEcmParameters().get("NetWorkEnv").getValue();
 		for (File temp : fileDirectory.listFiles()) {
-			String fileName= temp.getName();
-			if (!temp.isDirectory() && fileName.endsWith("zip") && fileName.startsWith("DONE_"+NetWorkEnv)) {				
-				excSynDetailMapper.executeSQL("update exc_syn_detail set STAUTS='已同步' where BATCH_NUM ='"+fileName.split("\\.")[0].substring(5)+"'");
-				temp.renameTo(new File(temp.getParent()+"/FINISH_"+fileName));
-				temp.renameTo(new File(temp.getParent()+"/FINISH_"+fileName+ ".MD5.txt"));
+			String fileName = temp.getName();
+			if (!temp.isDirectory() && fileName.endsWith("zip") && fileName.startsWith("DONE_" + NetWorkEnv)) {
+				excSynDetailMapper.executeSQL("update exc_syn_detail set STAUTS='已同步' where BATCH_NUM ='"
+						+ fileName.split("\\.")[0].substring(5) + "'");
+				String fileNewName=temp.getParent() + "/FINISH_" + fileName;
+				String fileOrgName=temp.getAbsolutePath();
+				temp.renameTo(new File(fileNewName));
+				new File(fileOrgName+".MD5.txt").renameTo(new File(temp.getParent() + "/FINISH_" + fileName + ".MD5.txt"));
 			}
 		}
 		return false;
@@ -492,59 +490,39 @@ public class SyncPublicNet implements ISyncPublicNet {
 		IEcmSession ecmSession = null;
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		String token = null;
+		File zipFile=null;
 		try {
 			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
 			token = ecmSession.getToken();
 			String zipFolderPath = fileDirectory.getAbsolutePath() + "/";
-			String zipFileFullPath = zipFolderPath + zipFileList.get(0).getName();
-			String zipMD5FileFullPath = zipFolderPath + zipFileList.get(0).getName() + ".MD5.txt";
-			String MD5_org = readFirstLine(zipMD5FileFullPath).replaceAll("[\\s\\t\\n\\r]", "");
-			if (generateZipFileMD5(zipFileFullPath).equals(MD5_org)) {
-				unZip(zipFileFullPath, zipFolderPath);
-				List<SyncBean> syncBeanList = readJsonResult(zipFileList.get(0).toString().replace(".zip", "") + "/"
-						+ zipFileList.get(0).getName().replace(".zip", "") + ".json");
-				if (actionName.equals("导入用户")) {
-					for (Iterator iterator = syncBeanList.iterator(); iterator.hasNext();) {
-						SyncBean en = (SyncBean) iterator.next();
-						String beanType = en.getBeanType();
-						EcmUser ecmUserObj = en.getEcmUser();
-						String userId = null;
-						String groupId = null;
-						switch (beanType) {
-						case "新建用户":
-							if (userService.getObjectById(token, ecmUserObj.getId()) == null) {
-								userService.newObject(token, ecmUserObj);
-							}
-							break;
-						case "修改用户":
-							userService.updateObject(token, ecmUserObj);
-							break;
-						case "添加到角色":
-							userId = userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
-							groupId = groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
-							groupService.addUserToGroup(token, userId, groupId);
-							break;
-						case "移除用户":
-							userId = userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
-							groupId = groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
-							groupService.removeUserFromRole(token, userId, groupId);
-							break;
-						default:
-						}
-					}
-				} else {
-					importDataInner(token, syncBeanList);
-				}
-				writeJsonResult(zipFileList.get(0), "DONE_");
+			for (Iterator<File> iterator = zipFileList.iterator(); iterator.hasNext();) {
+				zipFile = iterator.next();
 
-			} else {
-				writeJsonResult(zipFileList.get(0), "ERROR_MD5_");
+				String zipFileFullPath = zipFolderPath + zipFile.getName();
+				String zipMD5FileFullPath = zipFolderPath + zipFile.getName() + ".MD5.txt";
+				String MD5_org = readFirstLine(zipMD5FileFullPath).replaceAll("[\\s\\t\\n\\r]", "");
+				if (generateZipFileMD5(zipFileFullPath).equals(MD5_org)) {
+					unZip(zipFileFullPath, zipFolderPath);
+					List<SyncBean> syncBeanList = readJsonResult(zipFile.toString().replace(".zip", "") + "/"
+							+ zipFile.getName().replace(".zip", "") + ".json");
+					if (actionName.equals("导入用户")) {
+						importUserInner(token, syncBeanList);
+					} else {
+						importDataInner(token, syncBeanList);
+					}
+					writeJsonResult(zipFile, "DONE_");
+
+				} else {
+					writeJsonResult(zipFile, "ERROR_MD5_");
+				}
+				FileUtils.deleteDirectory(new File(zipFile.toString().replace(".zip", "")));
 			}
-			FileUtils.deleteDirectory(new File(zipFileList.get(0).toString().replace(".zip", "")));
+
 		} catch (Exception e) {
 			TODOApplication.getNeedTOChange("错误输出到文件好定位");
-			writeJsonResult(zipFileList.get(0), "ERROR_");
 			e.printStackTrace();
+			if(zipFile!=null)
+				writeJsonResult(zipFile, "ERROR_");
 		} finally {
 			if (null != token)
 				authService.logout(token);
@@ -560,12 +538,52 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * @throws AccessDeniedException
 	 * @throws NoPermissionException
 	 * @throws Exception
+	 */
+	private void importUserInner(String token, List<SyncBean> syncBeanList)
+			throws EcmException, AccessDeniedException, NoPermissionException, Exception {
+		for (Iterator syncBeanIt = syncBeanList.iterator(); syncBeanIt.hasNext();) {
+			SyncBean en = (SyncBean) syncBeanIt.next();
+			String beanType = en.getBeanType();
+			EcmUser ecmUserObj = en.getEcmUser();
+			String userId = null;
+			String groupId = null;
+			switch (beanType) {
+			case "新建用户":
+				if (userService.getObjectById(token, ecmUserObj.getId()) == null) {
+					userService.newObject(token, ecmUserObj);
+				}
+				break;
+			case "修改用户":
+				userService.updateObject(token, ecmUserObj);
+				break;
+			case "添加到角色":
+				userId = userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+				groupId = groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+				groupService.addUserToGroup(token, userId, groupId);
+				break;
+			case "移除用户":
+				userId = userService.getObjectByLoginName(token, ecmUserObj.getName()).getId();
+				groupId = groupService.getGroupByName(token, ecmUserObj.getGroupName()).getId();
+				groupService.removeUserFromRole(token, userId, groupId);
+				break;
+			default:
+			}
+		}
+	}
+
+	/**
+	 * @param token
+	 * @param syncBeanList
+	 * @throws EcmException
+	 * @throws AccessDeniedException
+	 * @throws NoPermissionException
+	 * @throws Exception
 	 * @throws FileNotFoundException
 	 */
 	private void importDataInner(String token, List<SyncBean> syncBeanList)
 			throws EcmException, AccessDeniedException, NoPermissionException, Exception, FileNotFoundException {
-		for (Iterator iterator = syncBeanList.iterator(); iterator.hasNext();) {
-			SyncBean en = (SyncBean) iterator.next();
+		for (Iterator<SyncBean> iterator = syncBeanList.iterator(); iterator.hasNext();) {
+			SyncBean en =  iterator.next();
 			List<Map<String, Object>> documents = en.getDocuments();
 			List<Map<String, Object>> transfers = en.getTransfers();
 			List<EcmRelation> relations = en.getRelations();
@@ -623,8 +641,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 2.2从指定目录导入数据到当前系统后，将结果信息文件到指定目录 完成DONE_ 错误ERR_
 	 */
 	private boolean writeJsonResult(File file, String result) {
-		file.renameTo(new File(getSyncPathPrivate() + "/" + result + file.getName()));
-		file.renameTo(new File(getSyncPathPrivate() + "/" + result + file.getName() + ".MD5.txt"));
+		String fileNewName=file.getParent() + "/" + result+ file.getName();
+		String fileOrgName=file.getAbsolutePath();
+		file.renameTo(new File(fileNewName));
+		new File(fileOrgName+".MD5.txt").renameTo(new File(fileNewName + ".MD5.txt"));
 		return false;
 	}
 
