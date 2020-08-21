@@ -31,6 +31,7 @@ import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -374,7 +375,7 @@ public class WorkflowController extends ControllerAbstract {
 		long processTotalCount = 0;
 		Map workflowForm = args.get("workflowForm") == null ? null
 				: JSONUtils.stringToMap(args.get("workflowForm").toString());
-		StringBuffer sql0 = new StringBuffer("SELECT  a.START_TIME_, a.ID_, a.END_TIME_,  a.START_USER_ID_, b.NAME_ "
+		StringBuffer sql0 = new StringBuffer("SELECT  a.START_TIME_, a.ID_, a.END_TIME_,a.PROC_DEF_ID_,  a.START_USER_ID_, b.NAME_ "
 				+ " FROM ACT_HI_PROCINST  a, ACT_RE_PROCDEF b where a.PROC_DEF_ID_ = b.ID_ ");
 		StringBuffer sqlCount0 = new StringBuffer("SELECT count(*) " + " FROM ACT_HI_PROCINST a " + " where 1=1 ");
 		StringBuffer sql1 = new StringBuffer("");

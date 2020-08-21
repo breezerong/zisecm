@@ -700,8 +700,8 @@ export default {
         fileTopestSecurityLevel =
           fileTopestSecurityLevel + element.C_SECURITY_LEVEL;
         if (index == 0) {
-          _self.borrowForm.C_CREATION_UNIT =
-            _self.tabledata[index].C_ARCHIVE_UNIT;
+          // _self.borrowForm.C_CREATION_UNIT =
+          //   _self.tabledata[index].C_ARCHIVE_UNIT;
           documentIds = documentIds + element.ID;
         } else {
           documentIds = documentIds + "," + element.ID;
@@ -726,6 +726,9 @@ export default {
     saveCurrentForm(m) {
       let _self = this;
       m = _self.getFormdataMap();
+      let judgeMap = new Map();
+      // judgeMap = m.get("formData")
+      // console.log(judgeMap.get(""))
       axios
         .post("/dc/saveBorrowForm", m)
         .then(function(response) {

@@ -182,14 +182,12 @@ export default {
         var m = new Map();
         m.set("gridName", _self.gridviewName);
         m.set("lang", _self.currentLanguage);
-       
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
           _self.gridList = response.data.data;
           _self.openShopingCart();
         }).catch(function(error) {
           console.log(error);
         });
-
      },
       selectChange(selection) {
           this.selectedItemList = [];
