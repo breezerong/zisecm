@@ -29,14 +29,14 @@ export default {
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
-            url: '/proj/planview'
+            url: '/cnpe/icmmanagement/interfacemanual'
           },
           {
             title: '反馈ICM',
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
-            url: '/ied/releaseied'
+            url: '/cnpe/icmmanagement/icmfeedback'
           }
         ]
       },

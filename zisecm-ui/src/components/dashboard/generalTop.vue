@@ -34,28 +34,28 @@ export default {
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/DCManagement/receivingdc'
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
           },
           {
             title: 'IED',
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/IEDpublished'
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
           },
           {
             title: 'ICM',
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-delete',
-            url: ''
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
           },
           {
             title: '文函',
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/pendingied'
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
           },
         ]
       },
