@@ -94,19 +94,25 @@ public class DocTopController extends ControllerAbstract  {
 		if(getLCompany.equals("CNPE")==false) {
 			whereSql+=" and (C_COMPANY='"+getLCompany+"'";
 			//分包商项目信息
-			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
-					+ "where TYPE_NAME='计划任务' and("+whereSql+" or C_TO='"+getLCompany+"'))";;
+			sqlThreePlanNum = "select count(*) as ThreePlanNum from "
+					+"(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
+					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t "
+					+ "where TYPE_NAME='计划任务' and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
 			sqlIEDNum = "select count(*) as IEDNum from ecm_document "
 					+ "where TYPE_NAME='IED' and("+whereSql+"))";
 			sqlICMNum = "select count(*) as ICMNum from ecm_document "
 					+ "where TYPE_NAME='ICM' and("+whereSql+")) ";
 				
 			//分包商基本信息
-			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and "+whereSql+")";
-			sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
-					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
-					+ "( STATUS='待接收' and "+whereSql+" or C_TO='"+getLCompany+"'))";
-			String sqlSubmissiondcNum="select count(*) as receivedNum from ecm_document "
+			String sqldcNum = "select count(*) as dcNum from "
+					+ "(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
+					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
+					+ "C_IS_RELEASED=1 and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
+			sqlreceivedNum = "select count(*) as receivedNum from "
+					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STAUTS as STAUTS,b.TO_NAME "
+					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where C_ITEM_TYPE='文函' and "
+					+ "TYPE_NAME!='相关文件' and ( stauts='待接收' and("+whereSql+" or  TO_NAME='"+getLCompany+"')))";
+			String sqlSubmissiondcNum="select count(*) as submissiondcNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
 					+ "(status='' or status is null or status='新建') and "+whereSql+")";
 			sqlList += ""+
@@ -217,9 +223,11 @@ public class DocTopController extends ControllerAbstract  {
 		}
 		String getLCompany=getSession().getCurrentUser().getCompany();
 		if(getLCompany.equals("CNPE")==false) {
-			whereSql+=" and (C_COMPANY='"+getLCompany+"' or C_TO='"+getLCompany+"')";
+			whereSql+=" and (C_COMPANY='"+getLCompany+"' or TO_NAME='"+getLCompany+"')";
 		}
-		String sql="select STATUS,count(*) as c from ecm_document "
+		String sql="select STATUS,count(*) as c from"
+				+"(select a.STATUS,a.C_COMPANY, a.TYPE_NAME,a.C_PROJECT_NAME,b.TO_NAME "
+				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t "
 				+ "where 1=1 "+whereSql+" and TYPE_NAME in('设计文件','文件传递单','FU申请','FU通知单','作废通知单','CR澄清要求申请单'," + 
 						"'CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单'," + 
 						"'FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单'," + 

@@ -1,0 +1,14 @@
+package com.ecm.core.db.dm;
+
+import com.ecm.core.db.IDBSequence;
+
+public class DmSequence implements IDBSequence{
+
+	@Override
+	public String getContentDataTicketSql() {
+		// TODO Auto-generated method stub
+		return "select ecm_data_ticket.nextval from dual";
+	}
+
+	
+}

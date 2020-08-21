@@ -71,6 +71,9 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 	public boolean deleteByChildIdAndRelationName(String token,String childId,String relationName) throws Exception {
 		return ecmRelationMapper.deleteByChildAndRelationName(childId, relationName)>0;
 	}
+	public boolean deleteAllRelationByParentId(String token,String parentId) throws Exception {
+		return ecmRelationMapper.deleteAllRelationByParentId(parentId)>0;
+	}
 	
 	/**
 	 * 通过parentId,childId和relatinName删除
