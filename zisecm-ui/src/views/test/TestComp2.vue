@@ -23,6 +23,7 @@
            <el-button type="primary" plain icon="save" @click="deployProcess()">发布流程</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow('BianJiaoShenPi')">启动编校审批流程</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程-弹出表单</el-button> 
            <el-button type="primary" plain icon="save" @click="testWorkflow()">完成任务</el-button> 
          </el-col>
       </el-row>
