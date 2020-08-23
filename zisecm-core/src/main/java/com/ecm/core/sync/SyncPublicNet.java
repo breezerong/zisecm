@@ -149,8 +149,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 			writeMD5Info(zipFilePath);
 			FileUtils.deleteDirectory(new File(folderFullPath));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.getMessage());
 		} finally {
 			if (null != token)
 				authService.logout(token);
@@ -536,8 +536,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 			}
 
 		} catch (Exception e) {
-			TODOApplication.getNeedTOChange("错误输出到文件好定位");
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			if(zipFile!=null)
 				writeJsonResult(zipFile, "ERROR_");
 		} finally {
