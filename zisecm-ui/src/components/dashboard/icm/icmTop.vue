@@ -4,37 +4,37 @@
       <el-row>
         <el-col :span="3">
           <el-form-item>
-            <ecm-data-icons :option="projectData1"></ecm-data-icons>
+            <ecm-data-icons ref="p1" :option="projectData1"></ecm-data-icons>
           </el-form-item>
         </el-col>
         <el-col :span="3">
           <el-form-item>
-            <ecm-data-icons :option="projectData2"></ecm-data-icons>
+            <ecm-data-icons ref="p2" :option="projectData2"></ecm-data-icons>
           </el-form-item>
         </el-col>
         <el-col :span="3">
           <el-form-item>
-            <ecm-data-icons :option="projectData3"></ecm-data-icons>
+            <ecm-data-icons ref="p3" :option="projectData3"></ecm-data-icons>
           </el-form-item>
         </el-col>
         <el-col :span="3">
           <el-form-item>
-            <ecm-data-icons :option="projectData4"></ecm-data-icons>
+            <ecm-data-icons ref="p4" :option="projectData4"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        <el-col  :span="3">
+          <el-form-item>
+            <ecm-data-icons ref="p5" :option="projectData5"></ecm-data-icons>
           </el-form-item>
         </el-col>
         <el-col :span="3">
           <el-form-item>
-            <ecm-data-icons :option="projectData5"></ecm-data-icons>
+            <ecm-data-icons ref="p6" :option="projectData6"></ecm-data-icons>
           </el-form-item>
         </el-col>
         <el-col :span="3">
           <el-form-item>
-            <ecm-data-icons :option="projectData6"></ecm-data-icons>
-          </el-form-item>
-        </el-col>
-        <el-col :span="3">
-          <el-form-item>
-            <ecm-data-icons :option="projectData7"></ecm-data-icons>
+            <ecm-data-icons ref="p7" :option="projectData7"></ecm-data-icons>
           </el-form-item>
         </el-col>
       </el-row>
@@ -147,6 +147,13 @@ export default {
           _self.projectData5.data[0].count = response.data.dcNum;
           _self.projectData6.data[0].count = response.data.icmNum;
           _self.projectData7.data[0].count = response.data.feedbackicmNum;
+          _self.$refs.p1.refresh()
+          _self.$refs.p2.refresh()
+          _self.$refs.p3.refresh()
+          _self.$refs.p4.refresh()
+          _self.$refs.p5.refresh()
+          _self.$refs.p6.refresh()
+          _self.$refs.p7.refresh()
         })
         .catch(function (error) {
           console.log(error);

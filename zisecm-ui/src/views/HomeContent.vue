@@ -8,15 +8,25 @@
               <span style="float: left;" class="ecmtitle">基本信息</span>
             </div>
             <div>
-              <planTop v-if="isShowCNPEPlan"></planTop>
+              <planTop v-if="isCNPE"></planTop>
+              <subPlanTop v-if="isSub"></subPlanTop>
+              <generalTop v-if="isCNPEGen"></generalTop>
+              <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '120px' }">
+          <el-card :body-style="{ height: '900px',width:'900px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">项目信息</span>
             </div>
             <div>
-              <planProject v-if="isShowCNPEPlan"></planProject>
+              <subIcmProject v-if="isSubJK"></subIcmProject>
+              <icmProject v-if="isCNPEJK"></icmProject>
+              <planProject v-if="isCNPEPlan"></planProject>
+              <docProject v-if="isCNPEWK"></docProject>
+              <subDocProject v-if="isSubWK"></subDocProject>
+              <subPlanProject v-if="isSubPlan"></subPlanProject>
+              <generalProject v-if="isCNPEGen"></generalProject>
+              <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
           </el-card>
           <el-card :body-style="{ height: '180px' }">
@@ -152,26 +162,58 @@
 <script>
 import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
 import planTop from '@/components/dashboard/plan/planTop'
-import planProject from '@/components/dashboard/plan/planProject'
-import subPlanProject from '@/components/dashboard/plan/subPlanProject'
 import subPlanTop from '@/components/dashboard/plan/subPlanTop'
+import docTop from '@/components/dashboard/doc/docTop'
+import subDocTop from '@/components/dashboard/doc/subDocTop'
+import subIcmTop from '@/components/dashboard/icm/subIcmTop'
+import icmTop from '@/components/dashboard/icm/icmTop'
+import icmProject from '@/components/dashboard/icm/icmProject'
+import subIcmProject from '@/components/dashboard/icm/subIcmProject'
+import subDocProject from '@/components/dashboard/doc/subDocProject'
+import subPlanProject from '@/components/dashboard/plan/subPlanProject'
+import planProject from '@/components/dashboard/plan/planProject'
+import docProject from '@/components/dashboard/doc/docProject'
+import generalProject from '@/components/dashboard/generalProject'
+import generalTop from '@/components/dashboard/generalTop'
+import subGeneralTop from '@/components/dashboard/subGeneralTop'
+import subGeneralProject from '@/components/dashboard/subGeneralProject'
+
 export default {
   components: {
     ecmDataIcons,
     planTop,
     planProject,
     subPlanProject,
-    subPlanTop
+    subPlanTop,
+    docTop,
+    subDocTop,
+    subIcmTop,
+    icmTop,
+    icmProject,
+    subIcmProject,
+    subDocProject,
+    docProject,
+    generalProject,
+    generalTop,
+    subGeneralProject,
+    subGeneralTop,
+    subGeneralProject
+
   },
   data() {
     return {
-      isShowCNPEPlan:true,
-      isShowCNPEJK:false,
-      isShowSubPlan:false,
-      isShowSubJK:false,
-      isShowCNPEWK:false,
-      isShowSubWK:false,
-      userType:'',
+      isSubJK:false,
+      isSubWK:false,
+      isSubPlan:false,
+      isCNPEJK:false,
+      isCNPEWK:false,
+      isCNPEPlan:false,
+      isCNPE:false,
+      isSub:false,
+      issubGen:false,
+      isCNPEGen:false,
+      tempRoles:[],
+      userRoles:[],
 
        projectData1: {
         color: 'rgb(63, 161, 255)',
@@ -246,9 +288,63 @@ export default {
     _self.getDocument();
     _self.getCarousel();
     _self.getRegulation();
-    _self.getUserType();
+    _self.getRoles();
   },
   methods: {
+    getRoles(){                         //用户类型判断
+      this.tempRoles=this.currentUser().roles
+        for(var i = 0;i < this.tempRoles.length;i++){
+          if(this.tempRoles[i] == '分包商文控人员'||this.tempRoles[i] =='CNPE_文控人员'||this.tempRoles[i] =='CNPE_计划人员'||
+          this.tempRoles[i] =='CNPE_接口人员'||this.tempRoles[i] =='分包商接口人员'||this.tempRoles[i] =='分包商计划人员'){
+          this.userRoles[i] = this.tempRoles[i] 
+          }
+        }
+          for(var i = 0;i < this.userRoles.length;i++){
+          if(this.userRoles[i]=='分包商文控人员'){
+          this.isSubWK=true
+          this.isSub=true}
+          else if(this.userRoles[i]=='分包商接口人员'){
+          this.isSubJK=true
+          this.isSub=true
+          //console.log("SubJK:"+this.isSubJK)
+          }
+          else if(this.userRoles[i]=='分包商计划人员'){
+          this.isSubPlan=true
+          this.isSub=true
+          //console.log("SUBPLAN:"+this.isSubPlan)
+          }
+           else if(this.userRoles[i]=='分包商其他用户'){
+          this.issubGen=true
+          //this.isSub=true
+          //console.log("SUBPLAN:"+this.isSubPlan)
+          }
+          else if(this.userRoles[i]=='CNPE_文控人员'){
+          this.isCNPEWK=true
+          this.isCNPE=true
+          //console.log("CNPEWK:"+this.isCNPEWK)
+          }
+          else if(this.userRoles[i]=='CNPE_计划人员'){
+          this.isCNPEPlan=true
+          this.isCNPE=true
+          //console.log("CNPEPL:"+this.isCNPEPlan)
+          }
+          else if(this.userRoles[i]=='CNPE_接口人员'){
+          this.isCNPEJK=true
+          this.isCNPE=true
+          //console.log("CNPEJK:"+this.isCNPEJK)
+          }
+          else if(this.userRoles[i]=='CNPE_其他用户'){
+          this.isCNPEGen=true
+          this.isCNPE=true
+          //console.log("CNPEJK:"+this.isCNPEJK)
+          }
+          }
+          console.log(this.userRoles)
+    },
+
+
+
+
     //获取待办任务列表，最多五条
     getToDoList() {
       let _self = this;
@@ -461,16 +557,6 @@ export default {
         path:'/dc/folderviewer',
           query: { folderName: folderName }
       });
-    },
-    getUserType(){
-      var tempGroup
-      tempGroup = this.currentUser().roles
-      this.userType = tempGroup[0]
-      console.log(this.userType)
-      console.log(this.currentUser().roles)
-      if(this.userType=='CNPE_计划人员'){
-        this.isShowCNPEPlan=true
-      }
     },
   }
 };

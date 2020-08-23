@@ -4,13 +4,13 @@
       dataValueField="name" dataTextField="name" @onSelectChange="onSelectChange"></DataSelect> 
       
       <el-row>
-      <el-col :span="2">
-      
+      <el-col :span="4">
+      <ecm-data-icons ref="dataIED" :option="projectDataIED"></ecm-data-icons>
       <ecm-data-icons ref="dataDC" :option="projectDataDC"></ecm-data-icons>
       <ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons>
       </el-col>
       <el-col :span="10" >
-      <div id="docChart1" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>
+      <div id="docChart2" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>
       </el-col>
       </el-row> 
      </div>
@@ -36,17 +36,17 @@ export default {
         limit: 10
       },
 
-      docChart1: Object,
+      docChart2: Object,
       docChartData1: {
         xAxisData: [],
         yAxisData: []
       },
       divWidth: '500px',
-      divHeight: '500px',
+      divHeight: '300px',
       dataReport: [],
       count:'',
 
-      projectData1: {
+      projectDataIED: {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data:[{title: '三级计划',
@@ -92,7 +92,7 @@ export default {
 
   mounted() {
      let _self = this;
-    _self.docChart1 = _self.echarts.init(document.getElementById('docChart1'));
+    _self.docChart2 = _self.echarts.init(document.getElementById('docChart2'));
     _self.initChart();
     _self.getIEDNum()
     _self.getDCNum()
@@ -102,7 +102,11 @@ export default {
 
   methods: {
     onSelectChange(val){
-      this.filters.projectCode = val
+    let _self = this
+    this.filters.projectCode = val
+    _self.getIEDNum()
+    _self.getDCNum()
+    _self.getTPLANNum()
       this.initChart()
     },
     initChart(){
@@ -125,7 +129,7 @@ export default {
                     }
                     _self.docChartData1.xAxisData=xArray;
                     _self.docChartData1.yAxisData=yArray;
-                    _self.loadDocChart(_self.docChart1, _self.docChartData1);
+                    _self.loadDocChart(_self.docChart2, _self.docChartData1);
                 }
             })
             .catch(function(error) {
@@ -136,7 +140,11 @@ export default {
         let _self=this;
         let mp=new Map();
         let dataDC
-        mp.set('projectName','@project');
+        if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
         axios.post("/dc/getDCNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
@@ -159,7 +167,11 @@ export default {
         let _self=this;
         let mp=new Map();
         let datas
-        mp.set('projectName','@project');
+        if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
         axios.post("/dc/getIEDNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
@@ -170,7 +182,7 @@ export default {
                 icon: 'el-icon-s-unfold',
                 url: '/cnpe/iedmanagement/IEDpublished'
               }]
-            _self.projectData1.data = datas
+            _self.projectDataIED.data = datas
             _self.$refs.dataIED.refresh()
       }
             })
@@ -179,7 +191,11 @@ export default {
         let _self=this;
         let mp=new Map();
         let data
-        mp.set('projectName','@project');
+        if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
         axios.post("/dc/getTPLANNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
@@ -199,7 +215,11 @@ export default {
         let _self=this;
         let mp=new Map();
         let data
-        mp.set('projectName','@project');
+        if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
         axios.post("/dc/getProjectNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
