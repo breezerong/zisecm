@@ -17,6 +17,7 @@ public interface EcmRelationMapper {
 	int deleteByPrimaryKey(String id);
 	
 	int deleteByChildAndRelationName(String childId,String relationName);
+	int deleteAllRelationByParentId(String parentId);
 	
 	int deleteByCidPidAndRelationName(String parentId,String childId,String relationName);
 	

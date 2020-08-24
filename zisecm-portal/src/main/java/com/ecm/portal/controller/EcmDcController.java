@@ -1596,10 +1596,14 @@ public class EcmDcController extends ControllerAbstract {
 					goodFormDataMap.put("C_CREATION_UNIT", formDataMap.get("C_CREATION_UNIT"));
 				if (formDataMap.containsKey("SUB_TYPE"))
 					goodFormDataMap.put("SUB_TYPE", formDataMap.get("SUB_TYPE"));
-				if (formDataMap.containsKey("C_START_DATE"))
-					goodFormDataMap.put("C_START_DATE", formDataMap.get("C_START_DATE"));
-				if (formDataMap.containsKey("C_END_DATE"))
-					goodFormDataMap.put("C_END_DATE", formDataMap.get("C_END_DATE"));
+//				if (formDataMap.containsKey("C_START_DATE"))
+//					goodFormDataMap.put("C_START_DATE", formDataMap.get("C_START_DATE"));
+//				if (formDataMap.containsKey("C_END_DATE"))
+//					goodFormDataMap.put("C_END_DATE", formDataMap.get("C_END_DATE"));
+				if (formDataMap.containsKey("C_ITEM1_DATE"))
+					goodFormDataMap.put("C_ITEM1_DATE", formDataMap.get("C_ITEM1_DATE"));
+				if (formDataMap.containsKey("C_ITEM2_DATE"))
+					goodFormDataMap.put("C_ITEM2_DATE", formDataMap.get("C_ITEM2_DATE"));
 				if (formDataMap.containsKey("C_COMMENT"))
 					goodFormDataMap.put("C_COMMENT", formDataMap.get("C_COMMENT"));
 				if (formDataMap.containsKey("C_REVIEWER1"))
@@ -1726,7 +1730,7 @@ public class EcmDcController extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		List<Map<String, Object>> childList = null;
 		try {
-			String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT,b.C_STORE_STATUS ,b.FORMAT_NAME as FORMAT_NAME "
+			String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_STORE_STATUS ,b.FORMAT_NAME as FORMAT_NAME "
 					+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='" + id
 					+ "' order by a.ORDER_INDEX,b.CREATION_DATE";
 			childList = documentService.getMapList(getToken(), sql);
@@ -1747,6 +1751,22 @@ public class EcmDcController extends ControllerAbstract {
 		try {
 			objectMap = documentService.getObjectMapById(getToken(), id);
 			mp.put("data", objectMap);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/getDocumentMapById", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getDocumentMapById(@RequestBody String id) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		List<Map<String, Object>> mapList = null;
+		try {
+			mapList = documentService.getObjectMap(getToken(), " id ='"+id+"'");
+			mp.put("data", mapList.get(0));
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
 			mp.put("code", ActionContext.FAILURE);

@@ -182,14 +182,12 @@ export default {
         var m = new Map();
         m.set("gridName", _self.gridviewName);
         m.set("lang", _self.currentLanguage);
-       
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
           _self.gridList = response.data.data;
           _self.openShopingCart();
         }).catch(function(error) {
           console.log(error);
         });
-
      },
       selectChange(selection) {
           this.selectedItemList = [];
@@ -407,6 +405,14 @@ export default {
         for (var i = 0; i < _self.selectedItemList.length; i++) {
           addItemId.push(_self.selectedItemList[i].ID);
         }
+      }else{
+        _self.$message({
+          showClose: true,
+          message: "请勾选添加的文件!",
+          duration: 2000,
+          type: "success"
+          });
+          return;
       }
       m.set("documentIds",addItemId);
       m.set("formId",_self.formId);
@@ -418,7 +424,7 @@ export default {
           duration: 2000,
           type: "success"
           });
-
+          _self.loadGridView();
         })
         .catch(function(error) {
           console.log(error);

@@ -86,7 +86,7 @@ public class FeedbackController  extends ControllerAbstract  {
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("id", id);
 			String com=getSession().getCurrentUser().getCompany();
-			OptionLogger.logger(detailService, doc, "回复问题",com);
+			OptionLogger.logger(detailService, doc, "问题回复",com);
 		}catch(AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}

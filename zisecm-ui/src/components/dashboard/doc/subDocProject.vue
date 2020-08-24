@@ -1,10 +1,18 @@
 <template>
- <div>
-   <DataSelect @onSelectChange='onSelectChange' v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
+  <div>
+    <DataSelect @onSelectChange='onSelectChange' v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
                     dataValueField="name" dataTextField="name"></DataSelect>
-    <ecm-data-icons :option="projectData"></ecm-data-icons>
-    <div id="docChart1" :style="{height: divHeight, border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div> 
- </div>
+    <el-row>
+      <el-col :span="4">
+        <ecm-data-icons ref="T1" :option="projectDataTPLAN"></ecm-data-icons>
+        <ecm-data-icons ref="T2" :option="projectDataIED"></ecm-data-icons>
+        <ecm-data-icons ref="T3" :option="projectDataICM"></ecm-data-icons>
+      </el-col>
+      <el-col  :span="10">
+        <div id="docChart1" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 
@@ -28,40 +36,44 @@ export default {
       dataList: [],
       total: 0,
       page: 1,
-      divHeight: '540px',
+      divWidth: '500px',
+      divHeight: '300px',
       docChart1: Object,
       docChartData1: {
         xAxisData: [],
         yAxisData: []
       },
-      projectData: {
+      projectDataTPLAN: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data: [
-          {
-            title: '三级计划',
+        data: [{
+            title:'三级计划',
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
-            url: '/cnpe/plan/threelevelplan'
-          },
-          {
+            url: '/cnpe/plan/threelevelplan'}]
+      },
+      projectDataIED: {
+        color: 'rgb(63, 161, 255)',
+        span: 6,
+        data: [{
             title: 'IED',
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
-            url: '/cnpe/iedmanagement/IEDpublished'
-          },
-          {
+            url: '/cnpe/iedmanagement/IEDpublished'}]
+      },
+      projectDataICM: {
+        color: 'rgb(63, 161, 255)',
+        span: 6,
+        data: [{
             title: 'ICM',
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document',
             url: '/cnpe/MoreViewerBrowe/projectviewer'
-          }
-        ]
+        }]
       },
-      a:[]
     };
   },
   created() {
@@ -105,14 +117,14 @@ export default {
       axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
       .then(function (response) {
           if(response.data.code==1){
-            console.log(response.data)
-              _self.a[0]=response.data.ThreePlanNum;
-              _self.a[1]=response.data.IEDNum;
-              _self.a[2]=response.data.ICMNum;
-              let i=0
-              _self.projectData.data.forEach(function(item){
-                item.count=_self.a[i++];
-              })
+           
+              console.log(response.data)
+              _self.projectDataTPLAN.data[0].count=response.data.ThreePlanNum;
+              _self.projectDataIED.data[0].count=response.data.IEDNum;
+              _self.projectDataICM.data[0].count=response.data.ICMNum;
+              _self.$refs.T1.refresh()
+              _self.$refs.T2.refresh()
+              _self.$refs.T3.refresh()
           }
           
         })

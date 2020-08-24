@@ -11,14 +11,25 @@
       </el-steps>
       <el-divider content-position="left">表单信息</el-divider>
       <!-- <router-view ref="formRouter"></router-view> -->
-      <DocViewTask
+      <!-- <DocViewTask
         :formId="currentFormId"
         :docId="currentFormId"
         :istask="1"
         :processDefinitionId="currentData.processDefinitionId"
         :activityName="currentData.name"
         :formEnableType="this.$options.name"
-      ></DocViewTask>
+      ></DocViewTask> -->
+      <component
+        :is="taskName"
+        :typeName="taskName"
+        :formId="currentFormId"
+        :docId="currentFormId"
+        :istask="1"
+        :processDefinitionId="currentData.processDefinitionId"
+        :activityName="currentData.name"
+        :formEditPermision=0
+        :formEnableType="this.$options.name"
+      ></component>
       <el-divider content-position="left">流转意见</el-divider>
       <el-table :data="taskList" border v-loading="loading" style="width: 100%">
         <el-table-column label="序号" width="65">
@@ -210,6 +221,7 @@
 import UserSelectInput from "@/components/controls/UserSelectInput";
 import EditTask from "@/views/workflow/task/EditTask.vue";
 import DocViewTask from "@/views/workflow/task/DocViewTask.vue";
+import borrow1 from "@/components/form/Borrow1.vue";
 export default {
   name: "MyWorkflow",
   permit: 1,
@@ -217,6 +229,7 @@ export default {
     UserSelectInput: UserSelectInput,
     EditTask: EditTask,
     DocViewTask: DocViewTask,
+    borrow1: borrow1
   },
   data() {
     return {
@@ -418,7 +431,15 @@ export default {
       _self.refreshProcess(indata.id);
       _self.currentFormId = indata.formId;
       var m = new Map();
-      var n = new Map();
+      switch (_self.currentData.processDefinitionId.split(":")[0]) {
+        case "BianJiaoShenPi":
+            _self.taskName = 'DocViewTask';
+          break;
+        case "process_borrow":
+            _self.taskName = 'borrow1';
+          break;
+      }
+      // var n = new Map();
       // n.set("processDefinitionId", indata.processDefinitionId);
       // n.set("activityName", indata.name);
       // axios

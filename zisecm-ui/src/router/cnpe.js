@@ -197,8 +197,28 @@ export const cnpeRouter=
             title:'icmfeedback'
         },
         path: '/cnpe/icmmanagement/icmfeedback',
-        name: '延误反馈',
+        name: '延误打开反馈',
         component: () => import('@/views/docexchange/ICMManagement/icmfeedback.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'delayFeedback'
+        },
+        path: '/cnpe/icmmanagement/delayfeedback',
+        name: '延误回复反馈',
+        component: () => import('@/views/docexchange/ICMManagement/DelayFeedback.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
+            title:'delayConfirm'
+        },
+        path: '/cnpe/icmmanagement/delayconfirm',
+        name: '延误回复确认',
+        component: () => import('@/views/docexchange/ICMManagement/DelayConfirm.vue')
     },
     {
         meta: {
