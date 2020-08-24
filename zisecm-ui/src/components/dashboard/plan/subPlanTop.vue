@@ -11,7 +11,7 @@
           <el-col :span="4" v-if="isOnlySubjh|| isSubjkjh">
           <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isSubjh">
+          <el-col :span="4" v-if="isOnlySubjh">
           <el-form-item><ecm-data-icons ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
           </el-col>
           <el-col :span="4" v-if="isSubjh">
@@ -61,11 +61,7 @@
             <ecm-data-icons ref="p5" :option="projectData5"></ecm-data-icons>
           </el-form-item>
         </el-col>
-        <el-col :span="4" v-if="isSubjk">
-          <el-form-item>
-            <ecm-data-icons ref="p6" :option="projectData6"></ecm-data-icons>
-          </el-form-item>
-    </el-col>
+        
 
 
       </el-row> 
@@ -128,7 +124,7 @@ export default {
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
+                url: 'cnpe/DCManagement/ReceivedDC4Cnpe'}],
         },
         projectDataTPLAN: {
         color: 'rgb(63, 161, 255)',
@@ -137,7 +133,7 @@ export default {
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
+                url: '/cnpe/plan/threelevelplan'}],
         },
         projectDataProjectNum: {
         color: 'rgb(63, 161, 255)',
@@ -145,7 +141,8 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+                url:''}],
         },
 
         projectDataPublishedIED: {
@@ -162,7 +159,8 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+                url:'/cnpe/iedmanagement/pendingsubmit'}],
         },
         projectDataRejectIED:{
         color: 'rgb(63, 161, 255)',
@@ -170,7 +168,8 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+              }],
         },
         projectDataPlanNum:{
         color: 'rgb(63, 161, 255)',
@@ -178,7 +177,8 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+                url:''}],
         },
         projectDataICM: {
         data: [
@@ -231,21 +231,11 @@ export default {
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-delete",
-            url: "",
+            url: "/cnpe/icmmanagement/interfacemanual",
           },
         ],
       },
-      projectData6: {
-        data: [
-          {
-            title: "反馈ICM",
-            count: 0,
-            color: "rgb(255, 0, 0)",
-            icon: "el-icon-document-delete",
-            url: "",
-          },
-        ],
-      },
+     
       projectData: {
         color: 'rgb(63, 161, 255)',
         span: 24,
@@ -294,7 +284,7 @@ export default {
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/pendingied'
+            url: '/cnpe/DCManagement/submissiondc'
           },
         ]
       },
@@ -307,7 +297,7 @@ export default {
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-delete',
-            url: ''
+            url: '/cnpe/DCManagement/rejectedDC'
           }
         ]
       }
@@ -334,11 +324,13 @@ export default {
 
   methods: {
     getUserRole(){    //获取文件类型，进行本地验证
+        var k=0;
         this.tempRoles=this.currentUser().roles
         for(var i = 0;i < this.tempRoles.length;i++){
           if(this.tempRoles[i] == '分包商文控人员'||this.tempRoles[i] =='CNPE_文控人员'||this.tempRoles[i] =='CNPE_计划人员'||
           this.tempRoles[i] =='CNPE_接口人员'||this.tempRoles[i] =='分包商接口人员'||this.tempRoles[i] =='分包商计划人员'){
-          this.userRoles[i] = this.tempRoles[i] 
+          this.userRoles[k] = this.tempRoles[i] 
+          k++;
           }
         }
         if(this.userRoles.length==1 && this.userRoles[0]=='分包商接口人员'){
@@ -355,10 +347,10 @@ export default {
           }
           for(var i = 0;i < this.userRoles.length;i++){
             if(this.userRoles[i] == '分包商接口人员')
-            this.isSubjh = true
+            this.isSubjk = true
             this.tempJKJH[0]=this.userRoles[i]
             if(this.userRoles[i] =='分包商计划人员')
-            this.isSubjk = true
+            this.isSubjh = true
             this.tempJKJH[1]=this.userRoles[i]
             if(this.userRoles[i] =='分包商文控人员')
             this.isSubwk = true
@@ -382,15 +374,13 @@ export default {
           _self.projectDataICM.data[0].count = response.data.projectNum;
           _self.projectData2.data[0].count = response.data.planNum;
           _self.projectData3.data[0].count = response.data.thereplanNum;
-          _self.projectData4.data[0].count = response.data.iedNum;
+          _self.projectData4.data[0].count = 1656;
           _self.projectData5.data[0].count = response.data.icmNum;
-          _self.projectData6.data[0].count = response.data.feedbackicmNum;
           _self.$refs.p1.refresh()
           _self.$refs.p2.refresh()
           _self.$refs.p3.refresh()
           _self.$refs.p4.refresh()
           _self.$refs.p5.refresh()
-          _self.$refs.p6.refresh()
           console.log(response.data)
         })
         .catch(function (error) {
@@ -443,17 +433,19 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getPublishedIED",JSON.stringify(mp))
+        axios.post("/dc/getSubPublishedIED",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '已发布IED',
+                title: '已生效IED',
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
                 url: '/cnpe/iedmanagement/IEDpublished'
               }]
             _self.projectDataPublishedIED.data = datas
+            console.log("123123")
+            console.log(_self.projectDataPublishedIED.data)
             _self.$refs.dataPublishedIED.refresh()
       }
             })
@@ -492,7 +484,7 @@ export default {
                 count: response.data.data.num,
                 color: 'rgb(255,0,0)',
                 icon: 'el-icon-s-claim',
-                url: '/cnpe/iedmanagement/RejectIED'
+                 url:'/cnpe/iedmanagement/IEDRejectied'
               }]
               console.log(response.data.data)
             _self.projectDataRejectIED.data = datas
@@ -573,6 +565,7 @@ export default {
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-warning',
+                url:''
               }]
             _self.projectDataProjectNum.data = data
             _self.$refs.dataProjectNum.refresh()
