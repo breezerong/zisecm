@@ -2,21 +2,76 @@
      <div>  
         <el-form inline="true" >
         <el-row>
-          <el-col :span="5">
-            <el-form-item><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
+          <el-col :span="4" v-if="isOnlyCNPE">
+            <el-form-item ><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="5">
-          <el-form-item><ecm-data-icons ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
+          <el-col :span="4" v-if="isCNPEjh">
+          <el-form-item><ecm-data-icons  ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4"v-if="isCNPEjh">
           <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="5">
-          <el-form-item><ecm-data-icons ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
+          <el-col :span="4" v-if="isCNPEjh">
+          <el-form-item><ecm-data-icons  ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="5">
-          <el-form-item><ecm-data-icons ref="dataPendingIED" :option="projectDataPendingIED"></ecm-data-icons></el-form-item>
+          <el-col :span="4" v-if="isCNPEjh">
+          <el-form-item><ecm-data-icons  ref="dataPendingIED" :option="projectDataPendingIED"></ecm-data-icons></el-form-item>
           </el-col>
+          <el-col :span="4" v-if="isOnlyCNPEjk">
+          <el-form-item>
+          <ecm-data-icons ref="p1" :option="projectData1" ></ecm-data-icons>
+          </el-form-item>
+          </el-col>
+          <el-col :span="4" v-if="isOnlyCNPEjk">
+          <el-form-item>
+            <ecm-data-icons ref="p2" :option="projectData2" ></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        <el-col :span="4" v-if="isOnlyCNPEjk">
+        <el-form-item>
+          <ecm-data-icons ref="p3" :option="projectData3" v-if="isOnlyCNPEjk"></ecm-data-icons>
+        </el-form-item>
+        </el-col>
+        <el-col :span="4"v-if="isCNPEjk">
+        <el-form-item>
+          <ecm-data-icons ref="p4" :option="projectData4" v-if="isCNPEjk"></ecm-data-icons>
+        </el-form-item>
+        </el-col>
+        <el-col  :span="4"v-if="isCNPEjk">
+        <el-form-item>
+          <ecm-data-icons ref="p5" :option="projectData5" v-if="isCNPEjk"></ecm-data-icons>
+        </el-form-item>
+        </el-col>
+        <el-col :span="4"v-if="isCNPEjk">
+          <el-form-item>
+            <ecm-data-icons ref="p6" :option="projectData6" v-if="isCNPEjk"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        <el-col :span="4"v-if="isCNPEjk">
+        <el-form-item>
+          <ecm-data-icons ref="p7" :option="projectData7" v-if="isCNPEjk"></ecm-data-icons>
+        </el-form-item>
+        </el-col>
+
+      <el-col :span="4" ref="wk1" v-if="isOnlyCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectData"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" ref="wk2" v-if="isCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectDataWKDC"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" ref="wk3" v-if="isCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectDataReceived"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" ref="wk4" v-if="isCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectDataDeBlocking"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" ref="wk5" v-if="isCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectDataDispense"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" ref="wk6" v-if="isCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectDataReject"></ecm-data-icons></el-form-item>
+      </el-col>
+
       </el-row> 
       </el-form>
       
@@ -35,6 +90,15 @@ export default {
   name: "FeedBackGrid",
   data() {
     return {
+      isOnlyCNPEjk:false,
+      isCNPEjk:false,
+      isOnlyCNPE:false,
+      isCNPEjh:false,
+      isCNPEwk:false,
+      isOnlyCNPEwk:false,
+      tempRoles:[],
+      userRoles:[],
+
       filters: {
         projectCode: '',
         startDate: null,
@@ -54,7 +118,7 @@ export default {
       dataReport: [],
       count:'',
 
-      projectData1: {
+      projectDataIED: {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data:[{title: '三级计划',
@@ -131,11 +195,162 @@ export default {
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-flag',}],
         },
-
-
-      inputValueNum: "",
-
-      formLabelWidth: "120px",
+        projectData1: {
+        data: [
+          {
+            title: "项目",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-warning",
+            url: "",
+          },
+        ],
+      },
+      projectData2: {
+        data: [
+          {
+            title: "计划",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document",
+            url: "",
+          },
+        ],
+      },
+      projectData3: {
+        data: [
+          {
+            title: "三级计划",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document-checked",
+            url: "/cnpe/DCManagement/receivingdc",
+          },
+        ],
+      },
+      projectData4: {
+        data: [
+          {
+            title: "已生效IED",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document-checked",
+            url: "/cnpe/iedmanagement/IEDpublished",
+          },
+        ],
+      },
+      projectData5: {
+        data: [
+          {
+            title: "文函",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document-checked",
+            url: "/cnpe/iedmanagement/pendingied",
+          },
+        ],
+      },
+      projectData6: {
+        data: [
+          {
+            title: "ICM",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document-delete",
+            url: "",
+          },
+        ],
+      },
+      projectData7: {
+        data: [
+          {
+            title: "反馈ICM",
+            count: 0,
+            color: "rgb(255, 0, 0)",
+            icon: "el-icon-document-delete",
+            url: "",
+          },
+        ],
+      },
+      projectData: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '项目',
+            count:0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-warning',
+            url: ''
+          },
+        ]
+      },
+      projectDataWKDC: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '文函',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: '/cnpe/DCManagement/receivedDC'
+          },
+        ]
+      },
+      projectDataReceived: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待接收文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/DCManagement/receivingdc'
+          },
+        ]
+      },
+      projectDataDeBlocking: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待解锁文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/iedmanagement/IEDpublished'
+          },
+        ]
+      },
+      projectDataDispense: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待分发文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/iedmanagement/pendingied'
+          },
+        ]
+      },
+      projectDataReject: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '驳回文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-delete',
+            url: ''
+          }
+        ]
+      },
+    
     };
   },
 
@@ -152,6 +367,9 @@ export default {
     _self.getRejectIED()
     _self.getPlanNum()
     _self.getPendingIED()
+    this.loadStatistic()
+    this.loadStatisticWK()
+    this.getUserRole()
     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
@@ -160,6 +378,67 @@ export default {
       this.filters.projectCode = val
       this.initChart()
     },
+     getUserRole(){    //获取文件类型，进行本地验证
+        this.tempRoles=this.currentUser().roles
+        for(var i = 0;i < this.tempRoles.length;i++){
+          if(this.tempRoles[i] == '分包商文控人员'||this.tempRoles[i] =='CNPE_文控人员'||this.tempRoles[i] =='CNPE_计划人员'||
+          this.tempRoles[i] =='CNPE_接口人员'||this.tempRoles[i] =='分包商接口人员'||this.tempRoles[i] =='分包商计划人员'){
+          this.userRoles[i] = this.tempRoles[i] 
+          }
+        }
+        if(this.userRoles.length==1 && this.userRoles[0]=='CNPE_接口人员'){
+          this.isOnlyCNPEjk=true
+          this.isCNPEjk=true
+          }
+        if(this.userRoles.length==1 && this.userRoles[0]=='CNPE_计划人员'){
+          this.isOnlyCNPEjk=true
+          this.isCNPEjk=true
+          }
+          if(this.userRoles.length==1 && this.userRoles[0]=='CNPE_文控人员'){
+          this.isOnlyCNPEwk=true
+          this.isCNPEwk=true
+          }
+          for(var i = 0;i < this.userRoles.length;i++){
+            if(this.userRoles[i] == 'CNPE_计划人员')
+            this.isCNPEjh = true
+            if(this.userRoles[i] =='CNPE_接口人员')
+            this.isCNPEjk = true
+            if(this.userRoles[i] =='CNPE_文控人员')
+            this.isCNPEwk = true
+          }
+          if(this.userRoles.length>1 ){
+            this.isOnlyCNPE =true
+          }
+        console.log()
+      },
+      loadStatisticWK(){
+      let _self = this;
+      let mp=new Map()
+      axios
+        axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
+        .then(function (response) {
+          if(response.data.code==1){
+            console.log(response.data)
+              _self.projectData.data[0].count=response.data.sumNum;
+              _self.projectDataWKDC.data[0].count=response.data.dcNum;
+              _self.projectDataReceived.data[0].count=response.data.receivedNum;
+              _self.projectDataDeBlocking.data[0].count=response.data.deBlockingNum;
+              _self.projectDataDispense.data[0].count=response.data.dispenseNum;
+              _self.projectDataReject.data[0].count=response.data.RejectNum;
+              _self.$refs.wk1.refresh()
+              _self.$refs.wk2.refresh()
+              _self.$refs.wk3.refresh()
+              _self.$refs.wk4.refresh()
+              _self.$refs.wk5.refresh()
+              _self.$refs.wk6.refresh()
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+
     initChart(){
           let _self=this;
           let mp=new Map();
@@ -243,7 +522,6 @@ export default {
                 icon: 'el-icon-s-claim',
                 url: '/cnpe/iedmanagement/PendingSubmit'
               }]
-              console.log(response.data.data)
             _self.projectDataPendingSubmitIED.data = datas
             _self.$refs.dataPendingSubmitIED.refresh()
       }
@@ -284,7 +562,6 @@ export default {
                 icon: 'el-icon-s-claim',
                 url: '/cnpe/iedmanagement/RejectIED'
               }]
-              console.log(response.data.data)
             _self.projectDataRejectIED.data = datas
             _self.$refs.dataRejectIED.refresh()
       }
@@ -325,7 +602,7 @@ export default {
                 icon: 'el-icon-s-unfold',
                 url: '/cnpe/iedmanagement/IEDpublished'
               }]
-            _self.projectData1.data = datas
+            _self.projectDataIED.data = datas
             _self.$refs.dataIED.refresh()
       }
             })
@@ -369,7 +646,32 @@ export default {
       }
       })
       },
-
+      loadStatistic() {
+      let _self = this;
+      let mp = new Map();
+      axios;
+      axios
+        .post("/exchange/homeTop/homeSumNum", JSON.stringify(mp))
+        .then(function (response) {
+          _self.projectData1.data[0].count = response.data.projectNum;
+          _self.projectData2.data[0].count = response.data.planNum;
+          _self.projectData3.data[0].count = response.data.thereplanNum;
+          _self.projectData4.data[0].count = response.data.iedNum;
+          _self.projectData5.data[0].count = response.data.dcNum;
+          _self.projectData6.data[0].count = response.data.icmNum;
+          _self.projectData7.data[0].count = response.data.feedbackicmNum;
+          _self.$refs.p1.refresh()
+          _self.$refs.p2.refresh()
+          _self.$refs.p3.refresh()
+          _self.$refs.p4.refresh()
+          _self.$refs.p5.refresh()
+          _self.$refs.p6.refresh()
+          _self.$refs.p7.refresh()
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     loadDocChart(chartObj, indata){
       chartObj.setOption({
             title: { text: 'IED统计' },

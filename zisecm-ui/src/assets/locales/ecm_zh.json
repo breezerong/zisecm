@@ -340,12 +340,14 @@
     "RejectDC":"驳回文函",
     "BeenDispensed":"已分发",
     "LogMonitor": "日志监控",
-    "icmfeedback":"延误反馈",
+    "icmfeedback":"延误打开反馈",
     "projectManagement":"项目管理",
     "userManagement":"用户管理",
     "feedbackManagement":"问题沟通",
     "companyManage":"公司管理",
-    "AddressList":"通讯录"
+    "AddressList":"通讯录",
+    "delayFeedback": "延误回复反馈",
+    "delayConfirm": "延误回复确认"
 },
 "message": {
     "saveSuccess":"保存成功",

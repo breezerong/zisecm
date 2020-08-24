@@ -321,12 +321,14 @@
     "ReceivedDcFromCnpe":"Received For Contractor",
     "RejectDC":"Reject DC",
     "LogMonitor": "LogMonitor",
-    "icmfeedback":"icmfeedback",
+    "icmfeedback":"OpenFeedback",
     "projectManagement":"ProjectManagement",
     "userManagement":"User Management",
     "feedbackManagement":"Feedback Management",
     "companyManage":"Company Management",
-    "AddressList":"Address List"
+    "AddressList":"Address List",
+    "delayFeedback": "DelayFeedback",
+    "delayConfirm": "DelayConfirm"
 },
 "message": {
     "saveSuccess":"Save Success",
