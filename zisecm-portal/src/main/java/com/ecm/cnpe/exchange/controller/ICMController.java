@@ -82,7 +82,7 @@ public class ICMController  extends ControllerAbstract  {
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
 			documentService.updateObject(getToken(), doc, null);
-			OptionLogger.logger(detailService,doc, "延误反馈","CNPE");
+			OptionLogger.logger(detailService,doc, "延误打开反馈","CNPE");
 			mp.put("code", ActionContext.SUCESS);
 		}
 		catch (AccessDeniedException e) {
