@@ -1,8 +1,67 @@
 <template>
-    <div>
-        回复延误反馈
-    </div>
+   <DataLayout>
+
+        <template v-slot:header>
+            <el-form inline="true">
+            <el-form-item>    
+            <DataSelect v-model="value" dataUrl="/exchange/project/myproject" dataValueField="name" dataTextField="name" includeAll
+            @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect></el-form-item>
+            <el-form-item>
+                  <el-select
+                    name="selectCProcessStatus"
+                    v-model="Cstatus"
+                    placeholder="反馈状态"
+                    style="display:block;"
+                    >
+            <el-option
+             v-for="item in processStatus"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+            </el-select>
+            </el-form-item>
+            <el-form-item><el-input v-model="input" :placeholder="$t('message.selectByCoding')" style="width:200px"></el-input></el-form-item>
+            <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
+            </el-form>
+            <el-dialog
+            :title="dialogName+$t('application.property')"
+            :visible.sync="formVisual"
+            @close="formVisual = false"
+            width="80%"
+            >
+        <ShowProperty
+        ref="ShowProperty"
+        @onSaved="onSaved"
+        width="100%"
+        :folderPath="foldtemerPath"
+        v-bind:itemId="selectedItemId"
+        v-bind:typeName="typeName"
+      ></ShowProperty>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+            <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+            </div>
+        </el-dialog>
+        </template>
+    <template v-slot:main="{layout}">    
+    <DataGrid ref="mainDataGrid" dataUrl="/dc/getDocuments"
+                    condition="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
+                    gridViewName="ICM延误回复确认"
+                    isshowOption
+                    v-bind="tables.main"
+                    @rowclick="rowClick" 
+                     @selectchange="selectChange"
+                    :tableHeight="layout.height-166" 
+                    >
+                <template slot="customMoreOption" slot-scope="scope">
+                <el-button type="primary" @click="feedback(scope.data.row)" size="mini">回复反馈</el-button>
+                </template>
+    </DataGrid>
+    </template>
+  </DataLayout>   
 </template>
+
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
@@ -11,8 +70,16 @@ import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
 import AddCondition from '@/views/record/AddCondition.vue'
 export default {
+    components: {
+        ShowProperty:ShowProperty,
+        DataGrid:DataGrid,
+        DataSelect:DataSelect,
+        DataLayout:DataLayout,
+        AddCondition:AddCondition,
+    },
     name: "ICMFeedback",
     data(){
+        
         return{
             tables:{
                 main:{
@@ -30,20 +97,30 @@ export default {
                loading: false,
                status : '',
             },
-            processStatus:[{
-                label : "新建",
-                value : "新建",
+            processStatus:[
+                {
+                label : "所有类型",
+                value : "所有类型",
+            },
+
+                {
+                label : "接口信息传递单",
+                value : "接口信息传递单",
             },
             {
-                label : "已确认",
-                value : "已确认",
+                label : "接口信息意见单",
+                value : "接口信息意见单",
             }],
+            formVisual:false,
             selectedItems: [],
             selectedItemId: "",
             value:'',
-            Cstatus:'新建',
+            input:'',
+            coding:'',
+            dialogName:'',
+            Cstatus:'所有类型',
             hiddenInput:'hidden',
-            typeName:"ICM",
+            typeName:"延误回复反馈",
         }
     },
 
@@ -51,11 +128,111 @@ export default {
 
     },
  mounted(){
+   
      
     },
 
     methods: {
-    }
+        onLoadnDataSuccess(v,o){
+            this.search()
+        },
+        feedback(row){
+        this.coding=row.ID
+        this.dialogName='延误回复反馈'
+        this.formVisual=true
+        },
+        saveItem(){
+        let _self = this;
+        if(!this.$refs.ShowProperty.validFormValue()){
+            return;
+        }
+        var m = new Map();
+        var c;
+        for(c in _self.$refs.ShowProperty.dataList){
+            let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+            var i;
+            for (i in dataRows) {
+            if(dataRows[i].attrName && dataRows[i].attrName !='')
+            {
+                if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                {
+                var val = dataRows[i].defaultValue;
+                if(val && dataRows[i].isRepeat){
+                    var temp = "";
+                // console.log(val);
+                    for(let j=0,len=val.length;j<len;j++){
+                    temp = temp + val[j]+";";
+                    //console.log(temp);
+                    }
+                    temp = temp.substring(0,temp.length-1);
+                    val = temp;
+                    console.log(val);
+                }
+                m.set(dataRows[i].attrName, val);
+                }
+            }
+            }
+        }                  
+        var cd = this.coding
+        m.set("id",cd)                                      //以上为取出ShowProperty中的所有信息，写进map里
+        let formdata = new FormData();      
+        formdata.append("metaData",JSON.stringify(m));
+        axios.post("/exchange/ICM/DelayConfirm",formdata,{
+                'Content-Type': 'multipart/form-data'
+            })
+            .then(function(response){
+        let code = response.data.code
+        if(code==1){
+            _self.$message({
+                    showClose: true,
+                    message:_self.$t('message.operationSuccess') ,
+                    duration: 2000,
+                    type: "success"
+                });
+            _self.$refs.mainDataGrid.loadGridData();
+            _self.formVisual=false    
+            }
+            else{
+                _self.$message({
+                    showClose: true,
+                    message:_self.$t('message.operationFaild') ,
+                    duration: 2000,
+                    type: "error"
+                });
+            }
+            })
+        },
+        search(){
+        let _self = this
+        let wheres = ["CODING"]
+        let orS = ""
+        var k1="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) "
+         if(_self.input.trim().length>0){
+                wheres.forEach(function(item){
+                    if(orS.length>0){
+                        orS+=" OR "
+                    }
+                    orS+=item + " LIKE '%"+ _self.input+"%'"
+                })
+                k1+=" AND (" + orS + ")"
+            }
+            if(_self.value != undefined &&_self.value!='所有'){
+                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
+            }
+            if(_self.Cstatus=='所有类型'){
+                k1+="and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
+            }
+            if(_self.Cstatus!='所有类型'){
+                k1+="and TYPE_NAME ='"+_self.Cstatus+"'"
+            }
+            console.log(k1)
+
+
+        _self.$refs.mainDataGrid.condition=k1
+        _self.$refs.mainDataGrid.loadGridData();
+        }
+    },
+
 }
 </script>
 <style scoped>

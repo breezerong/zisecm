@@ -396,7 +396,8 @@
     "publishedAlert":"变更提示",
     "pleaseSelectIED":"请选择要操作的IED",
     "pleaseSelectICM":"请选择要确认的ICM",
-    "pleaseSelectSync":"请选择要同步的计划"
+    "pleaseSelectSync":"请选择要同步的计划",
+    "selectByCoding":"根据发文号关键字查找"
 },
 "field": {
     "indexNumber":"序号",

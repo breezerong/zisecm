@@ -374,7 +374,7 @@ export default {
           _self.projectDataICM.data[0].count = response.data.projectNum;
           _self.projectData2.data[0].count = response.data.planNum;
           _self.projectData3.data[0].count = response.data.thereplanNum;
-          _self.projectData4.data[0].count = 1656;
+          _self.projectData4.data[0].count = response.data.iedNum;
           _self.projectData5.data[0].count = response.data.icmNum;
           _self.$refs.p1.refresh()
           _self.$refs.p2.refresh()
@@ -444,8 +444,7 @@ export default {
                 url: '/cnpe/iedmanagement/IEDpublished'
               }]
             _self.projectDataPublishedIED.data = datas
-            console.log("123123")
-            console.log(_self.projectDataPublishedIED.data)
+            console.log(response.data)
             _self.$refs.dataPublishedIED.refresh()
       }
             })

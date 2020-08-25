@@ -1,5 +1,7 @@
 package com.ecm.cnpe.exchange.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcSynDetailService;
@@ -90,6 +93,46 @@ public class ICMController  extends ControllerAbstract  {
 		}
 		return mp;	
 	}
+	
+	@PostMapping("/exchange/ICM/DelayConfirm")
+	@ResponseBody
+	public Map<String, Object> CRM(String metaData) throws Exception{
+		LoginUser userObj=null;
+		Date d1 = new Date();
+		userObj=getSession().getCurrentUser();
+		String company = userObj.getCompany();
+		String name = userObj.getLoginName();
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		Map<String,Object> map = new HashMap<String,Object>();
+		EcmDocument temp = new EcmDocument();
+		String id=args.get("id").toString();
+		String comment2 = args.get("C_COMMENT2").toString();
+		String c_ex3_date = args.get("C_EX3_DATE").toString();
+		String comment3 = args.get("C_COMMENT3").toString();
+		String c_type1 =  args.get("C_TYPE1").toString();
+		String comment4 = args.get("C_COMMENT4").toString();
+		String c_ex6_date = args.get("C_EX6_DATE").toString();
+		String comment6 = args.get("C_COMMENT6").toString();
+		temp=documentService.getObjectById(getToken(), id);
+		temp.addAttribute("C_COMMENT2", comment2);
+		temp.addAttribute("C_EX3_DATE", c_ex3_date);
+		temp.addAttribute("C_COMMENT3", comment3);
+		temp.addAttribute("C_TYPE1", c_type1);
+		temp.addAttribute("C_COMMENT4", comment4);
+		temp.addAttribute("C_EX6_DATE", c_ex6_date);
+		temp.addAttribute("C_COMMENT6", comment6);
+		temp.addAttribute("C_PROCESS_STATUS", "新建");
+		temp.addAttribute("C_DRAFTER1", name);
+		temp.addAttribute("C_DRAFT1_DATE",d1);
+		documentService.updateObject(getToken(), temp, null);
+		OptionLogger.logger(detailService,temp, "延误回复反馈",company);
+		map.put("code", 1);
+		return map;
+	}
+	
+	
+	
+	
 	
 	@PostMapping("/exchange/ICM/UpdataICMLogger")
 	@ResponseBody
