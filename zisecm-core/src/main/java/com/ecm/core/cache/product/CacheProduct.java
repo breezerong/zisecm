@@ -85,8 +85,8 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	@Autowired
 	private CacheManagerCfgActivity cacheManagerCfgActivity;//活动配置
 
-//	@Autowired
-//	SyncPublicNet syncPublicNet;
+	@Autowired
+	SyncPublicNet syncPublicNet;
 	//@Autowired
 	//private PdfSignService pdfService;
 
@@ -138,8 +138,8 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 		
 		logger.info("Complete load cache: "+ (new Date()).toString());
 		//pdfService.run();
-//		syncPublicNet.exportData("提交");
-//		syncPublicNet.exportData("CNPE驳回");
+//		syncPublicNet.exportData("提交");//done
+		//		syncPublicNet.exportData("CNPE驳回");
 //		syncPublicNet.exportData("CNPE接收");
 //		syncPublicNet.exportData("分发");
 //		syncPublicNet.exportData("分包商驳回");
@@ -147,9 +147,17 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 //		syncPublicNet.exportData("修改");
 //		syncPublicNet.exportData("驳回");
 //		syncPublicNet.exportData("接收");
-
-//		syncPublicNet.importData();
-		//syncPublicNet.UpdateImportResultStatus();
+//		syncPublicNet.exportData("导出用户");
+		//		syncPublicNet.exportData("新建问题");
+//		syncPublicNet.exportData("问题回复");
+//		syncPublicNet.exportData("延误打开反馈");
+//		syncPublicNet.exportData("延误反馈确认");
+		
+		
+		//syncPublicNet.importData("");
+		//		syncPublicNet.importData("导入用户");
+		
+		//syncPublicNet.UpdateImportResultStatus();//done
 	}
 
 }
