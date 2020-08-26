@@ -160,7 +160,7 @@ export default {
         }
     },
     mounted(){
-        this.init()
+        this.init()        
     },
     methods: {
         async init(){
@@ -304,8 +304,12 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
+
+            if(this.view==true && this.project.length>0){
+                this.forms.headForm.project = this.project
+            }
             if(_self.forms.headForm.project != undefined){
-                k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
+                k1+=" AND C_PROJECT_NAME in ('"+_self.forms.headForm.project +"')"
             }
 
             let user = this.currentUser();

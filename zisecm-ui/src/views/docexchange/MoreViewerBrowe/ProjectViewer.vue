@@ -109,7 +109,7 @@
                     </el-row>
                 </template>
                 <template v-if="isIED">
-                    <IEDPublishedView :view=true :project="projectName"></IEDPublishedView>
+                    <IEDPublishedView ref="iedgrid" :view=true :project="projectName"></IEDPublishedView>
                 </template>
                 <template v-if="isProject">
                     <el-row>
@@ -554,6 +554,7 @@ export default {
                     this.typeName=data.name;
                     let user = this.currentUser();
                     let _self=this;
+                    this.$refs.iedgrid.search()
                     /* _self.$nextTick(()=>{
                         if(user.userType==2 && user.company!=null){
                             _self.condition=" TYPE_NAME='"+_self.typeName+"' "
