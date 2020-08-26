@@ -45,6 +45,7 @@ import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
 import com.ecm.common.util.FileUtils;
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.entity.EcmAttribute;
@@ -84,7 +85,6 @@ public class ICMImportService extends EcmService {
 	private FolderPathService folderPathService;
 	
 	private static String importExcelFolderId;
-	
 	private static String importDocFolderId;
 	/**
 	 * 批次导入
@@ -235,42 +235,71 @@ public class ICMImportService extends EcmService {
 						}
 						String tempId = null;
 						try {
-							tempId = newDocument( token, childType,itemStream,
-									sheet.getRow(i),  fileList, attrNames,
-									newId,relationName,number, childStartIndex,sheet.getRow(i).getLastCellNum(),
-									sameValues,null);
-							if(hasRendition) {
-								String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
-								if(!StringUtils.isEmpty(rendFileName)) {
-									if(FileUtils.getExtention(rendFileName).equalsIgnoreCase(FileUtils.getExtention(itemPath))) {
-										sb.append("第").append(i+1).append("行主格式和副本扩展名相同.").append("\r\n");
-									}else {
-										itemPath = uploadFolder +rendFileName;
-										File itemFile= new File(itemPath);
-										
-										if(itemFile.exists()) {
-											FileInputStream rs =null;
-											try {
-												rs = new FileInputStream(itemFile);
-												content = new EcmContent();
-												content.setName(rendFileName);
-												content.setContentSize(fileList.get(content.getName()));
-												content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
-												content.setInputStream(rs);
-												documentService.addRendition(token, tempId, content);
-											}
-											finally {
-												if(rs!=null) {
-													rs.close();
-													itemFile.delete();
+							
+							String res=checkDocument( token,sheet.getRow(i), 
+									attrNames,
+									1,sheet.getRow(i).getLastCellNum());
+							List<EcmDocument> list = new ArrayList<EcmDocument>();
+							int index  = getColumnIndex(attrNames, "C_IDENTIFY",1,sheet.getRow(i).getLastCellNum());
+							Cell cell = sheet.getRow(i).getCell(index);
+							String submitType= cell.getStringCellValue();
+							if(res!=null) {
+								if(submitType.equals("MOD")) {
+									updataDocument( token, parentType,itemStream, sheet.getRow(i),  
+											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+											null,null,res);
+									
+								}else if(submitType.equals("DEL")) {
+									delDocument( token, parentType,itemStream, sheet.getRow(i),  
+											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+											null,null,res);
+								}else {
+									sb.append("ICM不存在").append("\r\n");;
+									
+								}
+							}else {
+								if(submitType.equals("ADD")) {
+									newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
+											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+											null,null);
+									if(hasRendition) {
+										String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
+										if(!StringUtils.isEmpty(rendFileName)) {
+											if(FileUtils.getExtention(rendFileName).equalsIgnoreCase(FileUtils.getExtention(itemPath))) {
+												sb.append("第").append(i+1).append("行主格式和副本扩展名相同.").append("\r\n");
+											}else {
+												itemPath = uploadFolder +rendFileName;
+												File itemFile= new File(itemPath);
+												
+												if(itemFile.exists()) {
+													FileInputStream rs =null;
+													try {
+														rs = new FileInputStream(itemFile);
+														content = new EcmContent();
+														content.setName(rendFileName);
+														content.setContentSize(fileList.get(content.getName()));
+														content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
+														content.setInputStream(rs);
+														documentService.addRendition(token, tempId, content);
+													}
+													finally {
+														if(rs!=null) {
+															rs.close();
+															itemFile.delete();
+														}
+													}
+												}else {
+													sb.append("第").append(i+1).append("行格式副本不存在：").append(rendFileName).append("\r\n");
 												}
 											}
-										}else {
-											sb.append("第").append(i+1).append("行格式副本不存在：").append(rendFileName).append("\r\n");;
 										}
 									}
+								}else {
+									sb.append("ICM已存在").append("\r\n");;
+									
 								}
 							}
+							
 						}
 						finally {
 							//删除缓存文件
@@ -283,57 +312,75 @@ public class ICMImportService extends EcmService {
 					}else {
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
-						/*if(!StringUtils.isEmpty(itemPath)) {
-							File itemFile= new File(itemPath);
-							
-							if(itemFile.exists()) {
-								itemStream = new FileInputStream(itemFile);
-							}else {
-								if(!isReuse) {
-									sb.append("第").append(i+1).append("行文件不存在：").append(getCellValue(sheet.getRow(i).getCell(0))).append("\r\n");
+						try {
+							String res=checkDocument( token,sheet.getRow(i), 
+									attrNames,
+									1,sheet.getRow(i).getLastCellNum());
+							List<EcmDocument> list = new ArrayList<EcmDocument>();
+							int index  = getColumnIndex(attrNames, "C_IDENTIFY",1,sheet.getRow(i).getLastCellNum());
+							Cell cell = sheet.getRow(i).getCell(index);
+							String submitType= cell.getStringCellValue();
+							if(res!=null) {
+								if(submitType.equals("MOD")) {
+									updataDocument( token, parentType,itemStream, sheet.getRow(i),  
+											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+											null,null,res);
+									
+								}else if(submitType.equals("DEL")) {
+									delDocument( token, parentType,itemStream, sheet.getRow(i),  
+											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+											null,null,res);
+								}else {
+									sb.append("ICM不存在").append("\r\n");;
+									
 								}
-							}
-						}/*/
-						try {							
-							
-							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
-									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
-									null,null);
-							if(hasRendition) {
-								String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
-								if(!StringUtils.isEmpty(rendFileName)) {
-									if(FileUtils.getExtention(rendFileName).equalsIgnoreCase(FileUtils.getExtention(itemPath))) {
-										sb.append("第").append(i+1).append("行主格式和副本扩展名相同.").append("\r\n");
-									}else {
-										itemPath = uploadFolder +rendFileName;
-										File itemFile= new File(itemPath);
-										if(itemFile.exists()) {
-											FileInputStream rs =null;
-											try {
-												content = new EcmContent();
-												content.setName(rendFileName);
-												content.setContentSize(fileList.get(content.getName()));
-												content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
-												
-												rs = new FileInputStream(itemFile);
-												content.setInputStream(rs);
-												documentService.addRendition(token, newId, content);
-											}
-											finally {
-												if(rs!=null) {
-													rs.close();
-													itemFile.delete();
+							}else {
+								if(submitType.equals("ADD")) {
+									newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
+											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+											null,null);
+									if(hasRendition) {
+										String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
+										if(!StringUtils.isEmpty(rendFileName)) {
+											if(FileUtils.getExtention(rendFileName).equalsIgnoreCase(FileUtils.getExtention(itemPath))) {
+												sb.append("第").append(i+1).append("行主格式和副本扩展名相同.").append("\r\n");
+											}else {
+												itemPath = uploadFolder +rendFileName;
+												File itemFile= new File(itemPath);
+												if(itemFile.exists()) {
+													FileInputStream rs =null;
+													try {
+														content = new EcmContent();
+														content.setName(rendFileName);
+														content.setContentSize(fileList.get(content.getName()));
+														content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
+														
+														rs = new FileInputStream(itemFile);
+														content.setInputStream(rs);
+														documentService.addRendition(token, newId, content);
+													}
+													finally {
+														if(rs!=null) {
+															rs.close();
+															itemFile.delete();
+														}
+													}
+												}else {
+													sb.append("第").append(i+1).append("行格式副本不存在：").append(rendFileName).append("\r\n");;
 												}
 											}
-										}else {
-											sb.append("第").append(i+1).append("行格式副本不存在：").append(rendFileName).append("\r\n");;
 										}
 									}
+									if(!StringUtils.isEmpty(newId)) {
+										newRelation(token, deliveryId,relationName, newId, i,null);
+									}
+								}else {
+									sb.append("ICM已存在").append("\r\n");;
+									
 								}
 							}
-							if(!StringUtils.isEmpty(newId)) {
-								newRelation(token, deliveryId,relationName, newId, i,null);
-							}
+							
+							
 						}
 						finally {
 							//删除缓存文件
@@ -362,6 +409,27 @@ public class ICMImportService extends EcmService {
 		return sb.toString();
 	}
 	
+	
+	private  String checkDocument(String token,  Row row, 
+		Map<Integer,String> attrNames,
+		int start,int end) throws Exception {
+		String id;
+			String coding1= row.getCell(getColumnIndex(attrNames, "C_CODE1",start,end)).getStringCellValue();
+			String coding2= row.getCell(getColumnIndex(attrNames, "C_CODE2",start,end)).getStringCellValue();
+			String coding3= row.getCell(getColumnIndex(attrNames, "C_CODE3",start,end)).getStringCellValue();
+			String coding4= row.getCell(getColumnIndex(attrNames, "C_CODE4",start,end)).getStringCellValue();
+			String coding5= row.getCell(getColumnIndex(attrNames, "C_CODE5",start,end)).getStringCellValue();
+			String coding6= row.getCell(getColumnIndex(attrNames, "C_CODE6",start,end)).getStringCellValue();
+			String cond = " TYPE_NAME='ICM' and C_CODE1='"+coding1+"'"
+					+ " and C_CODE2='"+coding2+"'"
+					+ " and C_CODE3='"+coding3+"'"
+					+ " and C_CODE4='"+coding4+"'"
+					+ " and C_CODE5='"+coding5+"'"
+					+ " and C_CODE6='"+coding6+"'";
+			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
+			id = result.get(0).get("ID").toString();
+			return id;
+	}
 	
 	private String getToken() {
 		// TODO Auto-generated method stub
@@ -441,6 +509,72 @@ public class ICMImportService extends EcmService {
 			newRelation(token, parentId,relationName, docId, index,desc);
 		}
 		return docId;
+	}
+	private void updataDocument(String token, String typeName,FileInputStream itemStream,
+			Row row, Map<String,Long> fileList,
+			Map<Integer,String> attrNames,String parentId, String relationName,
+			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields,String id) throws Exception {
+			EcmDocument doc = new EcmDocument();
+			doc.setTypeName(typeName);
+			if(ICMImportService.importDocFolderId==null||"".equals(ICMImportService.importDocFolderId)) {
+//				ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
+				ICMImportService.importDocFolderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
+			}
+			doc.setFolderId(ICMImportService.importDocFolderId);
+			EcmContent content = null;
+			if(itemStream!=null) {
+				content = new EcmContent();
+				content.setName(row.getCell(0).getStringCellValue());
+				content.setContentSize(fileList.get(content.getName()));
+				content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
+				content.setInputStream(itemStream);
+				
+				doc.getAttributes().put("C_IMPORT_NAME", content.getName());
+				doc.getAttributes().put("FORMAT_NAME", content.getFormatName());
+				doc.getAttributes().put("CONTENT_SIZE", content.getContentSize());
+			}
+			if(parentId!=null) {
+				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,null);
+			}else {
+				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,sameFields);
+			}
+			setDefaultValues(documentService.getSession(token),doc.getAttributes());
+			doc.getAttributes().put("C_BATCH_CODE", batchName);
+			doc.getAttributes().put("ID", id);
+			documentService.updateObject(token, doc, null);
+	}
+	private void delDocument(String token, String typeName,FileInputStream itemStream,
+			Row row, Map<String,Long> fileList,
+			Map<Integer,String> attrNames,String parentId, String relationName,
+			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields,String id) throws Exception {
+			EcmDocument doc = new EcmDocument();
+			doc.setTypeName(typeName);
+			if(ICMImportService.importDocFolderId==null||"".equals(ICMImportService.importDocFolderId)) {
+//				ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
+				ICMImportService.importDocFolderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
+			}
+			doc.setFolderId(ICMImportService.importDocFolderId);
+			EcmContent content = null;
+			if(itemStream!=null) {
+				content = new EcmContent();
+				content.setName(row.getCell(0).getStringCellValue());
+				content.setContentSize(fileList.get(content.getName()));
+				content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
+				content.setInputStream(itemStream);
+				
+				doc.getAttributes().put("C_IMPORT_NAME", content.getName());
+				doc.getAttributes().put("FORMAT_NAME", content.getFormatName());
+				doc.getAttributes().put("CONTENT_SIZE", content.getContentSize());
+			}
+			if(parentId!=null) {
+				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,null);
+			}else {
+				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,sameFields);
+			}
+			setDefaultValues(documentService.getSession(token),doc.getAttributes());
+			doc.getAttributes().put("C_BATCH_CODE", batchName);
+			doc.getAttributes().put("ID", id);
+			documentService.updateObject(token, doc, null);
 	}
 	/**
 	 * 读取Cell值
