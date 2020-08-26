@@ -9,10 +9,25 @@
             <el-form-item>
                   <el-select
                     name="selectCProcessStatus"
-                    v-model="Cstatus"
+                    v-model="Ctypes"
                     placeholder="反馈状态"
                     style="display:block;"
                     >
+            <el-option
+             v-for="item in types"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+            </el-select>
+            </el-form-item>
+            <el-form-item>
+                  <el-select
+                    name="selectCProcessStatus"
+                    v-model="Cstatus"
+                    placeholder="反馈状态"
+                    style="display:block;"
+                >
             <el-option
              v-for="item in processStatus"
             :key="item.value"
@@ -21,6 +36,7 @@
             </el-option>
             </el-select>
             </el-form-item>
+
             <el-form-item><el-input v-model="input" :placeholder="$t('message.selectByCoding')" style="width:200px"></el-input></el-form-item>
             <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
             </el-form>
@@ -47,7 +63,7 @@
     <template v-slot:main="{layout}">    
     <DataGrid ref="mainDataGrid" dataUrl="/dc/getDocuments"
                     condition="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
-                    gridViewName="ICM延误回复确认"
+                    gridViewName="ICM延误回复反馈"
                     isshowOption
                     v-bind="tables.main"
                     @rowclick="rowClick" 
@@ -55,7 +71,7 @@
                     :tableHeight="layout.height-166" 
                     >
                 <template slot="customMoreOption" slot-scope="scope">
-                <el-button type="primary" @click="feedback(scope.data.row)" size="mini">回复反馈</el-button>
+                <el-button v-if="CstatusType" type="primary" @click="feedback(scope.data.row)" size="mini">回复反馈</el-button>
                 </template>
     </DataGrid>
     </template>
@@ -97,7 +113,23 @@ export default {
                loading: false,
                status : '',
             },
-            processStatus:[
+             processStatus:[
+            {
+                label : "所有未反馈延误",
+                value : "所有未反馈延误",
+            },
+            
+            {
+                label : "新建",
+                value : "新建",
+            },
+            {
+                label : "已确认",
+                value : "已确认",
+            }],
+
+
+            types:[
                 {
                 label : "所有类型",
                 value : "所有类型",
@@ -115,10 +147,12 @@ export default {
             selectedItems: [],
             selectedItemId: "",
             value:'',
-            input:'',
+            input:null,
             coding:'',
+            CstatusType:true,
             dialogName:'',
-            Cstatus:'所有类型',
+            Cstatus:'所有未反馈延误',
+            Ctypes:'所有类型',
             hiddenInput:'hidden',
             typeName:"延误回复反馈",
         }
@@ -204,30 +238,35 @@ export default {
         },
         search(){
         let _self = this
-        let wheres = ["CODING"]
         let orS = ""
-        var k1="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) "
-         if(_self.input.trim().length>0){
-                wheres.forEach(function(item){
-                    if(orS.length>0){
-                        orS+=" OR "
-                    }
-                    orS+=item + " LIKE '%"+ _self.input+"%'"
-                })
-                k1+=" AND (" + orS + ")"
+        var k1=""
+             if(_self.Cstatus=='所有未反馈延误'){
+                k1+="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) "
             }
-            if(_self.value != undefined &&_self.value!='所有'){
+             if(_self.Cstatus!='所有未反馈延误'){
+                k1+="C_PROCESS_STATUS ='"+_self.Cstatus+"'"
+            }
+
+            if(_self.value != null &&_self.value!='所有'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
-            if(_self.Cstatus=='所有类型'){
+            if(_self.Ctypes=='所有类型'){
                 k1+="and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
             }
-            if(_self.Cstatus!='所有类型'){
-                k1+="and TYPE_NAME ='"+_self.Cstatus+"'"
+            if(_self.Ctypes!='所有类型'){
+                k1+="and TYPE_NAME ='"+_self.Ctypes+"'"
             }
-            console.log(k1)
-
-
+            if(_self.input!=null){
+                k1+="and CODING LIKE '%"+_self.input+"%'"
+            }
+            if(_self.Cstatus=='新建'||_self.Cstatus=='已确认'){
+                _self.CstatusType=false
+            }
+            if(_self.Cstatus=='所有未反馈延误'){
+                _self.CstatusType=true
+            }
+            //k1+="and c_company='"+this.currentUser().company+"'"
+        console.log(k1)
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
         }
