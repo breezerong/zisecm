@@ -158,5 +158,23 @@ public class ICMController  extends ControllerAbstract  {
 		mp.put("code", ActionContext.SUCESS);
 		return mp;
 	}
+	@RequestMapping(value ="/exchange/ICM/ICMDelayConfirm",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> ICMDC(@RequestBody String argStr) throws Exception{
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company = userObj.getCompany();
+		List<String> ids = JSONUtils.stringToArray(argStr);
+		EcmDocument temp = new EcmDocument();
+		for(int i = 0;i < ids.size();i++){
+		temp = documentService.getObjectById(getToken(), ids.get(i));
+		temp.addAttribute("C_PROCESS_STATUS", "已确认");
+		documentService.updateObject(getToken(), temp, null);	
+		OptionLogger.logger(detailService, temp, "延误回复确认", company);
+		}
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		return mp;
+	}
 	
 }
