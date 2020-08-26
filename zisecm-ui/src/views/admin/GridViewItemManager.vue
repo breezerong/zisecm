@@ -1,8 +1,8 @@
 <template>
   <div>
     
-    <el-dialog width="80%" title="列表校验" :visible.sync="checkVisible">
-      <GridViewItemCheck ref="GridViewItemCheck" width="560" :parentgridid="parentid"></GridViewItemCheck>
+    <el-dialog width="90%" title="列表校验" :visible.sync="checkVisible">
+      <GridViewItemCheck ref="GridViewItemCheck" width="560" :gridViewName="gridViewName"></GridViewItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">{{$t('application.cancel')}}</el-button>
       </div>
@@ -65,7 +65,7 @@
           <el-breadcrumb-item>列表项管理</el-breadcrumb-item>
         </el-breadcrumb> -->
         <el-row class="topbar">
-          <el-col :span="4">列表名：{{typename}}</el-col>
+          <el-col :span="4">列表名：{{gridViewName}}</el-col>
         
           <el-col :span="4">
             <el-input
@@ -184,7 +184,7 @@ export default {
       loading: false,
       dialogVisible: false,
       checkVisible: false,
-      typename: "",
+      gridViewName: "",
       parentid: "",
       idEdit: false,
       tableHeight: window.innerHeight - 115,
@@ -212,7 +212,7 @@ export default {
     let _self = this;
     _self.loading = true;
     var pid = _self.$route.query.parentid;
-    _self.typename = _self.$route.query.name;
+    _self.gridViewName = _self.$route.query.name;
     if (pid) {
       _self.parentid = pid;
       _self.form.parentId = pid;
@@ -237,7 +237,10 @@ export default {
     startcheck() {
       let _self = this;
       _self.checkVisible = true;
-      _self.$refs.GridViewItemCheck.loaddata();
+      if(_self.$refs.GridViewItemCheck){
+        _self.$refs.GridViewItemCheck.loadData();
+      }
+      
     },
     refreshData() {
       let _self = this;
