@@ -60,54 +60,58 @@ public class CacheManagerEcmForm implements ICacheManager<EcmForm>{
 					CacheManagerOper.getEcmForms().put(ep.getTypeName()+"_1", ep);
 				}
 				
-				//获取opentext中category的属性定义，更新到缓存中
-				List<EcmFormItem> oldItems = ecmFormItemMapper.selectByParentId(ep.getId());				
-				ep.setEcmFormItems(oldItems);
-				for(EcmFormItem it:oldItems) {
-					CacheManagerOper.getEcmFormItems().put(it.getId(), it);
-					//把可查询的字段存放到list里
-					if("1".equals(it.getSearchable())) {
-						ep.getEcmFormSearchItems().add(it);
+				updateItem( ep);
+				
+			}
+		}
+	}
+	
+	private void updateItem(EcmForm ep) {
+		List<EcmFormItem> oldItems = ecmFormItemMapper.selectByParentId(ep.getId());				
+		ep.setEcmFormItems(oldItems);
+		for(EcmFormItem it:oldItems) {
+			CacheManagerOper.getEcmFormItems().put(it.getId(), it);
+			//把可查询的字段存放到list里
+			if("1".equals(it.getSearchable())) {
+				ep.getEcmFormSearchItems().add(it);
+			}
+			
+			if("Department".equals(it.getControlType())){
+				it.setControlType("Select");
+				it.setValidValues(new ArrayList<String>());
+				
+				try {
+					EcmParameter param = CacheManagerOper.getEcmParameters().get(SysConfig.getDepartmentRootId());
+					if(param == null) {
+						throw new RuntimeException("系统没有配置参数："+SysConfig.getDepartmentRootId());
 					}
-					
-					if("Department".equals(it.getControlType())){
-						it.setControlType("Select");
-						it.setValidValues(new ArrayList<String>());
-						
-						try {
-							EcmParameter param = CacheManagerOper.getEcmParameters().get(SysConfig.getDepartmentRootId());
-							if(param == null) {
-								throw new RuntimeException("系统没有配置参数："+SysConfig.getDepartmentRootId());
-							}
-							//MemberService memberService = OtAuthentication.getMemberServiceWSBindingProvider(OtStaticValue.getUserTest());
-							//Member rootM = memberService.getMemberById(Integer.valueOf(param.getValue()));
-							//递归查询部门
-							//createDepartment(rootM,it.getValidValues(), memberService);
-						} catch (Exception e) {
-							throw new RuntimeException(e);
-						}
-					}else if("SQLSelect".equals(it.getControlType())) {
-						it.setControlType("Select");
-						it.setValidValues(new ArrayList<String>());
-						
-						EcmQuery ecmQuery = ecmQueryMapper.selectByName(it.getQueryName());
-						if(ecmQuery != null) {
-							if(!EcmStringUtils.isEmpty(ecmQuery.getSqlString()))
-							{
-								List<Map<String,String>> list = ecmSelectValueMapper.selectEcmSelectValuesBySql(ecmQuery.getSqlString());
-								for(Map<String,String> m:list){
-									it.getValidValues().add(m.get(ecmQuery.getLabelColumn()));
-								}
-							}
-						}
-					}else if("ValueSelect".equals(it.getControlType())){
-						it.setControlType("Select");
-						it.setValidValues(new ArrayList<String>());
-						if(!EcmStringUtils.isEmpty(it.getValueList()))
-						{
-							it.setValidValues(Arrays.asList(it.getValueList().split(";")));
+					//MemberService memberService = OtAuthentication.getMemberServiceWSBindingProvider(OtStaticValue.getUserTest());
+					//Member rootM = memberService.getMemberById(Integer.valueOf(param.getValue()));
+					//递归查询部门
+					//createDepartment(rootM,it.getValidValues(), memberService);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}else if("SQLSelect".equals(it.getControlType())) {
+				it.setControlType("Select");
+				it.setValidValues(new ArrayList<String>());
+				
+				EcmQuery ecmQuery = ecmQueryMapper.selectByName(it.getQueryName());
+				if(ecmQuery != null) {
+					if(!EcmStringUtils.isEmpty(ecmQuery.getSqlString()))
+					{
+						List<Map<String,String>> list = ecmSelectValueMapper.selectEcmSelectValuesBySql(ecmQuery.getSqlString());
+						for(Map<String,String> m:list){
+							it.getValidValues().add(m.get(ecmQuery.getLabelColumn()));
 						}
 					}
+				}
+			}else if("ValueSelect".equals(it.getControlType())){
+				it.setControlType("Select");
+				it.setValidValues(new ArrayList<String>());
+				if(!EcmStringUtils.isEmpty(it.getValueList()))
+				{
+					it.setValidValues(Arrays.asList(it.getValueList().split(";")));
 				}
 			}
 		}
@@ -119,9 +123,19 @@ public class CacheManagerEcmForm implements ICacheManager<EcmForm>{
 		if(ep != null) {
 			ep = ecmFormMapper.selectByPrimaryKey(ep.getId());
 			CacheManagerOper.getEcmForms().put(key, ep);
+			updateItem(ep);
 			return ep;
+		}else {
+			ep = ecmFormMapper.selectByPrimaryKey(key);
+			if(ep != null) {
+				CacheManagerOper.getEcmForms().put(ep.getTypeName()+"_"+ep.getAction(), ep);
+				if(ep.getIsDefault()) {
+					CacheManagerOper.getEcmForms().put(ep.getTypeName()+"_1", ep);
+				}
+				updateItem(ep);
+			}
 		}
-		return null;
+		return ep;
 	}
 	
 //	private void createDepartment(Member member,List<String> departs,MemberService memberService) {
