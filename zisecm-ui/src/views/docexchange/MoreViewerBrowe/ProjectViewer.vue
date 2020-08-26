@@ -109,50 +109,7 @@
                     </el-row>
                 </template>
                 <template v-if="isIED">
-                     <el-row>
-                        <el-col :span="24">
-                        <el-form :inline="true" :model="filters" @submit.native.prevent>
-                            <el-form-item>
-                                <el-input width="100px" v-model="filtersIED.title" placeholder="内部编码或标题" @keyup.enter.native='searchItemIED'></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="searchItemIED">{{$t('application.SearchData')}}</el-button>
-                            </el-form-item>
-                            <el-form-item>
-                                <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
-                                <AddCondition @sendMsg='searchItemIED' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.mainDataGridIED)">{{$t('application.ExportExcel')}}</el-button>
-                            </el-form-item> 
-                         </el-form>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="24">
-                            <DataGrid ref="mainDataGridIED" 
-                                dataUrl="/dc/getDocuments"
-                                isshowOption
-                                isshowCustom
-                                gridViewName="IEDGrid"
-                                :v-bind="tables.main" :tableHeight="rightTableHeightIED"
-                                @cellMouseEnter="cellMouseEnter"
-                                @rowclick="rowClick" 
-                                @selectchange="selectChange"
-                                :isInitData="false"
-                                :isEditProperty="false"
-                                >
-                                <template slot="sequee" slot-scope="scope">
-                                    <el-popover trigger="hover" placement="top" width="50">
-                                    <div slot="reference" >
-                                        <span :style="(scope.data.row['C_ITEM_STATUS2']=='变更中')?{'background':'	#00FF00'}:''">{{scope.data.$index+1}}</span>
-                                    </div>
-                                    <span>{{scope.data.row.C_ITEM_STATUS2}}</span>
-                                </el-popover>
-                                </template>
-                            </DataGrid>
-                        </el-col>
-                        </el-row>
+                    <IEDPublishedView :view=true :project="projectName"></IEDPublishedView>
                 </template>
                 <template v-if="isProject">
                     <el-row>
@@ -350,6 +307,7 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import ExcelUtil from '@/utils/excel.js';
 import AddCondition from '@/views/record/AddCondition';
+import IEDPublishedView from '../IEDManagement/IEDpublished'
 export default {
     name: "ProjectViewer",
     data(){
@@ -596,7 +554,7 @@ export default {
                     this.typeName=data.name;
                     let user = this.currentUser();
                     let _self=this;
-                    _self.$nextTick(()=>{
+                    /* _self.$nextTick(()=>{
                         if(user.userType==2 && user.company!=null){
                             _self.condition=" TYPE_NAME='"+_self.typeName+"' "
                             +"and (STATUS is not null and STATUS!='' and STATUS!='新建')"
@@ -613,10 +571,7 @@ export default {
                         }
                         
                         
-                    });
-                    
-                    
-
+                    }); */
                 }else if(node.data.name=='设计文件'){
                     this.isDC=false;
                     this.isDesign=true;
@@ -829,7 +784,8 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        AddCondition:AddCondition
+        AddCondition:AddCondition,
+        IEDPublishedView:IEDPublishedView
     }
 }
 </script>
