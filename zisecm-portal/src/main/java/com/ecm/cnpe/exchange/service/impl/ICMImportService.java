@@ -366,7 +366,7 @@ public class ICMImportService extends EcmService {
 														}
 													}
 												}else {
-													sb.append("ICM已存在").append("\r\n");;
+													sb.append("第").append(i+1).append("行格式副本不存在：").append(rendFileName).append("\r\n");;
 												}
 											}
 										}
