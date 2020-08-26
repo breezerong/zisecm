@@ -111,7 +111,7 @@ export default {
           url: "/admin/getGridViewItemLang"
         })
         .then(function(response) {
-          _self.gridList = response.data.customGridInfo;
+          _self.gridList = response.data.data;
           _self.loading = false;
           _self.refreshData();
         })
