@@ -267,6 +267,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("驳回提交".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "update_驳回提交";
+		} else if ("延误打开反馈".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "update_延误打开反馈";
+		} else if ("延误反馈确认".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "update_延误反馈确认";
 		} else if ("新建".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建";

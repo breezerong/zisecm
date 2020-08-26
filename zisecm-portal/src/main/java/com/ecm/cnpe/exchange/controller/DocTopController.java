@@ -98,8 +98,8 @@ public class DocTopController extends ControllerAbstract  {
 					+"(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
 					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t "
 					+ "where TYPE_NAME='计划任务' and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
-			sqlIEDNum = "select count(*) as IEDNum from ecm_document "
-					+ "where TYPE_NAME='IED' and("+whereSql+"))";
+			sqlIEDNum = "select count(*) as IEDNum from ecm_document  "
+					+ "where TYPE_NAME='IED' and status='已生效' and IS_CURRENT ='1' and C_IS_RELEASED ='1' and("+whereSql+"))";
 			sqlICMNum = "select count(*) as ICMNum from ecm_document "
 					+ "where TYPE_NAME='ICM' and("+whereSql+")) ";
 				
@@ -150,6 +150,7 @@ public class DocTopController extends ControllerAbstract  {
 					sqlICMNum+") as ICMNum,("+
 					sqlreceivedNum+") as receivedNum from ecm_document";
 		try {
+			System.out.println(sqlIEDNum);
 			List<Map<String, Object>> numList = ecmDocument.executeSQL(sqlList);
 			//基本信息
 			mp.put("sumNum",numList.get(0).get("sumNum"));//项目

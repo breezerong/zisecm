@@ -17,7 +17,7 @@
             </el-dialog>
 
             <el-form :inline="true" :model="forms.headForm">
-                <el-form-item >
+                <el-form-item v-show="view==false">
                     <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject"
                      dataValueField="name" dataTextField="name" includeAll @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>                  
                 </el-form-item>
@@ -28,7 +28,7 @@
                 <el-form-item>
                     <AddCondition v-bind:typeName="typeName" :inputType='hiddenInput' @change="onSearchConditionChange"></AddCondition>
                 </el-form-item>
-                <el-form-item v-if="changeEnable">
+                <el-form-item v-if="view==false && changeEnable">
                     <el-button type="primary" @click="onIEDChange()">{{$t('application.change')}}</el-button>
                 </el-form-item>
                 <el-form-item>
@@ -41,7 +41,7 @@
                 <el-col :span="24">
                     <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-100" 
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
-                    <template slot="customMoreOption" slot-scope="scope">
+                    <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
                     <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
                     </template>
                     
@@ -75,6 +75,10 @@ import ExcelUtil from '@/utils/excel.js'
 import AddCondition from '@/views/record/AddCondition.vue'
 export default {
     name: "IEDpublished",
+    props:{
+        view:{type:Boolean,default:false},
+        project:{type:String,default:""}
+    },
     data(){
         return{
             tables:{
@@ -156,7 +160,7 @@ export default {
         }
     },
     mounted(){
-        this.init()
+        this.init()        
     },
     methods: {
         async init(){
@@ -236,6 +240,11 @@ export default {
             this.selectedItems = val;
         },
         onLoadnDataSuccess(select,options){
+            console.log(this.view)
+            console.log(this.project)
+            if(this.view==true && this.project.length>0){
+                this.forms.headForm.project = this.project
+            }
             this.search()
         },
         onSearchConditionChange:function(val){
@@ -295,8 +304,12 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
+
+            if(this.view==true && this.project.length>0){
+                this.forms.headForm.project = this.project
+            }
             if(_self.forms.headForm.project != undefined){
-                k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
+                k1+=" AND C_PROJECT_NAME in ('"+_self.forms.headForm.project +"')"
             }
 
             let user = this.currentUser();

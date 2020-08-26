@@ -14,7 +14,7 @@
               <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '900px',width:'900px' }">
+          <el-card :body-style="{ height: '320px',width:'900px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">项目信息</span>
             </div>
@@ -29,70 +29,6 @@
               <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '180px' }">
-            <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">待办任务<el-badge :value="totalCount" class="item"></el-badge>
-              </span>
-              <el-link
-                :underline="false"
-                style="float: right; padding: 3px 0"
-                @click="$router.push(jumpPath.todolist)"
-                type="primary"
-              >更多>></el-link>
-            </div>
-            <el-table :data="dataList.todoData" v-loading="loadingTodoData" style="width:100%;" :show-header="false">
-              <el-table-column label="任务名称">
-                <el-link slot-scope="scope" type="primary" @click="openTask(scope.row.id)">{{(scope.row.name)}}</el-link>
-             </el-table-column>
-              <el-table-column prop="startUser" label="发送人" class="ecmcontent"></el-table-column>
-              <el-table-column label="发送时间" align="right" class="ecmcontent">
-                <template slot-scope="scope">{{dateFormat(scope.row.createTime)}}</template>
-              </el-table-column>
-            </el-table>
-          </el-card>
-
-            <!-- <marquee behavior="scroll" scrollamount=26>
-              <template v-for="item in imagesBox">
-                <img :src="item">
-              </template>
-              <template v-for="item in imagesBox">
-                <img :src="item">
-              </template>
-            </marquee> -->
-             <!-- <PaoMaDeng :delay="0.5" :speed="100" :content="imagesBox">
-               <span v-for="(item, index) in imagesBox" :key="index">
-                 <img :src="item">
-               </span>
-             </PaoMaDeng> -->
-             <el-card :body-style="{ height: '280px' }">
-               <el-carousel height="280px">
-               <el-carousel-item v-for="item in imagesBox" :key="item">
-                 <img class="carousel-image" :src="item">
-               </el-carousel-item>
-             </el-carousel>
-             </el-card>
-          <!-- <el-card :body-style="{ height: '220px' }">
-            <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">最新文档</span>
-            </div>
-            <el-table
-              v-loading="loadingNewDocData"
-              :data="dataList.newdocData"
-              style="width:100%;"
-              :show-header="false"
-            >
-              <el-table-column prop="CODING" label="编码" width="240" class="ecmcontent"></el-table-column>
-              <el-table-column width="60" prop="REVISION" label="版本" class="ecmcontent"></el-table-column>
-              <el-table-column label="题名" min-width="20%" :show-overflow-tooltip="true">
-                <template slot-scope="scope">
-                  <el-link  type="primary" @click="showFile(scope.row)">{{scope.row.NAME}}</el-link>
-                </template>
-              </el-table-column>
-              <el-table-column label="编制日期" align="right" width="120" class="ecmcontent">
-                <template slot-scope="scope">{{dateFormat(scope.row.C_DOC_DATE)}}</template>
-              </el-table-column>
-            </el-table>
-          </el-card> -->
         </el-col>
         <el-col :span="8">
           <el-card :body-style="{ height: '32px' }">
@@ -108,7 +44,7 @@
               <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
             </el-col>
           </el-card>
-          <el-card :body-style="{ height: '190px' }">
+          <el-card :body-style="{ height: '320px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">通知公告</span>
               <el-link :underline="false" @click="routerJump('通知公告')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
@@ -128,6 +64,7 @@
               </el-table-column>
             </el-table>
           </el-card>
+          <!--
           <el-card :body-style="{ height: '310px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">管理文件</span>
@@ -148,6 +85,7 @@
               </el-table-column>
             </el-table>
           </el-card>
+          -->
           <!-- <el-card :body-style="{ height: '310px',width:'100%' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">馆藏状态</span>
