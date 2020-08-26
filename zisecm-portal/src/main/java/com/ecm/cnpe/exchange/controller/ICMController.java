@@ -152,7 +152,7 @@ public class ICMController  extends ControllerAbstract  {
 		temp = documentService.getObjectById(getToken(), ids.get(i));
 		temp.addAttribute("C_PROCESS_STATUS", "已确认");
 		documentService.updateObject(getToken(), temp, null);	
-		OptionLogger.logger(detailService, temp, "反馈确认", "CNPE");
+		OptionLogger.logger(detailService, temp, "延误打开确认", "CNPE");
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
