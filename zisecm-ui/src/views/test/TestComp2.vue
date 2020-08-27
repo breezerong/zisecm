@@ -27,34 +27,26 @@
     </el-row>
     <el-row>
       <el-form label-width="120px" @submit.native.prevent>
-        <el-row>
-          <el-col :span="8">起流程</el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="表单">
-              <el-input type="text" v-model="wfData.formId"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-button type="primary" plain icon="save" @click="deployProcess()">发布流程</el-button>
-            <el-button
-              type="primary"
-              plain
-              icon="save"
-              @click="startWorkflow('process_borrow')"
-            >启动借阅流程</el-button>
-            <el-button type="primary" plain icon="save" @click="showShopCar()">借阅单</el-button>
-            <el-button
-              type="primary"
-              plain
-              icon="save"
-              @click="startWorkflow('BianJiaoShenPi')"
-            >启动编校审批流程</el-button>
-            <el-button type="primary" plain icon="save" @click="testWorkflow()">完成任务</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
+      <el-row>
+         <el-col :span="8">
+           起流程
+         </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="表单">
+            <el-input type="text"  v-model="wfData.formId" ></el-input>
+          </el-form-item>
+        </el-col>
+         <el-col :span="8">
+           <el-button type="primary" plain icon="save" @click="deployProcess()">发布流程</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow('BianJiaoShenPi')">启动编校审批流程</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程-弹出表单</el-button> 
+           <el-button type="primary" plain icon="save" @click="testWorkflow()">完成任务</el-button> 
+         </el-col>
+      </el-row>
+    </el-form>
     </el-row>
     <split-pane split="vertical" @resize="resize">
       <template slot="paneL">

@@ -8,81 +8,27 @@
               <span style="float: left;" class="ecmtitle">基本信息</span>
             </div>
             <div>
-              <planTop v-if="isShowCNPEPlan"></planTop>
+              <planTop v-if="isCNPE"></planTop>
+              <subPlanTop v-if="isSub"></subPlanTop>
+              <generalTop v-if="isCNPEGen"></generalTop>
+              <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '120px' }">
+          <el-card :body-style="{ height: '320px',width:'900px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">项目信息</span>
             </div>
             <div>
-              <planProject v-if="isShowCNPEPlan"></planProject>
+              <subIcmProject v-if="isSubJK"></subIcmProject>
+              <icmProject v-if="isCNPEJK"></icmProject>
+              <planProject v-if="isCNPEPlan"></planProject>
+              <docProject v-if="isCNPEWK"></docProject>
+              <subDocProject v-if="isSubWK"></subDocProject>
+              <subPlanProject v-if="isSubPlan"></subPlanProject>
+              <generalProject v-if="isCNPEGen"></generalProject>
+              <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '180px' }">
-            <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">待办任务<el-badge :value="totalCount" class="item"></el-badge>
-              </span>
-              <el-link
-                :underline="false"
-                style="float: right; padding: 3px 0"
-                @click="$router.push(jumpPath.todolist)"
-                type="primary"
-              >更多>></el-link>
-            </div>
-            <el-table :data="dataList.todoData" v-loading="loadingTodoData" style="width:100%;" :show-header="false">
-              <el-table-column label="任务名称">
-                <el-link slot-scope="scope" type="primary" @click="openTask(scope.row.id)">{{(scope.row.name)}}</el-link>
-             </el-table-column>
-              <el-table-column prop="startUser" label="发送人" class="ecmcontent"></el-table-column>
-              <el-table-column label="发送时间" align="right" class="ecmcontent">
-                <template slot-scope="scope">{{dateFormat(scope.row.createTime)}}</template>
-              </el-table-column>
-            </el-table>
-          </el-card>
-
-            <!-- <marquee behavior="scroll" scrollamount=26>
-              <template v-for="item in imagesBox">
-                <img :src="item">
-              </template>
-              <template v-for="item in imagesBox">
-                <img :src="item">
-              </template>
-            </marquee> -->
-             <!-- <PaoMaDeng :delay="0.5" :speed="100" :content="imagesBox">
-               <span v-for="(item, index) in imagesBox" :key="index">
-                 <img :src="item">
-               </span>
-             </PaoMaDeng> -->
-             <el-card :body-style="{ height: '280px' }">
-               <el-carousel height="280px">
-               <el-carousel-item v-for="item in imagesBox" :key="item">
-                 <img class="carousel-image" :src="item">
-               </el-carousel-item>
-             </el-carousel>
-             </el-card>
-          <!-- <el-card :body-style="{ height: '220px' }">
-            <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">最新文档</span>
-            </div>
-            <el-table
-              v-loading="loadingNewDocData"
-              :data="dataList.newdocData"
-              style="width:100%;"
-              :show-header="false"
-            >
-              <el-table-column prop="CODING" label="编码" width="240" class="ecmcontent"></el-table-column>
-              <el-table-column width="60" prop="REVISION" label="版本" class="ecmcontent"></el-table-column>
-              <el-table-column label="题名" min-width="20%" :show-overflow-tooltip="true">
-                <template slot-scope="scope">
-                  <el-link  type="primary" @click="showFile(scope.row)">{{scope.row.NAME}}</el-link>
-                </template>
-              </el-table-column>
-              <el-table-column label="编制日期" align="right" width="120" class="ecmcontent">
-                <template slot-scope="scope">{{dateFormat(scope.row.C_DOC_DATE)}}</template>
-              </el-table-column>
-            </el-table>
-          </el-card> -->
         </el-col>
         <el-col :span="8">
           <el-card :body-style="{ height: '32px' }">
@@ -98,7 +44,7 @@
               <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
             </el-col>
           </el-card>
-          <el-card :body-style="{ height: '190px' }">
+          <el-card :body-style="{ height: '320px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">通知公告</span>
               <el-link :underline="false" @click="routerJump('通知公告')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
@@ -118,6 +64,7 @@
               </el-table-column>
             </el-table>
           </el-card>
+          <!--
           <el-card :body-style="{ height: '310px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">管理文件</span>
@@ -138,6 +85,7 @@
               </el-table-column>
             </el-table>
           </el-card>
+          -->
           <!-- <el-card :body-style="{ height: '310px',width:'100%' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">馆藏状态</span>
@@ -152,26 +100,58 @@
 <script>
 import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
 import planTop from '@/components/dashboard/plan/planTop'
-import planProject from '@/components/dashboard/plan/planProject'
-import subPlanProject from '@/components/dashboard/plan/subPlanProject'
 import subPlanTop from '@/components/dashboard/plan/subPlanTop'
+import docTop from '@/components/dashboard/doc/docTop'
+import subDocTop from '@/components/dashboard/doc/subDocTop'
+import subIcmTop from '@/components/dashboard/icm/subIcmTop'
+import icmTop from '@/components/dashboard/icm/icmTop'
+import icmProject from '@/components/dashboard/icm/icmProject'
+import subIcmProject from '@/components/dashboard/icm/subIcmProject'
+import subDocProject from '@/components/dashboard/doc/subDocProject'
+import subPlanProject from '@/components/dashboard/plan/subPlanProject'
+import planProject from '@/components/dashboard/plan/planProject'
+import docProject from '@/components/dashboard/doc/docProject'
+import generalProject from '@/components/dashboard/generalProject'
+import generalTop from '@/components/dashboard/generalTop'
+import subGeneralTop from '@/components/dashboard/subGeneralTop'
+import subGeneralProject from '@/components/dashboard/subGeneralProject'
+
 export default {
   components: {
     ecmDataIcons,
     planTop,
     planProject,
     subPlanProject,
-    subPlanTop
+    subPlanTop,
+    docTop,
+    subDocTop,
+    subIcmTop,
+    icmTop,
+    icmProject,
+    subIcmProject,
+    subDocProject,
+    docProject,
+    generalProject,
+    generalTop,
+    subGeneralProject,
+    subGeneralTop,
+    subGeneralProject
+
   },
   data() {
     return {
-      isShowCNPEPlan:true,
-      isShowCNPEJK:false,
-      isShowSubPlan:false,
-      isShowSubJK:false,
-      isShowCNPEWK:false,
-      isShowSubWK:false,
-      userType:'',
+      isSubJK:false,
+      isSubWK:false,
+      isSubPlan:false,
+      isCNPEJK:false,
+      isCNPEWK:false,
+      isCNPEPlan:false,
+      isCNPE:false,
+      isSub:false,
+      issubGen:false,
+      isCNPEGen:false,
+      tempRoles:[],
+      userRoles:[],
 
        projectData1: {
         color: 'rgb(63, 161, 255)',
@@ -246,9 +226,63 @@ export default {
     _self.getDocument();
     _self.getCarousel();
     _self.getRegulation();
-    _self.getUserType();
+    _self.getRoles();
   },
   methods: {
+    getRoles(){                         //用户类型判断
+      this.tempRoles=this.currentUser().roles
+        for(var i = 0;i < this.tempRoles.length;i++){
+          if(this.tempRoles[i] == '分包商文控人员'||this.tempRoles[i] =='CNPE_文控人员'||this.tempRoles[i] =='CNPE_计划人员'||
+          this.tempRoles[i] =='CNPE_接口人员'||this.tempRoles[i] =='分包商接口人员'||this.tempRoles[i] =='分包商计划人员'){
+          this.userRoles[i] = this.tempRoles[i] 
+          }
+        }
+          for(var i = 0;i < this.userRoles.length;i++){
+          if(this.userRoles[i]=='分包商文控人员'){
+          this.isSubWK=true
+          this.isSub=true}
+          else if(this.userRoles[i]=='分包商接口人员'){
+          this.isSubJK=true
+          this.isSub=true
+          //console.log("SubJK:"+this.isSubJK)
+          }
+          else if(this.userRoles[i]=='分包商计划人员'){
+          this.isSubPlan=true
+          this.isSub=true
+          //console.log("SUBPLAN:"+this.isSubPlan)
+          }
+           else if(this.userRoles[i]=='分包商其他用户'){
+          this.issubGen=true
+          //this.isSub=true
+          //console.log("SUBPLAN:"+this.isSubPlan)
+          }
+          else if(this.userRoles[i]=='CNPE_文控人员'){
+          this.isCNPEWK=true
+          this.isCNPE=true
+          //console.log("CNPEWK:"+this.isCNPEWK)
+          }
+          else if(this.userRoles[i]=='CNPE_计划人员'){
+          this.isCNPEPlan=true
+          this.isCNPE=true
+          //console.log("CNPEPL:"+this.isCNPEPlan)
+          }
+          else if(this.userRoles[i]=='CNPE_接口人员'){
+          this.isCNPEJK=true
+          this.isCNPE=true
+          //console.log("CNPEJK:"+this.isCNPEJK)
+          }
+          else if(this.userRoles[i]=='CNPE_其他用户'){
+          this.isCNPEGen=true
+          this.isCNPE=true
+          //console.log("CNPEJK:"+this.isCNPEJK)
+          }
+          }
+          console.log(this.userRoles)
+    },
+
+
+
+
     //获取待办任务列表，最多五条
     getToDoList() {
       let _self = this;
@@ -461,16 +495,6 @@ export default {
         path:'/dc/folderviewer',
           query: { folderName: folderName }
       });
-    },
-    getUserType(){
-      var tempGroup
-      tempGroup = this.currentUser().roles
-      this.userType = tempGroup[0]
-      console.log(this.userType)
-      console.log(this.currentUser().roles)
-      if(this.userType=='CNPE_计划人员'){
-        this.isShowCNPEPlan=true
-      }
     },
   }
 };

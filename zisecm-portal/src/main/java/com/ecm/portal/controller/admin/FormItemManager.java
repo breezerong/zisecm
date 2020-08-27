@@ -11,7 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.cache.manager.impl.CacheManagerEcmForm;
+import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmForm;
+import com.ecm.core.entity.EcmFormClassification;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.FormItemService;
@@ -29,6 +35,9 @@ public class FormItemManager extends ControllerAbstract{
 	 */
 	@Autowired
 	private FormItemService formItemService;
+	
+	@Autowired
+	private CacheManagerEcmForm cacheManagerEcmForm;
 	
 	/**
 	 * 获取所有表单项
@@ -63,6 +72,27 @@ public class FormItemManager extends ControllerAbstract{
 		 }
 		 return mp;
 	 }
+	 
+	 @ResponseBody
+		@RequestMapping(value = "/admin/getFormItemByLang", method = RequestMethod.POST)
+		public Map<String, Object> getFormItemByLang(@RequestBody String argStr) {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String id = args.get("id").toString();
+			String lang = args.get("lang").toString();
+			List<EcmFormClassification> list = null;
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				EcmForm frm =  cacheManagerEcmForm.refreshCache(id);
+				if (frm != null) {
+					list = frm.getFormClassifications(getSession(), lang);
+					mp.put("code", ActionContext.SUCESS);
+				}	
+			} catch (Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+			}
+			mp.put("data", list);
+			return mp;
+		}
 	 
 	 /**
 	  * 更新表单项

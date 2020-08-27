@@ -96,7 +96,7 @@ public class HomeDocController extends ControllerAbstract {
 				+ getLoginName + "')))";
 		String sqlplanNum = "select count(*) as planNum from ecm_document where TYPE_NAME='计划' and "+ whereSql +"";
 		String sqlthereplanNum = "select count(*) as thereplanNum from ecm_document where TYPE_NAME='计划任务' and "+ whereSql +"";
-		String sqliedNum = "select count(*) as iedNum from ecm_document where TYPE_NAME='IED' and C_ITEM_STATUS2 = 'Y' and "+ whereSql +"";
+		String sqliedNum = "select count(*) as iedNum from ecm_document where TYPE_NAME='IED' and STATUS = '已生效' and C_IS_RELEASED='1' AND IS_CURRENT='1' and "+ whereSql +"";
 		String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and "+whereSql+"";
 		String sqlicmNum = "select count(*) as icmNum from ecm_document ed where TYPE_NAME='ICM' and "+ whereSql +"";
 		String sqlfeedbackicmNum = "select count(*) as feedbackicmNum from ecm_document ed where TYPE_NAME='ICM' and C_PROCESS_STATUS='新建' and "+ whereSql +"";

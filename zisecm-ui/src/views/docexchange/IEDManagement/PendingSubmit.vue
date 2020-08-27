@@ -382,7 +382,7 @@ export default {
                 // _self.$message("创建成功!");
                 _self.$message({
                     showClose: true,
-                    message: "创建成功!",
+                    message:_self.$t('message.operationSuccess') ,
                     duration: 2000,
                     type: "success"
                 });

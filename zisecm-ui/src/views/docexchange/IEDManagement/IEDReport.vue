@@ -47,7 +47,7 @@
                 :isshowCustom="false"
                 :isshowicon="false"
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
+                condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
                 :tableHeight="layout.height-210"
               ></DataGrid>
             </el-col>
@@ -98,7 +98,7 @@
                 :isshowCustom="false"
                 :isshowicon="false"
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'"
+                condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
                 :tableHeight="layout.height-210"
               ></DataGrid>
             </el-col>
@@ -149,7 +149,7 @@
                 :isshowCustom="false"
                 :isshowicon="false"
                 gridViewName="IEDReportGrid"
-                condition="TYPE_NAME='IED' and C_PROJECT_NAME = '@project' and '@timecheck'" 
+                condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'" 
                 :tableHeight="layout.height - 210"
               ></DataGrid>
             </el-col>
@@ -244,11 +244,7 @@ export default {
       language:""
     };
   },
-  created() {
-    //window.addEventListener("resize",this.getHeight);
-  },
   mounted() {
-    this.init()
     this.language = localStorage.getItem("localeLanguage") || "zh-cn"
   },
   methods: {

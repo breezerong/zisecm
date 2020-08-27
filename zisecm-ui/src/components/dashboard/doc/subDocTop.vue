@@ -7,8 +7,14 @@
       <el-col :span="4">
         <ecm-data-icons :option="projectDataDC"></ecm-data-icons>
       </el-col>
-      <el-col :span="16">
-        <ecm-data-icons :option="projectDataOther"></ecm-data-icons>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataReceivingdc"></ecm-data-icons>
+      </el-col>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataSubmissiondc"></ecm-data-icons>
+      </el-col>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataDispensedc"></ecm-data-icons>
       </el-col>
     </el-row>
     
@@ -20,31 +26,17 @@ export default {
  name: "planTopDashBoard",
  data() {
     return {  
-      projectDataOther: {
+       projectData: {
         color: 'rgb(63, 161, 255)',
-        span: 6,
+        span: 24,
         data: [
           {
-            title: '待接收文函',
-            count: 0,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document-checked',
-            url: '/cnpe/DCManagement/receivingdc'
-          },
-          {
-            title: '待提交文函',
-            count: 0,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/pendingied'
-          },
-          {
-            title: '驳回文函',
-            count: 0,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document-delete',
+            title: '项目',
+            count:0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-warning',
             url: ''
-          }
+          },
         ]
       },
       projectDataDC: {
@@ -60,20 +52,45 @@ export default {
           },
         ]
       },
-      projectData: {
+      projectDataReceivingdc: {
         color: 'rgb(63, 161, 255)',
         span: 24,
         data: [
           {
-            title: '项目',
-            count:0,
-            color: 'rgb(63, 161, 255)',
-            icon: 'el-icon-warning',
-            url: ''
+            title: '待接收文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/DCManagement/receivingdc'
           },
         ]
       },
-      a:[]
+      projectDataSubmissiondc: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待提交文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/iedmanagement/pendingied'
+          },
+        ]
+      },
+      projectDataDispensedc: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+         {
+            title: '驳回文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-delete',
+            url: ''
+          }
+        ]
+      },
     };
   },
   mounted() {
@@ -91,20 +108,11 @@ export default {
         .then(function (response) {
           if(response.data.code==1){
             console.log(response.data)
-              _self.a[0]=response.data.dcNum;
-              _self.a[1]=response.data.receivedNum;
-              _self.a[2]=response.data.submissiondcNum;
-              _self.a[3]=response.data.dispenseNum;
-              _self.projectData.data.forEach(function(item){
-                item.count=response.data.sumNum;
-              })
-              _self.projectDataDC.data.forEach(function(item){
-                item.count=_self.a[0];
-              })
-              let i=1
-              _self.projectData.data.forEach(function(item){
-                item.count=_self.a[i++];
-              })
+              _self.projectData.data[0].count=response.data.sumNum;
+              _self.projectDataDC.data[0].count=response.data.dcNum;
+              _self.projectDataReceivingdc.data[0].count=response.data.receivedNum;
+              _self.projectDataSubmissiondc.data[0].count=response.data.submissiondcNum;
+              _self.projectDataDispensedc.data[0].count=response.data.dispenseNum;
           }
           
         })

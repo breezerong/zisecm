@@ -46,6 +46,7 @@
                             @rowclick="rowClick"
                             :isEditProperty="false"
                             :isshowSelection="false"
+                            showOptions="查看内容"
                             >
                                 
                             </DataGrid>
@@ -109,50 +110,7 @@
                     </el-row>
                 </template>
                 <template v-if="isIED">
-                     <el-row>
-                        <el-col :span="24">
-                        <el-form :inline="true" :model="filters" @submit.native.prevent>
-                            <el-form-item>
-                                <el-input width="100px" v-model="filtersIED.title" placeholder="内部编码或标题" @keyup.enter.native='searchItemIED'></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="searchItemIED">{{$t('application.SearchData')}}</el-button>
-                            </el-form-item>
-                            <el-form-item>
-                                <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
-                                <AddCondition @sendMsg='searchItemIED' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.mainDataGridIED)">{{$t('application.ExportExcel')}}</el-button>
-                            </el-form-item> 
-                         </el-form>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="24">
-                            <DataGrid ref="mainDataGridIED" 
-                                dataUrl="/dc/getDocuments"
-                                isshowOption
-                                isshowCustom
-                                gridViewName="IEDGrid"
-                                :v-bind="tables.main" :tableHeight="rightTableHeightIED"
-                                @cellMouseEnter="cellMouseEnter"
-                                @rowclick="rowClick" 
-                                @selectchange="selectChange"
-                                :isInitData="false"
-                                :isEditProperty="false"
-                                >
-                                <template slot="sequee" slot-scope="scope">
-                                    <el-popover trigger="hover" placement="top" width="50">
-                                    <div slot="reference" >
-                                        <span :style="(scope.data.row['C_ITEM_STATUS2']=='变更中')?{'background':'	#00FF00'}:''">{{scope.data.$index+1}}</span>
-                                    </div>
-                                    <span>{{scope.data.row.C_ITEM_STATUS2}}</span>
-                                </el-popover>
-                                </template>
-                            </DataGrid>
-                        </el-col>
-                        </el-row>
+                    <IEDPublishedView ref="iedgrid" :view=true :project="projectName"></IEDPublishedView>
                 </template>
                 <template v-if="isProject">
                     <el-row>
@@ -205,6 +163,7 @@
                                             :isInitData="false"
                                             :isshowCustom="true"
                                             :isEditProperty="false"
+                                            :isShowMoreOption="false"
                                             @selectchange="icmTransferSelect"
                                             ></DataGrid>
                             </el-tab-pane>
@@ -241,6 +200,8 @@
                             gridViewName="ICMGrid"
                             :isshowCustom="true"
                             :isInitData="false"
+                            :isshowicon="false"
+                            :isShowMoreOption="false"
                             :isEditProperty="false"
                             @rowclick="rowClickICM"
                             :isshowSelection="false"
@@ -263,6 +224,7 @@
                                             :isshowCustom="true"
                                             :isEditProperty="false"
                                             @selectchange="icmTransferSelect"
+                                            showOptions="查看内容"
                                             ></DataGrid>
                                     </el-tab-pane>
                             <el-tab-pane label="接口意见" name="t02">
@@ -281,6 +243,7 @@
                                         :isshowCustom="true"
                                         :isEditProperty="false"
                                         @selectchange="icmCommentsSelect"
+                                        showOptions="查看内容"
                                         ></DataGrid>
                                 
                             </el-tab-pane>
@@ -318,6 +281,7 @@
                             :isEditProperty="false"
                             :isshowCustom="true"
                             :isInitData="false"
+                            showOptions="查看内容"
                             ></DataGrid>
                     </el-row>
                     <el-row>
@@ -350,6 +314,7 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import ExcelUtil from '@/utils/excel.js';
 import AddCondition from '@/views/record/AddCondition';
+import IEDPublishedView from '../IEDManagement/IEDpublished'
 export default {
     name: "ProjectViewer",
     data(){
@@ -516,13 +481,13 @@ export default {
                 let user = this.currentUser();
                 if(user.userType==2 && user.company!=null){
                     this.$refs.mainDataGrid.condition=this.condition=" TYPE_NAME='"+this.typeName+"' "
-                    +"and (STATUS is not null and STATUS!='' and STATUS!='新建')"
+                    +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认')"
                     +" and C_PROJECT_NAME = '"+this.projectName+"' AND (C_COMPANY='"+user.company +"'"
                     +" or C_TO like'%"+user.company+"%')";
                     this.$refs.mainDataGrid.loadGridData();
                 }else{
                     this.$refs.mainDataGrid.condition=this.condition=" TYPE_NAME='"+this.typeName+"' "
-                    +"and (STATUS is not null and STATUS!='' and STATUS!='新建') "
+                    +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认') "
                     +"and C_PROJECT_NAME = '"+this.projectName+"' ";
                     this.$refs.mainDataGrid.loadGridData();
                 }
@@ -596,7 +561,8 @@ export default {
                     this.typeName=data.name;
                     let user = this.currentUser();
                     let _self=this;
-                    _self.$nextTick(()=>{
+                    this.$refs.iedgrid.search()
+                    /* _self.$nextTick(()=>{
                         if(user.userType==2 && user.company!=null){
                             _self.condition=" TYPE_NAME='"+_self.typeName+"' "
                             +"and (STATUS is not null and STATUS!='' and STATUS!='新建')"
@@ -613,10 +579,7 @@ export default {
                         }
                         
                         
-                    });
-                    
-                    
-
+                    }); */
                 }else if(node.data.name=='设计文件'){
                     this.isDC=false;
                     this.isDesign=true;
@@ -829,7 +792,8 @@ export default {
     components: {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
-        AddCondition:AddCondition
+        AddCondition:AddCondition,
+        IEDPublishedView:IEDPublishedView
     }
 }
 </script>

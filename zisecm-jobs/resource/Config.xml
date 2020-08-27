@@ -5,13 +5,821 @@
 		targetSystem:目标系统名称，用于区别tc和p6，
 		tcTypeName:对应其他系统的文件类型，
 		tcTableName: 目标系统表名-->
-		<conf sourceTypeName="文件传递单" targetSystem="tc" tcTypeName="文件传递单" tcTableName="K2_ItemTest">
-			<attributes>
+<!-- 		<conf sourceTypeName="文件传递单" targetSystem="tc" tcTypeName="文件传递单" tcTableName="K2_ItemTest"> -->
+<!-- 			<attributes> -->
 				<!--发文号 -->
-				<attribute sourceName="CODING" targetName="k2_Coding"></attribute>
+<!-- 				<attribute sourceName="CODING" targetName="k2_Coding"></attribute> -->
 <!-- 				defaultValue：如果分包商系统没有此字段的对应值而目标系统需要一个固定值时，将值写在此 -->
-				<attribute sourceName="TITLE" targetName="k2_title" defaultValue=""></attribute>
+<!-- 				<attribute sourceName="TITLE" targetName="k2_title" defaultValue=""></attribute> -->
+<!-- 			</attributes> -->
+<!-- 		</conf> -->
+		<conf sourceTypeName="文件传递单" targetSystem="tc" tcTypeName="文件传递单" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+				<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+				<attribute sourceName="CODING" targetName="OurDocNum"></attribute>
+				<attribute sourceName="C_OTHER_COIDNG" targetName="RevDocNo"></attribute>
+				<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+				<attribute sourceName="C_STRING3" targetName="ExtCC/IntCC"></attribute>
+				<attribute sourceName="C_STRING5" targetName="SendTo"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="SendDate"></attribute>
+				<attribute sourceName="C_CONTENT" targetName="Cont"></attribute>
+				<attribute sourceName="C_APPROVER" targetName="ApproSignPerson"></attribute>
+				<attribute sourceName="C_APPROVE_DATE" targetName="ApproDate"></attribute>
+				<attribute sourceName="C_DRAFTER" targetName="ComposePerson"></attribute>
+				<attribute sourceName="C_DRAFT_DATE" targetName="ComposeDate"></attribute>
 			</attributes>
+		</conf>
+		<conf sourceTypeName="设计文件" targetSystem="tc" tcTypeName="设计文件" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_FROM_CODING" targetName="DrawingBookNum"></attribute>
+				<attribute sourceName="CODING" targetName="InternalCode"></attribute>
+				<attribute sourceName="C_IN_CODING" targetName="ExternalCode"></attribute>
+				<attribute sourceName="TITLE" targetName="object_name"></attribute>
+				<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+				<attribute sourceName="C_ITEM_STATUS" targetName="Status"></attribute>
+				<attribute sourceName="C_LANGUAGE" targetName=""></attribute>
+				<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+				<attribute sourceName="C_COUNT1" targetName=""></attribute>
+				<attribute sourceName="C_COUNT2" targetName=""></attribute>
+				<attribute sourceName="C_COUNT3" targetName=""></attribute>
+				<attribute sourceName="C_ISLAND_TYPE" targetName="Structure"></attribute>
+				<attribute sourceName="C_SYS_CODE" targetName="PlantCode"></attribute>
+				<attribute sourceName="C_SYS_NAME" targetName="Sys"></attribute>
+				<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+				<attribute sourceName="C_PAGE_SIZE" targetName="DrawingSpcif"></attribute>
+				<attribute sourceName="SUB_TYPE" targetName="DrawingType"></attribute>
+				<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+				<attribute sourceName="C_DISPL_CODE" targetName="DisplCode"></attribute>
+				<attribute sourceName="C_REF_CODING" targetName="OurDocNum"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="SendDate"></attribute>
+				<attribute sourceName="C_COMPANY" targetName="SendFrom"></attribute>
+			</attributes>
+		</conf>
+		<conf sourceTypeName="FU申请" targetSystem="tc" tcTypeName="FU申请" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+				<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+				<attribute sourceName="CODING" targetName="OurDocNum"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="Date"></attribute>
+				<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+				<attribute sourceName="C_CONTENT" targetName="Cont"></attribute>
+				<attribute sourceName="C_DRAFTER" targetName="Author"></attribute>
+				<attribute sourceName="C_DRAFT_DATE" targetName="AuthorDate"></attribute>
+				<attribute sourceName="C_CHECKER" targetName="JiaoHPerson"></attribute>
+				<attribute sourceName="C_CHECK_DATE" targetName="JiaoHDate"></attribute>
+				<attribute sourceName="C_REVIEWER1" targetName="ShenHPerson"></attribute>
+				<attribute sourceName="C_REVIEW1_DATE" targetName="ShenHDate"></attribute>
+				<attribute sourceName="C_REVIEWER2" targetName="ShenPPerson"></attribute>
+				<attribute sourceName="C_REVIEW2_DATE" targetName="ShenPDate"></attribute>
+				<attribute sourceName="C_APPROVER" targetName="ApprovePerson"></attribute>
+				<attribute sourceName="C_APPROVE_DATE" targetName="ApproveDate"></attribute>
+			</attributes>
+		</conf>
+		<conf sourceTypeName="FU通知单" targetSystem="tc" tcTypeName="FU通知单" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+				<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+				<attribute sourceName="CODING" targetName="OurDocNum"></attribute>
+				<attribute sourceName="C_OTHER_COIDNG" targetName="RevDocNo"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="Date"></attribute>
+				<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+				<attribute sourceName="C_CONTENT" targetName="Cont"></attribute>
+				<attribute sourceName="C_DRAFTER" targetName="Author"></attribute>
+				<attribute sourceName="C_DRAFT_DATE" targetName="AuthorDate"></attribute>
+				<attribute sourceName="C_CHECKER" targetName="JiaoHPerson"></attribute>
+				<attribute sourceName="C_CHECK_DATE" targetName="JiaoHDate"></attribute>
+				<attribute sourceName="C_REVIEWER1" targetName="ShenHPerson"></attribute>
+				<attribute sourceName="C_REVIEW1_DATE" targetName="ShenHDate"></attribute>
+				<attribute sourceName="C_REVIEWER2" targetName="ShenPPerson"></attribute>
+				<attribute sourceName="C_REVIEW2_DATE" targetName="ShenPDate"></attribute>
+				<attribute sourceName="C_APPROVER" targetName="ApprovePerson"></attribute>
+				<attribute sourceName="C_APPROVE_DATE" targetName="ApproveDate"></attribute>
+				<attribute sourceName="C_REVIEWER3" targetName="ConfrSignPerson"></attribute>
+				<attribute sourceName="C_REVIEW3_DATE" targetName="ConfrSignDate"></attribute>
+			</attributes>
+		</conf>
+		<conf sourceTypeName="作废通知单" targetSystem="tc" tcTypeName="作废通知单" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+				<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+				<attribute sourceName="CODING" targetName="OurDocNum"></attribute>
+				<attribute sourceName="C_OTHER_COIDNG" targetName="ExtCC/IntCC"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="SendDate"></attribute>
+				<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+				<attribute sourceName="C_CONTENT" targetName="Cont"></attribute>
+				<attribute sourceName="C_DRAFTER" targetName="Author"></attribute>
+				<attribute sourceName="C_DRAFT_DATE" targetName="AuthorDate"></attribute>
+				<attribute sourceName="C_CHECKER" targetName="JiaoHPerson"></attribute>
+				<attribute sourceName="C_CHECK_DATE" targetName="JiaoHDate"></attribute>
+				<attribute sourceName="C_REVIEWER1" targetName="ShenHPerson"></attribute>
+				<attribute sourceName="C_REVIEW1_DATE" targetName="ShenHDate"></attribute>
+				<attribute sourceName="C_APPROVER" targetName="ApprovePerson"></attribute>
+				<attribute sourceName="C_APPROVE_DATE" targetName="ApproveDate"></attribute>
+				<attribute sourceName="C_REVIEWER3" targetName="ConfrSignPerson"></attribute>
+				<attribute sourceName="C_REVIEW3_DATE" targetName="ConfrSignDate"></attribute>
+			</attributes>
+		</conf>
+		<conf sourceTypeName="接口信息意见单" targetSystem="tc" tcTypeName="接口信息意见单" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+				<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="SendDate"></attribute>
+				<attribute sourceName="REVISION" targetName="RevisionID"></attribute>
+				<attribute sourceName="C_STRING1" targetName="ReleaseParty"></attribute>
+				<attribute sourceName="CODING" targetName="OurDocNum"></attribute>
+				<attribute sourceName="C_STRING2" targetName="ExtCC"></attribute>
+				<attribute sourceName="C_ITEM_STATUS" targetName="Status"></attribute>
+				<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+				<attribute sourceName="TITLE" targetName="KeyIntfc"></attribute>
+				<attribute sourceName="C_CODE1" targetName="1stParty"></attribute>
+				<attribute sourceName="C_CODE2" targetName="2ndParty"></attribute>
+				<attribute sourceName="C_CODE3" targetName="IntfcType"></attribute>
+				<attribute sourceName="C_CODE4" targetName="SerNum"></attribute>
+				<attribute sourceName="C_CODE5" targetName="ReleaseParty"></attribute>
+				<attribute sourceName="C_CODE6" targetName="RecvParty"></attribute>
+				<attribute sourceName="C_ITEM1_DATE" targetName="ICMDate"></attribute>
+				<attribute sourceName="C_CONTENT" targetName="IntfcDetailDescr"></attribute>
+				<attribute sourceName="C_OTHER_COIDNG" targetName="RevDocNo"></attribute>
+				<attribute sourceName="C_ITEM_STATUS1" targetName="ShenCConclu"></attribute>
+				<attribute sourceName="C_COMMENT" targetName="ShenCSugg"></attribute>
+				<attribute sourceName="C_ITEM_STATUS2" targetName="CifSendCD"></attribute>
+				<attribute sourceName="C_COUNT1" targetName="CDNum"></attribute>
+				<attribute sourceName="C_STRING3" targetName="PREExchange"></attribute>
+				<attribute sourceName="C_STRING4" targetName="FINExchange"></attribute>
+			</attributes>
+		</conf>
+		<conf sourceTypeName="接口信息传递单" targetSystem="tc" tcTypeName="接口信息传递单" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+				<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="SendDate"></attribute>
+				<attribute sourceName="REVISION" targetName="RevisionID"></attribute>
+				<attribute sourceName="CODING" targetName="OurDocNum"></attribute>
+				<attribute sourceName="C_STRING2" targetName="ExtCC"></attribute>
+				<attribute sourceName="C_ITEM_STATUS" targetName="Status"></attribute>
+				<attribute sourceName="TITLE" targetName="KeyIntfc"></attribute>
+				<attribute sourceName="C_CODE1" targetName="1stParty"></attribute>
+				<attribute sourceName="C_CODE2" targetName="2ndParty"></attribute>
+				<attribute sourceName="C_CODE3" targetName="IntfcType"></attribute>
+				<attribute sourceName="C_CODE4" targetName="SerNum"></attribute>
+				<attribute sourceName="C_CODE5" targetName="ReleaseParty"></attribute>
+				<attribute sourceName="C_CODE6" targetName="RecvParty"></attribute>
+				<attribute sourceName="C_ITEM1_DATE" targetName="ICMDate"></attribute>
+				<attribute sourceName="C_CONTENT" targetName="IntfcDetailDescr"></attribute>
+				<attribute sourceName="C_ITEM_STATUS2" targetName="CifSendCD"></attribute>
+				<attribute sourceName="C_COUNT1" targetName="CDNum"></attribute>
+				<attribute sourceName="C_COMMENT" targetName="DelayReason"></attribute>
+				<attribute sourceName="C_COMMENT1" targetName="DelayResAdv"></attribute>
+			</attributes>
+		</conf>
+		<conf sourceTypeName="CR澄清要求申请单" targetSystem="tc" tcTypeName="CR澄清要求申请单" tcTableName="">
+			<attributes>
+				<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+				<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+				<attribute sourceName="CODING" targetName="item_ID"></attribute>
+				<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+				<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+				<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+				<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+				<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+				<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+				<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+				<attribute sourceName="C_ITEM_DATE" targetName="RelaeseDate"></attribute>
+				<attribute sourceName="TITLE" targetName="Theme"></attribute>
+				<attribute sourceName="C_CONTENT" targetName="CRReasonDescr"></attribute>
+				<attribute sourceName="C_COUNT3" targetName="Attachment"></attribute>
+				<attribute sourceName="C_DRAFTER" targetName="CRDraftPerson"></attribute>
+				<attribute sourceName="C_DRAFT_DATE" targetName="CRDraftDate"></attribute>
+				<attribute sourceName="C_CHECKER" targetName="CRShenHPerson"></attribute>
+				<attribute sourceName="C_CHECK_DATE" targetName="CRShenHDate"></attribute>
+				<attribute sourceName="C_APPROVER" targetName="CRApproPerson"></attribute>
+				<attribute sourceName="C_APPROVE_DATE" targetName="CRApproDate"></attribute>
+				<attribute sourceName="C_FROM" targetName="ReplyUnit"></attribute>
+				<attribute sourceName="C_STRING1" targetName="ReplyDraftPerson"></attribute>
+				<attribute sourceName="C_ITEM1_DATE" targetName="ReplyDraftDate"></attribute>
+				<attribute sourceName="C_STRING2" targetName="ReplyProofPerson"></attribute>
+				<attribute sourceName="C_ITEM2_DATE" targetName="ReplyProofDate"></attribute>
+				<attribute sourceName="C_STRING3" targetName="ReplyShenHPerson"></attribute>
+				<attribute sourceName="C_ITEM3_DATE" targetName="ReplyShenHDate"></attribute>
+				<attribute sourceName="C_STRING4" targetName="ReplyApproPerson"></attribute>
+				<attribute sourceName="C_ITEM4_DATE" targetName="ReplyApproDate"></attribute>
+				<attribute sourceName="C_COUNT1" targetName="Pages"></attribute>
+				<attribute sourceName="C_COMMENT1" targetName="DMGSugg"></attribute>
+				<attribute sourceName="C_EX1_STRING" targetName="ReplyDraftPerson"></attribute>
+				<attribute sourceName="C_EX1_DATE" targetName="ReplyDraftDate"></attribute>
+				<attribute sourceName="C_EX2_STRING" targetName="ReplyApproPerson"></attribute>
+				<attribute sourceName="C_EX2_DATE" targetName="ReplyApproDate"></attribute>
+				<attribute sourceName="C_COUNT2" targetName="Pages"></attribute>
+				<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+			</attributes>
+		</conf>
+		<conf sourceTypeName="CR澄清要求答复单" targetSystem="tc" tcTypeName="CR澄清要求答复单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Dips"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="RelaeseDate"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="CRReasonDescr"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="CRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="CRDraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="CRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="CRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="CRApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="CRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="CRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="CRShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="CRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="CRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="CRApproPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="CRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="CRApproPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="CRApproDate"></attribute>
+		</conf>
+		<conf sourceTypeName="CR澄清要求关闭单" targetSystem="tc" tcTypeName="CR澄清要求关闭单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="RelaeseDate"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_COMMENT1" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="ClariCloseA"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_COMMENT2" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="SSignPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="FCR现场变更申请单" targetSystem="tc" tcTypeName="FCR现场变更申请单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_COUNT1" targetName="DIPS"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="ChangeReason"></attribute>
+			<attribute sourceName="C_RESPONSIBLE" targetName="ResbParty"></attribute>
+			<attribute sourceName="C_COMMENT1" targetName="ChangeSolution"></attribute>
+			<attribute sourceName="C_COMMENT2" targetName="ChangeSolution"></attribute>
+			<attribute sourceName="C_COUNT2" targetName="Attachment"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="FCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="FCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="FCRShenHPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="FCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="FCRApproPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="FCRApproDate"></attribute>
+			<attribute sourceName="C_COMMENT3" targetName="SupvisrFirmSugg"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="ShenCPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="SFirmDate"></attribute>
+			<attribute sourceName="C_COMMENT4" targetName="PCBShenHSugg"></attribute>
+			<attribute sourceName="C_STRING1" targetName="PCBSuggDraftPerson"></attribute>
+			<attribute sourceName="C_ITEM1_DATE" targetName="PCBSuggDraftDate"></attribute>
+			<attribute sourceName="C_STRING2" targetName="PCBSuggShenHPerson"></attribute>
+			<attribute sourceName="C_ITEM2_DATE" targetName="PCBSuggShenHDate"></attribute>
+			<attribute sourceName="C_STRING3" targetName="PcbSuggApproPerson"></attribute>
+			<attribute sourceName="C_ITEM3_DATE" targetName="PcbSuggApproDate"></attribute>
+			<attribute sourceName="C_COMMENT5" targetName="ReplyCont"></attribute>
+			<attribute sourceName="C_FROM" targetName="ReplyUnit"></attribute>
+			<attribute sourceName="C_EX1_STRING" targetName="ReplyDraftPerson"></attribute>
+			<attribute sourceName="C_EX1_DATE" targetName="ReplyDraftDate"></attribute>
+			<attribute sourceName="C_EX2_STRING" targetName="ReplyProofPerson"></attribute>
+			<attribute sourceName="C_EX2_DATE" targetName="ReplyProofDate"></attribute>
+			<attribute sourceName="C_EX3_STRING" targetName="ReplyShenHPerson"></attribute>
+			<attribute sourceName="C_EX3_DATE" targetName="ReplyShenHDate"></attribute>
+			<attribute sourceName="C_EX4_STRING" targetName="ReplyApproPerson"></attribute>
+			<attribute sourceName="C_EX4_DATE" targetName="ReplyApproDate"></attribute>
+			<attribute sourceName="C_COUNT3" targetName="Attachment"></attribute>
+			<attribute sourceName="C_COMMENT6" targetName="DMBConfirmSugg"></attribute>
+			<attribute sourceName="C_STRING4" targetName="ReplyProofPerson"></attribute>
+			<attribute sourceName="C_ITEM4_DATE" targetName="ReplyProofDate"></attribute>
+			<attribute sourceName="C_STRING5" targetName="ReplyApproPerson"></attribute>
+			<attribute sourceName="C_ITEM5_DATE" targetName="ReplyApproDate"></attribute>
+			<attribute sourceName="C_COUNT4" targetName="Attachment"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="FCR现场变更答复单" targetSystem="tc" tcTypeName="FCR现场变更答复单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_COUNT1" targetName="DIPS"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="ChangeReason"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="FCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="FCRDraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="FCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="FCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="FCRProofPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="FCRProofDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="FCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="FCRShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="FCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="FCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="FCRApprofPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="FCRApprofDate"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="FCRApprofPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="FCRApprofDate"></attribute>
+		</conf>
+		<conf sourceTypeName="FCR现场变更关闭单" targetSystem="tc" tcTypeName="FCR现场变更关闭单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_COUNT1" targetName="DIPS"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_COMMENT1" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="SignPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="SignDate"></attribute>
+			<attribute sourceName="C_COMMENT2" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="SignPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="SignDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="NCR不符合项报告单" targetSystem="tc" tcTypeName="NCR不符合项报告单" tcTableName="">
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_STRING2" targetName="ExtCC/IntCC"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevName DevNum"></attribute>
+			<attribute sourceName="TITLE" targetName="EngName"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_CODE1" targetName="DevNum"></attribute>
+			<attribute sourceName="C_CODE2" targetName="SecurityLevel"></attribute>
+			<attribute sourceName="C_CODE3" targetName="QualityLevel"></attribute>
+			<attribute sourceName="C_CODE4" targetName="ProjType"></attribute>
+			<attribute sourceName="C_CODE5" targetName="InputType"></attribute>
+			<attribute sourceName="C_CODE6" targetName=""></attribute>
+			<attribute sourceName="C_OTHER_CODING" targetName=""></attribute>
+			<attribute sourceName="C_STRING1" targetName=""></attribute>
+			<attribute sourceName="C_STRING2" targetName="Doc"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="Note"></attribute>
+			<attribute sourceName="C_TYPE1" targetName="InputType"></attribute>
+			<attribute sourceName="C_IDENTIFY" targetName="Note"></attribute>
+			<attribute sourceName="C_CODE6" targetName="Note"></attribute>
+			<attribute sourceName="C_ITEM_STATUS1" targetName="Note"></attribute>
+			<attribute sourceName="C_ITEM_STATUS2" targetName="Note"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_COMMENT" targetName="Note"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_COMMENT1" targetName="Note"></attribute>
+			<attribute sourceName="C_COMMENT2" targetName="Note"></attribute>
+			<attribute sourceName="C_STRING3" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_ITEM3_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_STRING4" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_ITEM4_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_COMMENT3" targetName="Note"></attribute>
+			<attribute sourceName="C_STRING5" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_ITEM5_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_STRING6" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_ITEM6_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_COMMENT4" targetName="Note"></attribute>
+			<attribute sourceName="C_EX1_STRING" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_EX1_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_EX2_STRING" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_EX2_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_COMMENT4" targetName="Note"></attribute>
+			<attribute sourceName="C_FROM" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_EX3_STRING" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_EX3_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_EX4_STRING" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_EX4_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_COMMENT6" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_EX5_STRING" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_EX5_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="NCR不符合项报告答复单" targetSystem="tc" tcTypeName="NCR不符合项报告答复单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_COUNT1" targetName="DIPS"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="NCRReasonDescr"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="NCRApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="NCRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="NCRApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="NCRApprolDate"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="NCRApproPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="NCRApproDate"></attribute>
+
+		</conf>
+		<conf sourceTypeName="NCR不符合项报告关闭单" targetSystem="tc" tcTypeName="NCR不符合项报告关闭单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_COUNT1" targetName="DIPS"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="NCRReasonDescr"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="NCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="NCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="NCRApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="NCRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="NCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="NCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="NCRApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="NCRApprolDate"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="NCRApproPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="NCRApproDate"></attribute>
+		</conf>
+		
+		<conf sourceTypeName="DCR设计变更申请单" targetSystem="tc" tcTypeName="DCR设计变更申请单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="Cont"></attribute>
+			<attribute sourceName="C_COMMENT" targetName="ChangeSolution"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="DCRApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="DCRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="DCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="DCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="DCRApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="DCRApprolDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		
+		<conf sourceTypeName="DCR设计变更答复单" targetSystem="tc" tcTypeName="DCR设计变更答复单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structer"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="DCRReasonDescr"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DCRDraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="DCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="DCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="DCRApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="DCRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="DCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="DCRShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="DCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="DCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="DCRApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="DCRApprolDate"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="DCRApprolPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="DCRApprolDate"></attribute>
+		</conf>
+		<conf sourceTypeName="DCR设计变更关闭单" targetSystem="tc" tcTypeName="DCR设计变更关闭单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structer"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_COMMENT" targetName="SFirmSugg"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_COMMENT1" targetName="SFirmSugg"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_COMMENT2" targetName="SFirmSugg"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="ShenCPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="ShenCDate"></attribute>
+			<attribute sourceName="C_COMMENT3" targetName="SFirmSugg"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="SFirmPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="SFirmDate"></attribute>
+			<attribute sourceName="C_COMMENT4" targetName="ApproSugg"></attribute>
+			<attribute sourceName="C_REVIEWER4" targetName="ApproPerson"></attribute>
+			<attribute sourceName="C_REVIEW4_DATE" targetName="ApproDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="TCR试验澄清申请单" targetSystem="tc" tcTypeName="TCR试验澄清申请单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structer"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="Cont"></attribute>
+			<attribute sourceName="C_COMMENT" targetName="ChangeSolution"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="TCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="TCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="TCRApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="TCRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="TCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="TCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="TCRApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="TCRApprolDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="TCR试验澄清答复单" targetSystem="tc" tcTypeName="TCR试验澄清答复单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set "></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structer"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="TCRReasonDescr"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="TCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="TCRDraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="TCRDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="TCRDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="TCRApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="TCRApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="TCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="TCRShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="TCRShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="TCRShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="TCRApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="TCRApprolDate"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="TCRApprolPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="TCRApprolDate"></attribute>
+		</conf>
+		<conf sourceTypeName="FCR现场变更答复单" targetSystem="tc" tcTypeName="FCR现场变更答复单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structer"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="SSignPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="SSignPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="TCR试验澄清关闭单" targetSystem="tc" tcTypeName="TCR试验澄清关闭单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structer"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="SSignPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="SSignPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="DEN设计变更通知单" targetSystem="tc" tcTypeName="DEN设计变更通知单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="SUB_TYPE" targetName="ProjType"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys"></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_AREA" targetName="Structure"></attribute>
+			<attribute sourceName="C_ROOM" targetName="Structure"></attribute>
+			<attribute sourceName="C_LEVEL" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_COUNT1" targetName="DIPS"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_STRING2" targetName="ExtCC/IntCC"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="C_ITEM_STATUS1" targetName="ChangeReason"></attribute>
+			<attribute sourceName="C_RESPONSIBLE" targetName="ResbParty"></attribute>
+			<attribute sourceName="C_COMMENT" targetName="ChangeDescr"></attribute>
+			<attribute sourceName="C_COMMENT1" targetName="ChangeReason"></attribute>
+			<attribute sourceName="C_ITEM_STATUS2" targetName="ResultDescr"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DENDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DENDraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="DENDraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="DENDraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="DENApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="DENApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="DENShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="DENShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="DENShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="DENShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="DENApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="DENApprolDate"></attribute>
+			<attribute sourceName="C_REVIEWER3" targetName="DENApprolPerson"></attribute>
+			<attribute sourceName="C_REVIEW3_DATE" targetName="DENApprolDate"></attribute>
+						
+		</conf>
+		<conf sourceTypeName="DEN设计变更关闭单" targetSystem="tc" tcTypeName="DEN设计变更关闭单" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_COMPANY" targetName="ReleaseUnit"></attribute>
+			<attribute sourceName="CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="REVISION" targetName="item_revision_id"></attribute>
+			<attribute sourceName="SUB_TYPE" targetName="ProjType"></attribute>
+			<attribute sourceName="C_UNIT" targetName="Set"></attribute>
+			<attribute sourceName="C_SYS_CODE" targetName="Sys "></attribute>
+			<attribute sourceName="C_EQUIPMENT" targetName="DevNum"></attribute>
+			<attribute sourceName="C_BUILDING" targetName="Structure"></attribute>
+			<attribute sourceName="C_AREA" targetName="Structure"></attribute>
+			<attribute sourceName="C_ROOM" targetName="Structure"></attribute>
+			<attribute sourceName="C_LEVEL" targetName="Structure"></attribute>
+			<attribute sourceName="C_DISPL_NAME" targetName="Displ"></attribute>
+			<attribute sourceName="C_COUNT1" targetName="DIPS"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="TITLE" targetName="Theme"></attribute>
+			<attribute sourceName="COMMENT" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="SSignPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_COMMENT1" targetName="CloseArctSecur"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="SSignPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="SSignDate"></attribute>
+			<attribute sourceName="C_COMMENT2" targetName="CloseArctSecur"></attribute>
+		</conf>
+		<conf sourceTypeName="图文传真" targetSystem="tc" tcTypeName="图文传真" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="CODING" targetName="OurDocNum"></attribute>
+			<attribute sourceName="C_OTHER_CODING" targetName="RevDocNo"></attribute>
+			<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+			<attribute sourceName="C_STRING1" targetName="SendTo"></attribute>
+			<attribute sourceName="C_STRING2" targetName="ExtCC/IntCC"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="SendDate"></attribute>
+			<attribute sourceName="C_ITEM_STATUS1" targetName="IfReply"></attribute>
+			<attribute sourceName="C_ITEM1_DATE" targetName="ReqDate"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="TITLE" targetName="object_name"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="Cont"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="ApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="ApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="ShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="ShenHDate"></attribute>
+			<attribute sourceName="C_REVIEWER2" targetName="ShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW2_DATE" targetName="ShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="ApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="ApprolDate"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+		</conf>
+		<conf sourceTypeName="会议纪要" targetSystem="tc" tcTypeName="会议纪要" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="SendDate"></attribute>
+			<attribute sourceName="C_CODING" targetName="Item_ID"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="ChannelNum"></attribute>
+			<attribute sourceName="TITLE" targetName="object_name"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_STRING4" targetName=""></attribute>
+			<attribute sourceName="C_ITEM1_DATE" targetName=""></attribute>
+			<attribute sourceName="C_FROM" targetName=""></attribute>
+			<attribute sourceName="C_STRING5" targetName=""></attribute>
+			<attribute sourceName="C_STRING6" targetName=""></attribute>
+			<attribute sourceName="C_TO" targetName=""></attribute>
+			<attribute sourceName="C_STRING2" targetName="ExtCC/IntCC"></attribute>
+			<attribute sourceName="C_CONTNET" targetName="Cont"></attribute>
+			<attribute sourceName="C_RESPONSIBLE" targetName="ResbParty"></attribute>
+			<attribute sourceName="C_COMMENT" targetName="DocReqDateLimit"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="ApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="ApprolDate"></attribute>
+		</conf>
+		<conf sourceTypeName="设计审查意见" targetSystem="tc" tcTypeName="设计审查意见" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+			<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_CODING" targetName="OurDocNum"></attribute>
+			<attribute sourceName="C_OTHER_CODING" targetName="RevDocNo"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="Num"></attribute>
+			<attribute sourceName="C_RECEIVE_DATE" targetName="Date"></attribute>
+			<attribute sourceName="C_ITEM1_DATE" targetName="Date"></attribute>
+			<attribute sourceName="C_STRING3" targetName="ExtCC/IntCC"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="ApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="ApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="ShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="ShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="ApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="ApprolDate"></attribute>
+		</conf>
+		<conf sourceTypeName="设计审查意见答复" targetSystem="tc" tcTypeName="设计审查意见答复" tcTableName="">
+			<attribute sourceName="C_PROJECT_NAME" targetName="EngName"></attribute>
+			<attribute sourceName="C_TO" targetName="SendTo"></attribute>
+			<attribute sourceName="C_FROM" targetName="SendFrom"></attribute>
+			<attribute sourceName="C_ITEM_DATE" targetName="ReleaseDate"></attribute>
+			<attribute sourceName="C_PAGE_COUNT" targetName="Pages"></attribute>
+			<attribute sourceName="C_CODING" targetName="OurDocNum"></attribute>
+			<attribute sourceName="C_REF_CODING" targetName="DRCSNum"></attribute>
+			<attribute sourceName="C_RECEIVE_DATE" targetName="DRCSDate"></attribute>
+			<attribute sourceName="C_STRING3" targetName="ExtCC/IntCC"></attribute>
+			<attribute sourceName="C_DRAFTER" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_DRAFTER1" targetName="DraftPerson"></attribute>
+			<attribute sourceName="C_DRAFT1_DATE" targetName="DraftDate"></attribute>
+			<attribute sourceName="C_CHECKER" targetName="ApproPerson"></attribute>
+			<attribute sourceName="C_CHECK_DATE" targetName="ApproDate"></attribute>
+			<attribute sourceName="C_REVIEWER1" targetName="ShenHPerson"></attribute>
+			<attribute sourceName="C_REVIEW1_DATE" targetName="ShenHDate"></attribute>
+			<attribute sourceName="C_APPROVER" targetName="ApprolPerson"></attribute>
+			<attribute sourceName="C_APPROVE_DATE" targetName="ApprolDate"></attribute>
+			<attribute sourceName="C_CONTENT" targetName="SendTo"></attribute>
 		</conf>
 	</confs>
 	

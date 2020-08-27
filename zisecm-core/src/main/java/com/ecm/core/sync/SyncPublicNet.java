@@ -52,6 +52,7 @@ import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.EcmUser;
+import com.ecm.core.entity.ExcSynBatch;
 import com.ecm.core.entity.ExcSynDetail;
 import com.ecm.core.entity.SyncBean;
 import com.ecm.core.exception.AccessDeniedException;
@@ -59,6 +60,7 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynBatchService;
 import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.GroupService;
 import com.ecm.core.service.RelationService;
@@ -71,6 +73,8 @@ import com.ecm.icore.service.IExcSynDetailService;
 public class SyncPublicNet implements ISyncPublicNet {
 	private final Logger logger = LoggerFactory.getLogger(SyncPublicNet.class);
 	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+	@Autowired
+	private ExcSynBatchService batchService;
 	@Autowired
 	IExcSynDetailService iExcSynDetailService;
 	@Autowired
@@ -137,7 +141,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				excSynDetailObjList = exportDataInner(actionName, token, resultObjList);
 			}
 			writeJsonFile(resultObjList, folderName + ".json");
-			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName, new Date());
+			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName);
 			String abusoluteFolderPath = getSyncPathPublic() + "/";
 			String folderFullPath = abusoluteFolderPath + folderName;
 			String zipFilePath = folderFullPath + ".zip";
@@ -145,8 +149,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 			writeMD5Info(zipFilePath);
 			FileUtils.deleteDirectory(new File(folderFullPath));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.getMessage());
 		} finally {
 			if (null != token)
 				authService.logout(token);
@@ -263,6 +267,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("驳回提交".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "update_驳回提交";
+		} else if ("延误打开反馈".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "update_延误打开反馈";
+		} else if ("延误反馈确认".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "update_延误反馈确认";
 		} else if ("新建".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建";
@@ -323,12 +333,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("新建问题".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建问题";
-		} else if ("回复问题".equals(type)) {
+		} else if ("问题回复".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
-			beanType = "create_回复问题";
+			beanType = "create_问题回复";
 		}
-
-		TODOApplication.getNeedTOChange("问题反馈类型需要增加...");
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
 		syncBean.setTransfers(transfers);
@@ -418,16 +426,23 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * 1.2.3
 	 * 
 	 */
-	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, String batchNum,
-			Date updateDate) {
+	private boolean updateExcSynDetailStatus(List<ExcSynDetail> objList, String status, String batchNum) {
+		Date updateDate=new Date();
 		for (Iterator<ExcSynDetail> iterator = objList.iterator(); iterator.hasNext();) {
 			ExcSynDetail excSynDetail =iterator.next();
 			excSynDetail.setStauts(status);
 			excSynDetail.setBatchNum(batchNum);
-			excSynDetail.setExportDate(updateDate);
+			excSynDetail.setExportDate(new Date());
 			excSynDetailMapper.updateByPrimaryKey(excSynDetail);
 
 		}
+		ExcSynBatch temp = new ExcSynBatch();
+		temp.setAppName("IN-OUT");
+		temp.setCreationDate(updateDate);
+		temp.setActionName("同步");
+		temp.setStauts("新建");
+		temp.setBatchNum(batchNum);
+		batchService.newObject(temp);
 		return true;
 	}
 
@@ -449,8 +464,16 @@ public class SyncPublicNet implements ISyncPublicNet {
 		for (File temp : fileDirectory.listFiles()) {
 			String fileName = temp.getName();
 			if (!temp.isDirectory() && fileName.endsWith("zip") && fileName.startsWith("DONE_" + NetWorkEnv)) {
+				String batchNum=fileName.split("\\.")[0].substring(5);
 				excSynDetailMapper.executeSQL("update exc_syn_detail set STAUTS='已同步' where BATCH_NUM ='"
-						+ fileName.split("\\.")[0].substring(5) + "'");
+						+ batchNum + "'");
+				List<ExcSynBatch> syncBatchList=batchService.getByCondition("BATCH_NUM='"+batchNum+"'");
+				if(syncBatchList.size()>0) {
+					ExcSynBatch syncBatch=syncBatchList.get(0);
+					syncBatch.setExecuteDate(new Date());
+					syncBatch.setStauts("已同步");
+					batchService.updateObject(syncBatch);
+				}
 				String fileNewName=temp.getParent() + "/FINISH_" + fileName;
 				String fileOrgName=temp.getAbsolutePath();
 				temp.renameTo(new File(fileNewName));
@@ -519,8 +542,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 			}
 
 		} catch (Exception e) {
-			TODOApplication.getNeedTOChange("错误输出到文件好定位");
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			if(zipFile!=null)
 				writeJsonResult(zipFile, "ERROR_");
 		} finally {
@@ -589,7 +612,6 @@ public class SyncPublicNet implements ISyncPublicNet {
 			List<EcmRelation> relations = en.getRelations();
 			List<EcmContent> contents = en.getContents();
 			String beanType = en.getBeanType();
-//			TODOApplication.getNeedTOChange("驳回提交，需要删除目标系统的...");
 			for (int i = 0; documents != null && i < documents.size(); i++) {
 				if (beanType.startsWith("create")) {
 					if (documentService.getObjectById(token, documents.get(i).get("ID").toString()) == null) {
@@ -597,7 +619,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 					} else {
 						documentService.updateObject(token, documents.get(i));
 					}
-					if (beanType.equals("create_回复问题")) {
+					if (beanType.equals("create_问题回复")) {
 						EcmDocument edObj = documentService.getObjectById(token,
 								documents.get(i).get("C_FROM_CODING").toString());
 						edObj.addAttribute("C_ITEM_STATUS", "已回复");

@@ -321,12 +321,14 @@
     "ReceivedDcFromCnpe":"Received For Contractor",
     "RejectDC":"Reject DC",
     "LogMonitor": "LogMonitor",
-    "icmfeedback":"icmfeedback",
+    "icmfeedback":"OpenFeedback",
     "projectManagement":"ProjectManagement",
     "userManagement":"User Management",
     "feedbackManagement":"Feedback Management",
     "companyManage":"Company Management",
-    "AddressList":"Address List"
+    "AddressList":"Address List",
+    "delayFeedback": "DelayFeedback",
+    "delayConfirm": "DelayConfirm"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -375,7 +377,8 @@
     "publishedAlert":"Caution!",
     "pleaseSelectIED":"Please Select IEDs for operate",
     "pleaseSelectICM":"Please Selcet ICMs for operate",
-    "pleaseSelectSync":"Please Select Plans for Sync"
+    "pleaseSelectSync":"Please Select Plans for Sync",
+    "selectByCoding":"Condtion select By Coding"
 },
 "field": {
     "indexNumber":"S/N",

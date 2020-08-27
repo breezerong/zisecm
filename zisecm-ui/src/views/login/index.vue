@@ -1,15 +1,13 @@
 <template>
   <div class="login-container pull-height" v-title :data-title="$t('application.name')">
     <div class="login-info text-white animated fadeInLeft">
-      <div class="logo" style="margin-top:-426px">
+      <div class="logo" style="margin-top:-326px">
           <img src="../../../static/img/logo.png" width="160px" height="160px" alt="logo" style="vertical-align: middle;" />
       </div>
-      <h2 class="login-info-title">{{$t("application.name")}}</h2>
-      <ul class="login-info-list">
-        <li class="login-info-item" v-for="item in website.info.list" :key="item">
-          <i class="el-icon-check"></i>&nbsp;{{item}}
-        </li>
-      </ul>
+      <br>
+      <br>
+      <h1 class="login-info-title">{{$t("application.name")}}</h1>
+
     </div>
     <div class="login-border  animated fadeInRight">
       <div class="login-main">
@@ -55,7 +53,7 @@ export default {
   justify-content: space-around;
   background: rgba(0, 0, 0, 0.2);
   position: relative;
-  height: 900px;
+  height: 800px;
 }
 .login-container::before {
   z-index: -999;
@@ -65,8 +63,10 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
-  background-image: url("../../assets/images/top_images/login.png");
-  background-size: cover;
+  background-image: url("../../assets/images/top_images/login_bg_cnpe.jpg");
+  background-repeat: no-repeat;
+  background-position-y: 200px;
+  background-size: contain;
 }
 .login-info {
   padding-left: 60px;

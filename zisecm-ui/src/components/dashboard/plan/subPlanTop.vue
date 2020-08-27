@@ -2,24 +2,68 @@
      <div>  
         <el-form inline="true" >
         <el-row>
-          <el-col :span="2">
-            <el-form-item><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
+          <el-col :span="4" v-if ="isOnlySub || isOnlySubjh">
+          <el-form-item><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4" v-if="isOnlySubjh || isSubjkjh" >
           <el-form-item><ecm-data-icons ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4" v-if="isOnlySubjh|| isSubjkjh">
           <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4" v-if="isOnlySubjh">
           <el-form-item><ecm-data-icons ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4" v-if="isSubjh">
           <el-form-item><ecm-data-icons ref="dataRejectIED" :option="projectDataRejectIED"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4" v-if="isSubjh">
           <el-form-item><ecm-data-icons ref="dataPendingSubmitIED" :option="projectDataPendingSubmitIED"></ecm-data-icons></el-form-item>
           </el-col>
+      <el-col :span="4" v-if="isOnlySubwk">
+      <el-form-item><ecm-data-icons :option="projectData"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" v-if="isSubwk">
+      <el-form-item><ecm-data-icons :option="projectDataDC"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" v-if="isSubwk">
+      <el-form-item><ecm-data-icons :option="projectDataReceivingdc"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" v-if="isSubwk">
+      <el-form-item><ecm-data-icons :option="projectDataSubmissiondc"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="4" v-if="isSubwk">
+      <el-form-item><ecm-data-icons :option="projectDataDispensedc"></ecm-data-icons></el-form-item>
+      </el-col>
+      
+      <el-col :span="4" v-if="isOnlySubjk">
+      <el-form-item>
+      <ecm-data-icons ref="p1" :option="projectDataICM"></ecm-data-icons>
+      </el-form-item>
+        </el-col>
+        <el-col :span="4" v-if="isOnlySubjk">
+          <el-form-item>
+            <ecm-data-icons ref="p2" :option="projectData2"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        <el-col :span="4" v-if="isOnlySubjk">
+          <el-form-item>
+            <ecm-data-icons ref="p3" :option="projectData3"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        <el-col :span="4" v-if="isSubjk">
+          <el-form-item>
+            <ecm-data-icons ref="p4" :option="projectData4"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        <el-col  :span="4" v-if="isSubjk"> 
+          <el-form-item>
+            <ecm-data-icons ref="p5" :option="projectData5"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        
+
+
       </el-row> 
       </el-form>
       
@@ -38,15 +82,21 @@ export default {
   name: "FeedBackGrid",
   data() {
     return {
+      
       filters: {
         projectCode: '',
-        startDate: null,
-        endDate: null,
-        supplier: '',
-        docType: '',
-        limit: 10
       },
-
+      tempJKJH:[],
+      isSubjkjh:false,
+      isOnlySub:false,
+      isOnlySubjk:false,
+      isSubjk:false,
+      isOnlySubjh:false,
+      isSubjh:false,
+      isSubwk:false,
+      isOnlySubwk:false,
+      tempRoles:[],
+      userRoles:[],
       docChart1: Object,
       docChartData1: {
         xAxisData: [],
@@ -74,7 +124,7 @@ export default {
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
+                url: 'cnpe/DCManagement/ReceivedDC4Cnpe'}],
         },
         projectDataTPLAN: {
         color: 'rgb(63, 161, 255)',
@@ -83,7 +133,7 @@ export default {
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
+                url: '/cnpe/plan/threelevelplan'}],
         },
         projectDataProjectNum: {
         color: 'rgb(63, 161, 255)',
@@ -91,7 +141,8 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+                url:''}],
         },
 
         projectDataPublishedIED: {
@@ -108,7 +159,8 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+                url:'/cnpe/iedmanagement/pendingsubmit'}],
         },
         projectDataRejectIED:{
         color: 'rgb(63, 161, 255)',
@@ -116,7 +168,8 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+              }],
         },
         projectDataPlanNum:{
         color: 'rgb(63, 161, 255)',
@@ -124,12 +177,130 @@ export default {
         data:[{title: '计划数',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
+                icon: 'el-icon-s-flag',
+                url:''}],
         },
-
-      inputValueNum: "",
-
-      formLabelWidth: "120px",
+        projectDataICM: {
+        data: [
+          {
+            title: "项目",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-warning",
+            url: "",
+          },
+        ],
+      },
+      projectData2: {
+        data: [
+          {
+            title: "计划",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document",
+            url: "",
+          },
+        ],
+      },
+      projectData3: {
+        data: [
+          {
+            title: "三级计划",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document-checked",
+            url: "/cnpe/DCManagement/receivingdc",
+          },
+        ],
+      },
+      projectData4: {
+        data: [
+          {
+            title: "已生效IED",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document-checked",
+            url: "/cnpe/iedmanagement/IEDpublished",
+          },
+        ],
+      },
+      projectData5: {
+        data: [
+          {
+            title: "ICM",
+            count: 0,
+            color: "rgb(63, 161, 255)",
+            icon: "el-icon-document-delete",
+            url: "/cnpe/icmmanagement/interfacemanual",
+          },
+        ],
+      },
+     
+      projectData: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '项目',
+            count:0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-warning',
+            url: ''
+          },
+        ]
+      },
+      projectDataDC: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '文函',
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: '/cnpe/DCManagement/receivedDC'
+          },
+        ]
+      },
+      projectDataReceivingdc: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待接收文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/DCManagement/receivingdc'
+          },
+        ]
+      },
+      projectDataSubmissiondc: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待提交文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/DCManagement/submissiondc'
+          },
+        ]
+      },
+      projectDataDispensedc: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+         {
+            title: '驳回文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-delete',
+            url: '/cnpe/DCManagement/rejectedDC'
+          }
+        ]
+      }
     };
   },
 
@@ -145,41 +316,97 @@ export default {
     _self.getPendingSubmitIED()
     _self.getRejectIED()
     _self.getPlanNum()
+    this.getUserRole()
+    this.loadStatisticICM()
+    this.loadStatistic()
     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
   methods: {
-    onSelectChange(val){
-      this.filters.projectCode = val
-      this.initChart()
-    },
-    initChart(){
-          let _self=this;
-          let mp=new Map();
-          if(_self.filters.projectCode){
-              mp.set('projectName',_self.filters.projectCode);
-          }else{
-              mp.set('projectName','@project');
+    getUserRole(){    //获取文件类型，进行本地验证
+        var k=0;
+        this.tempRoles=this.currentUser().roles
+        for(var i = 0;i < this.tempRoles.length;i++){
+          if(this.tempRoles[i] == '分包商文控人员'||this.tempRoles[i] =='CNPE_文控人员'||this.tempRoles[i] =='CNPE_计划人员'||
+          this.tempRoles[i] =='CNPE_接口人员'||this.tempRoles[i] =='分包商接口人员'||this.tempRoles[i] =='分包商计划人员'){
+          this.userRoles[k] = this.tempRoles[i] 
+          k++;
           }
-          axios.post("/dc/getIEDDash",JSON.stringify(mp))
-            .then(function(response) {
-                if(response.data.code==1){
-                    let result=response.data.data;
-                    let xArray=new Array();
-                    let yArray=new Array();
-                    for (let key in result){
-                        xArray.push(key);
-                        yArray.push(result[key]);
-                    }
-                    _self.docChartData1.xAxisData=xArray;
-                    _self.docChartData1.yAxisData=yArray;
-                    _self.loadDocChart(_self.docChart1, _self.docChartData1);
-                }
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
+        }
+        if(this.userRoles.length==1 && this.userRoles[0]=='分包商接口人员'){
+          this.isOnlySubjk=true
+          this.isSubjk=true
+          }
+        if(this.userRoles.length==1 && this.userRoles[0]=='分包商计划人员'){
+          this.isOnlySubjk=true
+          this.isSubjk=true
+          }
+          if(this.userRoles.length==1 && this.userRoles[0]=='分包商文控人员'){
+          this.isOnlySubwk=true
+          this.isSubwk=true
+          }
+          for(var i = 0;i < this.userRoles.length;i++){
+            if(this.userRoles[i] == '分包商接口人员')
+            this.isSubjk = true
+            this.tempJKJH[0]=this.userRoles[i]
+            if(this.userRoles[i] =='分包商计划人员')
+            this.isSubjh = true
+            this.tempJKJH[1]=this.userRoles[i]
+            if(this.userRoles[i] =='分包商文控人员')
+            this.isSubwk = true
+          }
+          if(this.userRoles.length>1 ){
+            this.isOnlySub  =true
+        
+          }
+          if(this.tempJKJH.length==2)
+          this.isSubjkjh=true
+         console.log(this.isSubjkjh+"/jkjh")
+          
+        console.log(this.userRoles)
       },
+    loadStatistic() {
+      let _self = this;
+      let mp = new Map();
+      axios
+        .post("/dc/getSubIcm", JSON.stringify(mp))
+        .then(function (response) {
+          _self.projectDataICM.data[0].count = response.data.projectNum;
+          _self.projectData2.data[0].count = response.data.planNum;
+          _self.projectData3.data[0].count = response.data.thereplanNum;
+          _self.projectData4.data[0].count = response.data.iedNum;
+          _self.projectData5.data[0].count = response.data.icmNum;
+          _self.$refs.p1.refresh()
+          _self.$refs.p2.refresh()
+          _self.$refs.p3.refresh()
+          _self.$refs.p4.refresh()
+          _self.$refs.p5.refresh()
+          console.log(response.data)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    loadStatisticICM(){
+      let _self = this;
+      let mp=new Map();
+      axios
+        axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
+        .then(function (response) {
+          if(response.data.code==1){
+            console.log(response.data)
+              _self.projectData.data[0].count=response.data.sumNum;
+              _self.projectDataDC.data[0].count=response.data.dcNum;
+              _self.projectDataReceivingdc.data[0].count=response.data.receivedNum;
+              _self.projectDataSubmissiondc.data[0].count=response.data.submissiondcNum;
+              _self.projectDataDispensedc.data[0].count=response.data.dispenseNum;
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
       getDCNum(){         //获取文函数量
         let _self=this;
         let mp=new Map();
@@ -206,17 +433,18 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getPublishedIED",JSON.stringify(mp))
+        axios.post("/dc/getSubPublishedIED",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '已发布IED',
+                title: '已生效IED',
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
                 url: '/cnpe/iedmanagement/IEDpublished'
               }]
             _self.projectDataPublishedIED.data = datas
+            console.log(response.data)
             _self.$refs.dataPublishedIED.refresh()
       }
             })
@@ -255,7 +483,7 @@ export default {
                 count: response.data.data.num,
                 color: 'rgb(255,0,0)',
                 icon: 'el-icon-s-claim',
-                url: '/cnpe/iedmanagement/RejectIED'
+                 url:'/cnpe/iedmanagement/IEDRejectied'
               }]
               console.log(response.data.data)
             _self.projectDataRejectIED.data = datas
@@ -335,50 +563,14 @@ export default {
                 title: '计划',
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',
+                icon: 'el-icon-warning',
+                url:''
               }]
             _self.projectDataProjectNum.data = data
             _self.$refs.dataProjectNum.refresh()
       }
       })
       },
-
-    loadDocChart(chartObj, indata){
-      chartObj.setOption({
-            title: { text: 'IED统计' },
-            tooltip: {},
-            grid: {  
-              left: '10%',
-              bottom:'35%'
-            },
-            xAxis: {
-              data: indata.xAxisData,
-              axisLabel: {  
-                interval:0,
-                rotate:40  
-              }  
-            },
-            yAxis: {},
-            series: [{
-                name: '数量',
-                type: 'bar',
-                data: indata.yAxisData,
-                itemStyle: {
-                  normal: {
-                    color:function(d){return "#"+Math.floor(Math.random()*(256*256*256-1)).toString(16);},
-                    label: {
-                      show: true, //开启显示
-                      position: 'top', //在上方显示
-                      textStyle: { //数值样式
-                        color: 'black',
-                        fontSize: 16
-                      }
-                    }
-                  }
-                }
-            }]
-        });
-    }
 
 
 

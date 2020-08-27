@@ -7,8 +7,17 @@
       <el-col :span="4">
         <ecm-data-icons :option="projectDataDC"></ecm-data-icons>
       </el-col>
-      <el-col :span="16">
-        <ecm-data-icons :option="projectDataOther"></ecm-data-icons>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataReceived"></ecm-data-icons>
+      </el-col>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataDeBlocking"></ecm-data-icons>
+      </el-col>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataDispense"></ecm-data-icons>
+      </el-col>
+      <el-col :span="4">
+        <ecm-data-icons :option="projectDataReject"></ecm-data-icons>
       </el-col>
     </el-row>
     
@@ -21,48 +30,7 @@ import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
 export default {
  name: "planTopDashBoard",
  data() {
-    return {  
-      projectDataOther: {
-        color: 'rgb(63, 161, 255)',
-        span: 4,
-        data: [
-          {
-            title: '文函',
-            count: 0,
-            color: 'rgb(63, 161, 255)',
-            icon: 'el-icon-document',
-            url: '/cnpe/DCManagement/receivedDC'
-          },
-          {
-            title: '待接收文函',
-            count: 0,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document-checked',
-            url: '/cnpe/DCManagement/receivingdc'
-          },
-          {
-            title: '待解锁文函',
-            count: 0,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/IEDpublished'
-          },
-          {
-            title: '待分发文函',
-            count: 0,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/pendingied'
-          },
-          {
-            title: '驳回文函',
-            count: 0,
-            color: 'rgb(255, 0, 0)',
-            icon: 'el-icon-document-delete',
-            url: ''
-          }
-        ]
-      },
+    return {
       projectData: {
         color: 'rgb(63, 161, 255)',
         span: 24,
@@ -89,7 +57,58 @@ export default {
           },
         ]
       },
-      a:[]
+      projectDataReceived: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待接收文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/DCManagement/receivingdc'
+          },
+        ]
+      },
+      projectDataDeBlocking: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待解锁文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/iedmanagement/IEDpublished'
+          },
+        ]
+      },
+      projectDataDispense: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '待分发文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-checked',
+            url: '/cnpe/iedmanagement/pendingied'
+          },
+        ]
+      },
+      projectDataReject: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+          {
+            title: '驳回文函',
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-delete',
+            url: ''
+          }
+        ]
+      },
     };
   },
   mounted() {
@@ -107,21 +126,12 @@ export default {
         .then(function (response) {
           if(response.data.code==1){
             console.log(response.data)
-              _self.a[0]=response.data.dcNum;
-              _self.a[1]=response.data.receivedNum;
-              _self.a[2]=response.data.deBlockingNum;
-              _self.a[3]=response.data.dispenseNum;
-              _self.a[4]=response.data.RejectNum;
-              _self.projectData.data.forEach(function(item){
-                item.count=response.data.sumNum;
-              })
-              _self.projectDataDC.data.forEach(function(item){
-                item.count=_self.a[0];
-              })
-              let i=1
-              _self.projectDataOther.data.forEach(function(item){
-                item.count=_self.a[i++];
-              })
+              _self.projectData.data[0].count=response.data.sumNum;
+              _self.projectDataDC.data[0].count=response.data.dcNum;
+              _self.projectDataReceived.data[0].count=response.data.receivedNum;
+              _self.projectDataDeBlocking.data[0].count=response.data.deBlockingNum;
+              _self.projectDataDispense.data[0].count=response.data.dispenseNum;
+              _self.projectDataReject.data[0].count=response.data.RejectNum;
           }
           
         })

@@ -1,5 +1,15 @@
 <template>
   <div>
+    <el-row>
+       <el-form label-position="right" label-width="100px">
+        <el-form-item label="语言">
+          <el-select v-model="currentLanguage" @change="loadData">
+            <el-option label="中文" value="zh-cn"></el-option>
+            <el-option label="英文" value="en"></el-option>
+          </el-select>
+        </el-form-item>
+       </el-form>
+      </el-row>
     <el-table
                 :data="dataList"
                 border
@@ -12,24 +22,24 @@
       </el-table-column>
         <el-table-column label="" type="index" width="60">
       </el-table-column>
-      <div v-for="(citem,idx) in gridList">
-        <div v-if="citem.visibleType==1">
-          <div v-if="(citem.width+'').indexOf('%')>0">
-            <el-table-column :label="citem.label" :minwidth="citem.width">
+      <template v-for="(citem,idx) in gridList" >
+        <template v-if="citem.visibleType==1">
+          <template v-if="(citem.width+'').indexOf('%')>0">
+            <el-table-column :label="citem.label" :minwidth="citem.width" :key="idx+'_C'">
               <template slot-scope="scope">
                 <span>{{scope.row[idx].value}}</span>
               </template>
             </el-table-column>
-          </div>
-          <div v-else>
-            <el-table-column :label="citem.label" :width="citem.width">
+          </template>
+          <template v-else>
+            <el-table-column :label="citem.label" :width="citem.width" :key="idx+'_C'">
               <template slot-scope="scope">
                 <span>{{scope.row[idx].value}}</span>
               </template>
             </el-table-column>
-          </div>
-        </div>
-      </div>
+          </template>
+        </template>
+      </template>
     </el-table>
      <el-pagination
       @size-change="handleSizeChange"
@@ -50,6 +60,7 @@ export default {
   permit: 9,
   data() {
     return {
+      currentLanguage: "zh-cn",
       dataList: [],
       gridList: [],
       loading: false,
@@ -66,14 +77,14 @@ export default {
     };
   },
   props: {
-    parentgridid:""
+    gridViewName:""
   },
    created(){ 
      if(this.$route.query.parentid)
      {
        this.parentgridid = this.$route.query.parentid;
      }
-     this.loaddata();
+     this.loadData();
     },
   methods: {
     handleSizeChange(val) {
@@ -82,13 +93,23 @@ export default {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
     },
-    loaddata()
+    loadData()
     {
       let _self = this;
       _self.loading = true;
       
-      //alert(_self.parentid);
-      axios.post('/admin/getGridViewItem',_self.parentgridid)
+       var m = new Map();
+      m.set("gridName", _self.gridViewName);
+      m.set("lang", _self.currentLanguage);
+      _self
+        .axios({
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          },
+          method: "post",
+          data: JSON.stringify(m),
+          url: "/admin/getGridViewItemLang"
+        })
         .then(function(response) {
           _self.gridList = response.data.data;
           _self.loading = false;

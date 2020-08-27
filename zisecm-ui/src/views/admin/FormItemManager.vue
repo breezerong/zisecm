@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="表单校验" :visible.sync="checkVisible"  width="80%">
+    <el-dialog title="表单校验" :visible.sync="checkVisible"  width="90%">
       <FormItemCheck ref="FormItemCheck" :parentformid="parentid"></FormItemCheck>
       <div slot="footer" class="dialog-footer">
         <el-button @click="checkVisible = false">{{$t('application.cancel')}}</el-button>
@@ -188,12 +188,13 @@
       </el-header>
       <el-main>
         <el-table :data="dataList" border :height="tableHeight" style="width: 100%" v-loading="loading">
-          <el-table-column label="属性名" width="180" sortable>
+         <el-table-column label="行号" type="index" width="60"></el-table-column>
+          <el-table-column label="属性名" width="190" sortable>
             <template slot-scope="scope">
               <el-input v-model="scope.row.attrName"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="标签" width="160" sortable>
+          <el-table-column label="标签" min-width="20%" sortable>
             <template slot-scope="scope">
               <el-input v-model="scope.row.label"></el-input>
             </template>
@@ -224,52 +225,15 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="隐藏" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.isHide">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="必填" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.required">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="只读" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.readOnly">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="是否可查询" width="90">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.searchable">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
           <el-table-column label="默认值" width="100">
             <template slot-scope="scope">
               <el-input v-model="scope.row.defaultValue"></el-input>
             </template>
           </el-table-column>
           
-          <el-table-column label="序号" width="80">
+          <el-table-column label="序号" width="100">
             <template slot-scope="scope">
               <el-input v-model="scope.row.orderIndex" auto-complete="off"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="查询名" width="100">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.queryName" auto-complete="off"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="240" fixed="right">
@@ -363,9 +327,10 @@ export default {
   },
   created() {
     let _self = this;
-    _self.getClassicfication();
-
     _self.loading = true;
+    _self.getClassicfication();
+     _self.loading = true;
+    
     var pid = _self.$route.query.parentid;
     _self.typename = _self.$route.query.name;
     if (pid) {
@@ -379,7 +344,7 @@ export default {
       .then(function(response) {
         _self.dataListFull = response.data.data;
         _self.dataList = response.data.data;
-        console.log(JSON.stringify(_self.dataListFull));
+        //console.log(JSON.stringify(_self.dataListFull));
         _self.loading = false;
       })
       .catch(function(error) {

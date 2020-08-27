@@ -55,7 +55,7 @@
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,'/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item v-if="roles2">
-                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >{{$t('route.icmfeedback')}}</el-button>
+                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >延误打开反馈</el-button>
                 </el-form-item>
             </el-form>
         </template>
@@ -187,7 +187,7 @@ export default {
     methods: {
         loadsuccess(){
             if(this.currentUser().company!='CNPE'){
-                this.tables.main.condition+=" AND (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"')"
+                this.tables.main.condition+=" AND (C_CODE5='"+this.currentUser().companyCode1+"' OR C_CODE6='"+this.currentUser().companyCode1+"')"
                 this.userCondition = " (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"') and "
             }
             this.$refs.mainDataGrid.condition = this.tables.main.condition
