@@ -118,7 +118,6 @@ export default {
   },
   created() {
     let _self = this;
-    _self.selectedItemList = [];
     _self.loadGridView();
   },
   methods: {

@@ -42,7 +42,8 @@
            <el-button type="primary" plain icon="save" @click="deployProcess()">发布流程</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow('BianJiaoShenPi')">启动编校审批流程</el-button> 
-           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程-弹出表单</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程-弹出表单</el-button>
+           <el-button type="primary" plain icon="save" @click="showShopCar()">借阅单</el-button> 
            <el-button type="primary" plain icon="save" @click="testWorkflow()">完成任务</el-button> 
          </el-col>
       </el-row>
@@ -102,9 +103,20 @@ export default {
     },
     showBorrow(val){
       let _self = this
-      _self.borrowItemList = val
-      _self.borrowDialogVisible = false;
-      _self.borrowVisible = true
+      let biObj = this.$refs.borrowItem
+      if(biObj != undefined){
+        _self.borrowVisible = true
+        this.$refs.borrowItem.loadData(val);
+      }else{
+         _self.borrowItemList = val
+        _self.borrowDialogVisible = false;
+        _self.borrowVisible = true
+      }
+      // let biObj = this.$refs.borrowItem
+      // if(_self.biObj == undefined){
+        
+      // }
+     
     },
     closeShopcar(){
       let _self = this

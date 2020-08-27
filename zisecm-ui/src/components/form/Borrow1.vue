@@ -513,9 +513,8 @@ export default {
           // }
         });
     },
-    loadData() {
+    loadData(val) {
       let _self = this;
-
       if (_self.formId != "") {
         axios
           .post("/dc/getDocumentMapById", _self.formId)
@@ -526,9 +525,11 @@ export default {
             }
           });
       }
-      if (_self.borrowItemList.length > 0) {
+     
+      if(_self.borrowItemList.length > 0){
         _self.tabledata = _self.borrowItemList;
-      } else {
+      }
+      else{
         axios
           .post("/dc/getFormRelateDocument", _self.formId)
           .then(function (response) {
@@ -538,6 +539,9 @@ export default {
             }
           });
       }
+      if(val.length>0){
+        _self.tabledata = val;
+      } 
     },
     selectChange(selection) {
       this.selectedItemList = [];
