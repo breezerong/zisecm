@@ -1,7 +1,7 @@
 <template>
   <el-table :data="tabledata">
     <template  v-for="item in gridList">
-      <el-table-column :key="item.id" :label="item.label" :prop="item.attrName">
+      <el-table-column :key="item.id" v-if="item.visibleType!='3'" :label="item.label" :prop="item.attrName">
         <template slot-scope="scope">
             <template v-if="item.attrName=='C_DOC_DATE'">
               {{dateFormat(scope.row.C_DOC_DATE)}}
