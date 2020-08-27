@@ -106,16 +106,20 @@
                   </template>
                 </el-table-column>
               </template>
-              <el-table-column align="right">
+              <el-table-column align="left">
                 <template slot-scope="scope">
                   <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
-                  <el-button size="mini" @click="removeItemFromForm(scope.row)">移除</el-button>
+                  <el-button
+                    v-if="borrowItemList.length <=0"
+                    size="mini"
+                    @click="removeItemFromForm(scope.row)"
+                  >移除</el-button>
                 </template>
               </el-table-column>
             </el-table>
           </el-col>
           <!-- 是否添加购物车 -->
-          <el-col>
+          <el-col v-if="borrowItemList.length <=0">
             <template>
               <el-button @click="showOrCloseShopingCart()">{{showOrCloseShopingCartLabel}}</el-button>
             </template>
@@ -125,20 +129,55 @@
                 width="100%"
                 v-bind:formId="formId"
                 v-bind:excludeRows="tabledata"
+                showFooter="fasle"
               ></ShowShopingCart>
               <el-button ref="add" style="float:left" @click="addToFormFromShopingCart()">添加到表单</el-button>
             </div>
           </el-col>
-           <el-col style="padding-top:3px;">
-            <div v-for="(approver,index)  in approvalUserList" :key="'approver_'+index">
-            <el-form-item :label="approver.activityName"  :label-width="formLabelWidth" style="float:left">
-              <UserSelectInput
-                v-model="borrowForm[approver.formAttribute]"
-                v-bind:inputValue="borrowForm[approver.formAttribute]"
-                v-bind:roleName="approver.roleName"
-              ></UserSelectInput>
-            </el-form-item>
-          </div>
+          <el-col style="padding-top:3px;">
+            <!-- <div v-for="(approver,index)  in approvalUserList" :key="'approver_'+index">
+              <el-form-item
+                :label="approver.activityName"
+                :label-width="formLabelWidth"
+                style="float:left"
+              >
+                <UserSelectInput
+                  v-model="borrowForm[approver.formAttribute]"
+                  v-bind:inputValue="borrowForm[approver.formAttribute]"
+                  v-bind:roleName="approver.roleName"
+                ></UserSelectInput>
+              </el-form-item>
+            </div>-->
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="申请人领导" :label-width="formLabelWidth">
+                  <UserSelectInput
+                    v-model="borrowForm.C_REVIEWER1"
+                    v-bind:inputValue="borrowForm.C_REVIEWER1"
+                    v-bind:roleName="系统管理员"
+                    :isRepeat = true
+                  ></UserSelectInput>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="形成部门领导" :label-width="formLabelWidth">
+                  <UserSelectInput
+                    v-model="borrowForm.C_REVIEWER2"
+                    v-bind:inputValue="borrowForm.C_REVIEWER2"
+                    v-bind:roleName="系统管理员"
+                  ></UserSelectInput>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="分管领导" :label-width="formLabelWidth">
+                  <UserSelectInput
+                    v-model="borrowForm.C_REVIEWER3"
+                    v-bind:inputValue="borrowForm.C_REVIEWER3"
+                    v-bind:roleName="系统管理员"
+                  ></UserSelectInput>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-col>
           <el-col>
             <el-form-item label="借阅目的" :label-width="formLabelWidth" style="text-align:left">
@@ -195,12 +234,12 @@
               :label-width="formLabelWidth"
               style="float:left"
             >{{dateFormat(borrowForm.C_ITEM2_DATE)}}</el-form-item>
-           <el-form-item :label-width="formLabelWidth" style="float:right">
+            <el-form-item :label-width="formLabelWidth" style="float:right">
               <el-button
-              v-show="borrowForm.SUB_TYPE=='下载' && borrowForm.STATUS=='已完成' "
-              ref="downloadAllFile"
-              @click="downloadAllFile()"
-            >打包下载</el-button>
+                v-show="borrowForm.SUB_TYPE=='下载' && borrowForm.STATUS=='已完成' "
+                ref="downloadAllFile"
+                @click="downloadAllFile()"
+              >打包下载</el-button>
             </el-form-item>
           </el-col>
           <el-col>
@@ -221,18 +260,18 @@
                     :title="scope.row.TYPE_NAME"
                     border="0"
                   />
-                   <img
-                  v-else-if="scope.row.FORMAT_NAME==null || scope.row.FORMAT_NAME==''"
-                  :src="'./static/img/format/f_undefined_16.gif'"
-                  title="无电子文件"
-                  border="0"
-                />
-                <img
-                  v-else
-                  :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
-                  :title="scope.row.FORMAT_NAME"
-                  border="0"
-                />
+                  <img
+                    v-else-if="scope.row.FORMAT_NAME==null || scope.row.FORMAT_NAME==''"
+                    :src="'./static/img/format/f_undefined_16.gif'"
+                    title="无电子文件"
+                    border="0"
+                  />
+                  <img
+                    v-else
+                    :src="'./static/img/format/f_'+scope.row.FORMAT_NAME+'_16.gif'"
+                    :title="scope.row.FORMAT_NAME"
+                    border="0"
+                  />
                 </template>
               </el-table-column>>
               <template v-for="item in gridList">
@@ -279,6 +318,11 @@
         </div>
       </el-row>
     </el-form>
+
+    <div slot="footer" class="dialog-footer" style="text-align:center" v-if="borrowItemList.length>0">
+      <el-button ref="borrowCancel" type="primary" @click="cancel()">{{$t('application.cancel')}}</el-button>
+      <el-button ref="borrowStartwf" @click="startWorkflow(borrowForm)">启动流程</el-button>
+    </div>
   </div>
 </template>
 
@@ -289,7 +333,7 @@ import UserSelectInput from "@/components/controls/UserSelectInput";
 export default {
   components: {
     ShowShopingCart: ShowShopingCart,
-    UserSelectInput: UserSelectInput
+    UserSelectInput: UserSelectInput,
   },
   name: "BorrwoForm",
   data() {
@@ -305,7 +349,7 @@ export default {
       approvalUserList: [],
       dialogTitle: "借阅",
       borrowDialogVisible: false,
-      componentName: "borrow", 
+      componentName: "borrow",
       borrowForm: {
         C_DRAFTER: sessionStorage.getItem("access-userName"),
         C_DESC1: sessionStorage.getItem("access-department"),
@@ -318,15 +362,15 @@ export default {
         C_REVIEWER3: "",
         C_COMMENT: "",
         C_CREATION_UNIT: "",
-        STATUS: ""
+        STATUS: "",
       },
       rules: {
         C_DESC1: [
           {
             required: true,
             message: this.$t("message.pleaseInput") + "用户部门",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
           // { validator: validaePass }
         ],
         // C_CREATION_UNIT: [
@@ -337,86 +381,90 @@ export default {
           {
             required: true,
             message: this.$t("message.pleaseInput") + "借阅开始时间",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
           // { validator: validaePass2 }
         ],
         C_ITEM2_DATE: [
           {
             required: true,
             message: this.$t("message.pleaseInput") + "借阅结束时间",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
           // { validator: validaePass2 }
-        ]
+        ],
       },
       // formId: "",
       // istask: 0,
       // formEditPermision: 0,
       // processDefinitionId: "",
       // activityName: "",
-     vshowShopingCart: false,
+      vshowShopingCart: false,
       showOrCloseShopingCartLabel: "从借阅单添加",
       expireTimeOption: this.dateCheck(),
       defaultProps: {
         children: "children",
-        label: "name"
+        label: "name",
       },
       deptList: [],
       showDepartMentList: 0,
       currentGroupData: "",
       selectedGroupItemId: "",
-      currentRootGroupData: ""
+      currentRootGroupData: "",
     };
   },
 
-  props:{
+  props: {
     activityName: {
-        type: String,
-        default: ""
-      },
-      formEnableType:{
-        type : String,
-        default: "",
-        required: true
-      },
-      docId:{
-        type:String,
-        default:""
-        },
+      type: String,
+      default: "",
+    },
+    formEnableType: {
+      type: String,
+      default: "",
+      required: false,
+    },
+    docId: {
+      type: String,
+      default: "",
+    },
     processDefinitionId: {
-        type: String,
-        default: ""
-      },
+      type: String,
+      default: "",
+    },
     formEditPermision: {
-        type: Number ,
-        default: 0
-      },
+      type: Number,
+      default: 0,
+    },
     istask: {
-        type: Number,
-        default: 0
-      },
+      type: Number,
+      default: 0,
+    },
     formId: {
-        type: String,
-        default: ""
-      }
+      type: String,
+      default: "",
+    },
+    borrowItemList: {
+      type: Array,
+      default: [],
+    },
   },
   created() {
     let _self = this;
     // _self.formId = _self.$route.query.borrowFormId;
     // _self.formId = _self.formId1;
-  //   if (typeof _self.$route.query.istask != "undefined") {
-  //     _self.formEditPermision = _self.$route.query.formEditPermision;
-  //     _self.istask = _self.$route.query.istask;
-  //     _self.processDefinitionId = _self.$route.query.processDefinitionId;
-  //     _self.activityName = _self.$route.query.activityName;
-  // }
-  //   if (typeof _self.istask1 != "undefined") {
-  //     _self.formEditPermision = _self.formEditPermision1;
-  //     _self.istask = _self.istask1;
-  //     _self.processDefinitionId = _self.processDefinitionId1;
-  //     _self.activityName = _self.activityName1;
-  // }
+    //   if (typeof _self.$route.query.istask != "undefined") {
+    //     _self.formEditPermision = _self.$route.query.formEditPermision;
+    //     _self.istask = _self.$route.query.istask;
+    //     _self.processDefinitionId = _self.$route.query.processDefinitionId;
+    //     _self.activityName = _self.$route.query.activityName;
+    // }
+    //   if (typeof _self.istask1 != "undefined") {
+    //     _self.formEditPermision = _self.formEditPermision1;
+    //     _self.istask = _self.istask1;
+    //     _self.processDefinitionId = _self.processDefinitionId1;
+    //     _self.activityName = _self.activityName1;
+    // }
     _self.getApprovalUserList();
     _self.loadGridView();
   },
@@ -426,24 +474,23 @@ export default {
   },
 
   methods: {
-    getApprovalUserList(){
-            let _self = this;
-       var m = new Map();
+    getApprovalUserList() {
+      let _self = this;
+      var m = new Map();
       m.set("processDefinitionId", _self.processDefinitionId);
       m.set("activityName", _self.activityName);
-    axios
+      axios
         .post("/workflow/getApprovalUserList", JSON.stringify(m))
-        .then(function(response) {
-         _self.approvalUserList = response.data.data;
+        .then(function (response) {
+          _self.approvalUserList = response.data.data;
         });
-     
     },
     dateCheck() {
       let _self = this;
       return {
         disabledDate(date) {
           return date.getTime() + 86400000 < Date.now();
-        }
+        },
       };
     },
 
@@ -454,7 +501,7 @@ export default {
       m.set("lang", _self.currentLanguage);
       axios
         .post("/dc/getGridViewInfo", JSON.stringify(m))
-        .then(function(response) {
+        .then(function (response) {
           _self.gridList = response.data.data;
           _self.loadData();
           // if (typeof _self.formId == "undefined") {
@@ -462,26 +509,35 @@ export default {
           //   _self.borrowForm.C_CREATION_UNIT =
           //     _self.$route.query.C_ARCHIVE_UNIT;
           // } else {
-            
+
           // }
         });
     },
     loadData() {
       let _self = this;
-      axios.post("/dc/getDocumentMapById", _self.formId).then(function(response) {
-        let result = response.data;
-        if (result.code == 1) {
-          _self.borrowForm = result.data;
-        }
-      });
-      axios
-        .post("/dc/getFormRelateDocument", _self.formId)
-        .then(function(response) {
-          let result = response.data;
-          if (result.code == 1) {
-            _self.tabledata = result.data;
-          }
-        });
+
+      if (_self.formId != "") {
+        axios
+          .post("/dc/getDocumentMapById", _self.formId)
+          .then(function (response) {
+            let result = response.data;
+            if (result.code == 1) {
+              _self.borrowForm = result.data;
+            }
+          });
+      }
+      if (_self.borrowItemList.length > 0) {
+        _self.tabledata = _self.borrowItemList;
+      } else {
+        axios
+          .post("/dc/getFormRelateDocument", _self.formId)
+          .then(function (response) {
+            let result = response.data;
+            if (result.code == 1) {
+              _self.tabledata = result.data;
+            }
+          });
+      }
     },
     selectChange(selection) {
       this.selectedItemList = [];
@@ -501,7 +557,7 @@ export default {
     startWorkflow() {
       let _self = this;
       let formMap = new Map();
-      _self.$refs.borrowForm.validate(valid => {
+      _self.$refs.borrowForm.validate((valid) => {
         if (valid) {
           formMap = _self.validateBorrowForm(_self);
           if (formMap == null) {
@@ -510,44 +566,45 @@ export default {
           _self.loading = true;
           axios
             .post("/dc/saveBorrowForm", JSON.stringify(formMap))
-            .then(function(response) {
+            .then(function (response) {
               _self.formId = response.data.data;
               console.log(response);
               let m = new Map();
               m.set("formId", _self.formId);
-              m.set(
-                "fileTopestSecurityLevel",
-                formMap.get("fileTopestSecurityLevel")
-              );
-              m.set("drawingNumber", formMap.get("drawingNumber"));
-              m.set("fileNumber", formMap.get("fileNumber"));
-
+              // m.set(
+              //   "fileTopestSecurityLevel",
+              //   formMap.get("fileTopestSecurityLevel")
+              // );
+              // m.set("drawingNumber", formMap.get("drawingNumber"));
+              // m.set("fileNumber", formMap.get("fileNumber"));
+              m.set("processName","借阅流程");
+              m.set("processInstanceKey","process_borrow")
               axios
                 .post("/workflow/startWorkflow", JSON.stringify(m))
-                .then(function(response) {
+                .then(function (response) {
                   console.log(response);
                   _self.$message({
                     showClose: true,
                     message: "流程发起成功!",
                     duration: 2000,
-                    type: "success"
+                    type: "success",
                   });
 
                   _self.loading = false;
                   _self.cancel();
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                   _self.$message({
                     showClose: true,
                     message: "流程发起失败!",
                     duration: 2000,
-                    type: "warning"
+                    type: "warning",
                   });
                   console.log(error);
                   _self.loading = false;
                 });
             })
-            .catch(function(error) {
+            .catch(function (error) {
               console.log(error);
               _self.loading = false;
             });
@@ -650,7 +707,7 @@ export default {
             showClose: true,
             message: "结束日期不能小于开始日期！",
             duration: 5000,
-            type: "error"
+            type: "error",
           });
           return;
         }
@@ -662,21 +719,21 @@ export default {
             showClose: true,
             message: "根据您借阅档案的信息：" + alertStr + "  必填",
             duration: 5000,
-            type: "warning"
+            type: "warning",
           });
           return;
         }
       }
 
-      if (isStoreStatus != "在库" && _self.borrowForm.SUB_TYPE == "纸质借阅") {
-        gougou.$message({
-          showClose: true,
-          message: "所借阅文件包含不在库文件，不能发起借阅流程",
-          duration: 5000,
-          type: "warning"
-        });
-        return;
-      }
+      // if (isStoreStatus != "在库" && _self.borrowForm.SUB_TYPE == "纸质借阅") {
+      //   gougou.$message({
+      //     showClose: true,
+      //     message: "所借阅文件包含不在库文件，不能发起借阅流程",
+      //     duration: 5000,
+      //     type: "warning",
+      //   });
+      //   return;
+      // }
 
       m.set("fileTopestSecurityLevel", fileTopestSecurityLevel);
       m.set("formId", _self.formId);
@@ -731,10 +788,10 @@ export default {
       // console.log(judgeMap.get(""))
       axios
         .post("/dc/saveBorrowForm", m)
-        .then(function(response) {
+        .then(function (response) {
           console.log(response.data.data);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
           _self.loading = false;
         });
@@ -745,7 +802,7 @@ export default {
       var arg = [];
       axios
         .post("/dc/openShopingCart", JSON.stringify(arg))
-        .then(function(response) {
+        .then(function (response) {
           if (response.data.code) {
             // _self.shopingCartDialogVisible = true;
             // setTimeout(()=>{
@@ -767,7 +824,7 @@ export default {
               showClose: true,
               message: "打开失败!",
               duration: 2000,
-              type: "warning"
+              type: "warning",
             });
           }
         });
@@ -825,7 +882,7 @@ export default {
           showClose: true,
           message: "请选择需要借阅的档案",
           duration: 5000,
-          type: "warning"
+          type: "warning",
         });
         return;
       }
@@ -834,7 +891,7 @@ export default {
       setTimeout(() => {
         axios
           .post("/dc/getFormRelateDocument", _self.formId)
-          .then(function(response) {
+          .then(function (response) {
             let result = response.data;
             if (result.code == 1) {
               _self.tabledata = result.data;
@@ -853,7 +910,7 @@ export default {
       let _self = this;
       if (typeof _self.formId == "undefined" || _self.formId == "") {
         let a = [];
-        a = _self.tabledata.filter(function(item) {
+        a = _self.tabledata.filter(function (item) {
           return item.ID != varArg.ID;
         });
         _self.tabledata = a;
@@ -861,21 +918,21 @@ export default {
         let _self = this;
         let m = new Map();
         m.set("relateId", varArg.RELATE_ID);
-        axios.post("/dc/removeItemFromForm", m).then(function(response) {
+        axios.post("/dc/removeItemFromForm", m).then(function (response) {
           let result = response.data;
           if (result.code == 1) {
             _self.$message({
               showClose: true,
               message: "操作成功!",
               duration: 2000,
-              type: "success"
+              type: "success",
             });
           }
         });
         setTimeout(() => {
           axios
             .post("/dc/getFormRelateDocument", _self.formId)
-            .then(function(response) {
+            .then(function (response) {
               let result = response.data;
               _self.$refs.ShowShopingCart.loadGridView();
               if (result.code == 1) {
@@ -903,9 +960,9 @@ export default {
       let href = this.$router.resolve({
         path: "/viewdoc",
         query: {
-          id: condition
+          id: condition,
           //token: sessionStorage.getItem('access-token')
-        }
+        },
       });
       //console.log(href);
       window.open(href.href, "_blank");
@@ -919,13 +976,13 @@ export default {
       m.set("groupType", 1);
       axios
         .post("/admin/getGroups", JSON.stringify(m))
-        .then(function(response) {
+        .then(function (response) {
           _self.deptList = response.data.data;
           _self.currentRootGroupData = response.data.data;
           //_self.handleNodeClick(_self.deptList[0]);
           //console.log(JSON.stringify(_self.deptList));
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -947,17 +1004,17 @@ export default {
       if (indata.extended == false) {
         axios
           .post("/admin/getGroups", JSON.stringify(m))
-          .then(function(response) {
+          .then(function (response) {
             // _self.$message("获取子节点成功!");
             indata.children = response.data.data;
             indata.extended = true;
             //console.log(JSON.stringify(indata));
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error);
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>

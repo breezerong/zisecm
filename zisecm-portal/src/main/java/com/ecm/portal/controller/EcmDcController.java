@@ -1565,7 +1565,7 @@ public class EcmDcController extends ControllerAbstract {
 		try {
 			if ("".equals(formId)) {
 				formDataMap.put("TYPE_NAME", "借阅单");
-				formDataMap.put("FOLDER_ID", folderService.getObjectByPath(getToken(), "/表单/借阅单").getId());
+//				formDataMap.put("FOLDER_ID", folderService.getObjectByPath(getToken(), "/表单/借阅单").getId());
 				formDataMap.put("CODING", numberService.getNumber(getToken(), formDataMap));
 				formId = documentService.newObject(getToken(), formDataMap);
 				EcmRelation en = new EcmRelation();
