@@ -56,6 +56,8 @@ export default {
                 data:[],
                 columns:[
                     {prop:"projectName",label:"项目名称",fixed:true},
+                    {prop:"toNum", label:"发送方", fixed:true},
+                    {prop:"fromNum", label:"接收方", fixed:true},
                     {prop:"shopenICMcount",label:"应打开接口",fixed:true},
                     {prop:"haopenICMcount",label:"已打开接口",fixed:true},
                     {prop:"odopenICMcount",label:"逾期未打开接口",fixed:true},
