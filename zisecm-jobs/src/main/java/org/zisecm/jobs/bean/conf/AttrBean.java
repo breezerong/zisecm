@@ -9,6 +9,11 @@ public class AttrBean {
 	private String targetName;
 	
 	private String defaultValue;
+	
+	private String dataType;
+	
+	private String label;
+	
 	@XmlAttribute
 	public String getSourceName() {
 		return sourceName;
@@ -30,6 +35,21 @@ public class AttrBean {
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
+	@XmlAttribute
+	public String getDataType() {
+		return dataType;
+	}
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
+	@XmlAttribute
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
 	
 	
 }
