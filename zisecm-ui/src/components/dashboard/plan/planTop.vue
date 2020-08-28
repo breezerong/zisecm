@@ -2,16 +2,16 @@
      <div>  
         <el-form inline="true" >
         <el-row>
-          <el-col :span="4" v-if="isOnlyCNPE">
+          <el-col :span="4" v-if="isOnlyCNPE || isOnlyCNPEjh">
             <el-form-item ><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isCNPEjh">
+          <el-col :span="4" v-if="isOnlyCNPEjh">
           <el-form-item><ecm-data-icons  ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isCNPEjh">
+          <el-col :span="4" v-if="isOnlyCNPEjh">
           <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isCNPEjh">
+          <el-col :span="4" v-if="isOnlyCNPEjh">
           <el-form-item><ecm-data-icons  ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
           </el-col>
           <el-col :span="4" v-if="isCNPEjh">
@@ -32,17 +32,17 @@
           <ecm-data-icons ref="p3" :option="projectData3" v-if="isOnlyCNPEjk"></ecm-data-icons>
         </el-form-item>
         </el-col>
-        <el-col :span="4"v-if="isCNPEjk">
+        <el-col :span="4"v-if="isCNPEjk||isCNPEjkjh">
         <el-form-item>
           <ecm-data-icons ref="p4" :option="projectData4" v-if="isCNPEjk"></ecm-data-icons>
         </el-form-item>
         </el-col>
-        <el-col  :span="4"v-if="isCNPEjk">
+        <el-col  :span="4"v-if="isCNPEjk||isCNPEjkjh">
         <el-form-item>
           <ecm-data-icons ref="p5" :option="projectData5" v-if="isCNPEjk"></ecm-data-icons>
         </el-form-item>
         </el-col>
-        <el-col :span="4"v-if="isCNPEjk">
+        <el-col :span="4"v-if="isCNPEjk||isCNPEjkjh">
           <el-form-item>
             <ecm-data-icons ref="p6" :option="projectData6" v-if="isCNPEjk"></ecm-data-icons>
           </el-form-item>
@@ -95,7 +95,10 @@ export default {
       isOnlyCNPE:false,
       isCNPEjh:false,
       isCNPEwk:false,
+      isOnlyCNPEjh:false,
+      isCNPEjkjh:false,
       isOnlyCNPEwk:false,
+      CNPEjkjh:[],
       tempRoles:[],
       userRoles:[],
 
@@ -224,7 +227,7 @@ export default {
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
-            url: "/cnpe/DCManagement/receivingdc",
+            url: "/cnpe/MoreViewerBrowe/projectviewer",
           },
         ],
       },
@@ -235,7 +238,7 @@ export default {
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
-            url: "/cnpe/iedmanagement/IEDpublished",
+            url: "/cnpe/MoreViewerBrowe/projectviewer",
           },
         ],
       },
@@ -246,7 +249,7 @@ export default {
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
-            url: "/cnpe/iedmanagement/pendingied",
+            url: "/cnpe/MoreViewerBrowe/projectviewer",
           },
         ],
       },
@@ -257,7 +260,7 @@ export default {
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-delete",
-            url: "",
+            url: "/cnpe/icmmanagement/interfacemanual",
           },
         ],
       },
@@ -268,7 +271,7 @@ export default {
             count: 0,
             color: "rgb(255, 0, 0)",
             icon: "el-icon-document-delete",
-            url: "",
+            url: "/cnpe/icmmanagement/icmfeedback",
           },
         ],
       },
@@ -320,7 +323,7 @@ export default {
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/IEDpublished'
+            url: '/cnpe/DCManagement/deblockingdc'
           },
         ]
       },
@@ -333,7 +336,7 @@ export default {
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/iedmanagement/pendingied'
+            url: '/cnpe/DCManagement/dispenseDc'
           },
         ]
       },
@@ -346,7 +349,7 @@ export default {
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-delete',
-            url: ''
+            url: 'cnpe/DCManagement/Reject4Cnpe'
           }
         ]
       },
@@ -379,11 +382,14 @@ export default {
       this.initChart()
     },
      getUserRole(){    //获取文件类型，进行本地验证
+        var k = 0;
+        var s = 0;
         this.tempRoles=this.currentUser().roles
         for(var i = 0;i < this.tempRoles.length;i++){
           if(this.tempRoles[i] == '分包商文控人员'||this.tempRoles[i] =='CNPE_文控人员'||this.tempRoles[i] =='CNPE_计划人员'||
           this.tempRoles[i] =='CNPE_接口人员'||this.tempRoles[i] =='分包商接口人员'||this.tempRoles[i] =='分包商计划人员'){
-          this.userRoles[i] = this.tempRoles[i] 
+          this.userRoles[k] = this.tempRoles[i]
+          k++; 
           }
         }
         if(this.userRoles.length==1 && this.userRoles[0]=='CNPE_接口人员'){
@@ -391,8 +397,8 @@ export default {
           this.isCNPEjk=true
           }
         if(this.userRoles.length==1 && this.userRoles[0]=='CNPE_计划人员'){
-          this.isOnlyCNPEjk=true
-          this.isCNPEjk=true
+          this.isOnlyCNPEjh=true
+          this.isCNPEjh=true
           }
           if(this.userRoles.length==1 && this.userRoles[0]=='CNPE_文控人员'){
           this.isOnlyCNPEwk=true
@@ -401,15 +407,20 @@ export default {
           for(var i = 0;i < this.userRoles.length;i++){
             if(this.userRoles[i] == 'CNPE_计划人员')
             this.isCNPEjh = true
+            this.CNPEjkjh[i]=='CNPE_计划人员'
             if(this.userRoles[i] =='CNPE_接口人员')
             this.isCNPEjk = true
+            this.CNPEjkjh[i]=='CNPE_接口人员'
             if(this.userRoles[i] =='CNPE_文控人员')
             this.isCNPEwk = true
           }
           if(this.userRoles.length>1 ){
             this.isOnlyCNPE =true
           }
-        console.log()
+          if(this.CNPEjkjh.length==2){
+            this.isCNPEjkjh=true
+          }
+         console.log(this.userRoles)
       },
       loadStatisticWK(){
       let _self = this;
@@ -479,7 +490,7 @@ export default {
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
-                url: '/cnpe/iedmanagement/IEDpublished'
+                url: 'cnpe/MoreViewerBrowe/projectviewer'
               }]
             _self.projectDataDC.data = dataDC
             _self.$refs.dataDC.refresh()//.option=_self.projectData1;
@@ -612,7 +623,7 @@ export default {
         let mp=new Map();
         let data
         mp.set('projectName','@project');
-        axios.post("/dc/getTPLANNum",JSON.stringify(mp))
+        axios.post("/dc/getCNPETPLANNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{

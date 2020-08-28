@@ -91,7 +91,9 @@ public class ICMReportController extends ControllerAbstract{
 								  "hareplyICMcount",
 								  "odreplyICMcount"};
 			
-			StringBuffer sql = new StringBuffer("select C_PROJECT_NAME");
+			StringBuffer sql = new StringBuffer("select C_PROJECT_NAME, "
+											  + "(SELECT COUNT(*) FROM(SELECT DISTINCT C_PROJECT_NAME, C_CODE5 FROM ecm_document ed WHERE C_CODE5 IS NOT NULL AND C_PROJECT_NAME IS NOT NULL) AS tonum WHERE C_PROJECT_NAME=ed.C_PROJECT_NAME) as toNum, "
+											  + "(SELECT COUNT(*) FROM (SELECT DISTINCT C_PROJECT_NAME, C_CODE5, C_CODE6 FROM ecm_document ed WHERE C_PROJECT_NAME IS NOT NULL AND C_CODE5 IS NOT NULL AND C_CODE6 IS NOT NULL) AS fromnum WHERE C_PROJECT_NAME=ed.C_PROJECT_NAME) as fromNum");
 			
 			for(int i = 0; i < 9; i++) {
 				String column = sqlSetColumn[i];
@@ -111,8 +113,13 @@ public class ICMReportController extends ControllerAbstract{
 			List<Map<String, Object>> listStatistic = documentService.getMapList(getToken(), sql.toString());
 			
 	        for(Map<String, Object> item : listStatistic) {
-				projMap = new HashMap<String, Object>();
+	        	projMap = new HashMap<String, Object>();
 				projMap.put("projectName", item.get("C_PROJECT_NAME"));		
+				
+				int toNum = (int)item.get("toNum");
+				projMap.put("toNum", toNum);
+				int fromNum = (int)item.get("fromNum");
+				projMap.put("fromNum", fromNum);
 				
 		        for(int i = 0; i < 9; i++) {
 					int icmTableGain = (int)item.get(sqlSetColumn[i]);

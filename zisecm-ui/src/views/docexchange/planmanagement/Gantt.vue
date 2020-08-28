@@ -15,10 +15,10 @@
                     <ecm-gantt v-if="tables.mainGrid.enabled" ref="mainGrid" :data="tables.mainGrid.data" :edit="false" width="100%"
                     border stripe lazy  highlight-current-row
                     :start-date="tables.mainGrid.startDate" :end-date="tables.mainGrid.endDate"
-                    :load="loadData" :height="layout.height/2-115"
+                    :load="loadData" :height="layout.height/2-15"
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                      @row-click="onRowClick">
-                        <el-table-column prop="wbs" :label="$t('application.wbs')" fixed prv="name" width="280"></el-table-column>
+                        <el-table-column prop="wbs" :label="$t('application.wbs')" fixed prv="name" width="330"></el-table-column>
                     </ecm-gantt>
 				</el-col>
 			</el-row>
@@ -26,7 +26,7 @@
 				<el-col :span="24">
 					<el-tabs v-model="tabs.tabAcitve">
 						<el-tab-pane name="relationIED" label="相关IED">
-							<DataGrid ref="relationIEDGrid" v-bind="tables.relationIEDGrid" :tableHeight="layout.height/2-115"></DataGrid>
+							<DataGrid ref="relationIEDGrid" v-bind="tables.relationIEDGrid" :tableHeight="layout.height/2-195"></DataGrid>
 						</el-tab-pane>
 					</el-tabs>
 				</el-col>
@@ -47,11 +47,11 @@ export default {
                 mainGrid:{
                     enabled:false,
                     columns:[
-                        {prop:"wbs",label: this.$t('application.tcWbs'),width:"380"},
-                        {prop:"name",label:this.$t('application.tcName'),width:"250"},
+                        {prop:"wbs",label: this.$t('application.tcWbs'),width:"400"},
+                        {prop:"name",label:this.$t('application.tcName'),width:"320"},
                         {prop:"projectName",label:this.$t('application.projectName'),width:"200"},
-                        {prop:"startDate",label:this.$t('application.startDate'),width:"200"},
-                        {prop:"endDate",label:this.$t('application.EndDate'),width:"200"}
+                        {prop:"startDate",label:this.$t('application.startDate'),width:"120"},
+                        {prop:"endDate",label:this.$t('application.EndDate'),width:"120"}
                     ],
                     data:[],
                     startDate:"",

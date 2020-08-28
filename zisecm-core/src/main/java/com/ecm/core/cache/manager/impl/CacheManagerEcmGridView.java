@@ -47,9 +47,19 @@ public class CacheManagerEcmGridView implements ICacheManager<EcmGridView>{
 		if(ep != null) {
 			ep = ecmGridViewMapper.selectByPrimaryKey(ep.getId());
 			CacheManagerOper.getEcmGridViews().put(key, ep);
-			return ep;
+		}else {
+			List<EcmGridView> list = ecmGridViewMapper.selectByCondition("NAME='"+key+"'");
+			if(list.size()>0) {
+				ep = list.get(0);
+				
+				CacheManagerOper.getEcmGridViews().put(ep.getName(), ep);
+			}
 		}
-		return null;
+		if(ep != null) {
+			List<EcmGridViewItem> items = ecmGridViewItemMapper.selectByParentId(ep.getId());
+			ep.setGridViewItems(items);
+		}
+		return ep;
 	}
 	
 }

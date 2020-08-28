@@ -153,7 +153,7 @@ export default {
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
-                url: '/cnpe/iedmanagement/IEDpublished'
+                url: '/cnpe/MoreViewerBrowe/projectviewer'
               }]
             _self.projectDataDC.data = dataDC
             _self.$refs.dataDC.refresh()//.option=_self.projectData1;
@@ -180,7 +180,6 @@ export default {
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/cnpe/iedmanagement/IEDpublished'
               }]
             _self.projectDataIED.data = datas
             _self.$refs.dataIED.refresh()

@@ -122,13 +122,16 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				String flowElementId = arg0.getCurrentFlowElement().getId();
 				String formId = varMap.get("formId").toString();
 				List<Map<String, Object>> childList = null;
-				String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
+//				String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
+//						+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='" + formId
+//						+ "'  and a.NAME='irel_borrow' ";
+				String sql = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
 						+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='" + formId
 						+ "'  and a.NAME='irel_borrow' ";
 				childList = documentService.getMapList(ecmSession.getToken(), sql);
 				Map<String, Object> formObj = documentService.getObjectMapById(ecmSession.getToken(), formId);
 				Date grantDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-						.parse(formObj.get("C_END_DATE").toString());
+						.parse(formObj.get("C_ITEM2_DATE").toString());
 
 				if ("automaticAuthorization".equals(flowElementId)) {
 					String userName = varMap.get("startUser").toString();
@@ -299,7 +302,10 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			Date grantDate, int permit)
 			throws EcmException, AccessDeniedException, NoPermissionException, ParseException {
 		if ("图册".equals(docObj.getTypeName())) {
-			String sqlSub = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
+//			String sqlSub = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE,b.C_ARCHIVE_DATE,b.C_ARCHIVE_UNIT"
+//					+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='"
+//					+ docObj.getId() + "' and a.NAME='" + relationName + "' ";
+			String sqlSub = "select a.ID as RELATE_ID ,b.ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX,b.NAME,b.CODING,b.C_SECURITY_LEVEL,b.REVISION,b.TITLE,b.CREATOR,b.TYPE_NAME,b.SUB_TYPE,b.CREATION_DATE"
 					+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID " + " and a.PARENT_ID='"
 					+ docObj.getId() + "' and a.NAME='" + relationName + "' ";
 			List<Map<String, Object>> childSubList = documentService.getMapList(ecmSession.getToken(), sqlSub);
@@ -327,9 +333,9 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 			// 初始化变量栈
 			varMap.put("borrowType", ecmObject.getSubType());
 
-			// 是否本部门文档
-			varMap.put("departmentDoc",
-					ecmObject.getAttributes().get("C_DEPARTMENT").equals(ecmObject.getAttributes().get("C_DESC1")));
+			// 是否本部门文档,(暂时注释掉)
+//			varMap.put("departmentDoc",ecmObject.getAttributes().get("C_DEPARTMENT").equals(ecmObject.getAttributes().get("C_DESC1")));
+			varMap.put("departmentDoc",false);
 
 			// 批次文件是否有商密文件
 			String fileTopestSecurityLevel = varMap.get("fileTopestSecurityLevel") == null ? ""
@@ -373,7 +379,7 @@ public class StartExecutorListener implements ExecutionListener, JavaDelegate, T
 				// varMap.put("taskUser_owner_leader",
 				// ecmObject.getAttributes().get("C_REVIEWER1"));
 				varMap.put("assigneeList",
-						getApprover(ecmSession, ecmObject.getAttributes().get("C_REVIEWER1").toString()));
+						getApprover(ecmSession, ecmObject.getAttributes().get("C_REVIEWER1").toString()));			
 				varMap.put("taskUser_doc_leader",
 						getApprover(ecmSession, ecmObject.getAttributes().get("C_REVIEWER2").toString()));
 				varMap.put("taskUser_leader_in_charge",
