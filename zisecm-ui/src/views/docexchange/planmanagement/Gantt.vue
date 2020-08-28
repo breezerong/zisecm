@@ -18,7 +18,7 @@
                     :load="loadData" :height="layout.height/2-15"
                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                      @row-click="onRowClick">
-                        <el-table-column prop="wbs" :label="$t('application.wbs')" fixed prv="name" width="280"></el-table-column>
+                        <el-table-column prop="wbs" :label="$t('application.wbs')" fixed prv="name" width="330"></el-table-column>
                     </ecm-gantt>
 				</el-col>
 			</el-row>
