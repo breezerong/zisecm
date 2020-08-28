@@ -106,6 +106,7 @@ export default {
       let biObj = this.$refs.borrowItem
       if(biObj != undefined){
         _self.borrowVisible = true
+        _self.borrowDialogVisible = false;
         this.$refs.borrowItem.loadData(val);
       }else{
          _self.borrowItemList = val
