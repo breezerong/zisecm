@@ -117,7 +117,7 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-          axios.post("/dc/getIEDDash",JSON.stringify(mp))
+          axios.post("/dc/getSubIEDDash",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                     let result=response.data.data;

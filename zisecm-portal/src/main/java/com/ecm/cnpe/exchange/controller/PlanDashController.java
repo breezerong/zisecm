@@ -74,7 +74,52 @@ public class PlanDashController extends ControllerAbstract{
 	return mp;
 		}
 	
-	
+	@RequestMapping(value = "/dc/getSubIEDDash", method = RequestMethod.POST) 		//获取IED图表信息
+	@ResponseBody
+	public Map<String, Object> getSubIEDDash(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
+		String whereSql="";
+		if(projectName!=null&&!"".equals(projectName)) {
+			if("@project".equals(projectName)) {
+				LoginUser userObj=null;
+				try {
+					userObj=getSession().getCurrentUser();
+					List<String> projectList= userObj.getMyProjects();
+					whereSql+=" and (";
+					for(int i=0;i<projectList.size();i++) {
+						String project=projectList.get(i);
+						if(i==0) {
+							whereSql+="C_PROJECT_NAME ='"+project+"'";
+						}else {
+							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+						}
+					}
+					whereSql+=")";
+				} catch (AccessDeniedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
+			}
+		}
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company= userObj.getCompany();
+		String sql="select STATUS ,count(*) as c from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND ((STATUS in('审核中','已驳回','变更中','已变更') or (status ='已生效' and c_is_released='1' and is_current='1'))) AND C_COMPANY='"+company+"' group by STATUS";
+		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
+		Map<String,Object> d = new HashMap();
+		Map<String,Object> result=new HashMap<>();
+		for(int i=0;i<data.size();i++) {
+			d = data.get(i);
+			result.put(d.get("STATUS").toString(), d.get("c"));
+		}
+		mp.put("code", "1");
+		mp.put("data", result);
+		return mp;	
+	}
 	
 	
 	
@@ -109,7 +154,7 @@ public class PlanDashController extends ControllerAbstract{
 				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
 			}
 		}
-		String sql="select STATUS ,count(*) as c from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND STATUS in('审核中','已生效','已驳回','变更中','已变更','已生效') group by STATUS";
+		String sql="select STATUS ,count(*) as c from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND STATUS in('审核中','已生效','已驳回','变更中','已变更','已生效') and c_is_released='1' and is_current='1' group by STATUS";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> d = new HashMap();
 		Map<String,Object> result=new HashMap<>();
@@ -152,7 +197,10 @@ public class PlanDashController extends ControllerAbstract{
 				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
 			}
 		}
-		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND STATUS in('审核中','已生效','已驳回','变更中','已变更','已生效')";
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company = userObj.getCompany();
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND status='已生效' and c_is_released='1' and is_current='1' and c_company = '"+company+"'";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
@@ -198,7 +246,10 @@ public class PlanDashController extends ControllerAbstract{
 				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
 			}
 		}
-		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND STATUS = '已生效'";
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company = userObj.getCompany();
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' and c_is_released='1' and is_current='1' and c_company='"+company+"'"+whereSql+"AND STATUS = '已生效'";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
@@ -413,7 +464,7 @@ public class PlanDashController extends ControllerAbstract{
 				try {
 					userObj=getSession().getCurrentUser();
 					List<String> projectList= userObj.getMyProjects();
-					whereSql+=" and (";
+					whereSql+=" (";
 					for(int i=0;i<projectList.size();i++) {
 						String project=projectList.get(i);
 						if(i==0) {
@@ -421,6 +472,7 @@ public class PlanDashController extends ControllerAbstract{
 						}else {
 							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
 						}
+						
 					}
 					whereSql+=")";
 				} catch (AccessDeniedException e) {
@@ -428,17 +480,22 @@ public class PlanDashController extends ControllerAbstract{
 					e.printStackTrace();
 				}
 			}else {
-				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
+				whereSql+=" C_PROJECT_NAME in("+projectName+")";
 			}
+			
 		}
-		String sql="select count(*) as count from ecm_document WHERE C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' "+whereSql;
+		String getLoginName=getSession().getCurrentUser().getLoginName();
+		String getLCompany=getSession().getCurrentUser().getCompany();
+		String sql="select count(*) as count from "
+			     + "(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
+			     + "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
+			     + "C_IS_RELEASED=1  and("+whereSql+" or  TO_NAME='"+getLCompany+"')";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
-		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
 		Map<String,Object> result=new HashMap<String, Object>();
 		for(int i=0;i<data.size();i++) {
 			d = data.get(i);
-			System.out.println(d.get("count").toString());
+			//System.out.println(d.get("count").toString());
 			result.put("num", d.get("count"));
 		}
 		mp.put("code", "1");
@@ -529,6 +586,53 @@ public class PlanDashController extends ControllerAbstract{
 		LoginUser userObj=null;
 		userObj=getSession().getCurrentUser();
 		String company= userObj.getCompany();
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划' "+whereSql;
+		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
+		Map<String,Object> d = new HashMap<String,Object>();
+		Map<String,Object> result=new HashMap<String, Object>();
+		for(int i=0;i<data.size();i++) {
+			d = data.get(i);
+			result.put("num", d.get("count"));
+		}
+		mp.put("code", "1");
+		mp.put("data", result);
+	return mp;
+		}
+	
+	@RequestMapping(value = "/dc/getSubPlanNum", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getSubPlanNum(@RequestBody String argStr) throws Exception {							//获取当前文函总数
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
+		String whereSql="";
+		if(projectName!=null&&!"".equals(projectName)) {
+			if("@project".equals(projectName)) {
+				LoginUser userObj=null;
+				try {
+					userObj=getSession().getCurrentUser();
+					List<String> projectList= userObj.getMyProjects();
+					whereSql+=" and (";
+					for(int i=0;i<projectList.size();i++) {
+						String project=projectList.get(i);
+						if(i==0) {
+							whereSql+="C_PROJECT_NAME ='"+project+"'";
+						}else {
+							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+						}
+					}
+					whereSql+=")";
+				} catch (AccessDeniedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
+			}
+		}
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company= userObj.getCompany();
 		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划' "+"and C_TO='"+company+"'"+whereSql;
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
@@ -545,8 +649,6 @@ public class PlanDashController extends ControllerAbstract{
 		}
 	
 	
-	
-	
 	@RequestMapping(value = "/dc/getProjectNum", method = RequestMethod.POST) 
 	@ResponseBody
 	public Map<String, Object> getProjectNum(@RequestBody String argStr) throws Exception {							//获取当前项目总数
@@ -558,6 +660,7 @@ public class PlanDashController extends ControllerAbstract{
 			if("@project".equals(projectName)) {
 				LoginUser userObj=null;
 				try {
+					
 					userObj=getSession().getCurrentUser();
 					List<String> projectList= userObj.getMyProjects();
 					whereSql+=" and (";
@@ -636,7 +739,7 @@ public class PlanDashController extends ControllerAbstract{
 				+ "(select id from ecm_user where login_name='"+ name + "')))";
 		String Plansql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划' "+whereSql;
 		String Tlansql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' "+whereSql+"and c_company ='"+company+"'";
-		String Iedsql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' and C_IS_RELEASED ='1' and IS_CURRENT ='1' "+whereSql+"AND STATUS = '已生效'"+"AND C_COMPANY='"+company+"'";
+		String Iedsql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND status='已生效' and c_is_released='1' and is_current='1' and c_company = '"+company+"'";
 		String Icmsql="select count(*) as count from ecm_document WHERE TYPE_NAME='ICM'"+whereSql+"AND C_COMPANY='"+company+"'";
 		String sqlList = "select ("+
 				Projectsql+") as projectNum, ("+
@@ -646,7 +749,6 @@ public class PlanDashController extends ControllerAbstract{
 				Icmsql+") as icmNum";
 		try{
 			List<Map<String, Object>> numList = ecmDocument.executeSQL(sqlList);
-			System.out.println(Iedsql);
 			mp.put("projectNum",numList.get(0).get("projectNum"));
 			mp.put("planNum", numList.get(0).get("planNum"));
 			mp.put("thereplanNum",numList.get(0).get("thereplanNum"));

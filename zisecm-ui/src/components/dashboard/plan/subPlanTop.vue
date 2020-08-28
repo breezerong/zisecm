@@ -24,7 +24,7 @@
       <el-form-item><ecm-data-icons :option="projectData"></ecm-data-icons></el-form-item>
       </el-col>
       <el-col :span="4" v-if="isSubwk">
-      <el-form-item><ecm-data-icons :option="projectDataDC"></ecm-data-icons></el-form-item>
+      <el-form-item><ecm-data-icons :option="projectDataDCnum"></ecm-data-icons></el-form-item>
       </el-col>
       <el-col :span="4" v-if="isSubwk">
       <el-form-item><ecm-data-icons :option="projectDataReceivingdc"></ecm-data-icons></el-form-item>
@@ -121,7 +121,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data:[{title: '文函',
-                count: 11,
+                count: 0,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
                 url: 'cnpe/DCManagement/ReceivedDC4Cnpe'}],
@@ -249,13 +249,13 @@ export default {
           },
         ]
       },
-      projectDataDC: {
+      projectDataDCnum: {
         color: 'rgb(63, 161, 255)',
         span: 24,
         data: [
           {
             title: '文函',
-            count: 0,
+            count: 15,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document',
             url: '/cnpe/DCManagement/receivedDC'
@@ -309,7 +309,6 @@ export default {
     //_self.docChart1 = _self.echarts.init(document.getElementById('docChart1'));
     //_self.initChart();
     _self.getIEDNum()
-    _self.getDCNum()
     _self.getTPLANNum()
     _self.getProjectNum()
     _self.getPublishedIED()
@@ -317,8 +316,9 @@ export default {
     _self.getRejectIED()
     _self.getPlanNum()
     this.getUserRole()
-    this.loadStatisticICM()
+    this.loadStatisticWK()
     this.loadStatistic()
+    this.getDCNum()
     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
@@ -368,6 +368,7 @@ export default {
     loadStatistic() {
       let _self = this;
       let mp = new Map();
+       mp.set('projectName','@project');
       axios
         .post("/dc/getSubIcm", JSON.stringify(mp))
         .then(function (response) {
@@ -387,16 +388,17 @@ export default {
           console.log(error);
         });
     },
-    loadStatisticICM(){
+    loadStatisticWK(){
       let _self = this;
       let mp=new Map();
+       mp.set('projectName','@project');
       axios
         axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
         .then(function (response) {
           if(response.data.code==1){
             console.log(response.data)
               _self.projectData.data[0].count=response.data.sumNum;
-              _self.projectDataDC.data[0].count=response.data.dcNum;
+              _self.projectDataDCnum.data[0].count=response.data.dcNum;
               _self.projectDataReceivingdc.data[0].count=response.data.receivedNum;
               _self.projectDataSubmissiondc.data[0].count=response.data.submissiondcNum;
               _self.projectDataDispensedc.data[0].count=response.data.dispenseNum;
@@ -414,6 +416,7 @@ export default {
         mp.set('projectName','@project');
         axios.post("/dc/getDCNum",JSON.stringify(mp))
             .then(function(response) {
+                
                 if(response.data.code==1){
                 dataDC = [{
                 title: '文函',
@@ -421,8 +424,10 @@ export default {
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
                 url: '/cnpe/iedmanagement/IEDpublished'
+              
               }]
             _self.projectDataDC.data = dataDC
+            //console.log(_self.projectDataDC.data )
             _self.$refs.dataDC.refresh()//.option=_self.projectData1;
       }
             })
@@ -496,7 +501,7 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getPlanNum",JSON.stringify(mp))
+        axios.post("/dc/getSubPlanNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
