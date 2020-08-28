@@ -1,7 +1,26 @@
 <template>
-  <div  class="components-container">
+  <div class="components-container">
+    <el-dialog :title="$t('application.borrow')" width="95%" :visible.sync="borrowDialogVisible" :close-on-click-modal="false">
+      <ShowShopingCart
+        ref="ShowShopingCart"
+        width="100%"
+        v-bind:formId="formId"
+        v-bind:excludeRows="tabledata"
+        @startBorrow ="showBorrow"
+        @showOrHiden ="closeShopcar"
+      ></ShowShopingCart>
+    </el-dialog>
+    <el-dialog :title="$t('application.borrow')" width="95%" :visible.sync="borrowVisible" :close-on-click-modal="false">
+      <borrow1
+        ref="borrowItem"
+        width="100%"
+        :formEditPermision=1
+        :borrowItemList="borrowItemList"
+        @showOrHiden ="closeBorrow"
+      ></borrow1>
+    </el-dialog>
     <el-row>
-      <el-button type="primary" plain icon="save" @click="updateDept()">更新部门</el-button> 
+      <el-button type="primary" plain icon="save" @click="updateDept()">更新部门</el-button>
     </el-row>
     <el-row>
       <el-input type="textarea" :rows="6" v-model="optionMessage"></el-input>
@@ -23,7 +42,8 @@
            <el-button type="primary" plain icon="save" @click="deployProcess()">发布流程</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程</el-button> 
            <el-button type="primary" plain icon="save" @click="startWorkflow('BianJiaoShenPi')">启动编校审批流程</el-button> 
-           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程-弹出表单</el-button> 
+           <el-button type="primary" plain icon="save" @click="startWorkflow('process_borrow')">启动借阅流程-弹出表单</el-button>
+           <el-button type="primary" plain icon="save" @click="showShopCar()">借阅单</el-button> 
            <el-button type="primary" plain icon="save" @click="testWorkflow()">完成任务</el-button> 
          </el-col>
       </el-row>
@@ -45,92 +65,143 @@
       </template>
     </split-pane>
   </div>
-  
 </template>
 
 <script type="text/javascript">
-
+import ShowShopingCart from "@/components/form/ShopingCart";
+import borrow1 from "@/components/form/Borrow1.vue";
 export default {
+  components: {
+    ShowShopingCart: ShowShopingCart,
+    borrow1: borrow1
+  },
   name: "TestComp2",
   permit: 1,
   data() {
     return {
-      loading:false,
-      optionMessage:"",
+      loading: false,
+      //以下五个参数都是借阅单用到的
+      borrowDialogVisible: false,
+      borrowVisible:false,
+      formId:'',
+      tabledata:[],
+      borrowItemList:[],
+      optionMessage: "",
       wfData: {
-        formId:""
+        formId: "",
       },
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
     };
   },
   methods: {
-     resize() {
-      console.log('resize')
+    resize() {
+      console.log("resize");
     },
-    updateDept(){
+    showShopCar() {
       let _self = this;
-      _self.loading =true;
-      axios.post("/tools/updateDepartment").then(function(response){
-        _self.optionMessage = response.data.data;
-        _self.loading = false;
-      }).catch(function(error){
-        console.log(error);
-        _self.loading = false;
-      });
+      _self.borrowDialogVisible = true;
     },
-    startWorkflow(processInstanceKey){
+    showBorrow(val){
+      let _self = this
+      let biObj = this.$refs.borrowItem
+      if(biObj != undefined){
+        _self.borrowVisible = true
+        this.$refs.borrowItem.loadData(val);
+      }else{
+         _self.borrowItemList = val
+        _self.borrowDialogVisible = false;
+        _self.borrowVisible = true
+      }
+      // let biObj = this.$refs.borrowItem
+      // if(_self.biObj == undefined){
+        
+      // }
+     
+    },
+    closeShopcar(){
+      let _self = this
+      _self.borrowDialogVisible = false
+    },
+    closeBorrow(){
+      let _self = this
+      _self.borrowVisible = false
+    },
+    updateDept() {
       let _self = this;
-      _self.loading =true;
-      let m = new  Map();
-      m.set("formId",_self.wfData.formId);
+      _self.loading = true;
+      axios
+        .post("/tools/updateDepartment")
+        .then(function (response) {
+          _self.optionMessage = response.data.data;
+          _self.loading = false;
+        })
+        .catch(function (error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+    startWorkflow(processInstanceKey) {
+      let _self = this;
+      _self.loading = true;
+      let m = new Map();
+      m.set("formId", _self.wfData.formId);
       switch (processInstanceKey) {
         case "BianJiaoShenPi":
           m.set("processName", "编校审批");
           break;
-      
+
         case "process_borrow":
           m.set("processName", "借阅流程");
           break;
-      
+
         default:
-         break;
+          break;
       }
       m.set("processInstanceKey", processInstanceKey);
-      axios.post("/workflow/startWorkflow",JSON.stringify(m)).then(function(response){
-        console.log(response);  
-        _self.loading = false;
-      }).catch(function(error){
-        console.log(error);
-        _self.loading = false;
-      });
+      axios
+        .post("/workflow/startWorkflow", JSON.stringify(m))
+        .then(function (response) {
+          console.log(response);
+          _self.loading = false;
+        })
+        .catch(function (error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
-    testWorkflow(){
+    testWorkflow() {
       let _self = this;
-      _self.loading =true;
-      let m = new  Map();
-      m.set("formId",_self.wfData.formId);
-      axios.post("/workflow/testWorkflow",JSON.stringify(m)).then(function(response){
-        console.log(response);  
-        _self.loading = false;
-      }).catch(function(error){
-        console.log(error);
-        _self.loading = false;
-      });
+      _self.loading = true;
+      let m = new Map();
+      m.set("formId", _self.wfData.formId);
+      axios
+        .post("/workflow/testWorkflow", JSON.stringify(m))
+        .then(function (response) {
+          console.log(response);
+          _self.loading = false;
+        })
+        .catch(function (error) {
+          console.log(error);
+          _self.loading = false;
+        });
     },
-      deployProcess(){
+    deployProcess() {
       let _self = this;
-      _self.loading =true;
-      let m = new  Map();
-      m.set("formId",_self.wfData.formId);
-      axios.post("/workflow/deploymentProcess",JSON.stringify(m)).then(function(response){
-        console.log(response);  
-        _self.loading = false;
-      }).catch(function(error){
-        console.log(error);
-        _self.loading = false;
-      });
-    }
-  }
+      _self.loading = true;
+      let m = new Map();
+      m.set("formId", _self.wfData.formId);
+      axios
+        .post("/workflow/deploymentProcess", JSON.stringify(m))
+        .then(function (response) {
+          console.log(response);
+          _self.loading = false;
+        })
+        .catch(function (error) {
+          console.log(error);
+          _self.loading = false;
+        });
+    },
+  },
 };
 </script>
 
@@ -153,29 +224,29 @@ a {
 }
 
 .components-container {
-    position: relative;
-    height: 100vh;
-  }
+  position: relative;
+  height: 100vh;
+}
 
-  .left-container {
-    background-color: #F38181;
-    height: 100%;
-  }
+.left-container {
+  background-color: #f38181;
+  height: 100%;
+}
 
-  .right-container {
-    background-color: #FCE38A;
-    height: 200px;
-  }
+.right-container {
+  background-color: #fce38a;
+  height: 200px;
+}
 
-  .top-container {
-    background-color: #FCE38A;
-    width: 100%;
-    height: 100%;
-  }
+.top-container {
+  background-color: #fce38a;
+  width: 100%;
+  height: 100%;
+}
 
-  .bottom-container {
-    width: 100%;
-    background-color: #95E1D3;
-    height: 100%;
-  }
+.bottom-container {
+  width: 100%;
+  background-color: #95e1d3;
+  height: 100%;
+}
 </style>

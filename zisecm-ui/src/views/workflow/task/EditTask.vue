@@ -10,7 +10,7 @@
                 v-model="taskForm[approver.formAttribute]"
                 v-bind:inputValue="taskForm[approver.formAttribute]"
                 v-bind:roleName="approver.roleName"
-                :buttonType = "formEnableType != 'TodoTask'"
+                :buttonType ="formEnableType != 'TodoTask'"
               ></UserSelectInput>
             </el-form-item>
           </div>

@@ -46,6 +46,7 @@
                             @rowclick="rowClick"
                             :isEditProperty="false"
                             :isshowSelection="false"
+                            showOptions="查看内容"
                             >
                                 
                             </DataGrid>
@@ -162,6 +163,7 @@
                                             :isInitData="false"
                                             :isshowCustom="true"
                                             :isEditProperty="false"
+                                            :isShowMoreOption="false"
                                             @selectchange="icmTransferSelect"
                                             ></DataGrid>
                             </el-tab-pane>
@@ -198,6 +200,8 @@
                             gridViewName="ICMGrid"
                             :isshowCustom="true"
                             :isInitData="false"
+                            :isshowicon="false"
+                            :isShowMoreOption="false"
                             :isEditProperty="false"
                             @rowclick="rowClickICM"
                             :isshowSelection="false"
@@ -220,6 +224,7 @@
                                             :isshowCustom="true"
                                             :isEditProperty="false"
                                             @selectchange="icmTransferSelect"
+                                            showOptions="查看内容"
                                             ></DataGrid>
                                     </el-tab-pane>
                             <el-tab-pane label="接口意见" name="t02">
@@ -238,6 +243,7 @@
                                         :isshowCustom="true"
                                         :isEditProperty="false"
                                         @selectchange="icmCommentsSelect"
+                                        showOptions="查看内容"
                                         ></DataGrid>
                                 
                             </el-tab-pane>
@@ -275,6 +281,7 @@
                             :isEditProperty="false"
                             :isshowCustom="true"
                             :isInitData="false"
+                            showOptions="查看内容"
                             ></DataGrid>
                     </el-row>
                     <el-row>
@@ -474,13 +481,13 @@ export default {
                 let user = this.currentUser();
                 if(user.userType==2 && user.company!=null){
                     this.$refs.mainDataGrid.condition=this.condition=" TYPE_NAME='"+this.typeName+"' "
-                    +"and (STATUS is not null and STATUS!='' and STATUS!='新建')"
+                    +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认')"
                     +" and C_PROJECT_NAME = '"+this.projectName+"' AND (C_COMPANY='"+user.company +"'"
                     +" or C_TO like'%"+user.company+"%')";
                     this.$refs.mainDataGrid.loadGridData();
                 }else{
                     this.$refs.mainDataGrid.condition=this.condition=" TYPE_NAME='"+this.typeName+"' "
-                    +"and (STATUS is not null and STATUS!='' and STATUS!='新建') "
+                    +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认') "
                     +"and C_PROJECT_NAME = '"+this.projectName+"' ";
                     this.$refs.mainDataGrid.loadGridData();
                 }
