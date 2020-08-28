@@ -8,7 +8,7 @@
           <el-col :span="4" v-if="isCNPEjh">
           <el-form-item><ecm-data-icons  ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4"v-if="isCNPEjh">
+          <el-col :span="4" v-if="isCNPEjh">
           <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
           </el-col>
           <el-col :span="4" v-if="isCNPEjh">
