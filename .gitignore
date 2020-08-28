@@ -82,3 +82,4 @@ zisecm-code-generator/target/
 zisecm-portal/src/main/resources/flowable.cfg.xml
 zisecm-jobs/.classpath
 zisecm-jobs/.classpath
+zisecm-ui/yarn.lock

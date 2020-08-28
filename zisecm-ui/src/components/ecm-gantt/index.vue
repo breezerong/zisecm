@@ -51,6 +51,7 @@
           fixed
           :label="$t('application.wbsName')"
           min-width="200"
+          width="300"
           class-name="name-col"
           :prop="selfProps.name"
           :formatter="nameFormatter"
@@ -77,23 +78,13 @@
                 scope.row[selfProps.name]
                 }}
               </span>
-              <!-- <span class="name-col-edit">
-                <i
-                  class="el-icon-remove-outline name-col-icon task-remove"
-                  @click="emitTaskRemove(scope.row)"
-                ></i>
-                <i
-                  class="el-icon-circle-plus-outline name-col-icon task-add"
-                  @click="emitTaskAdd(scope.row)"
-                ></i>
-              </span> -->
             </strong>
           </template>
         </el-table-column>
         <el-table-column
           :resizable="false"
           fixed
-          width="160"
+          width="110"
           align="center"
           :prop="selfProps.startDate"
           :label="$t('application.startDate')"
@@ -122,7 +113,7 @@
         <el-table-column
           fixed
           :resizable="false"
-          width="160"
+          width="110"
           align="center"
           :prop="selfProps.endDate"
           :label="$t('application.endDate')"
