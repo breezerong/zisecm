@@ -32,21 +32,21 @@ export default {
         span: 6,
         data: [
           {
-            title: '三级计划',
+            title: this.$t('application.TPlan'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
             url: '/cnpe/plan/threelevelplan'
           },
           {
-            title: 'IED',
+            title: this.$t('application.IEDPublished'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
             url: '/cnpe/iedmanagement/IEDpublished'
           },
           {
-            title: 'ICM',
+            title: this.$t('application.ICM'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',

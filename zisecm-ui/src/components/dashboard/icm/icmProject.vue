@@ -25,14 +25,14 @@ export default {
         span: 6,
         data: [
           {
-            title: 'ICM',
+            title: this.$t('application.ICM'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
             url: '/cnpe/icmmanagement/interfacemanual'
           },
           {
-            title: '反馈ICM',
+            title: this.$t('application.FeedbackICM'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
