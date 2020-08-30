@@ -134,7 +134,7 @@ export default {
     },
     loadDocChart(chartObj, indata){
       chartObj.setOption({
-            title: { text: this.$t('application.IEDDash') },
+            title: { text: this.$t('application.DCDash') },
             tooltip: {},
             grid: {  
               left: '10%',

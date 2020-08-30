@@ -47,7 +47,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data: [{
-            title:_self.$t('application.TPlan'),
+            title:this.$t('application.TPlan'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
@@ -57,7 +57,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data: [{
-            title: _self.$t('application.IEDPublished'),
+            title: this.$t('application.IEDPublished'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
@@ -67,7 +67,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data: [{
-            title: _self.$t('application.ICM'),
+            title: this.$t('application.ICM'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document',
@@ -134,7 +134,7 @@ export default {
     },
     loadDocChart(chartObj, indata){
       chartObj.setOption({
-            title: { text: this.$t('application.IEDDash') },
+            title: { text: this.$t('application.DCDash') },
             tooltip: {},
             grid: {  
               left: '10%',
