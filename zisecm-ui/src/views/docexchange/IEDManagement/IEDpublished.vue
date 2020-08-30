@@ -309,7 +309,7 @@ export default {
                 this.forms.headForm.project = this.project
             }
             if(_self.forms.headForm.project != undefined){
-                k1+=" AND C_PROJECT_NAME in ('"+_self.forms.headForm.project +"')"
+                k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
 
             let user = this.currentUser();
