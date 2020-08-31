@@ -237,10 +237,13 @@
     "ToDistributedDC":"Dispense DC",
     "DeblockingDC":"Deblocking DC",
     "PendingIED":"PendingIED",
-    "FeedbackICM":"Feedback ICM",
+    "FeedbackICM":"Delay Open",
     "IEDDash" : "IED Dash",
     "DCDash" : "Documents Dash",
-    "nums":"Numbers"
+    "nums":"Numbers",
+    "delayFeedback": "DelayFeedback",
+    "delayConfirm": "DelayConfirm",
+    "delayOpenConfirm":"DelayOpenConfirm"
 },
 "skin": {
     "Blue": "Blue",
@@ -352,7 +355,9 @@
     "companyManage":"Company Management",
     "AddressList":"Address List",
     "delayFeedback": "DelayFeedback",
-    "delayConfirm": "DelayConfirm"
+    "delayConfirm": "DelayConfirm",
+    "delayOpenConfirm":"DelayOpenConfirm",
+    "delayNum":"DelayReply Nums"
 },
 "message": {
     "saveSuccess":"Save Success",

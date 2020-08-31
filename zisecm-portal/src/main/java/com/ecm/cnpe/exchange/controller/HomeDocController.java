@@ -100,7 +100,12 @@ public class HomeDocController extends ControllerAbstract {
 		String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
 				+ " (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')and "+whereSql+" ";
 		String sqlicmNum = "select count(*) as icmNum from ecm_document ed where TYPE_NAME='ICM' and "+ whereSql +"";
-		String sqlfeedbackicmNum = "select count(*) as feedbackicmNum from ecm_document ed where TYPE_NAME='ICM' and C_PROCESS_STATUS='新建' and "+ whereSql +"";
+		String sqlfeedbackicmNum = "select count(*) as feedbackicmNum from ecm_document ed where TYPE_NAME='ICM' AND C_PROCESS_STATUS in ('新建','已确认') and "+ whereSql +"";
+		String sqlDelayConfirm="select count(*) as feedbackicmNum from ecm_document ed where type_name='icm' and C_PROCESS_STATUS='新建' and"+whereSql;
+		String sqlDelayNum="select count(*) as feedbackicmNum from ecm_document ed where (C_PROCESS_STATUS in ('新建','已确认')   ) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单') and"+whereSql;
+		String sqlDelayReply="select count(*) as feedbackicmNum from ecm_document ed where (C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单') and " 
+		+ whereSql; 
+		String sqlDelayReplyConfirm="select count(*) as feedbackicmNum from ecm_document ed where (C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')";
 		String sqlcomplanNum = "select count(*) as complanNum from ecm_document where TYPE_NAME='计划' and "+ whereSql +" and (C_TO='"+ getLCompany +"')";
 		String sqlcomthereplanNum = "select count(*) as comthereplanNum from ecm_document where TYPE_NAME='计划任务' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
 		String sqlcomiedNum = "select count(*) as comiedNum from ecm_document where TYPE_NAME='IED' and C_ITEM_STATUS2 = 'Y' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
@@ -121,7 +126,11 @@ public class HomeDocController extends ControllerAbstract {
 				sqlcomplanNum+") as complanNum, (" +
 				sqlcomthereplanNum+") as comthereplanNum, ("+ 
 				sqlcomiedNum+") as comiedNum, ("+
-				sqlcomicmNum+") as comicmNum,("+sqlcomdcNum+") as comdcNum";
+				sqlcomicmNum+") as comicmNum,("+sqlcomdcNum+") as comdcNum,("
+				+sqlDelayConfirm+") as delayConfirmNum,("
+				+sqlDelayNum+") as delayNum,("
+				+ sqlDelayReply+") as delayReplyNum,("
+				+sqlDelayReplyConfirm+") as delayReplyConfirm";
 		
 		try{
 			System.out.println(sqlcomdcNum);
@@ -139,6 +148,10 @@ public class HomeDocController extends ControllerAbstract {
 			mp.put("comiedNum",numList.get(0).get("comiedNum"));
 			mp.put("comicmNum",numList.get(0).get("comicmNum"));
 			mp.put("comdcNum",numList.get(0).get("comdcNum"));
+			mp.put("delayConfirmNum",numList.get(0).get("delayConfirmNum"));
+			mp.put("delayNum",numList.get(0).get("delayNum"));
+			mp.put("delayReplyNum",numList.get(0).get("delayReplyNum"));
+			mp.put("delayReplyConfirm",numList.get(0).get("delayReplyConfirm"));
 			mp.put("code", ActionContext.SUCESS);
 		}catch(Exception ex) {
 			ex.printStackTrace();

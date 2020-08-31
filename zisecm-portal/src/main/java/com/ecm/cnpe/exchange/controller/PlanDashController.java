@@ -449,9 +449,9 @@ public class PlanDashController extends ControllerAbstract{
 	return mp;
 	}
 	
-	@RequestMapping(value = "/dc/getIcmNum", method = RequestMethod.POST) 
+	@RequestMapping(value = "/dc/getCNPEIcmNum", method = RequestMethod.POST) 
 	@ResponseBody
-	public Map<String, Object> getIcmNum(@RequestBody String argStr) throws Exception {							//获取当前文函总数
+	public Map<String, Object> getIcmNum(@RequestBody String argStr) throws Exception {							//获取当前ICM总数
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
@@ -480,7 +480,7 @@ public class PlanDashController extends ControllerAbstract{
 				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
 			}
 		}
-		String sql="select count(*) as count from ecm_document WHERE C_ITEM_TYPE='文函' and C_IS_RELEASED = 1 "+whereSql;
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='ICM' "+whereSql;
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
@@ -495,6 +495,109 @@ public class PlanDashController extends ControllerAbstract{
 	return mp;
 	
 		}
+	
+	@RequestMapping(value = "/dc/getSubIcmNum", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getSUBIcmNum(@RequestBody String argStr) throws Exception {							//获取当前ICM总数
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
+		String whereSql="";
+		if(projectName!=null&&!"".equals(projectName)) {
+			if("@project".equals(projectName)) {
+				LoginUser userObj=null;
+				try {
+					userObj=getSession().getCurrentUser();
+					List<String> projectList= userObj.getMyProjects();
+					whereSql+=" and (";
+					for(int i=0;i<projectList.size();i++) {
+						String project=projectList.get(i);
+						if(i==0) {
+							whereSql+="C_PROJECT_NAME ='"+project+"'";
+						}else {
+							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+						}
+					}
+					whereSql+=")";
+				} catch (AccessDeniedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
+			}
+		}
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company = userObj.getCompany();
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='ICM'"+whereSql+"AND C_COMPANY='"+company+"'";
+		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
+		System.out.println(sql);
+		Map<String,Object> d = new HashMap<String,Object>();
+		Map<String,Object> result=new HashMap<String, Object>();
+		for(int i=0;i<data.size();i++) {
+			d = data.get(i);
+			System.out.println(d.get("count").toString());
+			result.put("num", d.get("count"));
+		}
+		mp.put("code", "1");
+		mp.put("data", result);
+	return mp;
+	
+		}
+	@RequestMapping(value = "/dc/getSubDCNum", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getSubDCNum(@RequestBody String argStr) throws Exception {							//获取当前文函总数
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
+		String whereSql="";
+		if(projectName!=null&&!"".equals(projectName)) {
+			if("@project".equals(projectName)) {
+				LoginUser userObj=null;
+				try {
+					userObj=getSession().getCurrentUser();
+					List<String> projectList= userObj.getMyProjects();
+					whereSql+=" (";
+					for(int i=0;i<projectList.size();i++) {
+						String project=projectList.get(i);
+						if(i==0) {
+							whereSql+="C_PROJECT_NAME ='"+project+"'";
+						}else {
+							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+						}
+						
+					}
+					whereSql+=")";
+				} catch (AccessDeniedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				whereSql+=" C_PROJECT_NAME in("+projectName+")";
+			}
+			
+		}
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company= userObj.getCompany();
+		//String name = userObj.getLoginName();
+		String sql = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
+				+ " (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')and "+whereSql+"and c_company=' "+company+"'";
+		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
+		Map<String,Object> d = new HashMap<String,Object>();
+		Map<String,Object> result=new HashMap<String, Object>();
+		for(int i=0;i<data.size();i++) {
+			d = data.get(i);
+			//System.out.println(d.get("count").toString()+"取到的数据是：");
+			result.put("num", d.get("dcNum"));
+		}
+		mp.put("code", "1");
+		mp.put("data", result);
+	return mp;
+	
+		}
+	
 	
 	
 	
@@ -797,6 +900,7 @@ public class PlanDashController extends ControllerAbstract{
 				Iedsql+") as iedNum,  ("+
 				Icmsql+") as icmNum";
 		try{
+			System.out.println(Icmsql);
 			List<Map<String, Object>> numList = ecmDocument.executeSQL(sqlList);
 			mp.put("projectNum",numList.get(0).get("projectNum"));
 			mp.put("planNum", numList.get(0).get("planNum"));
