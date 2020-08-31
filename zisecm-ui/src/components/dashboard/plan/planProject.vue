@@ -163,6 +163,7 @@ export default {
                 icon: 'el-icon-s-order',
                 url: '/cnpe/MoreViewerBrowe/projectviewer'
               }]
+              console.log(response.data)
             _self.projectDataDC.data = dataDC
             _self.$refs.dataDC.refresh()//.option=_self.projectData1;
       }
@@ -180,7 +181,7 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-        axios.post("/dc/getIEDNum",JSON.stringify(mp))
+        axios.post("/dc/getCNPEIEDNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
@@ -204,7 +205,7 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-        axios.post("/dc/getTPLANNum",JSON.stringify(mp))
+        axios.post("/dc/getCNPETPLANNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{

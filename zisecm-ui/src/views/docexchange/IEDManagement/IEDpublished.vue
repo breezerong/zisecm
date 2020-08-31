@@ -319,9 +319,7 @@ export default {
             if(condition != undefined && condition.length>0){
                 k1 += " and "+condition 
             }
-            _self.$refs.mainDataGrid.condition=k1
-            _self.$refs.mainDataGrid.loadGridData();
-
+            console.log(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
         },

@@ -5,7 +5,7 @@
         <el-col :span="16">
           <el-card :body-style="{ height: '120px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">基本信息</span>
+              <span style="float: left;" class="ecmtitle">{{$t('route.userInfo')}}</span>
             </div>
             <div>
               <planTop v-if="isCNPE"></planTop>
@@ -16,7 +16,7 @@
           </el-card>
           <el-card :body-style="{ height: '320px',width:'900px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">项目信息</span>
+              <span style="float: left;" class="ecmtitle">{{$t('application.projectInfo')}}</span>
             </div>
             <div>
               <subIcmProject v-if="isSubJK"></subIcmProject>
@@ -33,21 +33,21 @@
         <el-col :span="8">
           <el-card :body-style="{ height: '32px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">个人中心</span>
+              <span style="float: left;" class="ecmtitle">{{$t('application.userCenter')}}</span>
             </div>
             <el-col :span="12">
               <i style="font-size : 28px" class="el-icon-user"></i>
-              <el-link :underline="false" @click="$router.push(jumpPath.userCenter)">我的信息</el-link>
+              <el-link :underline="false" @click="$router.push(jumpPath.userCenter)">{{$t('application.myInformation')}}</el-link>
             </el-col>
             <el-col :span="12">
               <i style="font-size : 28px" class="el-icon-s-claim"></i>
-              <el-link :underline="false" @click="$router.push('/user/userroleinfo')">我的授权</el-link>
+              <el-link :underline="false" @click="$router.push('/user/userroleinfo')">{{$t('application.myAuth')}}</el-link>
             </el-col>
           </el-card>
           <el-card :body-style="{ height: '320px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
-              <span style="float: left;" class="ecmtitle">通知公告</span>
-              <el-link :underline="false" @click="routerJump('通知公告')" style="float: right; padding: 3px 0" type="primary">更多>></el-link>
+              <span style="float: left;" class="ecmtitle">{{$t('application.myNotice')}}</span>
+              <el-link :underline="false" @click="routerJump('通知公告')" style="float: right; padding: 3px 0" type="primary">{{$t('application.more')}}>></el-link>
             </div>
             <el-table
               v-loading="loadingNoticeData"

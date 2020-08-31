@@ -105,7 +105,7 @@ public class ExcSynBatchController  extends ControllerAbstract {
 			
 		}
 		else if(result.size()>0) {
-			K.append("编号为"+doc.getName()+"的同步日志已经创建,创建失败").append("<br>");		//resultString
+			K.append("编号为"+doc.getName()+"的同步日志已经创建,重复创建创建失败").append("<br>");		//resultString
 			continue;
 		}
 		}
