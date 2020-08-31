@@ -1,0 +1,45 @@
+package org.zisecm.jobs.business;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.ecm.core.cache.manager.CacheManagerOper;
+
+@Service
+public class SyncPublicNetApp {
+	@Autowired
+	SyncPublicNet syncPublicNet;
+
+	@Scheduled(cron = "0/20 * * * * ?")
+	public void run() {
+		try {
+			if(CacheManagerOper.getFinishLoadCacheTag()) {
+				
+			//			System.out.println(SyncPublicNetApp.class.getName());
+			syncPublicNet.exportData("提交");
+//	syncPublicNet.exportData("新建");
+//	syncPublicNet.exportData("新建问题");
+//	syncPublicNet.exportData("CNPE驳回");
+//	syncPublicNet.exportData("CNPE接收");
+//	syncPublicNet.exportData("分发");
+//	syncPublicNet.exportData("分包商驳回");
+//	syncPublicNet.exportData("修改");
+//	syncPublicNet.exportData("驳回");
+//	syncPublicNet.exportData("接收");
+//	syncPublicNet.exportData("导出用户");
+//	syncPublicNet.exportData("问题回复");
+//	syncPublicNet.exportData("延误打开反馈");
+//	syncPublicNet.exportData("延误反馈确认");
+
+//	syncPublicNet.importData("");//导入数据
+//	syncPublicNet.importData("导入用户");//导入用户
+
+//	syncPublicNet.UpdateImportResultStatus();//done
+			};
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
