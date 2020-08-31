@@ -97,45 +97,34 @@ public class HomeDocController extends ControllerAbstract {
 		String sqlplanNum = "select count(*) as planNum from ecm_document where TYPE_NAME='计划' and "+ whereSql +"";
 		String sqlthereplanNum = "select count(*) as thereplanNum from ecm_document where TYPE_NAME='计划任务' and "+ whereSql +"";
 		String sqliedNum = "select count(*) as iedNum from ecm_document where TYPE_NAME='IED' and STATUS = '已生效' and C_IS_RELEASED='1' AND IS_CURRENT='1' and "+ whereSql +"";
-		String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and" 
-					    + " TYPE_NAME in('设计文件','文件传递单','FU申请','FU通知单','作废通知单','CR澄清要求申请单'," 
-					    + "'CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单',"
-					    + "'FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单',"
-					    + "'DCR设计变更申请单','DCR设计变更答复单','DCR设计变更关闭单','TCR试验澄清申请单',"
-					    + "'TCR试验澄清答复单','TCR试验澄清关闭单','DEN设计变更通知单','DEN设计变更关闭单',"
-					    + "'图文传真','会议纪要','设计审查意见','设计审查意见答复') and "+whereSql+"";
+		String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
+				+ " (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')and "+whereSql+" ";
 		String sqlicmNum = "select count(*) as icmNum from ecm_document ed where TYPE_NAME='ICM' and "+ whereSql +"";
 		String sqlfeedbackicmNum = "select count(*) as feedbackicmNum from ecm_document ed where TYPE_NAME='ICM' and C_PROCESS_STATUS='新建' and "+ whereSql +"";
 		String sqlcomplanNum = "select count(*) as complanNum from ecm_document where TYPE_NAME='计划' and "+ whereSql +" and (C_TO='"+ getLCompany +"')";
 		String sqlcomthereplanNum = "select count(*) as comthereplanNum from ecm_document where TYPE_NAME='计划任务' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
 		String sqlcomiedNum = "select count(*) as comiedNum from ecm_document where TYPE_NAME='IED' and C_ITEM_STATUS2 = 'Y' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
 		String sqlcomicmNum = "select count(*) as comicmNum from ecm_document ed where TYPE_NAME='ICM' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
-		String sqlcomdcNum = "select count(*) as comdcNum from  "     
-						   	+ "(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
-						   	+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
-						   	+ "C_IS_RELEASED=1 and" 
-						    + " TYPE_NAME in('设计文件','文件传递单','FU申请','FU通知单','作废通知单','CR澄清要求申请单'," 
-						    + "'CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单',"
-						    + "'FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单',"
-						    + "'DCR设计变更申请单','DCR设计变更答复单','DCR设计变更关闭单','TCR试验澄清申请单',"
-						    + "'TCR试验澄清答复单','TCR试验澄清关闭单','DEN设计变更通知单','DEN设计变更关闭单',"
-						    + "'图文传真','会议纪要','设计审查意见','设计审查意见答复') and("+whereSql+" AND (C_COMPANY = '"+ getLCompany +"' or TO_NAME='"+getLCompany+"'))";
+		String sqlcomdcNum = "select count(*) as comdcNum from "
+				+ "(select a.C_item_type,a.TYPE_NAME,a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
+				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
+				+ "C_IS_RELEASED=1 and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')  and("+whereSql+" or  TO_NAME='"+getLCompany+"')";
 		
 		String sqlList = "select ("+
 				sqlSum+") as projectNum, ("+
 				sqlplanNum+") as planNum,("+
 				sqlthereplanNum+") as thereplanNum,("+
-				sqliedNum+") as iedNum, ("+
+				sqliedNum+") as iedNum ,("+
 				sqldcNum+") as dcNum, ("+
 				sqlicmNum+") as icmNum ,("+
 				sqlfeedbackicmNum+") as feedbackicmNum,("+ 
 				sqlcomplanNum+") as complanNum, (" +
 				sqlcomthereplanNum+") as comthereplanNum, ("+ 
 				sqlcomiedNum+") as comiedNum, ("+
-				sqlcomicmNum+") as comicmNum, ("+
-				sqlcomdcNum+") as comdcNum from ecm_document";
+				sqlcomicmNum+") as comicmNum,("+sqlcomdcNum+") as comdcNum";
 		
 		try{
+			System.out.println(sqlcomdcNum);
 			List<Map<String, Object>> numList = ecmDocument.executeSQL(sqlList);
 			
 			mp.put("projectNum",numList.get(0).get("projectNum"));

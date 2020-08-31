@@ -151,7 +151,7 @@ export default {
              if (code == 1 &&_self.selectedItems.length!=0) {
                 _self.$message({
                     showClose: true,
-                    message: "创建成功!",
+                    message: "确认成功!",
                     duration: 2000,
                     type: "success"
                 });

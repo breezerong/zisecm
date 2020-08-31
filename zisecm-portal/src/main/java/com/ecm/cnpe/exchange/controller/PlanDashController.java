@@ -30,7 +30,7 @@ public class PlanDashController extends ControllerAbstract{
 	
 	@RequestMapping(value = "/dc/getCNPETPLANNum", method = RequestMethod.POST) 
 	@ResponseBody
-	public Map<String, Object> getCNPETPLANNum(@RequestBody String argStr) throws Exception {							//获取当前文函总数
+	public Map<String, Object> getCNPETPLANNum(@RequestBody String argStr) throws Exception {							//获取三级计划
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
@@ -214,6 +214,53 @@ public class PlanDashController extends ControllerAbstract{
 		mp.put("data", result);
 	return mp;
 	}
+	
+	@RequestMapping(value = "/dc/getCNPEIEDNum", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getSubIEDNum(@RequestBody String argStr) throws Exception {				//获取CNPE IED
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
+		String whereSql="";
+		if(projectName!=null&&!"".equals(projectName)) {
+			if("@project".equals(projectName)) {
+				LoginUser userObj=null;
+				try {
+					userObj=getSession().getCurrentUser();
+					List<String> projectList= userObj.getMyProjects();
+					whereSql+=" and (";
+					for(int i=0;i<projectList.size();i++) {
+						String project=projectList.get(i);
+						if(i==0) {
+							whereSql+="C_PROJECT_NAME ='"+project+"'";
+						}else {
+							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+						}
+					}
+					whereSql+=")";
+				} catch (AccessDeniedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
+			}
+		}
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND status='已生效' and c_is_released='1' and is_current='1' ";
+		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
+		Map<String,Object> d = new HashMap<String,Object>();
+		Map<String,Object> result=new HashMap<String, Object>();
+		for(int i=0;i<data.size();i++) {
+			d = data.get(i);
+			System.out.println(d.get("count").toString());
+			result.put("num", d.get("count"));
+		}
+		mp.put("code", "1");
+		mp.put("data", result);
+	return mp;
+	}
+	
+	
 	
 	@RequestMapping(value = "/dc/getPublishedIED", method = RequestMethod.POST) 
 	@ResponseBody
@@ -484,19 +531,19 @@ public class PlanDashController extends ControllerAbstract{
 			}
 			
 		}
-		String getLoginName=getSession().getCurrentUser().getLoginName();
-		String getLCompany=getSession().getCurrentUser().getCompany();
-		String sql="select count(*) as count from "
+		/*String sql="select count(*) as count from "
 			     + "(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
 			     + "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
-			     + "C_IS_RELEASED=1  and("+whereSql+" or  TO_NAME='"+getLCompany+"')";
+			     + "C_IS_RELEASED=1  and("+whereSql+" or  TO_NAME='"+getLCompany+"')";/*/
+		String sql = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
+				+ " (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')and "+whereSql+" ";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> d = new HashMap<String,Object>();
 		Map<String,Object> result=new HashMap<String, Object>();
 		for(int i=0;i<data.size();i++) {
 			d = data.get(i);
-			//System.out.println(d.get("count").toString());
-			result.put("num", d.get("count"));
+			//System.out.println(d.get("count").toString()+"取到的数据是：");
+			result.put("num", d.get("dcNum"));
 		}
 		mp.put("code", "1");
 		mp.put("data", result);
@@ -551,6 +598,8 @@ public class PlanDashController extends ControllerAbstract{
 		mp.put("data", result);
 	return mp;
 		}
+	
+	
 	
 	@RequestMapping(value = "/dc/getPlanNum", method = RequestMethod.POST) 
 	@ResponseBody

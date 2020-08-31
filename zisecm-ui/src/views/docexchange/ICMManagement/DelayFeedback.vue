@@ -62,7 +62,6 @@
         </template>
     <template v-slot:main="{layout}">    
     <DataGrid ref="mainDataGrid" dataUrl="/dc/getDocuments"
-                    condition="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
                     gridViewName="ICM延误回复反馈"
                     isshowOption
                     v-bind="tables.main"

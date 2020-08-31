@@ -503,7 +503,7 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getPublishedIED",JSON.stringify(mp))
+        axios.post("/dc/getCNPEIEDNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
@@ -603,7 +603,7 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getIEDNum",JSON.stringify(mp))
+        axios.post("/dc/getCNPEIEDNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
