@@ -2,61 +2,61 @@
      <div>  
         <el-form inline="true" >
         <el-row>
-          <el-col :span="4" v-if ="isOnlySub || isOnlySubjh">
+          <el-col :span="6" v-if ="isOnlySub || isOnlySubjh">
           <el-form-item><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlySubjh || isSubjkjh" >
+          <el-col :span="6" v-if="isOnlySubjh || isSubjkjh" >
           <el-form-item><ecm-data-icons ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlySubjh|| isSubjkjh">
+          <el-col :span="6" v-if="isOnlySubjh|| isSubjkjh">
           <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlySubjh">
+          <el-col :span="6" v-if="isOnlySubjh">
           <el-form-item><ecm-data-icons ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isSubjh">
+          <el-col :span="6" v-if="isSubjh">
           <el-form-item><ecm-data-icons ref="dataRejectIED" :option="projectDataRejectIED"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isSubjh">
+          <el-col :span="6" v-if="isSubjh">
           <el-form-item><ecm-data-icons ref="dataPendingSubmitIED" :option="projectDataPendingSubmitIED"></ecm-data-icons></el-form-item>
           </el-col>
-      <el-col :span="4" v-if="isOnlySubwk">
+      <el-col :span="6" v-if="isOnlySubwk">
       <el-form-item><ecm-data-icons :option="projectData"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" v-if="isSubwk">
-      <el-form-item><ecm-data-icons :option="projectDataDC"></ecm-data-icons></el-form-item>
+      <el-col :span="6" v-if="isSubwk">
+      <el-form-item><ecm-data-icons :option="projectDataDCnum"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" v-if="isSubwk">
+      <el-col :span="6" v-if="isSubwk">
       <el-form-item><ecm-data-icons :option="projectDataReceivingdc"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" v-if="isSubwk">
+      <el-col :span="6" v-if="isSubwk">
       <el-form-item><ecm-data-icons :option="projectDataSubmissiondc"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" v-if="isSubwk">
+      <el-col :span="6" v-if="isSubwk">
       <el-form-item><ecm-data-icons :option="projectDataDispensedc"></ecm-data-icons></el-form-item>
       </el-col>
       
-      <el-col :span="4" v-if="isOnlySubjk">
+      <el-col :span="6" v-if="isOnlySubjk">
       <el-form-item>
       <ecm-data-icons ref="p1" :option="projectDataICM"></ecm-data-icons>
       </el-form-item>
         </el-col>
-        <el-col :span="4" v-if="isOnlySubjk">
+        <el-col :span="6" v-if="isOnlySubjk">
           <el-form-item>
             <ecm-data-icons ref="p2" :option="projectData2"></ecm-data-icons>
           </el-form-item>
         </el-col>
-        <el-col :span="4" v-if="isOnlySubjk">
+        <el-col :span="6" v-if="isOnlySubjk">
           <el-form-item>
             <ecm-data-icons ref="p3" :option="projectData3"></ecm-data-icons>
           </el-form-item>
         </el-col>
-        <el-col :span="4" v-if="isSubjk">
+        <el-col :span="6" v-if="isSubjk">
           <el-form-item>
             <ecm-data-icons ref="p4" :option="projectData4"></ecm-data-icons>
           </el-form-item>
         </el-col>
-        <el-col  :span="4" v-if="isSubjk"> 
+        <el-col  :span="6" v-if="isSubjk"> 
           <el-form-item>
             <ecm-data-icons ref="p5" :option="projectData5"></ecm-data-icons>
           </el-form-item>
@@ -121,7 +121,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data:[{title: '文函',
-                count: 11,
+                count: 0,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
                 url: 'cnpe/DCManagement/ReceivedDC4Cnpe'}],
@@ -138,7 +138,7 @@ export default {
         projectDataProjectNum: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '计划数',
+        data:[{title:'123123',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-flag',
@@ -183,7 +183,7 @@ export default {
         projectDataICM: {
         data: [
           {
-            title: "项目",
+            title: this.$t('application.Projects'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-warning",
@@ -194,7 +194,7 @@ export default {
       projectData2: {
         data: [
           {
-            title: "计划",
+            title: this.$t('application.Plannum'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document",
@@ -205,7 +205,7 @@ export default {
       projectData3: {
         data: [
           {
-            title: "三级计划",
+            title: this.$t('application.TPlan'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
@@ -216,7 +216,7 @@ export default {
       projectData4: {
         data: [
           {
-            title: "已生效IED",
+            title: this.$t('application.IEDPublished'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
@@ -227,7 +227,7 @@ export default {
       projectData5: {
         data: [
           {
-            title: "ICM",
+            title: this.$t('application.ICM'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-delete",
@@ -241,7 +241,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '项目',
+            title: this.$t('application.Projects'),
             count:0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-warning',
@@ -249,13 +249,13 @@ export default {
           },
         ]
       },
-      projectDataDC: {
+      projectDataDCnum: {
         color: 'rgb(63, 161, 255)',
         span: 24,
         data: [
           {
-            title: '文函',
-            count: 0,
+            title: this.$t('application.Document'),
+            count: 15,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document',
             url: '/cnpe/DCManagement/receivedDC'
@@ -267,7 +267,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '待接收文函',
+            title: this.$t('application.ReceivedDC'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
@@ -280,7 +280,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '待提交文函',
+            title: this.$t('application.PendingSubmitDC'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
@@ -293,7 +293,7 @@ export default {
         span: 24,
         data: [
          {
-            title: '驳回文函',
+            title: this.$t('application.RejectedDC'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-delete',
@@ -308,8 +308,8 @@ export default {
      let _self = this;
     //_self.docChart1 = _self.echarts.init(document.getElementById('docChart1'));
     //_self.initChart();
+
     _self.getIEDNum()
-    _self.getDCNum()
     _self.getTPLANNum()
     _self.getProjectNum()
     _self.getPublishedIED()
@@ -317,8 +317,10 @@ export default {
     _self.getRejectIED()
     _self.getPlanNum()
     this.getUserRole()
-    this.loadStatisticICM()
+    this.loadStatisticWK()
     this.loadStatistic()
+    this.getDCNum()
+
     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
@@ -346,14 +348,14 @@ export default {
           this.isSubwk=true
           }
           for(var i = 0;i < this.userRoles.length;i++){
-            if(this.userRoles[i] == '分包商接口人员')
+            if(this.userRoles[i] == '分包商接口人员'){
             this.isSubjk = true
-            this.tempJKJH[0]=this.userRoles[i]
-            if(this.userRoles[i] =='分包商计划人员')
+            this.tempJKJH[0]=this.userRoles[i]}
+            if(this.userRoles[i] =='分包商计划人员'){
             this.isSubjh = true
-            this.tempJKJH[1]=this.userRoles[i]
-            if(this.userRoles[i] =='分包商文控人员')
-            this.isSubwk = true
+            this.tempJKJH[1]=this.userRoles[i]}
+            if(this.userRoles[i] =='分包商文控人员'){
+            this.isSubwk = true}
           }
           if(this.userRoles.length>1 ){
             this.isOnlySub  =true
@@ -361,13 +363,14 @@ export default {
           }
           if(this.tempJKJH.length==2)
           this.isSubjkjh=true
-         console.log(this.isSubjkjh+"/jkjh")
-          
-        console.log(this.userRoles)
-      },
+          console.log(this.isSubjkjh)
+      }
+      
+      ,
     loadStatistic() {
       let _self = this;
       let mp = new Map();
+       mp.set('projectName','@project');
       axios
         .post("/dc/getSubIcm", JSON.stringify(mp))
         .then(function (response) {
@@ -387,19 +390,20 @@ export default {
           console.log(error);
         });
     },
-    loadStatisticICM(){
+    loadStatisticWK(){
       let _self = this;
       let mp=new Map();
+       mp.set('projectName','@project');
       axios
         axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
         .then(function (response) {
           if(response.data.code==1){
             console.log(response.data)
               _self.projectData.data[0].count=response.data.sumNum;
-              _self.projectDataDC.data[0].count=response.data.dcNum;
+              _self.projectDataDCnum.data[0].count=response.data.dcNum;
               _self.projectDataReceivingdc.data[0].count=response.data.receivedNum;
               _self.projectDataSubmissiondc.data[0].count=response.data.submissiondcNum;
-              _self.projectDataDispensedc.data[0].count=response.data.dispenseNum;
+              _self.projectDataDispensedc.data[0].count=response.data.RejectNum;
           }
           
         })
@@ -414,15 +418,18 @@ export default {
         mp.set('projectName','@project');
         axios.post("/dc/getDCNum",JSON.stringify(mp))
             .then(function(response) {
+                
                 if(response.data.code==1){
                 dataDC = [{
-                title: '文函',
+                title: _self.$t('application.DC'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
                 url: '/cnpe/iedmanagement/IEDpublished'
+              
               }]
             _self.projectDataDC.data = dataDC
+            //console.log(_self.projectDataDC.data )
             _self.$refs.dataDC.refresh()//.option=_self.projectData1;
       }
             })
@@ -437,7 +444,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '已生效IED',
+                title: _self.$t('application.IEDPublished'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
@@ -458,7 +465,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '待提交IED',
+                title: _self.$t('application.PendingSubmit'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
@@ -479,7 +486,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '已驳回IED',
+                title: _self.$t('application.IEDRejected'),
                 count: response.data.data.num,
                 color: 'rgb(255,0,0)',
                 icon: 'el-icon-s-claim',
@@ -496,11 +503,11 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getPlanNum",JSON.stringify(mp))
+        axios.post("/dc/getSubPlanNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '计划数',
+                title: _self.$t('application.Plannum'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
@@ -520,7 +527,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: 'IED',
+                title: _self.$t('application.IEDPublished'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
@@ -540,7 +547,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '三级计划',
+                title: _self.$t('application.TPlan'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
@@ -560,7 +567,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '计划',
+                title: _self.$t('application.Projects'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-warning',

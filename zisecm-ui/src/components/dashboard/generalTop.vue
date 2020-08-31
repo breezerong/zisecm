@@ -16,42 +16,42 @@ export default {
         span: 4,
         data: [
           {
-            title: '项目',
+            title: this.$t('application.Projects'),
             count:0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-warning',
             url: ''
           },
           {
-            title: '计划',
+            title: this.$t('application.Plannum'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document',
             url: '/cnpe/DCManagement/receivedDC'
           },
           {
-            title: '三级计划',
+            title: this.$t('application.TPlan'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-checked',
             url: '/cnpe/MoreViewerBrowe/projectviewer'
           },
           {
-            title: 'IED',
+            title: this.$t('application.IEDPublished'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-checked',
             url: '/cnpe/MoreViewerBrowe/projectviewer'
           },
           {
-            title: 'ICM',
+            title: this.$t('application.ICM'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-delete',
             url: '/cnpe/MoreViewerBrowe/projectviewer'
           },
           {
-            title: '文函',
+            title: this.$t('application.Document'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-checked',
@@ -73,7 +73,6 @@ export default {
         axios.post("/exchange/homeTop/homeSumNum",JSON.stringify(mp))
         .then(function (response) {
           if(response.data.code==1){
-            console.log(response.data)
               _self.a[0]=response.data.projectNum;
               _self.a[1]=response.data.planNum;
               _self.a[2]=response.data.thereplanNum;

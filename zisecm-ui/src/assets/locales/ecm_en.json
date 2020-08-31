@@ -135,7 +135,7 @@
     "fileBox":"FileBox",
     "warehousing":"Warehousing",
     "theme": "Theme",
-    "more":"more",
+    "more":"More",
     "createFileToTransfer":"Create File To Transfer",
     "addToTransfer":"Add To Transfer",
     "removeFromTransfer":"Remove From Transfer",
@@ -214,9 +214,31 @@
     "updatecount":"Update Count",
     "newcount":"New Count",
     "SyncCreationDate":"Sync Start Date",
-    "SyncEexecuteDate":"Sync End Date"
-
-
+    "SyncEexecuteDate":"Sync End Date",
+    "projectInfo":"Project Information",
+    "userCenter":"User Center",
+    "myInformation":"Account Information",
+    "myAuth":"My Authorization",
+    "myNotice":"Notice Board",
+    
+    "Document":"Documents",
+    "Projects":"Projects Nums",
+    "Plannum":"Plan Nums",
+    "IEDPublished":"IED Published",
+    "PendingSubmit":"Submission IED",
+    "IEDRejected":"Rejected IED",
+    "TPlan":"ThreeLevel Plan",
+    "ICM":"ICM",
+    "ReceivedDC":"Receiving DC",
+    "RejectedDC":"Rejected DC",
+    "PendingSubmitDC":"PendingSubmit DC",
+    "ToDistributedDC":"Dispense DC",
+    "DeblockingDC":"Deblocking DC",
+    "PendingIED":"PendingIED",
+    "FeedbackICM":"Feedback ICM",
+    "IEDDash" : "IED Dash",
+    "DCDash" : "Documents Dash",
+    "nums":"Numbers"
 },
 "skin": {
     "Blue": "Blue",

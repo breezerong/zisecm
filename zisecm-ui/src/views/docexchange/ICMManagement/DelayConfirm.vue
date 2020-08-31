@@ -25,7 +25,7 @@
             </el-select>
             </el-form-item>
             <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
-            <el-form-item><el-button type="success" @click="submit()">{{$t('application.ok')}}</el-button></el-form-item>
+            <el-form-item><el-button v-if="isCNPE" type="success" @click="submit()">{{$t('application.ok')}}</el-button></el-form-item>
             </el-form>
         </template>
         <template v-slot:main="{layout}">
@@ -59,6 +59,7 @@ export default {
     name: "ICMFeedback",
     data(){
         return{
+            isCNPE:false,
             tables:{
                 main:{
                     dataList:[],
@@ -158,6 +159,11 @@ export default {
         //this.search()
     },
     search(){
+        console.log(this.currentUser().company)        
+        if(this.currentUser().company=='CNPE'){
+            this.isCNPE=true
+        }
+
         let _self = this
         var k1="(C_PROCESS_STATUS in ('新建','已确认') ) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
          if(_self.value != null &&_self.value!='所有'){

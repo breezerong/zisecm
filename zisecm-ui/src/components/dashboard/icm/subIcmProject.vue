@@ -35,7 +35,7 @@ export default {
       projectDataDC: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '三级计划',
+        data:[{title: this.$t('application.Document'),
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
@@ -44,7 +44,7 @@ export default {
       projectDataIcm: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '三级计划',
+        data:[{title: this.$t('application.ICM'),
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
@@ -63,7 +63,6 @@ export default {
     this.filters.projectCode = val
     _self.getIcmNum()
     _self.getDCNum()
-      this.initChart()
     },
      getDCNum(){         //获取文函数量
         let _self=this;
@@ -79,7 +78,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 dataDC = [{
-                title: '文函',
+                title: _self.$t('application.Document'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
@@ -105,7 +104,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 dataDC = [{
-                title: 'ICM',
+                title: _self.$t('application.ICM'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',

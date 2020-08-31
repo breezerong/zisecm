@@ -147,7 +147,7 @@ public class DocTopController extends ControllerAbstract  {
 			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
 					+ "where TYPE_NAME='计划任务' and("+whereSql+")";
 			sqlIEDNum = "select count(*) as IEDNum from ecm_document "
-					+ "where TYPE_NAME='IED' and("+whereSql+")";
+					+ "where TYPE_NAME='IED' and("+whereSql+")" +"and status='已生效' and c_is_released='1' and is_current='1'";
 			sqlICMNum = "select count(*) as ICMNum from ecm_document "
 					+ "where TYPE_NAME='ICM' and("+whereSql+") ";
 			
