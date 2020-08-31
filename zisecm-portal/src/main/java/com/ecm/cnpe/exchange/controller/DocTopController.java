@@ -105,14 +105,9 @@ public class DocTopController extends ControllerAbstract  {
 				
 			//分包商基本信息
 			String sqldcNum = "select count(*) as dcNum from "
-					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
+					+ "(select a.C_ITEM_TYPE,a.C_COMPANY,a.TYPE_NAME,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
 					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
-					+ " TYPE_NAME in('设计文件','文件传递单','FU申请','FU通知单','作废通知单','CR澄清要求申请单',"
-					+ "'CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单',"
-					+ "'FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单',"
-					+ "'DCR设计变更申请单','DCR设计变更答复单','DCR设计变更关闭单','TCR试验澄清申请单',"
-					+ "'TCR试验澄清答复单','TCR试验澄清关闭单','DEN设计变更通知单','DEN设计变更关闭单',"
-					+ "'图文传真','会议纪要','设计审查意见','设计审查意见答复') and "
+					+ " (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') and "
 					+ "C_IS_RELEASED=1 and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
 			sqlreceivedNum = "select count(*) as receivedNum from "
 					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STAUTS as STAUTS,b.TO_NAME "
@@ -128,12 +123,7 @@ public class DocTopController extends ControllerAbstract  {
 			//CNPE基本信息
 			
 			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
-					+ " TYPE_NAME in('设计文件','文件传递单','FU申请','FU通知单','作废通知单','CR澄清要求申请单',"
-					+ "'CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单',"
-					+ "'FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单',"
-					+ "'DCR设计变更申请单','DCR设计变更答复单','DCR设计变更关闭单','TCR试验澄清申请单',"
-					+ "'TCR试验澄清答复单','TCR试验澄清关闭单','DEN设计变更通知单','DEN设计变更关闭单',"
-					+ "'图文传真','会议纪要','设计审查意见','设计审查意见答复') and "+whereSql+" ";
+					+"(C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') and "+whereSql+" ";
 			sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( status='待确认')";
 			String sqldeBlockingNum = "select count(*) as deBlockingNum from ecm_document "
@@ -239,14 +229,9 @@ public class DocTopController extends ControllerAbstract  {
 			whereSql+=" and (C_COMPANY='"+getLCompany+"' or TO_NAME='"+getLCompany+"')";
 		}
 		String sql="select STATUS,count(*) as c from"
-				+"(select a.STATUS,a.C_COMPANY, a.TYPE_NAME,a.C_PROJECT_NAME,b.TO_NAME "
+				+"(select a.C_ITEM_TYPE, a.STATUS,a.C_COMPANY, a.TYPE_NAME,a.C_PROJECT_NAME,b.TO_NAME "
 				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t "
-				+ "where 1=1 "+whereSql+" and TYPE_NAME in('设计文件','文件传递单','FU申请','FU通知单','作废通知单','CR澄清要求申请单'," + 
-						"'CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单'," + 
-						"'FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单'," + 
-						"'DCR设计变更申请单','DCR设计变更答复单','DCR设计变更关闭单','TCR试验澄清申请单'," + 
-						"'TCR试验澄清答复单','TCR试验澄清关闭单','DEN设计变更通知单','DEN设计变更关闭单'," + 
-						"'图文传真','会议纪要','设计审查意见','设计审查意见答复') group by STATUS";
+				+ "where 1=1 "+whereSql+" and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') group by STATUS";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> result=new HashMap<>();
 		for(Map<String,Object> d : data) {
