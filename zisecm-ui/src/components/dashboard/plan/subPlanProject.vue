@@ -145,7 +145,7 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-        axios.post("/dc/getDCNum",JSON.stringify(mp))
+        axios.post("/dc/getSubDCNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 dataDC = [{
