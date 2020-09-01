@@ -1,4 +1,4 @@
-package com.ecm.core.sync;
+package org.zisecm.jobs.business;
 
 public class TODOApplication {
 	public static final String getNeedTOChange(String s){

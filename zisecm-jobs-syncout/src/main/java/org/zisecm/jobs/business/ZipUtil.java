@@ -1,4 +1,4 @@
-package com.ecm.core.sync;
+package org.zisecm.jobs.business;
 
 
 import org.apache.commons.io.IOUtils;

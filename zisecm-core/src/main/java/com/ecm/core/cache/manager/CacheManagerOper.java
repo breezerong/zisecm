@@ -75,6 +75,8 @@ public class CacheManagerOper {
 	//缓存活动配置对象
 	private static final Map<String,EcmCfgActivity> CFG_ACTIVITY = new HashMap<String,EcmCfgActivity>();
 	
+	
+	private static Boolean FinishLoadCacheTag=false;
 	/**
 	 * @Title getEcmParameters   
 	 * @Description TODO(获取系统参数缓存全部数据)   
@@ -223,6 +225,13 @@ public class CacheManagerOper {
 	 */
 	public static Map<String,EcmCfgActivity> getCfgActivityCache() {
 		return CFG_ACTIVITY;
+	}
+	
+	public static Boolean getFinishLoadCacheTag() {
+		return FinishLoadCacheTag;
+	}
+	public static  void setFinishLoadCacheTag(Boolean FinishLoadCacheTagVar) {
+		 FinishLoadCacheTag=FinishLoadCacheTagVar;
 	}
 	
 

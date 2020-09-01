@@ -1,4 +1,4 @@
-package com.ecm.core.sync;
+package org.zisecm.jobs.business;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -140,14 +141,16 @@ public class SyncPublicNet implements ISyncPublicNet {
 			} else {
 				excSynDetailObjList = exportDataInner(actionName, token, resultObjList);
 			}
-			writeJsonFile(resultObjList, folderName + ".json");
-			updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName);
-			String abusoluteFolderPath = getSyncPathPublic() + "/";
-			String folderFullPath = abusoluteFolderPath + folderName;
-			String zipFilePath = folderFullPath + ".zip";
-			ZipUtil.zip(folderFullPath + "/", zipFilePath);
-			writeMD5Info(zipFilePath);
-			FileUtils.deleteDirectory(new File(folderFullPath));
+			if(resultObjList.size()>0) {
+				writeJsonFile(resultObjList, folderName + ".json");
+				updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName);
+				String abusoluteFolderPath = getSyncPathPublic() + "/";
+				String folderFullPath = abusoluteFolderPath + folderName;
+				String zipFilePath = folderFullPath + ".zip";
+				ZipUtil.zip(folderFullPath + "/", zipFilePath);
+				writeMD5Info(zipFilePath);
+				FileUtils.deleteDirectory(new File(folderFullPath));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());

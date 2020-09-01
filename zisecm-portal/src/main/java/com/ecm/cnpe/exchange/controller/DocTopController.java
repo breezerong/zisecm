@@ -107,7 +107,7 @@ public class DocTopController extends ControllerAbstract  {
 			String sqldcNum = "select count(*) as dcNum from "
 					+ "(select a.C_ITEM_TYPE,a.C_COMPANY,a.TYPE_NAME,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
 					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
-					+ " (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') and "
+					+ " (C_ITEM_TYPE='文函') and "
 					+ "C_IS_RELEASED=1 and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
 			sqlreceivedNum = "select count(*) as receivedNum from "
 					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STAUTS as STAUTS,b.TO_NAME "
@@ -123,7 +123,7 @@ public class DocTopController extends ControllerAbstract  {
 			//CNPE基本信息
 			
 			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
-					+"(C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') and "+whereSql+" ";
+					+"(C_ITEM_TYPE='文函') and "+whereSql+" ";
 			sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( status='待确认')";
 			String sqldeBlockingNum = "select count(*) as deBlockingNum from ecm_document "
