@@ -98,7 +98,7 @@ public class HomeDocController extends ControllerAbstract {
 		String sqlthereplanNum = "select count(*) as thereplanNum from ecm_document where TYPE_NAME='计划任务' and "+ whereSql +"";
 		String sqliedNum = "select count(*) as iedNum from ecm_document where TYPE_NAME='IED' and STATUS = '已生效' and C_IS_RELEASED='1' AND IS_CURRENT='1' and "+ whereSql +"";
 		String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
-				+ " (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')and "+whereSql+" ";
+				+ " (C_ITEM_TYPE='文函' )and "+whereSql+" ";
 		String sqlicmNum = "select count(*) as icmNum from ecm_document ed where TYPE_NAME='ICM' and "+ whereSql +"";
 		String sqlfeedbackicmNum = "select count(*) as feedbackicmNum from ecm_document ed where TYPE_NAME='ICM' AND C_PROCESS_STATUS in ('新建','已确认') and "+ whereSql +"";
 		String sqlDelayConfirm="select count(*) as feedbackicmNum from ecm_document ed where type_name='icm' and C_PROCESS_STATUS='新建' and"+whereSql;
@@ -214,7 +214,7 @@ public class HomeDocController extends ControllerAbstract {
 		}
 		
 		String sql="select TYPE_NAME,count(*) as c from ecm_document "
-				+ "where 1=1 "+whereSql+" and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') group by TYPE_NAME";
+				+ "where 1=1 "+whereSql+" and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') and c_is_released='1' group by TYPE_NAME";
 		
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> result=new HashMap<>();
