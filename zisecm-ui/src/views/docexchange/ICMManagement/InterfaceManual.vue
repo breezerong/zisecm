@@ -284,9 +284,8 @@ export default {
             let _self = this
             let key="";
             key = _self.advCondition;
-            // _self.$alert(_self.$refs.mainDataGrid.condition)
             _self.$refs.mainDataGrid.condition=key
-            // _self.$alert(_self.$refs.mainDataGrid.condition)
+            _self.tables.main.condition=_self.$refs.mainDataGrid.condition
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
             _self.$refs.ICMPass.itemDataList=[]

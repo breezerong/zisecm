@@ -149,6 +149,7 @@ export default {
             let key="";
             key = _self.advCondition;
             _self.$refs.mainDataGrid.condition=key+" AND C_PROJECT_NAME='@project'";
+            _self.tables.main.condition=_self.$refs.mainDataGrid.condition
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
             _self.$refs.rfDg.itemDataList=[]
