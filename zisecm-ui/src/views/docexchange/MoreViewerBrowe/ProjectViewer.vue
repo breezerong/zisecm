@@ -1,17 +1,19 @@
 <template>
-    <div>
-        <el-container>
-            <el-aside>
-                <el-tree
-                    class="filter-tree"
-                    :data="data"
-                    :props="defaultProps"
-                    :filter-node-method="filterNode"
-                    ref="tree"
-                    @node-click="nodeClick">
-                </el-tree>
-            </el-aside>
-            <el-main>
+    <div :style="{position:'relative',height: asideHeight+'px'}">
+        <split-pane split="vertical" @resize="resize" :min-percent='10' :default-percent='22'>
+            <template slot="paneL">
+                <el-container :style="{height:treeHeight+'px',width:asideWidth,overflow:'auto'}">
+                    <el-tree
+                        class="filter-tree"
+                        :data="data"
+                        :props="defaultProps"
+                        :filter-node-method="filterNode"
+                        ref="tree"
+                        @node-click="nodeClick">
+                    </el-tree>
+                </el-container>
+            </template>
+            <template slot="paneR">
                 <template v-if="isDC">
                     <el-row>
                         <el-col :span="24">
@@ -305,8 +307,8 @@
                         </el-tabs>
                     </el-row>
                 </template>
-            </el-main>
-        </el-container>
+            </template>
+        </split-pane>
     </div>
 </template>
 <script type="text/javascript">
@@ -319,6 +321,10 @@ export default {
     name: "ProjectViewer",
     data(){
         return{
+            asideHeight: window.innerHeight - 150,
+            treeHeight:window.innerHeight - 100,
+            tableHeight: window.innerHeight - 180,
+            asideWidth: '100%',
             defaultProps: {
                 children: 'children',
                 label: 'name'
