@@ -440,7 +440,7 @@ export default {
          m.set("id", _self.parentId);
       }
       m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", _self.currentPage - 1);
+      m.set("pageIndex", 0);
       m.set("orderBy", "");
       _self
         .axios({
