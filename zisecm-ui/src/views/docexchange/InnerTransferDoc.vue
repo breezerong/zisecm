@@ -887,7 +887,7 @@ export default {
         // _self.$message("新建成功!");
         _self.$message({
             showClose: true,
-            message: _self.$t("message.newSuccess"),
+            message: _self.$t('message.operationSuccess'),
             duration: 2000,
             type: 'success'
           });

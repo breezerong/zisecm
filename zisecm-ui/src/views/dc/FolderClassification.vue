@@ -848,7 +848,7 @@ export default {
       if (indata == "update") {
         this.$message(this.$t("message.saveSuccess"));
       } else {
-        this.$message(this.$t("message.newSuccess"));
+        this.$message(this.$t("message.operationSuccess"));
       }
       this.propertyVisible = false;
       this.loadGridData(this.currentFolder);

@@ -245,7 +245,8 @@
     "delayConfirm": "DelayConfirm",
     "delayOpenConfirm":"DelayOpenConfirm",
     "contrast":"Contrast",
-    "iedContrast":"IEDContrast"
+    "iedContrast":"IEDContrast",
+    "delayNum":"DelayReply Nums"
 },
 "skin": {
     "Blue": "Blue",
@@ -358,8 +359,7 @@
     "AddressList":"Address List",
     "delayFeedback": "DelayFeedback",
     "delayConfirm": "DelayConfirm",
-    "delayOpenConfirm":"DelayOpenConfirm",
-    "delayNum":"DelayReply Nums"
+    "delayOpenConfirm":"DelayOpenConfirm"
 },
 "message": {
     "saveSuccess":"Save Success",
