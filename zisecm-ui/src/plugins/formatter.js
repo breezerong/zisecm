@@ -6,6 +6,7 @@ Vue.prototype.dateFormat = function(val){
       if(typeof datetime === 'string'){
         //console.log(datetime);
         datetime = datetime.replace('+0000','').trim();
+        datetime = datetime.replace('.0000000','').trim();
         //console.log(datetime);
         var regexp=new RegExp(/(\.\d{3})/g);
         datetime = datetime.replace(regexp,"");
@@ -34,6 +35,7 @@ Vue.prototype.dateFormat = function(val){
       if(typeof datetime === 'string'){
         //console.log(datetime);
         datetime = datetime.replace('+0000','').trim();
+        datetime = datetime.replace('.0000000','').trim();
         //console.log(datetime);
         var regexp=new RegExp(/(\.\d{3})/g);
         datetime = datetime.replace(regexp,"");

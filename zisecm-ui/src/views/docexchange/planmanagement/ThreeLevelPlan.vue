@@ -109,11 +109,11 @@ export default {
             let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+            let key = this.$refs.mainDataGrid.condition
             let params = {
                 gridName:this.tables.main.gridViewName,
                 lang:"zh-cn",
-                condition: this.$refs.mainDataGrid.condition,
-                condition:this.tables.main.condition,
+                condition: key,
                 filename:"ThreeLevelPlan_"+fileDateStr+".xlsx",
                 sheetname:"Result"
             }
@@ -149,6 +149,7 @@ export default {
             let key="";
             key = _self.advCondition;
             _self.$refs.mainDataGrid.condition=key+" AND C_PROJECT_NAME='@project'";
+            _self.tables.main.condition=_self.$refs.mainDataGrid.condition
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
             _self.$refs.rfDg.itemDataList=[]

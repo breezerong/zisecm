@@ -465,7 +465,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "IED_Report_" +new Date().Format("yyyy-MM-dd")+ ".xlsx"
+          filename: "IED_Report_" +new Date().Format("yyyy-MM-dd")
         })
       })
     },

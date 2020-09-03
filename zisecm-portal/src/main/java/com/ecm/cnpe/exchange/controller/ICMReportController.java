@@ -92,8 +92,8 @@ public class ICMReportController extends ControllerAbstract{
 								  "odreplyICMcount"};
 			
 			StringBuffer sql = new StringBuffer("select C_PROJECT_NAME, "
-											  + "(SELECT COUNT(*) FROM(SELECT DISTINCT C_PROJECT_NAME, C_CODE5 FROM ecm_document ed WHERE C_CODE5 IS NOT NULL AND C_PROJECT_NAME IS NOT NULL) AS tonum WHERE C_PROJECT_NAME=ed.C_PROJECT_NAME) as toNum, "
-											  + "(SELECT COUNT(*) FROM (SELECT DISTINCT C_PROJECT_NAME, C_CODE5, C_CODE6 FROM ecm_document ed WHERE C_PROJECT_NAME IS NOT NULL AND C_CODE5 IS NOT NULL AND C_CODE6 IS NOT NULL) AS fromnum WHERE C_PROJECT_NAME=ed.C_PROJECT_NAME) as fromNum");
+											  + "(SELECT COUNT(*) FROM(SELECT DISTINCT C_PROJECT_NAME, C_CODE5 FROM ecm_document ed WHERE C_CODE5 IS NOT NULL AND C_PROJECT_NAME IS NOT NULL"+ timeCheck +") AS tonum WHERE C_PROJECT_NAME=ed.C_PROJECT_NAME) as toNum, "
+											  + "(SELECT COUNT(*) FROM (SELECT DISTINCT C_PROJECT_NAME, C_CODE5, C_CODE6 FROM ecm_document ed WHERE C_PROJECT_NAME IS NOT NULL AND C_CODE5 IS NOT NULL AND C_CODE6 IS NOT NULL"+ timeCheck +") AS fromnum WHERE C_PROJECT_NAME=ed.C_PROJECT_NAME) as fromNum");
 			
 			for(int i = 0; i < 9; i++) {
 				String column = sqlSetColumn[i];
