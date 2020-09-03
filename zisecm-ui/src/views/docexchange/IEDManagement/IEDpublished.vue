@@ -115,7 +115,7 @@ export default {
                     showOptions:'查看内容'
                 },
                 tfDg:{
-                    gridViewName:"TransferGrid",
+                    gridViewName:"TransferGrid4IED",
                     dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,
@@ -251,7 +251,10 @@ export default {
             this.search(val)
         },
         onDataGridRowClick:function(row){
-            let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='设计文件' and CODING = '"+row.CODING+"')"
+            console.log(row)
+             var cond=""
+            var type = row.SUB_TYPE
+            let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='IED' and CODING = '"+row.CODING+"')"
             this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
             this.$refs.rfDg.condition=this.tables.rfDg.condition
             this.tables.rfDg.gridViewName="IEDRelationGrid"
@@ -260,18 +263,24 @@ export default {
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
             
-            this.tables.dfDg.condition="CODING = '"+row.CODING+"'"
-            this.$refs.dfDg.condition=this.tables.dfDg.condition
+            if(type=='图册'){
+                cond="TYPE_NAME='设计文件' and C_FROM_CODING='"+row.CODING+"' and is_current='1'"
+            }
+            if(type!='图册'){
+                cond="type_name='设计文件' and CODING='"+row.CODING+"' and REVISION ='"+row.REVISION+"' AND IS_CURRENT='1'"
+            }
+            this.$refs.dfDg.condition=cond
             this.$refs.dfDg.itemDataList=[]
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
-
-            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='设计文件' and "+ this.tables.dfDg.condition;
-            this.tables.tfDg.condition = "CODING IN ("+ dfDGCondition+")"
+            console.log(this.$refs.dfDg.condition)
+            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='IED' and CODING =  '"+ row.CODING+"'";
+            this.tables.tfDg.condition = "Type_name='文件传递单' and CODING IN ("+ dfDGCondition+")"
             this.$refs.tfDg.condition= this.tables.tfDg.condition
             this.$refs.tfDg.itemDataList=[]
-            this.$refs.tfDg.loadGridInfo()
+            //this.$refs.tfDg.loadGridInfo()
             this.$refs.tfDg.loadGridData()
+         
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
