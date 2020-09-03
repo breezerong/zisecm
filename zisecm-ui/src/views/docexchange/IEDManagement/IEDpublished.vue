@@ -37,32 +37,31 @@
             </el-form>
         </template>
         <template v-slot:main="{layout}">
-            <el-row>
-                <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-100" 
+            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+            <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='60' split="horizontal">
+                <template slot="paneL">
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="(layout.height-startHeight)*topSize/100-topbarHeight" 
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
-                    <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
-                    <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
-                    </template>
-                    
+                        <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
+                        <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
+                        </template>
                     </DataGrid>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">
+                </template>
+                <template slot="paneR">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.relevant')" name="relationFiles">
-                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-140"></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="(layout.height-startHeight)*(100-topSize)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.designdoc')" name="designFile">
-                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="layout.height/2-140"></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="(layout.height-startHeight)*(100-topSize)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.transmitaldoc')" name="transmitals">
-                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="layout.height/2-140"></DataGrid>
+                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="(layout.height-startHeight)*(100-topSize)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
-                </el-col>
-            </el-row>
+                </template>
+            </split-pane>
+            </div>
         </template>
     </DataLayout>
 </template>
@@ -80,7 +79,16 @@ export default {
         project:{type:String,default:""}
     },
     data(){
+        
         return{
+            // 非split pan 控制区域高度
+            startHeight: 135,
+            // 顶部百分比*100
+            topSize: 60,
+            // 顶部除列表高度
+            topbarHeight: 40,
+            // 底部除列表高度
+            bottomHeight: 80,
             tables:{
                 main:{
                     gridViewName:"IEDGrid",
@@ -192,6 +200,12 @@ export default {
                 })
             }
             console.log(role)
+        },
+        // 上下分屏事件
+        onSplitResize(topSize){
+            // 顶部百分比*100
+            this.topSize = topSize;
+            //console.log(JSON.stringify(topSize));
         },
         onIEDChange(){
             let _self =  this
