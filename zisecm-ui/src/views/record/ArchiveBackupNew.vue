@@ -354,7 +354,7 @@ export default {
         // this.$message("新建成功!");
         _self.$message({
           showClose: true,
-          message: "新建成功!",
+          message: _self.$t('message.operationSuccess'),
           duration: 2000,
           type: 'success'
             });
