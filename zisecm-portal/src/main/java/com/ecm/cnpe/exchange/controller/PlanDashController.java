@@ -1,4 +1,5 @@
 package com.ecm.cnpe.exchange.controller;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,14 +10,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.dao.EcmDocumentMapper;
+import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.FolderPathService;
+import com.ecm.core.service.FolderService;
+import com.ecm.core.service.RelationService;
 import com.ecm.portal.controller.ControllerAbstract;
 
 @Controller
@@ -26,7 +37,12 @@ public class PlanDashController extends ControllerAbstract{
 	@Autowired
 	private DocumentService documentService;
 	
-	
+	@Autowired
+	private FolderService folderService;
+	@Autowired
+	private FolderPathService folderPathService;
+	@Autowired
+	private RelationService relationService;
 	
 	@RequestMapping(value = "/dc/getCNPETPLANNum", method = RequestMethod.POST) 
 	@ResponseBody
@@ -968,5 +984,78 @@ public class PlanDashController extends ControllerAbstract{
 	return mp;
 	}
 	
+	
+	@RequestMapping(value = "/dc/newPlan", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> newDocumentOrSubDoc(String metaData, MultipartFile uploadFile) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		EcmContent en = null; 
+		EcmDocument doc = new EcmDocument();
+		doc.setAttributes(args);
+		String name =args.get("C_PROJECT_NAME").toString();
+		String projectName = args.get("NAME").toString();
+		String sql="select * from ecm_Document where Type_Name='计划' and C_PROJECT_NAME='"+name+"' and Name='"+projectName+"'";
+		System.out.println(sql);
+		List<Map<String,Object>> res = documentService.getMapList(getToken(), sql);
+		if(res.size()>0) {
+			mp.put("code", 2);
+			return mp;
+		}
+		
+		if (uploadFile != null) {
+			en = new EcmContent();
+			en.setName(uploadFile.getOriginalFilename());
+			en.setContentSize(uploadFile.getSize());
+			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+			en.setInputStream(uploadFile.getInputStream());
+		}
+		Object fid= args.get("folderId");
+		String folderId="";
+		if(fid==null) {
+			folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+		}else {
+			folderId=fid.toString();
+		}
+		doc.setStatus("新建");
+		EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+		doc.setFolderId(folderId);
+		doc.setAclName(folder.getAclName());
+
+		
+		String id ="";
+		
+		if(args.get("parentDocId")!=null&&!"".equals(args.get("parentDocId"))) {
+			String relationName="irel_children";
+			relationName=args.get("relationName")!=null
+					&&!"".equals(args.get("relationName").toString())
+					?args.get("relationName").toString():"irel_children";
+			EcmDocument pdoc=documentService.getObjectById(getToken(), args.get("parentDocId").toString());
+			doc.addAttribute("C_PROJECT_NAME", pdoc.getAttributeValue("C_PROJECT_NAME")!=null?
+					pdoc.getAttributeValue("C_PROJECT_NAME").toString():"");
+			id = documentService.newObject(getToken(),doc,en);
+			EcmRelation relation=new EcmRelation();
+			relation.setParentId(args.get("parentDocId").toString());
+			
+			relation.setChildId(id);
+			relation.setName(relationName);
+			try {
+				relationService.newObject(getToken(), relation);
+			} catch (EcmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message",e.getMessage());
+				return mp;
+			}
+		}else {
+			id= documentService.newObject(getToken(),doc,en);
+		}
+		
+		
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("id", id);
+		return mp;
+	}
 	
 		}

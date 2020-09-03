@@ -115,6 +115,10 @@ export default {
 
     methods: {
 
+          onSearchConditionChange:function(val){
+            this.search(val)
+        },
+
         onLoadnDataSuccess(v,o){
             this.search();
         },
@@ -159,7 +163,7 @@ export default {
                 }})
         //this.search()
     },
-    search(){
+    search(cond){
         let _self = this
         var k1="TYPE_NAME='ICM'"
          if(_self.value != undefined &&_self.value!='所有项目'){
@@ -168,6 +172,9 @@ export default {
         if(_self.Cstatus != undefined && _self.Cstatus != null){
                 k1+="AND C_PROCESS_STATUS = '"+_self.Cstatus+"'"
         }
+        if(cond != undefined && cond.length>0){
+                k1 += " and "+cond
+            }
         console.log(k1)
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();

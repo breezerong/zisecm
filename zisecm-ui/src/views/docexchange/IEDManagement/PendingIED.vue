@@ -1,7 +1,7 @@
 <template>    
         <DataLayout >
     <el-dialog 
-        title="IEDContrast"
+        :title="$t('application.iedContrast')"
         :visible.sync="IEDcontrast"
         @close="IEDcontrast = false"
         width="80%">
@@ -99,7 +99,7 @@
             </el-popover>
             </template>
             <template slot="customMoreOption" slot-scope="scope">
-            <el-button type="primary" @click="goContrast(scope.data.row)" size="mini">对比</el-button>
+            <el-button type="primary" @click="goContrast(scope.data.row)" size="mini">{{$t('application.contrast')}}</el-button>
             </template>
 
            </DataGrid>

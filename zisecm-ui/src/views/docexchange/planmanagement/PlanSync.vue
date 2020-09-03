@@ -72,7 +72,6 @@
        <el-table :data="P6data" ref="P6" row-key="id" border>
         <el-table-column type="index" width="50" label="序号" align='center'>
     
-     <!-->这次试试不加序号能不能自动补位<!-->
       </el-table-column>
        <el-table-column v-for="item in P6columns" v-bind="item" :key="item.prop" highlight-current-row></el-table-column>
        <el-table-column width="120" fixed="right">
@@ -302,16 +301,15 @@ export default {
         m.set("NAME",this.P6form.C_PROJECT_NAME)
         m.set("C_PROJECT_NAME",temp.replace(/\'/g,""))
         m.set("TYPE_NAME","计划")
-        console.log(m)
         this.dialogCreatevisual=false
         let formdata = new FormData();
         formdata.append("metaData",JSON.stringify(m));
-         axios.post("/dc/newDocumentOrSubDoc",formdata,{
+         axios.post("/dc/newPlan",formdata,{
                 'Content-Type': 'multipart/form-data'
             })
             .then(function(response) {
             let code = response.data.code;
-            console.log("取到的数据"+code)
+            console.log(response.data)
              if (code == 1) {
                 _self.$message({
                     showClose: true,
@@ -320,7 +318,17 @@ export default {
                     type: "success"
                 });
                 _self.$refs.mainDataGrid.loadGridData()
-                }})
+                }
+               else if(code==2){
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t('message.failureForNew'),
+                    duration: 2000,
+                    type: "error"
+                })
+                
+                };
+                })
             
             },
             rowClick(row){
@@ -430,9 +438,9 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            /*if(_self.value != undefined &&_self.value!='所有项目'){
+            if(_self.value != undefined &&_self.value!='所有'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
-            }/*/
+            }
         console.log(k1)
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
@@ -463,7 +471,6 @@ export default {
     },
 
      onLoadnDataSuccess(select,options){
-            console.log(select)
             this.search()
             this.getSubContractors()
         },
