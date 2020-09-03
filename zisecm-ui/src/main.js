@@ -53,6 +53,8 @@ Date.prototype.Format = function (fmt) { // author: meizz
       return fmt;
 }
 
+
+
 Vue.component('split-pane', splitPane);
 Vue.prototype.$video = Video
 Vue.prototype.addToShoppingCar=addToShoppingCar;
@@ -63,6 +65,18 @@ Vue.prototype.onPreviousStatus=previousStatus;
 Vue.prototype.onWithdraw=withdraw;
 Vue.prototype.onPreviousStatusCnpe=previousStatusCnpe;
 Vue.prototype.onNextStatusCnpe=nextStatusCnpe;
+
+Vue.prototype.setStorageNumber = function(key,val){
+  localStorage.setItem("ziecm-"+key, val);
+}
+
+Vue.prototype.getStorageNumber = function(key,defaultVal){
+  let n = localStorage.getItem("ziecm-"+key);
+  if(n && n != null){
+    return Number(n);
+  }
+  return defaultVal;
+}
 
 Vue.use(ImgViewer)
 Vue.config.productionTip = false

@@ -38,9 +38,9 @@
         </template>
         <template v-slot:main="{layout}">
             <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
-            <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='60' split="horizontal">
+            <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
                 <template slot="paneL">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="(layout.height-startHeight)*topSize/100-topbarHeight" 
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight" 
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
                         <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
                         <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
@@ -50,13 +50,13 @@
                 <template slot="paneR">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.relevant')" name="relationFiles">
-                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="(layout.height-startHeight)*(100-topSize)/100-bottomHeight"></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.designdoc')" name="designFile">
-                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="(layout.height-startHeight)*(100-topSize)/100-bottomHeight"></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.transmitaldoc')" name="transmitals">
-                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="(layout.height-startHeight)*(100-topSize)/100-bottomHeight"></DataGrid>
+                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
                 </template>
@@ -81,14 +81,17 @@ export default {
     data(){
         
         return{
+            // 本地存储高度名称
+            topStorageName: 'PublishIEDTopHeight',
             // 非split pan 控制区域高度
             startHeight: 135,
             // 顶部百分比*100
-            topSize: 60,
+            topPercent: 60,
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 80,
+
             tables:{
                 main:{
                     gridViewName:"IEDGrid",
@@ -168,7 +171,12 @@ export default {
         }
     },
     mounted(){
-        this.init()        
+        this.init()
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+            console.log("topPercent:" +JSON.stringify(this.topPercent))
+        }, 500);
+        
     },
     methods: {
         async init(){
@@ -199,13 +207,15 @@ export default {
                     }
                 })
             }
-            console.log(role)
+            
+            // console.log(role)
         },
         // 上下分屏事件
-        onSplitResize(topSize){
+        onSplitResize(topPercent){
             // 顶部百分比*100
-            this.topSize = topSize;
-            //console.log(JSON.stringify(topSize));
+            this.topPercent = topPercent
+            this.setStorageNumber(this.topStorageName, topPercent)
+            //console.log(JSON.stringify(topPercent))
         },
         onIEDChange(){
             let _self =  this
@@ -254,8 +264,8 @@ export default {
             this.selectedItems = val;
         },
         onLoadnDataSuccess(select,options){
-            console.log(this.view)
-            console.log(this.project)
+            // console.log(this.view)
+            // console.log(this.project)
             if(this.view==true && this.project.length>0){
                 this.forms.headForm.project = this.project
             }

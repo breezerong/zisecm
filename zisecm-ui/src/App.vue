@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-title :data-title="$t('application.name')">
-    <transition name="rotate-fall">
+    <transition name="moveToTop">
     <router-view></router-view>
     </transition>
   </div>
