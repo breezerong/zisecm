@@ -243,7 +243,9 @@
     "nums":"Numbers",
     "delayFeedback": "DelayFeedback",
     "delayConfirm": "DelayConfirm",
-    "delayOpenConfirm":"DelayOpenConfirm"
+    "delayOpenConfirm":"DelayOpenConfirm",
+    "contrast":"Contrast",
+    "iedContrast":"IEDContrast"
 },
 "skin": {
     "Blue": "Blue",

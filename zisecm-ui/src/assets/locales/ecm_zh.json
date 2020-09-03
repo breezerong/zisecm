@@ -241,7 +241,9 @@
     "delayFeedback": "延误回复反馈",
     "delayConfirm": "延误回复确认",
     "delayOpenConfirm":"延误打开确认",
-    "delayNum":"延误回复"
+    "delayNum":"延误回复",
+    "contrast":"对比",
+    "iedContrast":"IED对比"
 },
 "skin": {
     "Blue": "天空蓝",
