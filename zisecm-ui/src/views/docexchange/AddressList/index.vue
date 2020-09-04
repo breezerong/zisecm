@@ -321,7 +321,7 @@ export default {
       }
       m.set("condition", cond);
       m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", 0);
+      m.set("pageIndex",  _self.currentPage - 1);
       
       // console.log('pagesize:', _self.pageSize);
       axios

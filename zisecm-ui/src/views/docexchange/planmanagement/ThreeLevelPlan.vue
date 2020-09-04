@@ -138,21 +138,19 @@ export default {
             if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
-
             _self.$refs.mainDataGrid.condition=k1
-           
+            _self.$refs.mainDataGrid.currentPage=1
             _self.$refs.mainDataGrid.loadGridData();
         },
         //高级搜索
         searchItem(){
             let _self = this
-            let key="";
-            key = _self.advCondition;
-            _self.$refs.mainDataGrid.condition=key+" AND C_PROJECT_NAME='@project'";
-            _self.tables.main.condition=_self.$refs.mainDataGrid.condition
+            _self.$refs.mainDataGrid.condition=_self.tables.main.condition+" and "+_self.advCondition
+            _self.advCondition=''
             _self.$refs.mainDataGrid.loadGridInfo()
             _self.$refs.mainDataGrid.loadGridData()
-            _self.$refs.rfDg.itemDataList=[]
+            _self.$refs.ICMPass.itemDataList=[]
+            _self.$refs.ICMComments.itemDataList=[]
         },
         //下拉菜单
         onSelectChange(val){
