@@ -2,70 +2,70 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 待接收文函 -->
-        <!-- 创建附件 -->
-        <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
-            <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
-                <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
-                <el-upload
-                    :limit="100"
-                    :file-list="fileList"
-                    action
-                    :on-change="handleChange"
-                    :auto-upload="false"
-                    :multiple="true"
-                >
-                    <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
-                </el-upload>
-                </div>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
-                <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
-            </div>
-        </el-dialog>
-        <!-- 创建类型选择 -->
-        <el-dialog :visible.sync="childrenTypeSelectVisible">
-            <el-form>
-                <el-form-item :label="$t('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
-                <el-select
-                    name="selectName"
-                    v-model="selectedChildrenType"
-                    :placeholder="$t('application.selectFileType')"
-                    style="display:block;"
-                >
-                    <div v-for="(name,nameIndex) in childrenTypes" :key="'T2_'+nameIndex">
-                    <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+            <!-- 创建附件 -->
+            <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
+                <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                    <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+                    <el-upload
+                        :limit="100"
+                        :file-list="fileList"
+                        action
+                        :on-change="handleChange"
+                        :auto-upload="false"
+                        :multiple="true"
+                    >
+                        <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+                    </el-upload>
                     </div>
-                </el-select>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button
-                @click="childrenTypeSelectVisible=false;beforeCreateDocItem(selectedChildrenType,'')"
-                >{{$t('application.ok')}}</el-button>
-            </div>
-        </el-dialog>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+                    <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
+                </div>
+            </el-dialog>
+            <!-- 创建类型选择 -->
+            <el-dialog :visible.sync="childrenTypeSelectVisible">
+                <el-form>
+                    <el-form-item :label="$t('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
+                    <el-select
+                        name="selectName"
+                        v-model="selectedChildrenType"
+                        :placeholder="$t('application.selectFileType')"
+                        style="display:block;"
+                    >
+                        <div v-for="(name,nameIndex) in childrenTypes" :key="'T2_'+nameIndex">
+                        <el-option :label="name" :value="name" :key="nameIndex"></el-option>
+                        </div>
+                    </el-select>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button
+                    @click="childrenTypeSelectVisible=false;beforeCreateDocItem(selectedChildrenType,'')"
+                    >{{$t('application.ok')}}</el-button>
+                </div>
+            </el-dialog>
 
-        <el-dialog
-            :title="dialogName+$t('application.property')"
-            :visible.sync="propertyVisible"
-            @close="propertyVisible = false"
-            width="80%"
-            >
-            <ShowProperty
-                ref="ShowProperty"
-                @onSaved="onSaved"
-                width="100%"
-                folderPath=""
-                itemId=""
-                v-bind:typeName="typeName"
-            ></ShowProperty>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="saveItem">{{$t('application.save')}}</el-button>
-                <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
-            </div>
-        </el-dialog>
-		<el-form :inline="true" :model="filters" @submit.native.prevent>
+            <el-dialog
+                :title="dialogName+$t('application.property')"
+                :visible.sync="propertyVisible"
+                @close="propertyVisible = false"
+                width="80%"
+                >
+                <ShowProperty
+                    ref="ShowProperty"
+                    @onSaved="onSaved"
+                    width="100%"
+                    folderPath=""
+                    itemId=""
+                    v-bind:typeName="typeName"
+                ></ShowProperty>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                    <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
+                </div>
+            </el-dialog>
+            <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
                     <!-- <el-select v-model="filters.projectCode">
                     <el-option label="所有项目" value></el-option>
@@ -124,150 +124,149 @@
                 </el-form>
         </template>
         <template v-slot:main="{layout}">
-            <el-row>
-                <el-col :span="24">
-                     <DataGrid
-                ref="mainDataGrid"
-                key="main"
-                dataUrl="/dc/getDocuments4Cnpe"
-                v-bind:tableHeight="layout.height/2-130"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="DCTransferGrid"
-                condition=" stauts='待接收' and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
-                @rowclick="rowClick"
-                @selectchange="selectChange"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                showOptions="查看内容"
-                :isShowChangeList="false"
-                ></DataGrid>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">
-                    <el-tabs v-model="selectedTabName">
-        <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
-          <el-row>
-            <el-col :span="24">
-              <el-form :inline="true" :model="filters" @submit.native.prevent>
-                <!-- <el-form-item>
-                  <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
-                </el-form-item> -->
-                <!-- 打包下载 -->
-                <el-form-item>
-                    <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
-                </el-form-item>
-                <!-- 驳回 -->
-                <el-form-item>
-                    <!-- <el-button type="primary" >{{$t('application.Rejected')}}</el-button> -->
-                    <RejectButton :selectedItems="selectedTransferDocItems" :isSubObj="true" :refreshDataGrid="$refs.transferDoc"></RejectButton>
-                </el-form-item>
-                
-              </el-form>
-            </el-col>
-          </el-row>
-          <!--列表-->
-          <DataGrid
-                ref="transferDoc"
-                key="transferDocKey"
-                dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="layout.height/2-160"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="DrawingGrid"
-                condition=" and a.NAME='设计文件'"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                showOptions="查看内容"
-                :isShowChangeList="false"
-                @selectchange="selectChangeTransferDoc"
-                ></DataGrid>
-        </el-tab-pane>
-        <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
-          <el-row>
-            <el-col :span="24">
-              <el-form :inline="true" :model="filters" @submit.native.prevent>
-                <!-- <el-form-item>
-                  <el-button type="primary" @click="beforeCreateDocItem('设计文件','相关文件')">新建</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
-                </el-form-item> -->
-                 <!-- 打包下载 -->
-                <el-form-item>
-                    <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
-                </el-form-item>
-               
-              </el-form>
-            </el-col>
-          </el-row>
-          <!--列表-->
-          <DataGrid
-                ref="relevantDoc"
-                key="relevantDocKey"
-                dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="layout.height/2-160"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="DrawingGrid"
-                condition=" and a.NAME='相关文件'"
-                :isShowMoreOption="false"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                :isShowChangeList="false"
-                :isshowicon="false"
-                @selectchange="relevantDocSelect"
-                ></DataGrid>
-          
-        </el-tab-pane>
-        <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
-          <el-row>
-            <el-col :span="24">
-              <el-form :inline="true" :model="filters" @submit.native.prevent>
-                <!-- <el-form-item>
-                  <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">{{$t('application.delete')}}</el-button>
-                </el-form-item> -->
-                 <!-- 打包下载 -->
-                <el-form-item>
-                    <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
-                </el-form-item>
-               
-                
-              </el-form>
-            </el-col>
-          </el-row>
-          <!--列表-->
-          <DataGrid
-                ref="attachmentDoc"
-                key="attachmentDocKey"
-                dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="layout.height/2-160"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="AttachmentGrid"
-                condition=" and a.NAME='附件'"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                showOptions="查看内容"
-                :isShowChangeList="false"
-                @selectchange="attachmentDocSelect"
-                ></DataGrid>
-        </el-tab-pane>
-      </el-tabs>
-                </el-col>
-            </el-row>
+            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                    <template slot="paneL">
+                        <DataGrid
+                            ref="mainDataGrid"
+                            key="main"
+                            dataUrl="/dc/getDocuments4Cnpe"
+                            v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
+                            v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                            gridViewName="DCTransferGrid"
+                            condition=" stauts='待接收' and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
+                            @rowclick="rowClick"
+                            @selectchange="selectChange"
+                            :isshowCustom="false"
+                            :isEditProperty="false"
+                            showOptions="查看内容"
+                            :isShowChangeList="false"
+                        ></DataGrid>
+                    </template>
+                    <template slot="paneR">
+                        <el-tabs v-model="selectedTabName">
+                            <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
+                                <el-row>
+                                    <el-col :span="24">
+                                    <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                        <!-- <el-form-item>
+                                        <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
+                                        </el-form-item>
+                                        <el-form-item>
+                                        <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
+                                        </el-form-item>
+                                        <el-form-item>
+                                        <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
+                                        </el-form-item> -->
+                                        <!-- 打包下载 -->
+                                        <el-form-item>
+                                            <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
+                                        </el-form-item>
+                                        <!-- 驳回 -->
+                                        <el-form-item>
+                                            <!-- <el-button type="primary" >{{$t('application.Rejected')}}</el-button> -->
+                                            <RejectButton :selectedItems="selectedTransferDocItems" :isSubObj="true" :refreshDataGrid="$refs.transferDoc"></RejectButton>
+                                        </el-form-item>
+                                        
+                                    </el-form>
+                                    </el-col>
+                                </el-row>
+                                <!--列表-->
+                                <DataGrid
+                                    ref="transferDoc"
+                                    key="transferDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="DrawingGrid"
+                                    condition=" and a.NAME='设计文件'"
+                                    :isshowCustom="false"
+                                    :isEditProperty="false"
+                                    showOptions="查看内容"
+                                    :isShowChangeList="false"
+                                    @selectchange="selectChangeTransferDoc"
+                                ></DataGrid>
+                            </el-tab-pane>
+                            <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                            <!-- <el-form-item>
+                                            <el-button type="primary" @click="beforeCreateDocItem('设计文件','相关文件')">新建</el-button>
+                                            </el-form-item>
+                                            <el-form-item>
+                                            <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
+                                            </el-form-item>
+                                            <el-form-item>
+                                            <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
+                                            </el-form-item> -->
+                                            <!-- 打包下载 -->
+                                            <el-form-item>
+                                                <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
+                                            </el-form-item>
+                                        
+                                        </el-form>
+                                    </el-col>
+                                </el-row>
+                                <!--列表-->
+                                <DataGrid
+                                    ref="relevantDoc"
+                                    key="relevantDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="DrawingGrid"
+                                    condition=" and a.NAME='相关文件'"
+                                    :isShowMoreOption="false"
+                                    :isshowCustom="false"
+                                    :isEditProperty="false"
+                                    :isShowChangeList="false"
+                                    :isshowicon="false"
+                                    @selectchange="relevantDocSelect"
+                                ></DataGrid>
+                            </el-tab-pane>
+                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                            <!-- <el-form-item>
+                                            <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
+                                            </el-form-item>
+                                            <el-form-item>
+                                            <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
+                                            </el-form-item>
+                                            <el-form-item>
+                                            <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">{{$t('application.delete')}}</el-button>
+                                            </el-form-item> -->
+                                            <!-- 打包下载 -->
+                                            <el-form-item>
+                                                <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
+                                            </el-form-item>
+                                        
+                                            
+                                        </el-form>
+                                    </el-col>
+                                </el-row>
+                                <!--列表-->
+                                <DataGrid
+                                    ref="attachmentDoc"
+                                    key="attachmentDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="AttachmentGrid"
+                                    condition=" and a.NAME='附件'"
+                                    :isshowCustom="false"
+                                    :isEditProperty="false"
+                                    showOptions="查看内容"
+                                    :isShowChangeList="false"
+                                    @selectchange="attachmentDocSelect"
+                                ></DataGrid>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                </split-pane>
+            </div>
         </template>
     </DataLayout>
 </template>
@@ -279,9 +278,19 @@ import DataSelect from '@/components/ecm-data-select';
 import ExcelUtil from '@/utils/excel.js'
 import DataLayout from '@/components/ecm-data-layout'
 export default {
-    name: "Submissiondc",
+    name: "ReceivingDC4Cnpe",
     data(){
         return{
+            // 本地存储高度名称
+            topStorageName: 'ReceivingDC4CnpeHeight',
+            // 非split pan 控制区域高度
+            startHeight: 135,
+            // 顶部百分比*100
+            topPercent: 60,
+            // 顶部除列表高度
+            topbarHeight: 40,
+            // 底部除列表高度
+            bottomHeight: 80,
             filters: {
                 projectCode: "",
                 docType: "",
@@ -327,9 +336,17 @@ export default {
             })
             
         }
+        this.topPercent = this.getStorageNumber(this.topStorageName,60)
+    
     },
     methods: {
-        
+        // 上下分屏事件
+        onSplitResize(topPercent){
+            // 顶部百分比*100
+            this.topPercent = topPercent
+            this.setStorageNumber(this.topStorageName, topPercent)
+            //console.log(JSON.stringify(topPercent))
+        },
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {
