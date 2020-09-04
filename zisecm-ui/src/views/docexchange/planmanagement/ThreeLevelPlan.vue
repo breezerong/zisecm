@@ -138,9 +138,8 @@ export default {
             if(_self.forms.headForm.project != undefined && _self.forms.headForm.project.length>0){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
-
             _self.$refs.mainDataGrid.condition=k1
-           
+            _self.$refs.mainDataGrid.currentPage=1
             _self.$refs.mainDataGrid.loadGridData();
         },
         //高级搜索

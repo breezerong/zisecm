@@ -276,6 +276,7 @@ export default {
             }
             
             _self.tables.main.condition=_self.$refs.mainDataGrid.condition
+            _self.$refs.mainDataGrid.currentPage=1
             _self.$refs.mainDataGrid.loadGridInfo();
             _self.$refs.mainDataGrid.loadGridData();
         },
