@@ -916,7 +916,6 @@ public class PlanDashController extends ControllerAbstract{
 				Iedsql+") as iedNum,  ("+
 				Icmsql+") as icmNum";
 		try{
-			System.out.println(Icmsql);
 			List<Map<String, Object>> numList = ecmDocument.executeSQL(sqlList);
 			mp.put("projectNum",numList.get(0).get("projectNum"));
 			mp.put("planNum", numList.get(0).get("planNum"));

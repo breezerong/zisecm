@@ -96,7 +96,7 @@ export default {
       if(_self.filters.projectCode){
           mp.set('projectName',_self.filters.projectCode);
       }
-      axios.post("/exchange/docTop/getDCData",JSON.stringify(mp))
+      axios.post("/exchange/docTop/getCNPEDCData",JSON.stringify(mp))
       .then(function(response) {
           if(response.data.code==1){
               let result=response.data.data;
