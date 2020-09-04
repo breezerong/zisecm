@@ -170,7 +170,7 @@ public class PlanDashController extends ControllerAbstract{
 				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
 			}
 		}
-		String sql="select STATUS ,count(*) as c from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND STATUS in('审核中','已生效','已驳回','变更中','已变更','已生效') and c_is_released='1' and is_current='1' group by STATUS";
+		String sql="select STATUS ,count(*) as c from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND ((STATUS in('审核中','已驳回','变更中','已变更')) or (status='已生效'and c_is_released='1' and is_current='1')) group by STATUS";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> d = new HashMap();
 		Map<String,Object> result=new HashMap<>();

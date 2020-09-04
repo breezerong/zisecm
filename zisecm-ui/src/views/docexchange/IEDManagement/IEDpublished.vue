@@ -172,11 +172,7 @@ export default {
     },
     mounted(){
         this.init()
-        setTimeout(() => {
-            this.topPercent = this.getStorageNumber(this.topStorageName,60)
-            console.log("topPercent:" +JSON.stringify(this.topPercent))
-        }, 500);
-        
+        this.topPercent = this.getStorageNumber(this.topStorageName,60)
     },
     methods: {
         async init(){
