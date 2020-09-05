@@ -9,28 +9,28 @@
             </el-form>
         </template>
         <template v-slot:main="{layout}">
-            <el-row>
-                <!-- :end-date="tables.mainGrid.endDate" -->
-				<el-col :span="24">
-                    <ecm-gantt v-if="tables.mainGrid.enabled" ref="mainGrid" :data="tables.mainGrid.data" :edit="false" width="100%"
-                    border stripe lazy  highlight-current-row
-                    :start-date="tables.mainGrid.startDate" :end-date="tables.mainGrid.endDate"
-                    :load="loadData" :height="layout.height/2-15"
-                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-                     @row-click="onRowClick">
-                        <el-table-column prop="wbs" :label="$t('application.wbs')" fixed prv="name" width="330"></el-table-column>
-                    </ecm-gantt>
-				</el-col>
-			</el-row>
-			 <el-row>
-				<el-col :span="24">
+           <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                    <template slot="paneL">
+                        <ecm-gantt v-if="tables.mainGrid.enabled" ref="mainGrid" :data="tables.mainGrid.data" :edit="false" width="100%"
+                        border stripe lazy  highlight-current-row
+                        :start-date="tables.mainGrid.startDate" :end-date="tables.mainGrid.endDate"
+                        :load="loadData" :height="(layout.height-startHeight)*topPercent/100-topbarHeight"
+                        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+                        @row-click="onRowClick">
+                            <el-table-column prop="wbs" :label="$t('application.wbs')" fixed prv="name" width="330"></el-table-column>
+                        </ecm-gantt>
+			        </template>
+                    <template slot="paneR">
+				
 					<el-tabs v-model="tabs.tabAcitve">
 						<el-tab-pane name="relationIED" label="相关IED">
-							<DataGrid ref="relationIEDGrid" v-bind="tables.relationIEDGrid" :tableHeight="layout.height/2-195"></DataGrid>
+							<DataGrid ref="relationIEDGrid" v-bind="tables.relationIEDGrid" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
 						</el-tab-pane>
 					</el-tabs>
-				</el-col>
-			</el-row>
+				</template>
+                </split-pane>
+            </div>
         </template>
     </DataLayout>
 </template>
@@ -43,6 +43,16 @@ export default {
     name: "Gantt",
     data(){
         return{
+            // 本地存储高度名称
+            topStorageName: 'GanttHeight',
+            // 非split pan 控制区域高度
+            startHeight: 135,
+            // 顶部百分比*100
+            topPercent: 70,
+            // 顶部除列表高度
+            topbarHeight: 0,
+            // 底部除列表高度
+            bottomHeight: 80,
             tables:{
                 mainGrid:{
                     enabled:false,
@@ -82,9 +92,18 @@ export default {
 
     },
     mounted(){
-
+         setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
     },
     methods: {
+        // 上下分屏事件
+        onSplitResize(topPercent){
+            // 顶部百分比*100
+            this.topPercent = topPercent
+            this.setStorageNumber(this.topStorageName, topPercent)
+            //console.log(JSON.stringify(topPercent))
+        },
         onLoadnDataSuccess(select,options){
             this.search()
             this.tables.mainGrid.doLayout()
