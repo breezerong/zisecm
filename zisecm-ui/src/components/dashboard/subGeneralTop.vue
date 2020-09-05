@@ -70,6 +70,7 @@ export default {
       axios
         axios.post("/exchange/homeTop/homeSumNum",JSON.stringify(mp))
         .then(function (response) {
+          console.log(response)
           if(response.data.code==1){
             console.log(response.data)
               _self.a[0]=response.data.projectNum;

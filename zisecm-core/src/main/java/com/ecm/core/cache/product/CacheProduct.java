@@ -23,9 +23,10 @@ import com.ecm.core.cache.manager.impl.CacheManagerEcmParam;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmStore;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmSuggestion;
 import com.ecm.core.cache.manager.impl.CacheManagerEcmSystemEvent;
+import com.ecm.core.cache.manager.impl.CacheManagerFinishLoadCacheTag;
 import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 import com.ecm.core.cache.manager.impl.CacheManagerLanguage;
-import com.ecm.core.sync.SyncPublicNet;
+//import com.ecm.core.sync.SyncPublicNet;
 
 /**
  * 
@@ -86,7 +87,10 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	private CacheManagerCfgActivity cacheManagerCfgActivity;//活动配置
 
 	@Autowired
-	SyncPublicNet syncPublicNet;
+	private CacheManagerFinishLoadCacheTag cacheManagerFinishLoadCacheTag;//活动配置
+
+//	@Autowired
+//	SyncPublicNet syncPublicNet;
 	//@Autowired
 	//private PdfSignService pdfService;
 
@@ -94,10 +98,11 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	public int getOrder() {
 		return 5;
 	}
-
+	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		logger.info("Start load cache: "+ (new Date()).toString());
+		
 		//语言标签配置
 		cacheManagerLanguage.initAllCaches();
 		cacheManagerLangInfo.initAllCaches();
@@ -136,6 +141,12 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 		
 		cacheManagerCfgActivity.initAllCaches();
 		
+		
+		
+		
+		
+		
+		cacheManagerFinishLoadCacheTag.initAllCaches();	//标记所有cache 加载完毕
 		logger.info("Complete load cache: "+ (new Date()).toString());
 		//pdfService.run();
 

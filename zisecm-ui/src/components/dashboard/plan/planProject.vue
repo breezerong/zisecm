@@ -157,12 +157,13 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 dataDC = [{
-                title: '文函',
+                title: _self.$t('application.Document'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
                 url: '/cnpe/MoreViewerBrowe/projectviewer'
               }]
+              console.log(response.data)
             _self.projectDataDC.data = dataDC
             _self.$refs.dataDC.refresh()//.option=_self.projectData1;
       }
@@ -180,11 +181,11 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-        axios.post("/dc/getIEDNum",JSON.stringify(mp))
+        axios.post("/dc/getCNPEIEDNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: 'IED',
+                title: _self.$t('application.IEDPublished'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
@@ -204,11 +205,11 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-        axios.post("/dc/getTPLANNum",JSON.stringify(mp))
+        axios.post("/dc/getCNPETPLANNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '三级计划',
+                title: _self.$t('application.TPlan'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
@@ -232,7 +233,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '计划',
+                title: _self.$t('application.Projects'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-flag',
@@ -245,7 +246,7 @@ export default {
 
     loadDocChart(chartObj, indata){
       chartObj.setOption({
-            title: { text: 'IED统计' },
+            title: { text: this.$t('application.IEDDash') },
             tooltip: {},
             grid: {  
               left: '8%',
@@ -260,7 +261,7 @@ export default {
             },
             yAxis: {},
             series: [{
-                name: '数量',
+                name: this.$t('application.nums'),
                 type: 'bar',
                 data: indata.yAxisData,
                 itemStyle: {

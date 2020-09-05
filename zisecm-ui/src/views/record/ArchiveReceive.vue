@@ -974,7 +974,7 @@ export default {
       if (indata == "update") {
         this.$message(this.$t("message.saveSuccess"));
       } else {
-        this.$message("新建成功!");
+        this.$message(this.$t("message.operationSuccess"));
       }
       this.propertyVisible = false;
       this.loadGridData();

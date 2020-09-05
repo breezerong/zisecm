@@ -116,87 +116,86 @@
                 </el-form>
         </template>
         <template v-slot:main="{layout}">
-            <el-row>
-                <el-col :span="24">
-                    <DataGrid
-                ref="mainDataGrid"
-                key="main"
-                dataUrl="/dc/getDocuments"
-                v-bind:tableHeight="layout.height/2-130"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="DCTransferGrid"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                showOptions="查看内容"
-                :isShowChangeList="false"
-                condition=" status='待确认' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
-                @rowclick="rowClick"
-                @selectchange="selectChange"
-                ></DataGrid>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">
-                    <el-tabs v-model="selectedTabName">
-        <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
-          
-          <!--列表-->
-          <DataGrid
-                ref="transferDoc"
-                key="transferDocKey"
-                dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="layout.height/2-160"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="DrawingGrid"
-                condition=" and a.NAME='设计文件'"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                showOptions="查看内容"
-                :isShowChangeList="false"
-                @selectchange="selectChangeTransferDoc"
-                ></DataGrid>
-        </el-tab-pane>
-        <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
-          
-          <!--列表-->
-          <DataGrid
-                ref="relevantDoc"
-                key="relevantDocKey"
-                dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="layout.height/2-160"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="DrawingGrid"
-                condition=" and a.NAME='相关文件'"
-                :isShowMoreOption="false"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                :isShowChangeList="false"
-                :isshowicon="false"
-                @selectchange="relevantDocSelect"
-                ></DataGrid>
-          
-        </el-tab-pane>
-        <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
-          
-          <!--列表-->
-          <DataGrid
-                ref="attachmentDoc"
-                key="attachmentDocKey"
-                dataUrl="/dc/getDocuByRelationParentId"
-                v-bind:tableHeight="layout.height/2-160"
-                v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                gridViewName="AttachmentGrid"
-                condition=" and a.NAME='附件'"
-                :isshowCustom="false"
-                :isEditProperty="false"
-                showOptions="查看内容"
-                :isShowChangeList="false"
-                @selectchange="attachmentDocSelect"
-                ></DataGrid>
-        </el-tab-pane>
-      </el-tabs>
-                </el-col>
-            </el-row>
+            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                    <template slot="paneL">
+                        <DataGrid
+                        ref="mainDataGrid"
+                        key="main"
+                        dataUrl="/dc/getDocuments"
+                        v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
+                        v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                        gridViewName="DCTransferGrid"
+                        :isshowCustom="false"
+                        :isEditProperty="false"
+                        showOptions="查看内容"
+                        :isShowChangeList="false"
+                        condition=" status='待确认' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
+                        @rowclick="rowClick"
+                        @selectchange="selectChange"
+                        ></DataGrid>
+                    </template>
+                    <template slot="paneR">
+                        <el-tabs v-model="selectedTabName">
+                            <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
+                            <!--列表-->
+                            <DataGrid
+                                    ref="transferDoc"
+                                    key="transferDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="DrawingGrid"
+                                    condition=" and a.NAME='设计文件'"
+                                    :isshowCustom="false"
+                                    :isEditProperty="false"
+                                    showOptions="查看内容"
+                                    :isShowChangeList="false"
+                                    @selectchange="selectChangeTransferDoc"
+                                    ></DataGrid>
+                            </el-tab-pane>
+                            <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
+                            
+                            <!--列表-->
+                            <DataGrid
+                                    ref="relevantDoc"
+                                    key="relevantDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="DrawingGrid"
+                                    condition=" and a.NAME='相关文件'"
+                                    :isShowMoreOption="false"
+                                    :isshowCustom="false"
+                                    :isEditProperty="false"
+                                    :isShowChangeList="false"
+                                    :isshowicon="false"
+                                    @selectchange="relevantDocSelect"
+                                    ></DataGrid>
+                            
+                            </el-tab-pane>
+                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                            
+                            <!--列表-->
+                            <DataGrid
+                                    ref="attachmentDoc"
+                                    key="attachmentDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="AttachmentGrid"
+                                    condition=" and a.NAME='附件'"
+                                    :isshowCustom="false"
+                                    :isEditProperty="false"
+                                    showOptions="查看内容"
+                                    :isShowChangeList="false"
+                                    @selectchange="attachmentDocSelect"
+                                    ></DataGrid>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                </split-pane>
+            </div>
         </template>
     </DataLayout>
 </template>
@@ -208,9 +207,20 @@ import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
 export default {
-    name: "Submissiondc",
+    name: "Pendingdc",
     data(){
         return{
+            // 本地存储高度名称
+            topStorageName: 'PendingdcHeight',
+            // 非split pan 控制区域高度
+            startHeight: 135,
+            // 顶部百分比*100
+            topPercent: 60,
+            // 顶部除列表高度
+            topbarHeight: 40,
+            // 底部除列表高度
+            bottomHeight: 80,
+
             filters: {
                 projectCode: "",
                 docType: "",
@@ -259,9 +269,17 @@ export default {
             })
             
         }
+        this.topPercent = this.getStorageNumber(this.topStorageName,60)
+    
     },
     methods: {
-        
+        // 上下分屏事件
+        onSplitResize(topPercent){
+            // 顶部百分比*100
+            this.topPercent = topPercent
+            this.setStorageNumber(this.topStorageName, topPercent)
+            //console.log(JSON.stringify(topPercent))
+        },
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {
@@ -633,7 +651,7 @@ export default {
             // _self.$message("新建成功!");
             _self.$message({
                 showClose: true,
-                message: "新建成功",
+                message: _self.$t('message.operationSuccess'),
                 duration: 2000,
                 type: 'success'
             });

@@ -117,7 +117,7 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-          axios.post("/dc/getIEDDash",JSON.stringify(mp))
+          axios.post("/dc/getSubIEDDash",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                     let result=response.data.data;
@@ -145,11 +145,11 @@ export default {
           }else{
               mp.set('projectName','@project');
           }
-        axios.post("/dc/getDCNum",JSON.stringify(mp))
+        axios.post("/dc/getSubDCNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 dataDC = [{
-                title: '文函',
+                title: _self.$t('application.Document'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
@@ -176,7 +176,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: 'IED',
+                title: _self.$t('application.IEDPublished'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
@@ -199,7 +199,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '三级计划',
+                title: _self.$t('application.TPlan'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
@@ -223,7 +223,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '计划',
+                title: _self.$t('application.Plannum'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-flag',
@@ -236,7 +236,7 @@ export default {
 
     loadDocChart(chartObj, indata){
       chartObj.setOption({
-            title: { text: 'IED统计' },
+            title: { text: this.$t('application.IEDDash') },
             tooltip: {},
             grid: {  
               left: '10%',
@@ -251,7 +251,7 @@ export default {
             },
             yAxis: {},
             series: [{
-                name: '数量',
+                name: this.$t('application.nums'),
                 type: 'bar',
                 data: indata.yAxisData,
                 itemStyle: {

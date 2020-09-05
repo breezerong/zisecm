@@ -62,13 +62,13 @@
         </template>
     <template v-slot:main="{layout}">    
     <DataGrid ref="mainDataGrid" dataUrl="/dc/getDocuments"
-                    condition="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
                     gridViewName="ICM延误回复反馈"
                     isshowOption
                     v-bind="tables.main"
                     @rowclick="rowClick" 
                      @selectchange="selectChange"
                     :tableHeight="layout.height-166" 
+                    :isEditProperty="false"
                     >
                 <template slot="customMoreOption" slot-scope="scope">
                 <el-button v-if="CstatusType" type="primary" @click="feedback(scope.data.row)" size="mini">回复反馈</el-button>
@@ -115,8 +115,8 @@ export default {
             },
              processStatus:[
             {
-                label : "所有未反馈延误",
-                value : "所有未反馈延误",
+                label : "未反馈",
+                value : "未反馈",
             },
             
             {
@@ -151,7 +151,7 @@ export default {
             coding:'',
             CstatusType:true,
             dialogName:'',
-            Cstatus:'所有未反馈延误',
+            Cstatus:'未反馈',
             Ctypes:'所有类型',
             hiddenInput:'hidden',
             typeName:"延误回复反馈",
@@ -239,11 +239,11 @@ export default {
         search(){
         let _self = this
         let orS = ""
-        var k1=""
-             if(_self.Cstatus=='所有未反馈延误'){
+        var k1="C_IS_RELEASED='1' and "
+             if(_self.Cstatus=='未反馈'){
                 k1+="(C_PROCESS_STATUS not in ('新建','已确认') or C_PROCESS_STATUS is null) "
             }
-             if(_self.Cstatus!='所有未反馈延误'){
+             if(_self.Cstatus!='未反馈'){
                 k1+="C_PROCESS_STATUS ='"+_self.Cstatus+"'"
             }
 
@@ -262,7 +262,7 @@ export default {
             if(_self.Cstatus=='新建'||_self.Cstatus=='已确认'){
                 _self.CstatusType=false
             }
-            if(_self.Cstatus=='所有未反馈延误'){
+            if(_self.Cstatus=='未反馈'){
                 _self.CstatusType=true
             }
             //k1+="and c_company='"+this.currentUser().company+"'"

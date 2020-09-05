@@ -25,19 +25,40 @@ export default {
         span: 6,
         data: [
           {
-            title: 'ICM',
+            title: this.$t('application.ICM'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
             url: '/cnpe/icmmanagement/interfacemanual'
           },
           {
-            title: '反馈ICM',
+            title: this.$t('application.FeedbackICM'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
             url: '/cnpe/icmmanagement/icmfeedback'
-          }
+          },
+           {
+            title: this.$t('application.delayOpenConfirm'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-s-order',
+            url: ''
+          },
+          {
+            title: this.$t('application.delayNum'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-s-order',
+            url: ''
+          },
+            {
+            title: this.$t('application.delayConfirm'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-s-order',
+            url: ''
+          },
         ]
       },
       a:[]
@@ -55,6 +76,11 @@ export default {
     loadStatistic(){
       let _self = this;
       let mp=new Map();
+       if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
       axios
         axios.post("/exchange/homeTop/homeSumNum",JSON.stringify(mp))
         .then(function (response) {
@@ -62,10 +88,14 @@ export default {
             console.log(response.data)
               _self.a[0]=response.data.icmNum;
               _self.a[1]=response.data.feedbackicmNum;
+              _self.a[2]=response.data.delayConfirmNum
+              _self.a[3]=response.data.delayNum
+              _self.a[4]=response.data.delayReplyConfirm
               let i=0
               _self.projectData.data.forEach(function(item){
                 item.count=_self.a[i++];
               })
+            
           }
           
         })

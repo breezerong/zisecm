@@ -24,28 +24,41 @@
       <el-button @click="removeminus" icon="el-icon-minus">{{$t('application.delete')}}</el-button>
     </el-row>
       <el-row :key="index" v-for="(item,index) in formtips">
-            <el-col :span='3' class="topbar-button">
+            <el-col :span='3' v-model="item.relation1" class="topbar-button">
               <el-select v-model="item.relation" v-if="index!=0">
                 <div v-for="relation in relations">
                   <el-option :label="relation.label" :value="relation.val"></el-option>
                 </div>
               </el-select>
             </el-col>
-            <el-col :span="5" class="topbar-button">
-              <el-select v-model="item.column">
+            <el-col :span='3' class="topbar-button">
+              <el-select v-model="item.relation1">
+                <div v-for="relation1 in relations1">
+                  <el-option :label="relation1.label" :value="relation1.val"></el-option>
+                </div>
+              </el-select>
+              <!-- <el-select v-model="item.relation1"  v-if="(item.relation==''&&index!=0)||index==0">
+                <div v-for="relation1 in relations1">
+                  <el-option :label="relation2.label" :value="relation2.val"></el-option>
+                </div>
+              </el-select> -->
+            </el-col>
+            
+            <el-col :span="5" class="topbar-button" >
+              <el-select v-model="item.column" v-if="item.relation1!=')'">
                 <div v-for="col in columns">
                   <el-option v-if="col.isHide==false" :label="col.label" :value="col.attrName"></el-option>
                 </div>
               </el-select>
             </el-col>
             <el-col :span="3" class="topbar-button">
-              <el-select v-model="item.condition">
+              <el-select v-model="item.condition" v-if="item.relation1!=')'">
                     <div v-for="condition in changeColumn(item.column,item)">
                       <el-option :label="condition.label" :value="condition.val"></el-option>
                     </div>
               </el-select>
             </el-col>
-            <el-col :span="8" class="topbar-button" v-model="item.condition">
+            <el-col :span="8" class="topbar-button" v-model="item.condition" v-if="item.relation1!=')'">
               <div v-for="ConditionsType in ConditionType(item.column,item)">
                 <el-input v-if="ConditionsType=='2'" v-model="item.val" :type="inputType1" ></el-input>
                 <el-date-picker
@@ -81,6 +94,8 @@
 export default {
   data() {
     return {
+      left:0,
+      right:0,
       currentLanguage: this.getLang(),
       visible: false,
       findValue: "",
@@ -94,6 +109,7 @@ export default {
       columns:[],
       typeNameOptions:[],
       typeName:"",
+      relations1:[{"label":"(","val":"("},{"label":")","val":")"}],
       relations:[{"label":"且","val":"and"},{"label":"或","val":"or"}],
       intCondition:[{"label":"大于","val":">"},{"label":"小于","val":"<"},
       {"label":"大于等于","val":">="},{"label":"小于等于","val":"<="},{"label":"不等于","val":"!="}
@@ -212,6 +228,7 @@ export default {
     addplus:function () {
         this.formtips.push(
           {
+            relation1:"",
             relation:"",
             column:"",
             dataType:"",
@@ -237,8 +254,16 @@ export default {
         sql+=" TYPE_NAME='"+_self.typeName+"' and (";
       }
       _self.formtips.forEach(element => {
-        sql=sql+element.relation+' '+element.column+' ';
-
+        
+        sql=sql+element.relation+' ';
+        sql=sql+element.relation1;
+        if(element.relation1=='('){
+          _self.left++;
+        }
+        if(element.relation1==')'){
+          _self.right++;
+        }
+        sql=sql+element.column+' '
         if(element.condition=='like'){
           sql=sql+element.condition+' \'%'+element.val+'%\' '
         }else if(element.condition=='='||element.condition=='!='){
@@ -263,14 +288,28 @@ export default {
         else{
           sql=sql+element.condition+' '+element.val+' '
         }
+        
         // +element.condition+' '+element.val
       });
       if(_self.typeName!='所有'){
         sql=sql+")";
       }
-      
+      if(_self.left!=_self.right){
+        sql=" TYPE_NAME='"+_self.typeName+"'";
+        _self.right=0;
+        _self.left=0
+        _self.$message({
+          showClose: true,
+          message: "查询条件有误",
+          duration: 2000,
+          type: "warring"
+        });
+        return;
+      }
       if(_self.formtips.length==0){
         sql=" TYPE_NAME='"+_self.typeName+"'";
+        _self.right=0;
+        _self.left=0
         _self.$message({
           showClose: true,
           message: "未添加查询条件",

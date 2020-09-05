@@ -210,8 +210,40 @@
     "appname":"应用名称",
     "newcount":"新增数量",
     "updatecount":"更新数量",
+    "failcount":"失败数量",
     "SyncCreationDate":"同步开始时间",
-    "SyncEexecuteDate":"同步结束时间"
+    "SyncEexecuteDate":"同步结束时间",
+    "ExecuteDate":"执行时间",
+    "projectInfo":"项目信息",
+    "userCenter":"个人中心",
+    "myInformation":"我的信息",
+    "myAuth":"我的授权",
+    "myNotice":"通知公告",
+    
+    "Document":"文函",
+    "Projects":"项目",
+    "Plannum":"计划数",
+    "IEDPublished":"已生效IED",
+    "PendingSubmit":"待提交IED",
+    "IEDRejected":"驳回IED",
+    "TPlan":"三级计划",
+    "ICM":"ICM",
+    "ReceivedDC":"待接收文函",
+    "RejectedDC":"驳回文函",
+    "PendingSubmitDC":"待提交文函",
+    "ToDistributedDC":"待分发文函",
+    "DeblockingDC":"待解锁文函",
+    "PendingIED":"待确认IED",
+    "FeedbackICM":"延误打开",
+    "IEDDash" : "IED统计",
+    "DCDash" : "文函统计",
+    "nums":"数量",
+    "delayFeedback": "延误回复反馈",
+    "delayConfirm": "延误回复确认",
+    "delayOpenConfirm":"延误打开确认",
+    "delayNum":"延误回复",
+    "contrast":"对比",
+    "iedContrast":"IED对比"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -347,7 +379,8 @@
     "companyManage":"公司管理",
     "AddressList":"通讯录",
     "delayFeedback": "延误回复反馈",
-    "delayConfirm": "延误回复确认"
+    "delayConfirm": "延误回复确认",
+    "delayOpenConfirm":"延误打开确认"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -397,7 +430,8 @@
     "pleaseSelectIED":"请选择要操作的IED",
     "pleaseSelectICM":"请选择要确认的ICM",
     "pleaseSelectSync":"请选择要同步的计划",
-    "selectByCoding":"根据发文号关键字查找"
+    "selectByCoding":"根据发文号关键字查找",
+    "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目"
 },
 "field": {
     "indexNumber":"序号",

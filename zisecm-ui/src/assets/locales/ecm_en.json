@@ -135,7 +135,7 @@
     "fileBox":"FileBox",
     "warehousing":"Warehousing",
     "theme": "Theme",
-    "more":"more",
+    "more":"More",
     "createFileToTransfer":"Create File To Transfer",
     "addToTransfer":"Add To Transfer",
     "removeFromTransfer":"Remove From Transfer",
@@ -213,10 +213,40 @@
     "appname":"AppName",
     "updatecount":"Update Count",
     "newcount":"New Count",
+    "failcount":"Fail Count",
     "SyncCreationDate":"Sync Start Date",
-    "SyncEexecuteDate":"Sync End Date"
-
-
+    "ExecuteDate":"Sync Execute Date",
+    "SyncEexecuteDate":"Sync End Date",
+    "projectInfo":"Project Information",
+    "userCenter":"User Center",
+    "myInformation":"Account Information",
+    "myAuth":"My Authorization",
+    "myNotice":"Notice Board",
+    
+    "Document":"Documents",
+    "Projects":"Projects Nums",
+    "Plannum":"Plan Nums",
+    "IEDPublished":"IED Published",
+    "PendingSubmit":"Submission IED",
+    "IEDRejected":"Rejected IED",
+    "TPlan":"ThreeLevel Plan",
+    "ICM":"ICM",
+    "ReceivedDC":"Receiving DC",
+    "RejectedDC":"Rejected DC",
+    "PendingSubmitDC":"PendingSubmit DC",
+    "ToDistributedDC":"Dispense DC",
+    "DeblockingDC":"Deblocking DC",
+    "PendingIED":"PendingIED",
+    "FeedbackICM":"Delay Open",
+    "IEDDash" : "IED Dash",
+    "DCDash" : "Documents Dash",
+    "nums":"Numbers",
+    "delayFeedback": "DelayFeedback",
+    "delayConfirm": "DelayConfirm",
+    "delayOpenConfirm":"DelayOpenConfirm",
+    "contrast":"Contrast",
+    "iedContrast":"IEDContrast",
+    "delayNum":"DelayReply Nums"
 },
 "skin": {
     "Blue": "Blue",
@@ -328,7 +358,8 @@
     "companyManage":"Company Management",
     "AddressList":"Address List",
     "delayFeedback": "DelayFeedback",
-    "delayConfirm": "DelayConfirm"
+    "delayConfirm": "DelayConfirm",
+    "delayOpenConfirm":"DelayOpenConfirm"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -378,7 +409,8 @@
     "pleaseSelectIED":"Please Select IEDs for operate",
     "pleaseSelectICM":"Please Selcet ICMs for operate",
     "pleaseSelectSync":"Please Select Plans for Sync",
-    "selectByCoding":"Condtion select By Coding"
+    "selectByCoding":"Condtion select By Coding",
+    "failureForNew":"Operation Failed!Don't create duplicate items under the same project"
 },
 "field": {
     "indexNumber":"S/N",

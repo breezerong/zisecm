@@ -58,10 +58,10 @@ export default {
                itemDataList: [],
                loading: false,
                status : '已完成',
-               selectedItems: [],
                selectedItemId: "",
     
             },
+            selectedItems: [],
             value:'',
             input:'',
         }
@@ -115,7 +115,13 @@ export default {
 
 
     submit(){
-      this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
+ 
+    if(this.selectedItems.length==0){
+    let msg = this.$t('message.pleaseSelectIED')
+    this.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
+    return
+    }
+        this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid)
         this.fresh()
     },
     onLoadnDataSuccess(select,options){

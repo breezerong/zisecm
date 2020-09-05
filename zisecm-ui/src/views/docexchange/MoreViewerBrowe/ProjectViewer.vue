@@ -1,17 +1,19 @@
 <template>
-    <div>
-        <el-container>
-            <el-aside>
-                <el-tree
-                    class="filter-tree"
-                    :data="data"
-                    :props="defaultProps"
-                    :filter-node-method="filterNode"
-                    ref="tree"
-                    @node-click="nodeClick">
-                </el-tree>
-            </el-aside>
-            <el-main>
+    <div :style="{position:'relative',height: asideHeight+'px'}">
+        <split-pane split="vertical" @resize="resize" :min-percent='10' :default-percent='22'>
+            <template slot="paneL">
+                <el-container :style="{height:treeHeight+'px',width:asideWidth,overflow:'auto'}">
+                    <el-tree
+                        class="filter-tree"
+                        :data="data"
+                        :props="defaultProps"
+                        :filter-node-method="filterNode"
+                        ref="tree"
+                        @node-click="nodeClick">
+                    </el-tree>
+                </el-container>
+            </template>
+            <template slot="paneR">
                 <template v-if="isDC">
                     <el-row>
                         <el-col :span="24">
@@ -110,7 +112,7 @@
                     </el-row>
                 </template>
                 <template v-if="isIED">
-                    <IEDPublishedView ref="iedgrid" :view=true :project="projectName"></IEDPublishedView>
+                    <IEDPublishedView ref="iedgrid" :view=true :project="'\''+projectName+'\''"></IEDPublishedView>
                 </template>
                 <template v-if="isProject">
                     <el-row>
@@ -305,8 +307,8 @@
                         </el-tabs>
                     </el-row>
                 </template>
-            </el-main>
-        </el-container>
+            </template>
+        </split-pane>
     </div>
 </template>
 <script type="text/javascript">
@@ -319,6 +321,10 @@ export default {
     name: "ProjectViewer",
     data(){
         return{
+            asideHeight: window.innerHeight - 150,
+            treeHeight:window.innerHeight - 100,
+            tableHeight: window.innerHeight - 180,
+            asideWidth: '100%',
             defaultProps: {
                 children: 'children',
                 label: 'name'
@@ -468,7 +474,26 @@ export default {
                 return;
             }
             if(node.data.name=='文函'){
-                return;
+                this.isDC=true;
+                this.isDesign=false;
+                this.isIED=false;
+                this.isProject=false;
+                this.isICM=false;
+                this.projectName=node.parent.data.name;
+                let user = this.currentUser();
+                if(user.userType==2 && user.company!=null){
+                    this.$refs.mainDataGrid.condition=this.condition=" C_ITEM_TYPE = '文函' and C_IS_RELEASED =1"
+                    +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认')"
+                    +" and C_PROJECT_NAME = '"+this.projectName+"' AND (C_COMPANY='"+user.company +"'"
+                    +" or C_TO like'%"+user.company+"%')";
+                    this.$refs.mainDataGrid.loadGridData();
+                }else{
+                    this.$refs.mainDataGrid.condition=this.condition=" C_ITEM_TYPE = '文函' and C_IS_RELEASED =1 "
+                    +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认') "
+                    +"and C_PROJECT_NAME = '"+this.projectName+"' ";
+                    this.$refs.mainDataGrid.loadGridData();
+                }
+
             }
             if(node.parent.data.name=="文函"){//文函查询
                 this.isDC=true;

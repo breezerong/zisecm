@@ -47,7 +47,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data: [{
-            title:'三级计划',
+            title:this.$t('application.TPlan'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-order',
@@ -57,7 +57,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data: [{
-            title: 'IED',
+            title: this.$t('application.IEDPublished'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-s-unfold',
@@ -67,7 +67,7 @@ export default {
         color: 'rgb(63, 161, 255)',
         span: 6,
         data: [{
-            title: 'ICM',
+            title: this.$t('application.ICM'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document',
@@ -96,7 +96,7 @@ export default {
       if(_self.filters.projectCode){
           mp.set('projectName',_self.filters.projectCode);
       }
-      axios.post("/exchange/docTop/getDCData",JSON.stringify(mp))
+      axios.post("/exchange/docTop/getCNPEDCData",JSON.stringify(mp))
       .then(function(response) {
           if(response.data.code==1){
               let result=response.data.data;
@@ -134,7 +134,7 @@ export default {
     },
     loadDocChart(chartObj, indata){
       chartObj.setOption({
-            title: { text: '文函统计' },
+            title: { text: this.$t('application.DCDash') },
             tooltip: {},
             grid: {  
               left: '10%',
@@ -149,7 +149,7 @@ export default {
             },
             yAxis: {},
             series: [{
-                name: '数量',
+                name: this.$t('application.nums'),
                 type: 'bar',
                 data: indata.yAxisData,
                 itemStyle: {

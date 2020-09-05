@@ -2,73 +2,73 @@
      <div>  
         <el-form inline="true" >
         <el-row>
-          <el-col :span="4" v-if="isOnlyCNPE || isOnlyCNPEjh">
+          <el-col :span="6" v-if="isOnlyCNPE || isOnlyCNPEjh">
             <el-form-item ><ecm-data-icons ref="dataProjectNum" :option="projectDataProjectNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlyCNPEjh">
+          <el-col :span="6" v-if="isOnlyCNPEjh">
           <el-form-item><ecm-data-icons  ref="dataPlanNum" :option="projectDataPlanNum"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlyCNPEjh">
+          <el-col :span="6" v-if="isOnlyCNPEjh">
           <el-form-item><ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlyCNPEjh">
+          <el-col :span="6" v-if="isOnlyCNPEjh">
           <el-form-item><ecm-data-icons  ref="dataPublishedIED" :option="projectDataPublishedIED"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isCNPEjh">
+          <el-col :span="6" v-if="isCNPEjh">
           <el-form-item><ecm-data-icons  ref="dataPendingIED" :option="projectDataPendingIED"></ecm-data-icons></el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlyCNPEjk">
+          <el-col :span="6" v-if="isOnlyCNPEjk">
           <el-form-item>
           <ecm-data-icons ref="p1" :option="projectData1" ></ecm-data-icons>
           </el-form-item>
           </el-col>
-          <el-col :span="4" v-if="isOnlyCNPEjk">
+          <el-col :span="6" v-if="isOnlyCNPEjk">
           <el-form-item>
             <ecm-data-icons ref="p2" :option="projectData2" ></ecm-data-icons>
           </el-form-item>
         </el-col>
-        <el-col :span="4" v-if="isOnlyCNPEjk">
+        <el-col :span="6" v-if="isOnlyCNPEjk">
         <el-form-item>
           <ecm-data-icons ref="p3" :option="projectData3" v-if="isOnlyCNPEjk"></ecm-data-icons>
         </el-form-item>
         </el-col>
-        <el-col :span="4"v-if="isCNPEjk||isCNPEjkjh">
+        <el-col :span="6"v-if="isCNPEjk||isCNPEjkjh">
         <el-form-item>
           <ecm-data-icons ref="p4" :option="projectData4" v-if="isCNPEjk"></ecm-data-icons>
         </el-form-item>
         </el-col>
-        <el-col  :span="4"v-if="isCNPEjk||isCNPEjkjh">
+        <el-col  :span="6"v-if="isCNPEjk||isCNPEjkjh">
         <el-form-item>
           <ecm-data-icons ref="p5" :option="projectData5" v-if="isCNPEjk"></ecm-data-icons>
         </el-form-item>
         </el-col>
-        <el-col :span="4"v-if="isCNPEjk||isCNPEjkjh">
+        <el-col :span="6"v-if="isCNPEjk||isCNPEjkjh">
           <el-form-item>
             <ecm-data-icons ref="p6" :option="projectData6" v-if="isCNPEjk"></ecm-data-icons>
           </el-form-item>
         </el-col>
-        <el-col :span="4"v-if="isCNPEjk">
+        <el-col :span="6"v-if="isCNPEjk">
         <el-form-item>
           <ecm-data-icons ref="p7" :option="projectData7" v-if="isCNPEjk"></ecm-data-icons>
         </el-form-item>
         </el-col>
 
-      <el-col :span="4" ref="wk1" v-if="isOnlyCNPEwk">
+      <el-col :span="6" ref="wk1" v-if="isOnlyCNPEwk">
       <el-form-item><ecm-data-icons :option="projectData"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" ref="wk2" v-if="isCNPEwk">
+      <el-col :span="6" ref="wk2" v-if="isCNPEwk">
       <el-form-item><ecm-data-icons :option="projectDataWKDC"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" ref="wk3" v-if="isCNPEwk">
+      <el-col :span="6" ref="wk3" v-if="isCNPEwk">
       <el-form-item><ecm-data-icons :option="projectDataReceived"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" ref="wk4" v-if="isCNPEwk">
+      <el-col :span="6" ref="wk4" v-if="isCNPEwk">
       <el-form-item><ecm-data-icons :option="projectDataDeBlocking"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" ref="wk5" v-if="isCNPEwk">
+      <el-col :span="6" ref="wk5" v-if="isCNPEwk">
       <el-form-item><ecm-data-icons :option="projectDataDispense"></ecm-data-icons></el-form-item>
       </el-col>
-      <el-col :span="4" ref="wk6" v-if="isCNPEwk">
+      <el-col :span="6" ref="wk6" v-if="isCNPEwk">
       <el-form-item><ecm-data-icons :option="projectDataReject"></ecm-data-icons></el-form-item>
       </el-col>
 
@@ -201,7 +201,7 @@ export default {
         projectData1: {
         data: [
           {
-            title: "项目",
+            title: this.$t('application.Projects'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-warning",
@@ -212,7 +212,7 @@ export default {
       projectData2: {
         data: [
           {
-            title: "计划",
+            title: this.$t('application.Plannum'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document",
@@ -223,7 +223,7 @@ export default {
       projectData3: {
         data: [
           {
-            title: "三级计划",
+            title: this.$t('application.TPlan'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
@@ -234,7 +234,7 @@ export default {
       projectData4: {
         data: [
           {
-            title: "已生效IED",
+            title: this.$t('application.IEDPublished'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
@@ -245,7 +245,7 @@ export default {
       projectData5: {
         data: [
           {
-            title: "文函",
+            title: this.$t("application.Document"),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-checked",
@@ -256,7 +256,7 @@ export default {
       projectData6: {
         data: [
           {
-            title: "ICM",
+            title: this.$t('application.ICM'),
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-document-delete",
@@ -267,7 +267,7 @@ export default {
       projectData7: {
         data: [
           {
-            title: "反馈ICM",
+            title: this.$t('application.FeedbackICM'),
             count: 0,
             color: "rgb(255, 0, 0)",
             icon: "el-icon-document-delete",
@@ -280,7 +280,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '项目',
+            title: this.$t('application.Projects'),
             count:0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-warning',
@@ -293,7 +293,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '文函',
+            title: this.$t('application.Document'),
             count: 0,
             color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document',
@@ -306,7 +306,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '待接收文函',
+            title: this.$t('application.ReceivedDC'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
@@ -319,7 +319,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '待解锁文函',
+            title: this.$t('application.DeblockingDC'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
@@ -332,7 +332,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '待分发文函',
+            title: this.$t('application.ToDistributedDC'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
@@ -345,7 +345,7 @@ export default {
         span: 24,
         data: [
           {
-            title: '驳回文函',
+            title: this.$t('application.RejectedDC'),
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-delete',
@@ -486,7 +486,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 dataDC = [{
-                title: '文函',
+                title: _self.$t('application.DC'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
@@ -503,11 +503,11 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getPublishedIED",JSON.stringify(mp))
+        axios.post("/dc/getCNPEIEDNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '已发布IED',
+                title: _self.$t('application.IEDPublished'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
@@ -527,7 +527,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '待提交IED',
+                title: _self.$t('application.PendingSubmit'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
@@ -547,7 +547,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '待确认IED',
+                title: _self.$t('application.PendingIED'),
                 count: response.data.data.num,
                 color: 'rgb(255, 0, 0)',
                 icon: 'el-icon-s-claim',
@@ -567,7 +567,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '已驳回IED',
+                title: _self.$t('application.IEDRejected'),
                 count: response.data.data.num,
                 color: 'rgb(255,0,0)',
                 icon: 'el-icon-s-claim',
@@ -587,7 +587,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: '计划数',
+                title: _self.$t('application.Plannum'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-claim',
@@ -603,11 +603,11 @@ export default {
         let mp=new Map();
         let datas
         mp.set('projectName','@project');
-        axios.post("/dc/getIEDNum",JSON.stringify(mp))
+        axios.post("/dc/getCNPEIEDNum",JSON.stringify(mp))
             .then(function(response) {
                 if(response.data.code==1){
                 datas = [{
-                title: 'IED',
+                title: _self.$t('application.IEDPublished'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
@@ -627,7 +627,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '三级计划',
+                title: _self.$t('application.TPlan'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-order',
@@ -647,7 +647,7 @@ export default {
             .then(function(response) {
                 if(response.data.code==1){
                 data = [{
-                title: '项目',
+                title: _self.$t('application.Projects'),
                 count: response.data.data.num,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-flag',

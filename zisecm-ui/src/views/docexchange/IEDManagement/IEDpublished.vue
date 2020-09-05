@@ -37,32 +37,31 @@
             </el-form>
         </template>
         <template v-slot:main="{layout}">
-            <el-row>
-                <el-col :span="24">
-                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="layout.height/2-100" 
+            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+            <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                <template slot="paneL">
+                    <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight" 
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
-                    <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
-                    <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
-                    </template>
-                    
+                        <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
+                        <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
+                        </template>
                     </DataGrid>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">
+                </template>
+                <template slot="paneR">
                     <el-tabs v-model="tabs.active">
                         <el-tab-pane :label="$t('application.relevant')" name="relationFiles">
-                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="layout.height/2-140"></DataGrid>
+                            <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.designdoc')" name="designFile">
-                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="layout.height/2-140"></DataGrid>
+                            <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                         <el-tab-pane :label="$t('application.transmitaldoc')" name="transmitals">
-                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="layout.height/2-140"></DataGrid>
+                            <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
                         </el-tab-pane>
                     </el-tabs>
-                </el-col>
-            </el-row>
+                </template>
+            </split-pane>
+            </div>
         </template>
     </DataLayout>
 </template>
@@ -80,7 +79,19 @@ export default {
         project:{type:String,default:""}
     },
     data(){
+        
         return{
+            // 本地存储高度名称
+            topStorageName: 'PublishIEDTopHeight',
+            // 非split pan 控制区域高度
+            startHeight: 135,
+            // 顶部百分比*100
+            topPercent: 60,
+            // 顶部除列表高度
+            topbarHeight: 40,
+            // 底部除列表高度
+            bottomHeight: 80,
+
             tables:{
                 main:{
                     gridViewName:"IEDGrid",
@@ -115,7 +126,7 @@ export default {
                     showOptions:'查看内容'
                 },
                 tfDg:{
-                    gridViewName:"TransferGrid",
+                    gridViewName:"TransferGrid4IED",
                     dataUrl:"/dc/getDocuments",
                     condition:"",
                     isshowOption:true,
@@ -160,7 +171,8 @@ export default {
         }
     },
     mounted(){
-        this.init()        
+        this.init()
+        this.topPercent = this.getStorageNumber(this.topStorageName,60)
     },
     methods: {
         async init(){
@@ -191,7 +203,15 @@ export default {
                     }
                 })
             }
-            console.log(role)
+            
+            // console.log(role)
+        },
+        // 上下分屏事件
+        onSplitResize(topPercent){
+            // 顶部百分比*100
+            this.topPercent = topPercent
+            this.setStorageNumber(this.topStorageName, topPercent)
+            //console.log(JSON.stringify(topPercent))
         },
         onIEDChange(){
             let _self =  this
@@ -240,8 +260,8 @@ export default {
             this.selectedItems = val;
         },
         onLoadnDataSuccess(select,options){
-            console.log(this.view)
-            console.log(this.project)
+            // console.log(this.view)
+            // console.log(this.project)
             if(this.view==true && this.project.length>0){
                 this.forms.headForm.project = this.project
             }
@@ -251,7 +271,10 @@ export default {
             this.search(val)
         },
         onDataGridRowClick:function(row){
-            let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='设计文件' and CODING = '"+row.CODING+"')"
+            console.log(row)
+             var cond=""
+            var type = row.SUB_TYPE
+            let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='IED' and CODING = '"+row.CODING+"')"
             this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
             this.$refs.rfDg.condition=this.tables.rfDg.condition
             this.tables.rfDg.gridViewName="IEDRelationGrid"
@@ -260,18 +283,24 @@ export default {
             this.$refs.rfDg.loadGridInfo()
             this.$refs.rfDg.loadGridData()
             
-            this.tables.dfDg.condition="CODING = '"+row.CODING+"'"
-            this.$refs.dfDg.condition=this.tables.dfDg.condition
+            if(type=='图册'){
+                cond="TYPE_NAME='设计文件' and C_FROM_CODING='"+row.CODING+"' and is_current='1'"
+            }
+            if(type!='图册'){
+                cond="type_name='设计文件' and CODING='"+row.CODING+"' and REVISION ='"+row.REVISION+"' AND IS_CURRENT='1'"
+            }
+            this.$refs.dfDg.condition=cond
             this.$refs.dfDg.itemDataList=[]
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
-
-            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='设计文件' and "+ this.tables.dfDg.condition;
-            this.tables.tfDg.condition = "CODING IN ("+ dfDGCondition+")"
+            console.log(this.$refs.dfDg.condition)
+            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='IED' and CODING =  '"+ row.CODING+"'";
+            this.tables.tfDg.condition = "Type_name='文件传递单' and CODING IN ("+ dfDGCondition+")"
             this.$refs.tfDg.condition= this.tables.tfDg.condition
             this.$refs.tfDg.itemDataList=[]
-            this.$refs.tfDg.loadGridInfo()
+            //this.$refs.tfDg.loadGridInfo()
             this.$refs.tfDg.loadGridData()
+         
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
@@ -309,7 +338,7 @@ export default {
                 this.forms.headForm.project = this.project
             }
             if(_self.forms.headForm.project != undefined){
-                k1+=" AND C_PROJECT_NAME in ('"+_self.forms.headForm.project +"')"
+                k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
 
             let user = this.currentUser();
@@ -319,9 +348,7 @@ export default {
             if(condition != undefined && condition.length>0){
                 k1 += " and "+condition 
             }
-            _self.$refs.mainDataGrid.condition=k1
-            _self.$refs.mainDataGrid.loadGridData();
-
+            console.log(k1)
             _self.$refs.mainDataGrid.condition=k1
             _self.$refs.mainDataGrid.loadGridData();
         },

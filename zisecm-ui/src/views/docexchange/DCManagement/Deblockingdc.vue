@@ -255,7 +255,12 @@ export default {
                 +")";
             }
             if(key!=''){
-                _self.$refs.mainDataGrid.condition=key;
+                if(_self.advCondition!=''){
+                    _self.$refs.mainDataGrid.condition=key+" and "+_self.advCondition;
+                    _self.advCondition=''
+                }else{
+                    _self.$refs.mainDataGrid.condition=key
+                }
             }
             _self.$refs.mainDataGrid.loadGridData();
         },

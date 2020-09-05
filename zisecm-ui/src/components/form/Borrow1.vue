@@ -110,7 +110,7 @@
                 <template slot-scope="scope">
                   <el-button size="mini" @click="viewdoc(scope.row)">查看</el-button>
                   <el-button
-                    v-if="borrowItemList.length <=0"
+                    v-show="!startFlowNodeJudge"
                     size="mini"
                     @click="removeItemFromForm(scope.row)"
                   >移除</el-button>
@@ -119,7 +119,7 @@
             </el-table>
           </el-col>
           <!-- 是否添加购物车 -->
-          <el-col v-if="borrowItemList.length <=0">
+          <el-col v-show="!startFlowNodeJudge">
             <template>
               <el-button @click="showOrCloseShopingCart()">{{showOrCloseShopingCartLabel}}</el-button>
             </template>
@@ -319,7 +319,7 @@
       </el-row>
     </el-form>
 
-    <div slot="footer" class="dialog-footer" style="text-align:center" v-if="borrowItemList.length>0">
+    <div slot="footer" class="dialog-footer" style="text-align:center" v-show="startFlowNodeJudge">
       <el-button ref="borrowCancel" type="primary" @click="cancel()">{{$t('application.cancel')}}</el-button>
       <el-button ref="borrowStartwf" @click="startWorkflow(borrowForm)">启动流程</el-button>
     </div>
@@ -411,6 +411,8 @@ export default {
       currentGroupData: "",
       selectedGroupItemId: "",
       currentRootGroupData: "",
+      //startFlowNodeJudge：判读当前为启动借阅流程，还是处于流程中显示界面内容。
+      startFlowNodeJudge: false
     };
   },
 
@@ -446,7 +448,9 @@ export default {
     },
     borrowItemList: {
       type: Array,
-      default: [],
+      default:function(){
+				return [];
+			}
     },
   },
   created() {
@@ -465,7 +469,14 @@ export default {
     //     _self.processDefinitionId = _self.processDefinitionId1;
     //     _self.activityName = _self.activityName1;
     // }
-    _self.getApprovalUserList();
+
+    //购物车触发借阅单传值给borrowItemList，在此认定有传值即为启动流程，其余为流程中
+    if(_self.borrowItemList.length>0){
+      _self.startFlowNodeJudge = true
+    }else{
+      //启动借阅流程无需获取审批用户列表
+      _self.getApprovalUserList();
+    }
     _self.loadGridView();
   },
   mounted() {
@@ -539,7 +550,7 @@ export default {
             }
           });
       }
-      if(val.length>0){
+      if(val != undefined){
         _self.tabledata = val;
       } 
     },
@@ -995,7 +1006,7 @@ export default {
       _self.borrowForm.C_CREATION_UNIT = _self.currentGroupData.name;
     },
     // 部门点击事件
-    handleNodeClick(indata) {
+    handleNodeClick(indata) { 
       let _self = this;
       _self.currentGroupData = indata;
       if (_self.currentRootGroupData[0].name != _self.currentGroupData.name) {

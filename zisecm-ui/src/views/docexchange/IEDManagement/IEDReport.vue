@@ -286,7 +286,7 @@ export default {
 
       clock += day + " ";
 
-      var k1 = "TYPE_NAME='IED' AND C_ITEM4_DATE < '" + clock + "'" + " AND C_ITEM_STATUS2 IS NULL AND C_ITEM_DATE IS NOT NULL"
+      var k1 = "TYPE_NAME='IED' AND C_ITEM4_DATE < '" + clock + "'" + " AND C_ITEM_STATUS2 IS NULL AND C_ITEM_DATE IS NOT NULL AND IS_CURRENT=1 AND C_IS_RELEASED=1"
 
       if(_self.overdueIED != undefined && _self.overdueIED!='所有项目'){
         k1+=" AND C_PROJECT_NAME in (" + _self.overdueIED + ")";
@@ -323,7 +323,7 @@ export default {
     search2() {
       let _self = this;
 
-      var k2 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 IS NULL AND C_ITEM_DATE IS NOT NULL"
+      var k2 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 IS NULL AND C_ITEM_DATE IS NOT NULL AND IS_CURRENT=1 AND C_IS_RELEASED=1"
       
       if(this.uncompletedIED != undefined && this.uncompletedIED.length>0){
         k2+=" AND C_PROJECT_NAME in ("+_self.uncompletedIED +")"
@@ -360,7 +360,7 @@ export default {
     search3() {
       let _self = this;
       
-      var k3 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 = 'Y' AND C_ITEM_DATE IS NOT NULL"
+      var k3 = "TYPE_NAME='IED' AND C_ITEM_STATUS2 = 'Y' AND C_ITEM_DATE IS NOT NULL AND IS_CURRENT=1 AND C_IS_RELEASED=1"
 
       if(_self.startDate!= "" && _self.endDate!= ""){
         k3+=""
@@ -465,7 +465,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "IED_Report_" +new Date().Format("yyyy-MM-dd")+ ".xlsx"
+          filename: "IED_Report_" +new Date().Format("yyyy-MM-dd")
         })
       })
     },

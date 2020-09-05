@@ -1,0 +1,74 @@
+
+package com.cnpe.p6.wbsservice;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>CopyWBSFromTemplate complex type的 Java 类。
+ * 
+ * <p>以下模式片段指定包含在此类中的预期内容。
+ * 
+ * <pre>
+ * &lt;complexType name="CopyWBSFromTemplate">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="ObjectId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="TemplateWbsObjectId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "CopyWBSFromTemplate", propOrder = {
+    "objectId",
+    "templateWbsObjectId"
+})
+public class CopyWBSFromTemplate {
+
+    @XmlElement(name = "ObjectId")
+    protected int objectId;
+    @XmlElement(name = "TemplateWbsObjectId")
+    protected int templateWbsObjectId;
+
+    /**
+     * 获取objectId属性的值。
+     * 
+     */
+    public int getObjectId() {
+        return objectId;
+    }
+
+    /**
+     * 设置objectId属性的值。
+     * 
+     */
+    public void setObjectId(int value) {
+        this.objectId = value;
+    }
+
+    /**
+     * 获取templateWbsObjectId属性的值。
+     * 
+     */
+    public int getTemplateWbsObjectId() {
+        return templateWbsObjectId;
+    }
+
+    /**
+     * 设置templateWbsObjectId属性的值。
+     * 
+     */
+    public void setTemplateWbsObjectId(int value) {
+        this.templateWbsObjectId = value;
+    }
+
+}

@@ -72,12 +72,9 @@
        <el-table :data="P6data" ref="P6" row-key="id" border>
         <el-table-column type="index" width="50" label="序号" align='center'>
     
-      <template slot-scope="scope">
-      <span>{{(pages.page - 1) * pages.size + scope.$index + 1}}</span>
-      </template>
       </el-table-column>
        <el-table-column v-for="item in P6columns" v-bind="item" :key="item.prop" highlight-current-row></el-table-column>
-       <el-table-column width="120" fixed="left">
+       <el-table-column width="120" fixed="right">
        <template slot-scope="scope">
         <el-button
           @click="selectP6(scope.row)"
@@ -131,22 +128,33 @@
       </el-table-column>
       <el-table-column
         prop="newCount"
-        :label="$t('application.appname')"
+        :label="$t('application.newcount')"
         width="100">
       </el-table-column>
       <el-table-column
         prop="updateCount"
-        :label="$t('application.newcount')"
+        :label="$t('application.updatecount')"
         width="100">
       </el-table-column>
+      <el-table-column
+        prop="failCount"
+        :label="$t('application.failcount')"
+        width="200">
+      </el-table-column>
+
       <el-table-column
         prop="creationDate"
         :label="$t('application.SyncCreationDate')"
         width="200">
       </el-table-column>
-      <el-table-column
+       <el-table-column
         prop="executeDate"
-        :label=="$t('application.SyncEexecuteDate')"
+        :label="$t('application.ExecuteDate')"
+        width="200">
+      </el-table-column>
+         <el-table-column
+        prop="stauts"
+        :label="$t('field.status')"
         width="200">
       </el-table-column>
       </el-table>
@@ -200,7 +208,13 @@ export default {
           C_PROJECT_NAME:'第一计划',
           C_CODING:'FSK45',
           C_PROJECT_ID:'MK25'
-        }],
+        },
+        {
+          C_PROJECT_NAME:'第二计划',
+          C_CODING:'FSK55',
+          C_PROJECT_ID:'MK27' 
+        }
+        ],
       P6form:{
         C_PROJECT_NAME:'',
         CODING:'',
@@ -269,7 +283,7 @@ export default {
       //console.log(m)
       axios
         .post("/exchange/ied/getBatch", JSON.stringify(m)).then(function(response){
-          console.log(response.data.itemCount)
+          console.log(response.data)
            _self.tabledata = response.data.data
            _self.itemCount = response.data.itemCount
         }).catch(function(error) {
@@ -287,16 +301,15 @@ export default {
         m.set("NAME",this.P6form.C_PROJECT_NAME)
         m.set("C_PROJECT_NAME",temp.replace(/\'/g,""))
         m.set("TYPE_NAME","计划")
-        console.log(m)
         this.dialogCreatevisual=false
         let formdata = new FormData();
         formdata.append("metaData",JSON.stringify(m));
-         axios.post("/dc/newDocumentOrSubDoc",formdata,{
+         axios.post("/dc/newPlan",formdata,{
                 'Content-Type': 'multipart/form-data'
             })
             .then(function(response) {
             let code = response.data.code;
-            console.log("取到的数据"+code)
+            console.log(response.data)
              if (code == 1) {
                 _self.$message({
                     showClose: true,
@@ -305,7 +318,17 @@ export default {
                     type: "success"
                 });
                 _self.$refs.mainDataGrid.loadGridData()
-                }})
+                }
+               else if(code==2){
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t('message.failureForNew'),
+                    duration: 2000,
+                    type: "error"
+                })
+                
+                };
+                })
             
             },
             rowClick(row){
@@ -415,9 +438,9 @@ export default {
                 })
                 k1+=" AND (" + orS + ")"
             }
-            /*if(_self.value != undefined &&_self.value!='所有项目'){
+            if(_self.value != undefined &&_self.value!='所有'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
-            }/*/
+            }
         console.log(k1)
         _self.$refs.mainDataGrid.condition=k1
         _self.$refs.mainDataGrid.loadGridData();
@@ -448,7 +471,6 @@ export default {
     },
 
      onLoadnDataSuccess(select,options){
-            console.log(select)
             this.search()
             this.getSubContractors()
         },
