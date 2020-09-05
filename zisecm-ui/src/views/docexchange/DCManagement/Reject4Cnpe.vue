@@ -4,7 +4,7 @@
             <!-- 驳回文函(Cnpe) -->
             <!-- 创建附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
-                <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                <el-form size="mini" v-loading='uploading'>
                     <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                     <el-upload
                         :limit="100"
@@ -127,7 +127,7 @@
                             gridViewName="DCTransferGridCnpeReject"
                             :isshowCustom="false"
                             condition=" stauts='驳回'"
-                            :isEditProperty="false"
+                            :isEditProperty="true"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                             @rowclick="rowClick"
@@ -307,7 +307,6 @@ export default {
             uploading:false,
             selectedAttachment:[],
             uploadUrl:'',
-            rightTableHeight:(window.innerHeight - 100)/2,
             isShowDesgin:true,
             isShowRelevant:true,
             isShowAttachmentDoc:true,
@@ -320,6 +319,7 @@ export default {
         this.getTypeNamesByMainList("DCTypeCNPE");
     },
     mounted(){
+        
         if(!this.validataPermission()){
             //跳转至权限提醒页
             let _self=this;
@@ -328,7 +328,10 @@ export default {
             })
             
         }
-        this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
+        
     },
     methods: {
         // 上下分屏事件

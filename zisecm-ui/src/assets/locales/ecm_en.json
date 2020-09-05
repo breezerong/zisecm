@@ -358,8 +358,9 @@
     "companyManage":"Company Management",
     "AddressList":"Address List",
     "delayFeedback": "DelayFeedback",
-    "delayConfirm": "DelayConfirm",
-    "delayOpenConfirm":"DelayOpenConfirm"
+    "delayConfirm": "DelayFeedbackConfirm",
+    "delayOpenConfirm":"DelayOpenConfirm",
+    "delayCloseConfirm":"DelayCloseConfim"
 },
 "message": {
     "saveSuccess":"Save Success",

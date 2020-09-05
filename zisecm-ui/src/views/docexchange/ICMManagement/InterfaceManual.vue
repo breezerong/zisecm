@@ -60,30 +60,30 @@
             </el-form>
         </template>
         <template v-slot:main="{layout}">
-            <el-row>
-                <el-col :span="24">
-                    <DataGrid ref="mainDataGrid"
-                     v-bind="tables.main" 
-                     :tableHeight="layout.height/2-55" 
-                     @selectchange="selectChange"
-                     @rowclick="onDataGridRowClick"
-                     @onPropertiesSaveSuccess="onPropertiesSaveSuccess"></DataGrid>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">
-                    <el-tabs v-model="tabs.active">
-                        <el-tab-pane :label="$t('application.InterfaceTransfer')" name="ICMPass">
-                            <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="layout.height/2-225"></DataGrid>
-                        </el-tab-pane>
-                        <el-tab-pane :label="$t('application.InterfaceOpinion')" name="ICMComments">
-                            <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
-                            <DataGrid ref="ICMComments" showOptions="查看内容" v-bind="tables.ICMComments" :tableHeight="layout.height/2-225"></DataGrid>
-                        </el-tab-pane>
-                    </el-tabs>
-                </el-col>
-            </el-row>
+           <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                    <template slot="paneL">
+                        <DataGrid ref="mainDataGrid"
+                        v-bind="tables.main" 
+                        :tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight" 
+                        @selectchange="selectChange"
+                        @rowclick="onDataGridRowClick"
+                        @onPropertiesSaveSuccess="onPropertiesSaveSuccess"></DataGrid>
+                    </template>
+                    <template slot="paneR">
+                        <el-tabs v-model="tabs.active">
+                            <el-tab-pane :label="$t('application.InterfaceTransfer')" name="ICMPass">
+                                <el-button type="default" @click.native="exportData('ICMPass','ICMPassGrid')">{{$t('application.ExportExcel')}}</el-button>
+                                <DataGrid ref="ICMPass" showOptions="查看内容" v-bind="tables.ICMPass" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
+                            </el-tab-pane>
+                            <el-tab-pane :label="$t('application.InterfaceOpinion')" name="ICMComments">
+                                <el-button type="default" @click.native="exportData('ICMComments','ICMCommentsGrid')">{{$t('application.ExportExcel')}}</el-button>
+                                <DataGrid ref="ICMComments" showOptions="查看内容" v-bind="tables.ICMComments" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </template>
+                </split-pane>
+           </div>
         </template>
     </DataLayout>
 </template>
@@ -100,6 +100,16 @@ export default {
     name: "InterfaceManual",
     data(){
         return{
+            // 本地存储高度名称
+            topStorageName: 'ICMHeight',
+            // 非split pan 控制区域高度
+            startHeight: 135,
+            // 顶部百分比*100
+            topPercent: 60,
+            // 顶部除列表高度
+            topbarHeight: 40,
+            // 底部除列表高度
+            bottomHeight: 120,
             userCondition: '',
             tables:{
                 main:{
@@ -183,8 +193,18 @@ export default {
             this.roles2=true
         }
         this.loadsuccess();
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
     },
     methods: {
+        // 上下分屏事件
+        onSplitResize(topPercent){
+            // 顶部百分比*100
+            this.topPercent = topPercent
+            this.setStorageNumber(this.topStorageName, topPercent)
+            //console.log(JSON.stringify(topPercent))
+        },
         loadsuccess(){
             if(this.currentUser().company!='CNPE'){
                 this.tables.main.condition+=" AND (C_CODE5='"+this.currentUser().companyCode1+"' OR C_CODE6='"+this.currentUser().companyCode1+"')"

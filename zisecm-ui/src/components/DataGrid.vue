@@ -453,7 +453,7 @@ export default {
         })
         .then(function(response) {
           _self.itemDataList = response.data.data;
-          _self.itemCount = response.data.pager.total;
+          _self.itemCount = response.data.pager?response.data.pager.total:0;
           _self.loading = false;
         })
         .catch(function(error) {

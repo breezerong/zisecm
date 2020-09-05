@@ -380,7 +380,8 @@
     "AddressList":"通讯录",
     "delayFeedback": "延误回复反馈",
     "delayConfirm": "延误回复确认",
-    "delayOpenConfirm":"延误打开确认"
+    "delayOpenConfirm":"延误打开确认",
+    "delayCloseConfirm":"延误关闭确认"
 },
 "message": {
     "saveSuccess":"保存成功",

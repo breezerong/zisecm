@@ -276,13 +276,13 @@ export default {
             // 本地存储高度名称
             topStorageName: 'CreateDispenseHeight',
             // 非split pan 控制区域高度
-            startHeight: 125,
+            startHeight: 135,
             // 顶部百分比*100
             topPercent: 60,
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 80,
+            bottomHeight: 120,
 
             filters: {
                 projectCode: "",
@@ -337,7 +337,9 @@ export default {
             })
             
         }
-        this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
     },
     methods: {
         // 上下分屏事件

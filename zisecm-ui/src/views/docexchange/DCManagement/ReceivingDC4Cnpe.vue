@@ -138,7 +138,7 @@
                             @rowclick="rowClick"
                             @selectchange="selectChange"
                             :isshowCustom="false"
-                            :isEditProperty="false"
+                            :isEditProperty="true"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                         ></DataGrid>
@@ -290,7 +290,7 @@ export default {
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 80,
+            bottomHeight: 120,
             filters: {
                 projectCode: "",
                 docType: "",
@@ -336,8 +336,9 @@ export default {
             })
             
         }
-        this.topPercent = this.getStorageNumber(this.topStorageName,60)
-    
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
     },
     methods: {
         // 上下分屏事件

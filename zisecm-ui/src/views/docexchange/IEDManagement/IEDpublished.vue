@@ -172,7 +172,9 @@ export default {
     },
     mounted(){
         this.init()
-        this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
     },
     methods: {
         async init(){
