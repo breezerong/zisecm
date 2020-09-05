@@ -1,6 +1,8 @@
 package org.zisecm.jobs.business;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +17,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.zisecm.jobs.bean.conf.Operator;
+import org.zisecm.jobs.entity.DataEntity;
 import org.zisecm.jobs.tc.clientx.Session;
+import org.zisecm.jobs.tc.service.SyncTcService;
+import org.zisecm.jobs.tc.tools.SyncTcOption;
 import org.zisecm.jobs.tc.ws.PLMServerLOT.PLMServerLOTImpl;
 import org.zisecm.jobs.tc.ws.PLMServerLOT.ReturnVal;
 
@@ -57,6 +62,10 @@ public class Sync2Tc {
 	private Environment env;
 	@Autowired
 	private ContentService contentService;
+	@Autowired
+	private SyncTcOption tcOption;
+	@Autowired
+	private SyncTcService syncTcService;
 	
 	@Scheduled(cron = "0/20 * * * * ?")
 	public void run() {
@@ -72,14 +81,19 @@ public class Sync2Tc {
 					"'图文传真','会议纪要','设计审查意见') and SYN_STATUS is null";
 			List<Map<String,Object>> data= documentService.getObjectMap(ecmSession.getToken(), condition);
 			for(Map<String,Object> mp:data) {
-				Map<String,Object> afterMp= Operator.OperationContractorData(mp, "tc");
-				DataManagementService dms= getDmService();
-				EcmContent en = null;
-				en = contentService.getPrimaryContent(ecmSession.getToken(), mp.get("ID").toString());
-				String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
-				
-				String tcId=createItem(dms, afterMp.get("tcTable").toString(), 
-						(Map<String, Object>) afterMp.get("data"),fullPath+en.getFilePath());
+				Map<String,Object> afterMp= Operator.OperationContractorData(ecmSession.getToken(),
+						documentService,mp,null, "tc");
+//				DataManagementService dms= getDmService();
+//				EcmContent en = null;
+//				en = contentService.getPrimaryContent(ecmSession.getToken(), mp.get("ID").toString());
+//				String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//				
+//				String tcId ="";
+//				CreateItemsOutput output=tcOption.createFileRevision(mp, afterMp);
+//				tcId=output.item.get_item_id();
+//						createItem(dms,mp, afterMp.get("tcTable").toString(), 
+//						(Map<String, Object>) afterMp.get("data"),fullPath+en.getFilePath());
+				String tcId= syncTcService.setFileData(mp, afterMp);
 				mp.put("SYN_ID", tcId);
 				mp.put("SYN_STATUS", "已同步");
 				EcmDocument doc=new EcmDocument();
@@ -101,7 +115,8 @@ public class Sync2Tc {
 		
 	}
 	
-	public static String createItem(DataManagementService dmService,String typeName,Map<String,Object> data,
+	public static String createItem(DataManagementService dmService,Map<String,Object> mp,String typeName,
+			Map<String,Object> data,
 			String filePath) throws Exception {
 			
 			ItemIdsAndInitialRevisionIds itemidAndRevId = generateItemIds(typeName);
@@ -116,7 +131,7 @@ public class Sync2Tc {
 	        itemProperty.revId = itemidAndRevId.newRevId;
 	        //modify by xiaolei 20160620 for bug 2641
 	        //itemProperty.name = itemidAndRevId.newItemId;
-	        String object_name= data.get("k2_Coding").toString();
+	        String object_name= mp.get("TITLE").toString();
 	        int length=object_name.length();
 	        String str="";
 	        if(length>120){
@@ -127,8 +142,8 @@ public class Sync2Tc {
 	        }
 	        
 	        //itemProperty.name =str+".."; 
-	        itemProperty.type = typeName;
-	        itemProperty.description = data.get("k2_title").toString();//object_desc data.get("description").toString();
+	        itemProperty.type = typeName.substring(0,typeName.length()-8);
+	        itemProperty.description = mp.get("TITLE").toString();//object_desc data.get("description").toString();
 	        itemProperty.uom = "";
 	      
 	        itemProps[0] = itemProperty;
@@ -151,11 +166,18 @@ public class Sync2Tc {
 			Item itemRev = output.item;
 			
 			HashMap<String, VecStruct> revisionStrMap=new HashMap<>();
+			insertValueMap(revisionStrMap,"item_revision_id",itemidAndRevId.newRevId);
 			Set<String> keys=data.keySet();
 			Iterator<String> it= keys.iterator();
 			while(it.hasNext()) {
 				String key=it.next();
-				insertValueMap(revisionStrMap,key,data.get(key).toString());
+				DataEntity dt= (DataEntity) data.get(key);
+				if(dt.getDataType()!=null&&"Time".equals(dt.getDataType())) {
+					insertDateValueMap(revisionStrMap,key,data.get(key).toString());
+				}else {
+					insertValueMap(revisionStrMap,key,data.get(key).toString());
+				}
+				
 			}
 			
 			serviceData = dmService.setProperties(
@@ -270,7 +292,16 @@ public class Sync2Tc {
 		}
 
 	}
-	
+	public static void insertDateValueMap(HashMap<String, VecStruct> revisionStrMap,String propertyName,String value)throws Exception {
+		if(value!=null && !value.equals("")){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dateFormat3 = new SimpleDateFormat("HH:mm:ss+08:00");
+			Date time = dateFormat.parse(value);
+			String timeStr = dateFormat2.format(time)+"T"+dateFormat3.format(time);
+			insertValueMap(revisionStrMap,propertyName,timeStr);
+		}
+	}
 	public static void insertValueMap(HashMap<String, VecStruct> revisionStrMap,String propertyName,String value) {
 		if(value!=null){
 			VecStruct vecStruct = new VecStruct();

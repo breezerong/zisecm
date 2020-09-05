@@ -3867,14 +3867,6 @@ public String getICMFromPref(String projectId) {
 			
 			System.out.println(attachments[i].getFilePath()+"----------"+attachments[i].getFileName());
 			
-			
-			
-			
-			
-			
-			
-			
-			
 			String ext = attachments[i].getFileName().substring(attachments[i].getFileName().lastIndexOf(".") + 1);
 			String fileName="";
 			

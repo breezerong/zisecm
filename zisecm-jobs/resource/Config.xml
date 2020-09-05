@@ -15,11 +15,11 @@
 <!-- 		</conf> -->
 		<conf sourceTypeName="文件传递单" targetSystem="tc" tcTypeName="文件传递单" tcTableName="CN9FileTFRevision">
 			<attributes>
-				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="projects_list" dataType="String"></attribute>
+				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="projectId" dataType="String"></attribute>
 				<attribute label="发自" sourceName="C_FROM" targetName="cn9SenderCh" dataType="String"></attribute>
-				<attribute label="发自单位" sourceName="无" targetName="cn9AuthorUnit" dataType=""></attribute>
+				<attribute label="发自单位" sourceName="" targetName="cn9AuthorUnit" dataType=""></attribute>
 				<attribute label="主送(发至)" sourceName="C_TO" targetName="cn9ReceiverCh" dataType="String"></attribute>
-				<attribute label="主送单位" sourceName="无" targetName="cn9RecivUnit" dataType=""></attribute>
+				<attribute label="主送单位" sourceName="" targetName="cn9RecivUnit" dataType=""></attribute>
 				<attribute label="发文号" sourceName="CODING" targetName="cn9LetterSendNo" dataType="String"></attribute>
 				<attribute label="对方文号" sourceName="C_OTHER_COIDNG" targetName="cn9CorrespLeeterRecNo" dataType="String"></attribute>
 				<attribute label="页数" sourceName="C_PAGE_COUNT" targetName="cn9Pages" dataType="Integer"></attribute>
@@ -34,17 +34,16 @@
 				<attribute label="类型名称" sourceName="TYPE_NAME" targetName="cn9LetterType" dataType="String"></attribute>
 			</attributes>
 		</conf>
-		<conf sourceTypeName="设计文件" targetSystem="tc" tcTypeName="设计文件" tcTableName="CN9TCIEDDeliverRevision">
+		<conf sourceTypeName="设计文件" targetSystem="tc" tcTypeName="设计文件" tcTableName="CN9DSMIEDRevision">
 			<attributes>
-				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="project_list" dataType="String"></attribute>
-				<attribute label="图册号(图册序号)" sourceName="C_FROM_CODING" targetName="cn9DrawingBookNum" dataType="String"></attribute>
+				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="projectId" dataType="String"></attribute>
 				<attribute label="内部编码" sourceName="CODING" targetName="cn9IntNum" dataType="String"></attribute>
-				<attribute label="外部编码" sourceName="C_IN_CODING" targetName="cn9QIEDExtNum" dataType="String"></attribute>
+				<attribute label="外部编码" sourceName="C_IN_CODING" targetName="item_id" dataType="String"></attribute>
 				<attribute label="标题" sourceName="TITLE" targetName="object_name" dataType="String"></attribute>
-				<attribute label="版次" sourceName="REVISION" targetName="item_revision_id" dataType="String"></attribute>
-				<attribute label="状态" sourceName="C_ITEM_STATUS" targetName="cn9DrawingStatus" dataType="String"></attribute>
-				<attribute label="页数" sourceName="C_PAGE_COUNT" targetName="cn9TotalPageNum" dataType="Integer"></attribute>
-				<attribute label="厂区名称" sourceName="C_ISLAND_TYPE" targetName="cn9PlantCode" dataType="String"></attribute>
+				<attribute label="版次" sourceName="REVISION" targetName="cn9Ver" dataType="String"></attribute>
+				<attribute label="状态" sourceName="C_ITEM_STATUS" targetName="cn9Status" dataType="String"></attribute>
+				<attribute label="页数" sourceName="C_PAGE_COUNT" targetName="cn9Pages" dataType="Integer"></attribute>
+				<attribute label="厂区名称" sourceName="C_ISLAND_TYPE" targetName="cn9NewAreaCode" dataType="String"></attribute>
 				<attribute label="子项/系统代码" sourceName="C_SYS_CODE" targetName="cn9SysNum" dataType="String"></attribute>
 				<attribute label="子项/系统名称" sourceName="C_SYS_NAME" targetName="cn9SysName" dataType="String"></attribute>
 				<attribute label="机组号" sourceName="C_UNIT" targetName="cn9UnitCode" dataType="String"></attribute>
@@ -52,9 +51,10 @@
 				<attribute label="成品类型" sourceName="SUB_TYPE" targetName="cn9DrawingType" dataType="String"></attribute>
 				<attribute label="专业" sourceName="C_DISPL_NAME" targetName="cn9Displ" dataType="String"></attribute>
 				<attribute label="专业代码" sourceName="C_DISPL_CODE" targetName="cn9DisplCode" dataType="String"></attribute>
-				<attribute label="发文号" sourceName="C_REF_CODING" targetName="cn9ChannelNum" dataType="String"></attribute>
-				<attribute label="发文日期" sourceName="C_ITEM_DATE" targetName="cn9ArchiDate" dataType="Time"></attribute>
-				<attribute label="发文单位" sourceName="C_COMPANY" targetName="cn9ReleaseDep" dataType="String"></attribute>
+				<attribute label="发文号" sourceName="C_REF_CODING" targetName="cn9ReciveChannelCOde" dataType="String"></attribute>
+				<attribute label="发文日期" sourceName="C_ITEM_DATE" targetName="cn9SendOwnerDate" dataType="Time"></attribute>
+				<attribute label="发文单位" sourceName="C_COMPANY" targetName="cn9ComposeUnit" dataType="String"></attribute>
+								
 			</attributes>
 		</conf>
 		<conf sourceTypeName="FU申请" targetSystem="tc" tcTypeName="FU申请" tcTableName="CN9FURevision">
@@ -127,7 +127,7 @@
 
 			</attributes>
 		</conf>
-		<conf sourceTypeName="接口信息意见单" targetSystem="tc" tcTypeName="接口信息意见单" tcTableName="CN9IICSAP1000Revision">
+		<conf sourceTypeName="接口信息意见单" targetSystem="tc" tcTypeName="接口信息意见单" tcTableName="CN9IICSRevision">
 			<attributes>
 				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="project_list.project_id" dataType="String"></attribute>
 				<attribute label="发至" sourceName="C_TO" targetName="cn9SendTo" dataType="String"></attribute>
@@ -178,7 +178,7 @@
 								
 			</attributes>
 		</conf>
-		<conf sourceTypeName="接口信息传递单" targetSystem="tc" tcTypeName="接口信息传递单" tcTableName="CN9IITFAP1000Revision">
+		<conf sourceTypeName="接口信息传递单" targetSystem="tc" tcTypeName="接口信息传递单" tcTableName="CN9IITFRevision">
 			<attributes>
 				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="project_list.project_id" dataType="String"></attribute>
 				<attribute label="发至" sourceName="C_TO" targetName="cn9SendTo" dataType="String"></attribute>
@@ -657,7 +657,8 @@
 		</conf>
 		<conf sourceTypeName="设计审查意见答复" targetSystem="tc" tcTypeName="设计审查意见答复" tcTableName="CN9DesignRevAnsFRevision">
 			<attributes>
-				<attribute label="项目名称 " sourceName="C_PROJECT_NAME" targetName="project_list.project_id" dataType="String"></attribute>
+<!-- 				<attribute label="项目名称 " sourceName="C_PROJECT_NAME" targetName="project_list.project_id" dataType="String"></attribute> -->
+				<attribute label="类型名称" sourceName="TYPE_NAME" targetName="cn9LetterType" dataType="String"></attribute>
 				<attribute label="发至" sourceName="C_TO" targetName="cn9ReceiverCh" dataType="String"></attribute>
 				<attribute label="发自" sourceName="C_FROM" targetName="cn9SenderCh" dataType="String"></attribute>
 				<attribute label="日期" sourceName="C_ITEM_DATE" targetName="cn9SendDate" dataType="Time"></attribute>
@@ -680,6 +681,69 @@
 								
 			</attributes>
 		</conf>
+	
+	<conf sourceTypeName="ICM" targetSystem="tc" tcTypeName="ICM" tcTableName="CN9ICMACP1000Revision">
+			<attributes>
+				<attribute label="设计单位" sourceName="C_DESIGN_UNIT" targetName="cn9Host" dataType="String"></attribute>
+				<attribute label="项目ID" sourceName="C_PROJECT_CODE" targetName="project_ids" dataType="String"></attribute>
+				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="project_list" dataType="String"></attribute>
+				<attribute label="内部编码" sourceName="C_IN_CODING" targetName="item_id" dataType="String"></attribute>
+				<attribute label="WBS编码" sourceName="C_WBS_CODING" targetName="cn9WBSCode" dataType="Integer"></attribute>
+				<attribute label="关键接口" sourceName="TITLE" targetName="cn9IntfcNum" dataType="String"></attribute>
+				<attribute label="第一方" sourceName="C_CODE1" targetName="1stParty" dataType="String"></attribute>
+				<attribute label="第二方" sourceName="C_CODE2" targetName="2ndParty" dataType="String"></attribute>
+				<attribute label="接口类型" sourceName="C_CODE3" targetName="IntfcType" dataType="String"></attribute>
+				<attribute label="流水号" sourceName="C_CODE4" targetName="SerNum" dataType="Integer"></attribute>
+				<attribute label="发布方" sourceName="C_CODE5" targetName="cn9OfferParty" dataType="String"></attribute>
+				<attribute label="接收方" sourceName="C_CODE6" targetName="cn9RecvParty" dataType="String"></attribute>
+				<attribute label="ICM 层次" sourceName="SUB_TYPE" targetName="cn9ICMLevel" dataType="String"></attribute>
+				<attribute label="接口详细描述" sourceName="C_COMMENT" targetName="cn9IntfcDetailDescr" dataType="String"></attribute>
+				<attribute label="初版预报日期" sourceName="C_ITEM1_DATE" targetName="cn9PREIntfcForDate" dataType="Time"></attribute>
+				<attribute label="终板预报日期" sourceName="C_ITEM2_DATE" targetName="cn9FINIntfcForDate" dataType="Time"></attribute>
+				<attribute label="计划关闭日期" sourceName="C_ITEM3_DATE" targetName="cn9PlannedCloseDate" dataType="Time"></attribute>
+				<attribute label="初版状态" sourceName="C_ITEM_STATUS1" targetName="cn9PreStatus" dataType="String"></attribute>
+				<attribute label="终板状态" sourceName="C_ITEM_STATUS2" targetName="cn9FinStatus" dataType="String"></attribute>
+				<attribute label="是否里程碑接口" sourceName="C_ITEM_STATUS" targetName="cn9IsMileSInt" dataType="String"></attribute>
+				<attribute label="主办所(责任所)" sourceName="C_HOST" targetName="cn9RespDepart" dataType="String"></attribute>
+				<attribute label="所内专业室" sourceName="C_DEPARTMENT" targetName="cn9DeptRoom" dataType="String"></attribute>
+				<attribute label="所内编制人" sourceName="C_DRAFTER" targetName="cn9DeptAuthor" dataType="String"></attribute>
+				<attribute label="责任总师（责任设总）" sourceName="C_APPROVER" targetName="cn9ResbChiefEngineer" dataType="String"></attribute>
+				<attribute label="参办" sourceName="C_PARTICIPATION" targetName="cn9AssistDept" dataType="String"></attribute>
+				<attribute label="阅知" sourceName="C_COPY_TO" targetName="cn9NewReserveText1" dataType="String"></attribute>
+				<attribute label="DCS LOT" sourceName="C_STRING1" targetName="cn9DCSLOT" dataType="String"></attribute>
+				<attribute label="DCS BATCH" sourceName="C_STRING2" targetName="cn9BATCH" dataType="String"></attribute>
+				<attribute label="接口标识" sourceName="C_STRING3" targetName="cn9IntfcIdent" dataType="String"></attribute>
+				<attribute label="LOT 包号" sourceName="C_STRING4" targetName="cn9LotPackNo" dataType="String"></attribute>
+				<attribute label="接口备注" sourceName="C_COMMENT1" targetName="cn9Remark" dataType="String"></attribute>
+				<attribute label="初版打开日期" sourceName="C_EX1_DATE" targetName="cn9PreOpenDate" dataType="Time"></attribute>
+				<attribute label="初版打开文号" sourceName="C_EX1_STRING" targetName="cn9PREDocNo" dataType="String"></attribute>
+				<attribute label="初版关闭日期" sourceName="C_EX2_DATE" targetName="cn9PreCloseDate" dataType="Time"></attribute>
+				<attribute label="初版关闭文号" sourceName="C_EX2_STRING" targetName="cn9PRECloseNum" dataType="String"></attribute>
+				<attribute label="终版打开日期" sourceName="C_EX3_DATE" targetName="cn9FINOpenDate" dataType="Time"></attribute>
+				<attribute label="终板打开文号" sourceName="C_EX3_STRING" targetName="cn9FINDocNo" dataType="String"></attribute>
+				<attribute label="终版关闭日期" sourceName="C_EX4_DATE" targetName="cn9FINCloseDate" dataType="Time"></attribute>
+				<attribute label="终版关闭文号" sourceName="C_EX4_STRING" targetName="cn9FINCloseNum" dataType="String"></attribute>
+				<attribute label="变更标识" sourceName="C_STRING5" targetName="cn9DelLebal" dataType="String"></attribute>
+				<attribute label="变更原因" sourceName="C_COMMENT5" targetName="cn9ChangeReason" dataType="String"></attribute>
+				<attribute label="变更日期" sourceName="C_ITEM5_DATE" targetName="cn9ChangeDate" dataType="Time"></attribute>
+				<attribute label="设备位号" sourceName="C_EQUIPMENT" targetName="cn9DevNum" dataType="String"></attribute>
+			</attributes>
+		</conf>
+		
+		<conf sourceTypeName="设计文件Form" targetSystem="tc" tcTypeName="CN9FileItemF" tcTableName="CN9FileItemF">
+			<attributes>
+				<attribute label="内部编码" sourceName="CODING" targetName="cn9InternalCode" dataType="String"></attribute>
+				<attribute label="外部编码" sourceName="C_IN_CODING" targetName="cn9ExternalCode" dataType="String"></attribute>
+				<attribute label="版次" sourceName="REVISION" targetName="cn9Rev" dataType="String"></attribute>
+				<attribute label="状态" sourceName="C_ITEM_STATUS" targetName="cn9States" dataType="String"></attribute>
+				<attribute label="页数" sourceName="C_PAGE_COUNT" targetName="cn9Page" dataType="String"></attribute>
+				<attribute label="纸" sourceName="C_COUNT1" targetName="cn9Paper" dataType="String"></attribute>
+				<attribute label="电" sourceName="C_COUNT2" targetName="cn9Digital" dataType="String"></attribute>
+				<attribute label="蓝" sourceName="C_COUNT3" targetName="cn9Blue" dataType="String"></attribute>
+				
+			</attributes>
+		</conf>
+		
 	</confs>
 	
 </config>

@@ -11,6 +11,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.zisecm.jobs.entity.DataEntity;
+
+import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.SqlDeniedException;
+import com.ecm.core.service.DocumentService;
+
 public class Operator {
 	private static ConfigBean cf;
 	static {
@@ -69,9 +76,15 @@ public class Operator {
 	 * 往TC发送数据
 	 * @param data
 	 * @return
+	 * @throws Exception 
 	 */
-	public static Map<String,Object> OperationContractorData(Map<String,Object> data,String targetSystem){
-		ConfBean conf=getConfBeanBySourceTypeName(data.get("TYPE_NAME").toString(),targetSystem);
+	public static Map<String,Object> OperationContractorData(String token,DocumentService docService,
+			Map<String,Object> data,String typeName,String targetSystem) throws Exception{
+		
+		if(typeName==null) {
+			typeName=data.get("TYPE_NAME").toString();
+		}
+		ConfBean conf=getConfBeanBySourceTypeName(typeName,targetSystem);
 		Map<String,Object> newData=new HashMap<String, Object>();
 		Map<String,Object> rowData=new HashMap<String, Object>();
 		newData.put("tcTable", conf.getTcTableName());
@@ -80,7 +93,28 @@ public class Operator {
 			String sName= attr.getSourceName();
 			String tName= attr.getTargetName();
 			String defaultValue=attr.getDefaultValue();
-			rowData.put(tName, data.get(sName)==null?defaultValue:data.get(sName));
+			if("projectId".equals(tName)) {
+				List<EcmDocument> projects= docService.getObjects(token, "NAME='"+data.get(sName).toString()+"'");
+				EcmDocument project=null;
+				if(projects!=null&&projects.size()>0) {
+					project= projects.get(0);
+					
+				}else {
+					throw new Exception("系统中午对应的项目："+data.get(sName).toString());
+				}
+				DataEntity dt=new DataEntity();
+				dt.setAttrName(tName);
+				dt.setAttrValue(project.getCoding());
+				dt.setDataType(attr.getDataType());
+				rowData.put(tName, dt);
+			}else {
+				DataEntity dt=new DataEntity();
+				dt.setAttrName(tName);
+				dt.setAttrValue((sName.equals("")||data.get(sName)==null)?defaultValue:data.get(sName));
+				dt.setDataType(attr.getDataType());
+				rowData.put(tName, dt);
+			}
+			
 		}
 		newData.put("data", rowData);
 		return newData;
