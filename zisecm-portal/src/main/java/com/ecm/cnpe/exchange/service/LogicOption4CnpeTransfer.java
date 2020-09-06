@@ -125,7 +125,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 	 * @throws Exception
 	 */
 	public String upgradIED(String token,EcmDocument oldIED,EcmDocument doc) throws Exception {
-		
+		Date now = new Date();
 //		oldIED.setModifiedDate(new Date());
 //		oldIED.setModifier(getCurrentUser(token).getUserName());
 //		oldIED.setCurrent(false);
@@ -140,10 +140,17 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 //		contentService.copyContent(token, oldIED.getId(), newDocId, 1);
 //		
 		Map<String,Object> attrMap=new HashMap<String, Object>();
+		String isA = doc.getRevision();
+		String status2 = "Y";
+		if(!isA.equals("A")) {
+			status2="N";
+		}
+		System.out.println(status2+"123123");
 		attrMap.put("REVISION",doc.getRevision());
 		attrMap.put("C_SEND_DATE", doc.getAttributeValue("C_ITEM_DATE"));
 		attrMap.put("C_REF_CODING", doc.getAttributeValue("C_REF_CODING"));
-		attrMap.put("C_ITEM_STATUS2", "Y");
+		attrMap.put("C_REVIEW1_DATE", now);
+		attrMap.put("C_ITEM_STATUS2", status2);
 		
 		EcmDocument checkInDoc= checkIn(token, oldIED.getId(),attrMap, null, true);
 		
