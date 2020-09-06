@@ -706,7 +706,7 @@ export default {
            
             if(_self.filtersPLAN.title!=''){
                 key+=" and (C_WBS_CODING like '%"+_self.filtersPLAN.title+"%' "
-                +"or TITLE like '%"+_self.filtersPLAN.title+"%' "
+                +"or NAME like '%"+_self.filtersPLAN.title+"%' "
                 +")";
             }
             if(_self.advCondition!=''){
