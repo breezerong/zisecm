@@ -2,7 +2,7 @@
     <DataLayout>
         <template v-slot:main="{layout}">
             <div :style="{position:'relative',height: layout.height-startHeight+45+'px'}">
-                <split-pane split="vertical" @resize="onHorizontalSplitResize" :min-percent='10' :default-percent='leftPercent'>
+                <split-pane split="vertical" @resize="onHorizontalSplitResize" :min-percent='1' :default-percent='leftPercent'>
                     <template slot="paneL">
                         <el-container :style="{height:layout.height-startHeight+45+'px',width:asideWidth,overflow:'auto'}">
                             <el-tree
@@ -10,6 +10,7 @@
                                 :data="data"
                                 :props="defaultProps"
                                 :filter-node-method="filterNode"
+                                highlight-current
                                 ref="tree"
                                 @node-click="nodeClick">
                             </el-tree>
@@ -872,6 +873,9 @@ export default {
     }
 }
 </script>
-<style scoped>
+<style>
 
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+    background-color: #d3d3d3 !important;
+}
 </style>
