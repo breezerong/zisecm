@@ -125,6 +125,7 @@ public class StatusController extends ControllerAbstract{
 		}catch (Exception e) {
 			// TODO: handle exception
 			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
 			e.printStackTrace();
 		}
 		

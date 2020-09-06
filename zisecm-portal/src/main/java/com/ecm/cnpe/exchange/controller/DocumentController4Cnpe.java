@@ -57,8 +57,6 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		}
 		return mp;
 	}
-	
-	
 	/**
 	 * 分发文件
 	 * @param argStr
@@ -71,41 +69,96 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String idsStr=args.get("ids").toString();
-		String contractorsStr=args.get("contractors").toString();
 		List<String> idsList = JSONUtils.stringToArray(idsStr);
-		List<String> contractorsList = JSONUtils.stringToArray(contractorsStr);
-		for(String contractorName : contractorsList) {
-			for(String childId : idsList) {
-				EcmDocument doc= documentService.getObjectById(getToken(), childId);
-				String currentStatus= doc.getStatus();
-				if(currentStatus==null||"".equals(currentStatus)) {
-					currentStatus="新建";
-				}
+
+		for(String childId : idsList) {
+			EcmDocument doc= documentService.getObjectById(getToken(), childId);
+			String currentStatus= doc.getStatus();
+			
+			if(currentStatus==null||"".equals(currentStatus)) {
+				currentStatus="新建";
+			}
+			String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
+			String contractorStr= doc.getAttributeValue("C_TO")==null?"":doc.getAttributeValue("C_TO").toString();
+			String codingStr=doc.getCoding();
+			String[] contractors=contractorStr.split(";");
+			String[] codings=codingStr.split(";");
+			for(int i=0;i<contractors.length;i++) {
 				ExcTransfer excTransfer=new ExcTransfer();
 				excTransfer.setItemType(1);
 				excTransfer.setDocId(childId);
 				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
-				excTransfer.setToName(contractorName);
+				excTransfer.setToName(contractors[i]);
 				excTransfer.setCreationDate(new Date());
 				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
 				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
 				excTransfer.setSendDate(new Date());
-				String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
+				
 				excTransfer.setStauts(nextStatus);
 				excTransferService.newObject(excTransfer);
-				if("新建".equals(currentStatus)) {
-					doc.addAttribute("c_item_date", new Date());
-				}
-				doc.addAttribute("C_IS_RELEASED", 1);
-				doc.setStatus(nextStatus);
-				documentService.updateObject(getToken(), doc, null);
+				
 			}
 			
+			if("新建".equals(currentStatus)) {
+				doc.addAttribute("c_item_date", new Date());
+			}
+			doc.addAttribute("C_IS_RELEASED", 1);
+			doc.setStatus(nextStatus);
+			documentService.updateObject(getToken(), doc, null);
 		}
+		
+	
 		mp.put("code", ActionContext.SUCESS);
 		
 		return mp;
 	}
+	/**
+	 * 分发文件
+	 * @param argStr
+	 * @return
+	 * @throws Exception
+	 */
+//	@RequestMapping(value = "/dc/dispenseDc", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+//	@ResponseBody
+//	public Map<String, Object> dispenseDc(@RequestBody String argStr) throws Exception {
+//		Map<String, Object> mp = new HashMap<String, Object>();
+//		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+//		String idsStr=args.get("ids").toString();
+//		String contractorsStr=args.get("contractors").toString();
+//		List<String> idsList = JSONUtils.stringToArray(idsStr);
+//		List<String> contractorsList = JSONUtils.stringToArray(contractorsStr);
+//		for(String contractorName : contractorsList) {
+//			for(String childId : idsList) {
+//				EcmDocument doc= documentService.getObjectById(getToken(), childId);
+//				String currentStatus= doc.getStatus();
+//				if(currentStatus==null||"".equals(currentStatus)) {
+//					currentStatus="新建";
+//				}
+//				ExcTransfer excTransfer=new ExcTransfer();
+//				excTransfer.setItemType(1);
+//				excTransfer.setDocId(childId);
+//				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
+//				excTransfer.c(contractorName);
+//				excTransfer.setCreationDate(new Date());
+//				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
+//				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
+//				excTransfer.setSendDate(new Date());
+//				String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
+//				excTransfer.setStauts(nextStatus);
+//				excTransferService.newObject(excTransfer);
+//				if("新建".equals(currentStatus)) {
+//					doc.addAttribute("c_item_date", new Date());
+//				}
+//				doc.addAttribute("C_IS_RELEASED", 1);
+//				doc.setStatus(nextStatus);
+//				documentService.updateObject(getToken(), doc, null);
+//			}
+//			
+//		}
+//		mp.put("code", ActionContext.SUCESS);
+//		
+//		return mp;
+//	}
 	
 	/**
 	 * 下一状态

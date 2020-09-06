@@ -208,7 +208,7 @@
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     showOptions="查看内容"
                                     @dbclick="dbClick"
                                     :isShowChangeList="false"
@@ -658,6 +658,16 @@ export default {
                 if(typeName!='设计文件'&&typeName!='相关文件'){
                     _self.parentId='';
                                      
+                }else{
+                    if(_self.parentId==''){
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.noMainFile'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                        return;
+                    }
                 }
                 _self.relationName=relationName;
                 _self.dialogName = typeName;
@@ -674,6 +684,16 @@ export default {
                             _self.$refs.ShowProperty.formName="";
                         }
                         _self.typeName=typeName;
+                        if('设计文件'==typeName){
+                            _self.$refs.ShowProperty.setMainObject(_self.selectRow);
+                            let mp=new Map();
+                            mp.set("C_PROJECT_NAME",'C_PROJECT_NAME');
+                            mp.set("C_REF_CODING",'CODING');
+                            mp.set("C_ITEM_DATE",'C_ITEM_DATE');
+
+                            _self.$refs.ShowProperty.setMainSubRelation(mp);
+                        }
+                        
                         // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
@@ -800,7 +820,7 @@ export default {
                 // _self.$message("创建成功!");
                 _self.$message({
                     showClose: true,
-                    message: "创建成功!",
+                    message: _self.$t('message.newSuccess'),//"创建成功!"
                     duration: 2000,
                     type: "success"
                 });

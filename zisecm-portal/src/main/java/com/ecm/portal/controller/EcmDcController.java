@@ -2481,6 +2481,7 @@ public class EcmDcController extends ControllerAbstract {
 			EcmDocument pdoc=documentService.getObjectById(getToken(), args.get("parentDocId").toString());
 			doc.addAttribute("C_PROJECT_NAME", pdoc.getAttributeValue("C_PROJECT_NAME")!=null?
 					pdoc.getAttributeValue("C_PROJECT_NAME").toString():"");
+			doc.setCurrent(false);
 			id = documentService.newObject(getToken(),doc,en);
 			EcmRelation relation=new EcmRelation();
 			relation.setParentId(args.get("parentDocId").toString());

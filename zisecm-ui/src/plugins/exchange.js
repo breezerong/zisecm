@@ -112,7 +112,7 @@ export function onDeleleItem(selectedItems,dataGridObj) {
                 
                 _self.$message({
                     showClose: true,
-                    message: _self.$t("message.operationFaild"),
+                    message: response.data.message,//_self.$t("message.operationFaild"),
                     duration: 5000,
                     type: 'error'
                 });
