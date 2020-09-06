@@ -225,6 +225,14 @@
               </el-select>
             </template>
           </el-table-column>
+          <el-table-column label="必填" width="90">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.required">
+                <el-option label="否" value="false"></el-option>
+                <el-option label="是" value="true"></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
           <el-table-column label="默认值" width="100">
             <template slot-scope="scope">
               <el-input v-model="scope.row.defaultValue"></el-input>

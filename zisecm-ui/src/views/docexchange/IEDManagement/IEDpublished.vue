@@ -16,6 +16,9 @@
                 </div>
             </el-dialog>
 
+            <el-dialog title="查看版本" :visible.sync="iedVersionVisual" width="400" >
+                <DataGrid ref="iedVersionDg" v-bind="tables.iedVersionDg" tableHeight=400></DataGrid>
+            </el-dialog>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item v-show="view==false">
                     <DataSelect v-model="forms.headForm.project" dataUrl="/exchange/project/myproject"
@@ -44,6 +47,9 @@
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
                         <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
                         <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
+                        <el-tooltip effect="dark" content="查看版本">
+                            <el-button type="default" @click="IEDVersion(scope.data.row)" size="mini" icon="el-icon-s-order" circle></el-button>
+                        </el-tooltip>
                         </template>
                     </DataGrid>
                 </template>
@@ -95,7 +101,8 @@ export default {
             tables:{
                 main:{
                     gridViewName:"IEDGrid",
-                    dataUrl:"/dc/getDocuments",                    
+                    dataUrl:"/dc/getDocuments",
+                    condition:"C_IS_RELEASED=1",                  
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
@@ -120,7 +127,7 @@ export default {
                     condition:"",
                     isshowOption:true,
                     isshowCustom:true,
-                    isInitData:false,
+                    isInitData:true,
                     isshowicon:false,
                     isEditProperty:false,
                     showOptions:'查看内容'
@@ -135,6 +142,17 @@ export default {
                     isshowicon:true,
                     isEditProperty:false,
                     showOptions:'查看内容'
+                },
+                iedVersionDg:{
+                    gridViewName:"IEDVersionGrid",
+                    dataUrl:"/dc/getDocuments",
+                    condition:"",
+                    isshowOption:false,
+                    isshowCustom:false,
+                    isInitData:true,
+                    isshowicon:false,
+                    isEditProperty:false,
+                    //showOptions:'查看内容'
                 },
             },
             tabs:{
@@ -167,12 +185,15 @@ export default {
             changeEnable:false,
             editPropAble:false,
             feedbackVisual:false,
+            iedVersionVisual:false,
             id:"",
         }
     },
     mounted(){
         this.init()
-        this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
     },
     methods: {
         async init(){
@@ -300,7 +321,8 @@ export default {
             this.$refs.tfDg.itemDataList=[]
             //this.$refs.tfDg.loadGridInfo()
             this.$refs.tfDg.loadGridData()
-         
+            this.id=row.ID
+            this.tables.iedVersionDg.condition="VERSION_ID='"+this.id+"'"
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
@@ -353,9 +375,21 @@ export default {
             _self.$refs.mainDataGrid.loadGridData();
         },
         IEDfeedback(row){
-        this.feedbackVisual=true
-        this.id = row.ID
-        console.log(this.id)
+            this.feedbackVisual=true
+            this.id = row.ID
+            console.log(this.id)
+        },
+        IEDVersion(row){
+            this.iedVersionVisual=true
+            console.log(row.ID)
+            this.id = row.ID
+            let gridobj = this.$refs.iedVersionDg
+           if(gridobj == undefined){
+                this.tables.iedVersionDg.condition="VERSION_ID='"+this.id+"'"
+            }else{
+                this.$refs.iedVersionDg.condition="VERSION_ID='"+this.id+"'"
+                this.$refs.iedVersionDg.loadGridData()
+            }
         },
         submit(feedForm){           //时间在后台方法中获取
              this.$refs[feedForm].validate((valid) => {

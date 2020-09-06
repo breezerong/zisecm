@@ -113,6 +113,12 @@
                 <el-form-item>
                     <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
+                 <el-form-item>
+                    <AddCondition @sendMsg='searchItem' 
+                    v-model="advCondition" 
+                    v-bind:inputValue="advCondition" 
+                    inputType='hidden'></AddCondition>
+                </el-form-item>
                 </el-form>
         </template>
         <template v-slot:main="{layout}">
@@ -206,6 +212,7 @@ import BatchImport from '@/components/controls/ImportDocument';
 import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
+import AddCondition from '@/views/record/AddCondition.vue'
 export default {
     name: "Pendingdc",
     data(){
@@ -252,7 +259,8 @@ export default {
             isShowDesgin:true,
             isShowRelevant:true,
             isShowAttachmentDoc:true,
-            selectedTabName:'t01'
+            selectedTabName:'t01',
+            advCondition:""
         }
     },
     created(){
@@ -269,8 +277,9 @@ export default {
             })
             
         }
-        this.topPercent = this.getStorageNumber(this.topStorageName,60)
-    
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        }, 300);
     },
     methods: {
         // 上下分屏事件
@@ -491,7 +500,12 @@ export default {
                 +")";
             }
             if(key!=''){
-                _self.$refs.mainDataGrid.condition=key;
+                if(_self.advCondition!=''){
+                    _self.$refs.mainDataGrid.condition=key+" and "+_self.advCondition;
+                    _self.advCondition=''
+                }else{
+                    _self.$refs.mainDataGrid.condition=key
+                }
             }
             _self.$refs.mainDataGrid.loadGridData();
             _self.$refs.transferDoc.itemDataList=[];
@@ -683,6 +697,7 @@ export default {
         DataGrid:DataGrid,
         DataSelect:DataSelect,
         BatchImport:BatchImport,
+        AddCondition:AddCondition,
         DataLayout:DataLayout
     }
 }

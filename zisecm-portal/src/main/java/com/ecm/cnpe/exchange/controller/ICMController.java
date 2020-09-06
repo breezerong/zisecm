@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,16 +78,40 @@ public class ICMController  extends ControllerAbstract  {
 		}
 		return mp;
 	}
-	@PostMapping("/exchange/ICM/FeedBack")
+	@PostMapping("/exchange/ICM/OpenFeedBack")
 	@ResponseBody
-	public Map<String, Object> FeedBack(String metaData) throws Exception{
+	public Map<String, Object> OpenFeedBack(String metaData) throws Exception{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
+			LoginUser userObj=null;
+			userObj=getSession().getCurrentUser();
+			String company = userObj.getCompany();
 			Map<String, Object> args = JSONUtils.stringToMap(metaData);
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
 			documentService.updateObject(getToken(), doc, null);
-			OptionLogger.logger(detailService,doc, "延误打开反馈","CNPE");
+			OptionLogger.logger(detailService,doc, "延误打开反馈",company);
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;	
+	}
+	
+	@PostMapping("/exchange/ICM/CloseFeedBack")
+	@ResponseBody
+	public Map<String, Object> CloseFeedBack(String metaData) throws Exception{
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			LoginUser userObj=null;
+			userObj=getSession().getCurrentUser();
+			String company = userObj.getCompany();
+			Map<String, Object> args = JSONUtils.stringToMap(metaData);
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(args);
+			documentService.updateObject(getToken(), doc, null);
+			OptionLogger.logger(detailService,doc, "延误关闭反馈",company);
 			mp.put("code", ActionContext.SUCESS);
 		}
 		catch (AccessDeniedException e) {
@@ -176,5 +202,38 @@ public class ICMController  extends ControllerAbstract  {
 		mp.put("code", ActionContext.SUCESS);
 		return mp;
 	}
-	
+	@RequestMapping(value ="/exchange/ICM/ICMDelayCloseConfirm",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> ICMDCC(@RequestBody String metadata) throws Exception{
+		LoginUser userObj=null;
+		userObj=getSession().getCurrentUser();
+		String company = userObj.getCompany();
+		Map<String, Object> args = JSONUtils.stringToMap(metadata);
+		Object o1 = args.get("ids");
+
+		
+		List<String> ids = new ArrayList<String>();
+		ids.add(String.class.cast(o1));
+		String isTrue = args.get("isTrue").toString();
+		for(int i=0;i<ids.size();i++) {
+			String reg="\"";
+			String str =ids.get(i);	
+			 Pattern p = Pattern.compile(reg);
+			 Matcher m = p.matcher(str);//这里把想要替换的字符串传进来
+			 String temp =m.replaceAll("").trim();
+			 temp=temp.replaceAll("\\[", "").replaceAll("\\]", "");	
+			 ids.set(i, temp);			//去掉特殊字符
+		}
+		EcmDocument temp = new EcmDocument();
+		for(int i = 0;i < ids.size();i++){
+		temp = documentService.getObjectById(getToken(), ids.get(i));
+		temp.addAttribute("C_PROCESS_STATUS", "已确认");
+		temp.addAttribute("C_ITEM_STATUS4", isTrue);
+		documentService.updateObject(getToken(), temp, null);	
+		OptionLogger.logger(detailService, temp, "延误关闭确认", company);
+		}
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		return mp;
+	}
 }

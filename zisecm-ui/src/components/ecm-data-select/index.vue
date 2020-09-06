@@ -1,6 +1,6 @@
 <template>
   <el-select v-model="svalue" @change="sChange" filterable >
-    <el-option v-if="includeAll" :label="$t('application.all')" :value="allvalue"></el-option>
+    <el-option v-if="includeAll" :label="$t('application.allProjects')" :value="allvalue"></el-option>
     <el-option v-for="item in options" :key="item[valueField]" v-bind="item"></el-option>
   </el-select>
 </template>

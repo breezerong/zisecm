@@ -247,7 +247,8 @@
     "contrast":"Contrast",
     "iedContrast":"IEDContrast",
     "delayNum":"DelayReply Nums",
-    "Dispense":"Dispense"
+    "Dispense":"Dispense",
+    "DelayCloseReason":"Current Delay Reason is Right?"
 },
 "skin": {
     "Blue": "Blue",
@@ -359,8 +360,9 @@
     "companyManage":"Company Management",
     "AddressList":"Address List",
     "delayFeedback": "DelayFeedback",
-    "delayConfirm": "DelayConfirm",
-    "delayOpenConfirm":"DelayOpenConfirm"
+    "delayConfirm": "DelayFeedbackConfirm",
+    "delayOpenConfirm":"DelayOpenConfirm",
+    "delayCloseConfirm":"DelayCloseConfim"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -412,7 +414,8 @@
     "pleaseSelectSync":"Please Select Plans for Sync",
     "selectByCoding":"Condtion select By Coding",
     "failureForNew":"Operation Failed!Don't create duplicate items under the same project",
-    "noMainFile":"Please select a master file"
+    "noMainFile":"Please select a master file",
+    "pleaseSelectDC":"Please select document for operate!"
 },
 "field": {
     "indexNumber":"S/N",

@@ -3,7 +3,7 @@
     <el-main>
       <el-row>
         <el-col :span="16">
-          <el-card :body-style="{ height: '120px' }">
+          <el-card >
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">{{$t('route.userInfo')}}</span>
             </div>
@@ -31,20 +31,20 @@
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card :body-style="{ height: '32px' }">
+          <el-card :body-style="{ height: '48px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">{{$t('application.userCenter')}}</span>
             </div>
             <el-col :span="12">
-              <i style="font-size : 28px" class="el-icon-user"></i>
+              <i style="padding-bottom:25px;font-size : 28px" class="el-icon-user"></i>
               <el-link :underline="false" @click="$router.push(jumpPath.userCenter)">{{$t('application.myInformation')}}</el-link>
             </el-col>
             <el-col :span="12">
-              <i style="font-size : 28px" class="el-icon-s-claim"></i>
+              <i style="padding-bottom:25px;font-size : 28px" class="el-icon-s-claim"></i>
               <el-link :underline="false" @click="$router.push('/user/userroleinfo')">{{$t('application.myAuth')}}</el-link>
             </el-col>
           </el-card>
-          <el-card :body-style="{ height: '320px' }">
+          <el-card :body-style="{ height: '400px' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">{{$t('application.myNotice')}}</span>
               <el-link :underline="false" @click="routerJump('通知公告')" style="float: right; padding: 3px 0" type="primary">{{$t('application.more')}}>></el-link>
@@ -503,10 +503,17 @@ export default {
 .el-col {
   padding-right: 5px;  
   padding-left: 5px;  
+  margin-bottom: 5px !important;
 }
 .el-card {
   /* padding-bottom: 30px; */
-  margin-bottom: 10px;
+  margin-bottom: 5px !important;
+}
+.el-card__header {
+    padding: 8px 10px !important;
+    border-bottom: 1px solid #ebeef5;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 .el-table {
   width: 100%;

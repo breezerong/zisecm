@@ -4,7 +4,7 @@
       <!-- 已分发 -->
       <!-- 创建附件 -->
       <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
-        <el-form size="mini" :label-width="formLabelWidth" v-loading="uploading">
+        <el-form size="mini" v-loading="uploading">
           <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
             <el-upload
               :limit="100"
@@ -166,7 +166,7 @@
                         @rowclick="rowClick"
                         @selectchange="selectChange"
                         :isshowCustom="false"
-                        :isEditProperty="false"
+                        :isEditProperty="true"
                         showOptions="查看内容"
                         :isShowChangeList="false"
                     ></DataGrid>
@@ -329,7 +329,7 @@ export default {
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 80,
+            bottomHeight: 120,
 
             filters: {
                 projectCode: "",
@@ -370,6 +370,7 @@ export default {
         this.getTypeNamesByMainList("DCTypeCNPE");
     },
     mounted() {
+        this.topPercent = this.getStorageNumber(this.topStorageName,60)
         if (!this.validataPermission()) {
         //跳转至权限提醒页
         let _self = this;
@@ -377,7 +378,7 @@ export default {
             _self.$router.push({ path: "/NoPermission" });
         });
         }
-        this.topPercent = this.getStorageNumber(this.topStorageName,60)
+        
     },
     methods: {
         // 上下分屏事件

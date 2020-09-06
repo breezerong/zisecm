@@ -1,315 +1,336 @@
 <template>
-    <div :style="{position:'relative',height: asideHeight+'px'}">
-        <split-pane split="vertical" @resize="resize" :min-percent='10' :default-percent='22'>
-            <template slot="paneL">
-                <el-container :style="{height:treeHeight+'px',width:asideWidth,overflow:'auto'}">
-                    <el-tree
-                        class="filter-tree"
-                        :data="data"
-                        :props="defaultProps"
-                        :filter-node-method="filterNode"
-                        ref="tree"
-                        @node-click="nodeClick">
-                    </el-tree>
-                </el-container>
-            </template>
-            <template slot="paneR">
-                <template v-if="isDC">
-                    <el-row>
-                        <el-col :span="24">
-                        <el-form :inline="true" :model="filters" @submit.native.prevent>
-                            <el-form-item>
-                                <el-input width="100px" v-model="filters.title" 
-                                :placeholder="$t('application.PostNumber')+$t('application.or')+$t('application.Title')" 
-                                @keyup.enter.native='searchItem'></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
-                            </el-form-item>
-                            <el-form-item>
-                                <AddCondition @sendMsg='searchItem' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
-                            </el-form-item> 
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
-                            </el-form-item> 
-                         </el-form>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <DataGrid
-                            ref="mainDataGrid"
-                            key="main"
-                            dataUrl="/dc/getDocuments"
-                            v-bind:tableHeight="rightTableHeight"
-                            v-bind:isshowOption="true"
-                            gridViewName="DCTransferGrid"
-                            :isshowCustom="true"
-                            :isInitData="false"
-                            @rowclick="rowClick"
-                            :isEditProperty="false"
-                            :isshowSelection="false"
-                            showOptions="查看内容"
-                            >
-                                
-                            </DataGrid>
-                    </el-row>
-                    <el-row>
-                        <el-tabs  v-model="selectedTabName">
-                            <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
-                                <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
-                            <!--列表-->
-                            <DataGrid
-                                    ref="transferDoc"
-                                    key="transferDocKey"
-                                    dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="rightTableHeight"
-                                    v-bind:isshowOption="true"
-                                    gridViewName="DrawingGrid"
-                                    condition=" and a.NAME='设计文件'"
-                                    :isshowCustom="true"
-                                    :isEditProperty="false"
-                                    @selectchange="selectChangeTransferDoc"
-                                    ></DataGrid>
-                            </el-tab-pane>
-                            <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant" ref="relevantTab">
-                            <!-- 打包下载 -->
-                            <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
-                            
-                            <!--列表-->
-                            <DataGrid
-                                    ref="relevantDoc"
-                                    key="relevantDocKey"
-                                    dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="rightTableHeight"
-                                    v-bind:isshowOption="true"
-                                    gridViewName="DrawingGrid"
-                                    condition=" and a.NAME='相关文件'"
-                                    :isshowCustom="true"
-                                    :isEditProperty="false"
-                                    @selectchange="relevantDocSelect"
-                                    ></DataGrid>
-                            
-                            </el-tab-pane>
-                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
-                            <!-- 打包下载 -->
-                            <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
-                            
-                            <!--列表-->
-                            <DataGrid
-                                    ref="attachmentDoc"
-                                    key="attachmentDocKey"
-                                    dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="rightTableHeight"
-                                    v-bind:isshowOption="true"
-                                    gridViewName="AttachmentGrid"
-                                    condition=" and a.NAME='附件'"
-                                    :isshowCustom="true"
-                                    :isEditProperty="false"
-                                    @selectchange="attachmentDocSelect"
-                                    ></DataGrid>
-                            </el-tab-pane>
-                        </el-tabs>
-                    </el-row>
-                </template>
-                <template v-if="isIED">
-                    <IEDPublishedView ref="iedgrid" :view=true :project="'\''+projectName+'\''"></IEDPublishedView>
-                </template>
-                <template v-if="isProject">
-                    <el-row>
-                        <el-col :span="24">
-                        <el-form :inline="true" :model="filters" @submit.native.prevent>
-                            <el-form-item>
-                                <el-input width="100px" v-model="filtersPLAN.title" placeholder="WBS编码或标题" @keyup.enter.native='searchItemPlan'></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="searchItemPlan">{{$t('application.SearchData')}}</el-button>
-                            </el-form-item>
-                            <el-form-item>
-                                <AddCondition @sendMsg='searchItemPlan' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
-                            </el-form-item> 
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.PlanDataGrid)">{{$t('application.ExportExcel')}}</el-button>
-                            </el-form-item> 
-                         </el-form>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <DataGrid
-                            ref="PlanDataGrid"
-                            key="PlanDataGrid"
-                            dataUrl="/dc/getDocuments"
-                            v-bind:tableHeight="rightTableHeight"
-                            v-bind:isshowOption="true"
-                            gridViewName="PlanTaskGrid"
-                            condition=" TYPE_NAME='计划任务' "
-                            :isshowCustom="true"
-                            :isInitData="false"
-                            :isEditProperty="false"
-                            @rowclick="rowClickPlan"
-                            :isshowSelection="false"
-                            >
-                        </DataGrid>
-                    </el-row>
-                    <el-row>
-                        <el-tabs  value="t01">
-                            <el-tab-pane label="相关IED" name="t01">
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.IEDGrid)">{{$t('application.ExportExcel')}}</el-button>
-                                    <!--列表-->
-                                    <DataGrid
-                                            ref="IEDGrid"
-                                            key="IEDGrid"
+    <DataLayout>
+        <template v-slot:main="{layout}">
+            <div :style="{position:'relative',height: layout.height-startHeight+45+'px'}">
+                <split-pane split="vertical" @resize="onHorizontalSplitResize" :min-percent='1' :default-percent='leftPercent'>
+                    <template slot="paneL">
+                        <el-container :style="{height:layout.height-startHeight+45+'px',width:asideWidth,overflow:'auto'}">
+                            <el-tree
+                                class="filter-tree"
+                                :data="data"
+                                :props="defaultProps"
+                                :filter-node-method="filterNode"
+                                highlight-current
+                                ref="tree"
+                                @node-click="nodeClick">
+                            </el-tree>
+                        </el-container>
+                    </template>
+                    <template slot="paneR">
+                        <template v-if="isDC">
+                            <el-row>
+                                <el-col :span="24">
+                                <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                    <el-form-item>
+                                        <el-input width="100px" v-model="filters.title" 
+                                        :placeholder="$t('application.PostNumber')+$t('application.or')+$t('application.Title')" 
+                                        @keyup.enter.native='searchItem'></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <AddCondition @sendMsg='searchItem' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
+                                    </el-form-item> 
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
+                                    </el-form-item> 
+                                </el-form>
+                                </el-col>
+                            </el-row>
+                            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                                    <template slot="paneL">
+                                        <DataGrid
+                                            ref="mainDataGrid"
+                                            key="main"
                                             dataUrl="/dc/getDocuments"
-                                            v-bind:tableHeight="rightTableHeight"
+                                            v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
                                             v-bind:isshowOption="true"
-                                            gridViewName="IEDGrid"
+                                            gridViewName="DCTransferGrid"
+                                            :isshowCustom="true"
                                             :isInitData="false"
-                                            :isshowCustom="true"
+                                            @rowclick="rowClick"
                                             :isEditProperty="false"
-                                            :isShowMoreOption="false"
-                                            @selectchange="icmTransferSelect"
-                                            ></DataGrid>
-                            </el-tab-pane>
-                           
-                        </el-tabs>
-                    </el-row>
-                </template>
-                <template v-if="isICM">
-                    <el-row>
-                        <el-col :span="24">
-                        <el-form :inline="true" :model="filters" @submit.native.prevent>
-                            <el-form-item>
-                                <el-input width="100px" v-model="filtersICM.title" :placeholder="$t('application.PostNumber')+$t('application.or')+$t('application.Title')"  @keyup.enter.native='searchItemICM'></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="searchItemICM">{{$t('application.SearchData')}}</el-button>
-                            </el-form-item>
-                            <el-form-item>
-                                <AddCondition @sendMsg='searchItemICM' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
-                            </el-form-item> 
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataByObj($refs.ICMDataGrid)">{{$t('application.ExportExcel')}}</el-button>
-                            </el-form-item> 
-                         </el-form>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <DataGrid
-                            ref="ICMDataGrid"
-                            key="ICMDataGrid"
-                            dataUrl="/dc/getDocuments"
-                            v-bind:tableHeight="rightTableHeight"
-                            v-bind:isshowOption="true"
-                            gridViewName="ICMGrid"
-                            :isshowCustom="true"
-                            :isInitData="false"
-                            :isshowicon="false"
-                            :isShowMoreOption="false"
-                            :isEditProperty="false"
-                            @rowclick="rowClickICM"
-                            :isshowSelection="false"
-                            >
-                        </DataGrid>
-                    </el-row>
-                    <el-row>
-                        <el-tabs  value="t01">
-                            <el-tab-pane label="接口传递" name="t01">
-                                <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMTransfer)">{{$t('application.ExportExcel')}}</el-button>
-                                    <!--列表-->
-                                    <DataGrid
-                                            ref="ICMTransfer"
-                                            key="ICMTransfer"
-                                            dataUrl="/dc/getDocuByRelationParentId"
-                                            v-bind:tableHeight="rightTableHeight"
-                                            v-bind:isshowOption="true"
-                                            gridViewName="ICMPassGrid"
-                                            condition=" and a.NAME='传递接口'"
-                                            :isshowCustom="true"
-                                            :isEditProperty="false"
-                                            @selectchange="icmTransferSelect"
+                                            :isshowSelection="false"
                                             showOptions="查看内容"
-                                            ></DataGrid>
+                                            >
+                                                
+                                            </DataGrid>
+                                    </template>
+                                    <template slot="paneR">
+                                        <el-tabs  v-model="selectedTabName">
+                                            <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
+                                                <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
+                                            <!--列表-->
+                                            <DataGrid
+                                                    ref="transferDoc"
+                                                    key="transferDocKey"
+                                                    dataUrl="/dc/getDocuByRelationParentId"
+                                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                    v-bind:isshowOption="true"
+                                                    gridViewName="DrawingGrid"
+                                                    condition=" and a.NAME='设计文件'"
+                                                    :isshowCustom="true"
+                                                    :isEditProperty="false"
+                                                    @selectchange="selectChangeTransferDoc"
+                                                    ></DataGrid>
+                                            </el-tab-pane>
+                                            <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant" ref="relevantTab">
+                                            <!-- 打包下载 -->
+                                            <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
+                                            
+                                            <!--列表-->
+                                            <DataGrid
+                                                    ref="relevantDoc"
+                                                    key="relevantDocKey"
+                                                    dataUrl="/dc/getDocuByRelationParentId"
+                                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                    v-bind:isshowOption="true"
+                                                    gridViewName="DrawingGrid"
+                                                    condition=" and a.NAME='相关文件'"
+                                                    :isshowCustom="true"
+                                                    :isEditProperty="false"
+                                                    @selectchange="relevantDocSelect"
+                                                    ></DataGrid>
+                                            
+                                            </el-tab-pane>
+                                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                                            <!-- 打包下载 -->
+                                            <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
+                                            
+                                            <!--列表-->
+                                            <DataGrid
+                                                    ref="attachmentDoc"
+                                                    key="attachmentDocKey"
+                                                    dataUrl="/dc/getDocuByRelationParentId"
+                                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                    v-bind:isshowOption="true"
+                                                    gridViewName="AttachmentGrid"
+                                                    condition=" and a.NAME='附件'"
+                                                    :isshowCustom="true"
+                                                    :isEditProperty="false"
+                                                    @selectchange="attachmentDocSelect"
+                                                    ></DataGrid>
+                                            </el-tab-pane>
+                                        </el-tabs>
+                                    </template>
+                                </split-pane>
+                            </div>
+                        </template>
+                        <template v-if="isIED">
+                            <IEDPublishedView ref="iedgrid" :view=true :project="'\''+projectName+'\''"></IEDPublishedView>
+                        </template>
+                        <template v-if="isProject">
+                            <el-row>
+                                <el-col :span="24">
+                                <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                    <el-form-item>
+                                        <el-input width="100px" v-model="filtersPLAN.title" placeholder="WBS编码或标题" @keyup.enter.native='searchItemPlan'></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="searchItemPlan">{{$t('application.SearchData')}}</el-button>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <AddCondition @sendMsg='searchItemPlan' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
+                                    </el-form-item> 
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="exportDataByObj($refs.PlanDataGrid)">{{$t('application.ExportExcel')}}</el-button>
+                                    </el-form-item> 
+                                </el-form>
+                                </el-col>
+                            </el-row>
+                            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                                    <template slot="paneL">
+                                        <DataGrid
+                                            ref="PlanDataGrid"
+                                            key="PlanDataGrid"
+                                            dataUrl="/dc/getDocuments"
+                                            v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
+                                            v-bind:isshowOption="true"
+                                            gridViewName="PlanTaskGrid"
+                                            condition=" TYPE_NAME='计划任务' "
+                                            :isshowCustom="true"
+                                            :isInitData="false"
+                                            :isEditProperty="false"
+                                            @rowclick="rowClickPlan"
+                                            :isshowSelection="false"
+                                            >
+                                        </DataGrid>
+                                    </template>
+                                    <template slot="paneR">
+                                        <el-tabs  value="t01">
+                                            <el-tab-pane label="相关IED" name="t01">
+                                                <el-button type="primary" v-on:click="exportDataByObj($refs.IEDGrid)">{{$t('application.ExportExcel')}}</el-button>
+                                                    <!--列表-->
+                                                    <DataGrid
+                                                            ref="IEDGrid"
+                                                            key="IEDGrid"
+                                                            dataUrl="/dc/getDocuments"
+                                                            v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                            v-bind:isshowOption="true"
+                                                            gridViewName="IEDGrid"
+                                                            :isInitData="false"
+                                                            :isshowCustom="true"
+                                                            :isEditProperty="false"
+                                                            :isShowMoreOption="false"
+                                                            @selectchange="icmTransferSelect"
+                                                            ></DataGrid>
+                                            </el-tab-pane>
+                                        
+                                        </el-tabs>
+                                    </template>
+                                </split-pane>
+                            </div>
+                        </template>
+                        <template v-if="isICM">
+                            <el-row>
+                                <el-col :span="24">
+                                <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                    <el-form-item>
+                                        <el-input width="100px" v-model="filtersICM.title" :placeholder="$t('application.PostNumber')+$t('application.or')+$t('application.Title')"  @keyup.enter.native='searchItemICM'></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="searchItemICM">{{$t('application.SearchData')}}</el-button>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <AddCondition @sendMsg='searchItemICM' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
+                                    </el-form-item> 
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="exportDataByObj($refs.ICMDataGrid)">{{$t('application.ExportExcel')}}</el-button>
+                                    </el-form-item> 
+                                </el-form>
+                                </el-col>
+                            </el-row>
+                            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                                    <template slot="paneL">
+                                        <DataGrid
+                                            ref="ICMDataGrid"
+                                            key="ICMDataGrid"
+                                            dataUrl="/dc/getDocuments"
+                                            v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
+                                            v-bind:isshowOption="true"
+                                            gridViewName="ICMGrid"
+                                            :isshowCustom="true"
+                                            :isInitData="false"
+                                            :isshowicon="false"
+                                            :isShowMoreOption="false"
+                                            :isEditProperty="false"
+                                            @rowclick="rowClickICM"
+                                            :isshowSelection="false"
+                                            >
+                                        </DataGrid>
+                                    </template>
+                                    <template slot="paneR">
+                                <el-tabs  value="t01">
+                                    <el-tab-pane label="接口传递" name="t01">
+                                        <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMTransfer)">{{$t('application.ExportExcel')}}</el-button>
+                                            <!--列表-->
+                                            <DataGrid
+                                                    ref="ICMTransfer"
+                                                    key="ICMTransfer"
+                                                    dataUrl="/dc/getDocuByRelationParentId"
+                                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                    v-bind:isshowOption="true"
+                                                    gridViewName="ICMPassGrid"
+                                                    condition=" and a.NAME='传递接口'"
+                                                    :isshowCustom="true"
+                                                    :isEditProperty="false"
+                                                    @selectchange="icmTransferSelect"
+                                                    showOptions="查看内容"
+                                                    ></DataGrid>
+                                            </el-tab-pane>
+                                                <el-tab-pane label="接口意见" name="t02">
+                                                    <!-- 导出Excel -->
+                                                    <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMComments)">{{$t('application.ExportExcel')}}</el-button>
+                                                    
+                                                    <!--列表-->
+                                                    <DataGrid
+                                                            ref="ICMComments"
+                                                            key="ICMComments"
+                                                            dataUrl="/dc/getDocuByRelationParentId"
+                                                            v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                            v-bind:isshowOption="true"
+                                                            gridViewName="ICMCommentsGrid"
+                                                            condition=" and a.NAME='接口意见'"
+                                                            :isshowCustom="true"
+                                                            :isEditProperty="false"
+                                                            @selectchange="icmCommentsSelect"
+                                                            showOptions="查看内容"
+                                                            ></DataGrid>
+                                                    
+                                            </el-tab-pane>
+                                        </el-tabs>
+                                    </template>
+                                </split-pane>
+                            </div>
+                        </template>
+                        <template v-if="isDesign">
+                            <el-row>
+                                <el-col :span="24">
+                                <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                    <el-form-item>
+                                        <el-input width="100px" v-model="filtersDesign.title" :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')" @keyup.enter.native='searchItemDesign'></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="searchItemDesign">{{$t('application.SearchData')}}</el-button>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
+                                        <AddCondition @sendMsg='searchItemDesign' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" v-on:click="exportDataDesign($refs.projDesignDoc)">{{$t('application.ExportExcel')}}</el-button>
+                                    </el-form-item> 
+                                </el-form>
+                                </el-col>
+                            </el-row>
+                            <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+                                <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+                                    <template slot="paneL">
+                                <DataGrid
+                                    ref="projDesignDoc"
+                                    key="projDesignDoc"
+                                    dataUrl="/exchange/project/getDesignAtProjectView"
+                                    v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="false"
+                                    gridViewName="DrawingGrid"
+                                    :isEditProperty="false"
+                                    :isshowCustom="true"
+                                    :isInitData="false"
+                                    showOptions="查看内容"
+                                    ></DataGrid>
+                            </template>
+                                    <template slot="paneR">
+                                <el-tabs  value="t01">
+                                    <el-tab-pane :label="$t('application.relevant')" name="t01">
+                                        <el-button type="primary" v-on:click="exportDataSubTable($refs.projRelevantDoc)">{{$t('application.ExportExcel')}}</el-button>
+                                        <!--列表-->
+                                        <DataGrid
+                                                ref="projRelevantDoc"
+                                                key="projRelevantDoc"
+                                                dataUrl="/dc/getDocuByRelationParentId"
+                                                v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                v-bind:isshowOption="true"
+                                                gridViewName="DrawingGrid"
+                                                condition=" and a.NAME='相关文件'"
+                                                :isshowCustom="true"
+                                                :isEditProperty="false"
+                                                @selectchange="icmTransferSelect"
+                                                ></DataGrid>
                                     </el-tab-pane>
-                            <el-tab-pane label="接口意见" name="t02">
-                                <!-- 导出Excel -->
-                                <el-button type="primary" v-on:click="exportDataSubTable($refs.ICMComments)">{{$t('application.ExportExcel')}}</el-button>
-                                
-                                <!--列表-->
-                                <DataGrid
-                                        ref="ICMComments"
-                                        key="ICMComments"
-                                        dataUrl="/dc/getDocuByRelationParentId"
-                                        v-bind:tableHeight="rightTableHeight"
-                                        v-bind:isshowOption="true"
-                                        gridViewName="ICMCommentsGrid"
-                                        condition=" and a.NAME='接口意见'"
-                                        :isshowCustom="true"
-                                        :isEditProperty="false"
-                                        @selectchange="icmCommentsSelect"
-                                        showOptions="查看内容"
-                                        ></DataGrid>
-                                
-                            </el-tab-pane>
-                        </el-tabs>
-                    </el-row>
-                </template>
-                <template v-if="isDesign">
-                    <el-row>
-                        <el-col :span="24">
-                        <el-form :inline="true" :model="filters" @submit.native.prevent>
-                            <el-form-item>
-                                <el-input width="100px" v-model="filtersDesign.title" :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')" @keyup.enter.native='searchItemDesign'></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="searchItemDesign">{{$t('application.SearchData')}}</el-button>
-                            </el-form-item>
-                            <el-form-item>
-                                <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
-                                <AddCondition @sendMsg='searchItemDesign' :typeName="typeName" v-model="advCondition" v-bind:inputValue="advCondition" inputType='hidden'></AddCondition>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" v-on:click="exportDataDesign($refs.projDesignDoc)">{{$t('application.ExportExcel')}}</el-button>
-                            </el-form-item> 
-                         </el-form>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <DataGrid
-                            ref="projDesignDoc"
-                            key="projDesignDoc"
-                            dataUrl="/exchange/project/getDesignAtProjectView"
-                            v-bind:tableHeight="rightTableHeight"
-                            v-bind:isshowOption="true" v-bind:isshowSelection ="false"
-                            gridViewName="DrawingGrid"
-                            :isEditProperty="false"
-                            :isshowCustom="true"
-                            :isInitData="false"
-                            showOptions="查看内容"
-                            ></DataGrid>
-                    </el-row>
-                    <el-row>
-                        <el-tabs  value="t01">
-                            <el-tab-pane :label="$t('application.relevant')" name="t01">
-                                <el-button type="primary" v-on:click="exportDataSubTable($refs.projRelevantDoc)">{{$t('application.ExportExcel')}}</el-button>
-                                <!--列表-->
-                                <DataGrid
-                                        ref="projRelevantDoc"
-                                        key="projRelevantDoc"
-                                        dataUrl="/dc/getDocuByRelationParentId"
-                                        v-bind:tableHeight="rightTableHeight"
-                                        v-bind:isshowOption="true"
-                                        gridViewName="DrawingGrid"
-                                        condition=" and a.NAME='相关文件'"
-                                        :isshowCustom="true"
-                                        :isEditProperty="false"
-                                        @selectchange="icmTransferSelect"
-                                        ></DataGrid>
-                            </el-tab-pane>
-                        </el-tabs>
-                    </el-row>
-                </template>
-            </template>
-        </split-pane>
-    </div>
+                                </el-tabs>
+                            </template>
+                                </split-pane>
+                            </div>
+                        </template>
+                    </template>
+                </split-pane>
+            </div>
+        </template>
+    </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
@@ -317,13 +338,26 @@ import DataGrid from "@/components/DataGrid";
 import ExcelUtil from '@/utils/excel.js';
 import AddCondition from '@/views/record/AddCondition';
 import IEDPublishedView from '../IEDManagement/IEDpublished'
+import DataLayout from '@/components/ecm-data-layout'
+
 export default {
     name: "ProjectViewer",
     data(){
         return{
-            asideHeight: window.innerHeight - 150,
-            treeHeight:window.innerHeight - 100,
-            tableHeight: window.innerHeight - 180,
+            leftStorageName: 'ProjectViewerWidth',
+            leftPercent: 20,
+
+            // 本地存储高度名称
+            topStorageName: 'ProjectViewerHeight',
+            // 非split pan 控制区域高度
+            startHeight: 135,
+            // 顶部百分比*100
+            topPercent: 60,
+            // 顶部除列表高度
+            topbarHeight: 40,
+            // 底部除列表高度
+            bottomHeight: 120,
+
             asideWidth: '100%',
             defaultProps: {
                 children: 'children',
@@ -337,8 +371,6 @@ export default {
             isShowAttachmentDoc:true,
             parentId:"",
             selectedTabName:'t01',
-            rightTableHeight: window.innerHeight/2-150,
-            rightTableHeightIED:window.innerHeight - 175,
             advCondition:"",
             filters: {
                 title: ""
@@ -392,8 +424,26 @@ export default {
             
         }
         this.getTreeData();
+        setTimeout(() => {
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
+            this.leftPercent = this.getStorageNumber(this.leftStorageName,20)
+        }, 300);
     },
     methods: {
+        // 水平分屏事件
+        onHorizontalSplitResize(leftPercent){
+            // 左边百分比*100
+            this.leftPercent = leftPercent
+            this.setStorageNumber(this.leftStorageName, leftPercent)
+            
+        },
+        // 上下分屏事件
+        onSplitResize(topPercent){
+            // 顶部百分比*100
+            this.topPercent = topPercent
+            this.setStorageNumber(this.topStorageName, topPercent)
+            //console.log(JSON.stringify(topPercent))
+        },
         cellMouseEnter(row, column, cell, event){
         this.selectRow=row;
  
@@ -656,7 +706,7 @@ export default {
            
             if(_self.filtersPLAN.title!=''){
                 key+=" and (C_WBS_CODING like '%"+_self.filtersPLAN.title+"%' "
-                +"or TITLE like '%"+_self.filtersPLAN.title+"%' "
+                +"or NAME like '%"+_self.filtersPLAN.title+"%' "
                 +")";
             }
             if(_self.advCondition!=''){
@@ -818,10 +868,14 @@ export default {
         ShowProperty:ShowProperty,
         DataGrid:DataGrid,
         AddCondition:AddCondition,
-        IEDPublishedView:IEDPublishedView
+        IEDPublishedView:IEDPublishedView,
+        DataLayout:DataLayout
     }
 }
 </script>
-<style scoped>
+<style>
 
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+    background-color: #d3d3d3 !important;
+}
 </style>

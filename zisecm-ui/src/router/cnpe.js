@@ -224,6 +224,16 @@ export const cnpeRouter=
         meta: {
             requireAuth: true,
             permit: 1,
+            title:'delayCloseConfirm'
+        },
+        path: '/cnpe/icmmanagement/delaycloseconfirm',
+        name: '延误关闭确认',
+        component: () => import('@/views/docexchange/ICMManagement/DelayCloseConfirm.vue')
+    },
+    {
+        meta: {
+            requireAuth: true,
+            permit: 1,
             title:'ICMReport'
         },
         path: '/cnpe/icmmanagement/icmreport',
