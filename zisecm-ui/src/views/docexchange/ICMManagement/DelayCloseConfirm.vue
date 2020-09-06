@@ -1,6 +1,5 @@
 <template>
     <DataLayout>
-    
         <template v-slot:header>
             <el-form inline="true">
             <el-form-item>
@@ -25,8 +24,18 @@
             </el-select>
             </el-form-item>
             <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
-            <el-form-item><el-button v-if="isCNPE" type="success" @click="submit()">{{$t('application.ok')}}</el-button></el-form-item>
+            <el-form-item><el-button v-if="isCNPE" type="success" @click="openDialog()">{{$t('application.ok')}}</el-button></el-form-item>
             </el-form>
+            <el-dialog  :visible.sync="dialogClosevisual">
+
+            <el-row><span>{{$t('application.DelayCloseReason')}}</span></el-row>
+            <el-radio v-model="isTrue" :label="$t('application.yes')" ></el-radio>
+            <el-radio v-model="isTrue" :label="$t('application.no')"></el-radio>
+            <div slot="footer" class="dialog-footer">
+            <el-button @click="submit() ">{{$t('application.ok')}}</el-button>
+            <el-button @click="closeDialog() ">{{$t('application.cancel')}}</el-button>
+            </div>
+            </el-dialog>
         </template>
         <template v-slot:main="{layout}">
                 <el-row>
@@ -36,8 +45,8 @@
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
             isshowOption
-            gridViewName="ICM延误回复确认"
-            condition="(C_PROCESS_STATUS in ('新建','已确认') ) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
+            gridViewName="延误关闭确认"
+            condition="(C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME=ICM)"
             v-bind="tables.main":tableHeight="layout.height-166"
             @rowclick="rowClick" 
             @selectchange="selectChange"
@@ -60,6 +69,7 @@ export default {
     data(){
         return{
             isCNPE:false,
+            isTrue:'',
             tables:{
                 main:{
                     dataList:[],
@@ -90,6 +100,7 @@ export default {
             Cstatus:'新建',
             hiddenInput:'hidden',
             typeName:"ICM",
+            dialogClosevisual:false
         }
     },
 
@@ -109,11 +120,16 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }   
-      this.search()  
+      //this.search()  
     },
 
     methods: {
-
+        openDialog(){
+            this.dialogClosevisual=true
+        },
+        closeDialog(){
+        this.dialogClosevisual=false
+      },
         onLoadnDataSuccess(v,o){
             this.search();
         },
@@ -130,10 +146,12 @@ export default {
       this.selectedItems = val;
     },
     submit(){
+        this.dialogClosevisual=false
+
         var ids =[]
+        let mp=new Map();
         var k = this.selectedItems.length           //获取当前Checkbox数组的长度
         let _self = this
-        console.log("长度："+k)
          if(_self.selectedItems.length==0){
              let msg = this.$t('message.pleaseSelectICM')
             _self.$message({message:msg,duration: 2000,showClose: true,type: "info"})
@@ -144,7 +162,9 @@ export default {
         {
             ids[i] = this.selectedItems[i].ID
         }
-        axios.post("/exchange/ICM/ICMDelayConfirm",JSON.stringify(ids)).then(function(response){
+        mp.set("ids",ids);
+        mp.set("isTrue",this.isTrue)
+        axios.post("/exchange/ICM/ICMDelayCloseConfirm",JSON.stringify(mp)).then(function(response){
             let code = response.data.code;
             console.log("取到的数据"+code)
              if (code == 1 &&_self.selectedItems.length!=0) {
@@ -156,7 +176,6 @@ export default {
                 });
             _self.search()
                 }})
-        //this.search()
     },
     search(){
         console.log(this.currentUser().company)        
@@ -165,16 +184,17 @@ export default {
         }
 
         let _self = this
-        var k1="(C_PROCESS_STATUS in ('新建','已确认') ) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
+        var k1="(C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME='ICM')"
          if(_self.value != null &&_self.value!='所有'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
         if(_self.Cstatus != undefined && _self.Cstatus != null){
                 k1+="AND C_PROCESS_STATUS = '"+_self.Cstatus+"'"
         }
-        console.log(k1)
+       
         _self.$refs.mainDataGrid.condition=k1
-        _self.$refs.mainDataGrid.loadGridData();
+        console.log(_self.$refs.mainDataGrid.condition)
+       _self.$refs.mainDataGrid.loadGridData();
     },
     },
     props: {

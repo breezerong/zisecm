@@ -75,6 +75,7 @@ public class StatusController extends ControllerAbstract{
 				doc.setStatus(nextStatus);
 				if("IED".equals(doc.getTypeName())) {
 					if("已生效".equals(nextStatus)) {
+						doc.addAttribute("C_ITEM_STATUS2", "Y");
 						logicOptionCnpeIEDService.IEDOption(getToken(), doc);
 						OptionLogger.logger(detailService, doc, "接收", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 						
