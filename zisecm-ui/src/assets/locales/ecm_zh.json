@@ -243,7 +243,8 @@
     "delayOpenConfirm":"延误打开确认",
     "delayNum":"延误回复",
     "contrast":"对比",
-    "iedContrast":"IED对比"
+    "iedContrast":"IED对比",
+    "DelayCloseReason":"是否认可延误关闭原因"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -432,7 +433,8 @@
     "pleaseSelectICM":"请选择要确认的ICM",
     "pleaseSelectSync":"请选择要同步的计划",
     "selectByCoding":"根据发文号关键字查找",
-    "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目"
+    "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目",
+    "pleaseSelectDC":"请选择要操作的文函！"
 },
 "field": {
     "indexNumber":"序号",
