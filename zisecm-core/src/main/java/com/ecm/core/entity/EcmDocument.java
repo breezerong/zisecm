@@ -110,7 +110,9 @@ public class EcmDocument extends EcmSysObject{
      */
     private String projectName;
     
-    
+    public EcmDocument() {
+    	this.setCurrent(true);
+    }
     
     protected String getProjectName() {
 		return projectName;

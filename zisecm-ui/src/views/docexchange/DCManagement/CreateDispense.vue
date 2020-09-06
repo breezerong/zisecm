@@ -1,6 +1,31 @@
 <template>
     <DataLayout>
         <template v-slot:header>
+            <!-- 创建设计文件附件 -->
+            <el-dialog :title="$t('application.Import')" :visible.sync="importSubVisible" width="70%">
+                <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                    <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+                    <el-upload
+                        :limit="100"
+                        :file-list="fileList"
+                        action
+                        :on-change="handleChange"
+                        :auto-upload="false"
+                        :multiple="true"
+                    >
+                        <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+                    </el-upload>
+                    </div>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="importSubVisible = false">{{$t('application.cancel')}}</el-button>
+                    <el-button type="primary" @click="uploadDataSub()">{{$t('application.start')+$t('application.Import')}}</el-button>
+                </div>
+            </el-dialog>
+            <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="90%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            </el-dialog>
             <!-- 创建分发 -->
         <el-dialog title="分包商选择" :visible.sync="contractorCheckVisible" width="60%" >
             <el-checkbox-group v-model="checkList">
@@ -10,7 +35,7 @@
             </el-checkbox-group>
             <div slot="footer" class="dialog-footer">
                 <el-button
-                @click="contractorCheckVisible=false;onDispenseDc(selectedChildrenType,'')"
+                @click="contractorCheckVisible=false;onDispenseDc()"
                 >{{$t('application.ok')}}</el-button>
             </div>
         </el-dialog>
@@ -116,7 +141,8 @@
                     :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="beforeDispense()">分发</el-button>
+                    <!-- beforeDispense() -->
+                    <el-button type="success" v-on:click="onDispenseDc()">{{$t('application.Dispense')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="warning" 
@@ -161,6 +187,9 @@
                                         <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件','/系统配置/导入模板/设计文件')">{{$t('application.Import')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
+                                            <el-button type="primary" @click="beforeUploadSubFile('/dc/addAttachment')">{{$t('application.Add')+$t('application.Attachment')}}</el-button>
+                                        </el-form-item>
+                                        <el-form-item>
                                             <MountFile :selectedItem="selectedTransferDocItems" @refresh='refreshTransferDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
                                         </el-form-item>
                                         <el-form-item>
@@ -182,6 +211,7 @@
                                         :isEditProperty="false"
                                         showOptions="查看内容"
                                         :isShowChangeList="false"
+                                        @dbclick="dbClick"
                                         @selectchange="selectChangeTransferDoc"
                                         ></DataGrid>
                             </el-tab-pane>
@@ -265,6 +295,7 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import BatchImport from '@/components/controls/ImportDocument';
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 import ExcelUtil from '@/utils/excel.js'
 import MountFile from '@/components/MountFile.vue';
 import DataSelect from '@/components/ecm-data-select'
@@ -290,6 +321,10 @@ export default {
                 coding: "",
                 title: "",
                 limit: 10
+            },
+            dialog:{
+                title:"",
+                visible:false
             },
             projects:[],
             typeName:"文件传递单",
@@ -318,7 +353,9 @@ export default {
             isShowDesgin:true,
             isShowRelevant:true,
             isShowAttachmentDoc:true,
-            selectedTabName:'t01'
+            selectedTabName:'t01',
+            importSubVisible:false,
+            docId:""
         }
     },
     created(){
@@ -340,6 +377,85 @@ export default {
         this.topPercent = this.getStorageNumber(this.topStorageName,60)
     },
     methods: {
+        beforeUploadSubFile(uploadpath){
+            let _self=this;
+            if(_self.selectedTransferDocItems==undefined||_self.selectedTransferDocItems.length!=1){
+                // _self.$message('请选择一条文件数据');
+                _self.$message({
+                        showClose: true,
+                        message: '请选择一条设计文件数据!',
+                        duration: 2000,
+                        type: "warning"
+                    });
+                return;
+            }
+            _self.uploadUrl=uploadpath;
+            _self.fileList=[];
+            _self.importSubVisible=true;
+            
+        },
+        //上传文件
+        uploadDataSub() {
+            let _self = this;
+            let formdata = _self.getSubFormData();
+            console.log("UploadData getData");
+            console.log(formdata);
+            _self.uploading=true;
+            _self
+                .axios({
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                },
+                datatype: "json",
+                method: "post",
+                data: formdata,
+                url: _self.uploadUrl
+                })
+                .then(function(response) {
+                _self.importSubVisible = false;
+                // _self.refreshData();
+                _self.uploading=false;
+                // _self.$message("导入成功!");
+                _self.$message({
+                        showClose: true,
+                        message: "导入成功!",
+                        duration: 2000,
+                        type: 'success'
+                    });
+                })
+                .catch(function(error) {
+                _self.uploading=false;
+                console.log(error);
+                });
+            },
+        getSubFormData() {
+                let _self = this;
+                let formdata = new FormData();
+                var data = {};
+                data["parentDocId"] = _self.selectedTransferDocItems[0].ID;//_self.selectedInnerItems[0].ID;//_self.selectedFileId;
+                data["relationName"]='附件';
+                data["TYPE_NAME"]='附件';
+                formdata.append("metaData", JSON.stringify(data));
+                _self.fileList.forEach(function(file) {
+                    //console.log(file.name);
+                    formdata.append("uploadFile", file.raw, file.name);
+                });
+                return formdata;
+            },
+        dbClick(row){
+            this.docId=row.ID;
+            this.dialog.visible=true;
+            
+            this.$nextTick(()=>{
+                this.$refs.subAttachment.refresh();
+                // this.$refs.subAttachment.docId=row.ID;
+            });
+
+            // this.$nextTick(()=>{
+            //     this.$refs.subAttachment.docId=row.ID;
+            // this.$refs.subAttachment.docId=row.ID;
+            // });
+        },
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100
@@ -542,6 +658,17 @@ export default {
                             _self.$refs.ShowProperty.formName="";
                         }
                         _self.typeName=typeName;
+                        
+                        if('设计文件'==typeName){
+                            _self.$refs.ShowProperty.setMainObject(_self.selectRow);
+                            let mp=new Map();
+                            mp.set("C_PROJECT_NAME",'C_PROJECT_NAME');
+                            mp.set("C_REF_CODING",'CODING');
+                            mp.set("C_ITEM_DATE",'C_ITEM_DATE');
+
+                            _self.$refs.ShowProperty.setMainSubRelation(mp);
+                        }
+
                         // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
@@ -776,19 +903,19 @@ export default {
                 let _self = this;
                 let m = [];
                 let tab = _self.selectedItems;
-                let ctab= _self.checkList;
+                // let ctab= _self.checkList;
                 let c=[];
                 let i;
                 for (i in tab) {
                     m.push(tab[i]["ID"]);
                 }
                 let j;
-                for(j in ctab){
-                    c.push(ctab[j])
-                }
+                // for(j in ctab){
+                //     c.push(ctab[j])
+                // }
                 let mp=new Map();
                 mp.set("ids",m);
-                mp.set("contractors",c);
+                // mp.set("contractors",c);
                 axios.post("/dc/dispenseDc",JSON.stringify(mp),{
                     headers: {
                         "Content-Type": "application/json;charset=UTF-8"
@@ -847,7 +974,8 @@ export default {
         MountFile:MountFile,
         BatchImport:BatchImport,
         DataSelect:DataSelect,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        AttachmentFile:AttachmentFile,
     }
 }
 </script>

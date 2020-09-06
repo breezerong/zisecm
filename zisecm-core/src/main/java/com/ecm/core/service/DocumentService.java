@@ -452,7 +452,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	public String newObject(String token, EcmDocument doc, EcmContent content) throws Exception {
 		doc.createId();
 		logger.info("doc id:{}", doc.getId());
-		doc.setCurrent(true);
+//		doc.setCurrent(true);
 		if (content != null) {
 			if (StringUtils.isEmpty(content.getFormatName())) {
 				throw new Exception("Format cannot be empty.");
@@ -1247,6 +1247,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		doc.addAttribute("VERSION_ID", toDoc.getAttributeValue("VERSION_ID"));
 		doc.addAttribute("SYSTEM_VERSION", toDoc.getSystemVersion()+1);
 		doc.setCurrent(isCurrent);
+		doc.addAttribute("C_IS_RELEASED", 1);
 		this.updateObject(token, doc, null);
 		if(isCurrent) {
 			toDoc.setCurrent(false);

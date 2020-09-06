@@ -243,7 +243,8 @@
     "delayOpenConfirm":"延误打开确认",
     "delayNum":"延误回复",
     "contrast":"对比",
-    "iedContrast":"IED对比"
+    "iedContrast":"IED对比",
+    "Dispense":"分发"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -431,7 +432,8 @@
     "pleaseSelectICM":"请选择要确认的ICM",
     "pleaseSelectSync":"请选择要同步的计划",
     "selectByCoding":"根据发文号关键字查找",
-    "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目"
+    "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目",
+    "noMainFile":"请选择一条主文件"
 },
 "field": {
     "indexNumber":"序号",

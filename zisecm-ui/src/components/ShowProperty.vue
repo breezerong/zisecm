@@ -95,7 +95,9 @@ export default {
       myFolderId: this.folderId,
       formName:"",
       parentDocId:'',
-      clientPermission: 1
+      clientPermission: 1,
+      mainObject:[],
+      mainSubRelation:[]
     };
   },
   mounted() {
@@ -112,6 +114,12 @@ export default {
     folderPath:{type:String}
   },
   methods: {
+    setMainObject(obj){
+      this.mainObject=obj;
+    },
+    setMainSubRelation(obj){
+      this.mainSubRelation=obj;
+    },
     validateValue(itemData){
       if(itemData.required){
         if(itemData.validatePolicy != null && itemData.validatePolicy != ""){
@@ -388,6 +396,27 @@ export default {
       let _self = this;
       if(_self.myItemId =='')
       {
+        var c;
+            for(c in indata){
+              let frmItems = indata[c].ecmFormItems;
+              //console.log(JSON.stringify(frmItems));
+              var i;
+              for (i in frmItems) {
+                let val =frmItems[i].defaultValue;
+                
+                if(_self.mainSubRelation&&_self.mainSubRelation.size>0
+                &&_self.mainObject&&(val==null||val==undefined||val=='')){
+                   val=_self.mainObject[_self.mainSubRelation.get(frmItems[i].attrName)];
+                   frmItems[i].defaultValue = val;
+                }
+                
+                
+                // if("TYPE_NAME"==frmItems[i].attrName){
+                //   _self.typeName=frmItems[i].attrName；
+                // }
+                //console.log(JSON.stringify(frmItems[i].attrName)+":"+frmItems[i].defaultValue);
+              }
+            }
         _self.dataList = indata;
       }
       else
@@ -407,6 +436,7 @@ export default {
                 if(val && frmItems[i].isRepeat){
                   val = val.split(";");
                 }
+                
                 frmItems[i].defaultValue = val;
                 // if("TYPE_NAME"==frmItems[i].attrName){
                 //   _self.typeName=frmItems[i].attrName；

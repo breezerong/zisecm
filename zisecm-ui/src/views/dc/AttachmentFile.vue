@@ -8,9 +8,17 @@
                 v-bind:isshowOption="true"
                 gridViewName="AttachmentGrid"
                 condition=" and a.NAME='附件'"
-                :isshowCustom="true"
+                :isshowCustom="false"
+                :isEditProperty="true"
+                showOptions="查看内容"
+                :isShowChangeList="false"
                 :parentId="docId"
-                ></DataGrid>
+                >
+                    <template slot="dropdownItem" slot-scope="scope">
+                        <el-dropdown-item @click.native="onDeleleItem([scope.data.row],[$refs.attachmentDoc])">删除</el-dropdown-item>
+
+                    </template>
+                </DataGrid>
     </div>
 </template>
 <script>
@@ -25,6 +33,7 @@ export default {
 
     },
     methods:{
+       
         refresh(){
             this.$refs.attachmentDoc.loadGridData();
         }

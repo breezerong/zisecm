@@ -58,6 +58,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 	@Transactional(rollbackFor = Exception.class)
 	public boolean transferOption(String token,EcmDocument transferDoc) throws Exception {
 		List<Map<String,Object>> designDocMaps= getChildsByParentID(token, transferDoc.getId(), "设计文件");
+		
 		for(int j=0;designDocMaps!=null&&j<designDocMaps.size();j++) {
 			EcmDocument newDesignDoc=new EcmDocument();
 			
@@ -65,6 +66,9 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 			boolean isUpgrad= upgradDesignDocument(token,newDesignDoc);
 			if(isUpgrad) {
 				EcmDocument oldIED= getIEDByDoc(token,newDesignDoc);
+				if(oldIED==null) {
+					throw new Exception("此文件\""+newDesignDoc.getCoding()+"\"无对应IED!");
+				}
 				upgradIED(token,oldIED,newDesignDoc);
 			}
 		}
@@ -138,7 +142,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 		Map<String,Object> attrMap=new HashMap<String, Object>();
 		attrMap.put("REVISION",doc.getRevision());
 		attrMap.put("C_SEND_DATE", doc.getAttributeValue("C_ITEM_DATE"));
-		attrMap.put("C_REF_CODING", doc.getAttributeValue("CODING"));
+		attrMap.put("C_REF_CODING", doc.getAttributeValue("C_REF_CODING"));
 		attrMap.put("C_ITEM_STATUS2", "Y");
 		
 		EcmDocument checkInDoc= checkIn(token, oldIED.getId(),attrMap, null, true);
@@ -156,7 +160,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 	 */
 	public boolean upgradDesignDocument(String token,EcmDocument newDoc) throws Exception {
 		String coding =newDoc.getCoding();
-		String condition=" CODING='"+coding+"' and IS_CURRENT=1 and TYPE_NAME='设计文件'";
+		String condition=" CODING='"+coding+"' and REVISION!='"+newDoc.getRevision()+"' and IS_CURRENT=1 and TYPE_NAME='设计文件'";
 		List<Map<String, Object>> result= getObjectMap(token, condition);
 		if(result!=null&&result.size()>0) {
 			EcmDocument oldDoc = new EcmDocument();
@@ -177,6 +181,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 			newDoc.setCurrent(true);
 			newDoc.setModifiedDate(new Date());
 			newDoc.setModifier(getCurrentUser(token).getUserName());
+			newDoc.addAttribute("C_IS_RELEASED", 1);
 			updateObject(token, newDoc, null);
 		}
 		
