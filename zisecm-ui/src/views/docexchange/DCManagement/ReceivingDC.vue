@@ -130,6 +130,7 @@
                             condition=" status='待确认'"
                             @rowclick="rowClick"
                             :isEditProperty="true"
+                            @dbclick="dbclick"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                             @selectchange="selectChange"
@@ -339,6 +340,27 @@ export default {
         }, 300);
     },
     methods: {
+        dbclick(row){
+            this.showItemContent(row)
+
+        },
+        showItemContent(indata) {
+      let condition = indata.ID;
+      let href = this.$router.resolve({
+        path: "/viewdoc",
+        query: {
+          id: condition
+          //token: sessionStorage.getItem('access-token')
+        }
+      });
+      //console.log(href);
+      window.open(href.href, "_blank");
+    },
+
+
+
+
+
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100
