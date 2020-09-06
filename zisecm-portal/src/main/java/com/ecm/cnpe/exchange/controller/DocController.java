@@ -251,7 +251,7 @@ public class DocController  extends ControllerAbstract  {
 			queryAttr.append(",");
 		}
 		datalist.add(titleCNName);
-		String gvCondition=gv.getCondition();
+		String gvCondition=params.getCondition();;
 		if(gvCondition==null||"".equals(gvCondition)) {
 			gvCondition=" 1=1 ";
 		}else {
@@ -291,7 +291,7 @@ public class DocController  extends ControllerAbstract  {
 		if(sql!=null&&sql.contains("@company")) {
 			sql=sql.replaceAll("@company", userObj.getCompany());
 	    }
-		
+		sql=SqlUtils.replaceSql(sql, userObj);
 		
 		try {
 			List<Map<String,Object>> queryList =documentService.getMapList(getToken(), sql);

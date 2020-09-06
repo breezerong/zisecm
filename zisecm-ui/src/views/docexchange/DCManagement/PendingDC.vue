@@ -219,7 +219,7 @@ export default {
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 120,
+            bottomHeight: 80,
 
             filters: {
                 projectCode: "",
