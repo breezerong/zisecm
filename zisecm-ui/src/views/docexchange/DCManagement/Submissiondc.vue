@@ -138,9 +138,7 @@
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/文函')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,
-                    [$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Submit')}}</el-button>
+                    <el-button type="success" @click="subdc">{{$t('application.Submit')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="warning" 
@@ -378,6 +376,21 @@ export default {
         }, 300);
     },
     methods: {
+        subdc(){
+            let a=this.selectedItems[0].FORMAT_NAME
+            if(a=='pdf'||a=='PDF'){
+                this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid[this.$refs.transferDoc,this.$refs.relevantDoc])
+            }else{
+                this.$message({
+                            showClose: true,
+                            message: "提交文函必需包含PDF格式电子文件",
+                            duration: 2000,
+                            type: 'warning'
+                            });
+                        return;
+            }
+            
+        },
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100
@@ -765,6 +778,14 @@ export default {
         {
             //console.log(_self.file);
             formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+        }else{
+            _self.$message({
+                            showClose: true,
+                            message: "请选择pdf",
+                            duration: 2000,
+                            type: 'warning'
+                            });
+                        return;
         }
         // console.log(JSON.stringify(m));
         if(_self.$refs.ShowProperty.myItemId=='')
