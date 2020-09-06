@@ -119,7 +119,7 @@
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>-->
                 <el-form-item>
-                    <el-button type="primary" v-on:click="getData">{{$t('application.ExportExcel')}}</el-button>
+                    <el-button type="primary" @click="exportData()">{{$t('application.exportExcel')}}</el-button>
                 </el-form-item> 
                 </el-form>
         </template>
@@ -353,9 +353,10 @@ export default {
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
                 filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
-                sheetname:"Result"
+                sheetname:"Result",
+                URL:"/exchange/doc/export4Cnpe"
             }
-            ExcelUtil.export(params)
+            ExcelUtil.export4Cnpe(params)
         },
         beforImport(obj,isSub,relationName){
             this.gridObj=obj;
