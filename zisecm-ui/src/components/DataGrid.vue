@@ -431,7 +431,7 @@ export default {
     // 加载表格数据
     loadGridData() {
       let _self = this;
-      
+      _self.loading = true;
       var m = new Map();
       m.set("gridName", _self.gridViewName);
       // m.set('folderId',indata.id);
@@ -646,6 +646,7 @@ export default {
 
   loadGridInfo() {
       let _self = this;
+      _self.loading = true;
       var m = new Map();
       m.set("gridName", _self.gridViewName);
       m.set("lang", _self.currentLanguage);
@@ -671,7 +672,7 @@ export default {
         })
         .catch(function(error) {
           console.log(error);
-         
+          _self.loading = false;
         });
   },
    rightChange(value, direction, movedKeys){
