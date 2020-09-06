@@ -23,8 +23,8 @@
                 <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
-        <!-- 延误反馈 -->
-        <el-dialog :title="延误反馈" :visible.sync="Visible1" width="80%">
+        <!-- 打开延误反馈 -->
+        <el-dialog :title="延误打开反馈" :visible.sync="Visible1" width="80%">
             <ShowProperty
                 ref="ShowProperty"
                 width="100%"
@@ -32,8 +32,21 @@
                 v-bind:typeName="dialogtypeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="SaveFeedBack">{{$t('application.ok')}}</el-button>
+                <el-button @click="SaveOpenFeedBack">{{$t('application.ok')}}</el-button>
                 <el-button @click="Visible1 = false">{{$t('application.cancel')}}</el-button>
+            </div>
+        </el-dialog>
+        <!-- 关闭延误反馈 -->
+        <el-dialog :title="延误关闭反馈" :visible.sync="Visible2" width="80%">
+            <ShowProperty
+                ref="ShowProperty"
+                width="100%"
+                itemId="1"
+                v-bind:typeName="dialogtypeName"
+            ></ShowProperty>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="SaveCloseFeedBack">{{$t('application.ok')}}</el-button>
+                <el-button @click="Visible2 = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
         <template v-slot:header>
@@ -55,7 +68,10 @@
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,'/系统配置/导入模板/ICM')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item v-if="roles2">
-                    <el-button type="primary" @click="icmfeedback('延误反馈',selectedItems)" >延误打开反馈</el-button>
+                    <el-button type="primary" @click="icmOpenfeedback('延误打开反馈',selectedItems)" >延误打开反馈</el-button>
+                </el-form-item>
+                <el-form-item v-if="roles2">
+                    <el-button type="primary" @click="icmClosefeedback('延误关闭反馈',selectedItems)" >延误关闭反馈</el-button>
                 </el-form-item>
             </el-form>
         </template>
@@ -168,6 +184,7 @@ export default {
             condition1:"",
             selectedItems:'',
             Visible1:false,
+            Visible2:false,
             roles1:false,
             roles2:false,
             dialogtypeName:'',
@@ -421,8 +438,8 @@ export default {
             });
             return formdata;
         },
-        //延误反馈
-        icmfeedback(typeName, selectedItems) {
+        //打开延误反馈
+        icmOpenfeedback(typeName, selectedItems) {
             
             let _self = this;
             let selectid=''
@@ -464,7 +481,7 @@ export default {
             }
             
         },
-        SaveFeedBack(){
+        SaveOpenFeedBack(){
             this.Visible1 = false
             let _self = this;
             if(!this.$refs.ShowProperty.validFormValue()){
@@ -497,7 +514,106 @@ export default {
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
             if(_self.$refs.ShowProperty.myItemId==''){
-                axios.post("/exchange/ICM/FeedBack",formdata,{
+                axios.post("/exchange/ICM/OpenFeedBack",formdata,{
+                    'Content-Type': 'multipart/form-data'
+                })
+                .then(function(response) {
+                    let code = response.data.code;
+                    if (code == 1) {
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t("message.commitSuccess"),
+                            duration: 2000,
+                            type: "success"
+                        });
+                        _self.propertyVisible = false;
+                        _self.$refs.mainDataGrid.loadGridData();
+                    } 
+                    else{
+                    _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.failured'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                        
+                    }
+                })
+                .catch(function(error) {
+                    _self.$message(_self.$t('message.failured'));
+                    console.log(error);
+                });
+            }
+        },
+        //关闭延误反馈
+        icmClosefeedback(typeName, selectedItems) {
+            
+            let _self = this;
+            let selectid=''
+            let status=''
+            if(selectedItems.length==1){
+                selectedItems.forEach(function(item){
+                    selectid=item.ID
+                    status=item.C_PROCESS_STATUS
+                })
+                
+                _self.Visible2 = true;
+                setTimeout(()=>{
+                    if(_self.$refs.ShowProperty){
+                        _self.$refs.ShowProperty.myItemId = "";
+                        _self.dialogName=typeName;
+                        _self.$refs.ShowProperty.myTypeName =typeName;
+                        _self.dialogtypeName=typeName;
+                        _self.$refs.ShowProperty.parentDocId=selectid
+                        _self.$refs.ShowProperty.loadFormInfo();
+                    }
+                },10);
+                
+            }
+            else{
+                _self.$message({
+                    showClose: true,
+                    message: "请选择一条数据",
+                    duration: 2000,
+                    type: "warring"
+                });
+            }
+            
+        },
+        SaveCloseFeedBack(){
+            this.Visible2 = false
+            let _self = this;
+            if(!this.$refs.ShowProperty.validFormValue()){
+                return;
+            }
+            var m = new Map();
+            var c;
+            for(c in _self.$refs.ShowProperty.dataList){
+                let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+                var i;
+                for (i in dataRows) {
+                    if(dataRows[i].attrName && dataRows[i].attrName !=''){
+                        if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID'){
+                            var val = dataRows[i].defaultValue;
+                            if(val && dataRows[i].isRepeat){
+                                var temp = "";
+                                for(let j=0,len=val.length;j<len;j++){
+                                    temp = temp + val[j]+";";
+                                }
+                                temp = temp.substring(0,temp.length-1);
+                                val = temp;
+                            }
+                            m.set(dataRows[i].attrName, val);
+                        }
+                    }
+                }
+                
+            }
+            m.set("ID",_self.$refs.ShowProperty.parentDocId)
+            let formdata = new FormData();
+            formdata.append("metaData",JSON.stringify(m));
+            if(_self.$refs.ShowProperty.myItemId==''){
+                axios.post("/exchange/ICM/CloseFeedBack",formdata,{
                     'Content-Type': 'multipart/form-data'
                 })
                 .then(function(response) {

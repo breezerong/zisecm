@@ -76,16 +76,40 @@ public class ICMController  extends ControllerAbstract  {
 		}
 		return mp;
 	}
-	@PostMapping("/exchange/ICM/FeedBack")
+	@PostMapping("/exchange/ICM/OpenFeedBack")
 	@ResponseBody
-	public Map<String, Object> FeedBack(String metaData) throws Exception{
+	public Map<String, Object> OpenFeedBack(String metaData) throws Exception{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
+			LoginUser userObj=null;
+			userObj=getSession().getCurrentUser();
+			String company = userObj.getCompany();
 			Map<String, Object> args = JSONUtils.stringToMap(metaData);
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
 			documentService.updateObject(getToken(), doc, null);
-			OptionLogger.logger(detailService,doc, "延误打开反馈","CNPE");
+			OptionLogger.logger(detailService,doc, "延误打开反馈",company);
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;	
+	}
+	
+	@PostMapping("/exchange/ICM/CloseFeedBack")
+	@ResponseBody
+	public Map<String, Object> CloseFeedBack(String metaData) throws Exception{
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			LoginUser userObj=null;
+			userObj=getSession().getCurrentUser();
+			String company = userObj.getCompany();
+			Map<String, Object> args = JSONUtils.stringToMap(metaData);
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(args);
+			documentService.updateObject(getToken(), doc, null);
+			OptionLogger.logger(detailService,doc, "延误关闭反馈",company);
 			mp.put("code", ActionContext.SUCESS);
 		}
 		catch (AccessDeniedException e) {
