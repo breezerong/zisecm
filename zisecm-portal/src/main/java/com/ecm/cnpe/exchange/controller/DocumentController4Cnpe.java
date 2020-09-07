@@ -35,6 +35,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 	@Autowired
 	private ExcSynDetailService detailService;
 	
+	
 	@RequestMapping(value = "/dc/getDocuments4Cnpe", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getDocuments4Cnpe(@RequestBody String argStr) throws Exception {
@@ -374,4 +375,26 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		return mp;
 	
 	}
+	@RequestMapping(value = "/dc/getTRS", method = RequestMethod.POST) 
+	@ResponseBody
+	public Map<String, Object> getTRS(@RequestBody String argStr) throws Exception {
+
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			List<String> TRS = JSONUtils.stringToArray(argStr);
+			System.out.println(TRS);
+			documentService.getTRS(TRS);
+			
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+	
+		}
+		
+		return mp;
+	
+	}
+	
+	
+	
 }
