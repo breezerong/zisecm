@@ -348,7 +348,7 @@ export default {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"RejectedDC_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result",
                 URL:"/exchange/doc/export4Cnpe"
             }
@@ -772,7 +772,7 @@ export default {
                         showClose: true,
                         message: _self.$t("message.pleaseSelectDC"),
                         duration: 2000,
-                        type: 'error' 
+                        type: 'warning' 
                     });
                     return
             }
