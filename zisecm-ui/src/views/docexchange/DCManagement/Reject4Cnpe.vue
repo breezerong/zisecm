@@ -84,7 +84,6 @@
                 </el-form-item>
                 <el-form-item style="width:100px;">
                     <el-select v-model="filters.status">
-                    <el-option label="所有" value></el-option>
                     <el-option label="已作废" value="已作废"></el-option>
                     <el-option label="驳回" value="驳回"></el-option>
                     </el-select>
@@ -96,7 +95,7 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="handleComplete()">{{$t('application.handleComplete')}}</el-button>
+                    <el-button v-if='isReject' type="primary" @click="handleComplete()">{{$t('application.handleComplete')}}</el-button>
                 </el-form-item>
                 
                 <!-- 导出Excel -->
@@ -289,6 +288,7 @@ export default {
                 status:"驳回",
                 limit: 10
             },
+            isReject:false,
             projects:[],
             typeName:"文件传递单",
             dialogName:"文件传递单",
@@ -310,7 +310,8 @@ export default {
             isShowDesgin:true,
             isShowRelevant:true,
             isShowAttachmentDoc:true,
-            selectedTabName:'t01'
+            selectedTabName:'t01',
+            TRS:[]
         }
     },
     created(){
@@ -331,7 +332,7 @@ export default {
         setTimeout(() => {
             this.topPercent = this.getStorageNumber(this.topStorageName,60)
         }, 300);
-        
+        this.searchItem()
     },
     methods: {
         // 上下分屏事件
@@ -446,8 +447,8 @@ export default {
                 });
             },
         rowClick(row){
-            
             this.selectRow=row;
+               console.log(this.selectRow)
             this.parentId=row.ID;
             let _self=this;
             if(row.TYPE_NAME=='文件传递单'){
@@ -535,6 +536,17 @@ export default {
         searchItem(){
             let _self=this;
             let key="";
+         
+            if(this.filters.status==''||this.filters.status=='已作废'){
+                this.isReject=false
+            } 
+            if(this.filters.status=='驳回'){
+                this.isReject=true
+            }
+            
+            
+            console.log(this.filters.status)
+               console.log(this.isReject)
             if(_self.filters.status!=''){
                 key=" stauts='"+_self.filters.status+"'";
             }else{
@@ -557,6 +569,7 @@ export default {
                 +")";
             }
             if(key!=''){
+                console.log(key)
                 _self.$refs.mainDataGrid.condition=key;
             }
             _self.$refs.mainDataGrid.loadGridData();
@@ -736,15 +749,41 @@ export default {
                 console.log(error);
                 });
         },
+
+         //把对应TRS传到后端
+        getTRS(){
+            console.log(this.TRS)
+              axios.post("/dc/getTRS",JSON.stringify(this.TRS),{
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            })
+            this.TRS=null
+        },
+
+
         handleComplete(){
             let _self = this;
             var m = [];
             let tab = _self.selectedItems;
-
-            var i;
-            for (i in tab) {
-                m.push(tab[i]["ID"]);
+            console.log(tab)
+            if(this.selectedItems.length==0){
+                this.$message({
+                        showClose: true,
+                        message: _self.$t("message.pleaseSelectDC"),
+                        duration: 2000,
+                        type: 'error' 
+                    });
+                    return
             }
+            var i;
+            var j;
+            for (j=0;j<tab.length;j++) {
+                m.push(tab[j]["ID"])
+                this.TRS.push(tab[j]["TRSID"])
+            }
+            console.log(this.TRS)
+            this.getTRS()
         
             axios.post("/dc/handleComplete",JSON.stringify(m),{
                 headers: {
@@ -759,6 +798,7 @@ export default {
                         duration: 2000,
                         type: 'success'
                     });
+                    
                     _self.searchItem();
                 }else{
                     _self.$message({
