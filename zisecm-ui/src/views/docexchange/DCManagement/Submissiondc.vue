@@ -93,7 +93,7 @@
                     v-bind:typeName="typeName"
                 ></ShowProperty>
                 <div slot="footer" class="dialog-footer">
-                    <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                    <el-button  v-on:click="saveItem" :loading="butt">{{$t('application.save')}}</el-button>
                     <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
                 </div>
             </el-dialog>
@@ -353,7 +353,8 @@ export default {
             isShowAttachmentDoc:true,
             selectedTabName:'t01',
             importSubVisible:false,
-            docId:""
+            docId:"",
+            butt:false
         }
     },
     created(){
@@ -753,6 +754,7 @@ export default {
         if(!this.$refs.ShowProperty.validFormValue()){
             return;
         }
+        this.butt=true
         var m = new Map();
         var c;
         for(c in _self.$refs.ShowProperty.dataList){
@@ -796,6 +798,7 @@ export default {
         
         if(_self.$refs.ShowProperty.file!="")
         {
+            
             //console.log(_self.file);
             formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
         }else{
@@ -825,7 +828,7 @@ export default {
                     type: "success"
                 });
                 _self.propertyVisible = false;
-
+                _self.butt=false
                 // _self.loadTransferGridData();
                 _self.$refs.mainDataGrid.loadGridData();
 
@@ -837,7 +840,7 @@ export default {
                 }
                 
                 
-                } 
+            } 
             else{
 			_self.$message({
                     showClose: true,
@@ -875,7 +878,8 @@ export default {
             console.log(error);
             });
         }
-        },
+        
+    },
         // 保存结果事件
         onSaved(indata) {
         let _self=this;
@@ -897,6 +901,7 @@ export default {
             });
         }
         _self.propertyVisible = false;
+        this.butt=false
         
         },
         loadOptionList(queryName,val){
