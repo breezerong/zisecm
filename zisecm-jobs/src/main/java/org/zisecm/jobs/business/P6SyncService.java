@@ -52,6 +52,8 @@ public class P6SyncService {
 
 	private List<Map<String, Object>> loadlist;
 	
+	private ProjectPortType projectPort;
+	
 	private boolean init() {
 		httpClientPolicy = new HTTPClientPolicy();
 		httpClientPolicy.setConnectionTimeout(5000);
@@ -70,6 +72,7 @@ public class P6SyncService {
 			e.printStackTrace();
 			return false;
 		}
+		
 	}
 	
 	@SuppressWarnings({ "unchecked", "unchecked", "unchecked", "unused" })
@@ -200,7 +203,12 @@ public class P6SyncService {
 		return list;
 	}
 
-	private Project getProjectInfo(String projectId,ProjectPortType projectPort)  {
+	public Project getProjectInfo(String projectId)  {
+		ProjectPortType projectPort = this.getProjectService();
+		return this.getProjectInfo(projectId, projectPort);
+	}
+	
+	public Project getProjectInfo(String projectId,ProjectPortType projectPort)  {
 		List<Project> projectList = null;
 		List<String> fieldList = new ArrayList<String>();
 		fieldList.add("Id");
@@ -209,10 +217,11 @@ public class P6SyncService {
 		fieldList.add("WBSObjectId");
 		// 项目计划开始时间
 		fieldList.add("StartDate");
+		fieldList.add("WBSCodeSeparator");
 		// 项目完成时间
 		fieldList.add("ScheduledFinishDate");
 		try {
-			projectList = projectPort.readProjects(fieldList, "", null);
+			projectList = projectPort.readProjects(fieldList, "Id='"+projectId+"'", null);
 			if(projectList!=null && projectList.size()>0) {
 				return projectList.get(0);
 			}else {
@@ -241,7 +250,7 @@ public class P6SyncService {
 					getActivitiesByWbs(wbs.getObjectId()+"",actList);
 					
 					loadlist.add(obj);
-					loadWbs(wbs.getObjectId()+"", wbsPort, wbscode, projectInfo, actList);
+					loadWbs(wbs.getObjectId()+"", wbsPort, itemWbsCode, projectInfo, actList);
 				}
 			}
 		}catch (Exception e) {
