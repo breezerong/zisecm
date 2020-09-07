@@ -123,7 +123,7 @@
             type="primary"
             v-on:click="exportData"
             :title="$t('application.ExportExcel')"
-          >{{$t('application.export')}}</el-button>
+          >{{$t('application.ExportExcel')}}</el-button>
         </el-form-item>
         <!-- 打包下载 -->
         <el-form-item>
@@ -162,7 +162,8 @@
                         v-bind:isshowOption="true"
                         v-bind:isshowSelection="true"
                         gridViewName="DCTransferGrid"
-                        condition=" status!='新建' or status is not null or status !=''"
+                        condition=" (status!='新建' or status is not null or status !='') and C_PROJECT_NAME = '@project'"
+
                         @rowclick="rowClick"
                         @selectchange="selectChange"
                         :isshowCustom="false"
@@ -378,7 +379,7 @@ export default {
             _self.$router.push({ path: "/NoPermission" });
         });
         }
-        
+      this.searchItem()  
     },
     methods: {
         // 上下分屏事件
@@ -405,9 +406,10 @@ export default {
                 lang: "zh-cn",
                 condition: this.$refs.mainDataGrid.condition,
                 filename:
-                "exportExcel" + new Date().Format("yyyy-MM-dd hh:mm:ss") + ".xlsx",
+                "DispensedDC_" + new Date().Format("yyyy-MM-dd hh:mm:ss") + ".xlsx",
                 sheetname: "Result",
             };
+            console.log(this.$refs.mainDataGrid.condition)
             ExcelUtil.export(params);
         },
         beforImport(obj, isSub, relationName) {
