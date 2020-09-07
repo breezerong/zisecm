@@ -51,7 +51,11 @@
                             <el-button type="default" @click="IEDVersion(scope.data.row)" size="mini" icon="el-icon-s-order" circle></el-button>
                         </el-tooltip>
                         </template>
-                    </DataGrid>
+                        <template slot="sequee" slot-scope="scope">
+                                            <span :style="(scope.data.row['STATUS']!=null
+                                            &&scope.data.row['STATUS']=='变更中')?{'background':'#409EFF'}:''">{{scope.data.$index+1}}</span>
+                                        </template>
+                        </DataGrid>
                 </template>
                 <template slot="paneR">
                     <el-tabs v-model="tabs.active">
@@ -345,7 +349,7 @@ export default {
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
             let orS = ""
-            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND STATUS='已生效'"// AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')"
+            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')"// AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')"
             if(_self.inputValueNum.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){
