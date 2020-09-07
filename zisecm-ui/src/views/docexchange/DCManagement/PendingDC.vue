@@ -482,7 +482,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='待确认' and C_COMPANY='@company'";
+            let key=" status not in('新建','驳回') and C_COMPANY='@company'";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{
