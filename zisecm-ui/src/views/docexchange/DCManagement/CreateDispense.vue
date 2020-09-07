@@ -106,7 +106,7 @@
                 v-bind:typeName="typeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                <el-button @click="saveItem" :loading="butt">{{$t('application.save')}}</el-button>
                 <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
@@ -355,7 +355,8 @@ export default {
             isShowAttachmentDoc:true,
             selectedTabName:'t01',
             importSubVisible:false,
-            docId:""
+            docId:"",
+            butt:false
         }
     },
     created(){
@@ -731,6 +732,7 @@ export default {
         if(!this.$refs.ShowProperty.validFormValue()){
             return;
         }
+        this.butt=true
         var m = new Map();
         var c;
         for(c in _self.$refs.ShowProperty.dataList){
@@ -776,6 +778,14 @@ export default {
         {
             //console.log(_self.file);
             formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+        }else{
+            _self.$message({
+                            showClose: true,
+                            message: "请选择文件",
+                            duration: 2000,
+                            type: 'warning'
+                            });
+                        return;
         }
         // console.log(JSON.stringify(m));
         if(_self.$refs.ShowProperty.myItemId=='')
@@ -850,6 +860,8 @@ export default {
         // 保存结果事件
         onSaved(indata) {
         let _self=this;
+        
+        this.butt=true
         if (indata == "update") {
             // _self.$message(_self.$t("message.saveSuccess"));
             _self.$message({
@@ -868,7 +880,7 @@ export default {
             });
         }
         _self.propertyVisible = false;
-        
+        this.butt=false
         },
         loadOptionList(queryName,val){
             let _self = this;
