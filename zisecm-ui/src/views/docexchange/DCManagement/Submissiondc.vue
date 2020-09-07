@@ -150,7 +150,7 @@
                 </el-form-item>
                 
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.export')}}</el-button>
+                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
         </template>
@@ -378,6 +378,16 @@ export default {
     },
     methods: {
         subdc(){
+            let _self = this
+            if(this.selectedItems.length==0){
+                this.$message({
+                        showClose: true,
+                        message: _self.$t("message.pleaseSelectDC"),
+                        duration: 2000,
+                        type: 'warning' 
+                    });
+                    return
+            }
             let a=this.selectedItems[0].FORMAT_NAME
             if(a=='pdf'||a=='PDF'){
                 this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid[this.$refs.transferDoc,this.$refs.relevantDoc])
@@ -427,7 +437,7 @@ export default {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"Submissiondc_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -792,6 +802,8 @@ export default {
             m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
 			m.set("parentDocId", _self.parentId);
             m.set("relationName",_self.relationName);
+            console.log(_self.$refs.ShowProperty.myTypeName)
+            console.log(_self.$refs.ShowProperty.myFolderId)
         }
         let formdata = new FormData();
         formdata.append("metaData",JSON.stringify(m));

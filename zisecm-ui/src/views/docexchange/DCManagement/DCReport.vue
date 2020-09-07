@@ -163,7 +163,7 @@ export default {
                 gridName:this.$refs.noReceiveGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.noReceiveGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"DCReport_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result",
                 URL:"/exchange/doc/export4Report"
             }
