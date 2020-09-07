@@ -55,7 +55,7 @@ public class FeedbackController  extends ControllerAbstract  {
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
 			String id = args.get("C_FROM_CODING").toString();
-			String sql="select CREATOR,CREATION_DATE,SUB_TYPE,C_CONTENT,TITLE from ecm_document where ";
+			String sql="select CREATOR,CREATION_DATE,SUB_TYPE,C_CONTENT,TITLE, C_COMPANY from ecm_document where ";
 			sql+="ID='"+id+"'";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			mp.put("data", list);

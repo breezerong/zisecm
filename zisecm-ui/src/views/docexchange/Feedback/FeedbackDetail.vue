@@ -15,7 +15,7 @@
 						<div class="item_title">标题：{{item.TITLE}}</div>
 					</el-row>
 					<el-row>
-						<div class="item_content" style="background: #f7f7fd;">类型：{{item.SUB_TYPE}} &nbsp;  &nbsp; 回复数：{{awns.length}}</div>
+						<div class="item_content" style="background: #f7f7fd;">相关方：{{item.C_COMPANY}} &nbsp;  &nbsp; 类型：{{item.SUB_TYPE}} &nbsp;  &nbsp; 回复数：{{awns.length}}</div>
 					</el-row>
 					<el-row style="background: #f7f7fd;">
 						<el-col :span="row.left">
