@@ -260,7 +260,10 @@ public class DocController  extends ControllerAbstract  {
 		columnsStr.append(queryAttr.deleteCharAt(queryAttr.length() - 1).toString());
 		
 		String sql="select "+ columnsStr.toString() +" from (" + 
-				"	select a.*,b.STAUTS as STAUTS,b.TO_NAME from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
+				"	select a.ID,a.C_PROJECT_NAME,a.C_FROM,a.C_TO,a.CODING,a.C_OTHER_CODING,"+
+				"a.CREATION_DATE,a.C_CONTENT,a.C_PAGE_COUNT,a.C_STRING3,a.C_ITEM_DATE,a.TYPE_NAME,a.C_ITEM_TYPE," + 
+				"b.STAUTS as STAUTS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,"+ 
+				"b.REJECT_DATE as C_REJECT_DATE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
 				")t where "+gvCondition;
 		
 		
