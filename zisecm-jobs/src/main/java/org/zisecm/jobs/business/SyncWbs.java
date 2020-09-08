@@ -2,9 +2,14 @@ package org.zisecm.jobs.business;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +23,17 @@ import org.zisecm.jobs.entity.WsService;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cnpe.p6.activityservice.Activity;
+import com.cnpe.p6.projectservice.Project;
+import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.ExcSynBatch;
+import com.ecm.core.entity.ExcSynDetail;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynBatchService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.icore.service.IEcmSession;
 
 /**
@@ -39,44 +53,240 @@ public class SyncWbs {
 	private DocumentService documentService;
 	
 	@Autowired
+	private ExcSynBatchService excSynBatchService;
+	
+	@Autowired
+	private ExcSynDetailService excSynDetailService;
+	
+	@Autowired
+	private P6SyncService p6Service;
+	
+	@Autowired
 	private Environment env;
 	
 	@Scheduled(cron = "${cron.syncwbs}")
 	public void run () {
-		//获取P6计划数据
-		
-		/*
-		             根据计划ID（P6计划任务ID：C_SYN_ITEM_ID）更新实际开始日期、实际完成日期、文件完成百分比、尚需工期、更新时间。
-			计算逻辑1：WBS相关文件、图纸发起传递单流程时，实际开始日期取分包院传递单提交流程发起的日期；如果相关文件、图纸未发起流程，当数据传递当天日期大于等于计划开始日期时，实际开始日期取计划开始日期。
-			计算逻辑2：WBS相关文件、图纸全部完成提交项目部流程时的日期。
-			计算逻辑3：（只对比日期，忽略时间）
-			实际完成日期若有值，尚需工期=0
-			实际完成日期若为空，当天日期<计划完成时，尚需工期=计划完成日期-当天日期（+1）；当天日期>=计划完成时，尚需工期=原定工期*5%
-			原定工期=计划完成日期-计划开始日期（+1）。
-
-		 */
-		
-		/*
-		 * 获取到的同步数据
-		 */
-		List<Map<String,Object>> syncDataList = new ArrayList<Map<String,Object>>();
 		
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("ecm.username");
+		String workflowSpecialUserName = env.getProperty("ecm.username");		
 		try {
 			ecmSession = authService.login("jobs", workflowSpecialUserName, env.getProperty("ecm.password"));
-			
-			//读取配置文件
-			JSONObject root = loadMapperFile();
-			//通过服务key获取服务对象
-			WsService serviceObj = loadService(root, "syncproject");
-			
-			serviceObj.getList().forEach((item) -> {
-				
-			});
-		} catch (Exception e) {
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		List<ExcSynBatch> synBatchList = excSynBatchService.getByCondition(" APP_NAME='P6' and STATUS='新建'");
+		for (ExcSynBatch excSynBatch : synBatchList) {
+			Map<String,Object> syncProjectInfo = documentService.getObjectMapById(ecmSession.getToken(), excSynBatch.getBatchNum());
+			String projectId = syncProjectInfo.get("CODING").toString();
+			
+			int newCount = 0;
+			int updateCount = 0;
+			int failCount = 0;
+			
+			Project project = p6Service.getProjectInfo(projectId);
+			if(project==null) {
+				excSynBatch.setStauts("错误");
+				excSynBatch.setNewCount(newCount);
+				excSynBatch.setUpdateCount(updateCount);
+				excSynBatch.setFailCount(1);
+				excSynBatchService.updateObject(excSynBatch);
+				ExcSynDetail detail =  new ExcSynDetail();
+				detail.setBatchNum(excSynBatch.getBatchNum());
+				detail.setAppName("P6");
+				detail.setActionName("同步");
+				detail.setStauts("错误");
+				detail.setErrorMessage("项目编号 "+projectId+" 在P6中不存在");
+				excSynDetailService.newObject(detail);
+			}else {
+				List<Activity> actList = p6Service.getActivityList(projectId);
+				List<Map<String,Object>> wbsList = p6Service.getWbsList(projectId, actList);
+				
+				if(actList!=null && actList.size()>0) {
+					for (Activity activity : actList) {
+						String condition ="TYPE_NAME='计划任务' AND SUB_TYPE='Activity' AND SYN_ID='"+activity.getId()+"'";
+						List<EcmDocument> list = null;
+						try {
+							list = documentService.getObjects(ecmSession.getToken(), condition);
+						} catch (EcmException | SqlDeniedException e) {
+							e.printStackTrace();
+						}
+						EcmDocument actDocObj = null;
+						if(list== null || list.size()<1) {
+							actDocObj = new EcmDocument();
+							actDocObj.setName(activity.getName());
+							actDocObj.setTypeName("计划任务");
+							actDocObj.setSubType("Activity");
+							
+							actDocObj.addAttribute("SYN_ID", activity.getId());
+							actDocObj.addAttribute("C_TYPE1", "99");
+							
+							actDocObj.addAttribute("C_PROJECT_CODE", projectId);
+							actDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							XMLGregorianCalendar datevalue = activity.getStartDate();
+							if(this.getDateObj(datevalue) !=null) {
+								actDocObj.addAttribute("C_ITEM1_DATE", this.getDateObj(datevalue));
+							}
+							
+							datevalue = activity.getFinishDate();
+							if(this.getDateObj(datevalue) !=null) {
+								actDocObj.addAttribute("C_ITEM2_DATE", this.getDateObj(datevalue));
+							}
+							
+							actDocObj.addAttribute("C_WBS_CODING", activity.getWBSPath());
+							
+							try {
+								documentService.creatOrUpdateObject(ecmSession.getToken(), actDocObj, null);
+								newCount++;
+							} catch (Exception e) {
+								e.printStackTrace();
+								failCount++;
+							}
+						}else {
+							actDocObj = list.get(0);
+							actDocObj.addAttribute("C_PROJECT_CODE", projectId);
+							actDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							XMLGregorianCalendar datevalue = activity.getStartDate();
+							if(this.getDateObj(datevalue) !=null) {
+								actDocObj.addAttribute("C_ITEM1_DATE", this.getDateObj(datevalue));
+							}
+							
+							datevalue = activity.getFinishDate();
+							if(this.getDateObj(datevalue) !=null) {
+								actDocObj.addAttribute("C_ITEM2_DATE", this.getDateObj(datevalue));
+							}
+							
+							actDocObj.addAttribute("C_WBS_CODING", activity.getWBSPath());
+							try {
+								documentService.creatOrUpdateObject(ecmSession.getToken(), actDocObj, null);
+								updateCount++;
+							} catch (Exception e) {
+								e.printStackTrace();
+								failCount++;
+							}
+						}
+					}
+				}
+				
+				if(wbsList!=null && wbsList.size()>0) {
+
+					for (Map<String, Object> wbs : wbsList) {
+						String condition ="TYPE_NAME='计划任务' AND SUB_TYPE='WBS' AND SYN_ID='"+wbs.get("OBJECT_ID").toString()+"'";
+						List<EcmDocument> list = null;
+						try {
+							list = documentService.getObjects(ecmSession.getToken(), condition);
+						} catch (EcmException | SqlDeniedException e) {
+							e.printStackTrace();
+						}
+						EcmDocument wbsDocObj = null;
+						if(list== null || list.size()<1) {
+							wbsDocObj = new EcmDocument();
+							wbsDocObj.setName(wbs.get("NAME").toString());
+							wbsDocObj.setTypeName("计划任务");
+							wbsDocObj.setSubType("WBS");
+							String parent = wbs.get("PARENT_OBJECT_ID").toString().equals(project.getWBSObjectId().getValue()+"")?"":wbs.get("PARENT_OBJECT_ID").toString();
+							wbsDocObj.addAttribute("C_IN_CODING", parent);
+							
+							String wbsCode = wbs.get("CODE").toString();
+							wbsDocObj.addAttribute("C_WBS_CODING", wbsCode);
+							wbsDocObj.addAttribute("C_PROJECT_CODE", projectId);
+							wbsDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							wbsDocObj.addAttribute("SYN_ID", wbs.get("OBJECT_ID").toString());
+							
+							Date startDate = getActDate(actList, wbsCode,1);
+							Date finishDate = getActDate(actList, wbsCode,2);
+							if(startDate!=null) {
+								wbsDocObj.addAttribute("C_ITEM1_DATE", startDate);
+							}
+							if(finishDate!=null) {
+								wbsDocObj.addAttribute("C_ITEM2_DATE", finishDate);
+							}
+							
+							try {
+								documentService.creatOrUpdateObject(ecmSession.getToken(), wbsDocObj, null);
+								newCount++;
+							} catch (Exception e) {
+								e.printStackTrace();
+								failCount++;
+							}
+						}else {
+							wbsDocObj = list.get(0);
+							
+							String wbsCode = wbs.get("CODE").toString();
+							wbsDocObj.addAttribute("C_WBS_CODING", wbsCode);
+							wbsDocObj.addAttribute("C_PROJECT_CODE", projectId);
+							wbsDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							wbsDocObj.addAttribute("SYN_ID", wbs.get("OBJECT_ID").toString());
+							
+							Date startDate = getActDate(actList, wbsCode,1);
+							Date finishDate = getActDate(actList, wbsCode,2);
+							if(startDate!=null) {
+								wbsDocObj.addAttribute("C_ITEM1_DATE", startDate);
+							}
+							if(finishDate!=null) {
+								wbsDocObj.addAttribute("C_ITEM2_DATE", finishDate);
+							}
+							
+							try {
+								documentService.creatOrUpdateObject(ecmSession.getToken(), wbsDocObj, null);
+								updateCount++;
+							} catch (Exception e) {
+								e.printStackTrace();
+								failCount++;
+							}
+						}
+					}
+				}
+				
+				excSynBatch.setStauts("已同步");
+				excSynBatch.setNewCount(newCount);
+				excSynBatch.setUpdateCount(updateCount);
+				excSynBatch.setFailCount(failCount);
+				excSynBatchService.updateObject(excSynBatch);
+				
+				System.out.println(actList.size());
+				System.out.println(wbsList.size());
+			}
+		}
+		
+		
+	}
+	
+	/**
+	 * 
+	 * @Title:
+	 * @author lsyl
+	 * @date:  2020年9月7日 上午9:38:10
+	 * @Description
+	 * @param actList
+	 * @param wbs
+	 * @param type 1 startDate 2 finishDate
+	 * @return
+	 */
+	private Date getActDate(List<Activity> actList,String wbs,int type) {
+		Date date = null;
+		for (Activity activity : actList) {
+			if(activity.getWBSPath().equals(wbs)) {
+				
+				if(type==1) {
+					Date cdate = this.getDateObj(activity.getBaseline1StartDate().getValue());
+					if(date == null) {
+						date = cdate;
+					}else if(cdate.compareTo(date)<0) {
+						date = cdate;
+					}
+				}
+				if(type==2) {
+					Date cdate = this.getDateObj(activity.getBaseline1FinishDate().getValue());
+					if(date == null) {						
+						date = cdate;
+					}else if(date.compareTo(cdate)<0) {
+						date = cdate;
+					}
+				}
+			}
+		}
+		return date;
 	}
 	
 	/**
@@ -161,5 +371,27 @@ public class SyncWbs {
 		if(root==null) {
 			return;
 		}
+	}
+	
+	private String getDate(XMLGregorianCalendar value) {
+		if(value == null) {
+			return "";
+		}
+		return value.toString().replace("T", " ");
+		
+	}
+	
+	private Date getDateObj(XMLGregorianCalendar value) {
+		if(value == null) {
+			return null;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			return sdf.parse(value.toString().replace("T", " "));
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 }
