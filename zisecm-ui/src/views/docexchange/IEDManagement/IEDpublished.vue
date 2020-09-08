@@ -36,7 +36,7 @@
                     <el-button type="primary" @click="onIEDChange()">{{$t('application.change')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
+                    <el-button type="primary" @click="exportData()">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
             </el-form>
         </template>
@@ -108,7 +108,7 @@ export default {
                 main:{
                     gridViewName:"IEDGrid",
                     dataUrl:"/dc/getDocuments",
-                    condition:"C_IS_RELEASED=1",                  
+                    condition:'',                  
                     isshowOption:true,
                     isshowCustom:true,
                     isshowicon:false,
@@ -292,7 +292,7 @@ export default {
             if(this.view==true && this.project.length>0){
                 this.forms.headForm.project = this.project
             }
-            this.search()
+            this.search("")
         },
         onSearchConditionChange:function(val){
             this.search(val)
@@ -330,19 +330,7 @@ export default {
             this.id=row.ID
             this.tables.iedVersionDg.condition="VERSION_ID='"+this.id+"'"
         },
-        exportData(){
-            let dataUrl = "/exchange/doc/export"
-            var fileDate = new Date()
-            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
-            let params = {
-                gridName:this.tables.main.gridViewName,
-                lang:"zh-cn",
-                condition: this.$refs.mainDataGrid.condition,
-                filename:"IED_Published_"+fileDateStr+".xlsx",
-                sheetname:"Result"
-            }
-            ExcelUtil.export(params)
-        },
+        
         search(condition){
             this.$refs.rfDg.itemDataList=[]
             this.$refs.dfDg.itemDataList=[]
@@ -368,7 +356,7 @@ export default {
             if(_self.forms.headForm.project != undefined){
                 k1+=" AND C_PROJECT_NAME in ("+_self.forms.headForm.project +")"
             }
-
+            console.log(this.forms.headForm.project)
             let user = this.currentUser();
             if(user.userType==2 && user.company!=null){
                 k1+=" AND C_COMPANY='"+user.company +"'"
@@ -376,9 +364,24 @@ export default {
             if(condition != undefined && condition.length>0){
                 k1 += " and "+condition 
             }
-            console.log(k1)
             _self.$refs.mainDataGrid.condition=k1
+            _self.tables.main.condition=k1;
+            //_self.exportData()
             _self.$refs.mainDataGrid.loadGridData();
+        },
+        exportData(){
+            let dataUrl = "/exchange/doc/export"
+            var fileDate = new Date()
+            let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
+            console.log(this.$refs.mainDataGrid.condition)
+            let params = {
+                gridName:this.tables.main.gridViewName,
+                lang:"zh-cn",
+                condition: this.tables.main.condition,
+                filename:"IED_Published_"+fileDateStr+".xlsx",
+                sheetname:"Result"
+            }
+            ExcelUtil.export(params)
         },
         IEDfeedback(row){
             this.feedbackVisual=true
