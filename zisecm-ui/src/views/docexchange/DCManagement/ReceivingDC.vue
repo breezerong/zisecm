@@ -605,7 +605,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){

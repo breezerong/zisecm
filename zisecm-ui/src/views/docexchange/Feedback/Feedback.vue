@@ -17,6 +17,10 @@
       </el-form>
       <el-form :inline="true">
         <el-form-item>
+          <DataSelect v-model="toCompany" defaultIsNull :includeAll="true" @onSelectChange='onSelectChange'
+            queryName="收发文公司"  dataValueField="NAME"  dataTextField="NAME" :allLabel="$t('application.all')"></DataSelect>
+        </el-form-item>
+        <el-form-item>
           <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.inputQuestionLimit')"></el-input>
         </el-form-item>
         <el-form-item>
@@ -48,10 +52,13 @@
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataLayout from "@/components/ecm-data-layout";
+import DataSelect from '@/components/ecm-data-select';
+
 export default {
   name: "FeedBackGrid",
   data() {
     return {
+      generalCondition:"",
       tables: {
         feedbackGrid: {
           gridViewName: "FeedBackGrid",
@@ -64,7 +71,7 @@ export default {
           isShowMoreOption: true,
         },
       },
-
+      toCompany: "",
       dataReport: [],
       typeName: "问题沟通",
       dialogName: "问题沟通",
@@ -90,6 +97,12 @@ export default {
   },
 
   methods: {
+    //下拉菜单
+        onSelectChange(val){
+            let _self = this
+            this.toCompany = val
+            this.FuzzySearch()
+        },
     loadStatistic() {
       let _self = this;
       _self.loading = true;
@@ -225,7 +238,7 @@ export default {
 
     iedType() {
       let _self = this;
-      var k1 = "SUB_TYPE='IED' AND C_ITEM_STATUS IS NOT NULL";
+      var k1 = "SUB_TYPE='IED' AND C_ITEM_STATUS = '新建'";
       _self.tables.feedbackGrid.condition = k1;
       _self.$refs.feedbackGrid.condition = this.tables.feedbackGrid.condition;
       _self.$refs.feedbackGrid.loadGridData();
@@ -233,7 +246,7 @@ export default {
 
     icmType() {
       let _self = this;
-      var k2 = "SUB_TYPE='ICM' AND C_ITEM_STATUS IS NOT NULL";
+      var k2 = "SUB_TYPE='ICM' AND C_ITEM_STATUS = '新建'";
       _self.tables.feedbackGrid.condition = k2;
       _self.$refs.feedbackGrid.condition = this.tables.feedbackGrid.condition;
       _self.$refs.feedbackGrid.loadGridData();
@@ -241,7 +254,7 @@ export default {
 
     planType() {
       let _self = this;
-      var k3 = "SUB_TYPE='计划' AND C_ITEM_STATUS IS NOT NULL";
+      var k3 = "SUB_TYPE='计划' AND C_ITEM_STATUS = '新建'";
       _self.tables.feedbackGrid.condition = k3;
       _self.$refs.feedbackGrid.condition = this.tables.feedbackGrid.condition;
       _self.$refs.feedbackGrid.loadGridData();
@@ -249,7 +262,7 @@ export default {
 
     dcType() {
       let _self = this;
-      var k4 = "SUB_TYPE='文函' AND C_ITEM_STATUS IS NOT NULL";
+      var k4 = "SUB_TYPE='文函' AND C_ITEM_STATUS = '新建'";
       _self.tables.feedbackGrid.condition = k4;
       _self.$refs.feedbackGrid.condition = this.tables.feedbackGrid.condition;
       _self.$refs.feedbackGrid.loadGridData();
@@ -257,7 +270,7 @@ export default {
 
     docType() {
       let _self = this;
-      var k5 = "SUB_TYPE='设计文件' AND C_ITEM_STATUS IS NOT NULL";
+      var k5 = "SUB_TYPE='设计文件' AND C_ITEM_STATUS = '新建'";
       _self.tables.feedbackGrid.condition = k5;
       _self.$refs.feedbackGrid.condition = this.tables.feedbackGrid.condition;
       _self.$refs.feedbackGrid.loadGridData();
@@ -265,9 +278,12 @@ export default {
 
     FuzzySearch() {
       let _self = this;
-      console.log(_self.$refs.feedbackGrid.condition);
-      var Fuzzyk = " AND TITLE LIKE '%" + _self.inputValueNum + "%'";
-      _self.$refs.feedbackGrid.condition += Fuzzyk;
+      //console.log(_self.$refs.feedbackGrid.condition);
+      var Fuzzyk = " TITLE LIKE '%" + _self.inputValueNum + "%'";
+      if( _self.toCompany != ""){
+        Fuzzyk += " AND C_TO='"+ _self.toCompany+"'";
+      }
+      _self.$refs.feedbackGrid.condition = Fuzzyk;
       _self.$refs.feedbackGrid.loadGridData();
     },
   },
@@ -281,6 +297,7 @@ export default {
     ShowProperty: ShowProperty,
     DataGrid: DataGrid,
     DataLayout: DataLayout,
+    DataSelect:DataSelect
   },
 };
 </script>
