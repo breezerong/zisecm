@@ -100,8 +100,13 @@ export default {
     validateValue(itemData){
       if(itemData.required){
         if(itemData.validatePolicy != null && itemData.validatePolicy != ""){
-          var p = itemData.validatePolicy.split(":");
-          if(this.getValueByAttr(p[0]) == p[1]){
+          var p = itemData.validatePolicy.split(";");
+          if(p[0] != ""){
+            var p1 = p[0].split(":");
+            if(this.getValueByAttr(p1[0]) == p1[1]){
+              return true;
+            }
+          }else{
             return true;
           }
         }else{

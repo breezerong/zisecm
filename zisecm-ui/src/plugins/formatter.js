@@ -1,6 +1,6 @@
 import Vue from 'vue'
 Vue.prototype.dateFormat = function(val){
-    let datetime = val;
+    var datetime = val;
     //console.log(val);
     if (datetime){
       if(typeof datetime === 'string'){
@@ -12,8 +12,9 @@ Vue.prototype.dateFormat = function(val){
         datetime = datetime.replace(regexp,"");
         //console.log(datetime);
         datetime = datetime.replace(/-/g,'/').replace(/T|Z/g,' ');
-       // console.log(datetime);
+        
         datetime = new Date(datetime);
+        console.log(datetime);
       
       }else if(typeof datetime === 'object'){
         datetime = new Date(datetime);
