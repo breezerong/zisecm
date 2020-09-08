@@ -68,7 +68,7 @@
                     v-bind:typeName="typeName"
                 ></ShowProperty>
                 <div slot="footer" class="dialog-footer">
-                    <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                    <el-button @click="saveItem" :loading="butt">{{$t('application.save')}}</el-button>
                     <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
                 </div>
             </el-dialog>
@@ -326,7 +326,8 @@ export default {
             isShowDesgin:true,
             isShowRelevant:true,
             isShowAttachmentDoc:true,
-            selectedTabName:'t01'
+            selectedTabName:'t01',
+            butt:false,
         }
     },
     created(){
