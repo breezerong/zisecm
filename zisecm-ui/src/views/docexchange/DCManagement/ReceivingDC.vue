@@ -131,7 +131,7 @@
                             :isInitData="true"
                             condition=" status='待确认'"
                             @rowclick="rowClick"
-                            :isEditProperty="true"
+                            :isEditProperty="false"
                             @dbclick="dbclick"
                             showOptions="查看内容"
                             :isShowChangeList="false"

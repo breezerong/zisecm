@@ -84,6 +84,19 @@ export default {
       //console.log(v);
       return v;
     },
+    getValueByAttr(attrName){
+      var c;
+      for(c in this.dataList){
+        let dataRows = this.dataList[c].ecmFormItems;
+        var i;
+        for (i in dataRows) {
+          if(dataRows[i].attrName == attrName){
+            return dataRows[i].defaultValue;
+          }
+        }
+      }
+      return "";
+    },
     validateValue(itemData){
       if(itemData.required){
         if(itemData.validatePolicy != null && itemData.validatePolicy != ""){

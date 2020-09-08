@@ -245,7 +245,7 @@
                                     condition=" and a.NAME='相关文件'"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="relevantDocSelect"
@@ -277,7 +277,7 @@
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="attachmentDocSelect"
@@ -301,6 +301,7 @@ import MountFile from '@/components/MountFile.vue';
 import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 import DataLayout from '@/components/ecm-data-layout'
 export default {
+    // CNPE 待提交文函
     name: "Submissiondc",
     data(){
         return{

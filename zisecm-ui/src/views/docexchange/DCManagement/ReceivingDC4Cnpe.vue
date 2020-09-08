@@ -140,7 +140,7 @@
                             @selectchange="selectChange"
                              @dbclick="dbclick"
                             :isshowCustom="false"
-                            :isEditProperty="true"
+                            :isEditProperty="false"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                         ></DataGrid>
