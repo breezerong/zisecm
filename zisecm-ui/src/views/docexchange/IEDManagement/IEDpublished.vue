@@ -96,7 +96,7 @@ export default {
             // 本地存储高度名称
             topStorageName: 'PublishIEDTopHeight',
             // 非split pan 控制区域高度
-            startHeight: 135,
+            startHeight: 140,
             // 顶部百分比*100
             topPercent: 60,
             // 顶部除列表高度

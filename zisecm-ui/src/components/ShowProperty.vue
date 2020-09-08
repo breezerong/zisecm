@@ -40,7 +40,7 @@
         </el-collapse>
     </el-row>
       <el-form-item style="float:left"  :label="$t('application.type')" >{{typeName}}</el-form-item>
-      <div v-if="itemId  == undefined || itemId == 0 " style="float:left;margin-left:120px;">
+      <div v-if="(itemId  == undefined || itemId == '0' || itemId == '') && showUploadFile " style="float:left;margin-left:120px;">
         <el-upload
         :limit="1"
         :file-list="fileList" 
@@ -111,7 +111,8 @@ export default {
     itemId: {type:String},
     typeName: {type:String},
     folderId: {type:String},
-    folderPath:{type:String}
+    folderPath:{type:String},
+    showUploadFile: {type:Boolean, default:true}
   },
   methods: {
     setMainObject(obj){

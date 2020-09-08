@@ -119,7 +119,7 @@
                             </div>
                         </template>
                         <template v-if="isIED">
-                            <IEDPublishedView ref="iedgrid" :view=true :project="'\''+projectName+'\''"></IEDPublishedView>
+                            <IEDPublishedView ref="iedgrid" :view="true" :project="'\''+projectName+'\''"></IEDPublishedView>
                         </template>
                         <template v-if="isProject">
                             <el-row>
