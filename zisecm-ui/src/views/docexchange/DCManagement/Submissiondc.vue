@@ -392,7 +392,7 @@ export default {
             }
             let a=this.selectedItems[0].FORMAT_NAME
             if(a=='pdf'||a=='PDF'){
-                this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid[this.$refs.transferDoc,this.$refs.relevantDoc])
+                this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid,[this.$refs.transferDoc,this.$refs.relevantDoc])
             }else{
                 this.$message({
                             showClose: true,
