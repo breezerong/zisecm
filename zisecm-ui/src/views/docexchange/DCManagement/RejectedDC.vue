@@ -168,7 +168,7 @@
                                             <MountFile v-if="isShowMountFile" :selectedItem="selectedTransferDocItems" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
                                         </el-form-item>
                                         <el-form-item>
-                                        <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
+                                        <el-button type="warning" v-if="isShowMountFile" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
                                         </el-form-item>
                                     </el-form>
                                     </el-col>
@@ -183,7 +183,7 @@
                                     gridViewName="DrawingGridRejected"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="isShowMountFile"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="selectChangeTransferDoc"
@@ -472,6 +472,8 @@ export default {
             this.selectRow=row;
             this.parentId=row.ID;
             let _self=this;
+            _self.isShowMountFile = false;
+            
             if(row.TYPE_NAME=='文件传递单'){
                 _self.isShowDesgin=true;
                 _self.isShowRelevant=false;
