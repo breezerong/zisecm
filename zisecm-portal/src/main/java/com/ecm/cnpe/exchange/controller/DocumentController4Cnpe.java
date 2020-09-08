@@ -81,8 +81,11 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			}
 			String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
 			String contractorStr= doc.getAttributeValue("C_TO")==null?"":doc.getAttributeValue("C_TO").toString();
+			String copyToStr=doc.getAttributeValue("C_COPY_TO")==null?"":doc.getAttributeValue("C_COPY_TO").toString();
+			
 			String codingStr=doc.getCoding();
 			String[] contractors=contractorStr.split(";");
+			String[] copyTos=copyToStr.split(";");
 			String[] codings=codingStr.split(";");
 			for(int i=0;i<contractors.length;i++) {
 				ExcTransfer excTransfer=new ExcTransfer();
@@ -90,6 +93,22 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				excTransfer.setDocId(childId);
 				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
 				excTransfer.setToName(contractors[i]);
+				excTransfer.setCreationDate(new Date());
+				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
+				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
+				excTransfer.setSendDate(new Date());
+				
+				excTransfer.setStauts(nextStatus);
+				excTransferService.newObject(excTransfer);
+				
+			}
+			
+			for(int i=0;i<copyTos.length;i++) {
+				ExcTransfer excTransfer=new ExcTransfer();
+				excTransfer.setItemType(1);
+				excTransfer.setDocId(childId);
+				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
+				excTransfer.setToName(copyTos[i]);
 				excTransfer.setCreationDate(new Date());
 				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
 				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());

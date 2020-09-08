@@ -24,8 +24,7 @@ public class SyncFromTcService {
 	private static Logger logger=Logger.getLogger(SyncFromTcService.class);
 	@Autowired
 	private Environment env;
-	public String getTcData(Map<String,Object> data,Map<String,Object> tcData) throws Exception {
-		Map<String,Object> tcdt=(Map<String, Object>) tcData.get("data");
+	public String getTcData() throws Exception {
 		Session session=SyncTcTools.getSession(env);
 	    logger.info("-----------begin setCRData------------");
 
@@ -41,18 +40,12 @@ public class SyncFromTcService {
 	    {
 	      DataManagement dataManagement = new DataManagement(session);
 	      Query query = new Query(session);
-	      Workflow workflow = new Workflow(session);
 	     
-	      DataEntity dt=(DataEntity)tcdt.get("projectId");
-	      String projectId=dt.getAttrValue().toString();
-	      TC_Project project = query.queryProjectExist(projectId);
-	      
-
-	      ModelObject findChangeRqRevision = query.queryFileRevision(projectId,data.get("CODING").toString());
-	      
-	      if (findChangeRqRevision != null) {
-	    	 throw new Exception("文件传递单数据在TC中已经存在符合条件的文件传递单：" + data.get("C_PROJECT_NAME").toString() + "|" +  data.get("CODING").toString() + "|" );
-	      }
+//	      ModelObject findChangeRqRevision = query.queryFileRevision(projectId,data.get("CODING").toString());
+//	      
+//	      if (findChangeRqRevision != null) {
+//	    	 throw new Exception("文件传递单数据在TC中已经存在符合条件的文件传递单：" + data.get("C_PROJECT_NAME").toString() + "|" +  data.get("CODING").toString() + "|" );
+//	      }
 	    }catch(Exception ex) {
 	    	ex.printStackTrace();
 	    }
