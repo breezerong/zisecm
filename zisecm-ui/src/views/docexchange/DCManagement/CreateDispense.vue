@@ -732,7 +732,7 @@ export default {
         if(!this.$refs.ShowProperty.validFormValue()){
             return;
         }
-        this.butt=true
+        _self.butt=true
         var m = new Map();
         var c;
         for(c in _self.$refs.ShowProperty.dataList){
@@ -805,7 +805,7 @@ export default {
                     type: "success"
                 });
                 _self.propertyVisible = false;
-
+                _self.butt=false
                 // _self.loadTransferGridData();
                 _self.$refs.mainDataGrid.loadGridData();
 
@@ -861,7 +861,7 @@ export default {
         onSaved(indata) {
         let _self=this;
         
-        this.butt=true
+        _self.butt=true
         if (indata == "update") {
             // _self.$message(_self.$t("message.saveSuccess"));
             _self.$message({
@@ -870,6 +870,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         } else {
             // _self.$message("新建成功!");
             _self.$message({
@@ -878,9 +879,10 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         }
         _self.propertyVisible = false;
-        this.butt=false
+        _self.butt=false
         },
         loadOptionList(queryName,val){
             let _self = this;
