@@ -691,9 +691,12 @@ export default {
                         _self.$refs.ShowProperty.myItemId = "";
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
+                        
                         if(typeName=='相关文件'){
+                            _self.$refs.ShowProperty.showUploadFile = false;
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else{
+                            _self.$refs.ShowProperty.showUploadFile = true;
                             _self.$refs.ShowProperty.formName="";
                         }
                         _self.typeName=typeName;
@@ -832,14 +835,16 @@ export default {
                 //console.log(_self.file);
                 formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
             }else{
-                _self.$message({
+                if(_self.$refs.ShowProperty.myTypeName !='相关文件'){
+                    _self.$message({
                                 showClose: true,
-                                message: "请选择pdf",
+                                message: "请选择电子文件",
                                 duration: 2000,
                                 type: 'warning'
                                 });
                             _self.butt=false;
                             return;
+                }
             }
             // console.log(JSON.stringify(m));
             if(_self.$refs.ShowProperty.myItemId=='')

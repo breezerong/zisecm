@@ -318,6 +318,7 @@ import DataSelect from "@/components/ecm-data-select";
 import DataLayout from "@/components/ecm-data-layout";
 import ExcelUtil from "@/utils/excel.js";
 export default {
+    // CNPE 已分发文函
     name: "BeenDispensed",
     data() {
         return {

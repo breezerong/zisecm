@@ -301,6 +301,7 @@ import MountFile from '@/components/MountFile.vue';
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
 export default {
+    // CNPE 待分发文函
     name: "CreateDispense",
     data(){
         return{
@@ -655,9 +656,12 @@ export default {
                         _self.$refs.ShowProperty.myItemId = "";
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
+                        
                         if(typeName=='相关文件'){
+                            _self.$refs.ShowProperty.showUploadFile = false;
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else{
+                            _self.$refs.ShowProperty.showUploadFile = true;
                             _self.$refs.ShowProperty.formName="";
                         }
                         _self.typeName=typeName;
