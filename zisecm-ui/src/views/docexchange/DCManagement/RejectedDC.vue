@@ -525,6 +525,16 @@ export default {
                 if(typeName!='设计文件'&&typeName!='相关文件'){
                     _self.parentId='';
                                      
+                }else{
+                    if(_self.parentId==''){
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.noMainFile'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                        return;
+                    }
                 }
                 _self.relationName=relationName;
                 _self.dialogName = typeName;
@@ -541,6 +551,16 @@ export default {
                             _self.$refs.ShowProperty.formName="";
                         }
                         _self.typeName=typeName;
+                        if('设计文件'==typeName){
+                            _self.$refs.ShowProperty.setMainObject(_self.selectRow);
+                            let mp=new Map();
+                            mp.set("C_PROJECT_NAME",'C_PROJECT_NAME');
+                            mp.set("C_REF_CODING",'CODING');
+                            mp.set("C_ITEM_DATE",'C_ITEM_DATE');
+
+                            _self.$refs.ShowProperty.setMainSubRelation(mp);
+                        }
+                        
                         // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
@@ -602,135 +622,148 @@ export default {
         },
         // 保存文档
         saveItem() {
-        if (!this.$refs.ShowProperty.validFormValue()) {
-            return;
-        }
-        let _self = this;
-        var m = new Map();
-        let dataRows = this.$refs.ShowProperty.dataList;
-        var i;
-        for (i in dataRows) {
-            if (dataRows[i].attrName && dataRows[i].attrName != "") {
-            if (
-                dataRows[i].attrName != "FOLDER_ID" &&
-                dataRows[i].attrName != "ID"
-            ) {
-                m.set(dataRows[i].attrName, dataRows[i].defaultValue);
+            
+            let _self = this;
+            if(!this.$refs.ShowProperty.validFormValue()){
+                return;
             }
+            var m = new Map();
+            var c;
+            for(c in _self.$refs.ShowProperty.dataList)
+            {
+                let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+                var i;
+                for (i in dataRows) {
+                if(dataRows[i].attrName && dataRows[i].attrName !='')
+                {
+                    if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                    {
+                    var val = dataRows[i].defaultValue;
+                    if(val && dataRows[i].isRepeat){
+                        var temp = "";
+                    // console.log(val);
+                        for(let j=0,len=val.length;j<len;j++){
+                        temp = temp + val[j]+";";
+                        //console.log(temp);
+                        }
+                        temp = temp.substring(0,temp.length-1);
+                        val = temp;
+                        console.log(val);
+                    }
+                    m.set(dataRows[i].attrName, val);
+                    }
+                }
+                }
             }
-        }
-        if (_self.$refs.ShowProperty.myItemId != "") {
-            m.set("ID", _self.$refs.ShowProperty.myItemId);
-        }
-        if (_self.$refs.ShowProperty.myTypeName != "") {
-            m.set("TYPE_NAME", _self.$refs.ShowProperty.myTypeName);
-            m.set("folderPath", _self.$refs.ShowProperty.folderPath);
-            m.set("parentDocId", _self.parentId);
-            m.set("relationName",_self.relationName);
-        }
-        let formdata = new FormData();
-        formdata.append("metaData", JSON.stringify(m));
+            if(_self.$refs.ShowProperty.myItemId!='')
+            {
+                m.set('ID',_self.$refs.ShowProperty.myItemId);
+            }
+            if(_self.$refs.ShowProperty.myTypeName!='')
+            {
+                m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
+                m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
+                m.set("parentDocId", _self.parentId);
+                m.set("relationName",_self.relationName);
+            }
+            _self.validateData(m,function(isOk)
+            {
+                _self.isOnly=isOk;
 
-        if (_self.$refs.ShowProperty.file != "") {
-            //console.log(_self.file);
-            formdata.append("uploadFile", _self.$refs.ShowProperty.file.raw);
-        }
-        // console.log(JSON.stringify(m));
-        if (_self.$refs.ShowProperty.myItemId == "") {
-            _self
-            .axios({
-                headers: {
-                "Content-Type": "multipart/form-data"
-                // x-www-form-urlencoded'
-                //"Content-Type": "application/json;charset=UTF-8"
-                },
-                method: "post",
-                data: formdata,
-                url: "/dc/newDocumentOrSubDoc"
-            })
-            .then(function(response) {
-                let code = response.data.code;
-                //console.log(JSON.stringify(response));
-                if (code == 1) {
-                // _self.$message("创建成功!");
-                _self.$message({
-                    showClose: true,
-                    message: "创建成功!",
-                    duration: 2000,
-                    type: "success"
-                });
-                _self.propertyVisible = false;
+                if(_self.isOnly==false){
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t('message.dataIsnotOnly'),
+                        duration: 2000,
+                        type: 'error'
+                    });
+                    return;
+                }
+                let formdata = new FormData();
+                formdata.append("metaData",JSON.stringify(m));
+                
+                if(_self.$refs.ShowProperty.file!="")
+                {
+                    //console.log(_self.file);
+                    formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+                }else{
+                    _self.$message({
+                                    showClose: true,
+                                    message: "请选择pdf",
+                                    duration: 2000,
+                                    type: 'warning'
+                                    });
+                                return;
+                }
+                // console.log(JSON.stringify(m));
+                if(_self.$refs.ShowProperty.myItemId=='')
+                {
+                    axios.post("/dc/newDocumentOrSubDoc",formdata,{
+                        'Content-Type': 'multipart/form-data'
+                    })
+                    .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if (code == 1) {
+                        // _self.$message("创建成功!");
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.newSuccess'),//"创建成功!"
+                            duration: 2000,
+                            type: "success"
+                        });
+                        _self.propertyVisible = false;
 
-                // _self.loadTransferGridData();
-                
-                if(_self.$refs.mainDataGrid){
-                    _self.$refs.mainDataGrid.loadGridData();
+                        // _self.loadTransferGridData();
+                        _self.$refs.mainDataGrid.loadGridData();
+
+                        if(_self.$refs.transferDoc!=undefined){
+                            _self.$refs.transferDoc.loadGridData();
+                        }
+                        if(_self.$refs.relevantDoc!=undefined){
+                            _self.$refs.relevantDoc.loadGridData();
+                        }
+                        
+                        
+                        } 
+                    else{
+                    _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.newFailured'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                        
+                    }
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    });
                 }
-                if(_self.$refs.transferDoc){
-                    _self.$refs.transferDoc.loadGridData();
+                else
+                {
+                    if(_self.$refs.ShowProperty.permit<5){
+                    _self.$message(_self.$t('message.hasnoPermssion'));
+                    return ;
+                    }
+                    axios.post("/dc/saveDocument",JSON.stringify(m))
+                    .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if(code==1){
+                        _self.$emit('onSaved','update');
+                    }
+                    else{
+                        _self.$message(_self.$t('message.saveFailured'));
+                    }
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.saveFailured'));
+                    console.log(error);
+                    });
                 }
-                if(_self.$refs.relevantDoc){
-                    _self.$refs.relevantDoc.loadGridData();
-                }
-                
-                
-                } else {
-                // _self.$message("新建失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "新建失败!",
-                    duration: 2000,
-                    type: "warning"
-                });
-                }
-            })
-            .catch(function(error) {
-                // _self.$message("新建失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "新建失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                console.log(error);
             });
-        } else {
-            _self
-            .axios({
-                headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-                },
-                method: "post",
-                data: JSON.stringify(m),
-                url: "/dc/saveDocument"
-            })
-            .then(function(response) {
-                let code = response.data.code;
-                //console.log(JSON.stringify(response));
-                if (code == 1) {
-                    
-                    _self.$emit("onSaved", "update");
-                } else {
-                // _self.$message("保存失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "保存失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                }
-            })
-            .catch(function(error) {
-                // _self.$message("保存失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "保存失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                console.log(error);
-            });
-        }
         },
         // 保存结果事件
         onSaved(indata) {

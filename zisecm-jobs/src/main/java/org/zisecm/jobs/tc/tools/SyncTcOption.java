@@ -72,7 +72,7 @@ public class SyncTcOption {
 	public ItemIdsAndInitialRevisionIds generateItemIds(String type) throws Exception {
 		// Get the service stub
 		DataManagementService dmService = DataManagementService
-				.getService(SyncTcTools.getSession().getConnection());
+				.getService(SyncTcTools.getSession(env).getConnection());
 
 		GenerateItemIdsAndInitialRevisionIdsProperties[] properties = new GenerateItemIdsAndInitialRevisionIdsProperties[1];
 		GenerateItemIdsAndInitialRevisionIdsProperties property = new GenerateItemIdsAndInitialRevisionIdsProperties();
@@ -146,7 +146,7 @@ public class SyncTcOption {
       
         itemProps[0] = itemProperty;
         DataManagementService dmService = DataManagementService
-				.getService(SyncTcTools.getSession().getConnection());
+				.getService(SyncTcTools.getSession(env).getConnection());
         CreateItemsResponse response = dmService.createItems(itemProps, null, "");
         
         ServiceData serviceData = response.serviceData;

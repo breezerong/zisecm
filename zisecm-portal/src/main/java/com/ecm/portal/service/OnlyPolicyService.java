@@ -98,10 +98,16 @@ public class OnlyPolicyService extends DocumentService{
 			if(policy!=null) {
 				String rulesStr=policy.toString();
 				String[] rules= rulesStr.split(";");
-				for(String rule : rules) {
+				for(int i=0;i<rules.length;i++) {
+					String rule = rules[i];
 					rule=rule.substring(rule.indexOf("{")+1,rule.indexOf("}"));
 					if(data.get(rule)!=null) {
-						whereSql+=rule+"='"+data.get(rule).toString()+"'";
+						if(i==rules.length-1) {
+							whereSql+=rule+"='"+data.get(rule).toString()+"'";
+						}else {
+							whereSql+=rule+"='"+data.get(rule).toString()+"' and ";
+						}
+						
 					}
 				}
 			}

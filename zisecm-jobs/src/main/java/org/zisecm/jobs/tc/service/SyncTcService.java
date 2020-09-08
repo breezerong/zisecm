@@ -20,6 +20,7 @@ import org.zisecm.jobs.tc.utils.Query;
 import org.zisecm.jobs.tc.utils.Workflow;
 import org.zisecm.jobs.tc.ws.PLMServerLOT.FileAttachment;
 import org.zisecm.jobs.tc.ws.PLMServerLOT.ReturnVal;
+import org.zisecm.jobs.utils.HttpTools;
 
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
@@ -66,7 +67,7 @@ public class SyncTcService {
 	private static Logger logger=Logger.getLogger(SyncTcService.class);
 	public String setFileData(Map<String,Object> data,Map<String,Object> tcData) throws Exception {
 			Map<String,Object> tcdt=(Map<String, Object>) tcData.get("data");
-			Session session=SyncTcTools.getSession();
+			Session session=SyncTcTools.getSession(env);
 		    logger.info("-----------begin setCRData------------");
 
 		    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -76,7 +77,7 @@ public class SyncTcService {
 
 		    CreateItemsOutput createItemOutput = null;
 		    DataManagementService dmService = 
-		      DataManagementService.getService(Session.getConnection());
+		    DataManagementService.getService(session.getConnection());
 		    try
 		    {
 		      DataManagement dataManagement = new DataManagement(session);
@@ -204,7 +205,7 @@ public class SyncTcService {
 			System.out.println(ret);
 			throw new Exception(ret);
 		}
-		
+		String localDir=env.getProperty("ecm.localDir");
 		for(int docIndex=0;docIndex<docList.size();docIndex++) {
 			Map<String,Object> doc=docList.get(docIndex);
 			
@@ -221,9 +222,11 @@ public class SyncTcService {
 						continue;
 					}
 					EcmContent en = contentList.get(0);
-					String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//					String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//					
+//					String localFileName=storePath + en.getFilePath();
 					
-					String localFileName=storePath + en.getFilePath();
+					String localFileName=localDir+en.getId()+"."+en.getFormatName();
 					
 					String datasetType = "";
 					String referenceName = "";
@@ -245,6 +248,11 @@ public class SyncTcService {
 						System.out.println(localFileName+"can't find dataset config in preference CNPE_File_Import_Type!");
 						continue;
 					}
+					//下载电子文件
+						HttpTools.downloadFile(getEcmSession().getToken(), localDir,en.getId(),en.getFormatName(), 
+								env.getProperty("ecm.baseUrl"));
+					//
+					
 					createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, "CN9Attachment");
 					
 				}

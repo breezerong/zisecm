@@ -353,7 +353,8 @@ export default {
             isShowAttachmentDoc:true,
             selectedTabName:'t01',
             importSubVisible:false,
-            docId:""
+            docId:"",
+            isOnly:false
         }
     },
     created(){
@@ -755,7 +756,8 @@ export default {
         }
         var m = new Map();
         var c;
-        for(c in _self.$refs.ShowProperty.dataList){
+        for(c in _self.$refs.ShowProperty.dataList)
+        {
             let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
             var i;
             for (i in dataRows) {
@@ -791,90 +793,105 @@ export default {
 			m.set("parentDocId", _self.parentId);
             m.set("relationName",_self.relationName);
         }
-        let formdata = new FormData();
-        formdata.append("metaData",JSON.stringify(m));
-        
-        if(_self.$refs.ShowProperty.file!="")
+        _self.validateData(m,function(isOk)
         {
-            //console.log(_self.file);
-            formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
-        }else{
-            _self.$message({
-                            showClose: true,
-                            message: "请选择pdf",
-                            duration: 2000,
-                            type: 'warning'
-                            });
-                        return;
-        }
-        // console.log(JSON.stringify(m));
-        if(_self.$refs.ShowProperty.myItemId=='')
-        {
-            axios.post("/dc/newDocumentOrSubDoc",formdata,{
-                'Content-Type': 'multipart/form-data'
-            })
-            .then(function(response) {
-            let code = response.data.code;
-            //console.log(JSON.stringify(response));
-            if (code == 1) {
-                // _self.$message("创建成功!");
+            _self.isOnly=isOk;
+
+            if(_self.isOnly==false){
                 _self.$message({
                     showClose: true,
-                    message: _self.$t('message.newSuccess'),//"创建成功!"
+                    message: _self.$t('message.dataIsnotOnly'),
                     duration: 2000,
-                    type: "success"
+                    type: 'error'
                 });
-                _self.propertyVisible = false;
+                return;
+            }
+            let formdata = new FormData();
+            formdata.append("metaData",JSON.stringify(m));
+            
+            if(_self.$refs.ShowProperty.file!="")
+            {
+                //console.log(_self.file);
+                formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
+            }else{
+                _self.$message({
+                                showClose: true,
+                                message: "请选择pdf",
+                                duration: 2000,
+                                type: 'warning'
+                                });
+                            return;
+            }
+            // console.log(JSON.stringify(m));
+            if(_self.$refs.ShowProperty.myItemId=='')
+            {
+                axios.post("/dc/newDocumentOrSubDoc",formdata,{
+                    'Content-Type': 'multipart/form-data'
+                })
+                .then(function(response) {
+                let code = response.data.code;
+                //console.log(JSON.stringify(response));
+                if (code == 1) {
+                    // _self.$message("创建成功!");
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t('message.newSuccess'),//"创建成功!"
+                        duration: 2000,
+                        type: "success"
+                    });
+                    _self.propertyVisible = false;
 
-                // _self.loadTransferGridData();
-                _self.$refs.mainDataGrid.loadGridData();
+                    // _self.loadTransferGridData();
+                    _self.$refs.mainDataGrid.loadGridData();
 
-                if(_self.$refs.transferDoc!=undefined){
-                     _self.$refs.transferDoc.loadGridData();
+                    if(_self.$refs.transferDoc!=undefined){
+                        _self.$refs.transferDoc.loadGridData();
+                    }
+                    if(_self.$refs.relevantDoc!=undefined){
+                        _self.$refs.relevantDoc.loadGridData();
+                    }
+                    
+                    
+                    } 
+                else{
+                _self.$message({
+                        showClose: true,
+                        message: _self.$t('message.newFailured'),
+                        duration: 2000,
+                        type: "warning"
+                    });
+                    
                 }
-                if(_self.$refs.relevantDoc!=undefined){
-                    _self.$refs.relevantDoc.loadGridData();
-                }
-                
-                
-                } 
-            else{
-			_self.$message({
-                    showClose: true,
-                    message: _self.$t('message.newFailured'),
-                    duration: 2000,
-                    type: "warning"
+                })
+                .catch(function(error) {
+                _self.$message(_self.$t('message.newFailured'));
+                console.log(error);
                 });
-                
             }
-            })
-            .catch(function(error) {
-            _self.$message(_self.$t('message.newFailured'));
-            console.log(error);
-            });
-        }
-        else
-        {
-            if(_self.$refs.ShowProperty.permit<5){
-            _self.$message(_self.$t('message.hasnoPermssion'));
-            return ;
-            }
-            axios.post("/dc/saveDocument",JSON.stringify(m))
-            .then(function(response) {
-            let code = response.data.code;
-            //console.log(JSON.stringify(response));
-            if(code==1){
-                _self.$emit('onSaved','update');
-            }
-            else{
+            else
+            {
+                if(_self.$refs.ShowProperty.permit<5){
+                _self.$message(_self.$t('message.hasnoPermssion'));
+                return ;
+                }
+                axios.post("/dc/saveDocument",JSON.stringify(m))
+                .then(function(response) {
+                let code = response.data.code;
+                //console.log(JSON.stringify(response));
+                if(code==1){
+                    _self.$emit('onSaved','update');
+                }
+                else{
+                    _self.$message(_self.$t('message.saveFailured'));
+                }
+                })
+                .catch(function(error) {
                 _self.$message(_self.$t('message.saveFailured'));
+                console.log(error);
+                });
             }
-            })
-            .catch(function(error) {
-            _self.$message(_self.$t('message.saveFailured'));
-            console.log(error);
-            });
-        }
+        });
+        
         },
         // 保存结果事件
         onSaved(indata) {

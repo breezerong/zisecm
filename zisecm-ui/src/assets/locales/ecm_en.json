@@ -415,7 +415,8 @@
     "selectByCoding":"Condtion select By Coding",
     "failureForNew":"Operation Failed!Don't create duplicate items under the same project",
     "noMainFile":"Please select a master file",
-    "pleaseSelectDC":"Please select document for operate!"
+    "pleaseSelectDC":"Please select document for operate!",
+    "dataIsnotOnly":"This data already exists"
 },
 "field": {
     "indexNumber":"S/N",

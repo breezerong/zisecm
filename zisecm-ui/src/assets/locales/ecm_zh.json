@@ -436,7 +436,8 @@
     "selectByCoding":"根据发文号关键字查找",
     "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目",
     "noMainFile":"请选择一条主文件",
-    "pleaseSelectDC":"请选择要操作的文函！"
+    "pleaseSelectDC":"请选择要操作的文函！",
+    "dataIsnotOnly":"此数据已在系统中存在！"
 },
 "field": {
     "indexNumber":"序号",
