@@ -765,7 +765,7 @@ export default {
         if(!this.$refs.ShowProperty.validFormValue()){
             return;
         }
-        this.butt=true
+        _self.butt=true
         var m = new Map();
         var c;
         for(c in _self.$refs.ShowProperty.dataList){
@@ -822,6 +822,7 @@ export default {
                             type: 'warning'
                             });
                         return;
+                        _self.butt=false
         }
         // console.log(JSON.stringify(m));
         if(_self.$refs.ShowProperty.myItemId=='')
@@ -861,18 +862,20 @@ export default {
                     duration: 2000,
                     type: "warning"
                 });
-                
+                _self.butt=false
             }
             })
             .catch(function(error) {
             _self.$message(_self.$t('message.newFailured'));
             console.log(error);
+            _self.butt=false
             });
         }
         else
         {
             if(_self.$refs.ShowProperty.permit<5){
             _self.$message(_self.$t('message.hasnoPermssion'));
+            _self.butt=false
             return ;
             }
             axios.post("/dc/saveDocument",JSON.stringify(m))
@@ -881,14 +884,17 @@ export default {
             //console.log(JSON.stringify(response));
             if(code==1){
                 _self.$emit('onSaved','update');
+                _self.butt=false
             }
             else{
                 _self.$message(_self.$t('message.saveFailured'));
+                _self.butt=false
             }
             })
             .catch(function(error) {
             _self.$message(_self.$t('message.saveFailured'));
             console.log(error);
+            _self.butt=false
             });
         }
         
@@ -904,6 +910,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         } else {
             // _self.$message("新建成功!");
             _self.$message({
@@ -912,6 +919,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         }
         _self.propertyVisible = false;
         this.butt=false
