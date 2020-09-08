@@ -30,7 +30,9 @@ public class DocumentService4Cnpe extends DocumentService{
 	@Autowired
 	private ExcTransferServiceImpl excTransferService;
 	
-	private String baseColumns = "ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
+	private List<String> TRS;  
+	
+	private String baseColumns = "TRSID,ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,"
 			+ "TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR,STATUS,STAUTS";
@@ -38,6 +40,12 @@ public class DocumentService4Cnpe extends DocumentService{
 			+ "MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
 
+	
+	
+	public void getTRS(List<String> TRSID) {
+		this.TRS=TRSID;
+	}
+	
 	
 	public List<Map<String, Object>> getObjects4Cnpe(String token, String gridName, String folderId, Pager pager,
 			String condition, String orderBy) {
@@ -75,8 +83,8 @@ public class DocumentService4Cnpe extends DocumentService{
 				"a.C_ITEM_STATUS3,a.C_ITEM_STATUS4,a.C_ITEM_STATUS5";
 		
 		String sql="select "+ baseColumns + getGridColumn(gv, gridName) +" from (" + 
-				"	select "+columns+",b.STAUTS as STAUTS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,b.REJECT_DATE as C_REJECT_DATE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
-				")t where "+gvCondition;
+				"	select "+columns+",b.ID as TRSID,b.STAUTS as STAUTS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,b.REJECT_DATE as C_REJECT_DATE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
+				")t where "+gvCondition;		//把B表的ID也取出来备用
 		
 		
 		if (!StringUtils.isEmpty(folderId)) {
@@ -92,7 +100,7 @@ public class DocumentService4Cnpe extends DocumentService{
 		}
 		
 		sql=SqlUtils.replaceSql(sql, userObj);
-		
+		System.out.println(sql);
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
 		return list;
@@ -129,7 +137,7 @@ public class DocumentService4Cnpe extends DocumentService{
 	 * @param docId
 	 * @return
 	 */
-	public ExcTransfer getOneExcTransferByDocId(String token,String docId){
+	public ExcTransfer getOneExcTransferByDocId(String token,String docId,String trsid){
 		LoginUser userObj=null;
 		try {
 			userObj=getSession(token).getCurrentUser();
@@ -140,9 +148,9 @@ public class DocumentService4Cnpe extends DocumentService{
 		
 		
 		String sql="select a.ID from exc_transfer a,ecm_document b where a.doc_id=b.ID "
-				+" and b.ID ='"+docId+"' ";
+				+" and b.ID ='"+docId+"' and a.id='"+trsid+"'";
 		
-		
+		System.out.println(sql);
 		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
 		if(list!=null&&list.size()>0) {
 			ExcTransfer exc=new ExcTransfer();
@@ -168,7 +176,9 @@ public class DocumentService4Cnpe extends DocumentService{
 	}
 	@Transactional(rollbackFor=Exception.class)
 	public boolean handleComplete(String token,List<String> docIds) throws NoPermissionException, AccessDeniedException, EcmException {
+		int i = 0;
 		for(String docId:docIds) {
+			String tempTRS = TRS.get(i);
 			EcmDocument doc= this.getObjectById(token, docId);
 			Object cRefCodingObj= doc.getAttributeValue("C_REF_CODING");//渠道号
 			if(cRefCodingObj!=null&&!"".equals(cRefCodingObj.toString())) {
@@ -184,11 +194,15 @@ public class DocumentService4Cnpe extends DocumentService{
 				doc.addAttribute("CODING", coding+"-作废");
 				this.updateObject(token, doc,null);
 			}
-			ExcTransfer excTransfer= getOneExcTransferByDocId(token, docId);
+			ExcTransfer excTransfer= getOneExcTransferByDocId(token, docId,tempTRS);
+			System.out.println(excTransfer);
 			excTransfer.setStauts("已作废");
 			excTransferService.updateObject(excTransfer);
+			i++;
+			
 //			String sql="update ecm_document set status='已作废' where id='"+docId+"'";
-//			ecmDocument.executeSQL(sql);
+//		ecmDocument.executeSQL(sql);
+			
 		}
 		return true;
 		

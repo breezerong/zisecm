@@ -93,7 +93,7 @@
                     v-bind:typeName="typeName"
                 ></ShowProperty>
                 <div slot="footer" class="dialog-footer">
-                    <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                    <el-button  v-on:click="saveItem" :loading="butt">{{$t('application.save')}}</el-button>
                     <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
                 </div>
             </el-dialog>
@@ -150,7 +150,7 @@
                 </el-form-item>
                 
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.export')}}</el-button>
+                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
         </template>
@@ -245,7 +245,7 @@
                                     condition=" and a.NAME='相关文件'"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="relevantDocSelect"
@@ -277,7 +277,7 @@
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="attachmentDocSelect"
@@ -301,6 +301,7 @@ import MountFile from '@/components/MountFile.vue';
 import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 import DataLayout from '@/components/ecm-data-layout'
 export default {
+    // CNPE 待提交文函
     name: "Submissiondc",
     data(){
         return{
@@ -354,7 +355,8 @@ export default {
             selectedTabName:'t01',
             importSubVisible:false,
             docId:"",
-            isOnly:false
+            isOnly:false,
+            butt:false
         }
     },
     created(){
@@ -378,6 +380,16 @@ export default {
     },
     methods: {
         subdc(){
+            let _self = this
+            if(this.selectedItems.length==0){
+                this.$message({
+                        showClose: true,
+                        message: _self.$t("message.pleaseSelectDC"),
+                        duration: 2000,
+                        type: 'warning' 
+                    });
+                    return
+            }
             let a=this.selectedItems[0].FORMAT_NAME
             if(a=='pdf'||a=='PDF'){
                 this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid[this.$refs.transferDoc,this.$refs.relevantDoc])
@@ -427,7 +439,7 @@ export default {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"Submissiondc_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -729,7 +741,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){
@@ -751,9 +763,12 @@ export default {
         saveItem()
         {
         let _self = this;
+        _self.butt=true;
         if(!this.$refs.ShowProperty.validFormValue()){
+            _self.butt=false;
             return;
         }
+        _self.butt=true
         var m = new Map();
         var c;
         for(c in _self.$refs.ShowProperty.dataList)
@@ -792,6 +807,8 @@ export default {
             m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
 			m.set("parentDocId", _self.parentId);
             m.set("relationName",_self.relationName);
+            console.log(_self.$refs.ShowProperty.myTypeName)
+            console.log(_self.$refs.ShowProperty.myFolderId)
         }
         _self.validateData(m,function(isOk)
         {
@@ -804,6 +821,7 @@ export default {
                     duration: 2000,
                     type: 'error'
                 });
+                _self.butt=false;
                 return;
             }
             let formdata = new FormData();
@@ -820,6 +838,7 @@ export default {
                                 duration: 2000,
                                 type: 'warning'
                                 });
+                            _self.butt=false;
                             return;
             }
             // console.log(JSON.stringify(m));
@@ -839,6 +858,7 @@ export default {
                         duration: 2000,
                         type: "success"
                     });
+                    _self.butt=false;
                     _self.propertyVisible = false;
 
                     // _self.loadTransferGridData();
@@ -860,18 +880,20 @@ export default {
                         duration: 2000,
                         type: "warning"
                     });
-                    
+                    _self.butt=false;
                 }
                 })
                 .catch(function(error) {
                 _self.$message(_self.$t('message.newFailured'));
                 console.log(error);
+                _self.butt=false;
                 });
             }
             else
             {
                 if(_self.$refs.ShowProperty.permit<5){
                 _self.$message(_self.$t('message.hasnoPermssion'));
+                _self.butt=false;
                 return ;
                 }
                 axios.post("/dc/saveDocument",JSON.stringify(m))
@@ -879,15 +901,18 @@ export default {
                 let code = response.data.code;
                 //console.log(JSON.stringify(response));
                 if(code==1){
+                    _self.butt=false;
                     _self.$emit('onSaved','update');
                 }
                 else{
+                    _self.butt=false;
                     _self.$message(_self.$t('message.saveFailured'));
                 }
                 })
                 .catch(function(error) {
                 _self.$message(_self.$t('message.saveFailured'));
                 console.log(error);
+                _self.butt=false;
                 });
             }
         });
@@ -904,6 +929,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         } else {
             // _self.$message("新建成功!");
             _self.$message({
@@ -912,8 +938,10 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         }
         _self.propertyVisible = false;
+        this.butt=false
         
         },
         loadOptionList(queryName,val){

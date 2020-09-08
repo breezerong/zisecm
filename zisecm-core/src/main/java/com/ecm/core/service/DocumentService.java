@@ -190,7 +190,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
 		String gvCondition=gv.getCondition();
 		
-		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
+		String sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
 				+ gvCondition;
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
@@ -198,6 +198,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if (!EcmStringUtils.isEmpty(condition)) {
 			sql += " and (" + condition + ")";
 		}
+		sql+=") t";
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
 		} else {
@@ -511,19 +512,22 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		fieldStr += "ID,";
 		valueStr = "'" + id + "',";
+
+		boolean hasCreationDate = false;
 		for (Object key : args.keySet().toArray()) {
 			if (key.toString().equalsIgnoreCase("ID")
 					||key.toString().equalsIgnoreCase("transferId")
 					||key.toString().equalsIgnoreCase("folderPath")
 					||key.toString().equalsIgnoreCase("folderId")
-					||key.toString().equalsIgnoreCase("CREATION_DATE")
+					//||key.toString().equalsIgnoreCase("CREATION_DATE")
 					||key.toString().equalsIgnoreCase("CREATOR")
-					||key.toString().equalsIgnoreCase("VERSION_ID")
+					// ||key.toString().equalsIgnoreCase("VERSION_ID")
 					||key.toString().equalsIgnoreCase("owner_name")
 					||key.toString().equalsIgnoreCase("parentDocId")
 					||key.toString().equalsIgnoreCase("relationName")) {
 				continue;
 			}
+			
 			if (args.get(key) == null) {
 				continue;
 			}
@@ -543,7 +547,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 				}
 				if (date == null || date.length() < 1)
+				{
 					continue;
+				}else {
+					if(key.toString().equalsIgnoreCase("CREATION_DATE")) {
+						hasCreationDate = true;
+					}
+				}
 				fieldStr += key.toString() + ",";
 				valueStr += " " + date + " ,";
 				break;
@@ -570,8 +580,15 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			default:// 字符串
 			{
+				
 				fieldStr += key.toString() + ",";
-				valueStr += "'" + DBFactory.getDBConn().getDBUtils().getString((String) args.get(key)) + "',";
+				if(key.toString().equalsIgnoreCase("VERSION_ID") && ((String) args.get(key)==null || ((String)args.get(key)).length()==0))
+				{
+					valueStr += "'" + id + "',";
+				}else {
+					valueStr += "'" + DBFactory.getDBConn().getDBUtils().getString((String) args.get(key)) + "',";
+				}
+				
 				break;
 			}
 			}
@@ -579,8 +596,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String ownerName = args.get("OWNER_NAME") != null && args.get("OWNER_NAME").toString().length() > 0
 				? args.get("OWNER_NAME").toString()
 				: getSession(token).getCurrentUser().getUserName();
-		fieldStr += "CREATION_DATE,CREATOR,VERSION_ID,OWNER_NAME";
-		valueStr += DBFactory.getDBConn().getDBUtils().getDBDateNow() + ",'" + getSession(token).getCurrentUser().getUserName() + "','" + id
+		if(!hasCreationDate) {
+			fieldStr += "CREATION_DATE,";
+			valueStr += DBFactory.getDBConn().getDBUtils().getDBDateNow() + ",";
+		}
+		fieldStr += "CREATOR,OWNER_NAME";
+		valueStr +=  "'" +getSession(token).getCurrentUser().getUserName() 
 				+ "','" + ownerName + "'";
 		// get acl name from folder when Acl Name is empty
 		if (StringUtils.isEmpty((String) args.get("ACL_NAME"))) {

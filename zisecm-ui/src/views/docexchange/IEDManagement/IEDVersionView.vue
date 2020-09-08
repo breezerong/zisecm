@@ -1,0 +1,153 @@
+<template>
+  <DataLayout>
+    <template v-slot:main="{layout}">
+      <div :style="{position:'relative',height: layout.height-startHeight+'px'}">
+        <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
+          <template slot="paneL">
+              <DataGrid ref="mainDg" v-bind="tables.mainDg" 
+              :tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
+              @rowclick="onDataGridRowClick"></DataGrid>
+          </template>
+          <template slot="paneR">
+            <el-tabs v-model="tabs.active">
+                <el-tab-pane :label="$t('application.relevant')" name="relationFiles">
+                    <DataGrid ref="rfDg" v-bind="tables.rfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
+                </el-tab-pane>
+                <el-tab-pane :label="$t('application.designdoc')" name="designFile">
+                    <DataGrid ref="dfDg"  v-bind="tables.dfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
+                </el-tab-pane>
+                <el-tab-pane :label="$t('application.transmitaldoc')" name="transmitals">
+                    <DataGrid ref="tfDg"  v-bind="tables.tfDg" :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"></DataGrid>
+                </el-tab-pane>
+            </el-tabs>
+          </template>
+        </split-pane>
+      </div>
+    </template>
+  </DataLayout>
+</template>
+
+<script>
+import DataGrid from "@/components/DataGrid"
+import DataLayout from '@/components/ecm-data-layout'
+export default {
+  data(){
+    return{
+      docId:"",
+      topStorageName: 'IEDVersionViewHeight',
+      startHeight: 135,
+      topPercent: 60,
+      topbarHeight: 40,
+      bottomHeight: 80,
+      tables:{
+        mainDg:{
+            gridViewName:"IEDVersionGrid",
+            dataUrl:"/dc/getDocuments",
+            condition:"VERSION_ID=''",
+            isshowOption:false,
+            isshowCustom:false,
+            isInitData:true,
+            isshowicon:false,
+            isEditProperty:false
+        },
+        rfDg:{
+            gridViewName:"IEDRelationGrid",
+            dataUrl:"/dc/getDocuments",
+            condition:"",
+            isshowOption:true,
+            isshowCustom:true,
+            isInitData:false,
+            isshowicon:false,
+            isEditProperty:false,
+            showOptions:'查看内容'
+        },
+        dfDg:{
+            gridViewName:"DrawingGrid",
+            dataUrl:"/dc/getDocuments",
+            condition:"",
+            isshowOption:true,
+            isshowCustom:true,
+            isInitData:true,
+            isshowicon:false,
+            isEditProperty:false,
+            showOptions:'查看内容'
+        },
+        tfDg:{
+            gridViewName:"TransferGrid4IED",
+            dataUrl:"/dc/getDocuments",
+            condition:"",
+            isshowOption:true,
+            isshowCustom:true,
+            isInitData:false,
+            isshowicon:true,
+            isEditProperty:false,
+            showOptions:'查看内容'
+        }
+      },
+      tabs:{
+        active:"relationFiles"
+      },
+    }
+  },
+  components:{
+    DataLayout,DataGrid
+  },
+  methods:{
+    onSplitResize(topPercent){
+      // 顶部百分比*100
+      this.topPercent = topPercent
+      this.setStorageNumber(this.topStorageName, topPercent)      
+    },
+    onDataGridRowClick:function(row){
+        console.log(row)
+        let cond=""
+        let type = row.SUB_TYPE
+        let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='IED' and CODING = '"+row.CODING+"')"
+        this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
+        this.$refs.rfDg.condition=this.tables.rfDg.condition
+        this.tables.rfDg.gridViewName="IEDRelationGrid"
+        this.$refs.rfDg.gridViewName=this.tables.rfDg.gridViewName
+        this.$refs.rfDg.itemDataList=[]
+        this.$refs.rfDg.loadGridInfo()
+        this.$refs.rfDg.loadGridData()
+        
+        if(type=='图册'){
+            cond="TYPE_NAME='设计文件' and C_FROM_CODING='"+row.CODING+"' and is_current='1'"
+        }
+        if(type!='图册'){
+            cond="type_name='设计文件' and CODING='"+row.CODING+"' and REVISION ='"+row.REVISION+"' AND IS_CURRENT='1'"
+        }
+        this.$refs.dfDg.condition=cond
+        this.$refs.dfDg.itemDataList=[]
+        this.$refs.dfDg.loadGridInfo()
+        this.$refs.dfDg.loadGridData()
+        console.log(this.$refs.dfDg.condition)
+        let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='IED' and CODING =  '"+ row.CODING+"'";
+        this.tables.tfDg.condition = "Type_name='文件传递单' and CODING IN ("+ dfDGCondition+")"
+        this.$refs.tfDg.condition= this.tables.tfDg.condition
+        this.$refs.tfDg.itemDataList=[]
+        //this.$refs.tfDg.loadGridInfo()
+        this.$refs.tfDg.loadGridData()
+        this.id=row.ID
+        this.tables.mainDg.condition="VERSION_ID='"+this.id+"'"
+    },
+    search(){
+      this.$refs.rfDg.itemDataList=[]
+      this.$refs.dfDg.itemDataList=[]
+      this.$refs.tfDg.itemDataList=[]
+      
+      this.$refs.mainDg.condition = "VERSION_ID='"+this.docId+"'"
+      this.$refs.mainDg.loadGridData()
+    }
+  },
+  mounted(){
+    setTimeout(() => {
+      this.topPercent = this.getStorageNumber(this.topStorageName,60)
+    }, 300);
+  }
+}
+</script>
+
+<style>
+
+</style>

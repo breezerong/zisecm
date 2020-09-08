@@ -353,7 +353,7 @@
     "ReceivedDcFromCnpe":"Received For Contractor",
     "RejectDC":"Reject DC",
     "LogMonitor": "LogMonitor",
-    "icmfeedback":"OpenFeedback",
+    "icmfeedback":"DelayOpenConfirm",
     "projectManagement":"ProjectManagement",
     "userManagement":"User Management",
     "feedbackManagement":"Feedback Management",

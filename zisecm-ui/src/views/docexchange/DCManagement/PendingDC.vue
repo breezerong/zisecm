@@ -213,7 +213,9 @@ import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
 import AddCondition from '@/views/record/AddCondition.vue'
+
 export default {
+    // 待确认文函
     name: "Pendingdc",
     data(){
         return{
@@ -295,7 +297,7 @@ export default {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"PendingDC_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -482,7 +484,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='待确认' and C_COMPANY='@company'";
+            let key=" status not in('新建','驳回') and C_COMPANY='@company'";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{
@@ -496,7 +498,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){

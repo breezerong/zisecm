@@ -106,7 +106,7 @@
                 v-bind:typeName="typeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                <el-button @click="saveItem" :loading="butt">{{$t('application.save')}}</el-button>
                 <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
             </div>
         </el-dialog>
@@ -150,7 +150,7 @@
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" :title="$t('application.ExportExcel')" v-on:click="exportData">{{$t('application.export')}}</el-button>
+                    <el-button type="primary" :title="$t('application.ExportExcel')" v-on:click="exportData">{{$t('application.exportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
         </template>
@@ -355,7 +355,8 @@ export default {
             isShowAttachmentDoc:true,
             selectedTabName:'t01',
             importSubVisible:false,
-            docId:""
+            docId:"",
+            butt:false
         }
     },
     created(){
@@ -487,7 +488,7 @@ export default {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"DispenseDC_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -731,6 +732,7 @@ export default {
             if(!this.$refs.ShowProperty.validFormValue()){
                 return;
             }
+            _self.butt=true
             var m = new Map();
             var c;
             for(c in _self.$refs.ShowProperty.dataList){
@@ -777,6 +779,7 @@ export default {
                         duration: 2000,
                         type: 'error'
                     });
+                    _self.butt=false;
                     return;
                 }
                 let formdata = new FormData();
@@ -804,6 +807,7 @@ export default {
                             duration: 2000,
                             type: "success"
                         });
+                        _self.butt=false;
                         _self.propertyVisible = false;
 
                         // _self.loadTransferGridData();
@@ -825,18 +829,20 @@ export default {
                             duration: 2000,
                             type: "warning"
                         });
-                        
+                        _self.butt=false;
                     }
                     })
                     .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
                     console.log(error);
+                    _self.butt=false;
                     });
                 }
                 else
                 {
                     if(_self.$refs.ShowProperty.permit<5){
                     _self.$message(_self.$t('message.hasnoPermssion'));
+                    _self.butt=false;
                     return ;
                     }
                     axios.post("/dc/saveDocument",JSON.stringify(m))
@@ -844,14 +850,17 @@ export default {
                     let code = response.data.code;
                     //console.log(JSON.stringify(response));
                     if(code==1){
+                        _self.butt=false;
                         _self.$emit('onSaved','update');
                     }
                     else{
+                        _self.butt=false;
                         _self.$message(_self.$t('message.saveFailured'));
                     }
                     })
                     .catch(function(error) {
                     _self.$message(_self.$t('message.saveFailured'));
+                    _self.butt=false;
                     console.log(error);
                     });
                 }
@@ -862,6 +871,8 @@ export default {
         // 保存结果事件
         onSaved(indata) {
         let _self=this;
+        
+        _self.butt=true
         if (indata == "update") {
             // _self.$message(_self.$t("message.saveSuccess"));
             _self.$message({
@@ -870,6 +881,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         } else {
             // _self.$message("新建成功!");
             _self.$message({
@@ -878,9 +890,10 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         }
         _self.propertyVisible = false;
-        
+        _self.butt=false
         },
         loadOptionList(queryName,val){
             let _self = this;

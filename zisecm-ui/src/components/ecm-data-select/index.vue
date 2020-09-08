@@ -1,6 +1,6 @@
 <template>
   <el-select v-model="svalue" @change="sChange" filterable >
-    <el-option v-if="includeAll" :label="$t('application.allProjects')" :value="allvalue"></el-option>
+    <el-option v-if="includeAll" :label="allLabelString" :value="allvalue"></el-option>
     <el-option v-for="item in options" :key="item[valueField]" v-bind="item"></el-option>
   </el-select>
 </template>
@@ -34,6 +34,10 @@ export default {
       type:String,
       default:""
     },
+    allLabel:{
+      type:String,
+      default:""
+    },
     includeAll:{
       type:Boolean,
       default:false
@@ -48,7 +52,8 @@ export default {
       svalue : this.value,
       valueField:"",
       textField:"",
-      allvalue:""
+      allvalue:"",
+      allLabelString: this.$t('application.allProjects')
     }
   },
    watch: {
@@ -101,7 +106,12 @@ export default {
       axios.post("/query/getquery", JSON.stringify(queryObj)).then(function(resp){
         _self.textField = resp.data.labelField
         _self.valueField = resp.data.valueField
-        _self.options = resp.data.data
+         let getOptions = resp.data.data
+        getOptions.forEach(function(item){
+           _self.options.push({label:item[_self.dataTextField],value:item[_self.dataValueField]})
+        })
+        
+         console.log(_self.options);
         _self.$emit("onLoadnDataSuccess",_self.svalue,_self.options)
       }).catch(function(error) {
         console.log(error);
@@ -118,6 +128,9 @@ export default {
     }else{
       console.log("initDataUrlOptions");
       this.initDataUrlOptions();
+    }
+    if(this.allLabel != ""){
+      this.allLabelString = this.allLabel;
     }
   }
 }

@@ -125,7 +125,7 @@
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.export')}}</el-button>
+                    <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.exportExcel')}}</el-button>
                 </el-form-item>
                 </el-form>
         </template>
@@ -142,7 +142,7 @@
                             gridViewName="DCTransferGridReject"
                             condition=" status='驳回' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
                             :isshowCustom="false"
-                            :isEditProperty="false"
+                            :isEditProperty="true"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                             @rowclick="rowClick"
@@ -183,7 +183,7 @@
                                     gridViewName="DrawingGridRejected"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="selectChangeTransferDoc"
@@ -223,7 +223,7 @@
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='相关文件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     :isShowMoreOption="false"
@@ -257,7 +257,7 @@
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="false"
+                                    :isEditProperty="true"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="attachmentDocSelect"
@@ -369,7 +369,7 @@ export default {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"RejectedDC_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -595,7 +595,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){
@@ -624,7 +624,9 @@ export default {
         saveItem() {
             
             let _self = this;
+            _self.butt=true;
             if(!this.$refs.ShowProperty.validFormValue()){
+                _self.butt=false;
                 return;
             }
             var m = new Map();
@@ -677,6 +679,7 @@ export default {
                         duration: 2000,
                         type: 'error'
                     });
+                    _self.butt=false;
                     return;
                 }
                 let formdata = new FormData();
@@ -693,6 +696,7 @@ export default {
                                     duration: 2000,
                                     type: 'warning'
                                     });
+                                    _self.butt=false;
                                 return;
                 }
                 // console.log(JSON.stringify(m));
@@ -712,6 +716,7 @@ export default {
                             duration: 2000,
                             type: "success"
                         });
+                        _self.butt=false;
                         _self.propertyVisible = false;
 
                         // _self.loadTransferGridData();
@@ -733,18 +738,20 @@ export default {
                             duration: 2000,
                             type: "warning"
                         });
-                        
+                        _self.butt=false;
                     }
                     })
                     .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
                     console.log(error);
+                    _self.butt=false;
                     });
                 }
                 else
                 {
                     if(_self.$refs.ShowProperty.permit<5){
                     _self.$message(_self.$t('message.hasnoPermssion'));
+                    _self.butt=false;
                     return ;
                     }
                     axios.post("/dc/saveDocument",JSON.stringify(m))
@@ -752,14 +759,17 @@ export default {
                     let code = response.data.code;
                     //console.log(JSON.stringify(response));
                     if(code==1){
+                        _self.butt=false;
                         _self.$emit('onSaved','update');
                     }
                     else{
+                        _self.butt=false;
                         _self.$message(_self.$t('message.saveFailured'));
                     }
                     })
                     .catch(function(error) {
                     _self.$message(_self.$t('message.saveFailured'));
+                    _self.butt=false;
                     console.log(error);
                     });
                 }
@@ -776,6 +786,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false;
         } else {
             // _self.$message("新建成功!");
             _self.$message({
@@ -784,6 +795,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false;
         }
         _self.propertyVisible = false;
         

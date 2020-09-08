@@ -98,8 +98,7 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="onNextStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Receive')}}</el-button>
+                    <el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
@@ -112,7 +111,9 @@
                 <el-form-item>
                     <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
                 </el-form-item>
-                
+                <el-form-item>
+                <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
+                </el-form-item>
                 <!-- <el-form-item>
                     <el-button type="warning" 
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
@@ -139,7 +140,7 @@
                             @selectchange="selectChange"
                              @dbclick="dbclick"
                             :isshowCustom="false"
-                            :isEditProperty="true"
+                            :isEditProperty="false"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                         ></DataGrid>
@@ -342,6 +343,21 @@ export default {
         }, 300);
     },
     methods: {
+        submit(){
+        let _self=this
+        if(this.selectedItems.length==0){
+                this.$message({
+                        showClose: true,
+                        message: _self.$t("message.pleaseSelectDC"),
+                        duration: 2000,
+                        type: 'warning' 
+                    });
+                    return
+            }
+           this.onNextStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
+            $refs.relevantDoc])
+        },
+        
         dbclick(row){
             this.showItemContent(row)
 
@@ -369,15 +385,15 @@ export default {
             //console.log(JSON.stringify(topPercent))
         },
         exportData(){
-            let dataUrl = "/exchange/doc/export"
             let params = {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
-                sheetname:"Result"
+                filename:"Receiving_DC_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                sheetname:"Result",
+                URL:"/exchange/doc/export4Cnpe"
             }
-            ExcelUtil.export(params)
+            ExcelUtil.export4Cnpe(params)
         },
         beforImport(obj,isSub,relationName){
             this.gridObj=obj;
@@ -575,7 +591,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){

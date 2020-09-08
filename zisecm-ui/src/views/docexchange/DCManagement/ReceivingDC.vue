@@ -89,8 +89,7 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" v-on:click="onNextStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.Receive')}}</el-button>
+                    <el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button>
                 </el-form-item>
                 <!-- 驳回 -->
                 <el-form-item>
@@ -102,6 +101,9 @@
                 <!-- 打包下载 -->
                 <el-form-item>
                     <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
+                </el-form-item>
+                <el-form-item>
+                <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
                 
                 <!-- <el-form-item>
@@ -129,7 +131,7 @@
                             :isInitData="true"
                             condition=" status='待确认'"
                             @rowclick="rowClick"
-                            :isEditProperty="true"
+                            :isEditProperty="false"
                             @dbclick="dbclick"
                             showOptions="查看内容"
                             :isShowChangeList="false"
@@ -340,6 +342,22 @@ export default {
         }, 300);
     },
     methods: {
+        
+
+        submit(){
+        let _self=this
+        if(this.selectedItems.length==0){
+                this.$message({
+                        showClose: true,
+                        message: _self.$t("message.pleaseSelectDC"),
+                        duration: 2000,
+                        type: 'warning' 
+                    });
+                    return
+            }
+           this.onNextStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
+            $refs.relevantDoc])
+        },
         dbclick(row){
             this.showItemContent(row)
 
@@ -379,13 +397,14 @@ export default {
             
         },
 
+
         exportData(){
             let dataUrl = "/exchange/doc/export"
             let params = {
                 gridName:this.$refs.mainDataGrid.gridViewName,
                 lang:"zh-cn",
                 condition:this.$refs.mainDataGrid.condition,
-                filename:"exportExcel"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
+                filename:"ReceivingDC_"+new Date().Format("yyyy-MM-dd hh:mm:ss")+".xlsx",
                 sheetname:"Result"
             }
             ExcelUtil.export(params)
@@ -586,7 +605,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){

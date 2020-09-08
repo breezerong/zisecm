@@ -151,9 +151,10 @@ public class DocTopController extends ControllerAbstract  {
 					sqlIEDNum+") as IEDNum, ("+
 					sqlICMNum+") as ICMNum,("+
 					sqlreceivedNum+") as receivedNum from ecm_document";
+		
 		try {
-			System.out.println(sqlIEDNum);
 			List<Map<String, Object>> numList = ecmDocument.executeSQL(sqlList);
+			System.out.println(sqlList);
 			//基本信息
 			mp.put("sumNum",numList.get(0).get("sumNum"));//项目
 			mp.put("dcNum", numList.get(0).get("dcNum"));//文函
@@ -175,6 +176,84 @@ public class DocTopController extends ControllerAbstract  {
 		
 		return mp;
 	}
+	
+	
+	@RequestMapping(value = "/exchange/docTop/getCNPEDCData", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> CNPEDCData(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
+		String whereSql="";
+		if(projectName!=null&&!"".equals(projectName)) {
+			if("@project".equals(projectName)) {
+				LoginUser userObj=null;
+				try {
+					userObj=getSession().getCurrentUser();
+					List<String> projectList= userObj.getMyProjects();
+					whereSql+=" and (";
+					for(int i=0;i<projectList.size();i++) {
+						String project=projectList.get(i);
+						if(i==0) {
+							whereSql+="C_PROJECT_NAME ='"+project+"'";
+						}else {
+							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+						}
+						
+					}
+					whereSql+=")";
+				} catch (AccessDeniedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else {
+				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
+			}
+			
+		}
+		else {
+			LoginUser userObj=null;
+			userObj=getSession().getCurrentUser();
+			List<String> projectList= userObj.getMyProjects();
+			whereSql+=" and (";
+			for(int i=0;i<projectList.size();i++) {
+				String project=projectList.get(i);
+				if(i==0) {
+					whereSql+="C_PROJECT_NAME ='"+project+"'";
+				}else {
+					whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+				}
+				
+			}
+			whereSql+=")";
+		}
+		String getLCompany=getSession().getCurrentUser().getCompany();
+		if(getLCompany.equals("CNPE")==false) {
+			whereSql+=" and (C_COMPANY='"+getLCompany+"' or TO_NAME='"+getLCompany+"')";
+		}
+		String sql="select STATUS,count(*) as c from ecm_document where (c_item_type='文函' or type_name='设计文件') and c_is_released=1 "+whereSql+" GROUP by status ";
+		System.out.println(sql);
+		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
+		Map<String,Object> result=new HashMap<>();
+		for(Map<String,Object> d : data) {
+			if(d.get("STATUS") !=null) {
+				result.put(d.get("STATUS").toString(), d.get("c"));
+			}
+		}
+		mp.put("code", "1");
+		mp.put("data", result);
+		return mp;
+		/*
+		 select Status,count(*) from ecm_document ed  where (c_item_type='文函' or TYPE_NAME  in('设计文件','FU申请','FU通知单','作废通知单','CR澄清要求申请单','CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单','FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单'
+,'DCR设计变更申请单','DCR设计变更答复单','DCR设计变更关闭单','TCR试验澄清申请单','TCR试验澄清答复单',
+'图文传真','会议纪要','接口信息意见单','接口信息传递单','TCR试验澄清关闭单','DEN设计变更通知单','DEN设计变更通知关闭单',
+'设计审查意见','设计审查意见答复')) 
+and C_IS_RELEASED =1  GROUP by STATUS  
+		 */
+	}
+	
+	
+	
 	@RequestMapping(value = "/exchange/docTop/getDCData", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> DCData(@RequestBody String argStr) throws Exception {
@@ -230,8 +309,8 @@ public class DocTopController extends ControllerAbstract  {
 		}
 		String sql="select STATUS,count(*) as c from"
 				+"(select a.C_ITEM_TYPE, a.STATUS,a.C_COMPANY, a.TYPE_NAME,a.C_PROJECT_NAME,b.TO_NAME "
-				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t "
-				+ "where 1=1 "+whereSql+" and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') group by STATUS";
+				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id and a.company=')t "
+				+ "where 1=1 "+whereSql+" and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') group by STATUS";    
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> result=new HashMap<>();
 		for(Map<String,Object> d : data) {
@@ -242,6 +321,12 @@ public class DocTopController extends ControllerAbstract  {
 		mp.put("code", "1");
 		mp.put("data", result);
 		return mp;
-		
+		/*
+		 select Status,count(*) from ecm_document ed  where (c_item_type='文函' or TYPE_NAME  in('设计文件','FU申请','FU通知单','作废通知单','CR澄清要求申请单','CR澄清要求答复单','CR澄清要求关闭单','FCR现场变更申请单','FCR现场变更答复单','FCR现场变更关闭单','NCR不符合项报告单','NCR不符合项报告答复单','NCR不符合项报告关闭单'
+,'DCR设计变更申请单','DCR设计变更答复单','DCR设计变更关闭单','TCR试验澄清申请单','TCR试验澄清答复单',
+'图文传真','会议纪要','接口信息意见单','接口信息传递单','TCR试验澄清关闭单','DEN设计变更通知单','DEN设计变更通知关闭单',
+'设计审查意见','设计审查意见答复')) 
+and C_IS_RELEASED =1  GROUP by STATUS  
+		 */
 	}
 }

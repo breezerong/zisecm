@@ -16,8 +16,9 @@
                 </div>
             </el-dialog>
 
-            <el-dialog title="查看版本" :visible.sync="iedVersionVisual" width="400" >
-                <DataGrid ref="iedVersionDg" v-bind="tables.iedVersionDg" tableHeight=400></DataGrid>
+            <el-dialog title="查看版本" :visible.sync="iedVersionVisual" fullscreen >
+                <!-- <DataGrid ref="iedVersionDg" v-bind="tables.iedVersionDg" tableHeight=400></DataGrid> -->
+                <IEDVersionView ref="ivvViewer"></IEDVersionView>
             </el-dialog>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item v-show="view==false">
@@ -51,7 +52,11 @@
                             <el-button type="default" @click="IEDVersion(scope.data.row)" size="mini" icon="el-icon-s-order" circle></el-button>
                         </el-tooltip>
                         </template>
-                    </DataGrid>
+                        <template slot="sequee" slot-scope="scope">
+                                            <span :style="(scope.data.row['STATUS']!=null
+                                            &&scope.data.row['STATUS']=='变更中')?{'background':'#409EFF'}:''">{{scope.data.$index+1}}</span>
+                                        </template>
+                        </DataGrid>
                 </template>
                 <template slot="paneR">
                     <el-tabs v-model="tabs.active">
@@ -78,6 +83,7 @@ import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
 import ExcelUtil from '@/utils/excel.js'
 import AddCondition from '@/views/record/AddCondition.vue'
+import IEDVersionView from './IEDVersionView'
 export default {
     name: "IEDpublished",
     props:{
@@ -345,7 +351,7 @@ export default {
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
             let orS = ""
-            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND STATUS='已生效'"// AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')"
+            var k1=" TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')"// AND FOLDER_ID  in (select id from ecm_folder where folder_path='/设计分包/IED')"
             if(_self.inputValueNum.trim().length>0){
                 wheres.forEach(function(item){
                     if(orS.length>0){
@@ -383,13 +389,10 @@ export default {
             this.iedVersionVisual=true
             console.log(row.ID)
             this.id = row.ID
-            let gridobj = this.$refs.iedVersionDg
-           if(gridobj == undefined){
-                this.tables.iedVersionDg.condition="VERSION_ID='"+this.id+"'"
-            }else{
-                this.$refs.iedVersionDg.condition="VERSION_ID='"+this.id+"'"
-                this.$refs.iedVersionDg.loadGridData()
-            }
+            let viewer = this.$refs.ivvViewer
+            viewer.docId = row.ID
+            viewer.search()
+           
         },
         submit(feedForm){           //时间在后台方法中获取
              this.$refs[feedForm].validate((valid) => {
@@ -435,7 +438,8 @@ export default {
         DataGrid:DataGrid,
         DataSelect:DataSelect,
         AddCondition:AddCondition,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        IEDVersionView:IEDVersionView
     }
 }
 </script>
