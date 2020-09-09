@@ -83,7 +83,7 @@ public class DocumentService4Cnpe extends DocumentService{
 				"a.C_ITEM_STATUS3,a.C_ITEM_STATUS4,a.C_ITEM_STATUS5";
 		
 		String sql="select "+ baseColumns + getGridColumn(gv, gridName) +" from (" + 
-				"	select "+columns+",b.ID as TRSID,b.STAUTS as STAUTS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,b.REJECT_DATE as C_REJECT_DATE,b.APPLICANT as C_EX5_STRING,b.COMMENT1 AS C_EX6_STRING,b.STATUS1 AS C_EX7_STRING,b.APPLY_DATE AS C_ITEM8_DATE,b.ITEM_TYPE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
+				"	select "+columns+",b.ID as TRSID,b.STAUTS as STAUTS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,b.REJECT_DATE as C_REJECT_DATE,b.APPLICANT as C_EX5_STRING,b.COMMENT1 AS C_EX6_STRING,b.STATUS1 AS C_EX7_STRING,b.APPLY_DATE AS C_ITEM8_DATE,b.ITEM_TYPE as TR_ITEM_TYPE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
 				")t where "+gvCondition;		//把B表的ID也取出来备用
 		
 		
