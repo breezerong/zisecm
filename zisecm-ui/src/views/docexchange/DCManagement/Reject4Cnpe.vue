@@ -188,8 +188,6 @@
                                             <el-form-item>
                                             <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                                             </el-form-item>
-                                            
-                                            
                                         </el-form>
                                     </el-col>
                                 </el-row>
@@ -699,9 +697,6 @@ export default {
                     this.isReject=false
                     return
                 }
-                
-                console.log(tab[i]["ID"])
-                console.log("2222")
             }
             this.isTC=false
             this.isReject=true
