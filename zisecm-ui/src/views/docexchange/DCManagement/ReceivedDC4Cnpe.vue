@@ -142,7 +142,7 @@
                             :isEditProperty="false"
                             showOptions="查看内容"
                             :isShowChangeList="false"
-                            condition=" stauts='已接收' and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
+                            condition=" stauts='已接收' and ITEM_TYPE=1 and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
                             @rowclick="rowClick"
                             @selectchange="selectChange"
                         ></DataGrid>

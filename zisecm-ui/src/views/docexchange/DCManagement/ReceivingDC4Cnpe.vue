@@ -139,7 +139,7 @@
                             v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGrid"
-                            condition=" stauts='待接收' and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
+                            condition=" stauts='待接收' and ITEM_TYPE=1 and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
                             @rowclick="rowClick"
                             @selectchange="selectChange"
                              @dbclick="dbclick"

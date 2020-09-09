@@ -129,7 +129,7 @@
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGridCnpeReject"
                             :isshowCustom="false"
-                            condition=" stauts='驳回'"
+                            condition=" stauts='驳回' and ITEM_TYPE=1 "
                             :isEditProperty="true"
                             showOptions="查看内容"
                             :isShowChangeList="false"
