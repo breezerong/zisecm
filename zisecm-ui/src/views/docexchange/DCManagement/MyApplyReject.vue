@@ -135,7 +135,7 @@ export default {
       let orS = "";
       let wheres = ["CODING"];
       let _self = this;
-      var k1 = "C_EX4_STRING='" + this.currentUser().userName + "'";
+      var k1 = "C_EX5_STRING='" + this.currentUser().userName + "'";
       if (_self.value != null && _self.value != "所有项目") {
         k1 += " AND C_PROJECT_NAME in (" + _self.value + ")";
       }

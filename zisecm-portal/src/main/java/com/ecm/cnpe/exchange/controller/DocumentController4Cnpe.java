@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -91,34 +92,38 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			String[] copyTos=copyToStr.split(";");
 			String[] codings=codingStr.split(";");
 			for(int i=0;i<contractors.length;i++) {
-				ExcTransfer excTransfer=new ExcTransfer();
-				excTransfer.setItemType(1);
-				excTransfer.setDocId(childId);
-				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
-				excTransfer.setToName(contractors[i]);
-				excTransfer.setCreationDate(new Date());
-				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSendDate(new Date());
-				
-				excTransfer.setStatus(nextStatus);
-				excTransferService.newObject(excTransfer);
+				if(!StringUtils.isEmpty(contractors[i])) {
+					ExcTransfer excTransfer=new ExcTransfer();
+					excTransfer.setItemType(1);
+					excTransfer.setDocId(childId);
+					excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
+					excTransfer.setToName(contractors[i]);
+					excTransfer.setCreationDate(new Date());
+					excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSendDate(new Date());
+					
+					excTransfer.setStatus(nextStatus);
+					excTransferService.newObject(excTransfer);
+				}
 				
 			}
 			
 			for(int i=0;i<copyTos.length;i++) {
-				ExcTransfer excTransfer=new ExcTransfer();
-				excTransfer.setItemType(1);
-				excTransfer.setDocId(childId);
-				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
-				excTransfer.setToName(copyTos[i]);
-				excTransfer.setCreationDate(new Date());
-				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSendDate(new Date());
-				
-				excTransfer.setStatus(nextStatus);
-				excTransferService.newObject(excTransfer);
+				if(!StringUtils.isEmpty(copyTos[i])) {
+					ExcTransfer excTransfer=new ExcTransfer();
+					excTransfer.setItemType(1);
+					excTransfer.setDocId(childId);
+					excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
+					excTransfer.setToName(copyTos[i]);
+					excTransfer.setCreationDate(new Date());
+					excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSendDate(new Date());
+					
+					excTransfer.setStatus(nextStatus);
+					excTransferService.newObject(excTransfer);
+				}
 				
 			}
 			
@@ -144,7 +149,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		List<String> idsList = JSONUtils.stringToArray(idsStr);
 
 		for(String childId : idsList) {
-			String sql = "update exc_transfer set STATUS='待接收' where DOC_ID='"+childId+"'";	
+			String sql = "update exc_transfer set STATUS='待接收'   where DOC_ID='"+childId+"'";	
 			ecmDocument.executeSQL(sql);
 		}
 		mp.put("code", ActionContext.SUCESS);
@@ -322,6 +327,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				doc.setComment(rejectCommon);
 				doc.setRejecter(this.getSession().getCurrentUser().getUserName());
 				doc.setRejectDate(new Date());
+				if("待确认".equalsIgnoreCase(doc.getStatus1())){
+					doc.setStatus1("已驳回");
+				}
 				excTransferService.updateObject(doc);
 //				OptionLogger.logger(detailService, doc, "分包商驳回", "CNPE");
 				OptionLogger.logger(getToken(), detailService, doc, "CNPE");

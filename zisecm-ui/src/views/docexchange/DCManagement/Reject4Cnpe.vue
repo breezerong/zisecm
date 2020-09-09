@@ -269,7 +269,7 @@ export default {
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 80,
+            bottomHeight: 120,
             dialog:{
                 title:"",
                 visible:false
