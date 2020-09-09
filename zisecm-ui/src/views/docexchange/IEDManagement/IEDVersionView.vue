@@ -31,6 +31,11 @@
 import DataGrid from "@/components/DataGrid"
 import DataLayout from '@/components/ecm-data-layout'
 export default {
+  props:{
+    versionDocId:{
+      type:String,default:""
+    }
+  },
   data(){
     return{
       docId:"",
@@ -46,7 +51,7 @@ export default {
             condition:"VERSION_ID=''",
             isshowOption:false,
             isshowCustom:false,
-            isInitData:true,
+            isInitData:false,
             isshowicon:false,
             isEditProperty:false
         },
@@ -140,7 +145,7 @@ export default {
       this.$refs.rfDg.itemDataList=[]
       this.$refs.dfDg.itemDataList=[]
       this.$refs.tfDg.itemDataList=[]
-      
+
       if(versionId != undefined){
         this.docId = versionId
       }
@@ -153,6 +158,8 @@ export default {
   mounted(){
     setTimeout(() => {
       this.topPercent = this.getStorageNumber(this.topStorageName,60)
+      this.docId = this.versionDocId
+      this.search()
     }, 300);
 
     
