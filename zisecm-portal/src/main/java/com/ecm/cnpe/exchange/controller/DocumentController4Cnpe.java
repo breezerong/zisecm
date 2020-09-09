@@ -216,7 +216,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				doc.setStauts(nextStatus);
 				excTransferService.updateObject(doc);
 //				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
-				OptionLogger.logger(detailService, doc, "CNPE");
+				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
 								
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -305,7 +305,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				doc.setRejectDate(new Date());
 				excTransferService.updateObject(doc);
 //				OptionLogger.logger(detailService, doc, "分包商驳回", "CNPE");
-				OptionLogger.logger(detailService, doc, "CNPE");
+				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
 				
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -337,7 +337,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			
 			doc.addAttribute("C_PROCESS_STATUS", "申请解锁");
 			documentService.updateObject(getToken(), doc, null);
-			OptionLogger.logger(detailService, doc, "申请解锁", 
+			OptionLogger.logger(getToken(), detailService, doc, "申请解锁", 
 					doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 		}
 		mp.put("code", ActionContext.SUCESS);
@@ -414,6 +414,74 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 	
 	}
 	
-	
-	
+	@RequestMapping(value = "/exchange/doc/applyReject", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> applyReject(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String idsStr=args.get("ids").toString();
+			String isCnpe=args.get("iscnpe")!=null?args.get("iscnpe").toString():"";
+			String msg = args.get("msg").toString();
+			List<String> list = JSONUtils.stringToArray(idsStr);
+			if(isCnpe.equalsIgnoreCase("true")) {
+				for(String childId : list) {
+					String condition = "DOC_ID='"+childId+"' AND ITEM_TYPE=1";
+					List<ExcTransfer> tlist = excTransferService.selectByCondition(condition);
+					for(ExcTransfer obj:tlist) {
+						if(obj.getStatus1()!=null && obj.getStatus1().equals("待确认")) {
+							
+						}else {
+							obj.setApplicant(documentService.getSession(getToken()).getCurrentUser().getUserName());
+							obj.setApplyDate(new Date());
+							obj.setStatus1("待确认");
+							obj.setComment1(msg);
+							excTransferService.updateObject(obj);
+							OptionLogger.logger(getToken(), detailService, obj, "驳回申请", obj.getToName());
+						}
+					}
+				}
+			}else {
+				for(String childId : list) {
+					String condition = "DOC_ID='"+childId+"' AND ITEM_TYPE=2";
+					List<ExcTransfer> tlist = excTransferService.selectByCondition(condition);
+					if(tlist.size() == 0) {
+						ExcTransfer obj = new ExcTransfer();
+						obj.setItemType(2);
+						obj.setCreator(documentService.getSession(getToken()).getCurrentUser().getUserName());
+						obj.setCreationDate(new Date());
+						obj.setApplicant(documentService.getSession(getToken()).getCurrentUser().getUserName());
+						obj.setFromName(documentService.getSession(getToken()).getCurrentUser().getCompany());
+						obj.setApplyDate(new Date());
+						obj.setStatus1("待确认");
+						obj.setComment1(msg);
+						obj.setDocId(childId);
+						obj.setToName("CNPE");
+						excTransferService.newObject(obj);
+						OptionLogger.logger(getToken(), detailService, obj, "申请驳回", obj.getToName());
+					}else {
+						ExcTransfer obj = tlist.get(0);
+						if(obj.getStatus1()!=null && obj.getStatus1().equals("待确认")) {
+							
+						}else {
+							obj.setApplicant(documentService.getSession(getToken()).getCurrentUser().getUserName());
+							obj.setApplyDate(new Date());
+							obj.setStatus1("待确认");
+							obj.setComment1(msg);
+							excTransferService.updateObject(obj);
+							OptionLogger.logger(getToken(), detailService, obj, "申请驳回", obj.getToName());
+						}
+					}
+				}
+			}
+			mp.put("code", ActionContext.SUCESS);
+		}catch (Exception e) {
+			// TODO: handle exception
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return mp;
+	}
 }

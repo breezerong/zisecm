@@ -14,7 +14,7 @@ Vue.prototype.dateFormat = function(val){
         datetime = datetime.replace(/-/g,'/').replace(/T|Z/g,' ');
         
         datetime = new Date(datetime);
-        console.log(datetime);
+        // console.log(datetime);
       
       }else if(typeof datetime === 'object'){
         datetime = new Date(datetime);
