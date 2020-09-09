@@ -13,7 +13,7 @@
 <!-- 				<attribute sourceName="TITLE" targetName="k2_title" defaultValue=""></attribute> -->
 <!-- 			</attributes> -->
 <!-- 		</conf> -->
-		<conf sourceTypeName="文件传递单" targetSystem="tc" tcTypeName="文件传递单" childType="设计文件Form" tcTableName="CN9FileTFRevision">
+		<conf sourceTypeName="文件传递单" targetSystem="tc" tcTypeName="文件传递单" tcTableName="CN9FileTFRevision">
 			<attributes>
 				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="projectId" dataType="String"></attribute>
 				<attribute label="发自" sourceName="C_FROM" targetName="cn9SenderCh" dataType="String"></attribute>
@@ -730,7 +730,7 @@
 			</attributes>
 		</conf>
 		
-		<conf sourceTypeName="设计文件Form" targetSystem="tc" ischildType="true" tcTypeName="CN9FileItemF" tcTableName="CN9FileItemF">
+		<conf sourceTypeName="设计文件Form" targetSystem="tc" tcTypeName="CN9FileItemF" tcTableName="CN9FileItemF">
 			<attributes>
 				<attribute label="内部编码" sourceName="CODING" targetName="cn9InternalCode" dataType="String"></attribute>
 				<attribute label="外部编码" sourceName="C_IN_CODING" targetName="cn9ExternalCode" dataType="String"></attribute>
