@@ -10,11 +10,11 @@
     <result column="ARCHIVE_COUNT" jdbcType="INTEGER" property="archiveCount" />
     <result column="ITEM_COUNT" jdbcType="INTEGER" property="itemCount" />
     <result column="DESCRIPTION" jdbcType="NVARCHAR" property="description" />
-    <result column="STAUTS" jdbcType="NVARCHAR" property="stauts" />
+    <result column="STATUS" jdbcType="NVARCHAR" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, CODING, PARENT_CODING, TOTAL_LENGTH, REMAIN_LENGTH, ARCHIVE_COUNT, ITEM_COUNT, DESCRIPTION, 
-    STAUTS
+    STATUS
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -38,11 +38,11 @@
   <insert id="insert" parameterType="com.ecm.core.entity.EcmStorageColumn">
     insert into ecm_storage_row (ID, CODING, PARENT_CODING, 
       TOTAL_LENGTH, REMAIN_LENGTH, ARCHIVE_COUNT, ITEM_COUNT, 
-      DESCRIPTION, STAUTS)
+      DESCRIPTION, STATUS)
     values (#{id,jdbcType=NVARCHAR}, #{coding,jdbcType=NVARCHAR}, #{parentCoding,jdbcType=NVARCHAR}, 
       #{totalLength,jdbcType=DOUBLE}, #{remainLength,jdbcType=DOUBLE}, #{archiveCount,jdbcType=INTEGER}, 
       #{itemCount,jdbcType=INTEGER}, 
-      #{description,jdbcType=NVARCHAR}, #{stauts,jdbcType=NVARCHAR})
+      #{description,jdbcType=NVARCHAR}, #{status,jdbcType=NVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmStorageColumn">
     insert into ecm_storage_row
@@ -71,8 +71,8 @@
       <if test="description != null">
         DESCRIPTION,
       </if>
-      <if test="stauts != null">
-        STAUTS,
+      <if test="status != null">
+        STATUS,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -100,8 +100,8 @@
       <if test="description != null">
         #{description,jdbcType=NVARCHAR},
       </if>
-      <if test="stauts != null">
-        #{stauts,jdbcType=NVARCHAR},
+      <if test="status != null">
+        #{status,jdbcType=NVARCHAR},
       </if>
     </trim>
   </insert>
@@ -129,8 +129,8 @@
       <if test="description != null">
         DESCRIPTION = #{description,jdbcType=NVARCHAR},
       </if>
-      <if test="stauts != null">
-        STAUTS = #{stauts,jdbcType=NVARCHAR},
+      <if test="status != null">
+        STATUS = #{status,jdbcType=NVARCHAR},
       </if>
     </set>
     where ID = #{id,jdbcType=NVARCHAR}
@@ -144,7 +144,7 @@
       ARCHIVE_COUNT = #{archiveCount,jdbcType=INTEGER},
       ITEM_COUNT = #{itemCount,jdbcType=INTEGER},
       DESCRIPTION = #{description,jdbcType=NVARCHAR},
-      STAUTS = #{stauts,jdbcType=NVARCHAR}
+      STATUS = #{status,jdbcType=NVARCHAR}
     where ID = #{id,jdbcType=NVARCHAR}
   </update>
 </mapper>

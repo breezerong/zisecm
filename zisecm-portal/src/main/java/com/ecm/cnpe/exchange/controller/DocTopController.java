@@ -110,9 +110,9 @@ public class DocTopController extends ControllerAbstract  {
 					+ " (C_ITEM_TYPE='文函') and "
 					+ "C_IS_RELEASED=1 and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
 			sqlreceivedNum = "select count(*) as receivedNum from "
-					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STAUTS as STAUTS,b.TO_NAME "
+					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STATUS as STATUS,b.TO_NAME "
 					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where C_ITEM_TYPE='文函' and "
-					+ "TYPE_NAME!='相关文件' and ( stauts='待接收' and("+whereSql+" or  TO_NAME='"+getLCompany+"')))";
+					+ "TYPE_NAME!='相关文件' and ( status='待接收' and("+whereSql+" or  TO_NAME='"+getLCompany+"')))";
 			String sqlSubmissiondcNum="select count(*) as submissiondcNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
 					+ "(status='' or status is null or status='新建') and "+whereSql+")";

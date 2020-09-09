@@ -1,180 +1,175 @@
 <template>
-    <DataLayout>
-    
-        <template v-slot:header>
-            <el-form inline="true">
-            <el-form-item>
-            <DataSelect v-model="value" dataUrl="/exchange/project/myproject" 
-            dataValueField="name" dataTextField="name" includeAll
+  <DataLayout>
+    <template v-slot:header>
+      <el-form inline="true">
+        <el-form-item>
+          <DataSelect
+            v-model="value"
+            data-url="/exchange/project/myproject"
+            data-value-field="name"
+            data-text-field="name"
+            includeAll
             @onLoadnDataSuccess="onLoadnDataSuccess"
-            ></DataSelect></el-form-item>
-            <el-form-item>
-                  <el-select
-                    name="selectCProcessStatus"
-                    v-model="Cstatus"
-                    placeholder="反馈状态"
-                    style="display:block;"
-                >
+          ></DataSelect>
+        </el-form-item>
+        <el-form-item>
+          <el-select
+            name="selectCProcessStatus"
+            v-model="Cstatus"
+            placeholder="反馈状态"
+            style="display:block;"
+          >
             <el-option
-             v-for="item in processStatus"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-                </el-option>
-                </div>
-            </el-select>
-            </el-form-item>
-            <el-form-item><el-input v-model="input" :placeholder="$t('message.selectByCoding')" style="width:200px"></el-input></el-form-item>
-            <el-form-item><el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button></el-form-item>
-            </el-form>
-        </template>
-        <template v-slot:main="{layout}">
-                <el-row>
-                <el-col :span="24">
-                    <!--condition="creator='@currentuser' AND company='@company' AND status='已驳回'">
-                    <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
-            <DataGrid ref="mainDataGrid" 
-            dataUrl="/dc/getDocuments4Cnpe"
+              v-for="item in processStatus"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="input" :placeholder="$t('message.selectByCoding')" style="width:200px"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template v-slot:main="{layout}">
+        <DataGrid
+            ref="mainDataGrid"
+            data-url="/dc/getDocuments4Cnpe"
             isshowOption
             gridViewName="我的驳回申请"
-            condition=""
-            v-bind="tables.main":tableHeight="layout.height-166"
-            @rowclick="rowClick" 
+            condition
+            v-bind="tables.main"
+            :tableHeight="layout.height-166"
+            @rowclick="rowClick"
             @selectchange="selectChange"
-           ></DataGrid>
-                </el-col>
-                </el-row>
-        </template>
-   
-    </DataLayout>
+          ></DataGrid>
+    </template>
+  </DataLayout>
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
-import ExcelUtil from '@/utils/excel.js'
-import DataSelect from '@/components/ecm-data-select'
-import DataLayout from '@/components/ecm-data-layout'
-import AddCondition from '@/views/record/AddCondition.vue'
+import ExcelUtil from "@/utils/excel.js";
+import DataSelect from "@/components/ecm-data-select";
+import DataLayout from "@/components/ecm-data-layout";
+import AddCondition from "@/views/record/AddCondition.vue";
 export default {
-    name: "ICMFeedback",
-    data(){
-        return{
-            isCNPE:false,
-            tables:{
-                main:{
-                    dataList:[],
-                    height:"",
-                    isshowoption:true,
-                    isshowCustom:false,
-                    isShowPropertyButton:true,
-                    isShowMoreOption:false,
-                    isShowChangeList:false,
-                    isInitData:false,
-                    isshowicon:false
-                },
-               itemDataList: [],
-               loading: false,
-               status : '',
-            },
-            processStatus:[{
-                label : "待确认",
-                value : "待确认",
-            },
-            {
-                label : "已驳回",
-                value : "已驳回",
-            },
-            {
-                label : "拒绝驳回",
-                value : "拒绝驳回",
-            },],
-            selectedItems: [],
-            selectedItemId: "",
-            value:'',
-            input:'',
-            Cstatus:'待确认',
-            hiddenInput:'hidden',
-            typeName:"ICM",
-        }
-    },
-
- created(){
-
-
-    },
-
-
-
- mounted(){
-        if(!this.validataPermission()){
-            //跳转至权限提醒页
-            let _self=this;
-            _self.$nextTick(()=>{
-                _self.$router.push({ path: '/NoPermission' })
-            })
-            console.log(sessionStorage.data.data.groupname)
-        }   
-      //this.search()  
-    },
-
-    methods: {
-
-        onLoadnDataSuccess(v,o){
-            this.search();
+  name: "MyApplyReject",
+  data() {
+    return {
+      isCNPE: false,
+      tables: {
+        main: {
+          dataList: [],
+          height: "",
+          isshowoption: true,
+          isshowCustom: false,
+          isShowPropertyButton: true,
+          isShowMoreOption: false,
+          isShowChangeList: false,
+          isInitData: false,
+          isshowicon: false,
         },
-        cellMouseEnter(row, column, cell, event){
-        this.selectRow=row;
- 
+        itemDataList: [],
+        loading: false,
+        status: "",
+      },
+      processStatus: [
+        {
+          label: "待确认",
+          value: "待确认",
         },
-     rowClick(row){
-      this.selectRow=row;
-      console.log(row)
+        {
+          label: "已驳回",
+          value: "已驳回",
+        },
+        {
+          label: "拒绝驳回",
+          value: "拒绝驳回",
+        },
+      ],
+      selectedItems: [],
+      selectedItemId: "",
+      value: "",
+      input: "",
+      Cstatus: "待确认",
+      hiddenInput: "hidden",
+      typeName: "ICM",
+    };
+  },
+
+  created() {},
+
+  mounted() {
+    if (!this.validataPermission()) {
+      //跳转至权限提醒页
+      let _self = this;
+      _self.$nextTick(() => {
+        _self.$router.push({ path: "/NoPermission" });
+      });
+      console.log(sessionStorage.data.data.groupname);
+    }
+    //this.search()
+  },
+
+  methods: {
+    onLoadnDataSuccess(v, o) {
+      this.search();
     },
-     selectChange(val) {
+    cellMouseEnter(row, column, cell, event) {
+      this.selectRow = row;
+    },
+    rowClick(row) {
+      this.selectRow = row;
+      console.log(row);
+    },
+    selectChange(val) {
       // console.log(JSON.stringify(val));
       this.selectedItems = val;
     },
-    search(){
-        let orS = ""
-        let wheres = ["CODING"]
-        let _self = this
-        var k1="C_EX4_STRING='"+this.currentUser().userName+"'"
-        if(_self.value != null &&_self.value!='所有项目'){
-                k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
-            }
-        if(_self.Cstatus != undefined && _self.Cstatus != null){
-                k1+="AND C_EX7_STRING = '"+_self.Cstatus+"'"
-        }
-        if(_self.input.trim().length>0){
-                wheres.forEach(function(item){
-                    if(orS.length>0){
-                        orS+=" OR "
-                    }
-                    orS+=item + " LIKE '%"+ _self.input+"%'"
-                })
-                k1+=" AND (" + orS + ")"
-            }
-        _self.$refs.mainDataGrid.condition=k1
-        _self.$refs.mainDataGrid.loadGridData();
+    search() {
+      let orS = "";
+      let wheres = ["CODING"];
+      let _self = this;
+      var k1 = "C_EX4_STRING='" + this.currentUser().userName + "'";
+      if (_self.value != null && _self.value != "所有项目") {
+        k1 += " AND C_PROJECT_NAME in (" + _self.value + ")";
+      }
+      if (_self.Cstatus != undefined && _self.Cstatus != null) {
+        k1 += "AND C_EX7_STRING = '" + _self.Cstatus + "'";
+      }
+      if (_self.input.trim().length > 0) {
+        wheres.forEach(function (item) {
+          if (orS.length > 0) {
+            orS += " OR ";
+          }
+          orS += item + " LIKE '%" + _self.input + "%'";
+        });
+        k1 += " AND (" + orS + ")";
+      }
+      _self.$refs.mainDataGrid.condition = k1;
+      _self.$refs.mainDataGrid.loadGridData();
     },
-    },
-    props: {
-        
-    },
-    components: {
-        ShowProperty:ShowProperty,
-        DataGrid:DataGrid,
-        DataSelect:DataSelect,
-        DataLayout:DataLayout,
-        AddCondition:AddCondition,
-    }
-}
+  },
+  props: {},
+  components: {
+    ShowProperty: ShowProperty,
+    DataGrid: DataGrid,
+    DataSelect: DataSelect,
+    DataLayout: DataLayout,
+    AddCondition: AddCondition,
+  },
+};
 </script>
 <style scoped>
-.el-header{
-    height: auto;
+.el-header {
+  height: auto;
 }
-.el-form-item{
-    margin:0px
+.el-form-item {
+  margin: 0px;
 }
 </style>

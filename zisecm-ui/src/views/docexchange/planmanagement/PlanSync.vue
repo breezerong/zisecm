@@ -173,7 +173,7 @@
                     :label="$t('application.ExecuteDate')"
                     width="200"
                   ></el-table-column>
-                  <el-table-column prop="stauts" :label="$t('field.status')" width="200"></el-table-column>
+                  <el-table-column prop="status" :label="$t('field.status')" width="200"></el-table-column>
                 </el-table>
               </el-tab-pane>
             </el-tabs>

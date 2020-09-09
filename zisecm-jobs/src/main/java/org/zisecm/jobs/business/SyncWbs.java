@@ -86,7 +86,7 @@ public class SyncWbs {
 			
 			Project project = p6Service.getProjectInfo(projectId);
 			if(project==null) {
-				excSynBatch.setStauts("错误");
+				excSynBatch.setStatus("错误");
 				excSynBatch.setNewCount(newCount);
 				excSynBatch.setUpdateCount(updateCount);
 				excSynBatch.setFailCount(1);
@@ -95,7 +95,7 @@ public class SyncWbs {
 				detail.setBatchNum(excSynBatch.getBatchNum());
 				detail.setAppName("P6");
 				detail.setActionName("同步");
-				detail.setStauts("错误");
+				detail.setStatus("错误");
 				detail.setErrorMessage("项目编号 "+projectId+" 在P6中不存在");
 				excSynDetailService.newObject(detail);
 			}else {
@@ -238,7 +238,7 @@ public class SyncWbs {
 					}
 				}
 				
-				excSynBatch.setStauts("已同步");
+				excSynBatch.setStatus("已同步");
 				excSynBatch.setNewCount(newCount);
 				excSynBatch.setUpdateCount(updateCount);
 				excSynBatch.setFailCount(failCount);

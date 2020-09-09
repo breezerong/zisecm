@@ -37,7 +37,7 @@ public class EcmStorageRowService {
 	public List<Map<String,Object>> getAllStorageRows(String token,String column) {
 		String sql="select ID, CODING, PARENT_CODING, TOTAL_LENGTH, REMAIN_LENGTH,"
 				+ " ARCHIVE_COUNT, ITEM_COUNT, DESCRIPTION," + 
-				" STAUTS from ecm_storage_row where PARENT_CODING='"+column+"'";
+				" STATUS from ecm_storage_row where PARENT_CODING='"+column+"'";
 		return storageRowDao.executeSQL(sql);
 		
 	}
@@ -45,7 +45,7 @@ public class EcmStorageRowService {
 	public List<Map<String,Object>> getAllStorageRows(String token,Pager pager,String column) {
 		String sql="select ID, CODING, PARENT_CODING, TOTAL_LENGTH, REMAIN_LENGTH,"
 				+ " ARCHIVE_COUNT, ITEM_COUNT, DESCRIPTION," + 
-				" STAUTS from ecm_storage_row where PARENT_CODING='"+column+"'";
+				" STATUS from ecm_storage_row where PARENT_CODING='"+column+"'";
 		return storageRowDao.executeSQL(pager,sql);
 		
 	}
@@ -53,7 +53,7 @@ public class EcmStorageRowService {
 	public List<Map<String,Object>> getRowById(String token,String id) {
 		String sql="select ID, CODING, PARENT_CODING, TOTAL_LENGTH, REMAIN_LENGTH,"
 				+ " ARCHIVE_COUNT, ITEM_COUNT, DESCRIPTION," + 
-				" STAUTS from ecm_storage_row where ID='"+id+"'";
+				" STATUS from ecm_storage_row where ID='"+id+"'";
 		return storageRowDao.executeSQL(sql);
 		
 	}

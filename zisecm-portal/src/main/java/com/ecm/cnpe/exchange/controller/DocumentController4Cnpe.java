@@ -101,7 +101,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
 				excTransfer.setSendDate(new Date());
 				
-				excTransfer.setStauts(nextStatus);
+				excTransfer.setStatus(nextStatus);
 				excTransferService.newObject(excTransfer);
 				
 			}
@@ -117,7 +117,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
 				excTransfer.setSendDate(new Date());
 				
-				excTransfer.setStauts(nextStatus);
+				excTransfer.setStatus(nextStatus);
 				excTransferService.newObject(excTransfer);
 				
 			}
@@ -144,7 +144,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		List<String> idsList = JSONUtils.stringToArray(idsStr);
 
 		for(String childId : idsList) {
-			String sql = "update exc_transfer set STAUTS='待接收' where DOC_ID='"+childId+"'";	
+			String sql = "update exc_transfer set STATUS='待接收' where DOC_ID='"+childId+"'";	
 			ecmDocument.executeSQL(sql);
 		}
 		mp.put("code", ActionContext.SUCESS);
@@ -183,7 +183,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 //				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
 //				excTransfer.setSendDate(new Date());
 //				String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
-//				excTransfer.setStauts(nextStatus);
+//				excTransfer.setStatus(nextStatus);
 //				excTransferService.newObject(excTransfer);
 //				if("新建".equals(currentStatus)) {
 //					doc.addAttribute("c_item_date", new Date());
@@ -227,12 +227,12 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			for(Map<String, Object> childId : excTransferIds) {
 				
 				ExcTransfer doc= excTransferService.getObjectById(childId.get("ID").toString());
-				String currentStatus= doc.getStauts();
+				String currentStatus= doc.getStatus();
 				if(currentStatus==null||"".equals(currentStatus)) {
 					currentStatus="新建";
 				}
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, null, true);
-				doc.setStauts(nextStatus);
+				doc.setStatus(nextStatus);
 				excTransferService.updateObject(doc);
 //				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
 				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
@@ -313,12 +313,12 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			//
 			for(Map<String, Object> childId : excTransferIds) {
 				ExcTransfer doc= excTransferService.getObjectById(childId.get("ID").toString());
-				String currentStatus= doc.getStauts();
+				String currentStatus= doc.getStatus();
 				if(currentStatus==null||"".equals(currentStatus)) {
 					currentStatus="新建";
 				}
 				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, null, true);
-				doc.setStauts(previousStatus);
+				doc.setStatus(previousStatus);
 				doc.setComment(rejectCommon);
 				doc.setRejecter(this.getSession().getCurrentUser().getUserName());
 				doc.setRejectDate(new Date());
