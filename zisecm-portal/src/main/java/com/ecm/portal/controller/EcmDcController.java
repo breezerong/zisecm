@@ -2214,6 +2214,27 @@ public class EcmDcController extends ControllerAbstract {
 						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 						files.add(new File(storePath + en.getFilePath()));
 						fileNames.add(coding +"_"+revision+ "." + en.getFormatName());
+						
+						String childAttachSql="select CHILD_ID,NAME from ecm_relation where (NAME='相关文件' or NAME='附件' or name='设计文件') " + 
+								"and PARENT_ID ='"+objectIdsList[i]+"'";
+						List<Map<String,Object>> attacheFiles= ecmRelationMapper.executeSQL(childAttachSql);
+						for(int x=0;attacheFiles!=null&&x<attacheFiles.size();x++) {
+							Map<String,Object> attacheFile= attacheFiles.get(x);
+							if(attacheFile!=null) {
+								String attachID=attacheFile.get("CHILD_ID").toString();
+								EcmDocument attachDoc= documentService.getObjectById(getToken(), attachID);
+								if(attachDoc==null) {
+									continue;
+								}
+								List<EcmContent> attachDocEnList= contentMapper.getContents(attachID, 1);
+								if(attachDocEnList!=null&&attachDocEnList.size()>0) {
+									EcmContent attachDocEn=attachDocEnList.get(0);
+									files.add(new File(storePath + attachDocEn.getFilePath()));
+									fileNames.add(coding+"_"+revision+"_附件/"+coding+"_"+revision+"_附件_"+(x+1) +"." + attachDocEn.getFormatName());
+								}
+							}
+						}
+						
 					}
 				}
 			} catch (AccessDeniedException e) {
@@ -2267,6 +2288,26 @@ public class EcmDcController extends ControllerAbstract {
 								String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 								files.add(new File(storePath + en.getFilePath()));
 								fileNames.add(coding+"_"+revision+"/"+relationName+"/"+childCoding+"_"+childRevision + "." + en.getFormatName());
+							}
+							String childAttachSql="select CHILD_ID,NAME from ecm_relation where (NAME='相关文件' or NAME='附件' or name='设计文件') " + 
+									"and PARENT_ID ='"+childId+"'";
+							List<Map<String,Object>> attacheFiles= ecmRelationMapper.executeSQL(childAttachSql);
+							for(int x=0;attacheFiles!=null&&x<attacheFiles.size();x++) {
+								Map<String,Object> attacheFile= attacheFiles.get(x);
+								if(attacheFile!=null) {
+									String attachID=attacheFile.get("CHILD_ID").toString();
+									EcmDocument attachDoc= documentService.getObjectById(getToken(), attachID);
+									if(attachDoc==null) {
+										continue;
+									}
+									List<EcmContent> attachDocEnList= contentMapper.getContents(attachID, 1);
+									if(attachDocEnList!=null&&attachDocEnList.size()>0) {
+										EcmContent attachDocEn=attachDocEnList.get(0);
+										String storePath = CacheManagerOper.getEcmStores().get(attachDocEn.getStoreName()).getStorePath();
+										files.add(new File(storePath + attachDocEn.getFilePath()));
+										fileNames.add(coding+"_"+revision+"/"+relationName+"/"+childCoding+"_"+childRevision+"_附件"+"/"+childCoding+"_"+childRevision +"附件_"+(x+1) +"." + attachDocEn.getFormatName());
+									}
+								}
 							}
 						}
 					}
