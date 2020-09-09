@@ -142,6 +142,7 @@
                 </el-form-item>
                 <el-form-item>
                     <!-- beforeDispense() -->
+                    <!-- 分发 -->
                     <el-button type="success" v-on:click="onDispenseDc()">{{$t('application.Dispense')}}</el-button>
                 </el-form-item>
                 <el-form-item>

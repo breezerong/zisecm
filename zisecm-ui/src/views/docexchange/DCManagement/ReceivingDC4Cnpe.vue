@@ -1,7 +1,7 @@
 <template>
     <DataLayout>
         <template v-slot:header>
-            <!-- 待接收文函 -->
+            <!-- 分包商待接收文函 -->
             <!-- 设计文件附件 -->
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
@@ -101,6 +101,7 @@
                 <el-form-item>
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
+                <!-- 接收 -->
                 <el-form-item>
                     <el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button>
                 </el-form-item>
@@ -373,18 +374,18 @@ export default {
             // });
         },
         submit(){
-        let _self=this
-        if(this.selectedItems.length==0){
-                this.$message({
-                        showClose: true,
-                        message: _self.$t("message.pleaseSelectDC"),
-                        duration: 2000,
-                        type: 'warning' 
-                    });
-                    return
-            }
-           this.onNextStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-            $refs.relevantDoc])
+            let _self=this
+            if(this.selectedItems.length==0){
+                    this.$message({
+                            showClose: true,
+                            message: _self.$t("message.pleaseSelectDC"),
+                            duration: 2000,
+                            type: 'warning' 
+                        });
+                        return
+                }
+            this.onNextStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
+                $refs.relevantDoc])
         },
         
         dbclick(row){
