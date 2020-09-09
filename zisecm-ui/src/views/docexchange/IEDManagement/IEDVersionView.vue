@@ -95,8 +95,11 @@ export default {
   methods:{
     onSplitResize(topPercent){
       // 顶部百分比*100
-      this.topPercent = topPercent
-      this.setStorageNumber(this.topStorageName, topPercent)      
+      if(topPercent != undefined){
+        this.topPercent = topPercent
+      }
+      
+      this.setStorageNumber(this.topStorageName, this.topPercent)      
     },
     onDataGridRowClick:function(row){
         console.log(row)
@@ -131,19 +134,28 @@ export default {
         this.id=row.ID
         this.tables.mainDg.condition="VERSION_ID='"+this.id+"'"
     },
-    search(){
+    search(versionId){
+      console.log("IEDVersionView")
+      console.log(versionId)
       this.$refs.rfDg.itemDataList=[]
       this.$refs.dfDg.itemDataList=[]
       this.$refs.tfDg.itemDataList=[]
       
+      if(versionId != undefined){
+        this.docId = versionId
+      }
+
       this.$refs.mainDg.condition = "VERSION_ID='"+this.docId+"'"
       this.$refs.mainDg.loadGridData()
+      this.onSplitResize()
     }
   },
   mounted(){
     setTimeout(() => {
       this.topPercent = this.getStorageNumber(this.topStorageName,60)
     }, 300);
+
+    
   }
 }
 </script>

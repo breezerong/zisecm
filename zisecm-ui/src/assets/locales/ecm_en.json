@@ -248,7 +248,8 @@
     "iedContrast":"IEDContrast",
     "delayNum":"DelayReply Nums",
     "Dispense":"Dispense",
-    "DelayCloseReason":"Current Delay Reason is Right?"
+    "DelayCloseReason":"Current Delay Reason is Right?",
+    "startRejectApply": "StartRejectApply"
 },
 "skin": {
     "Blue": "Blue",
@@ -362,7 +363,9 @@
     "delayFeedback": "DelayFeedback",
     "delayConfirm": "DelayFeedbackConfirm",
     "delayOpenConfirm":"DelayOpenConfirm",
-    "delayCloseConfirm":"DelayCloseConfim"
+    "delayCloseConfirm":"DelayCloseConfim",
+    "applyReject": "ConfirmRejectApply",
+    "MyApplyReject": "MyRejectApply"
 },
 "message": {
     "saveSuccess":"Save Success",

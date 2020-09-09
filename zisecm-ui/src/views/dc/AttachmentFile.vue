@@ -15,7 +15,7 @@
                 :parentId="docId"
                 >
                     <template slot="dropdownItem" slot-scope="scope">
-                        <el-dropdown-item @click.native="onDeleleItem([scope.data.row],[$refs.attachmentDoc])">删除</el-dropdown-item>
+                        <el-dropdown-item icon="el-icon-delete" @click.native="onDeleleItem([scope.data.row],[$refs.attachmentDoc])">删除</el-dropdown-item>
 
                     </template>
                 </DataGrid>

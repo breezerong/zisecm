@@ -94,6 +94,36 @@ export const cnpeRouter=
         meta:{
             requireAuth: true,
             permit: 1,
+            title:'applyReject'
+        },
+        path:'/cnpe/DCManagement/applyRejectCnpe',
+        name:'申请驳回确认Cnpe',
+        component:()=>import('@/views/docexchange/DCManagement/ApplyRejectCnpe.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'applyReject'
+        },
+        path:'/cnpe/DCManagement/applyRejectSub',
+        name:'申请驳回确认Sub',
+        component:()=>import('@/views/docexchange/DCManagement/ApplyRejectSub.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
+            title:'MyApplyReject'
+        },
+        path:'/cnpe/DCManagement/applyRejectSub',
+        name:'我的申请驳回',
+        component:()=>import('@/views/docexchange/DCManagement/MyApplyReject.vue')
+    },
+    {
+        meta:{
+            requireAuth: true,
+            permit: 1,
             title:'ReceivedDcFromCnpe'
         },
         path:'/cnpe/DCManagement/ReceivedDC4Cnpe',
