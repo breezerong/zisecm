@@ -25,13 +25,13 @@
         <result column="APPLY_DATE" property="applyDate" jdbcType="TIMESTAMP" />
         <result column="CONFIRMER" property="confirmer" jdbcType="NVARCHAR" />
         <result column="CONFIRM_DATE" property="confirmDate" jdbcType="TIMESTAMP" />
-        <result column="STAUTS1" property="stauts1" jdbcType="NVARCHAR" />
+        <result column="STATUS1" property="status1" jdbcType="NVARCHAR" />
         <result column="COMMENT1" property="comment1" jdbcType="NVARCHAR" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS, STATUS, APPLICANT, APPLY_DATE, CONFIRMER, CONFIRM_DATE, STAUTS1, COMMENT1
+        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS, STATUS, APPLICANT, APPLY_DATE, CONFIRMER, CONFIRM_DATE, STATUS1, COMMENT1
     </sql>
 
 
@@ -80,7 +80,7 @@
 		    APPLY_DATE,
 		    CONFIRMER,
 		    CONFIRM_DATE,
-		    STAUTS1,
+		    STATUS1,
 		    COMMENT1
       )
     values (
@@ -105,7 +105,7 @@
     		 #{applyDate},
     		 #{confirmer},
     		 #{confirmDate},
-    		 #{stauts1},
+    		 #{status1},
     		 #{comment1}
     	)
   </insert>
@@ -176,8 +176,8 @@
     	<if test="confirmDate != null">
     		 CONFIRM_DATE,
     	</if>
-    	<if test="stauts1 != null">
-    		 STAUTS1,
+    	<if test="status1 != null">
+    		 STATUS1,
     	</if>
     	<if test="comment1 != null">
     		 COMMENT1,
@@ -247,8 +247,8 @@
     	<if test="confirmDate != null">
     		#{confirmDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts1 != null">
-    		#{stauts1,jdbcType=NVARCHAR}, 		 
+    	<if test="status1 != null">
+    		#{status1,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="comment1 != null">
     		#{comment1,jdbcType=NVARCHAR}, 		 
@@ -323,8 +323,8 @@
     	<if test="confirmDate != null">
     		CONFIRM_DATE=#{confirmDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts1 != null">
-    		STAUTS1=#{stauts1,jdbcType=NVARCHAR}, 		 
+    	<if test="status1 != null">
+    		STATUS1=#{status1,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="comment1 != null">
     		COMMENT1=#{comment1,jdbcType=NVARCHAR}, 		 
@@ -356,7 +356,7 @@
    		APPLY_DATE=#{applyDate},
    		CONFIRMER=#{confirmer},
    		CONFIRM_DATE=#{confirmDate},
-   		STAUTS1=#{stauts1},
+   		STATUS1=#{status1},
    		COMMENT1=#{comment1}
     where ID = #{id,jdbcType=VARCHAR}
   </update>

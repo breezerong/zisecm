@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ecm.common.util.DateUtils;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 /**
  * <p>
@@ -93,6 +93,87 @@ public class ExcTransfer extends EcmObject {
      * 同步状态
      */
     private String synStatus;
+    /**
+     * 申请人
+     */
+    private String applicant;
+
+    public String getApplicant() {
+		return applicant;
+	}
+
+	public void setApplicant(String applicant) {
+		this.applicant = applicant;
+	}
+
+	public Date getApplyDate() {
+		return applyDate;
+	}
+
+	public void setApplyDate(Date applyDate) {
+		this.applyDate = applyDate;
+	}
+
+	public String getConfirmer() {
+		return confirmer;
+	}
+
+	public void setConfirmer(String confirmer) {
+		this.confirmer = confirmer;
+	}
+
+	public Date getConfirmDate() {
+		return confirmDate;
+	}
+
+	public void setConfirmDate(Date confirmDate) {
+		this.confirmDate = confirmDate;
+	}
+
+	public String getStatus1() {
+		return status1;
+	}
+
+	public void setStatus1(String status1) {
+		this.status1 = status1;
+	}
+
+	public String getComment1() {
+		return comment1;
+	}
+
+	public void setComment1(String comment1) {
+		this.comment1 = comment1;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	/**
+     * 申请日期
+     */
+    private Date applyDate;
+
+    /**
+     * 确认
+     */
+    private String confirmer;
+
+    /**
+     * 确认时间
+     */
+    private Date confirmDate;
+
+    /**
+     * 申请状态
+     */
+    private String status1;
+
+    /**
+     * 申请信息
+     */
+    private String comment1;
     
     Map<String,Object> attributes=new HashMap<String, Object>();
     private String getString(Object val) {
@@ -161,6 +242,30 @@ public class ExcTransfer extends EcmObject {
 	    }
 	    if(attributes.get("SYN_STATUS")!=null) {
 	    	this.setSynStatus(getString(attributes.get("SYN_STATUS")));
+	    }
+	    
+	    if(attributes.get("APPLICANT")!=null) {
+	    	this.setApplicant(getString(attributes.get("APPLICANT")));
+	    }
+	    
+	    if(attributes.get("APPLY_DATE")!=null) {
+	    	this.setApplyDate(getDate(attributes.get("APPLY_DATE")));
+	    }
+	    
+	    if(attributes.get("CONFIRMER")!=null) {
+	    	this.setConfirmer(getString(attributes.get("CONFIRMER")));
+	    }
+	    
+	    if(attributes.get("CONFIRM_DATE")!=null) {
+	    	this.setConfirmDate(getDate(attributes.get("CONFIRM_DATE")));
+	    }
+	    
+	    if(attributes.get("STATUS1")!=null) {
+	    	this.setStatus1(getString(attributes.get("STATUS1")));
+	    }
+	    
+	    if(attributes.get("COMMENT1")!=null) {
+	    	this.setComment1(getString(attributes.get("COMMENT1")));
 	    }
 	    
 	}
@@ -289,23 +394,29 @@ public class ExcTransfer extends EcmObject {
 
     @Override
     public String toString() {
-        return "ExcTransfer{" +
-            "id=" + getId() +
-            ", itemType=" + itemType +
-            ", docId=" + docId +
-            ", fromName=" + fromName +
-            ", toName=" + toName +
-            ", creationDate=" + creationDate +
-            ", creator=" + creator +
-            ", rejecter=" + rejecter +
-            ", rejectDate=" + rejectDate +
-            ", sender=" + sender +
-            ", sendDate=" + sendDate +
-            ", receiver=" + receiver +
-            ", receiveDate=" + receiveDate +
-            ", stauts=" + stauts +
-            ", comment=" + comment +
-            ", synStatus=" + synStatus +
-        "}";
+    	return "ExcTransfer{" +
+                "id=" + getId() +
+                ", itemType=" + itemType +
+                ", docId=" + docId +
+                ", fromName=" + fromName +
+                ", toName=" + toName +
+                ", creationDate=" + creationDate +
+                ", creator=" + creator +
+                ", rejecter=" + rejecter +
+                ", rejectDate=" + rejectDate +
+                ", sender=" + sender +
+                ", sendDate=" + sendDate +
+                ", receiver=" + receiver +
+                ", receiveDate=" + receiveDate +
+                ", stauts=" + stauts +
+                ", comment=" + comment +
+                ", synStatus=" + synStatus +
+                ", applicant=" + applicant +
+                ", applyDate=" + applyDate +
+                ", confirmer=" + confirmer +
+                ", confirmDate=" + confirmDate +
+                ", status1=" + status1 +
+                ", comment1=" + comment1 +
+            "}";
     }
 }
