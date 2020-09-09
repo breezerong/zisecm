@@ -29,6 +29,7 @@
                     <el-form-item :label="$t('application.fileType')" :rules="[{required:true,message:'必填',trigger:'blur'}]">
                     <el-select
                         name="selectName"
+                        v-model="selectedChildrenType"
                         :placeholder="$t('application.selectFileType')"
                         style="display:block;"
                     >
