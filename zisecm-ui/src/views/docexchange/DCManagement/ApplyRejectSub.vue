@@ -126,7 +126,7 @@
                             v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGrid"
-                            condition=" TR_ITEM_TYPE=1 "
+                            condition=" ITEM_TYPE=1 and C_EX7_STRING='待确认' and C_COMPANY='@company' "
                             @rowclick="rowClick"
                             :isshowCustom="false"
                             :isEditProperty="false"
@@ -541,7 +541,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='已确认'";
+            let key=" ITEM_TYPE=1 and C_EX7_STRING='待确认' and C_COMPANY='@company' " 
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{
