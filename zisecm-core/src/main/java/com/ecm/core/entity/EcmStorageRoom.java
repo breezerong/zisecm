@@ -19,7 +19,7 @@ public class EcmStorageRoom {
 
     private String description;
 
-    private String stauts;
+    private String status;
     
     private Map<String, Object> attributes = new HashMap<String, Object>();
 
@@ -100,14 +100,14 @@ public class EcmStorageRoom {
 		}
     }
 
-    public String getStauts() {
-        return stauts;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStauts(String stauts) {
-        this.stauts = stauts == null ? null : stauts.trim();
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
         if(attributes!=null) {
-			attributes.put("STAUTS",  this.stauts);
+			attributes.put("STATUS",  this.status);
 		}
     }
     
@@ -137,8 +137,8 @@ public class EcmStorageRoom {
 			this.setDescription(getString(attributes.get("DESCRIPTION")));
 		}
 		
-		if(attributes.get("STAUTS")!=null) {
-			this.setStauts(getString(attributes.get("STAUTS")));
+		if(attributes.get("STATUS")!=null) {
+			this.setStatus(getString(attributes.get("STATUS")));
 		}
     }
     

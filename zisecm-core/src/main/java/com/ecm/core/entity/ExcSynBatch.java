@@ -39,7 +39,7 @@ public class ExcSynBatch extends EcmObject {
     /**
      * 状态
      */
-    private String stauts;
+    private String status;
 
     /**
      * 执行时间
@@ -90,12 +90,12 @@ public class ExcSynBatch extends EcmObject {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-    public String getStauts() {
-        return stauts;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStauts(String stauts) {
-        this.stauts = stauts;
+    public void setStatus(String status) {
+        this.status = status;
     }
     public Date getExecuteDate() {
         return executeDate;
@@ -134,7 +134,7 @@ public class ExcSynBatch extends EcmObject {
             ", actionName=" + actionName +
             ", batchNum=" + batchNum +
             ", creationDate=" + creationDate +
-            ", stauts=" + stauts +
+            ", status=" + status +
             ", executeDate=" + executeDate +
             ", newCount=" + newCount +
             ", updateCount=" + updateCount +

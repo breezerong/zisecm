@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog title="驳回备注" :visible.sync="showDialog" width="80%" @close="showDialog=false">
+        <el-dialog title="驳回" :visible.sync="showDialog" width="50%" @close="showDialog=false">
             <el-input
               type="textarea"
               :rows="5"

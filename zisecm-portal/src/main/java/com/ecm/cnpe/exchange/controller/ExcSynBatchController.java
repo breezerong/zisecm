@@ -99,7 +99,7 @@ public class ExcSynBatchController  extends ControllerAbstract {
 			temp.setAppName("P6");
 			temp.setCreationDate(now);
 			temp.setActionName("同步");
-			temp.setStauts("新建");
+			temp.setStatus("新建");
 			temp.setBatchNum(childId);
 			batchService.newObject(temp);
 			

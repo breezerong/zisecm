@@ -116,7 +116,7 @@ export const cnpeRouter=
             permit: 1,
             title:'MyApplyReject'
         },
-        path:'/cnpe/DCManagement/applyRejectSub',
+        path:'/cnpe/DCManagement/myApplyReject',
         name:'我的申请驳回',
         component:()=>import('@/views/docexchange/DCManagement/MyApplyReject.vue')
     },

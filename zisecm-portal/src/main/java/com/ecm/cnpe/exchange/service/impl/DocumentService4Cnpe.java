@@ -32,10 +32,10 @@ public class DocumentService4Cnpe extends DocumentService{
 	
 	private List<String> TRS;  
 	
-	private String baseColumns = "TRSID,ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
+	private String baseColumns = "SYN_APP,TRSID,ID,FOLDER_ID,CREATION_DATE, CREATOR, MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,REVISION,ACL_NAME,FORMAT_NAME,CONTENT_SIZE,ATTACHMENT_COUNT,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,"
-			+ "TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR,STATUS,STAUTS";
+			+ "TYPE_NAME,LIFECYCLE_NAME,LIFECYCLE_STATUS,LIFECYCLE_DIR,STATUS,C_COMPANY";
 	private String filterColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
@@ -62,7 +62,7 @@ public class DocumentService4Cnpe extends DocumentService{
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
 		String gvCondition=gv.getCondition();
 		
-		String columns="a.ID,a.NAME,a.TITLE,a.FOLDER_ID,a.STATUS,a.CREATION_DATE,a.CREATOR,a.TYPE_NAME,a.MODIFIER,a.MODIFIED_DATE," + 
+		String columns="a.ID,a.NAME,a.TITLE,a.FOLDER_ID,a.STATUS as DOC_STATUS,a.CREATION_DATE,a.CREATOR,a.TYPE_NAME,a.MODIFIER,a.MODIFIED_DATE," + 
 				"a.REVISION,a.CODING,a.C_ITEM_DATE,a.ACL_NAME,a.FORMAT_NAME,a.CONTENT_SIZE,a.ATTACHMENT_COUNT,a.SUB_TYPE," + 
 				"a.IS_CURRENT,a.IS_HIDDEN,a.C_DRAFTER,a.C_SECURITY_LEVEL,a.C_REVIEWER1,a.C_REVIEWER2,a.C_REVIEWER3,a.C_APPROVER,a.C_COMMENT,a.SYSTEM_VERSION," + 
 				"a.VERSION_ID,a.OWNER_NAME,a.LOCK_OWNER,a.LOCK_DATE,a.LOCK_CLIENT,a.C_PAGE_COUNT,a.C_PAGE_INDEX,a.C_ORDER_INDEX,a.C_RETENTION," + 
@@ -74,8 +74,8 @@ public class DocumentService4Cnpe extends DocumentService{
 				"a.C_COMMENT2,a.C_COMMENT3,a.C_COMMENT4,a.C_COMMENT5,a.C_COMMENT6,a.C_IDENTIFY,a.C_CODE1,a.C_CODE2,a.C_CODE3,a.C_CODE4,a.C_CODE5,a.C_CODE6," + 
 				"a.C_STRING1,a.C_STRING2,a.C_STRING3,a.C_STRING4,a.C_STRING5,a.C_STRING6,a.C_RESPONSIBLE,a.C_COMPANY," + 
 				"a.C_DEPARTMENT,a.C_SECTION,a.C_DRAFTER1,a.C_CHECKER,a.C_REVIEWER4,a.C_REVIEWER5,a.C_REVIEWER6,a.C_SENDER," + 
-				"a.C_RECEIVER,a.C_EX1_STRING,a.C_EX2_STRING,a.C_EX3_STRING,a.C_EX4_STRING," + 
-				"a.C_EX8_STRING,a.CREATION_UNIT,a.SYN_APP,a.SYN_ID,a.SYN_STATUS,a.CUSTOM_TYPE,a.C_DOUBLE1,a.C_DOUBLE2,a.C_ITEM1_DATE," + 
+				"a.C_RECEIVER,a.C_EX1_STRING,a.C_EX2_STRING,a.C_EX3_STRING," + 
+				"a.C_EX8_STRING,a.CREATION_UNIT,a.SYN_APP as SYN_APP,a.SYN_ID,a.SYN_STATUS,a.CUSTOM_TYPE,a.C_DOUBLE1,a.C_DOUBLE2,a.C_ITEM1_DATE," + 
 				"a.C_ITEM2_DATE,a.C_ITEM3_DATE,a.C_ITEM4_DATE,a.C_ITEM5_DATE,a.C_ITEM6_DATE,a.C_ITEM7_DATE,a.C_DRAFT_DATE," + 
 				"a.C_DRAFT1_DATE,a.C_CHECK_DATE,a.C_REVIEW1_DATE,a.C_REVIEW2_DATE,a.C_REVIEW3_DATE,a.C_REVIEW4_DATE,a.C_REVIEW5_DATE,a.C_REVIEW6_DATE,a.C_APPROVE_DATE," + 
 				"a.C_SEND_DATE,a.C_EX1_DATE,a.C_EX2_DATE,a.C_EX3_DATE,a.C_EX4_DATE,a.C_EX5_DATE,a.C_EX6_DATE,a.C_EX7_DATE,a.C_EX8_DATE,a.C_IS_RELEASED,a.C_DOC_DATE," + 
@@ -83,7 +83,9 @@ public class DocumentService4Cnpe extends DocumentService{
 				"a.C_ITEM_STATUS3,a.C_ITEM_STATUS4,a.C_ITEM_STATUS5";
 		
 		String sql="select "+ baseColumns + getGridColumn(gv, gridName) +" from (" + 
-				"	select "+columns+",b.ID as TRSID,b.STAUTS as STAUTS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,b.REJECT_DATE as C_REJECT_DATE,b.APPLICANT as C_EX5_STRING,b.COMMENT1 AS C_EX6_STRING,b.STATUS1 AS C_EX7_STRING,b.APPLY_DATE AS C_ITEM8_DATE,b.ITEM_TYPE as TR_ITEM_TYPE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
+
+				"select "+columns+",b.ID as TRSID,b.STATUS as STATUS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,b.CONFIRMER as C_EX4_STRING,b.REJECT_DATE as C_REJECT_DATE,b.APPLICANT as C_EX5_STRING,b.COMMENT1 AS C_EX6_STRING,b.STATUS1 AS C_EX7_STRING,b.APPLY_DATE AS C_ITEM8_DATE,b.ITEM_TYPE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
+
 				")t where "+gvCondition;		//把B表的ID也取出来备用
 		
 		
@@ -196,7 +198,7 @@ public class DocumentService4Cnpe extends DocumentService{
 			}
 			ExcTransfer excTransfer= getOneExcTransferByDocId(token, docId,tempTRS);
 			System.out.println(excTransfer);
-			excTransfer.setStauts("已作废");
+			excTransfer.setStatus("已作废");
 			excTransferService.updateObject(excTransfer);
 			i++;
 			

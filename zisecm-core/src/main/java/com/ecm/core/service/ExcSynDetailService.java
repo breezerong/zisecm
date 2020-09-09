@@ -22,7 +22,7 @@ import java.util.UUID;
  * @since 2020-06-24
  */
 @Service
-public class ExcSynDetailService  implements IExcSynDetailService {
+public class ExcSynDetailService extends EcmService implements IExcSynDetailService {
 	@Autowired
 	private ExcSynDetailMapper mapper;
 

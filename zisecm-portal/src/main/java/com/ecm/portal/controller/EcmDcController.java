@@ -2415,7 +2415,7 @@ public class EcmDcController extends ControllerAbstract {
 				
 				documentService.deleteObject(getToken(),childId);
 				if("驳回".equals(dc.getStatus())) {
-					OptionLogger.logger(detailService, dc, "驳回删除", 
+					OptionLogger.logger(getToken(), detailService, dc, "驳回删除", 
 							dc.getAttributeValue("C_COMPANY")!=null?dc.getAttributeValue("C_COMPANY").toString():"");
 				}
 			}catch(NullPointerException nu) {

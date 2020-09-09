@@ -27,12 +27,14 @@ public class SynDetailService extends EcmObjectService<ExcSynDetail> implements 
 	@Autowired
 	private ExcSynDetailMapper excSysnDetailMapper;
 	
+	public static String ignoreCompany = "中国核动力研究院";
+	public static String inCompany = "CNPE";
+	
 	@Override
 	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {
 		
 		ExcSynDetail en = (ExcSynDetail)obj;
-		String ignoreCompany = "动力院";
-		String inCompany = "CNPE";
+		
 		String toCompany = en.getToCompany();
 		//动力院发CNPE
 		if(inCompany.equalsIgnoreCase(toCompany)) {
@@ -59,8 +61,7 @@ public class SynDetailService extends EcmObjectService<ExcSynDetail> implements 
 	@Override
 	public String newObject(String token,String appName,String actionName,String fromId,String toCompany) throws EcmException, AccessDeniedException, NoPermissionException {
 		
-		String ignoreCompany = "动力院";
-		String inCompany = "CNPE";
+		
 		//动力院发CNPE
 		if(inCompany.equalsIgnoreCase(toCompany)) {
 			if(getSession(token).getCurrentUser().getCompany().equals(ignoreCompany)) {
@@ -78,7 +79,7 @@ public class SynDetailService extends EcmObjectService<ExcSynDetail> implements 
 		en.setActionName(actionName);
 		en.setCreationDate(new Date());
 		en.setFromId(fromId);
-		en.setStauts("新建");
+		en.setStatus("新建");
 		en.setAppName(appName);
 		return this.newObject(token, en);
 	}
