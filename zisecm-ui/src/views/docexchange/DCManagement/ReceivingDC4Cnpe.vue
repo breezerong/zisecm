@@ -2,6 +2,10 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 待接收文函 -->
+            <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            </el-dialog>
             <!-- 创建附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
                 <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -186,8 +190,13 @@
                                     :isEditProperty="false"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
+                                    @dbclick="dbClick"
                                     @selectchange="selectChangeTransferDoc"
-                                ></DataGrid>
+                                >
+                                    <template slot="dropdownItem" slot-scope="scope">
+                                        <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
+                                    </template>
+                                </DataGrid>
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
                                 <el-row>
@@ -279,6 +288,7 @@ import RejectButton from "@/components/RejectButton";
 import DataSelect from '@/components/ecm-data-select';
 import ExcelUtil from '@/utils/excel.js'
 import DataLayout from '@/components/ecm-data-layout'
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 export default {
     name: "ReceivingDC4Cnpe",
     data(){
@@ -293,6 +303,11 @@ export default {
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 120,
+            dialog:{
+                title:"",
+                visible:false
+            },
+			docId:"",
             filters: {
                 projectCode: "",
                 docType: "",
@@ -343,6 +358,20 @@ export default {
         }, 300);
     },
     methods: {
+        dbClick(row){
+            this.docId=row.ID;
+            this.dialog.visible=true;
+            
+            this.$nextTick(()=>{
+                this.$refs.subAttachment.refresh();
+                // this.$refs.subAttachment.docId=row.ID;
+            });
+
+            // this.$nextTick(()=>{
+            //     this.$refs.subAttachment.docId=row.ID;
+            // this.$refs.subAttachment.docId=row.ID;
+            // });
+        },
         submit(){
         let _self=this
         if(this.selectedItems.length==0){
@@ -783,7 +812,8 @@ export default {
         DataGrid:DataGrid,
         RejectButton:RejectButton,
         DataSelect:DataSelect,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        AttachmentFile:AttachmentFile,
     }
 }
 </script>

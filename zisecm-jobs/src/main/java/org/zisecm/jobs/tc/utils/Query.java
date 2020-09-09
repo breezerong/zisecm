@@ -2828,7 +2828,77 @@ public class Query {
 		}
 		return null;
 	}
+	/**
+	 * 根据表名和导出标记查询数据
+	 * @param typeName
+	 * @param isExport
+	 * @return
+	 * @throws Exception
+	 */
+	public ModelObject[] queryFilesRevision(String typeName,String isExport)
+			throws Exception {
 
+		ImanQuery query = null;
+
+		try {
+			GetSavedQueriesResponse savedQueries = queryService
+					.getSavedQueries();
+
+			if (savedQueries.queries.length == 0) {
+				System.out.println("There are no saved queries in the system.");
+				// return false;
+				throw new Exception("There are no saved queries in the system.");
+			}
+
+			for (int i = 0; i < savedQueries.queries.length; i++) {
+				if (savedQueries.queries[i].name.equals("查询需要同步至设计分包的Item")) {
+					query = savedQueries.queries[i].query;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("GetSavedQueries service request failed.");
+			System.out.println(e.getMessage());
+			// return false;
+			throw new Exception("GetSavedQueries service request failed:"
+					+ e.getMessage());
+		}
+
+		if (query == null) {
+			System.out.println("There is not an '查询需要同步至设计分包的Item");
+			// return false;
+			throw new Exception("There is not an '查询需要同步至设计分包的Item");
+		}
+
+		try {
+			String[] entries = new String[2];
+			entries[0] = "类型";
+			entries[1] = "是否已导出";
+			
+
+			String[] values = new String[2];
+			values[0] = typeName;
+			values[1] = isExport;
+			
+
+			int limit = 0;
+
+			ExecuteSavedQueryResponse found = queryService.executeSavedQuery(
+					query, entries, values, limit);
+
+			return found.objects;
+		} catch (Exception e) {
+			System.out.println("ExecuteSavedQuery service request failed.");
+			System.out.println(e.getMessage());
+			// return false;
+			throw new Exception("ExecuteSavedQuery service request failed."
+					+ e.getMessage());
+		}
+		
+	
+	}
+
+	
 	public static void main(String[] args) {
 
 	}

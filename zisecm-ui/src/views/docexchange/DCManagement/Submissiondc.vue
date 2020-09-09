@@ -2,7 +2,8 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 待提交文函 -->
-            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="90%" :before-close="handleClose">      
+            <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
 
@@ -213,7 +214,11 @@
                                     @dbclick="dbClick"
                                     :isShowChangeList="false"
                                     @selectchange="selectChangeTransferDoc"
-                                ></DataGrid>
+                                >
+                                    <template slot="dropdownItem" slot-scope="scope">
+                                        <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
+                                    </template>
+                                </DataGrid>
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant" ref="relevantTab">
                                 <el-row>

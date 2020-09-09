@@ -54,6 +54,22 @@ public class Operator {
 		
 	}
 	/**
+	 * 根据设计分包系统类型找到对应配置
+	 * @param sourceTypeName
+	 * @return
+	 */
+	public static ConfBean getConfBeanBySourceTypeName(String sourceTypeName) {
+			
+			for(ConfBean conf:cf.getConfs()) {
+				if(conf.getSourceTypeName()!=null
+						&&sourceTypeName.equals(conf.getSourceTypeName())) {
+					return conf;
+				}
+			}
+			return null;
+			
+		}
+	/**
 	 * 拿数据
 	 * @param targetTypeName
 	 * @param systemName
@@ -73,6 +89,25 @@ public class Operator {
 			
 	}
 	/**
+	 * 获取配置通过TCTableName
+	 * @param tcTableName
+	 * @param systemName
+	 * @return
+	 */
+	public static List<ConfBean> getConfBeanByTcTableName(String tcTableName,String systemName) {
+		List<ConfBean> confBeans=new ArrayList<ConfBean>();
+		for(ConfBean conf:cf.getConfs()) {
+			if(conf.getTcTypeName()!=null
+					&&tcTableName.equals(conf.getTcTableName())
+					&&systemName.equals(conf.getTargetSystem())) {
+				confBeans.add(conf);
+			}
+		}
+		
+		return confBeans;
+			
+	}
+	/**
 	 * 往TC发送数据
 	 * @param data
 	 * @return
@@ -81,7 +116,7 @@ public class Operator {
 	public static Map<String,Object> OperationContractorData(String token,DocumentService docService,
 			Map<String,Object> data,String typeName,String targetSystem) throws Exception{
 		
-		if(typeName==null) {
+		if(typeName==null||"".equals(typeName)) {
 			typeName=data.get("TYPE_NAME").toString();
 		}
 		ConfBean conf=getConfBeanBySourceTypeName(typeName,targetSystem);

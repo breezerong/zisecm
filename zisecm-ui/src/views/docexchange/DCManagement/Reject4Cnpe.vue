@@ -2,6 +2,10 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 驳回文函(Cnpe) -->
+            <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            </el-dialog>
             <!-- 创建附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
                 <el-form size="mini" v-loading='uploading'>
@@ -175,7 +179,12 @@
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="selectChangeTransferDoc"
-                                ></DataGrid>
+                                    @dbclick="dbClick"
+                                >
+                                    <template slot="dropdownItem" slot-scope="scope">
+                                        <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
+                                    </template>
+                                </DataGrid>
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
                                 <el-row>
@@ -265,6 +274,7 @@ import RejectButton from "@/components/RejectButton";
 import ExcelUtil from '@/utils/excel.js';
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 export default {
     name: "Reject4Cnpe",
     data(){
@@ -279,7 +289,11 @@ export default {
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 80,
-
+            dialog:{
+                title:"",
+                visible:false
+            },
+			docId:"",
             filters: {
                 projectCode: "",
                 docType: "",
@@ -335,6 +349,20 @@ export default {
         this.searchItem()
     },
     methods: {
+        dbClick(row){
+            this.docId=row.ID;
+            this.dialog.visible=true;
+            
+            this.$nextTick(()=>{
+                this.$refs.subAttachment.refresh();
+                // this.$refs.subAttachment.docId=row.ID;
+            });
+
+            // this.$nextTick(()=>{
+            //     this.$refs.subAttachment.docId=row.ID;
+            // this.$refs.subAttachment.docId=row.ID;
+            // });
+        },
         changeStatus:function(){
             // console.log(status)
             if(this.filters.status=='已作废'){
@@ -836,7 +864,8 @@ export default {
         DataGrid:DataGrid,
         RejectButton:RejectButton,
         DataSelect:DataSelect,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        AttachmentFile:AttachmentFile,
     }
 }
 </script>

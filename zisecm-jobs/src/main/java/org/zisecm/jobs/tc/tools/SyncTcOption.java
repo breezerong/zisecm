@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.zisecm.jobs.bean.conf.ConfBean;
 import org.zisecm.jobs.bean.conf.Operator;
 import org.zisecm.jobs.entity.DataEntity;
 import org.zisecm.jobs.tc.clientx.Session;
@@ -114,7 +115,8 @@ public class SyncTcOption {
 	 * @return
 	 * @throws Exception
 	 */
-	public CreateItemsOutput createFileRevision(String token,DocumentService docService,Map<String,Object> data,Map<String,Object> toTcData) throws Exception{
+	public CreateItemsOutput createFileRevision(String token,DocumentService docService,Map<String,Object> data,
+			Map<String,Object> toTcData) throws Exception{
 		String tcType=toTcData.get("tcTable").toString();
 		
 		ItemIdsAndInitialRevisionIds itemidAndRevId = generateItemIds(tcType);
@@ -130,6 +132,7 @@ public class SyncTcOption {
         //modify by xiaolei 20160620 for bug 2641
         //itemProperty.name = itemidAndRevId.newItemId;
         String object_name= data.get("TITLE")==null?"":data.get("TITLE").toString();
+        String pTypeName=data.get("TYPE_NAME").toString();
         int length=object_name.length();
         String str="";
         if(length>120){
@@ -201,7 +204,8 @@ public class SyncTcOption {
 		}
 		String sql="select a.* from ecm_document a,ecm_relation b where a.id=b.child_id and b.parent_id='"+data.get("ID").toString()+"'";
 		List<Map<String,Object>> docList= documentService.getMapList(getEcmSession().getToken(), sql);
-		
+		ConfBean bean= Operator.getConfBeanBySourceTypeName(pTypeName,"tc");
+		String childType=bean.getChildType()==null?"设计文件Form":bean.getChildType().toString();
 		//创建FileItemF Form并写入到cn9FileList属性中
 //		FileList[] fileList = fileCRDataRequest.getFileList();
 		if(docList!=null&&docList.size()>0) {
@@ -212,7 +216,7 @@ public class SyncTcOption {
 				for(int i=0;i<docList.size();i++) {
 					Map<String,Object> row=docList.get(i);
 					String formName=row.get("CODING").toString()+"_"+row.get("REVISION").toString();
-					Map<String,Object> afterMp= Operator.OperationContractorData(token,docService,row,"设计文件Form", "tc");
+					Map<String,Object> afterMp= Operator.OperationContractorData(token,docService,row,childType, "tc");
 					Map<String,Object> rowData= (Map<String, Object>) afterMp.get("data");
 					Set<String> rowKeys=rowData.keySet();
 					Iterator<String> rowIt= rowKeys.iterator();
