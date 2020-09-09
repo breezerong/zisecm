@@ -362,7 +362,9 @@
     "delayFeedback": "DelayFeedback",
     "delayConfirm": "DelayFeedbackConfirm",
     "delayOpenConfirm":"DelayOpenConfirm",
-    "delayCloseConfirm":"DelayCloseConfim"
+    "delayCloseConfirm":"DelayCloseConfim",
+    "applyReject": "ConfirmRejectApply",
+    "MyApplyReject": "MyRejectApply"
 },
 "message": {
     "saveSuccess":"Save Success",
