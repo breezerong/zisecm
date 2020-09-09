@@ -83,7 +83,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item style="width:100px;">
-                    <el-select v-model="filters.status">
+                    <el-select v-model="filters.status" v-on:change="changeStatus()">
                     <el-option label="已作废" value="已作废"></el-option>
                     <el-option label="驳回" value="驳回"></el-option>
                     </el-select>
@@ -288,7 +288,7 @@ export default {
                 status:"驳回",
                 limit: 10
             },
-            isReject:false,
+            isReject:true,
             projects:[],
             typeName:"文件传递单",
             dialogName:"文件传递单",
@@ -335,6 +335,17 @@ export default {
         this.searchItem()
     },
     methods: {
+        changeStatus:function(){
+            // console.log(status)
+            if(this.filters.status=='已作废'){
+                
+                this.isReject=false
+            } 
+            else{
+                this.isReject=true
+            }
+            this.searchItem()
+        },
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100
@@ -537,12 +548,7 @@ export default {
             let _self=this;
             let key="";
          
-            if(this.filters.status==''||this.filters.status=='已作废'){
-                this.isReject=false
-            } 
-            if(this.filters.status=='驳回'){
-                this.isReject=true
-            }
+            
             
             
             console.log(this.filters.status)
