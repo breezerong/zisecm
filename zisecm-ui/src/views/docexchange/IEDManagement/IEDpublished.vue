@@ -16,8 +16,7 @@
                 </div>
             </el-dialog>
 
-            <el-dialog title="查看版本" :visible.sync="iedVersionVisual" fullscreen >
-                <!-- <DataGrid ref="iedVersionDg" v-bind="tables.iedVersionDg" tableHeight=400></DataGrid> -->
+            <el-dialog title="查看版本" :visible.sync="iedVersionVisual" fullscreen @open="initDocVersion">
                 <IEDVersionView ref="ivvViewer"></IEDVersionView>
             </el-dialog>
             <el-form :inline="true" :model="forms.headForm">
@@ -234,6 +233,13 @@ export default {
             // console.log(role)
         },
         // 上下分屏事件
+        initDocVersion(){
+            this.$nextTick(()=>{
+                console.log(this.id)
+                this.$refs.ivvViewer.seach(this.id)
+                console.log(this.$refs.ivvViewer)
+            })
+        },
         onSplitResize(topPercent){
             // 顶部百分比*100
             this.topPercent = topPercent
@@ -370,7 +376,7 @@ export default {
             _self.$refs.mainDataGrid.loadGridData();
         },
         exportData(){
-            let dataUrl = "/exchange/doc/export"
+            //let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             console.log(this.$refs.mainDataGrid.condition)
@@ -390,11 +396,13 @@ export default {
         },
         IEDVersion(row){
             this.iedVersionVisual=true
-            console.log(row.ID)
-            this.id = row.ID
+            console.log(row.VERSION_ID)
+            this.id = row.VERSION_ID
             let viewer = this.$refs.ivvViewer
-            viewer.docId = row.ID
-            viewer.search()
+            if(viewer!=undefined){
+                viewer.docId = row.VERSION_ID
+                viewer.search()
+            }
            
         },
         submit(feedForm){           //时间在后台方法中获取
