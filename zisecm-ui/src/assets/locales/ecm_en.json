@@ -248,7 +248,8 @@
     "iedContrast":"IEDContrast",
     "delayNum":"DelayReply Nums",
     "Dispense":"Dispense",
-    "DelayCloseReason":"Current Delay Reason is Right?"
+    "DelayCloseReason":"Current Delay Reason is Right?",
+    "startRejectApply": "StartRejectApply"
 },
 "skin": {
     "Blue": "Blue",

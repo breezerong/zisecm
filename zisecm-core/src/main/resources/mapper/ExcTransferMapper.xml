@@ -20,11 +20,18 @@
         <result column="STAUTS" property="stauts" jdbcType="NVARCHAR" />
         <result column="COMMENT" property="comment" jdbcType="NVARCHAR" />
         <result column="SYN_STATUS" property="synStatus" jdbcType="NVARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="APPLICANT" property="applicant" jdbcType="NVARCHAR" />
+        <result column="APPLY_DATE" property="applyDate" jdbcType="TIMESTAMP" />
+        <result column="CONFIRMER" property="confirmer" jdbcType="NVARCHAR" />
+        <result column="CONFIRM_DATE" property="confirmDate" jdbcType="TIMESTAMP" />
+        <result column="STATUS1" property="status1" jdbcType="NVARCHAR" />
+        <result column="COMMENT1" property="comment1" jdbcType="NVARCHAR" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS
+        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS, STATUS, APPLICANT, APPLY_DATE, CONFIRMER, CONFIRM_DATE, STATUS1, COMMENT1
     </sql>
 
 
@@ -67,7 +74,14 @@
 		    RECEIVE_DATE,
 		    STAUTS,
 		    COMMENT,
-		    SYN_STATUS
+		    SYN_STATUS,
+		    STATUS,
+		    APPLICANT,
+		    APPLY_DATE,
+		    CONFIRMER,
+		    CONFIRM_DATE,
+		    STATUS1,
+		    COMMENT1
       )
     values (
     		 #{id},
@@ -85,10 +99,16 @@
     		 #{receiveDate},
     		 #{stauts},
     		 #{comment},
-    		 #{synStatus}
+    		 #{synStatus},
+    		 #{status},
+    		 #{applicant},
+    		 #{applyDate},
+    		 #{confirmer},
+    		 #{confirmDate},
+    		 #{status1},
+    		 #{comment1}
     	)
   </insert>
-  
   
   <insert id="insertSelective" parameterType="com.ecm.core.entity.ExcTransfer">
     insert into exc_transfer
@@ -141,6 +161,27 @@
     	<if test="synStatus != null">
     		 SYN_STATUS,
     	</if>
+    	<if test="status != null">
+    		 STATUS,
+    	</if>
+    	<if test="applicant != null">
+    		 APPLICANT,
+    	</if>
+    	<if test="applyDate != null">
+    		 APPLY_DATE,
+    	</if>
+    	<if test="confirmer != null">
+    		 CONFIRMER,
+    	</if>
+    	<if test="confirmDate != null">
+    		 CONFIRM_DATE,
+    	</if>
+    	<if test="status1 != null">
+    		 STATUS1,
+    	</if>
+    	<if test="comment1 != null">
+    		 COMMENT1,
+    	</if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
     	<if test="id != null">
@@ -190,6 +231,27 @@
     	</if>
     	<if test="synStatus != null">
     		#{synStatus,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="status != null">
+    		#{status,jdbcType=VARCHAR}, 		 
+    	</if>
+    	<if test="applicant != null">
+    		#{applicant,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="applyDate != null">
+    		#{applyDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="confirmer != null">
+    		#{confirmer,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="confirmDate != null">
+    		#{confirmDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="status1 != null">
+    		#{status1,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="comment1 != null">
+    		#{comment1,jdbcType=NVARCHAR}, 		 
     	</if>
     </trim>
   </insert>
@@ -246,6 +308,27 @@
     	<if test="synStatus != null">
     		SYN_STATUS=#{synStatus,jdbcType=NVARCHAR}, 		 
     	</if>
+    	<if test="status != null">
+    		STATUS=#{status,jdbcType=VARCHAR}, 		 
+    	</if>
+    	<if test="applicant != null">
+    		APPLICANT=#{applicant,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="applyDate != null">
+    		APPLY_DATE=#{applyDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="confirmer != null">
+    		CONFIRMER=#{confirmer,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="confirmDate != null">
+    		CONFIRM_DATE=#{confirmDate,jdbcType=TIMESTAMP}, 		 
+    	</if>
+    	<if test="status1 != null">
+    		STATUS1=#{status1,jdbcType=NVARCHAR}, 		 
+    	</if>
+    	<if test="comment1 != null">
+    		COMMENT1=#{comment1,jdbcType=NVARCHAR}, 		 
+    	</if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -267,7 +350,14 @@
    		RECEIVE_DATE=#{receiveDate},
    		STAUTS=#{stauts},
    		COMMENT=#{comment},
-   		SYN_STATUS=#{synStatus}
+   		SYN_STATUS=#{synStatus},
+   		STATUS=#{status},
+   		APPLICANT=#{applicant},
+   		APPLY_DATE=#{applyDate},
+   		CONFIRMER=#{confirmer},
+   		CONFIRM_DATE=#{confirmDate},
+   		STATUS1=#{status1},
+   		COMMENT1=#{comment1}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
   
