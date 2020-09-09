@@ -320,7 +320,7 @@ public class ICMImportService extends EcmService {
 							int index  = getColumnIndex(attrNames, "C_IDENTIFY",1,sheet.getRow(i).getLastCellNum());
 							Cell cell = sheet.getRow(i).getCell(index);
 							String submitType= cell.getStringCellValue();
-							if(res!=null) {
+							if(res!=null&&res!=""){
 								if(submitType.equals("MOD")) {
 									updataDocument( token, parentType,itemStream, sheet.getRow(i),  
 											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
@@ -331,7 +331,7 @@ public class ICMImportService extends EcmService {
 											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 											null,null,res);
 								}else {
-									sb.append("ICM不存在").append("\r\n");;
+									sb.append("ICM不存在").append("\r\n");
 									
 								}
 							}else {
@@ -375,7 +375,7 @@ public class ICMImportService extends EcmService {
 										newRelation(token, deliveryId,relationName, newId, i,null);
 									}
 								}else {
-									sb.append("ICM已存在").append("\r\n");;
+									sb.append("ICM已存在").append("\r\n");
 									
 								}
 							}
@@ -427,7 +427,12 @@ public class ICMImportService extends EcmService {
 					+ " and C_CODE5='"+coding5+"'"
 					+ " and C_CODE6='"+coding6+"'";
 			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
-			id = result.get(0).get("ID").toString();
+			
+			if(result != null && result.size() > 0) {
+				id = result.get(0).get("ID")==null?"":result.get(0).get("ID").toString();
+			}else {
+				id="";
+			}
 			return id;
 	}
 	
