@@ -124,8 +124,13 @@ export default {
     validateValue(itemData){
       if(itemData.required){
         if(itemData.validatePolicy != null && itemData.validatePolicy != ""){
-          var p = itemData.validatePolicy.split(":");
-          if(this.getValueByAttr(p[0]) == p[1]){
+          var p = itemData.validatePolicy.split(";");
+          if(p[0] != ""){
+            var p1 = p[0].split(":");
+            if(this.getValueByAttr(p1[0]) == p1[1]){
+              return true;
+            }
+          }else{
             return true;
           }
         }else{
@@ -238,6 +243,32 @@ export default {
           {
             msg += "["+dataRows[i].label+"] ";
             ret = false;
+          }else if(dataRows[i].validatePolicy != null && dataRows[i].validatePolicy != ""){
+            if((_self.myItemId == null || _self.myItemId =="") && dataRows[i].validatePolicy.indexOf(";")>-1){
+              let p = dataRows[i].validatePolicy.split(";")[1];
+              let fun = p.split(":");
+              if(p.indexOf(">=") > -1){
+                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])<0){
+                  msg += "["+dataRows[i].label+"] 必需大于等于当前日期+" + fun[2]+"天";
+                  ret = false;
+                }
+              }else if(p.indexOf("<=") > -1){
+                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])>0){
+                  msg += "["+dataRows[i].label+"] 必需小于等于当前日期+" + fun[2] + "天";
+                  ret = false;
+                }
+              }else if(p.indexOf(">") > -1){
+                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])>=0){
+                  msg += "["+dataRows[i].label+"] 必需大于当前日期+" + fun[2]+"天";
+                  ret = false;
+                }
+              }else if(p.indexOf("<") > -1){
+                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])>=0){
+                  msg += "["+dataRows[i].label+"] 必需小于当前日期+" + fun[2]+"天";
+                  ret = false;
+                }
+              }
+            }
           }
         }
       }
@@ -247,6 +278,14 @@ export default {
       }
       return ret;
     },
+    // 日期比较，输入日期-当前日期 -天数
+    validateInputDate(dateTime, addDay){
+      var now =new Date();
+      now=now.setDate(now.getDate()+parseInt(addDay));
+      var today = new Date(now).Format("yyyyMMdd");
+      var dt = new Date(dateTime).Format("yyyyMMdd");
+      return parseInt(dt) - parseInt(today);
+	  },
     getFormData(){
       let _self = this;
       var m = new Map();

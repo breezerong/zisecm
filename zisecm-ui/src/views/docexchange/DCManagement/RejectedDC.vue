@@ -473,7 +473,7 @@ export default {
             this.parentId=row.ID;
             let _self=this;
             _self.isShowMountFile = false;
-            
+
             if(row.TYPE_NAME=='文件传递单'){
                 _self.isShowDesgin=true;
                 _self.isShowRelevant=false;
@@ -670,6 +670,9 @@ export default {
                 m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
                 m.set("parentDocId", _self.parentId);
                 m.set("relationName",_self.relationName);
+                if( _self.$refs.ShowProperty.myTypeName == '设计文件'){
+                    m.set("C_PROCESS_STATUS","已解锁");
+                }
             }
             _self.validateData(m,function(isOk)
             {
@@ -692,16 +695,17 @@ export default {
                 {
                     //console.log(_self.file);
                     formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
-                }else{
-                    _self.$message({
-                                    showClose: true,
-                                    message: "请选择pdf",
-                                    duration: 2000,
-                                    type: 'warning'
-                                    });
-                                    _self.butt=false;
-                                return;
                 }
+                // else{
+                //     _self.$message({
+                //                     showClose: true,
+                //                     message: "请选择pdf",
+                //                     duration: 2000,
+                //                     type: 'warning'
+                //                     });
+                //                     _self.butt=false;
+                //                 return;
+                // }
                 // console.log(JSON.stringify(m));
                 if(_self.$refs.ShowProperty.myItemId=='')
                 {
