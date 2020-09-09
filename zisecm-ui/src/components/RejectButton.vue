@@ -165,8 +165,7 @@ export default {
         },
         rejectByCnpe(){
             let _self = this;
-            var m = [];
-            let tab = _self.selectedItems;
+            
             if(_self.selectedItems==null||_self.selectedItems.length==0){
                  _self.$message({
                             showClose: true,
@@ -176,6 +175,8 @@ export default {
                         });
                         return
             }
+            var m = [];
+            let tab = _self.selectedItems;
             var i;
             for (i in tab) {
                 m.push(tab[i]["ID"]);
