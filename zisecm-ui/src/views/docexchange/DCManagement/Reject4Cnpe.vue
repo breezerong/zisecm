@@ -2,6 +2,10 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 驳回文函(Cnpe) -->
+            <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            </el-dialog>
             <!-- 创建附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
                 <el-form size="mini" v-loading='uploading'>
@@ -72,11 +76,6 @@
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
-                    <!-- <el-option label="所有文函" value></el-option>
-                    <el-option label="传递单" value="传递单"></el-option>
-                    <el-option label="图文传真" value="图文传真"></el-option>
-                    <el-option label="会议纪要" value="会议纪要"></el-option>
-                    <el-option label="接口传递" value="接口传递"></el-option> -->
                     <el-option label="所有文函" value></el-option>
                     <el-option v-for="(name,nameIndex) in childrenTypes" :key="'Type2_'+nameIndex" :label="name" :value="name"></el-option>
                     
@@ -94,23 +93,30 @@
                 <el-form-item>
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
-                <el-form-item>
-                    <el-button v-if='isReject' type="primary" @click="handleComplete()">{{$t('application.handleComplete')}}</el-button>
+                <el-form-item v-if='isReject'>
+                    <el-button  type="primary" @click="handleComplete()">{{$t('application.handleComplete')}}</el-button>
+                </el-form-item>
+                <el-form-item v-if='isTC'>
+                    <el-button type="primary" @click="handleComplete()">{{$t('application.handleComplete')}}</el-button>
                 </el-form-item>
                 
                 <!-- 导出Excel -->
                 <el-form-item>
                     <el-button type="primary" @click="exportData()">{{$t('application.exportExcel')}}</el-button>
                 </el-form-item>
-                
-                <!-- <el-form-item>
+                <el-form-item>
                     <el-button type="warning" 
+                    v-if='isReject'
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" v-on:click="getData">导出Excel</el-button>
-                </el-form-item> -->
+                    <MountFile v-if='isReject' :selectedItem="selectedItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
+                </el-form-item>
+                <el-form-item>
+                    <!-- beforeDispense() -->
+                    <el-button v-if='isReject' type="success" v-on:click="onDispenseDc()">{{$t('application.Dispense')}}</el-button>
+                </el-form-item>
                 </el-form>
         </template>
         <template v-slot:main="{layout}">
@@ -125,8 +131,8 @@
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGridCnpeReject"
                             :isshowCustom="false"
-                            condition=" stauts='驳回'"
-                            :isEditProperty="true"
+                            condition=" stauts='驳回' and ITEM_TYPE=1 "
+                            :isEditProperty="isShowMountFile"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                             @rowclick="rowClick"
@@ -136,28 +142,18 @@
                     <template slot="paneR">
                         <el-tabs v-model="selectedTabName">
                             <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
-                                <el-row>
+                                <el-row v-if='isReject'>
                                     <el-col :span="24">
                                         <el-form :inline="true" :model="filters" @submit.native.prevent>
-                                            <!-- <el-form-item>
-                                            <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
-                                            </el-form-item>
                                             <el-form-item>
-                                            <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
+                                            <el-button  type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">{{$t('application.new')}}</el-button>
                                             </el-form-item>
                                             <el-form-item>
                                             <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
-                                            </el-form-item> -->
-                                            <!-- 打包下载 -->
-                                            <!-- <el-form-item>
-                                                <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
-                                            </el-form-item> -->
-                                            <!-- 驳回 -->
-                                            <!-- <el-form-item>
-                                            
-                                                <RejectButton :selectedItems="selectedTransferDocItems" :isSubObj="true" :refreshDataGrid="$refs.transferDoc"></RejectButton>
-                                            </el-form-item> -->
-                                            
+                                            </el-form-item>
+                                            <el-form-item>
+                                                <MountFile :selectedItem="selectedTransferDocItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
+                                            </el-form-item>
                                         </el-form>
                                     </el-col>
                                 </el-row>
@@ -171,30 +167,27 @@
                                     gridViewName="DrawingGridRejectedCnpe"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="isShowMountFile"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="selectChangeTransferDoc"
-                                ></DataGrid>
+                                    @dbclick="dbClick"
+                                >
+                                    <template slot="dropdownItem" slot-scope="scope">
+                                        <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
+                                    </template>
+                                </DataGrid>
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
-                                <el-row>
+                                <el-row v-if='isReject'> 
                                     <el-col :span="24">
                                         <el-form :inline="true" :model="filters" @submit.native.prevent>
-                                            <!-- <el-form-item>
-                                            <el-button type="primary" @click="beforeCreateDocItem('设计文件','相关文件')">新建</el-button>
-                                            </el-form-item>
                                             <el-form-item>
-                                            <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
+                                            <el-button type="primary" @click="beforeCreateDocItem('相关文件','相关文件')">{{$t('application.new')}}</el-button>
                                             </el-form-item>
                                             <el-form-item>
                                             <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
-                                            </el-form-item> -->
-                                            <!-- 打包下载 -->
-                                            <!-- <el-form-item>
-                                                <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
-                                            </el-form-item> -->
-                                        
+                                            </el-form-item>
                                         </el-form>
                                     </el-col>
                                 </el-row>
@@ -209,29 +202,25 @@
                                     condition=" and a.NAME='相关文件'"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="isShowMountFile"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="relevantDocSelect"
                                 ></DataGrid>
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
-                                <el-row>
+                                <el-row v-if='isReject'>
                                     <el-col :span="24">
                                         <el-form :inline="true" :model="filters" @submit.native.prevent>
-                                            <!-- <el-form-item>
+                                            <el-form-item>
                                             <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
                                             </el-form-item>
-                                            <el-form-item>
+                                            <!-- <el-form-item>
                                             <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                                            </el-form-item>
+                                            </el-form-item> -->
                                             <el-form-item>
                                             <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">{{$t('application.delete')}}</el-button>
-                                            </el-form-item> -->
-                                            <!-- 打包下载 -->
-                                            <!-- <el-form-item>
-                                                <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
-                                            </el-form-item> -->
+                                            </el-form-item>
                                         </el-form>
                                     </el-col>
                                 </el-row>
@@ -245,7 +234,7 @@
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="isShowMountFile"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="attachmentDocSelect"
@@ -265,6 +254,8 @@ import RejectButton from "@/components/RejectButton";
 import ExcelUtil from '@/utils/excel.js';
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
+import MountFile from '@/components/MountFile.vue';
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 export default {
     name: "Reject4Cnpe",
     data(){
@@ -279,7 +270,11 @@ export default {
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 80,
-
+            dialog:{
+                title:"",
+                visible:false
+            },
+			docId:"",
             filters: {
                 projectCode: "",
                 docType: "",
@@ -288,6 +283,7 @@ export default {
                 status:"驳回",
                 limit: 10
             },
+            isShowMountFile:true,
             isReject:true,
             projects:[],
             typeName:"文件传递单",
@@ -311,7 +307,8 @@ export default {
             isShowRelevant:true,
             isShowAttachmentDoc:true,
             selectedTabName:'t01',
-            TRS:[]
+            TRS:[],
+            isTC:false
         }
     },
     created(){
@@ -335,15 +332,31 @@ export default {
         this.searchItem()
     },
     methods: {
+        dbClick(row){
+            this.docId=row.ID;
+            this.dialog.visible=true;
+            
+            this.$nextTick(()=>{
+                this.$refs.subAttachment.refresh();
+                // this.$refs.subAttachment.docId=row.ID;
+            });
+
+            // this.$nextTick(()=>{
+            //     this.$refs.subAttachment.docId=row.ID;
+            // this.$refs.subAttachment.docId=row.ID;
+            // });
+        },
         changeStatus:function(){
             // console.log(status)
             if(this.filters.status=='已作废'){
-                
+                this.isShowMountFile=false;
                 this.isReject=false
             } 
             else{
+                this.isShowMountFile=true
                 this.isReject=true
             }
+            
             this.searchItem()
         },
         // 上下分屏事件
@@ -352,6 +365,76 @@ export default {
             this.topPercent = topPercent
             this.setStorageNumber(this.topStorageName, topPercent)
             //console.log(JSON.stringify(topPercent))
+        },
+        refreshTransferDocData(){
+             this.$refs.transferDoc.loadGridData();
+        },
+        refreshReleventDocData(){
+           
+            this.$refs.relevantDoc.loadGridData();
+        },
+        onDispenseDc(){
+            let _self = this;
+            let m = [];
+            let tab = _self.selectedItems;
+            // let ctab= _self.checkList;
+            let c=[];
+            let i;
+            for (i in tab) {
+                m.push(tab[i]["ID"]);
+            }
+            let j;
+            // for(j in ctab){
+            //     c.push(ctab[j])
+            // }
+            let mp=new Map();
+            mp.set("ids",m);
+            axios.post("/dc/reDispenseDc",JSON.stringify(mp),{
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            })
+            .then(function(response) {
+                if(response.data.code==1){
+                    
+                    _self.$refs.mainDataGrid.loadGridData();
+                    if(_self.$refs.transferDoc){
+                        _self.$refs.transferDoc.itemDataList=[];
+                    }
+                    if(_self.$refs.relevantDoc){
+                        _self.$refs.relevantDoc.itemDataList=[];
+                    }
+                    if(_self.$refs.attachmentDoc){
+                        _self.$refs.attachmentDoc.itemDataList=[];
+                    }
+                    
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t("message.DispenseSuccess"),
+                        duration: 2000,
+                        type: 'success'
+                    });
+                }else{
+                    
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t("message.operationFaild"),
+                        duration: 5000,
+                        type: 'error'
+                    });
+                }
+                
+            })
+            .catch(function(error) {
+                
+                _self.$message({
+                    showClose: true,
+                    message: _self.$t("message.operationFaild"),
+                    duration: 5000,
+                    type: 'error'
+                });
+                console.log(error);
+            });
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
@@ -462,6 +545,11 @@ export default {
                console.log(this.selectRow)
             this.parentId=row.ID;
             let _self=this;
+            if(row.SYN_APP=='TC'){
+                _self.isShowMountFile=false;
+            }else{
+                _self.isShowMountFile=true;
+            }
             if(row.TYPE_NAME=='文件传递单'){
                 _self.isShowDesgin=true;
                 _self.isShowRelevant=false;
@@ -512,7 +600,7 @@ export default {
         },
         beforeCreateDocItem(typeName,relationName) {
                 let _self = this;
-                if(typeName!='设计文件'){
+                if(typeName!='设计文件'&&typeName!='相关文件'){
                     _self.parentId='';
                                      
                 }
@@ -525,12 +613,30 @@ export default {
                         _self.$refs.ShowProperty.myItemId = "";
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
+                        
+                        if(typeName=='相关文件'){
+                            _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=_self.relation.formName;
+                        }else{
+                            _self.$refs.ShowProperty.showUploadFile = true;
+                            _self.$refs.ShowProperty.formName="";
+                        }
                         _self.typeName=typeName;
+                        
+                        if('设计文件'==typeName){
+                            _self.$refs.ShowProperty.setMainObject(_self.selectRow);
+                            let mp=new Map();
+                            mp.set("C_PROJECT_NAME",'C_PROJECT_NAME');
+                            mp.set("C_REF_CODING",'CODING');
+                            mp.set("C_ITEM_DATE",'C_ITEM_DATE');
+
+                            _self.$refs.ShowProperty.setMainSubRelation(mp);
+                        }
+
                         // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
                 },10);
-
         },
         //获取类型
         getTypeNamesByMainList(keyName) {
@@ -579,10 +685,29 @@ export default {
                 _self.$refs.mainDataGrid.condition=key;
             }
             _self.$refs.mainDataGrid.loadGridData();
+            _self.$refs.transferDoc.itemDataList=[];
+            _self.$refs.relevantDoc.itemDataList=[];
+            _self.$refs.attachmentDoc.itemDataList=[];
         },
         // 表格行选择
         selectChange(val) {
             this.selectedItems = val;
+            let tab = this.selectedItems;
+            let i;
+            for (i in tab) {
+                if(tab[i]["SYN_APP"]=='TC'){
+                     this.$message({
+                        showClose: true,
+                        message: "该文函只能作废处理",
+                        duration: 2000,
+                    });
+                    this.isTC=true
+                    this.isReject=false
+                    return
+                }
+            }
+            this.isTC=false
+            this.isReject=true
         },
         selectChangeTransferDoc(val) {
             this.selectedTransferDocItems = val;
@@ -836,7 +961,9 @@ export default {
         DataGrid:DataGrid,
         RejectButton:RejectButton,
         DataSelect:DataSelect,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        MountFile:MountFile,
+        AttachmentFile:AttachmentFile,
     }
 }
 </script>

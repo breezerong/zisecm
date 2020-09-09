@@ -92,16 +92,13 @@
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
                 
-                <!-- 打包下载 -->
+                <!-- 打包下载
                <el-form-item>
                     <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
-                </el-form-item>
+                </el-form-item> -->
                 <!-- 驳回 -->
                 <el-form-item>
-                    <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
-                    [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
-
-                    <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
+                    <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" isRejectByContractor
                     :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
                 </el-form-item>
                 <el-form-item>
@@ -125,11 +122,11 @@
                         <DataGrid
                             ref="mainDataGrid"
                             key="main"
-                            dataUrl="/dc/getDocuments"
+                            dataUrl="/dc/getDocuments4Cnpe"
                             v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGrid"
-                            condition=" status='已确认'"
+                            condition=" TR_ITEM_TYPE=1 "
                             @rowclick="rowClick"
                             :isshowCustom="false"
                             :isEditProperty="false"
@@ -144,16 +141,7 @@
                                 <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
-                                        <!-- <el-form-item>
-                                        <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
-                                        </el-form-item>
-                                        <el-form-item>
-                                        <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                                        </el-form-item>
-                                        <el-form-item>
-                                        <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
-                                        </el-form-item> -->
-                                        <!-- 打包下载 -->
+
                                         <el-form-item>
                                             <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                                         </el-form-item>
@@ -349,14 +337,15 @@ export default {
             //console.log(JSON.stringify(topPercent))
         },
         showReject:function(){
-            let roles= this.currentUser().roles;
+            /*let roles= this.currentUser().roles;
             for(let i in roles){
                 if(roles[i]=='CNPE_文控人员'){
                     return true;
                 }
             }
             
-            return false;
+            return false;*/
+            return true;
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"

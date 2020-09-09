@@ -165,9 +165,18 @@ export default {
         },
         rejectByCnpe(){
             let _self = this;
+            
+            if(_self.selectedItems==null||_self.selectedItems.length==0){
+                 _self.$message({
+                            showClose: true,
+                            message: _self.$t("message.pleaseSelectDC"),
+                            duration: 2000,
+                            type: 'warning' 
+                        });
+                        return
+            }
             var m = [];
             let tab = _self.selectedItems;
-            
             var i;
             for (i in tab) {
                 m.push(tab[i]["ID"]);

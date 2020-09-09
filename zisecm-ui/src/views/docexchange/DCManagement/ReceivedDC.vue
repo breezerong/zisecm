@@ -2,6 +2,10 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 已接收文函 -->
+            <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            </el-dialog>
             <!-- 创建附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
                 <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -174,11 +178,15 @@
                                     :isEditProperty="false"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
+                                    @dbclick="dbClick"
                                     @selectchange="selectChangeTransferDoc"
                                     >
                                         <template slot="sequee" slot-scope="scope">
                                             <span :style="(scope.data.row['C_PROCESS_STATUS']!=null
                                             &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''">{{scope.data.$index+1}}</span>
+                                        </template>
+                                        <template slot="dropdownItem" slot-scope="scope">
+                                            <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
                                         </template>
                                 </DataGrid>
                             </el-tab-pane>
@@ -274,6 +282,7 @@ import RejectButton from "@/components/RejectButton";
 import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 export default {
     name: "ReceivedDC",
     data(){
@@ -296,6 +305,11 @@ export default {
                 title: "",
                 limit: 10
             },
+            dialog:{
+                title:"",
+                visible:false
+            },
+            docId:"",
             projects:[],
             typeName:"文件传递单",
             dialogName:"文件传递单",
@@ -341,6 +355,15 @@ export default {
         }, 300);
     },
     methods: {
+        dbClick(row){
+            this.docId=row.ID;
+            this.dialog.visible=true;
+            
+            this.$nextTick(()=>{
+                this.$refs.subAttachment.refresh();
+                // this.$refs.subAttachment.docId=row.ID;
+            });
+        },
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100
@@ -764,7 +787,8 @@ export default {
         AddCondition:AddCondition,
         DataSelect:DataSelect,
         RejectButton:RejectButton,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        AttachmentFile:AttachmentFile,
     }
 }
 </script>

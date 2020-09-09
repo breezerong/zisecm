@@ -17,6 +17,7 @@ import com.ecm.cnpe.exchange.service.impl.DocumentService4Cnpe;
 import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.entity.Pager;
@@ -27,6 +28,8 @@ import com.ecm.portal.controller.ControllerAbstract;
 
 @Controller
 public class DocumentController4Cnpe extends ControllerAbstract {
+	@Autowired
+	private EcmDocumentMapper ecmDocument;
 	@Autowired
 	private DocumentService4Cnpe documentService;
 	@Autowired
@@ -128,6 +131,22 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		}
 		
 	
+		mp.put("code", ActionContext.SUCESS);
+		
+		return mp;
+	}
+	@RequestMapping(value = "/dc/reDispenseDc", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> reDispenseDc(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String idsStr=args.get("ids").toString();
+		List<String> idsList = JSONUtils.stringToArray(idsStr);
+
+		for(String childId : idsList) {
+			String sql = "update exc_transfer set STAUTS='待接收' where DOC_ID='"+childId+"'";	
+			ecmDocument.executeSQL(sql);
+		}
 		mp.put("code", ActionContext.SUCESS);
 		
 		return mp;
