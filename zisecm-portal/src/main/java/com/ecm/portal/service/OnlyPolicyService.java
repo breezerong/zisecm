@@ -6,6 +6,12 @@ import java.util.Map;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.druid.util.StringUtils;
+import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.entity.EcmForm;
+import com.ecm.core.entity.EcmFormClassification;
+import com.ecm.core.entity.EcmFormItem;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoOnlyPolicyException;
 import com.ecm.core.service.DocumentService;
@@ -19,8 +25,9 @@ public class OnlyPolicyService extends DocumentService{
 	 * @return
 	 * @throws NoOnlyPolicyException
 	 * @throws EcmException
+	 * @throws AccessDeniedException 
 	 */
-	public boolean validateOnlyOne(String token,Map<String,Object> data) throws NoOnlyPolicyException, EcmException {
+	public boolean validateOnlyOne(String token,Map<String,Object> data) throws NoOnlyPolicyException, EcmException, AccessDeniedException {
 		
 		Object pid=data.get("parentDocId");
 		if(pid!=null&&!"".equals(pid.toString())) {
@@ -36,8 +43,9 @@ public class OnlyPolicyService extends DocumentService{
 	 * @return
 	 * @throws NoOnlyPolicyException
 	 * @throws EcmException
+	 * @throws AccessDeniedException 
 	 */
-	public boolean validateChildOnly(String token,Map<String,Object> data) throws NoOnlyPolicyException, EcmException {
+	public boolean validateChildOnly(String token,Map<String,Object> data) throws NoOnlyPolicyException, EcmException, AccessDeniedException {
 		String typeName=data.get("TYPE_NAME").toString();
 		String parentID=data.get("parentDocId").toString();
 		String sql="select * from ( " + 
@@ -64,8 +72,9 @@ public class OnlyPolicyService extends DocumentService{
 	 * @param condition
 	 * @return
 	 * @throws NoOnlyPolicyException 
+	 * @throws AccessDeniedException 
 	 */
-	public boolean validate(String token,Map<String,Object> data) throws NoOnlyPolicyException {
+	public boolean validate(String token,Map<String,Object> data) throws NoOnlyPolicyException, AccessDeniedException {
 		String condition=getConditionByConfig(token,data);
 		List<Map<String,Object>> result= this.getObjectMap(token, condition);
 		if(result!=null&&result.size()>0) {
@@ -79,8 +88,9 @@ public class OnlyPolicyService extends DocumentService{
 	 * @param data
 	 * @return
 	 * @throws NoOnlyPolicyException
+	 * @throws AccessDeniedException 
 	 */
-	private String getConditionByConfig(String token,Map<String,Object> data) throws NoOnlyPolicyException {
+	private String getConditionByConfig(String token,Map<String,Object> data) throws NoOnlyPolicyException, AccessDeniedException {
 		String typeName=data.get("TYPE_NAME").toString();
 		String condition=" TYPE_NAME='唯一性规则' and SUB_TYPE='"+typeName+"'";
 		List<Map<String, Object>> onlyPolicys= this.getObjectMap(token, condition);
@@ -96,19 +106,80 @@ public class OnlyPolicyService extends DocumentService{
 			Map<String,Object> onlyPolicy= (Map<String,Object>)onlyPolicys.get(0);
 			Object policy= onlyPolicy.get("C_COMMENT");
 			if(policy!=null) {
+				List<EcmFormClassification> list;
 				String rulesStr=policy.toString();
 				String[] rules= rulesStr.split(";");
 				for(int i=0;i<rules.length;i++) {
 					String rule = rules[i];
 					rule=rule.substring(rule.indexOf("{")+1,rule.indexOf("}"));
-					if(data.get(rule)!=null) {
+					
+					try {
+						
+						EcmForm frm = CacheManagerOper.getEcmForms().get(typeName + "_EDIT");
+						if (frm == null) {
+							frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
+						}
+						list = frm.getFormClassifications(getSession(token), "zh-cn");
+						
+					} catch (Exception ex) {
+						EcmForm frm = CacheManagerOper.getEcmForms().get(typeName + "_NEW");
+						if (frm == null) {
+							frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
+						}
+						list = frm.getFormClassifications(getSession(token), "zh-cn");
+
+					}
+					EcmFormItem itemRuls=null;
+					try {
+						for(EcmFormClassification ecmClassification:list) {
+							List<EcmFormItem> formItems= ecmClassification.getEcmFormItems();
+							for(EcmFormItem item:formItems) {
+								if(rule.toUpperCase().equals(item.getAttrName().toUpperCase())) {
+									itemRuls=item;
+									throw new Exception();
+								}
+								
+							}
+						}
+					}catch (Exception e) {
+						// TODO: handle exception
+					}
+					if(itemRuls.getIsRepeat()) {
+						String[] ruleDatas= data.get(rule).toString().split(";");
+						String subCondition="";
+						for(int x=0;x<ruleDatas.length;x++) {
+							String ruleData=ruleDatas[x];
+							if(StringUtils.isEmpty(ruleData)) {
+								continue;
+							}
+							if(x==ruleDatas.length-1) {
+								subCondition+=rule+" like '%"+ruleData+"%' ";
+							}else {
+								subCondition+=rule+" like '%"+ruleData+"%' or ";
+							}
+							
+						}
 						if(i==rules.length-1) {
-							whereSql+=rule+"='"+data.get(rule).toString()+"'";
+							if(!StringUtils.isEmpty(subCondition)) {
+								whereSql+="("+subCondition+") ";
+							}
 						}else {
-							whereSql+=rule+"='"+data.get(rule).toString()+"' and ";
+							if(!StringUtils.isEmpty(subCondition)) {
+								whereSql+="("+subCondition+") and ";
+							}
 						}
 						
+					}else {
+						if(data.get(rule)!=null) {
+							if(i==rules.length-1) {
+								whereSql+=rule+"='"+data.get(rule).toString()+"'";
+							}else {
+								whereSql+=rule+"='"+data.get(rule).toString()+"' and ";
+							}
+							
+						}
 					}
+					
 				}
 			}
 		}
