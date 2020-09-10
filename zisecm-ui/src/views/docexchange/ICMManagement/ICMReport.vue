@@ -102,7 +102,7 @@
                 <el-form-item>
                   <el-button
                     type="primary"
-                    @click="icmDataStatistic()"
+                    @click="icmNewDataStatistic()"
                   >{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
               </el-form>
@@ -410,7 +410,28 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "ICM_Report_" + new Date().Format("yyyy-MM-dd") + ".xlsx",
+          filename: "ICM_Report_" + new Date().Format("yyyy-MM-dd"),
+        });
+      });
+    },
+
+    icmNewDataStatistic(){
+      let _self = this;
+
+      import("@/utils/Export2Excel").then((excel) => {
+        let tHeader = [];
+        let filterVal = [];
+        _self.tables.sponsorTable.columns.forEach(function (item) {
+          tHeader.push(item.label);
+          filterVal.push(item.prop);
+        });
+
+        const list = _self.tables.sponsorTable.data;
+        const data = this.formatJson(filterVal, list);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "ICM_CNPECompleteReport_" + new Date().Format("yyyy-MM-dd"),
         });
       });
     },
