@@ -114,6 +114,8 @@ public class HomeDocController extends ControllerAbstract {
 				+ "(select a.C_item_type,a.TYPE_NAME,a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
 				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
 				+ "C_IS_RELEASED=1 and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')  and("+whereSql+" or  TO_NAME='"+getLCompany+"')";
+		String sqlDelayCloseConfirm="select count(*) as count from ecm_document where (C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME='ICM') and ("+whereSql+")";
+		
 		
 		String sqlList = "select ("+
 				sqlSum+") as projectNum, ("+
@@ -130,7 +132,7 @@ public class HomeDocController extends ControllerAbstract {
 				+sqlDelayConfirm+") as delayConfirmNum,("
 				+sqlDelayNum+") as delayNum,("
 				+ sqlDelayReply+") as delayReplyNum,("
-				+sqlDelayReplyConfirm+") as delayReplyConfirm";
+				+sqlDelayReplyConfirm+") as delayReplyConfirm,("+sqlDelayCloseConfirm+") as delayCloseNum";
 		
 		try{
 			System.out.println(sqlcomdcNum);
@@ -138,13 +140,13 @@ public class HomeDocController extends ControllerAbstract {
 			
 			mp.put("projectNum",numList.get(0).get("projectNum"));
 			mp.put("planNum", numList.get(0).get("planNum"));
-			mp.put("thereplanNum",numList.get(0).get("thereplanNum"));
+			mp.put("thereplanNum",numList.get(0).get("ThreeplanNum"));
 			mp.put("iedNum",numList.get(0).get("iedNum"));
 			mp.put("dcNum",numList.get(0).get("dcNum"));
 			mp.put("icmNum",numList.get(0).get("icmNum"));
 			mp.put("feedbackicmNum",numList.get(0).get("feedbackicmNum"));
 			mp.put("complanNum",numList.get(0).get("complanNum"));
-			mp.put("comthereplanNum",numList.get(0).get("comthereplanNum"));
+			mp.put("comthereplanNum",numList.get(0).get("comthreelanNum"));
 			mp.put("comiedNum",numList.get(0).get("comiedNum"));
 			mp.put("comicmNum",numList.get(0).get("comicmNum"));
 			mp.put("comdcNum",numList.get(0).get("comdcNum"));
@@ -152,6 +154,8 @@ public class HomeDocController extends ControllerAbstract {
 			mp.put("delayNum",numList.get(0).get("delayNum"));
 			mp.put("delayReplyNum",numList.get(0).get("delayReplyNum"));
 			mp.put("delayReplyConfirm",numList.get(0).get("delayReplyConfirm"));
+			mp.put("delayCloseNum",numList.get(0).get("delayCloseNum"));
+			
 			mp.put("code", ActionContext.SUCESS);
 		}catch(Exception ex) {
 			ex.printStackTrace();

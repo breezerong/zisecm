@@ -1,16 +1,10 @@
 <template>
-     <div>
-      <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
-      dataValueField="name" dataTextField="name" @onSelectChange="onSelectChange"></DataSelect> 
-      
+     <div>      
       <el-row>
       <el-col :span="4">
-      <ecm-data-icons ref="dataIED" :option="projectDataIED"></ecm-data-icons>
-      <ecm-data-icons ref="dataDC" :option="projectDataDC"></ecm-data-icons>
-      <ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons>
       </el-col>
       <el-col :span="10" >
-      <div id="docChart2" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>
+      <div id="docChart4" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>
       </el-col>
       </el-row> 
      </div>
@@ -36,8 +30,8 @@ export default {
         limit: 10
       },
 
-      docChart2: Object,
-      docChartData1: {
+      docChart4: Object,
+      docChartData4: {
         xAxisData: [],
         yAxisData: []
       },
@@ -45,50 +39,48 @@ export default {
       divHeight: '300px',
       dataReport: [],
       count:'',
-      projectDataIED:{
+      projectDataTPLAN: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '三级计划',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],},
-      projectData1: {
-        color: 'rgb(63, 161, 255)',
-        span: 6,
-        data:[{title: '三级计划',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
-        
+        data: [{
+            title:this.$t('application.TPlan'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-s-order',
+            url: '/cnpe/plan/threelevelplan'}]
       },
-      projectDataDC: {
+      projectDataIED: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '文函',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
-        },
-        projectDataTPLAN: {
+        data: [{
+            title: this.$t('application.IEDPublished'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-s-unfold',
+            url: '/cnpe/iedmanagement/IEDpublished'}]
+      },
+      projectDataICM: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '三级计划',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
-        },
-        projectDataProjectNum: {
+        data: [{
+            title: this.$t('application.ICM'),
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document',
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
+        }]
+      },
+       projectDataDC: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '计划数',
-                count: 11,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-flag',}],
-        },
+        data: [{
+            title: this.$t('application.Document'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
+        }]
+      },
 
 
       inputValueNum: "",
@@ -99,11 +91,9 @@ export default {
 
   mounted() {
      let _self = this;
-    _self.docChart2 = _self.echarts.init(document.getElementById('docChart2'));
+    _self.docChart4 = _self.echarts.init(document.getElementById('docChart4'));
     _self.initChart();
-    _self.getIEDNum()
-    _self.getDCNum()
-    _self.getTPLANNum()
+    this.loadStaitic()
     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
@@ -111,9 +101,7 @@ export default {
     onSelectChange(val){
     let _self = this
     this.filters.projectCode = val
-    _self.getIEDNum()
-    _self.getDCNum()
-    _self.getTPLANNum()
+    this.loadStaitic()
       this.initChart()
     },
     initChart(){
@@ -134,15 +122,50 @@ export default {
                         xArray.push(key);
                         yArray.push(result[key]);
                     }
-                    _self.docChartData1.xAxisData=xArray;
-                    _self.docChartData1.yAxisData=yArray;
-                    _self.loadDocChart(_self.docChart2, _self.docChartData1);
+                    _self.docChartData4.xAxisData=xArray;
+                    _self.docChartData4.yAxisData=yArray;
+                    _self.loadDocChart(_self.docChart4, _self.docChartData4);
                 }
             })
             .catch(function(error) {
                 console.log(error);
             });
       },
+      loadStaitic(){
+        let mp=new Map();
+        let _self=this
+          if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
+          if(_self.filters.startDate){
+              mp.set('startDate',_self.filters.startDate);
+          }
+          if(_self.filters.endDate){
+              mp.set('endDate',_self.filters.endDate);
+          }
+        axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
+      .then(function (response) {
+          if(response.data.code==1){
+           
+              console.log(response.data)
+              _self.projectDataTPLAN.data[0].count=response.data.ThreePlanNum;
+              _self.projectDataIED.data[0].count=response.data.IEDNum;
+              _self.projectDataICM.data[0].count=response.data.ICMNum;
+              _self.projectDataDC.data[0].count=response.data.dcNum
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      },
+
+
+
+
+
       getDCNum(){         //获取文函数量
         let _self=this;
         let mp=new Map();
@@ -196,30 +219,7 @@ export default {
       }
             })
       },
-      getTPLANNum(){
-        let _self=this;
-        let mp=new Map();
-        let data
-         if(_self.filters.projectCode){
-              mp.set('projectName',_self.filters.projectCode);
-          }else{
-              mp.set('projectName','@project');
-          }
-        axios.post("/dc/getCNPETPLANNum",JSON.stringify(mp))
-            .then(function(response) {
-                if(response.data.code==1){
-                data = [{
-                title: _self.$t('application.TPlan'),
-                count: response.data.data.num,
-                color: 'rgb(63, 161, 255)',
-                icon: 'el-icon-s-order',
-                url: '/cnpe/MoreViewerBrowe/projectviewer'
-              }]
-            _self.projectDataTPLAN.data = data
-            _self.$refs.dataTPLAN.refresh()
-      }
-      })
-      },
+
       getProjectNum(){
         let _self=this;
         let mp=new Map();

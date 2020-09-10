@@ -19,12 +19,8 @@
               <span style="float: left;" class="ecmtitle">{{$t('application.projectInfo')}}</span>
             </div>
             <div>
-              <subIcmProject v-if="isSubJK"></subIcmProject>
-              <icmProject v-if="isCNPEJK"></icmProject>
-              <planProject v-if="isCNPEPlan"></planProject>
-              <docProject v-if="isCNPEWK"></docProject>
-              <subDocProject v-if="isSubWK"></subDocProject>
-              <subPlanProject v-if="isSubPlan"></subPlanProject>
+              <subIcmProject v-if="isSub"></subIcmProject>
+              <icmProject v-if='isCNPE'></icmProject>       
               <generalProject v-if="isCNPEGen"></generalProject>
               <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
@@ -296,7 +292,6 @@ export default {
           //console.log("CNPEJK:"+this.isCNPEJK)
         }
       }
-      console.log('isSubWK:'+this.isSubWK);
     },
 
     //获取待办任务列表，最多五条
