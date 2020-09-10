@@ -54,7 +54,7 @@ public class ExcSynDetail extends EcmObject {
     /**
      * 状态
      */
-    private String stauts;
+    private String status;
 
     /**
      * 导入时间
@@ -128,12 +128,12 @@ public class ExcSynDetail extends EcmObject {
     public void setExportDate(Date exportDate) {
         this.exportDate = exportDate;
     }
-    public String getStauts() {
-        return stauts;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStauts(String stauts) {
-        this.stauts = stauts;
+    public void setStatus(String status) {
+        this.status = status;
     }
     public Date getImportDate() {
         return importDate;
@@ -161,7 +161,7 @@ public class ExcSynDetail extends EcmObject {
             ", toId=" + toId +
             ", creationDate=" + creationDate +
             ", exportDate=" + exportDate +
-            ", stauts=" + stauts +
+            ", status=" + status +
             ", importDate=" + importDate +
             ", errorMessage=" + errorMessage +
         "}";

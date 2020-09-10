@@ -215,7 +215,7 @@ public class ExcTransferServiceImpl  implements IExcTransferService {
 	@Override
 	public List<Map<String, Object>> getObjectMap(String token, String condition) {
 
-		String sql = "select ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS from exc_transfer where " + condition;
+		String sql = "select ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS from exc_transfer where " + condition;
 
 		return mapper.executeSQL(sql);
 	}

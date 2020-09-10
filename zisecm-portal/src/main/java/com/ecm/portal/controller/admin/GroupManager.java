@@ -185,9 +185,9 @@ public class GroupManager extends ControllerAbstract {
 		EcmGroup group= groupService.getObjectById(getToken(), args.get("deptId").toString());
 		
 		if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
-			OptionLogger.loggerGroup(detailService, user, group.getName(),user.getCompanyName(),"添加到角色");
+			OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),user.getCompanyName(),"添加到角色");
 		}else {
-			OptionLogger.loggerGroup(detailService, user, group.getName(),"CNPE","添加到角色");
+			OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),"CNPE","添加到角色");
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", result ? ActionContext.SUCESS : ActionContext.FAILURE);

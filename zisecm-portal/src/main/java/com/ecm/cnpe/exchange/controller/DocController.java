@@ -46,7 +46,7 @@ public class DocController  extends ControllerAbstract  {
 	private ProjectViewService projDesignService;
 	@Autowired
 	private ExcSynDetailService synDetailService;
-	private final String queryBase = "SELECT ID,APP_NAME, CREATION_DATE, EXPORT_DATE, IMPORT_DATE, STAUTS, ERROR_MESSAGE FROM exc_syn_detail";
+	private final String queryBase = "SELECT ID,APP_NAME, CREATION_DATE, EXPORT_DATE, IMPORT_DATE, STATUS, ERROR_MESSAGE FROM exc_syn_detail";
 	
 	@PostMapping("exportTC")
 	@ResponseBody
@@ -124,7 +124,7 @@ public class DocController  extends ControllerAbstract  {
 				
 				projMap.put("finishedTime", (item.get("IMPORT_DATE")==null)?"":item.get("IMPORT_DATE").toString());
 				
-				projMap.put("logStatus", (item.get("STAUTS")==null)?"":item.get("STAUTS").toString());
+				projMap.put("logStatus", (item.get("STATUS")==null)?"":item.get("STATUS").toString());
 				
 				projMap.put("errorMessage", (item.get("ERROR_MESSAGE")==null)?"":item.get("ERROR_MESSAGE").toString());
 				
@@ -262,7 +262,7 @@ public class DocController  extends ControllerAbstract  {
 		String sql="select "+ columnsStr.toString() +" from (" + 
 				"	select a.ID,a.C_PROJECT_NAME,a.C_FROM,a.C_TO,a.CODING,a.C_OTHER_CODING,"+
 				"a.CREATION_DATE,a.C_CONTENT,a.C_PAGE_COUNT,a.C_STRING3,a.C_ITEM_DATE,a.TYPE_NAME,a.C_ITEM_TYPE," + 
-				"b.STAUTS as STAUTS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,"+ 
+				"b.STATUS as STATUS,b.TO_NAME,b.COMMENT as C_REJECT_COMMENT,b.REJECTER as C_REJECTOR,"+ 
 				"b.REJECT_DATE as C_REJECT_DATE from ecm_document a, exc_transfer b where a.id=b.doc_id" + 
 				")t where "+gvCondition;
 		

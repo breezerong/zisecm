@@ -131,8 +131,8 @@
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGridCnpeReject"
                             :isshowCustom="false"
-                            condition=" stauts='驳回' and ITEM_TYPE=1 "
-                            :isEditProperty="true"
+                            condition=" status='驳回' and ITEM_TYPE=1 "
+                            :isEditProperty="isShowMountFile"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                             @rowclick="rowClick"
@@ -167,7 +167,7 @@
                                     gridViewName="DrawingGridRejectedCnpe"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="isShowMountFile"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="selectChangeTransferDoc"
@@ -202,7 +202,7 @@
                                     condition=" and a.NAME='相关文件'"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="isShowMountFile"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="relevantDocSelect"
@@ -234,7 +234,7 @@
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="isShowMountFile"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
                                     @selectchange="attachmentDocSelect"
@@ -269,7 +269,7 @@ export default {
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 80,
+            bottomHeight: 120,
             dialog:{
                 title:"",
                 visible:false
@@ -283,6 +283,7 @@ export default {
                 status:"驳回",
                 limit: 10
             },
+            isShowMountFile:true,
             isReject:true,
             projects:[],
             typeName:"文件传递单",
@@ -348,12 +349,14 @@ export default {
         changeStatus:function(){
             // console.log(status)
             if(this.filters.status=='已作废'){
-                
+                this.isShowMountFile=false;
                 this.isReject=false
             } 
             else{
+                this.isShowMountFile=true
                 this.isReject=true
             }
+            
             this.searchItem()
         },
         // 上下分屏事件
@@ -542,6 +545,11 @@ export default {
                console.log(this.selectRow)
             this.parentId=row.ID;
             let _self=this;
+            if(row.SYN_APP=='TC'){
+                _self.isShowMountFile=false;
+            }else{
+                _self.isShowMountFile=true;
+            }
             if(row.TYPE_NAME=='文件传递单'){
                 _self.isShowDesgin=true;
                 _self.isShowRelevant=false;
@@ -652,9 +660,9 @@ export default {
             console.log(this.filters.status)
                console.log(this.isReject)
             if(_self.filters.status!=''){
-                key=" stauts='"+_self.filters.status+"'";
+                key=" status='"+_self.filters.status+"'";
             }else{
-                 key=" (stauts='驳回' or stauts='已作废')";
+                 key=" (status='驳回' or status='已作废')";
             }
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;

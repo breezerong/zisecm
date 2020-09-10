@@ -14,7 +14,8 @@
           <template v-for="(item,itemIndex) in citem.ecmFormItems">
             <el-col v-show="itemId || (!itemId && !item.readOnly)" :span="showCellValue(item)" v-bind:key="itemIndex" style="text-align:left;">
               <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:validateValue(item),message:$t('application.requiredInput'),trigger:'blur'}]">
-                    <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                    <el-input v-if="item.controlType=='TextBox' && !item.isRepeat" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                    <MultiInput v-if="item.controlType=='TextBox' && item.isRepeat" v-model="item.defaultValue"></MultiInput>
                     <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                     <el-input v-else-if="item.controlType=='Integer'" :min="0" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                     <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-checkbox>
@@ -59,12 +60,14 @@
 <script type="text/javascript">
 import UserSelectInput from '@/components/controls/UserSelectInput'
 import AddCondition from '@/views/record/AddCondition'
+import MultiInput from '@/components/ecm-multi-input'
 
 export default {
   name: "ShowProperty",
   components: {
-    UserSelectInput:UserSelectInput,
-    AddCondition:AddCondition
+    UserSelectInput : UserSelectInput,
+    AddCondition : AddCondition,
+    MultiInput : MultiInput
   },
   data() {
     return {

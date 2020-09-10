@@ -70,7 +70,7 @@ public class ICMController  extends ControllerAbstract  {
 			doc.setAclName(folder.getAclName());
 			String id = documentService.newObject(getToken(), doc, null);
 			doc.setId(id);
-			OptionLogger.logger(detailService,doc, "新建","CNPE");
+			OptionLogger.logger(getToken(), detailService,doc, "新建","CNPE");
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("id", id);
 		}catch (AccessDeniedException e) {
@@ -90,7 +90,7 @@ public class ICMController  extends ControllerAbstract  {
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
 			documentService.updateObject(getToken(), doc, null);
-			OptionLogger.logger(detailService,doc, "延误打开反馈",company);
+			OptionLogger.logger(getToken(), detailService,doc, "延误打开反馈",company);
 			mp.put("code", ActionContext.SUCESS);
 		}
 		catch (AccessDeniedException e) {
@@ -111,7 +111,7 @@ public class ICMController  extends ControllerAbstract  {
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
 			documentService.updateObject(getToken(), doc, null);
-			OptionLogger.logger(detailService,doc, "延误关闭反馈",company);
+			OptionLogger.logger(getToken(), detailService,doc, "延误关闭反馈",company);
 			mp.put("code", ActionContext.SUCESS);
 		}
 		catch (AccessDeniedException e) {
@@ -151,7 +151,7 @@ public class ICMController  extends ControllerAbstract  {
 		temp.addAttribute("C_DRAFTER1", name);
 		temp.addAttribute("C_DRAFT1_DATE",d1);
 		documentService.updateObject(getToken(), temp, null);
-		OptionLogger.logger(detailService,temp, "延误回复反馈",company);
+		OptionLogger.logger(getToken(), detailService,temp, "延误回复反馈",company);
 		map.put("code", 1);
 		return map;
 	}
@@ -166,7 +166,7 @@ public class ICMController  extends ControllerAbstract  {
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		EcmDocument doc = new EcmDocument();
 		doc.setAttributes(args);
-		OptionLogger.logger(detailService,doc, "修改","CNPE");
+		OptionLogger.logger(getToken(), detailService,doc, "修改","CNPE");
 	}
 	
 	@RequestMapping(value ="/exchange/ICM/AcceptICMFeedback",method = RequestMethod.POST)
@@ -178,7 +178,7 @@ public class ICMController  extends ControllerAbstract  {
 		temp = documentService.getObjectById(getToken(), ids.get(i));
 		temp.addAttribute("C_PROCESS_STATUS", "已确认");
 		documentService.updateObject(getToken(), temp, null);	
-		OptionLogger.logger(detailService, temp, "延误打开确认", "CNPE");
+		OptionLogger.logger(getToken(), detailService, temp, "延误打开确认", "CNPE");
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
@@ -196,7 +196,7 @@ public class ICMController  extends ControllerAbstract  {
 		temp = documentService.getObjectById(getToken(), ids.get(i));
 		temp.addAttribute("C_PROCESS_STATUS", "已确认");
 		documentService.updateObject(getToken(), temp, null);	
-		OptionLogger.logger(detailService, temp, "延误回复确认", company);
+		OptionLogger.logger(getToken(), detailService, temp, "延误回复确认", company);
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
@@ -230,7 +230,7 @@ public class ICMController  extends ControllerAbstract  {
 		temp.addAttribute("C_PROCESS_STATUS", "已确认");
 		temp.addAttribute("C_ITEM_STATUS4", isTrue);
 		documentService.updateObject(getToken(), temp, null);	
-		OptionLogger.logger(detailService, temp, "延误关闭确认", company);
+		OptionLogger.logger(getToken(), detailService, temp, "延误关闭确认", company);
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);

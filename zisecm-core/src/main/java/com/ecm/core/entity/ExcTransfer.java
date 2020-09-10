@@ -82,7 +82,8 @@ public class ExcTransfer extends EcmObject {
     /**
      * 状态
      */
-    private String stauts;
+    private String status;
+    
 
     /**
      * 错误信息
@@ -234,9 +235,10 @@ public class ExcTransfer extends EcmObject {
 		if(attributes.get("RECEIVE_DATE")!=null) {
 			this.setReceiveDate(getDate(attributes.get("RECEIVE_DATE")));
 		}
-	    if(attributes.get("STAUTS")!=null) {
-	    	this.setStauts(getString(attributes.get("STAUTS")));
+	    if(attributes.get("STATUS")!=null) {
+	    	this.setStatus(getString(attributes.get("STATUS")));
 	    }
+
 	    if(attributes.get("COMMENT")!=null) {
 	    	this.setComment(getString(attributes.get("COMMENT")));
 	    }
@@ -370,13 +372,7 @@ public class ExcTransfer extends EcmObject {
     public void setReceiveDate(Date receiveDate) {
         this.receiveDate = receiveDate;
     }
-    public String getStauts() {
-        return stauts;
-    }
 
-    public void setStauts(String stauts) {
-        this.stauts = stauts;
-    }
     public String getComment() {
         return comment;
     }
@@ -408,7 +404,7 @@ public class ExcTransfer extends EcmObject {
                 ", sendDate=" + sendDate +
                 ", receiver=" + receiver +
                 ", receiveDate=" + receiveDate +
-                ", stauts=" + stauts +
+                ", status=" + status +
                 ", comment=" + comment +
                 ", synStatus=" + synStatus +
                 ", applicant=" + applicant +
@@ -419,4 +415,12 @@ public class ExcTransfer extends EcmObject {
                 ", comment1=" + comment1 +
             "}";
     }
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

@@ -539,7 +539,7 @@ export default {
                       duration: 2000,
                       type: "Error"
                     });
-      retrun;
+      return;
     }
         var m = new Map();
         m.set('gridName',_self.gridViewName);

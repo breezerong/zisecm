@@ -142,7 +142,7 @@
                             :isEditProperty="false"
                             showOptions="查看内容"
                             :isShowChangeList="false"
-                            condition=" stauts='已接收' and ITEM_TYPE=1 and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
+                            condition=" status='已接收' and ITEM_TYPE=1 and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
                             @rowclick="rowClick"
                             @selectchange="selectChange"
                         ></DataGrid>
@@ -563,7 +563,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" stauts='已接收' and TO_NAME='@company'";
+            let key=" status='已接收' and TO_NAME='@company'";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{

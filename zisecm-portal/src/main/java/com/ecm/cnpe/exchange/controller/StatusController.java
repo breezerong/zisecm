@@ -73,11 +73,13 @@ public class StatusController extends ControllerAbstract{
 				
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(nextStatus);
+				doc.addAttribute("C_RECEIVER",this.getSession().getCurrentUser().getUserName());
+				doc.addAttribute("C_RECEIVE_DATE", new Date());
 				if("IED".equals(doc.getTypeName())) {
 					if("已生效".equals(nextStatus)) {
 						doc.addAttribute("C_ITEM_STATUS2", "Y");
 						logicOptionCnpeIEDService.IEDOption(getToken(), doc);
-						OptionLogger.logger(detailService, doc, "接收", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+						OptionLogger.logger(getToken(), detailService, doc, "接收", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 						
 					}
 					documentService.updateObject(getToken(), doc, null);
@@ -88,7 +90,7 @@ public class StatusController extends ControllerAbstract{
 					 * }
 					 */
 					if("审核中".equals(nextStatus)) {
-						OptionLogger.logger(detailService, doc, "提交", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+						OptionLogger.logger(getToken(), detailService, doc, "提交", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 					}
 					//
 				}else if("图文传真,会议纪要".contains(doc.getTypeName())){
@@ -111,10 +113,10 @@ public class StatusController extends ControllerAbstract{
 //				OptionLogger.logger(detailService, doc, "CNPE接收", 
 //						doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				if("驳回".equals(currentStatus)) {
-					OptionLogger.logger(detailService, doc, "驳回提交", 
+					OptionLogger.logger(getToken(), detailService, doc, "驳回提交", 
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}else {
-					OptionLogger.logger(detailService, doc, 
+					OptionLogger.logger(getToken(), detailService, doc, 
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}
 				
@@ -178,10 +180,10 @@ public class StatusController extends ControllerAbstract{
 				}
 				
 				if("IED".equals(doc.getTypeName())) {
-					OptionLogger.logger(detailService, doc, "驳回", 
+					OptionLogger.logger(getToken(), detailService, doc, "驳回", 
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}else {
-					OptionLogger.logger(detailService, doc,
+					OptionLogger.logger(getToken(), detailService, doc,
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}
 				

@@ -17,7 +17,7 @@
             </el-dialog>
 
             <el-dialog title="查看版本" :visible.sync="iedVersionVisual" fullscreen @open="initDocVersion">
-                <IEDVersionView ref="ivvViewer"></IEDVersionView>
+                <IEDVersionView ref="ivvViewer" :versionDocId="id"></IEDVersionView>
             </el-dialog>
             <el-form :inline="true" :model="forms.headForm">
                 <el-form-item v-show="view==false">
@@ -334,6 +334,7 @@ export default {
             //this.$refs.tfDg.loadGridInfo()
             this.$refs.tfDg.loadGridData()
             this.id=row.ID
+
             this.tables.iedVersionDg.condition="VERSION_ID='"+this.id+"'"
         },
         
