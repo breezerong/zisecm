@@ -72,6 +72,9 @@ export default {
 
       handleInputConfirm() {
         let inputValue = this.inputValue;
+        if(!this.value || this.value == null){
+          this.value = [];
+        }
         if (inputValue) {
           this.value.push(inputValue);
         }

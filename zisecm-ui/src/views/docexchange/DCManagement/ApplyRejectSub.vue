@@ -138,17 +138,6 @@
                     <template slot="paneR">
                         <el-tabs v-model="selectedTabName">
                             <el-tab-pane :label="$t('application.TransferDoc')" name="t01" v-if="isShowDesgin">
-                                <el-row>
-                                    <el-col :span="24">
-                                    <el-form :inline="true" :model="filters" @submit.native.prevent>
-
-                                        <el-form-item>
-                                            <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
-                                        </el-form-item>
-                                        
-                                    </el-form>
-                                    </el-col>
-                                </el-row>
                                 <!--列表-->
                                 <DataGrid
                                     ref="transferDoc"
@@ -171,26 +160,6 @@
                                 </DataGrid>
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
-                                <el-row>
-                                    <el-col :span="24">
-                                    <el-form :inline="true" :model="filters" @submit.native.prevent>
-                                        <!-- <el-form-item>
-                                        <el-button type="primary" @click="beforeCreateDocItem('设计文件','相关文件')">新建</el-button>
-                                        </el-form-item>
-                                        <el-form-item>
-                                        <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                                        </el-form-item>
-                                        <el-form-item>
-                                        <el-button type="warning" @click="onDeleleItem(relevantDocSelected,[$refs.relevantDoc])">{{$t('application.delete')}}</el-button>
-                                        </el-form-item> -->
-                                        <!-- 打包下载 -->
-                                        <el-form-item>
-                                            <el-button type="primary" @click="packDownloadSubFile(relevantDocSelected)">{{$t('application.PackToDownload')}}</el-button>
-                                        </el-form-item>
-                                    
-                                    </el-form>
-                                    </el-col>
-                                </el-row>
                                 <!--列表-->
                                 <DataGrid
                                     ref="relevantDoc"
@@ -210,27 +179,6 @@
                             
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
-                                <el-row>
-                                    <el-col :span="24">
-                                        <el-form :inline="true" :model="filters" @submit.native.prevent>
-                                            <!-- <el-form-item>
-                                            <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">新建</el-button>
-                                            </el-form-item>
-                                            <el-form-item>
-                                            <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                                            </el-form-item>
-                                            <el-form-item>
-                                            <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">{{$t('application.delete')}}</el-button>
-                                            </el-form-item> -->
-                                            <!-- 打包下载 -->
-                                            <el-form-item>
-                                                <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
-                                            </el-form-item>
-                                        
-                                            
-                                        </el-form>
-                                    </el-col>
-                                </el-row>
                                 <!--列表-->
                                 <DataGrid
                                     ref="attachmentDoc"
@@ -275,7 +223,7 @@ export default {
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 120,
+            bottomHeight: 80,
 
             filters: {
                 projectCode: "",

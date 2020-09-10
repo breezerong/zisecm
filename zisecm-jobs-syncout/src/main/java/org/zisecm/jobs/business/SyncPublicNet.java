@@ -440,7 +440,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 		}
 		ExcSynBatch temp = new ExcSynBatch();
-		temp.setAppName("IN-OUT");
+		temp.setAppName("DOCEX");
 		temp.setCreationDate(updateDate);
 		temp.setActionName("同步");
 		temp.setStatus("新建");
