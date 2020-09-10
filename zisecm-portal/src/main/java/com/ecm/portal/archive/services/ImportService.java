@@ -211,7 +211,7 @@ public class ImportService extends EcmService {
 								)) {
 							sameValues = new HashMap<String,Object>();
 							newId = null;
-							newId = newDocument( token, parentType,null, sheet.getRow(i),  
+							newId = newDocument( token, parentType,"",null, sheet.getRow(i),  
 									fileList, attrNames,null,relationName,number, 1,
 									childStartIndex-1,sameValues,sameFields);
 							if(!StringUtils.isEmpty(newId)) {
@@ -251,7 +251,7 @@ public class ImportService extends EcmService {
 							}
 							if(fileNameIndex==0) {
 								try {
-									tempId = newDocument( token, childType,itemStream,
+									tempId = newDocument( token, childType,deskFileName,itemStream,
 											sheet.getRow(i),  fileList, attrNames,
 											newId,relationName,number, childStartIndex,sheet.getRow(i).getLastCellNum(),
 											sameValues,null);
@@ -304,7 +304,7 @@ public class ImportService extends EcmService {
 									attachDoc.setName(deskFileName.substring(0, 
 											deskFileName.lastIndexOf(".")>-1?deskFileName.lastIndexOf("."):deskFileName.length()));
 									String folderId="";
-									folderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
+									folderId= folderPathService.getFolderId(token, attachDoc.getAttributes(), "3");
 									EcmFolder folder= folderService.getObjectById(token, folderId);
 									attachDoc.setFolderId(folderId);
 									attachDoc.setAclName(folder.getAclName());
@@ -365,7 +365,7 @@ public class ImportService extends EcmService {
 							}
 							if(fileNameIndex==0) {
 								try {
-									newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
+									newId = newDocument( token, parentType,deskFileName,itemStream, sheet.getRow(i),  
 											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 											null,null);
 									if(hasRendition) {
@@ -420,7 +420,7 @@ public class ImportService extends EcmService {
 									attachDoc.setName(deskFileName.substring(0, 
 											deskFileName.lastIndexOf(".")>-1?deskFileName.lastIndexOf("."):deskFileName.length()));
 									String folderId="";
-									folderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
+									folderId= folderPathService.getFolderId(token, attachDoc.getAttributes(), "3");
 									EcmFolder folder= folderService.getObjectById(token, folderId);
 									attachDoc.setFolderId(folderId);
 									attachDoc.setAclName(folder.getAclName());
@@ -468,8 +468,26 @@ public class ImportService extends EcmService {
 		sb.append("错误行数:").append(failedCount).append("\r\n");
 		return sb.toString();
 	}
-	
-	private String newDocument(String token, String typeName,FileInputStream itemStream,
+	/**
+	 * 
+	 * @param token
+	 * @param typeName
+	 * @param deskFileName 文件名称，带扩展名
+	 * @param itemStream
+	 * @param row
+	 * @param fileList
+	 * @param attrNames
+	 * @param parentId
+	 * @param relationName
+	 * @param batchName
+	 * @param start
+	 * @param end
+	 * @param sameValues
+	 * @param sameFields
+	 * @return
+	 * @throws Exception
+	 */
+	private String newDocument(String token, String typeName,String deskFileName,FileInputStream itemStream,
 			Row row, Map<String,Long> fileList,
 			Map<Integer,String> attrNames,String parentId, String relationName,
 			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields) throws Exception {
@@ -516,7 +534,11 @@ public class ImportService extends EcmService {
 			EcmContent content = null;
 			if(itemStream!=null) {
 				content = new EcmContent();
-				content.setName(row.getCell(0).getStringCellValue());
+//				content.setName(row.getCell(0).getStringCellValue());
+				if(deskFileName!=null&&!"".equals(deskFileName)) {
+					content.setName(deskFileName);
+				}
+				
 				content.setContentSize(fileList.get(content.getName()));
 				content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
 				content.setInputStream(itemStream);

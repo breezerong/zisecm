@@ -139,7 +139,7 @@
                     <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'','/系统配置/导入模板/文函')">{{$t('application.Import')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="success" @click="subdc">{{$t('application.Submit')}}</el-button>
+                    <el-button type="success" @click="subdc" :loading="buttLoading">{{$t('application.Submit')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="warning" 
@@ -320,7 +320,7 @@ export default {
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 120,
-
+            buttLoading:false,
             filters: {
                 projectCode: "",
                 docType: "",
@@ -386,6 +386,7 @@ export default {
     methods: {
         subdc(){
             let _self = this
+            _self.buttLoading=true;
             if(this.selectedItems.length==0){
                 this.$message({
                         showClose: true,
@@ -393,11 +394,13 @@ export default {
                         duration: 2000,
                         type: 'warning' 
                     });
+                     _self.buttLoading=false;
                     return
             }
             let a=this.selectedItems[0].FORMAT_NAME
             if(a=='pdf'||a=='PDF'){
                 this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid,[this.$refs.transferDoc,this.$refs.relevantDoc])
+                 _self.buttLoading=false;
             }else{
                 this.$message({
                             showClose: true,
@@ -405,7 +408,8 @@ export default {
                             duration: 2000,
                             type: 'warning'
                             });
-                        return;
+                _self.buttLoading=false;
+                return;
             }
             
         },
