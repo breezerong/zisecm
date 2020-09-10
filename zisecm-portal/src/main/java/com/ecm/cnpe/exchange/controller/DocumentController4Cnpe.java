@@ -238,6 +238,8 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				}
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, null, true);
 				doc.setStatus(nextStatus);
+				doc.setReceiver(this.getSession().getCurrentUser().getUserName());
+				doc.setReceiveDate(new Date());
 				excTransferService.updateObject(doc);
 //				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
 				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
