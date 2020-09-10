@@ -75,6 +75,28 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 		return true;
 		
 	}
+	/**
+	 * 验证IED是否存在
+	 * @param token
+	 * @param transferDoc
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean transferSubValidate(String token,EcmDocument transferDoc) throws Exception {
+		List<Map<String,Object>> designDocMaps= getChildsByParentID(token, transferDoc.getId(), "设计文件");
+		
+		for(int j=0;designDocMaps!=null&&j<designDocMaps.size();j++) {
+			EcmDocument newDesignDoc=new EcmDocument();
+			newDesignDoc.setAttributes(designDocMaps.get(j));
+			EcmDocument oldIED= getIEDByDoc(token,newDesignDoc);
+			if(oldIED==null) {
+				throw new Exception("此文件\""+newDesignDoc.getCoding()+"\"无对应IED!");
+			}
+		}
+		return true;
+		
+	}
 	
 	/**
 	 * 通过parentId 获取
@@ -194,6 +216,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 		
 		return true;
 	}
+	
 	
 	
 }

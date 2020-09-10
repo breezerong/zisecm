@@ -57,6 +57,21 @@ public class LogicOption4CnpeInterface extends DocumentService{
 	@Transactional(rollbackFor = Exception.class)
 	public boolean interfaceOption(String token,EcmDocument interfaceDoc) throws Exception {
 		EcmDocument icmDoc= getICMS(token,interfaceDoc);
+		if(icmDoc==null) {
+			throw new Exception("无对应ICM信息（“"+(interfaceDoc.getAttributeValue("C_CODE1")==null?""
+					:interfaceDoc.getAttributeValue("C_CODE1").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE2")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE2").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE3")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE3").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE4")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE4").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE5")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE5").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE6")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE6").toString())
+					+"”）");
+		}
 		EcmRelation relation=new EcmRelation();
 		relation.setChildId(interfaceDoc.getId());
 		relation.setParentId(icmDoc.getId());
@@ -67,6 +82,37 @@ public class LogicOption4CnpeInterface extends DocumentService{
 			relation.setName("接口意见");
 		}
 		relationService.newObject(token, relation);
+		return true;
+		
+		
+	}
+	
+	/**
+	 * 通过接口对象验证接口对象包含（接口信息传递单，接口信息意见单）两种类型是否存在
+	 * @param token
+	 * @param interfaceDoc
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean interfaceValidateOption(String token,EcmDocument interfaceDoc) throws Exception {
+		EcmDocument icmDoc= getICMS(token,interfaceDoc);
+		if(icmDoc==null) {
+			throw new Exception("无对应ICM信息（“"+(interfaceDoc.getAttributeValue("C_CODE1")==null?""
+					:interfaceDoc.getAttributeValue("C_CODE1").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE2")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE2").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE3")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE3").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE4")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE4").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE5")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE5").toString())
+					+" "+(interfaceDoc.getAttributeValue("C_CODE6")==null?""
+							:interfaceDoc.getAttributeValue("C_CODE6").toString())
+					+"”）");
+		}
+		
 		return true;
 		
 		
