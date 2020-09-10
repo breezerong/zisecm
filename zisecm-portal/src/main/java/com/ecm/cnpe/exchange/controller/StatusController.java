@@ -95,7 +95,18 @@ public class StatusController extends ControllerAbstract{
 					//
 				}else if("图文传真,会议纪要".contains(doc.getTypeName())){
 					documentService.updateObject(getToken(), doc, null);
+					doc.addAttribute("C_IS_RELEASED", 1);
 				}else {
+					if("待确认".equals(nextStatus)) {
+						//验证数据是否存在
+						if("文件传递单".equals(doc.getTypeName())) {
+							logicOptionTransferService.transferSubValidate(getToken(), doc);
+						}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
+							logicOptionInterfaceService.interfaceValidateOption(getToken(), doc);
+						}else {
+							logicOptionRelevantService.relevantValidateOption(getToken(),doc);
+						}
+					}
 					if("已确认".equals(nextStatus)) {
 						if("文件传递单".equals(doc.getTypeName())) {
 							logicOptionTransferService.transferOption(getToken(), doc);

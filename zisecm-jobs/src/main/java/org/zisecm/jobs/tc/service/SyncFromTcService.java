@@ -86,7 +86,13 @@ public class SyncFromTcService {
 	    			  doc.setAttributes(row);
 	    			  String docId= documentService.newObject(ecmSession.getToken(), doc, null);
 	    			  //检查数据是否有字表
-	    			  obj.getPropertyObject("cn9FileList").getStringArrayValue();
+	    			  com.teamcenter.soa.client.model.Property property= obj.getPropertyObject("cn9FileList");
+	    			  if(property!=null) {
+	    				 String[] formIds= property.getStringArrayValue();
+	    				 for(int j=0;j<formIds.length;j++) {
+	    					 
+	    				 }
+	    			  }
 	    			  //创建字表数据
 	    			  //下载电子文件保存至子表
 	    		  }

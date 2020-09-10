@@ -458,7 +458,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 					String condition = "DOC_ID='"+childId+"' AND ITEM_TYPE=1";
 					List<ExcTransfer> tlist = excTransferService.selectByCondition(condition);
 					for(ExcTransfer obj:tlist) {
-						if(obj.getStatus1()!=null && obj.getStatus1().equals("待确认")) {
+						if(obj.getStatus1()!=null &&( obj.getStatus1().equals("待确认")
+								||obj.getStatus().equals("驳回"))) {
+							continue;
 							
 						}else {
 							obj.setApplicant(documentService.getSession(getToken()).getCurrentUser().getUserName());
@@ -490,8 +492,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 						OptionLogger.logger(getToken(), detailService, obj, "申请驳回", obj.getToName());
 					}else {
 						ExcTransfer obj = tlist.get(0);
-						if(obj.getStatus1()!=null && obj.getStatus1().equals("待确认")) {
-							
+						if(obj.getStatus1()!=null && (obj.getStatus1().equals("待确认")||
+								obj.getStatus1().equals("已驳回"))) {
+							continue;
 						}else {
 							obj.setApplicant(documentService.getSession(getToken()).getCurrentUser().getUserName());
 							obj.setApplyDate(new Date());
