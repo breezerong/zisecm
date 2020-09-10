@@ -149,7 +149,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		List<String> idsList = JSONUtils.stringToArray(idsStr);
 
 		for(String childId : idsList) {
+
 			String sql = "update exc_transfer set STATUS='待接收'   where DOC_ID='"+childId+"'";	
+
 			ecmDocument.executeSQL(sql);
 		}
 		mp.put("code", ActionContext.SUCESS);
