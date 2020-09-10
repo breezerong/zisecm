@@ -2,6 +2,10 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 待提交文函 -->
+            <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            </el-dialog>
             <!-- 批量导入 -->
             <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
                 <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
@@ -186,11 +190,15 @@
                                     :isEditProperty="isShowMountFile"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
+                                    @dbclick="dbClick"
                                     @selectchange="selectChangeTransferDoc"
                                     >
                                         <template slot="sequee" slot-scope="scope">
                                             <span :style="(scope.data.row['C_PROCESS_STATUS']!=null
                                             &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''">{{scope.data.$index+1}}</span>
+                                        </template>
+                                        <template slot="dropdownItem" slot-scope="scope">
+                                            <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
                                         </template>
                                     </DataGrid>
                             </el-tab-pane>
@@ -279,6 +287,7 @@ import ExcelUtil from '@/utils/excel.js';
 import DataSelect from '@/components/ecm-data-select';
 import MountFile from '@/components/MountFile.vue';
 import DataLayout from '@/components/ecm-data-layout'
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 export default {
     name: "RejectedDC",
     data(){
@@ -293,6 +302,11 @@ export default {
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 120,
+            dialog:{
+                title:"",
+                visible:false
+            },
+            docId:"",
             filters: {
                 projectCode: "",
                 docType: "",
@@ -349,6 +363,20 @@ export default {
         }, 300);
     },
     methods: {
+        dbClick(row){
+            this.docId=row.ID;
+            this.dialog.visible=true;
+            
+            this.$nextTick(()=>{
+                this.$refs.subAttachment.refresh();
+                // this.$refs.subAttachment.docId=row.ID;
+            });
+
+            // this.$nextTick(()=>{
+            //     this.$refs.subAttachment.docId=row.ID;
+            // this.$refs.subAttachment.docId=row.ID;
+            // });
+        },
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100
@@ -892,7 +920,8 @@ export default {
         DataSelect:DataSelect,
         BatchImport:BatchImport,
         MountFile:MountFile,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        AttachmentFile:AttachmentFile,
     }
 }
 </script>

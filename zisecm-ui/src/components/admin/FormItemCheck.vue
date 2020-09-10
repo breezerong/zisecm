@@ -14,7 +14,8 @@
           <template v-for="(item,itemIndex) in citem.ecmFormItems">
             <el-col :span="showCellValue(item)" v-bind:key="itemIndex" style="text-align:left;">
               <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:validateValue(item),message:$t('application.requiredInput'),trigger:'blur'}]">
-                    <el-input v-if="item.controlType=='TextBox'" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                    <el-input v-if="item.controlType=='TextBox' && !item.isRepeat" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                    <MultiInput v-if="item.controlType=='TextBox' && item.isRepeat" v-model="item.defaultValue"></MultiInput>
                     <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                     <el-input v-else-if="item.controlType=='Integer'" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
                     <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-checkbox>
@@ -42,10 +43,16 @@
 </template>
 
 <script type="text/javascript">
+import UserSelectInput from '@/components/controls/UserSelectInput'
+import MultiInput from '@/components/ecm-multi-input'
 
 export default {
   name: "FormItemCheck",
   permit: 9,
+  components: {
+    UserSelectInput : UserSelectInput,
+    MultiInput : MultiInput
+  },
   data() {
     return {
       parentid: "",

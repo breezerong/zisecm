@@ -1,7 +1,24 @@
 <template>
   <DataLayout>
     <template v-slot:header>
+        <el-dialog title="驳回申请" :visible.sync="showRejectDialog" width="50%" @close="showRejectDialog=false">
+            <el-input
+              type="textarea"
+              :rows="5"
+              placeholder="请输入申请原因"
+              v-model="applyComment">
+            </el-input>
+            <div slot="footer" class="dialog-footer">
+                <el-button
+                @click="onRejectApply()"
+                >{{$t('application.ok')}}</el-button>
+            </div>
+        </el-dialog>
       <!-- 已分发 -->
+      <!-- 设计文件附件 -->
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            </el-dialog>
       <!-- 创建附件 -->
       <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
         <el-form size="mini" v-loading="uploading">
@@ -117,6 +134,13 @@
             :inputType="hiddenInput"
           ></AddCondition>
         </el-form-item>
+        <el-form-item>
+          <el-button
+            type="warning"
+            v-on:click="onShowApplyDialog"
+            :title="$t('application.startRejectApply')"
+          >{{$t('application.startRejectApply')}}</el-button>
+        </el-form-item>
         <!--导出Excel-->
         <el-form-item>
           <el-button
@@ -162,7 +186,7 @@
                         v-bind:isshowOption="true"
                         v-bind:isshowSelection="true"
                         gridViewName="DCTransferGrid"
-                        condition=" (status!='新建' or status is not null or status !='') and C_PROJECT_NAME = '@project'"
+                        condition=" (status!='新建' and status is not null and status !='') and c_company='@company' and C_PROJECT_NAME = '@project'"
 
                         @rowclick="rowClick"
                         @selectchange="selectChange"
@@ -211,6 +235,7 @@
                                 :isEditProperty="false"
                                 showOptions="查看内容"
                                 :isShowChangeList="false"
+                                @dbclick="dbClick"
                                 @selectchange="selectChangeTransferDoc"
                             >
                                 <template slot="sequee" slot-scope="scope">
@@ -218,6 +243,10 @@
                                         :style="(scope.data.row['C_PROCESS_STATUS']!=null
                                             &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''"
                                     >{{scope.data.$index+1}}</span>
+                                </template>
+
+                                <template slot="dropdownItem" slot-scope="scope">
+                                        <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
                                 </template>
                             </DataGrid>
                         </el-tab-pane>
@@ -317,6 +346,7 @@ import RejectButton from "@/components/RejectButton";
 import DataSelect from "@/components/ecm-data-select";
 import DataLayout from "@/components/ecm-data-layout";
 import ExcelUtil from "@/utils/excel.js";
+import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 export default {
     // CNPE 已分发文函
     name: "BeenDispensed",
@@ -332,6 +362,10 @@ export default {
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 120,
+
+            showRejectDialog: false,
+
+            applyComment: "",
 
             filters: {
                 projectCode: "",
@@ -364,6 +398,11 @@ export default {
             isShowRelevant: true,
             isShowAttachmentDoc: true,
             selectedTabName: "t01",
+            dialog:{
+                title:"",
+                visible:false
+            },
+            docId:"",
         };
     },
     created() {
@@ -383,6 +422,65 @@ export default {
       this.searchItem()  
     },
     methods: {
+        onShowApplyDialog(){
+            let _self = this;
+            if( _self.selectedItems == null || _self.selectedItems.length == 0){
+                _self.$message({
+                    showClose: true,
+                    message: "请勾选一条文件数据!",
+                    duration: 3000,
+                    type: "warning",
+                });
+                return;
+            }
+            _self.showRejectDialog = true;
+        },
+        onRejectApply(){
+            let _self = this;
+            var m = [];
+            let tab = _self.selectedItems;
+            
+            var i;
+            for (i in tab) {
+                m.push(tab[i]["ID"]);
+            }
+            let mp=new Map();
+            mp.set("ids",m);
+            mp.set("iscnpe","true");
+            mp.set("msg",_self.applyComment);
+            axios.post("/exchange/doc/applyReject",JSON.stringify(mp),{
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            })
+            .then(function (response) {
+                _self.showRejectDialog = false;
+                _self.$message({
+                    showClose: true,
+                    message: "发起驳回申请成功!",
+                    duration: 3000,
+                    type: "success",
+                });
+            })
+            .catch(function (error) {
+                _self.uploading = false;
+                console.log(error);
+            });
+        },
+        dbClick(row){
+            this.docId=row.ID;
+            this.dialog.visible=true;
+            
+            this.$nextTick(()=>{
+                this.$refs.subAttachment.refresh();
+                // this.$refs.subAttachment.docId=row.ID;
+            });
+
+            // this.$nextTick(()=>{
+            //     this.$refs.subAttachment.docId=row.ID;
+            // this.$refs.subAttachment.docId=row.ID;
+            // });
+        },
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100
@@ -595,7 +693,7 @@ export default {
         },
         searchItem() {
             let _self = this;
-            let key = " (status!='新建' or status is not null or status !='')";
+            let key = " (status!='新建' and status is not null and status !='') and c_company='@company'";
             if (_self.filters.projectCode != "") {
                 key += " and C_PROJECT_NAME = " + _self.filters.projectCode;
             } else {
@@ -814,6 +912,7 @@ export default {
         DataSelect: DataSelect,
         DataLayout: DataLayout,
         RejectButton: RejectButton,
+        AttachmentFile:AttachmentFile,
     },
 };
 </script>

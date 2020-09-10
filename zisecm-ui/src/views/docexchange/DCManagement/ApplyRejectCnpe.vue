@@ -72,12 +72,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
-                    <!-- <el-option label="所有文函" value></el-option>
-                    <el-option label="传递单" value="传递单"></el-option>
-                    <el-option label="图文传真" value="图文传真"></el-option>
-                    <el-option label="会议纪要" value="会议纪要"></el-option>
-                    <el-option label="接口传递" value="接口传递"></el-option> -->
-                    <el-option label="所有文函" value></el-option>
+                        <el-option label="所有文函" value></el-option>
                     <el-option v-for="(name,nameIndex) in childrenTypes" :key="'Type2_'+nameIndex" :label="name" :value="name"></el-option>
                     </el-select>
                 </el-form-item>
@@ -88,20 +83,16 @@
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <!-- <el-button type="success" >{{$t('application.AdvSearch')}}</el-button> -->
                     <AddCondition @sendMsg='searchItem' v-model="advCondition" v-bind:inputValue="advCondition" :inputType='hiddenInput'></AddCondition>
                 </el-form-item>
                 
-                <!-- 打包下载 -->
+                <!-- 打包下载 
                <el-form-item>
                     <el-button type="primary" @click="packDownloadByMain(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
-                </el-form-item>
+                </el-form-item>-->
                 <!-- 驳回 -->
                 <el-form-item>
-                    <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,
-                    [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
-
-                    <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
+                   <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
                     :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
                 </el-form-item>
                 <el-form-item>
@@ -125,11 +116,11 @@
                         <DataGrid
                             ref="mainDataGrid"
                             key="main"
-                            dataUrl="/dc/getDocuments"
+                            dataUrl="/dc/getDocuments4Cnpe"
                             v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
-                            gridViewName="DCTransferGrid"
-                            condition=" status='已确认'"
+                            gridViewName="ApplyRejectGrid"
+                            condition=" ITEM_TYPE=2 and C_EX7_STRING='待确认' and C_COMPANY='CNPE' "
                             @rowclick="rowClick"
                             :isshowCustom="false"
                             :isEditProperty="false"
@@ -144,16 +135,6 @@
                                 <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
-                                        <!-- <el-form-item>
-                                        <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">新建</el-button>
-                                        </el-form-item>
-                                        <el-form-item>
-                                        <el-button type="primary" @click="importVisible = true">{{$t('application.Import')}}</el-button>
-                                        </el-form-item>
-                                        <el-form-item>
-                                        <el-button type="warning" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
-                                        </el-form-item> -->
-                                        <!-- 打包下载 -->
                                         <el-form-item>
                                             <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                                         </el-form-item>
@@ -334,7 +315,6 @@ export default {
             _self.$nextTick(()=>{
                 _self.$router.push({ path: '/NoPermission' })
             })
-            
         }
         setTimeout(() => {
             this.topPercent = this.getStorageNumber(this.topStorageName,60)
@@ -349,14 +329,15 @@ export default {
             //console.log(JSON.stringify(topPercent))
         },
         showReject:function(){
-            let roles= this.currentUser().roles;
+            /*let roles= this.currentUser().roles;
             for(let i in roles){
                 if(roles[i]=='CNPE_文控人员'){
                     return true;
                 }
             }
             
-            return false;
+            return false;*/
+            return true;
         },
         exportData(){
             let dataUrl = "/exchange/doc/export"
@@ -552,7 +533,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status='已确认'";
+            let key=" ITEM_TYPE=2 and C_EX7_STRING='待确认' and C_COMPANY='CNPE' "
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{

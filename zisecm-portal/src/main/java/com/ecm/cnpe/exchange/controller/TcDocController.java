@@ -28,7 +28,7 @@ public class TcDocController extends ControllerAbstract{
 	private DocumentService documentService;
 	@Autowired
 	private ExcSynDetailService synDetailService;
-	private final String queryBase = "SELECT ID,APP_NAME, CREATION_DATE, EXPORT_DATE, IMPORT_DATE, STAUTS, ERROR_MESSAGE,FROM_ID,TO_ID FROM exc_syn_detail";
+	private final String queryBase = "SELECT ID,APP_NAME, CREATION_DATE, EXPORT_DATE, IMPORT_DATE, STATUS, ERROR_MESSAGE,FROM_ID,TO_ID FROM exc_syn_detail";
 	
 	@RequestMapping(value = "/doc/tc/TCMonitor", method = RequestMethod.POST)
 	@ResponseBody
@@ -100,7 +100,7 @@ public class TcDocController extends ControllerAbstract{
 				String finishedTime = (item.get("IMPORT_DATE")==null)?"":item.get("IMPORT_DATE").toString();
 				projMap.put("finishedTime", finishedTime);
 				
-				String logStatus = (item.get("STAUTS")==null)?"":item.get("STAUTS").toString();
+				String logStatus = (item.get("STATUS")==null)?"":item.get("STATUS").toString();
 				projMap.put("logStatus", logStatus);
 				
 				String errorMessage = (item.get("ERROR_MESSAGE")==null)?"":item.get("ERROR_MESSAGE").toString();

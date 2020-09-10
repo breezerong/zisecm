@@ -43,14 +43,14 @@ public class EcmStorageRoomService  extends EcmObjectService<EcmStorageRoom> imp
 	
 	public List<Map<String,Object>> getAllStorageRoom(String token) {
 		String sql="select ID, CODING, ROOM_TYPE, ROOM_AREA, ROOM_FUNCTION, "
-				+ "COLUMN_COUNT, DESCRIPTION, STAUTS from ecm_storage_room order by CODING asc";
+				+ "COLUMN_COUNT, DESCRIPTION, STATUS from ecm_storage_room order by CODING asc";
 		return storageRoomDao.executeSQL(sql);
 		
 	}
 	
 	public List<Map<String,Object>> getRoomById(String token,String roomId) {
 		String sql="select ID, CODING, ROOM_TYPE, ROOM_AREA, ROOM_FUNCTION, "
-				+ "COLUMN_COUNT, DESCRIPTION, STAUTS from ecm_storage_room where ID='"+roomId+"' order by CODING asc";
+				+ "COLUMN_COUNT, DESCRIPTION, STATUS from ecm_storage_room where ID='"+roomId+"' order by CODING asc";
 		return storageRoomDao.executeSQL(sql);
 		
 	}

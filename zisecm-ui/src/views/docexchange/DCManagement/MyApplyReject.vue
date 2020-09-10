@@ -158,8 +158,28 @@ export default {
         _self.$refs.mainDataGrid.loadGridData();
     },
     },
-    props: {
-        
+    search() {
+      let orS = "";
+      let wheres = ["CODING"];
+      let _self = this;
+      var k1 = "C_EX5_STRING='" + this.currentUser().userName + "'";
+      if (_self.value != null && _self.value != "所有项目") {
+        k1 += " AND C_PROJECT_NAME in (" + _self.value + ")";
+      }
+      if (_self.Cstatus != undefined && _self.Cstatus != null) {
+        k1 += "AND C_EX7_STRING = '" + _self.Cstatus + "'";
+      }
+      if (_self.input.trim().length > 0) {
+        wheres.forEach(function (item) {
+          if (orS.length > 0) {
+            orS += " OR ";
+          }
+          orS += item + " LIKE '%" + _self.input + "%'";
+        });
+        k1 += " AND (" + orS + ")";
+      }
+      _self.$refs.mainDataGrid.condition = k1;
+      _self.$refs.mainDataGrid.loadGridData();
     },
     components: {
         ShowProperty:ShowProperty,

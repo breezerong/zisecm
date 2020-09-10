@@ -17,7 +17,6 @@
         <result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
         <result column="RECEIVER" property="receiver" jdbcType="NVARCHAR" />
         <result column="RECEIVE_DATE" property="receiveDate" jdbcType="TIMESTAMP" />
-        <result column="STAUTS" property="stauts" jdbcType="NVARCHAR" />
         <result column="COMMENT" property="comment" jdbcType="NVARCHAR" />
         <result column="SYN_STATUS" property="synStatus" jdbcType="NVARCHAR" />
         <result column="STATUS" property="status" jdbcType="VARCHAR" />
@@ -25,13 +24,13 @@
         <result column="APPLY_DATE" property="applyDate" jdbcType="TIMESTAMP" />
         <result column="CONFIRMER" property="confirmer" jdbcType="NVARCHAR" />
         <result column="CONFIRM_DATE" property="confirmDate" jdbcType="TIMESTAMP" />
-        <result column="STAUTS1" property="stauts1" jdbcType="NVARCHAR" />
+        <result column="STATUS1" property="status1" jdbcType="NVARCHAR" />
         <result column="COMMENT1" property="comment1" jdbcType="NVARCHAR" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS, STATUS, APPLICANT, APPLY_DATE, CONFIRMER, CONFIRM_DATE, STAUTS1, COMMENT1
+        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, COMMENT, SYN_STATUS, STATUS, APPLICANT, APPLY_DATE, CONFIRMER, CONFIRM_DATE, STATUS1, COMMENT1
     </sql>
 
 
@@ -45,7 +44,13 @@
   <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
   	select
     <include refid="Base_Column_List" />
-    from exc_transfer order by ID
+    from exc_transfer
+  </select>
+  
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select
+    <include refid="Base_Column_List" />
+    from exc_transfer where ${condition} 
   </select>
   
   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
@@ -72,7 +77,6 @@
 		    SEND_DATE,
 		    RECEIVER,
 		    RECEIVE_DATE,
-		    STAUTS,
 		    COMMENT,
 		    SYN_STATUS,
 		    STATUS,
@@ -80,7 +84,7 @@
 		    APPLY_DATE,
 		    CONFIRMER,
 		    CONFIRM_DATE,
-		    STAUTS1,
+		    STATUS1,
 		    COMMENT1
       )
     values (
@@ -97,7 +101,6 @@
     		 #{sendDate},
     		 #{receiver},
     		 #{receiveDate},
-    		 #{stauts},
     		 #{comment},
     		 #{synStatus},
     		 #{status},
@@ -105,7 +108,7 @@
     		 #{applyDate},
     		 #{confirmer},
     		 #{confirmDate},
-    		 #{stauts1},
+    		 #{status1},
     		 #{comment1}
     	)
   </insert>
@@ -152,9 +155,6 @@
     	<if test="receiveDate != null">
     		 RECEIVE_DATE,
     	</if>
-    	<if test="stauts != null">
-    		 STAUTS,
-    	</if>
     	<if test="comment != null">
     		 COMMENT,
     	</if>
@@ -176,8 +176,8 @@
     	<if test="confirmDate != null">
     		 CONFIRM_DATE,
     	</if>
-    	<if test="stauts1 != null">
-    		 STAUTS1,
+    	<if test="status1 != null">
+    		 STATUS1,
     	</if>
     	<if test="comment1 != null">
     		 COMMENT1,
@@ -223,9 +223,6 @@
     	<if test="receiveDate != null">
     		#{receiveDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts != null">
-    		#{stauts,jdbcType=NVARCHAR}, 		 
-    	</if>
     	<if test="comment != null">
     		#{comment,jdbcType=NVARCHAR}, 		 
     	</if>
@@ -247,8 +244,8 @@
     	<if test="confirmDate != null">
     		#{confirmDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts1 != null">
-    		#{stauts1,jdbcType=NVARCHAR}, 		 
+    	<if test="status1 != null">
+    		#{status1,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="comment1 != null">
     		#{comment1,jdbcType=NVARCHAR}, 		 
@@ -299,9 +296,6 @@
     	<if test="receiveDate != null">
     		RECEIVE_DATE=#{receiveDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts != null">
-    		STAUTS=#{stauts,jdbcType=NVARCHAR}, 		 
-    	</if>
     	<if test="comment != null">
     		COMMENT=#{comment,jdbcType=NVARCHAR}, 		 
     	</if>
@@ -323,8 +317,8 @@
     	<if test="confirmDate != null">
     		CONFIRM_DATE=#{confirmDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts1 != null">
-    		STAUTS1=#{stauts1,jdbcType=NVARCHAR}, 		 
+    	<if test="status1 != null">
+    		STATUS1=#{status1,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="comment1 != null">
     		COMMENT1=#{comment1,jdbcType=NVARCHAR}, 		 
@@ -348,7 +342,6 @@
    		SEND_DATE=#{sendDate},
    		RECEIVER=#{receiver},
    		RECEIVE_DATE=#{receiveDate},
-   		STAUTS=#{stauts},
    		COMMENT=#{comment},
    		SYN_STATUS=#{synStatus},
    		STATUS=#{status},
@@ -356,7 +349,7 @@
    		APPLY_DATE=#{applyDate},
    		CONFIRMER=#{confirmer},
    		CONFIRM_DATE=#{confirmDate},
-   		STAUTS1=#{stauts1},
+   		STATUS1=#{status1},
    		COMMENT1=#{comment1}
     where ID = #{id,jdbcType=VARCHAR}
   </update>

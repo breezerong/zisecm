@@ -23,7 +23,7 @@
                 </div>
             </el-dialog>
             <!-- 设计文件附件 -->
-            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="90%" :before-close="handleClose">      
+            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
             <!-- 创建分发 -->
@@ -142,6 +142,7 @@
                 </el-form-item>
                 <el-form-item>
                     <!-- beforeDispense() -->
+                    <!-- 分发 -->
                     <el-button type="success" v-on:click="onDispenseDc()">{{$t('application.Dispense')}}</el-button>
                 </el-form-item>
                 <el-form-item>
@@ -167,7 +168,7 @@
                             gridViewName="DCTransferGrid"
                             condition=" (status='' or status='新建') and C_COMPANY='@company'"
                             :isshowCustom="false"
-                            :isEditProperty="false"
+                            :isEditProperty="true"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                             @rowclick="rowClick"
@@ -208,12 +209,16 @@
                                         gridViewName="DrawingGrid"
                                         condition=" and a.NAME='设计文件'"
                                         :isshowCustom="false"
-                                        :isEditProperty="false"
+                                        :isEditProperty="true"
                                         showOptions="查看内容"
                                         :isShowChangeList="false"
                                         @dbclick="dbClick"
                                         @selectchange="selectChangeTransferDoc"
-                                        ></DataGrid>
+                                        >
+                                            <template slot="dropdownItem" slot-scope="scope">
+                                                <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>
+                                            </template>
+                                        </DataGrid>
                             </el-tab-pane>
                             <el-tab-pane :label="$t('application.relevant')" name="t02" v-if="isShowRelevant">
                                 <el-row>
@@ -245,7 +250,7 @@
                                         condition=" and a.NAME='相关文件'"
                                         :isShowMoreOption="false"
                                         :isshowCustom="false"
-                                        :isEditProperty="false"
+                                        :isEditProperty="true"
                                         :isShowChangeList="false"
                                         :isshowicon="false"
                                         @selectchange="relevantDocSelect"
@@ -278,7 +283,7 @@
                                         gridViewName="AttachmentGrid"
                                         condition=" and a.NAME='附件'"
                                         :isshowCustom="false"
-                                        :isEditProperty="false"
+                                        :isEditProperty="true"
                                         showOptions="查看内容"
                                         :isShowChangeList="false"
                                         @selectchange="attachmentDocSelect"

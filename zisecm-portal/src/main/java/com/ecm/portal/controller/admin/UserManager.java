@@ -349,9 +349,9 @@ public class UserManager extends ControllerAbstract {
 		try {
 			userService.updateObject(getToken(), obj);
 			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
-				OptionLogger.loggerUser(detailService, obj, obj.getCompanyName(),"修改用户");
+				OptionLogger.loggerUser(getToken(), detailService, obj, obj.getCompanyName(),"修改用户");
 			}else {
-				OptionLogger.loggerUser(detailService, obj, "CNPE","修改用户");
+				OptionLogger.loggerUser(getToken(), detailService, obj, "CNPE","修改用户");
 			}
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
@@ -422,9 +422,9 @@ public class UserManager extends ControllerAbstract {
 			}
 			userService.newObject(getToken(), en, instream, fileName);
 			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
-				OptionLogger.loggerUser(detailService, en, en.getCompanyName(),"新建用户");
+				OptionLogger.loggerUser(getToken(), detailService, en, en.getCompanyName(),"新建用户");
 			}else {
-				OptionLogger.loggerUser(detailService, en, "CNPE","新建用户");
+				OptionLogger.loggerUser(getToken(), detailService, en, "CNPE","新建用户");
 			}
 			
 			if (instream != null) {
@@ -531,9 +531,9 @@ public class UserManager extends ControllerAbstract {
 			EcmGroup group= groupService.getObjectById(getToken(), args.get("roleId").toString());
 			
 			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
-				OptionLogger.loggerGroup(detailService, user, group.getName(),user.getCompanyName(),"移除用户");
+				OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),user.getCompanyName(),"移除用户");
 			}else {
-				OptionLogger.loggerGroup(detailService, user, group.getName(),"CNPE","移除用户");
+				OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),"CNPE","移除用户");
 			}
 			
 			mp.put("code", ActionContext.SUCESS);
