@@ -375,8 +375,8 @@ export default {
         },
         submit(){
             let _self=this
-            if(this.selectedItems.length==0){
-                    this.$message({
+            if(_self.selectedItems.length==0){
+                    _self.$message({
                             showClose: true,
                             message: _self.$t("message.pleaseSelectDC"),
                             duration: 2000,
@@ -384,8 +384,8 @@ export default {
                         });
                         return
                 }
-            this.onNextStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-                $refs.relevantDoc])
+            this.onNextStatusCnpe(_self.selectedItems,_self.$refs.mainDataGrid,[_self.$refs.transferDoc,
+                _self.$refs.relevantDoc])
         },
         
         dbclick(row){

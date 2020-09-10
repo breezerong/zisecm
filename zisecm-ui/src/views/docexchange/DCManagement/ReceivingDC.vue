@@ -368,8 +368,8 @@ export default {
 
         submit(){
         let _self=this
-        if(this.selectedItems.length==0){
-                this.$message({
+        if(_self.selectedItems.length==0){
+                _self.$message({
                         showClose: true,
                         message: _self.$t("message.pleaseSelectDC"),
                         duration: 2000,
@@ -377,8 +377,8 @@ export default {
                     });
                     return
             }
-           this.onNextStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-            $refs.relevantDoc])
+           _self.onNextStatus(_self.selectedItems,_self.$refs.mainDataGrid,[_self.$refs.transferDoc,
+            _self.$refs.relevantDoc])
         },
         dbclick(row){
             this.showItemContent(row)

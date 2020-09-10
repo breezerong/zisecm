@@ -60,5 +60,23 @@ public class ConfBean {
 	
 	private String targetSystem;
 	
+	private boolean ischildType;
+	
+	private String childType;
+	@XmlAttribute
+	public boolean isIschildType() {
+		return ischildType;
+	}
+	public void setIschildType(boolean ischildType) {
+		this.ischildType = ischildType;
+	}
+	@XmlAttribute
+	public String getChildType() {
+		return childType;
+	}
+	public void setChildType(String childType) {
+		this.childType = childType;
+	}
+	
 	
 }

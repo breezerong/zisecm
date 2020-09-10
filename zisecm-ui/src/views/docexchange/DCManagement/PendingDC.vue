@@ -1,5 +1,18 @@
 <template>
     <DataLayout>
+        <el-dialog title="驳回申请" :visible.sync="showRejectDialog" width="50%" @close="showRejectDialog=false">
+            <el-input
+              type="textarea"
+              :rows="5"
+              placeholder="请输入申请原因"
+              v-model="applyComment">
+            </el-input>
+            <div slot="footer" class="dialog-footer">
+                <el-button
+                @click="onRejectApply()"
+                >{{$t('application.ok')}}</el-button>
+            </div>
+        </el-dialog>
         <template v-slot:header>
             <!-- 我提交的文函 -->
             <!-- 设计文件附件 -->
@@ -109,6 +122,13 @@
                 <el-form-item>
                     <el-button type="primary" v-on:click="searchItem">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
+                <el-form-item>
+                    <AddCondition @sendMsg='searchItem' 
+                    v-model="advCondition" 
+                    v-bind:inputValue="advCondition" 
+                    inputType='hidden'></AddCondition>
+                </el-form-item>
+                
                 
                 <!-- <el-form-item>
                     <el-button type="warning" @click="onPreviousStatus(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
@@ -117,12 +137,14 @@
                 <el-form-item>
                     <el-button type="primary" v-on:click="exportData">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
-                 <el-form-item>
-                    <AddCondition @sendMsg='searchItem' 
-                    v-model="advCondition" 
-                    v-bind:inputValue="advCondition" 
-                    inputType='hidden'></AddCondition>
+                <el-form-item>
+                    <el-button
+                        type="warning"
+                        v-on:click="onShowApplyDialog"
+                        :title="$t('application.startRejectApply')"
+                        >{{$t('application.startRejectApply')}}</el-button>
                 </el-form-item>
+                 
                 </el-form>
         </template>
         <template v-slot:main="{layout}">
@@ -140,7 +162,7 @@
                         :isEditProperty="false"
                         showOptions="查看内容"
                         :isShowChangeList="false"
-                        condition=" status='待确认' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
+                        condition=" status!='' AND status!='新建' AND status!='驳回' and C_PROJECT_NAME = '@project' and C_COMPANY='@company'"
                         @rowclick="rowClick"
                         @selectchange="selectChange"
                         ></DataGrid>
@@ -238,6 +260,10 @@ export default {
             topbarHeight: 40,
             // 底部除列表高度
             bottomHeight: 80,
+
+            showRejectDialog: false,
+            applyComment: "",
+
             dialog:{
                 title:"",
                 visible:false
@@ -297,6 +323,51 @@ export default {
         }, 300);
     },
     methods: {
+        onShowApplyDialog(){
+            let _self = this;
+            if( _self.selectedItems == null || _self.selectedItems.length == 0){
+                _self.$message({
+                    showClose: true,
+                    message: "请勾选一条文件数据!",
+                    duration: 3000,
+                    type: "warning",
+                });
+                return;
+            }
+            _self.showRejectDialog = true;
+        },
+        onRejectApply(){
+            let _self = this;
+            var m = [];
+            let tab = _self.selectedItems;
+            
+            var i;
+            for (i in tab) {
+                m.push(tab[i]["ID"]);
+            }
+            let mp=new Map();
+            mp.set("ids",m);
+            mp.set("iscnpe","false");
+            mp.set("msg",_self.applyComment);
+            axios.post("/exchange/doc/applyReject",JSON.stringify(mp),{
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8"
+                }
+            })
+            .then(function (response) {
+                _self.showRejectDialog = false;
+                _self.$message({
+                    showClose: true,
+                    message: "发起驳回申请成功!",
+                    duration: 3000,
+                    type: "success",
+                });
+            })
+            .catch(function (error) {
+                _self.uploading = false;
+                console.log(error);
+            });
+        },
         dbClick(row){
             this.docId=row.ID;
             this.dialog.visible=true;
@@ -506,7 +577,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" status not in('新建','驳回') and C_COMPANY='@company'";
+            let key=" status not in('','新建','驳回') and C_COMPANY='@company'";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{

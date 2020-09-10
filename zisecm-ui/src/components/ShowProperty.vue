@@ -452,7 +452,9 @@ export default {
                    val=_self.mainObject[_self.mainSubRelation.get(frmItems[i].attrName)];
                    frmItems[i].defaultValue = val;
                 }
-                
+                if(frmItems[i].isRepeat && frmItems[i].defaultValue==null && frmItems[i].controlType=='TextBox'){
+                  frmItems[i].defaultValue =[]
+                }
                 
                 // if("TYPE_NAME"==frmItems[i].attrName){
                 //   _self.typeName=frmItems[i].attrName；

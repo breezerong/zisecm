@@ -134,13 +134,7 @@
             :inputType="hiddenInput"
           ></AddCondition>
         </el-form-item>
-        <el-form-item>
-          <el-button
-            type="warning"
-            v-on:click="onShowApplyDialog"
-            :title="$t('application.startRejectApply')"
-          >{{$t('application.startRejectApply')}}</el-button>
-        </el-form-item>
+        
         <!--导出Excel-->
         <el-form-item>
           <el-button
@@ -155,6 +149,13 @@
             type="primary"
             @click="packDownloadByMain(selectedItems)"
           >{{$t('application.PackToDownload')}}</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="warning"
+            v-on:click="onShowApplyDialog"
+            :title="$t('application.startRejectApply')"
+          >{{$t('application.startRejectApply')}}</el-button>
         </el-form-item>
         <!-- 驳回 -->
         <!-- <el-form-item> -->
@@ -191,7 +192,7 @@
                         @rowclick="rowClick"
                         @selectchange="selectChange"
                         :isshowCustom="false"
-                        :isEditProperty="true"
+                        :isEditProperty="false"
                         showOptions="查看内容"
                         :isShowChangeList="false"
                     ></DataGrid>
