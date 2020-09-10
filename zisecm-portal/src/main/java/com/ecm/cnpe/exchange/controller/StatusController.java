@@ -22,8 +22,10 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.ExcSynDetail;
+import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcSynDetailService;
+import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.portal.controller.ControllerAbstract;
 @Controller
 public class StatusController extends ControllerAbstract{
@@ -39,6 +41,9 @@ public class StatusController extends ControllerAbstract{
 	private LogicOption4CnpeIED logicOptionCnpeIEDService;
 	@Autowired
 	private ExcSynDetailService detailService;
+	
+	@Autowired
+	private ExcTransferServiceImpl excTransferService;
 	
 	/**
 	 * 下一状态
@@ -176,11 +181,32 @@ public class StatusController extends ControllerAbstract{
 				}
 				
 				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
+				if(previousStatus == null) {
+					previousStatus = "驳回";
+				}
 				doc.setStatus(previousStatus);
 				doc.addAttribute("C_REJECT_COMMENT", rejectCommon);
 				doc.addAttribute("C_REJECTOR", this.getSession().getCurrentUser().getUserName());
 				doc.addAttribute("C_REJECT_DATE", new Date());
 				documentService.updateObject(getToken(), doc, null);
+				
+				
+				// 如果是驳回申请，需要更新移交单属性
+				
+				String condition = "DOC_ID='"+childId+"' AND ITEM_TYPE=2";
+				List<ExcTransfer> tlist = excTransferService.selectByCondition(condition);
+				// 最多一条移交记录
+				if(tlist.size()>0) {
+					
+					ExcTransfer obj = tlist.get(0);
+					if("待确认".equalsIgnoreCase(obj.getStatus1())){
+						obj.setStatus1("已驳回");
+						obj.setRejecter(this.getSession().getCurrentUser().getUserName());
+						obj.setRejectDate(new Date());
+						excTransferService.updateObject(obj);
+					}
+				}
+				
 				
 				if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
 					logicOptionInterfaceService.interfaceRejectOption(getToken(), doc);
