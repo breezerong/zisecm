@@ -224,6 +224,8 @@ public class ImportService extends EcmService {
 						for(int fileNameIndex=0;fileNameIndex<fileNames.length;fileNameIndex++) {
 							//fileNameIndex==0表示第一个附件将其放入主件
 							String excelFileName=fileNames[fileNameIndex];
+							excelFileName=excelFileName.substring(0,excelFileName.lastIndexOf(".")>-1
+									?excelFileName.lastIndexOf("."):excelFileName.length());
 							String itemPath="";
 							String deskFileName="";
 							for(int findx=0;findx<files.length;findx++) {
@@ -338,6 +340,8 @@ public class ImportService extends EcmService {
 						for(int fileNameIndex=0;fileNameIndex<fileNames.length;fileNameIndex++) {
 							//fileNameIndex==0表示第一个附件将其放入主件
 							String excelFileName=fileNames[fileNameIndex];
+							excelFileName=excelFileName.substring(0,excelFileName.lastIndexOf(".")>-1
+									?excelFileName.lastIndexOf("."):excelFileName.length());
 							String itemPath="";
 							String deskFileName="";
 							for(int findx=0;findx<files.length;findx++) {
