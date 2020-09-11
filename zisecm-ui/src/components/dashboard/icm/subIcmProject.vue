@@ -114,7 +114,9 @@ export default {
     this.filters.projectCode = val
     _self.loadStatistic()
     this.initChart()
+    if(this.isSubWK==true)
     this.$refs.doc.onSelectChange(val)
+    if(this.isSubPlan==true)
     this.$refs.plan.onSelectChange(val)
     },
      initChart(){

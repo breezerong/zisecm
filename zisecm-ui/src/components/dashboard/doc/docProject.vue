@@ -94,7 +94,6 @@ export default {
   },
   methods: {
     onSelectChange(val){
-      console.log(123123)
       this.filters.projectCode = val
       this.initChart()
     },
