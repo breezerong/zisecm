@@ -215,6 +215,9 @@ public class ImportService extends EcmService {
 									fileList, attrNames,null,relationName,number, 1,
 									childStartIndex-1,sameValues,sameFields);
 							if(!StringUtils.isEmpty(newId)) {
+								if("设计文件".equals(parentType)&&(relationName==null||"".equals(relationName.trim()))) {
+									relationName="设计文件";
+								}
 								newRelation(token, deliveryId,relationName, newId, i,null);
 							}
 						}
@@ -257,6 +260,7 @@ public class ImportService extends EcmService {
 											sheet.getRow(i),  fileList, attrNames,
 											newId,relationName,number, childStartIndex,sheet.getRow(i).getLastCellNum(),
 											sameValues,null);
+																		
 									if(hasRendition) {
 										String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
 										if(!StringUtils.isEmpty(rendFileName)) {
@@ -405,6 +409,9 @@ public class ImportService extends EcmService {
 										}
 									}
 									if(!StringUtils.isEmpty(newId)) {
+										if("设计文件".equals(parentType)&&(relationName==null||"".equals(relationName.trim()))) {
+											relationName="设计文件";
+										}
 										newRelation(token, deliveryId,relationName, newId, i,null);
 									}
 								}
