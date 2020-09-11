@@ -56,7 +56,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public boolean transferOption(String token,EcmDocument transferDoc) throws Exception {
+	public boolean transferOption(String token,EcmDocument transferDoc,boolean isDispense) throws Exception {
 		List<Map<String,Object>> designDocMaps= getChildsByParentID(token, transferDoc.getId(), "设计文件");
 		
 		for(int j=0;designDocMaps!=null&&j<designDocMaps.size();j++) {
@@ -67,7 +67,12 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 			if(isUpgrad) {
 				EcmDocument oldIED= getIEDByDoc(token,newDesignDoc);
 				if(oldIED==null) {
-					throw new Exception("此文件\""+newDesignDoc.getCoding()+"\"无对应IED!");
+					if(isDispense) {
+						return true;
+					}else {
+						throw new Exception("此文件\""+newDesignDoc.getCoding()+"\"无对应IED!");
+					}
+					
 				}
 				upgradIED(token,oldIED,newDesignDoc);
 			}

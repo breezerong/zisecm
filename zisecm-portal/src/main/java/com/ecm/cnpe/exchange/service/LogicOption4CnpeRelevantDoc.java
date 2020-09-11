@@ -27,7 +27,7 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	 * @throws Exception 
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public boolean relevantOption(String token,List<String> mainDocIds) throws Exception {
+	public boolean relevantOption(String token,List<String> mainDocIds,boolean isDispense) throws Exception {
 		for(int i=0;i<mainDocIds.size();i++) {
 			String mainId= mainDocIds.get(i);
 			EcmDocument mainDoc=getObjectById(token, mainId);
@@ -36,7 +36,7 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 				Map<String,Object> relevantMap= relevantMaps.get(j);
 				EcmDocument relevantDoc=new EcmDocument();
 				relevantDoc.setAttributes(relevantMap);
-				execDesignDocByRelevant(token,relevantDoc,mainDoc);
+				execDesignDocByRelevant(token,relevantDoc,mainDoc,isDispense);
 				execIEDByRelevant(token,relevantDoc,mainDoc);
 			}
 		}
@@ -51,13 +51,13 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	 * @throws Exception 
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public boolean relevantOption(String token,EcmDocument mainDoc) throws Exception{
+	public boolean relevantOption(String token,EcmDocument mainDoc,boolean isDispense) throws Exception{
 		List<Map<String,Object>> relevantMaps= getChildsByParentID(token,mainDoc.getId(),"相关文件");
 		for(int j=0;relevantMaps!=null&&j<relevantMaps.size();j++) {
 			Map<String,Object> relevantMap= relevantMaps.get(j);
 			EcmDocument relevantDoc=new EcmDocument();
 			relevantDoc.setAttributes(relevantMap);
-			execDesignDocByRelevant(token,relevantDoc,mainDoc);
+			execDesignDocByRelevant(token,relevantDoc,mainDoc,isDispense);
 			execIEDByRelevant(token,relevantDoc,mainDoc);
 		}
 		return true;
@@ -235,7 +235,7 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 	 * @return
 	 * @throws Exception 
 	 */
-	private boolean execDesignDocByRelevant(String token,EcmDocument relevantDoc,EcmDocument mainDoc) throws Exception{
+	private boolean execDesignDocByRelevant(String token,EcmDocument relevantDoc,EcmDocument mainDoc,boolean isDispense) throws Exception{
 		String condition=" CODING='"+relevantDoc.getCoding()+"' and C_IS_RELEASED=1 and REVISION='"+relevantDoc.getRevision()+"' and TYPE_NAME='设计文件'";
 		List<Map<String, Object>> designDocList = getObjectMap(token,condition);
 		if(designDocList!=null&&designDocList.size()>0) {
@@ -249,8 +249,11 @@ public class LogicOption4CnpeRelevantDoc extends DocumentService {
 			relationService.newObject(token, relation);
 			return true;
 		}
+		if(!isDispense) {
+			throw new Exception("设计文件"+relevantDoc.getCoding()+"_"+relevantDoc.getRevision()+"不存在");
+		}
+		return true;
 		
-		throw new Exception("设计文件"+relevantDoc.getCoding()+"_"+relevantDoc.getRevision()+"不存在");
 		
 	}
 	/**

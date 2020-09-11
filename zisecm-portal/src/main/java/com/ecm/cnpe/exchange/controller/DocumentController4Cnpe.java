@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.cnpe.exchange.entity.StatusEntity;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeInterface;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeRelevantDoc;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeTransfer;
 import com.ecm.cnpe.exchange.service.impl.DocumentService4Cnpe;
 import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
@@ -35,10 +38,15 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 	private DocumentService4Cnpe documentService;
 	@Autowired
 	private ExcTransferServiceImpl excTransferService;
+	@Autowired
+	private LogicOption4CnpeInterface logicOptionInterfaceService;
+	@Autowired
+	private LogicOption4CnpeRelevantDoc logicOptionRelevantService;
 	
 	@Autowired
 	private ExcSynDetailService detailService;
-	
+	@Autowired
+	private LogicOption4CnpeTransfer logicOptionTransferService;
 	
 	@RequestMapping(value = "/dc/getDocuments4Cnpe", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
@@ -84,6 +92,27 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				currentStatus="新建";
 			}
 			String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
+			
+			
+			if("图文传真,会议纪要".contains(doc.getTypeName())){
+				documentService.updateObject(getToken(), doc, null);
+				doc.addAttribute("C_IS_RELEASED", 1);
+			}else {
+				
+				if("文件传递单".equals(doc.getTypeName())) {
+					logicOptionTransferService.transferOption(getToken(), doc,true);
+				}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
+					logicOptionInterfaceService.interfaceOption(getToken(), doc);
+				}else {
+					logicOptionRelevantService.relevantOption(getToken(),doc,true);
+				}
+				doc.addAttribute("C_IS_RELEASED", 1);
+				documentService.updateObject(getToken(), doc, null);
+				
+			}
+			
+			
+			
 			String contractorStr= doc.getAttributeValue("C_TO")==null?"":doc.getAttributeValue("C_TO").toString();
 			String copyToStr=doc.getAttributeValue("C_COPY_TO")==null?"":doc.getAttributeValue("C_COPY_TO").toString();
 			
