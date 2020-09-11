@@ -11,7 +11,7 @@
         <result column="TO_ID" property="toId" jdbcType="NVARCHAR" />
         <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
         <result column="EXPORT_DATE" property="exportDate" jdbcType="TIMESTAMP" />
-        <result column="STAUTS" property="stauts" jdbcType="NVARCHAR" />
+        <result column="STATUS" property="status" jdbcType="NVARCHAR" />
         <result column="C_COMPANY" property="toCompany" jdbcType="NVARCHAR" />
         <result column="IMPORT_DATE" property="importDate" jdbcType="TIMESTAMP" />
         <result column="ERROR_MESSAGE" property="errorMessage" jdbcType="NVARCHAR" />
@@ -19,7 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, APP_NAME, ACTION_NAME, BATCH_NUM, FROM_ID, TO_ID, CREATION_DATE, EXPORT_DATE, STAUTS, IMPORT_DATE,C_COMPANY, ERROR_MESSAGE
+        ID, APP_NAME, ACTION_NAME, BATCH_NUM, FROM_ID, TO_ID, CREATION_DATE, EXPORT_DATE, STATUS, IMPORT_DATE,C_COMPANY, ERROR_MESSAGE
     </sql>
 
 
@@ -55,7 +55,7 @@
 		    TO_ID,
 		    CREATION_DATE,
 		    EXPORT_DATE,
-		    STAUTS,
+		    STATUS,
 		    IMPORT_DATE,
 		    C_COMPANY,
 		    ERROR_MESSAGE
@@ -69,7 +69,7 @@
     		 #{toId},
     		 #{creationDate},
     		 #{exportDate},
-    		 #{stauts},
+    		 #{status},
     		 #{importDate},
     		 #{toCompany},
     		 #{errorMessage}
@@ -104,8 +104,8 @@
     	<if test="exportDate != null">
     		 EXPORT_DATE,
     	</if>
-    	<if test="stauts != null">
-    		 STAUTS,
+    	<if test="status != null">
+    		 STATUS,
     	</if>
     	<if test="importDate != null">
     		 IMPORT_DATE,
@@ -142,8 +142,8 @@
     	<if test="exportDate != null">
     		#{exportDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts != null">
-    		#{stauts,jdbcType=NVARCHAR}, 		 
+    	<if test="status != null">
+    		#{status,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="importDate != null">
     		#{importDate,jdbcType=TIMESTAMP}, 		 
@@ -185,8 +185,8 @@
     	<if test="exportDate != null">
     		EXPORT_DATE=#{exportDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts != null">
-    		STAUTS=#{stauts,jdbcType=NVARCHAR}, 		 
+    	<if test="status != null">
+    		STATUS=#{status,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="importDate != null">
     		IMPORT_DATE=#{importDate,jdbcType=TIMESTAMP}, 		 
@@ -211,7 +211,7 @@
    		TO_ID=#{toId},
    		CREATION_DATE=#{creationDate,jdbcType=TIMESTAMP},
     	EXPORT_DATE=#{exportDate,jdbcType=TIMESTAMP}, 		 
-   		STAUTS=#{stauts},
+   		STATUS=#{status},
    		IMPORT_DATE=#{importDate,jdbcType=TIMESTAMP},
     	C_COMPANY=#{toCompany,jdbcType=NVARCHAR}, 		 
    		ERROR_MESSAGE=#{errorMessage}

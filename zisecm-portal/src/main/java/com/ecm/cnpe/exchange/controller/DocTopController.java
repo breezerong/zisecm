@@ -110,9 +110,9 @@ public class DocTopController extends ControllerAbstract  {
 					+ " (C_ITEM_TYPE='文函') and "
 					+ "C_IS_RELEASED=1 and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
 			sqlreceivedNum = "select count(*) as receivedNum from "
-					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STAUTS as STAUTS,b.TO_NAME "
+					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STATUS as STATUS,b.TO_NAME "
 					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where C_ITEM_TYPE='文函' and "
-					+ "TYPE_NAME!='相关文件' and ( stauts='待接收' and("+whereSql+" or  TO_NAME='"+getLCompany+"')))";
+					+ "TYPE_NAME!='相关文件' and ( status='待接收' and("+whereSql+" or  TO_NAME='"+getLCompany+"')))";
 			String sqlSubmissiondcNum="select count(*) as submissiondcNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
 					+ "(status='' or status is null or status='新建') and "+whereSql+")";
@@ -133,6 +133,7 @@ public class DocTopController extends ControllerAbstract  {
 			String sqlRejectNum = "select count(*) as dcNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( STATUS='驳回')";
 			
+			
 			//CNPE项目信息
 			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
 					+ "where TYPE_NAME='计划任务' and("+whereSql+")";
@@ -145,7 +146,7 @@ public class DocTopController extends ControllerAbstract  {
 			sqldcNum+") as dcNum,("+
 			sqldeBlockingNum+") as deBlockingNum, ("+
 			sqldispenseNum+") as dispenseNum, ("+
-			sqlRejectNum+") as RejectNum,( ";
+			sqlRejectNum+") as RejectNum,(";
 		}
 		sqlList += ""+sqlThreePlanNum+") as ThreePlanNum,("+
 					sqlIEDNum+") as IEDNum, ("+
@@ -163,6 +164,7 @@ public class DocTopController extends ControllerAbstract  {
 			mp.put("dispenseNum",numList.get(0).get("dispenseNum"));//分发
 			mp.put("RejectNum",numList.get(0).get("RejectNum"));//驳回
 			mp.put("submissiondcNum",numList.get(0).get("submissiondcNum"));//待提交
+			mp.put("ICMNum",numList.get(0).get("ICMNum"));				//延误关闭确认
 			//项目信息
 			mp.put("ThreePlanNum",numList.get(0).get("ThreePlanNum"));
 			mp.put("IEDNum",numList.get(0).get("IEDNum"));
@@ -304,15 +306,15 @@ and C_IS_RELEASED =1  GROUP by STATUS
 			whereSql+=")";
 		}
 		String getLCompany=getSession().getCurrentUser().getCompany();
-		if(getLCompany.equals("CNPE")==false) {
-			whereSql+=" and (C_COMPANY='"+getLCompany+"' or TO_NAME='"+getLCompany+"')";
-		}
 		String sql="select STATUS,count(*) as c from"
-				+"(select a.C_ITEM_TYPE, a.STATUS,a.C_COMPANY, a.TYPE_NAME,a.C_PROJECT_NAME,b.TO_NAME "
-				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id and a.company=')t "
-				+ "where 1=1 "+whereSql+" and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') group by STATUS";    
+				+"(select b.status "
+				+ "from ecm_document a, exc_transfer b where a.id=b.doc_id and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件') and b.STATUS !='' and b.to_name='"+getLCompany+"' " +whereSql+" "
+				+ " union all"
+				+ " select STATUS from ecm_document where  C_COMPANY='"+getLCompany+"'"+whereSql+" and status is not null and (C_ITEM_TYPE='文函' or TYPE_NAME='设计文件')"+")t"
+				+" group by STATUS";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> result=new HashMap<>();
+		System.out.println(sql);
 		for(Map<String,Object> d : data) {
 			if(d.get("STATUS") !=null) {
 				result.put(d.get("STATUS").toString(), d.get("c"));

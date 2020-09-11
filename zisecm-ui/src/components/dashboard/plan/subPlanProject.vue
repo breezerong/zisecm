@@ -1,13 +1,7 @@
 <template>
-     <div>
-      <DataSelect v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
-      dataValueField="name" dataTextField="name" @onSelectChange="onSelectChange"></DataSelect> 
-      
+     <div>      
       <el-row>
       <el-col :span="4">
-      <ecm-data-icons ref="dataIED" :option="projectDataIED"></ecm-data-icons>
-      <ecm-data-icons ref="dataDC" :option="projectDataDC"></ecm-data-icons>
-      <ecm-data-icons ref="dataTPLAN" :option="projectDataTPLAN"></ecm-data-icons>
       </el-col>
       <el-col :span="10" >
       <div id="docChart2" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>

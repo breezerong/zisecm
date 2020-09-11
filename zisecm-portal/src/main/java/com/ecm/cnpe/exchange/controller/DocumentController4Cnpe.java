@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.cnpe.exchange.entity.StatusEntity;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeInterface;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeRelevantDoc;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeTransfer;
 import com.ecm.cnpe.exchange.service.impl.DocumentService4Cnpe;
 import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
@@ -34,10 +38,15 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 	private DocumentService4Cnpe documentService;
 	@Autowired
 	private ExcTransferServiceImpl excTransferService;
+	@Autowired
+	private LogicOption4CnpeInterface logicOptionInterfaceService;
+	@Autowired
+	private LogicOption4CnpeRelevantDoc logicOptionRelevantService;
 	
 	@Autowired
 	private ExcSynDetailService detailService;
-	
+	@Autowired
+	private LogicOption4CnpeTransfer logicOptionTransferService;
 	
 	@RequestMapping(value = "/dc/getDocuments4Cnpe", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
@@ -83,6 +92,27 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				currentStatus="新建";
 			}
 			String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
+			
+			
+			if("图文传真,会议纪要".contains(doc.getTypeName())){
+				documentService.updateObject(getToken(), doc, null);
+				doc.addAttribute("C_IS_RELEASED", 1);
+			}else {
+				
+				if("文件传递单".equals(doc.getTypeName())) {
+					logicOptionTransferService.transferOption(getToken(), doc,true);
+				}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
+					logicOptionInterfaceService.interfaceOption(getToken(), doc);
+				}else {
+					logicOptionRelevantService.relevantOption(getToken(),doc,true);
+				}
+				doc.addAttribute("C_IS_RELEASED", 1);
+				documentService.updateObject(getToken(), doc, null);
+				
+			}
+			
+			
+			
 			String contractorStr= doc.getAttributeValue("C_TO")==null?"":doc.getAttributeValue("C_TO").toString();
 			String copyToStr=doc.getAttributeValue("C_COPY_TO")==null?"":doc.getAttributeValue("C_COPY_TO").toString();
 			
@@ -91,34 +121,38 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			String[] copyTos=copyToStr.split(";");
 			String[] codings=codingStr.split(";");
 			for(int i=0;i<contractors.length;i++) {
-				ExcTransfer excTransfer=new ExcTransfer();
-				excTransfer.setItemType(1);
-				excTransfer.setDocId(childId);
-				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
-				excTransfer.setToName(contractors[i]);
-				excTransfer.setCreationDate(new Date());
-				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSendDate(new Date());
-				
-				excTransfer.setStauts(nextStatus);
-				excTransferService.newObject(excTransfer);
+				if(!StringUtils.isEmpty(contractors[i])) {
+					ExcTransfer excTransfer=new ExcTransfer();
+					excTransfer.setItemType(1);
+					excTransfer.setDocId(childId);
+					excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
+					excTransfer.setToName(contractors[i]);
+					excTransfer.setCreationDate(new Date());
+					excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSendDate(new Date());
+					
+					excTransfer.setStatus(nextStatus);
+					excTransferService.newObject(excTransfer);
+				}
 				
 			}
 			
 			for(int i=0;i<copyTos.length;i++) {
-				ExcTransfer excTransfer=new ExcTransfer();
-				excTransfer.setItemType(1);
-				excTransfer.setDocId(childId);
-				excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
-				excTransfer.setToName(copyTos[i]);
-				excTransfer.setCreationDate(new Date());
-				excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
-				excTransfer.setSendDate(new Date());
-				
-				excTransfer.setStauts(nextStatus);
-				excTransferService.newObject(excTransfer);
+				if(!StringUtils.isEmpty(copyTos[i])) {
+					ExcTransfer excTransfer=new ExcTransfer();
+					excTransfer.setItemType(1);
+					excTransfer.setDocId(childId);
+					excTransfer.setFromName(doc.getAttributeValue("C_FROM")!=null?doc.getAttributeValue("C_FROM").toString():"");
+					excTransfer.setToName(copyTos[i]);
+					excTransfer.setCreationDate(new Date());
+					excTransfer.setCreator(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
+					excTransfer.setSendDate(new Date());
+					
+					excTransfer.setStatus(nextStatus);
+					excTransferService.newObject(excTransfer);
+				}
 				
 			}
 			
@@ -144,7 +178,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		List<String> idsList = JSONUtils.stringToArray(idsStr);
 
 		for(String childId : idsList) {
-			String sql = "update exc_transfer set STAUTS='待接收' where DOC_ID='"+childId+"'";	
+
+			String sql = "update exc_transfer set STATUS='待接收'   where DOC_ID='"+childId+"'";	
+
 			ecmDocument.executeSQL(sql);
 		}
 		mp.put("code", ActionContext.SUCESS);
@@ -183,7 +219,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 //				excTransfer.setSender(this.getSession().getCurrentUser().getUserName());
 //				excTransfer.setSendDate(new Date());
 //				String nextStatus= StatusEntity.getNextDcStatusValue("新建", doc.getTypeName(), true);
-//				excTransfer.setStauts(nextStatus);
+//				excTransfer.setStatus(nextStatus);
 //				excTransferService.newObject(excTransfer);
 //				if("新建".equals(currentStatus)) {
 //					doc.addAttribute("c_item_date", new Date());
@@ -227,12 +263,14 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			for(Map<String, Object> childId : excTransferIds) {
 				
 				ExcTransfer doc= excTransferService.getObjectById(childId.get("ID").toString());
-				String currentStatus= doc.getStauts();
+				String currentStatus= doc.getStatus();
 				if(currentStatus==null||"".equals(currentStatus)) {
 					currentStatus="新建";
 				}
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, null, true);
-				doc.setStauts(nextStatus);
+				doc.setStatus(nextStatus);
+				doc.setReceiver(this.getSession().getCurrentUser().getUserName());
+				doc.setReceiveDate(new Date());
 				excTransferService.updateObject(doc);
 //				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
 				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
@@ -313,15 +351,18 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			//
 			for(Map<String, Object> childId : excTransferIds) {
 				ExcTransfer doc= excTransferService.getObjectById(childId.get("ID").toString());
-				String currentStatus= doc.getStauts();
+				String currentStatus= doc.getStatus();
 				if(currentStatus==null||"".equals(currentStatus)) {
 					currentStatus="新建";
 				}
 				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, null, true);
-				doc.setStauts(previousStatus);
+				doc.setStatus(previousStatus);
 				doc.setComment(rejectCommon);
 				doc.setRejecter(this.getSession().getCurrentUser().getUserName());
 				doc.setRejectDate(new Date());
+				if("待确认".equalsIgnoreCase(doc.getStatus1())){
+					doc.setStatus1("已驳回");
+				}
 				excTransferService.updateObject(doc);
 //				OptionLogger.logger(detailService, doc, "分包商驳回", "CNPE");
 				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
@@ -448,7 +489,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 					String condition = "DOC_ID='"+childId+"' AND ITEM_TYPE=1";
 					List<ExcTransfer> tlist = excTransferService.selectByCondition(condition);
 					for(ExcTransfer obj:tlist) {
-						if(obj.getStatus1()!=null && obj.getStatus1().equals("待确认")) {
+						if(obj.getStatus1()!=null &&( obj.getStatus1().equals("待确认")
+								||obj.getStatus().equals("驳回"))) {
+							continue;
 							
 						}else {
 							obj.setApplicant(documentService.getSession(getToken()).getCurrentUser().getUserName());
@@ -480,8 +523,9 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 						OptionLogger.logger(getToken(), detailService, obj, "申请驳回", obj.getToName());
 					}else {
 						ExcTransfer obj = tlist.get(0);
-						if(obj.getStatus1()!=null && obj.getStatus1().equals("待确认")) {
-							
+						if(obj.getStatus1()!=null && (obj.getStatus1().equals("待确认")||
+								obj.getStatus1().equals("已驳回"))) {
+							continue;
 						}else {
 							obj.setApplicant(documentService.getSession(getToken()).getCurrentUser().getUserName());
 							obj.setApplyDate(new Date());

@@ -61,6 +61,16 @@
             <ecm-data-icons ref="p5" :option="projectData5"></ecm-data-icons>
           </el-form-item>
         </el-col>
+        <el-col  :span="6" v-if="isSubjk"> 
+          <el-form-item>
+            <ecm-data-icons ref="p6" :option="projectDataFeedbackICM"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
+        <el-col  :span="6" v-if="isSubjk"> 
+          <el-form-item>
+            <ecm-data-icons ref="p7" :option="projectDataDRN"></ecm-data-icons>
+          </el-form-item>
+        </el-col>
         
 
 
@@ -107,6 +117,24 @@ export default {
       dataReport: [],
       count:'',
 
+      projectDataDRN: {
+        color: 'rgb(63, 161, 255)',
+        span: 6,
+        data:[{title: this.$t('application.delayNum'),
+                count: 11,
+                color: 'rgb(63, 161, 255)',
+                icon: 'el-icon-s-unfold',
+                url: '/ied/releaseied'}],
+      },
+        projectDataFeedbackICM: {
+        color: 'rgb(63, 161, 255)',
+        span: 6,
+        data:[{title: this.$t('application.FeedbackICM'),
+                count: 11,
+                color: 'rgb(63, 161, 255)',
+                icon: 'el-icon-s-unfold',
+                url: '/ied/releaseied'}],
+      },
       projectData1: {
         color: 'rgb(63, 161, 255)',
         span: 6,
@@ -319,12 +347,34 @@ export default {
     this.getUserRole()
     this.loadStatisticWK()
     this.loadStatistic()
+    this.loadStatisticJKSP()
     this.getDCNum()
 
     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
   methods: {
+      loadStatisticJKSP(){      //取两个接口特殊值
+      let _self = this;
+      let mp=new Map();
+      if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
+      axios
+        axios.post("/exchange/homeTop/homeSumNum",JSON.stringify(mp))
+        .then(function (response) {
+          if(response.data.code==1){
+              _self.projectDataFeedbackICM.data[0].count=response.data.feedbackicmNum;
+              _self.projectDataDRN.data[0].count=response.data.delayNum
+          }
+          
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     getUserRole(){    //获取文件类型，进行本地验证
         var k=0;
         this.tempRoles=this.currentUser().roles
@@ -379,12 +429,7 @@ export default {
           _self.projectData3.data[0].count = response.data.thereplanNum;
           _self.projectData4.data[0].count = response.data.iedNum;
           _self.projectData5.data[0].count = response.data.icmNum;
-          _self.$refs.p1.refresh()
-          _self.$refs.p2.refresh()
-          _self.$refs.p3.refresh()
-          _self.$refs.p4.refresh()
-          _self.$refs.p5.refresh()
-          console.log(response.data)
+          
         })
         .catch(function (error) {
           console.log(error);

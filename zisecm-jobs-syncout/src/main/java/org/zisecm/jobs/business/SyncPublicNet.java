@@ -114,7 +114,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 //		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('"+actionName+"')  and status='新建' ");
 		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService
 				.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName
-						+ "')  and (stauts is null  or stauts not in('已同步','已导出'))  order by CREATION_DATE asc ");
+						+ "')  and (status is null  or status not in('已同步','已导出'))  order by CREATION_DATE asc ");
 		return excSynDetailObjList;
 
 	}
@@ -284,7 +284,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 			beanType = "update_修改";
 		} else if ("分发".equals(type)) {
 			transfers = excTransferMapper.executeSQL(
-					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS FROM exc_transfer where ID in('"
+					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS FROM exc_transfer where ID in('"
 							+ docId + "') ");
 			for (int i = 0; i < transfers.size(); i++) {
 				Object transferDocId = transfers.get(i).get("DOC_ID");
@@ -433,17 +433,17 @@ public class SyncPublicNet implements ISyncPublicNet {
 		Date updateDate=new Date();
 		for (Iterator<ExcSynDetail> iterator = objList.iterator(); iterator.hasNext();) {
 			ExcSynDetail excSynDetail =iterator.next();
-			excSynDetail.setStauts(status);
+			excSynDetail.setStatus(status);
 			excSynDetail.setBatchNum(batchNum);
 			excSynDetail.setExportDate(new Date());
 			excSynDetailMapper.updateByPrimaryKey(excSynDetail);
 
 		}
 		ExcSynBatch temp = new ExcSynBatch();
-		temp.setAppName("IN-OUT");
+		temp.setAppName("DOCEX");
 		temp.setCreationDate(updateDate);
 		temp.setActionName("同步");
-		temp.setStauts("新建");
+		temp.setStatus("新建");
 		temp.setBatchNum(batchNum);
 		batchService.newObject(temp);
 		return true;
@@ -468,13 +468,13 @@ public class SyncPublicNet implements ISyncPublicNet {
 			String fileName = temp.getName();
 			if (!temp.isDirectory() && fileName.endsWith("zip") && fileName.startsWith("DONE_" + NetWorkEnv)) {
 				String batchNum=fileName.split("\\.")[0].substring(5);
-				excSynDetailMapper.executeSQL("update exc_syn_detail set STAUTS='已同步' where BATCH_NUM ='"
+				excSynDetailMapper.executeSQL("update exc_syn_detail set STATUS='已同步' where BATCH_NUM ='"
 						+ batchNum + "'");
 				List<ExcSynBatch> syncBatchList=batchService.getByCondition("BATCH_NUM='"+batchNum+"'");
 				if(syncBatchList.size()>0) {
 					ExcSynBatch syncBatch=syncBatchList.get(0);
 					syncBatch.setExecuteDate(new Date());
-					syncBatch.setStauts("已同步");
+					syncBatch.setStatus("已同步");
 					batchService.updateObject(syncBatch);
 				}
 				String fileNewName=temp.getParent() + "/FINISH_" + fileName;

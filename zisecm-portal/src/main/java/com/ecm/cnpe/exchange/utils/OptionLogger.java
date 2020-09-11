@@ -21,7 +21,7 @@ public class OptionLogger {
 		
 		detail.setFromId(doc.getId());
 		detail.setCreationDate(new Date());
-		detail.setStauts(doc.getStatus());
+		detail.setStatus(doc.getStatus());
 		if(StringUtils.isEmpty(companyName)) {
 			detail.setToCompany(doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 		}else {
@@ -52,7 +52,7 @@ public class OptionLogger {
 
 		detail.setFromId(doc.getId());
 		detail.setCreationDate(new Date());
-		detail.setStauts(doc.getStatus());
+		detail.setStatus(doc.getStatus());
 		if (StringUtils.isEmpty(companyName)) {
 			detail.setToCompany(
 					doc.getAttributeValue("C_COMPANY") != null ? doc.getAttributeValue("C_COMPANY").toString() : "");
@@ -144,10 +144,10 @@ public class OptionLogger {
 		ExcSynDetail detail = new ExcSynDetail();
 		detail.setAppName("DOCEX");
 //		detail.setActionName(actionName);
-		detail.setActionName(StatusEntity.actions.get(doc.getStauts()));
+		detail.setActionName(StatusEntity.actions.get(doc.getStatus()));
 		detail.setFromId(doc.getId());
 		detail.setCreationDate(new Date());
-		detail.setStauts(doc.getStauts());
+		detail.setStatus(doc.getStatus());
 		if (StringUtils.isEmpty(companyName)) {
 			detail.setToCompany(
 					doc.getAttributeValue("C_COMPANY") != null ? doc.getAttributeValue("C_COMPANY").toString() : "");
@@ -174,10 +174,10 @@ public class OptionLogger {
 		ExcSynDetail detail = new ExcSynDetail();
 		detail.setAppName("DOCEX");
 		detail.setActionName(actionName);
-//		detail.setActionName(StatusEntity.actions.get(doc.getStauts()));
+//		detail.setActionName(StatusEntity.actions.get(doc.getStatus()));
 		detail.setFromId(doc.getId());
 		detail.setCreationDate(new Date());
-		detail.setStauts(doc.getStauts());
+		detail.setStatus(doc.getStatus());
 		if (StringUtils.isEmpty(companyName)) {
 			detail.setToCompany(
 					doc.getAttributeValue("C_COMPANY") != null ? doc.getAttributeValue("C_COMPANY").toString() : "");

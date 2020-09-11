@@ -4,6 +4,7 @@
       <!-- 创建分发 -->
         
       <el-dialog
+        :append-to-body="true"
         title="编辑列"
         :visible.sync="editColumn"
         @close="onCloseCustom"
@@ -88,6 +89,7 @@
         width="40%"
         center
         top="15vh"
+        :append-to-body="true"
       >
         <el-checkbox
           :indeterminate="columnsInfo.isIndeterminate"

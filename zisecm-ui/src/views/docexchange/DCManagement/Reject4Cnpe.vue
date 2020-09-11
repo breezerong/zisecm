@@ -131,7 +131,7 @@
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGridCnpeReject"
                             :isshowCustom="false"
-                            condition=" stauts='驳回' and ITEM_TYPE=1 "
+                            condition=" status='驳回' and ITEM_TYPE=1 "
                             :isEditProperty="isShowMountFile"
                             showOptions="查看内容"
                             :isShowChangeList="false"
@@ -269,7 +269,7 @@ export default {
             // 顶部除列表高度
             topbarHeight: 40,
             // 底部除列表高度
-            bottomHeight: 80,
+            bottomHeight: 120,
             dialog:{
                 title:"",
                 visible:false
@@ -660,9 +660,9 @@ export default {
             console.log(this.filters.status)
                console.log(this.isReject)
             if(_self.filters.status!=''){
-                key=" stauts='"+_self.filters.status+"'";
+                key=" status='"+_self.filters.status+"'";
             }else{
-                 key=" (stauts='驳回' or stauts='已作废')";
+                 key=" (status='驳回' or status='已作废')";
             }
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;

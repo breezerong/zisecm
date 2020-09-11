@@ -9,7 +9,7 @@
         <result column="ACTION_NAME" property="actionName" jdbcType="NVARCHAR" />
         <result column="BATCH_NUM" property="batchNum" jdbcType="NVARCHAR" />
         <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
-        <result column="STAUTS" property="stauts" jdbcType="NVARCHAR" />
+        <result column="STATUS" property="status" jdbcType="NVARCHAR" />
         <result column="EXECUTE_DATE" property="executeDate" jdbcType="TIMESTAMP" />
         <result column="NEW_COUNT" property="newCount" jdbcType="INTEGER" />
         <result column="UPDATE_COUNT" property="updateCount" jdbcType="INTEGER" />
@@ -18,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, APP_NAME, ACTION_NAME, BATCH_NUM, CREATION_DATE, STAUTS, EXECUTE_DATE, NEW_COUNT, UPDATE_COUNT, FAIL_COUNT
+        ID, APP_NAME, ACTION_NAME, BATCH_NUM, CREATION_DATE, STATUS, EXECUTE_DATE, NEW_COUNT, UPDATE_COUNT, FAIL_COUNT
     </sql>
 
 
@@ -69,7 +69,7 @@
 		    ACTION_NAME,
 		    BATCH_NUM,
 		    CREATION_DATE,
-		    STAUTS,
+		    STATUS,
 		    EXECUTE_DATE,
 		    NEW_COUNT,
 		    UPDATE_COUNT,
@@ -81,7 +81,7 @@
     		 #{actionName},
     		 #{batchNum},
     		 #{creationDate},
-    		 #{stauts},
+    		 #{status},
     		 #{executeDate},
     		 #{newCount},
     		 #{updateCount},
@@ -108,8 +108,8 @@
     	<if test="creationDate != null">
     		 CREATION_DATE,
     	</if>
-    	<if test="stauts != null">
-    		 STAUTS,
+    	<if test="status != null">
+    		 STATUS,
     	</if>
     	<if test="executeDate != null">
     		 EXECUTE_DATE,
@@ -140,8 +140,8 @@
     	<if test="creationDate != null">
     		#{creationDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts != null">
-    		#{stauts,jdbcType=NVARCHAR}, 		 
+    	<if test="status != null">
+    		#{status,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="executeDate != null">
     		#{executeDate,jdbcType=TIMESTAMP}, 		 
@@ -177,8 +177,8 @@
     	<if test="creationDate != null">
     		CREATION_DATE=#{creationDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts != null">
-    		STAUTS=#{stauts,jdbcType=NVARCHAR}, 		 
+    	<if test="status != null">
+    		STATUS=#{status,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="executeDate != null">
     		EXECUTE_DATE=#{executeDate,jdbcType=TIMESTAMP}, 		 
@@ -203,7 +203,7 @@
    		ACTION_NAME=#{actionName},
    		BATCH_NUM=#{batchNum},
    		CREATION_DATE=#{creationDate},
-   		STAUTS=#{stauts},
+   		STATUS=#{status},
    		EXECUTE_DATE=#{executeDate},
    		NEW_COUNT=#{newCount},
    		UPDATE_COUNT=#{updateCount},

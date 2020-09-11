@@ -7,8 +7,8 @@
               @onLoadnDataSuccess="onLoadnDataSuccess"></DataSelect>
                <el-input v-model="input" :placeholder="$t('message.iedPublishedInputPlaceholder')" style="width:200px"></el-input>
             <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
-            <el-button type="success" @click="submit()">{{$t('application.Submit')}}</el-button>
-            <el-button type="warning" @click="Delete()">{{$t('application.delete')}}</el-button>
+            <el-button type="success" v-if='isNotCNPE' @click="submit()">{{$t('application.Submit')}}</el-button>
+            <el-button type="warning" v-if='isNotCNPE' @click="Delete()">{{$t('application.delete')}}</el-button>
             <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
             
             </el-row>
@@ -43,6 +43,9 @@ export default {
     name: "IEDRejected",
     data(){
         return{
+                tempRoles:[],
+                userRoles:[],
+                isNotCNPE:true,
             tables:{
                 main:{
                     gridName:"IEDGrid",
@@ -83,17 +86,32 @@ export default {
             })
             console.log(sessionStorage.data.data.groupname)
         }   
-        
+        this.getUserRole()
     },
 
     methods: {
+        getUserRole(){    //获取文件类型，进行本地验证
+        var k = 0;
+        var s = 0;
+        this.tempRoles=this.currentUser().roles
+        for(var i = 0;i < this.tempRoles.length;i++){
+          if(this.tempRoles[i] == '分包商文控人员'||this.tempRoles[i] =='CNPE_文控人员'||this.tempRoles[i] =='CNPE_计划人员'||
+          this.tempRoles[i] =='CNPE_接口人员'||this.tempRoles[i] =='分包商接口人员'||this.tempRoles[i] =='分包商计划人员'){
+          this.userRoles[k] = this.tempRoles[i]
+          k++; 
+          }
+        }
+        if(this.userRoles.length==1 && this.userRoles[0]=='CNPE_计划人员'){
+          this.isNotCNPE=false
+          }
+          console.log(this.isNotCNPE)
+      },
         fresh(){
           let _self = this
         _self.$refs.mainDataGrid.loadGridData();
        },
         cellMouseEnter(row, column, cell, event){
         this.selectRow=row;
- 
         },
      rowClick(row){
       this.selectRow=row;

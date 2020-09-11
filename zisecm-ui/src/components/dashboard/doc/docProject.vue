@@ -1,15 +1,10 @@
 <template>
-  <div>
-    <DataSelect @onSelectChange='onSelectChange' v-model="filters.projectCode" :includeAll="true" dataUrl="/exchange/project/myproject" 
-                    dataValueField="name" dataTextField="name"></DataSelect>
+  <div> 
     <el-row>
       <el-col :span="4">
-        <ecm-data-icons ref="T1" :option="projectDataTPLAN"></ecm-data-icons>
-        <ecm-data-icons ref="T2" :option="projectDataIED"></ecm-data-icons>
-        <ecm-data-icons ref="T3" :option="projectDataICM"></ecm-data-icons>
       </el-col>
       <el-col  :span="10">
-        <div id="docChart1" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
+        <div id="docChart2" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
       </el-col>
     </el-row>
   </div>
@@ -31,6 +26,7 @@ export default {
           docType: '',
           limit: 10
         },
+      isCNPEwk:false,
       showHidden: false,
       tableHeight: window.innerHeight - 210,
       dataList: [],
@@ -38,8 +34,8 @@ export default {
       page: 1,
       divWidth: '500px',
       divHeight: '300px',
-      docChart1: Object,
-      docChartData1: {
+      docChart2: Object,
+      docChartData2: {
         xAxisData: [],
         yAxisData: []
       },
@@ -74,6 +70,17 @@ export default {
             url: '/cnpe/MoreViewerBrowe/projectviewer'
         }]
       },
+       projectDataDC: {
+        color: 'rgb(63, 161, 255)',
+        span: 6,
+        data: [{
+            title: this.$t('application.Document'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: '/cnpe/MoreViewerBrowe/projectviewer'
+        }]
+      },
     };
   },
   created() {
@@ -82,7 +89,7 @@ export default {
   },
   mounted(){
     let _self = this
-     _self.docChart1 = _self.echarts.init(document.getElementById('docChart1'));
+     _self.docChart2 = _self.echarts.init(document.getElementById('docChart2'));
     
   },
   methods: {
@@ -106,9 +113,9 @@ export default {
                   xArray.push(key);
                   yArray.push(result[key]);
               }
-              _self.docChartData1.xAxisData=xArray;
-              _self.docChartData1.yAxisData=yArray;
-              _self.loadDocChart(_self.docChart1, _self.docChartData1);
+              _self.docChartData2.xAxisData=xArray;
+              _self.docChartData2.yAxisData=yArray;
+              _self.loadDocChart(_self.docChart2, _self.docChartData2);
         }
       })
       .catch(function(error) {
@@ -122,6 +129,7 @@ export default {
               _self.projectDataTPLAN.data[0].count=response.data.ThreePlanNum;
               _self.projectDataIED.data[0].count=response.data.IEDNum;
               _self.projectDataICM.data[0].count=response.data.ICMNum;
+              _self.projectDataDC.data[0].count=response.data.dcNum
               _self.$refs.T1.refresh()
               _self.$refs.T2.refresh()
               _self.$refs.T3.refresh()

@@ -17,7 +17,6 @@
         <result column="SEND_DATE" property="sendDate" jdbcType="TIMESTAMP" />
         <result column="RECEIVER" property="receiver" jdbcType="NVARCHAR" />
         <result column="RECEIVE_DATE" property="receiveDate" jdbcType="TIMESTAMP" />
-        <result column="STAUTS" property="stauts" jdbcType="NVARCHAR" />
         <result column="COMMENT" property="comment" jdbcType="NVARCHAR" />
         <result column="SYN_STATUS" property="synStatus" jdbcType="NVARCHAR" />
         <result column="STATUS" property="status" jdbcType="VARCHAR" />
@@ -31,7 +30,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STAUTS, COMMENT, SYN_STATUS, STATUS, APPLICANT, APPLY_DATE, CONFIRMER, CONFIRM_DATE, STATUS1, COMMENT1
+        ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, COMMENT, SYN_STATUS, STATUS, APPLICANT, APPLY_DATE, CONFIRMER, CONFIRM_DATE, STATUS1, COMMENT1
     </sql>
 
 
@@ -78,7 +77,6 @@
 		    SEND_DATE,
 		    RECEIVER,
 		    RECEIVE_DATE,
-		    STAUTS,
 		    COMMENT,
 		    SYN_STATUS,
 		    STATUS,
@@ -103,7 +101,6 @@
     		 #{sendDate},
     		 #{receiver},
     		 #{receiveDate},
-    		 #{stauts},
     		 #{comment},
     		 #{synStatus},
     		 #{status},
@@ -157,9 +154,6 @@
     	</if>
     	<if test="receiveDate != null">
     		 RECEIVE_DATE,
-    	</if>
-    	<if test="stauts != null">
-    		 STAUTS,
     	</if>
     	<if test="comment != null">
     		 COMMENT,
@@ -228,9 +222,6 @@
     	</if>
     	<if test="receiveDate != null">
     		#{receiveDate,jdbcType=TIMESTAMP}, 		 
-    	</if>
-    	<if test="stauts != null">
-    		#{stauts,jdbcType=NVARCHAR}, 		 
     	</if>
     	<if test="comment != null">
     		#{comment,jdbcType=NVARCHAR}, 		 
@@ -305,9 +296,6 @@
     	<if test="receiveDate != null">
     		RECEIVE_DATE=#{receiveDate,jdbcType=TIMESTAMP}, 		 
     	</if>
-    	<if test="stauts != null">
-    		STAUTS=#{stauts,jdbcType=NVARCHAR}, 		 
-    	</if>
     	<if test="comment != null">
     		COMMENT=#{comment,jdbcType=NVARCHAR}, 		 
     	</if>
@@ -354,7 +342,6 @@
    		SEND_DATE=#{sendDate},
    		RECEIVER=#{receiver},
    		RECEIVE_DATE=#{receiveDate},
-   		STAUTS=#{stauts},
    		COMMENT=#{comment},
    		SYN_STATUS=#{synStatus},
    		STATUS=#{status},

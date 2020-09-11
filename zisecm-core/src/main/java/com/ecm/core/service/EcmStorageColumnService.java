@@ -36,7 +36,7 @@ public class EcmStorageColumnService {
 	public List<Map<String,Object>> getAllStorageColumn(String token) {
 		String sql="select ID, CODING, PARENT_CODING, TOTAL_LENGTH, "
 				+ "REMAIN_LENGTH, ARCHIVE_COUNT, DESCRIPTION," + 
-				" STAUTS from ecm_storage_column";
+				" STATUS from ecm_storage_column";
 		return storageColumnDao.executeSQL(sql);
 		
 	}
@@ -44,7 +44,7 @@ public class EcmStorageColumnService {
 	public List<Map<String,Object>> getColumnByStorageRoom(String token,String storageRoomCoding) {
 		String sql="select ID, CODING, PARENT_CODING, TOTAL_LENGTH, REMAIN_LENGTH,"
 				+ " ARCHIVE_COUNT, DESCRIPTION," + 
-				" STAUTS from ecm_storage_column where PARENT_CODING='"+storageRoomCoding+"' order by CODING asc";
+				" STATUS from ecm_storage_column where PARENT_CODING='"+storageRoomCoding+"' order by CODING asc";
 		return storageColumnDao.executeSQL(sql);
 		
 	}
@@ -52,7 +52,7 @@ public class EcmStorageColumnService {
 	public List<Map<String,Object>> getColumnById(String token,String id) {
 		String sql="select ID, CODING, PARENT_CODING, TOTAL_LENGTH, REMAIN_LENGTH,"
 				+ " ARCHIVE_COUNT, DESCRIPTION," + 
-				" STAUTS from ecm_storage_column where ID='"+id+"' order by CODING asc";
+				" STATUS from ecm_storage_column where ID='"+id+"' order by CODING asc";
 		return storageColumnDao.executeSQL(sql);
 		
 	}

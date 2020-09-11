@@ -21,7 +21,6 @@
             :label="item.label"
             :value="item.value">
                 </el-option>
-                </div>
             </el-select>
             </el-form-item>
             <el-form-item><el-input v-model="input" :placeholder="$t('message.selectByCoding')" style="width:200px"></el-input></el-form-item>
@@ -31,16 +30,14 @@
         <template v-slot:main="{layout}">
                 <el-row>
                 <el-col :span="24">
-                    <!--condition="creator='@currentuser' AND company='@company' AND status='已驳回'">
-                    <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments4Cnpe"
             isshowOption
             gridViewName="我的驳回申请"
             condition=""
-            v-bind="tables.main":tableHeight="layout.height-166"
-            @rowclick="rowClick" 
-            @selectchange="selectChange"
+            v-bind="tables.main" 
+            :tableHeight="layout.height-166"
+            :isEditProperty="false"
            ></DataGrid>
                 </el-col>
                 </el-row>
@@ -138,7 +135,7 @@ export default {
         let orS = ""
         let wheres = ["CODING"]
         let _self = this
-        var k1="C_EX4_STRING='"+this.currentUser().userName+"'"
+        var k1="C_EX5_STRING='"+this.currentUser().userName+"'"
         if(_self.value != null &&_self.value!='所有项目'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"
             }
@@ -158,8 +155,28 @@ export default {
         _self.$refs.mainDataGrid.loadGridData();
     },
     },
-    props: {
-        
+    search() {
+      let orS = "";
+      let wheres = ["CODING"];
+      let _self = this;
+      var k1 = "C_EX5_STRING='" + this.currentUser().userName + "'";
+      if (_self.value != null && _self.value != "所有项目") {
+        k1 += " AND C_PROJECT_NAME in (" + _self.value + ")";
+      }
+      if (_self.Cstatus != undefined && _self.Cstatus != null) {
+        k1 += "AND C_EX7_STRING = '" + _self.Cstatus + "'";
+      }
+      if (_self.input.trim().length > 0) {
+        wheres.forEach(function (item) {
+          if (orS.length > 0) {
+            orS += " OR ";
+          }
+          orS += item + " LIKE '%" + _self.input + "%'";
+        });
+        k1 += " AND (" + orS + ")";
+      }
+      _self.$refs.mainDataGrid.condition = k1;
+      _self.$refs.mainDataGrid.loadGridData();
     },
     components: {
         ShowProperty:ShowProperty,

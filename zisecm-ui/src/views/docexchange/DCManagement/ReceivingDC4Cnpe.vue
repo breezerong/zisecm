@@ -140,7 +140,7 @@
                             v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGrid"
-                            condition=" stauts='待接收' and ITEM_TYPE=1 and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
+                            condition=" status='待接收' and ITEM_TYPE=1 and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
                             @rowclick="rowClick"
                             @selectchange="selectChange"
                              @dbclick="dbclick"
@@ -375,8 +375,8 @@ export default {
         },
         submit(){
             let _self=this
-            if(this.selectedItems.length==0){
-                    this.$message({
+            if(_self.selectedItems.length==0){
+                    _self.$message({
                             showClose: true,
                             message: _self.$t("message.pleaseSelectDC"),
                             duration: 2000,
@@ -384,8 +384,8 @@ export default {
                         });
                         return
                 }
-            this.onNextStatusCnpe(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
-                $refs.relevantDoc])
+            this.onNextStatusCnpe(_self.selectedItems,_self.$refs.mainDataGrid,[_self.$refs.transferDoc,
+                _self.$refs.relevantDoc])
         },
         
         dbclick(row){
@@ -607,7 +607,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" stauts='待接收' and TO_NAME='@company'";
+            let key=" status='待接收' and TO_NAME='@company'";
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{
