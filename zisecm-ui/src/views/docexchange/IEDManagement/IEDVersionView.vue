@@ -40,7 +40,7 @@ export default {
     return{
       docId:"",
       topStorageName: 'IEDVersionViewHeight',
-      startHeight: 135,
+      startHeight: 140,
       topPercent: 60,
       topbarHeight: 40,
       bottomHeight: 80,
@@ -49,7 +49,8 @@ export default {
             gridViewName:"IEDVersionGrid",
             dataUrl:"/dc/getDocuments",
             condition:"VERSION_ID=''",
-            isshowOption:false,
+            isshowOption:true,
+            isShowMoreOption: false,
             isshowCustom:false,
             isInitData:false,
             isshowicon:false,
@@ -107,11 +108,11 @@ export default {
       this.setStorageNumber(this.topStorageName, this.topPercent)      
     },
     onDataGridRowClick:function(row){
-        console.log(row)
+        //console.log(row)
         let cond=""
         let type = row.SUB_TYPE
-        let rfDGCondition = "SELECT CHILD_ID from ecm_relation where PARENT_ID  in (SELECT ID from ecm_document where TYPE_NAME ='IED' and CODING = '"+row.CODING+"')"
-        this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +")"
+        let rfDGCondition = "SELECT CHILD_ID from ecm_relation where NAME='相关文件' AND PARENT_ID  in ('"+row.ID+"')"
+        this.tables.rfDg.condition=" ID IN ("+ rfDGCondition +") and TYPE_NAME<>'设计文件' AND TYPE_NAME<>'IED'"
         this.$refs.rfDg.condition=this.tables.rfDg.condition
         this.tables.rfDg.gridViewName="IEDRelationGrid"
         this.$refs.rfDg.gridViewName=this.tables.rfDg.gridViewName
@@ -129,9 +130,11 @@ export default {
         this.$refs.dfDg.itemDataList=[]
         this.$refs.dfDg.loadGridInfo()
         this.$refs.dfDg.loadGridData()
-        console.log(this.$refs.dfDg.condition)
-        let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='IED' and CODING =  '"+ row.CODING+"'";
-        this.tables.tfDg.condition = "Type_name='文件传递单' and CODING IN ("+ dfDGCondition+")"
+       //this.tables.tfDg.condition = "Type_name='文件传递单' and CODING='"+ row.C_REF_CODING+"'"
+            
+        let dfDGCondition ="select PARENT_ID from ecm_relation where NAME='设计文件' and CHILD_ID in (select ID from ecm_document where type_name='设计文件' and CODING='"+row.CODING+"' and REVISION ='"+row.REVISION+"')";
+        this.tables.tfDg.condition = "Type_name='文件传递单' and ID IN ("+ dfDGCondition+")"
+
         this.$refs.tfDg.condition= this.tables.tfDg.condition
         this.$refs.tfDg.itemDataList=[]
         //this.$refs.tfDg.loadGridInfo()
@@ -140,8 +143,8 @@ export default {
         this.tables.mainDg.condition="VERSION_ID='"+this.id+"'"
     },
     search(versionId){
-      console.log("IEDVersionView")
-      console.log(versionId)
+      // console.log("IEDVersionView")
+      // console.log(versionId)
       this.$refs.rfDg.itemDataList=[]
       this.$refs.dfDg.itemDataList=[]
       this.$refs.tfDg.itemDataList=[]
@@ -150,19 +153,16 @@ export default {
         this.docId = versionId
       }
 
-      this.$refs.mainDg.condition = "VERSION_ID='"+this.docId+"'"
+      this.$refs.mainDg.condition = "VERSION_ID ='"+this.docId+"'"
       this.$refs.mainDg.loadGridData()
-      this.onSplitResize()
+      //this.onSplitResize(this.topPercent)
     }
   },
   mounted(){
+    this.search()
     setTimeout(() => {
-      this.topPercent = this.getStorageNumber(this.topStorageName,60)
-      this.docId = this.versionDocId
-      this.search()
+            this.topPercent = this.getStorageNumber(this.topStorageName,60)
     }, 300);
-
-    
   }
 }
 </script>

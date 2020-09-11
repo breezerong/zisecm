@@ -327,8 +327,10 @@ export default {
             this.$refs.dfDg.loadGridInfo()
             this.$refs.dfDg.loadGridData()
             console.log(this.$refs.dfDg.condition)
-            let dfDGCondition ="select C_REF_CODING from ecm_document where TYPE_NAME='IED' and CODING =  '"+ row.CODING+"'";
-            this.tables.tfDg.condition = "Type_name='文件传递单' and CODING IN ("+ dfDGCondition+")"
+            //this.tables.tfDg.condition = "Type_name='文件传递单' and CODING='"+ row.C_REF_CODING+"'"
+            
+            let dfDGCondition ="select PARENT_ID from ecm_relation where NAME='设计文件' and CHILD_ID in (select ID from ecm_document where type_name='设计文件' and CODING='"+row.CODING+"' and REVISION ='"+row.REVISION+"')";
+            this.tables.tfDg.condition = "Type_name='文件传递单' and ID IN ("+ dfDGCondition+")"
             this.$refs.tfDg.condition= this.tables.tfDg.condition
             this.$refs.tfDg.itemDataList=[]
             //this.$refs.tfDg.loadGridInfo()
@@ -397,12 +399,20 @@ export default {
         },
         IEDVersion(row){
             this.iedVersionVisual=true
-            console.log(row.VERSION_ID)
+            //console.log(row.VERSION_ID)
             this.id = row.VERSION_ID
             let viewer = this.$refs.ivvViewer
             if(viewer!=undefined){
                 viewer.docId = row.VERSION_ID
-                viewer.search()
+                viewer.search(row.VERSION_ID)
+            }else{
+                setTimeout(() => {
+                    viewer = this.$refs.ivvViewer
+                    if(viewer!=undefined){
+                        viewer.docId = row.VERSION_ID
+                        viewer.search(row.VERSION_ID)
+                    }
+                }, 300);
             }
            
         },
