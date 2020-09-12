@@ -78,7 +78,7 @@ public class IEDController  extends ControllerAbstract  {
 		String cond = "TYPE_NAME='IED' AND CODING = '"+coding+"'";
 		doc.addAttribute("C_WBS_CODING","1516-E-L3-N1-A-FU.E1.E314C.ED.11.1");//测试用数据，使用时删除
 		Object temp1=doc.getAttributeValue("C_WBS_CODING");
-		if(temp1 != null) {
+		/*if(temp1 != null) {
 			String WBS_CODING=temp1.toString();						//获取WBScoding，转换成String
 			String wbscond="TYPE_NAME='计划任务' AND C_WBS_CODING = '"+WBS_CODING+"'";
 			List<Map<String,Object>> result = documentService.getObjectMap(getToken(), wbscond);
@@ -101,7 +101,7 @@ public class IEDController  extends ControllerAbstract  {
 				return mp3;
 			}
 		}
-		}
+		}/*/
 		/*List<Map<String,Object>> result =documentService.getObjectMap(getToken(), cond);//查询IED用MAP
 		Map<String, Object> mp = new HashMap<String, Object>();					//结果map
 		if(result!=null&&result.size()>0) {

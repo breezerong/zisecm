@@ -12,7 +12,7 @@
       <el-col  :span="10">
         <div id="docChart1" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
         <docProject v-if="isCNPEWK" ref="doc"></docProject>
-        <planProject v-if="isCNPEPlan"  ref="plan"></planProject>
+        <planProject v-if="isCNPEPlan"  ref="p1"></planProject>
       </el-col>
     </el-row>
   </div>
@@ -109,9 +109,18 @@ export default {
   methods: {
     onSelectChange(val){
       this.filters.projectCode = val
+       console.log(this.isCNPEWK)
       this.initChart()
+      if(this.isCNPEWK==true)
+      this.onSelectChangeWK(val)
+      if(this.isCNPEPlan==true)
+      this.onSelectChangeJH(val)
+    },
+    onSelectChangeWK(val){
       this.$refs.doc.onSelectChange(val)
-      this.$refs.plan.onSelectChange(val)
+    },
+     onSelectChangeJH(val){
+      this.$refs.p1.onSelectChange(val)
     },
     initChart(){
       let _self=this;
