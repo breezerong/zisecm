@@ -78,8 +78,14 @@ public class StatusController extends ControllerAbstract{
 				
 				String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), isCnpeSend);
 				doc.setStatus(nextStatus);
-				doc.addAttribute("C_RECEIVER",this.getSession().getCurrentUser().getUserName());
-				doc.addAttribute("C_RECEIVE_DATE", new Date());
+				if("已生效".equals(nextStatus) || "已确认".equals(nextStatus)) {
+					doc.addAttribute("C_RECEIVER",this.getSession().getCurrentUser().getUserName());
+					doc.addAttribute("C_RECEIVE_DATE", new Date());
+				}
+				if("驳回".equals(currentStatus) || "已驳回".equals(currentStatus)) {
+					doc.addAttribute("C_REJECTOR",this.getSession().getCurrentUser().getUserName());
+					doc.addAttribute("C_REJECT_DATE", new Date());
+				}
 				if("IED".equals(doc.getTypeName())) {
 					if("已生效".equals(nextStatus)) {
 						//doc.addAttribute("C_ITEM_STATUS2", "Y");

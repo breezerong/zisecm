@@ -201,6 +201,13 @@ public class ImportService extends EcmService {
 //					}catch(Exception ex) {
 //						
 //					}
+					// 2、3、4列至少一个不为空
+					if(isEmptyCell(sheet.getRow(i).getCell(1))
+							&&isEmptyCell(sheet.getRow(i).getCell(2))
+							&&isEmptyCell(sheet.getRow(i).getCell(3))
+							) {
+						continue;
+					}
 					if(childStartIndex>1) {
 						//无格式副本2、3列至少一个不为空，有格式副本3、4不为空
 						if((!hasRendition&&(!isEmptyCell(sheet.getRow(i).getCell(1))
@@ -409,8 +416,38 @@ public class ImportService extends EcmService {
 										}
 									}
 									if(!StringUtils.isEmpty(newId)) {
+										//设计文件更新文件传递单属性
+										if("设计文件".equals(parentType)) {
+											if(!StringUtils.isEmpty(sameFields)) {
+												EcmDocument parentDoc = documentService.getObjectById(token, deliveryId);
+												EcmDocument techDoc = documentService.getObjectById(token, newId);
+												if(parentDoc != null) {
+													String[] ps = sameFields.split(";");
+													
+													for(String p : ps) {
+														if(!StringUtils.isEmpty(p)) {
+															String[] names = p.split(":");
+															String fromName ="";
+															String toName ="";
+															if(names.length==2) {
+																fromName = names[0];
+																toName = names[1];
+															}else if(names.length==1) {
+																fromName= names[0];
+																toName = fromName;
+															}
+															techDoc.getAttributes().put(toName, parentDoc.getAttributeValue(fromName));
+															
+														}
+													}
+													documentService.updateObject(token, techDoc, null);
+												}
+											}
+										}
+										
 										if("设计文件".equals(parentType)&&(relationName==null||"".equals(relationName.trim()))) {
 											relationName="设计文件";
+						
 										}
 										newRelation(token, deliveryId,relationName, newId, i,null);
 									}
