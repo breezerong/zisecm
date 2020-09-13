@@ -22,9 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.entity.EcmForm;
+import com.ecm.core.entity.EcmFormClassification;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -236,7 +240,6 @@ public class IEDController  extends ControllerAbstract  {
 	    	 	//columnresult.add(tempC1);
 	    	 	
          }
-		System.out.println("长度："+L1.size());
 		//map.put("data", L1);
 		return L1;
 	}
@@ -267,8 +270,11 @@ public class IEDController  extends ControllerAbstract  {
 		     for(int j = 0;j < tempsave.length;j++) {
 		    	 	if(tempsave[j]!=null) {
 		    	 	column tempC1 = new column();
+		    	 	String res = checkLabel(tempsave[j]);
+		    	 	if(!res.equals("未识别")) {
 		    	 	tempC1.setLabel(checkLabel(tempsave[j]));
 		    	 	tempC1.setAttrName(tempsave[j]);
+		    	 	}
 		    	 	//System.out.println(tempsave[j]);
 		    	 	//System.out.println(tempC1.attrname);
 		    	 	//System.out.println(tempC1.label);
@@ -326,156 +332,57 @@ public class IEDController  extends ControllerAbstract  {
 	}
 	
 
-	private String checkLabel(String attr) {
-		if(attr.equals("C_DESIGN_UNIT")) {
-		return "设计单位";
+	
+	
+	public String  checkLabel(String column) {
+		//String itemInfo = args.get("itemInfo").toString();
+		//String lang = args.get(zh-cn).toString();
+		//String formName=args.get("formName").toString();
+		String itemInfo = "IED";
+		String lang = "zh-cn";
+		String formName="";
+		EcmDocument en = null;
+		List<EcmFormClassification> list = null;
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			en = documentService.getObjectById(getToken(), itemInfo);
+			if(formName==null||"".equals(formName)) {
+				formName=en.getTypeName();
+			}
+			EcmForm frm = CacheManagerOper.getEcmForms().get(formName + "_EDIT");
+			if (frm == null) {
+				frm = CacheManagerOper.getEcmForms().get(formName + "_1");
+			}
+			list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			EcmForm frm = CacheManagerOper.getEcmForms().get(itemInfo + "_NEW");
+			if (frm == null) {
+				frm = CacheManagerOper.getEcmForms().get(itemInfo + "_1");
+			}
+			try {
+				list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
+				mp.put("code", ActionContext.SUCESS);
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				mp.put("code", ActionContext.TIME_OUT);
+			}
+
 		}
-		if(attr.equals("C_PROJECT_CODE")) {
-		return "项目ID";	
+		int ItemSize = list.size();
+		for(int i=0;i<ItemSize;i++) {
+		for(int j=0;j<list.get(i).getEcmFormItems().size();j++) {
+			if(column.equals(list.get(i).getEcmFormItems().get(j).getAttrName())) {
+			System.out.println(list.get(i).getEcmFormItems().get(j).getAttrName());
+			return list.get(i).getEcmFormItems().get(j).getLabel();}
+				
 		}
-		if(attr.equals("C_PROJECT_NAME")) {
-			return "项目名称";
 		}
-		if(attr.equals("C_WBS_CODING")) {
-			return "WBS编码";
-		}
-		if(attr.equals("C_TITLE")) {
-			return "英文标题";
-		}
-		/*if(attr.equals("REVISION")) {
-			return "版本";
-		}/*/
-		if(attr.equals("C_ITEM4_DATE")) {
-			return "提交计划";
-		}
-		if(attr.equals("C_ITEM5_DATE")) {
-			return "外部计划";
-		}
-		if(attr.equals("C_ITEM6_DATE")) {
-			return "FU计划";
-		}
-		if(attr.equals("C_ITEM7_DATE")) {
-			return "DEN计划";
-		}
-		/*if(attr.equals("SUB_TYPE")) {
-			return "文件/图册标识";
-		}/*/
-		if(attr.equals("C_FROM_CODING")) {
-			return "所属图册号";
-		}
-		if(attr.equals("C_TYPE1")) {
-			return "设计类型";
-		}
-		if(attr.equals("C_UNIT")) {
-			return "机组";
-		}
-		if(attr.equals("C_SYS_CODE")) {
-			return "系统";
-		}
-		if(attr.equals("C_INST_BUILDING")) {
-			return "安装厂房";
-		}
-		if(attr.equals("C_INST_LEVEL")) {
-			return "安装层位及标高";
-		}
-		if(attr.equals("C_INST_AREA_ZONE")) {
-			return "安装区域";
-		}
-		if(attr.equals("C_INST_POSITION")) {
-			return "安装层位";
-		}
-		if(attr.equals("C_ISLAND_TYPE")) {
-			return "岛别";
-		}
-		if(attr.equals("C_BUILDING")) {
-			return "厂房";
-		}
-		if(attr.equals("C_ZONE")) {
-			return "分区";
-		}
-		if(attr.equals("C_LEVEL")) {
-			return "层位及标高";
-		}
-		if(attr.equals("C_AREA")) {
-			return "区域";
-		}
-		if(attr.equals("C_ROOM")) {
-			return "房间";
-		}
-		if(attr.equals("C_MODULE")) {
-			return "模块";
-		}
-		if(attr.equals("C_EQUIPMENT")) {
-			return "设备";
-		}
-		if(attr.equals("C_COMMENT")) {
-			return "总体性文件";
-		}
-		if(attr.equals("CREATION_DATE")) {
-			return "新增日期";
-		}
-		if(attr.equals("C_ITEM1_DATE")) {
-			return "提交计划调整日期";
-		}
-		if(attr.equals("C_COMMENT1")) {
-			return "提交计划调整依据";
-		}
-		if(attr.equals("C_ITEM2_DATE")) {
-			return "外部计划调整日期";
-		}
-		if(attr.equals("C_COMMENT2")) {
-			return "外部计划调整依据";
-		}
-		if(attr.equals("C_ITEM3_DATE")) {
-			return "变更日期";
-		}
-		if(attr.equals("C_COMMENT3")) {
-			return "变更依据";
-		}
-		if(attr.equals("C_ITEM4_DATE")) {
-			return "预计日期";
-		}
-		if(attr.equals("C_COMMENT4")) {
-			return "进展说明";
-		}
-		if(attr.equals("STATUS")) {				//预计修改点：字段名称
-			return "状态";
-		}
-		if(attr.equals("C_SEND_DATE")) {
-			return "传递单日期";
-		}
-		if(attr.equals("C_REF_CODING")) {
-			return "传递单通道号";
-		}
-		/*if(attr.equals("FUStatus")) {
-			return "FU状态";
-		}/*/
-		if(attr.equals("C_DOUBLE1")) {
-			return "图册完成百分比";
-		}
-		if(attr.equals("C_ITEM_DATE")) {
-			return "发布日期";
-		}
-		if(attr.equals("C_RECEIVER")) {
-			return "接收人";
-		}
-		if(attr.equals("C_RECEIVE_DATE")) {
-			return "接收日期";
-		}
-		if(attr.equals("C_ITEM_STATUS1")) {
-			return "变更类型";
-		}
-		if(attr.equals("C_COMPANY")) {
-			return "分包商";
-		}
-		/*if(attr.equals("CREATOR")) {
-			return "创建人";
-		}/*/
-		/*if(attr.equals("C_IS_RELASED")) {
-			return "创建人";
-		}/*/
 		return "未识别";
 	}
+	
+	
+	
 }
 
 
