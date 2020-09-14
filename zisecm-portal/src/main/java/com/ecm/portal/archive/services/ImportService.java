@@ -418,9 +418,11 @@ public class ImportService extends EcmService {
 									if(!StringUtils.isEmpty(newId)) {
 										//设计文件更新文件传递单属性
 										if("设计文件".equals(parentType)) {
+											EcmDocument parentDoc = documentService.getObjectById(token, deliveryId);
+											EcmDocument techDoc = null;
 											if(!StringUtils.isEmpty(sameFields)) {
-												EcmDocument parentDoc = documentService.getObjectById(token, deliveryId);
-												EcmDocument techDoc = documentService.getObjectById(token, newId);
+												
+												techDoc = documentService.getObjectById(token, newId);
 												if(parentDoc != null) {
 													String[] ps = sameFields.split(";");
 													
@@ -443,6 +445,16 @@ public class ImportService extends EcmService {
 													documentService.updateObject(token, techDoc, null);
 												}
 											}
+											if(StringUtils.isEmpty(parentDoc.getTitle())){
+												if( techDoc == null ) {
+													techDoc = documentService.getObjectById(token, newId);
+												}
+												if(techDoc!=null && !StringUtils.isEmpty(parentDoc.getTitle())) {
+													parentDoc.setTitle(techDoc.getTitle());
+													documentService.updateObject(token, parentDoc, null);
+												}
+											}
+											
 										}
 										
 										if("设计文件".equals(parentType)&&(relationName==null||"".equals(relationName.trim()))) {
