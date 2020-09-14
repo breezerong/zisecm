@@ -45,7 +45,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency> -->
-		
+		<dependency>
+			<groupId>com.zisyun</groupId>
+			<artifactId>zisecm-cnpe-p6ws</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -179,6 +183,8 @@
 		    <artifactId>commons-io</artifactId>
 		    <version>2.7</version>
 		</dependency>
+		
+		
  	<dependency>
  	<groupId>junit</groupId>
 	 <artifactId>junit</artifactId>

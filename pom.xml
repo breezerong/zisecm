@@ -19,6 +19,7 @@
     <module>zisecm-process</module>
      -->
      <module>zisecm-code-generator</module>
+     <module>zisecm-cnpe-p6ws</module>
   </modules>
   
   <repositories>
