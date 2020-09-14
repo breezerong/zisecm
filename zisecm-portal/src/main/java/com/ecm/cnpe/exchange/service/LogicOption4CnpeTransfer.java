@@ -178,7 +178,7 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 		attrMap.put("C_REF_CODING", doc.getAttributeValue("C_REF_CODING"));
 		attrMap.put("C_REVIEW1_DATE", now);
 		attrMap.put("C_ITEM_STATUS2", status2);
-		
+		attrMap.put("TITLE", doc.getAttributeValue("TITLE"));
 		EcmDocument checkInDoc= checkIn(token, oldIED.getId(),attrMap, null, true);
 		
 		
