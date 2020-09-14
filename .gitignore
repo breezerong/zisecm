@@ -87,3 +87,4 @@ zisecm-jobs/.factorypath
 zisecm-jobs/.classpath
 zisecm-jobs/.settings/org.eclipse.core.resources.prefs
 *.prefs
+zisecm-jobs/.settings/org.eclipse.jdt.apt.core.prefs
