@@ -604,7 +604,7 @@ export default {
                       duration: 2000,
                       type: "Error"
                     });
-      retrun;
+      return;
     }
     let mp=new Array();
     for(let i=0;i<_self.selectedColumns.length;i++){
