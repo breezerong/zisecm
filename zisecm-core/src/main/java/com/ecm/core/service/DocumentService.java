@@ -1333,6 +1333,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if (isCurrent) {
 			sql += ",is_current=0";
 		}
+		sql +=" ,TITLE= '"+attrMap.get("TITLE")+"'";
 		sql += " where ID='" + docId + "'";
 		ecmDocument.executeSQL(sql);
 		return doc;
