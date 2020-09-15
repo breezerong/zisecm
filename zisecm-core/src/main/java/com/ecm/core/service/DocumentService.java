@@ -374,9 +374,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 //		contentServices.deleteObject(token, id);
 		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
 		String msg  = doc.getCoding() != null ? doc.getCoding() : "";
-		msg += " ; " + doc.getRevision() != null ? doc.getRevision() : "";
-		msg += " ; " + doc.getTitle() != null ? doc.getTitle() : "";
-		msg += " ; " + doc.getName() != null ? doc.getName() : "";
+		msg += " ; " + (doc.getRevision() != null ? doc.getRevision() : "");
+		msg += " ; " + (doc.getTitle() != null ? doc.getTitle() : "");
+		msg += " ; " + (doc.getName() != null ? doc.getName() : "");
 		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + msg);
 		addFullIndexSearchQueue(token, id);
 		return ret;
@@ -486,9 +486,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		// TODO Auto-generated method stub
 		String typeName = args.get("TYPE_NAME").toString();
 		String msg  = args.get("CODING") != null ? args.get("CODING").toString() : "";
-		msg += " ; " + args.get("REVISION") != null ? args.get("REVISION").toString() : "";
-		msg += " ; " + args.get("TITLE") != null ? args.get("TITLE").toString() : "";
-		msg += " ; " + args.get("NAME") != null ? args.get("NAME").toString() : "";
+		msg += " ; " + (args.get("REVISION") != null ? args.get("REVISION").toString() : "");
+		msg += " ; " + (args.get("TITLE") != null ? args.get("TITLE").toString() : "");
+		msg += " ; " + (args.get("NAME") != null ? args.get("NAME").toString() : "");
 		String id = createDocument(token, args);
 		addFullIndexSearchQueue(token, id);
 		// 添加新建日志
@@ -1654,9 +1654,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		contentServices.deleteObject(token, id);
 		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
 		String msg  = doc.getCoding() != null ? doc.getCoding() : "";
-		msg += " ; " + doc.getRevision() != null ? doc.getRevision() : "";
-		msg += " ; " + doc.getTitle() != null ? doc.getTitle() : "";
-		msg += " ; " + doc.getName() != null ? doc.getName() : "";
+		msg += " ; " + (doc.getRevision() != null ? doc.getRevision() : "");
+		msg += " ; " + (doc.getTitle() != null ? doc.getTitle() : "");
+		msg += " ; " + (doc.getName() != null ? doc.getName() : "");
 		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + msg);
 		addFullIndexSearchQueue(token, id);
 		return ret;
