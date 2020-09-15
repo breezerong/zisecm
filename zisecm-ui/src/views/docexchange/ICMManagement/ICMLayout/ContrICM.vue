@@ -50,6 +50,7 @@
             border
             stripe
             size="mini"
+            v-loading="loading"
             :height="layout.height-160"
           >
             <el-table-column type="index" width="30" fixed></el-table-column>
@@ -200,7 +201,7 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "ICM_Contactor_Statistic" + new Date().Format("yyyy-MM-dd"),
+          filename: "ICM_Contactor_Statistic_" + new Date().Format("yyyy-MM-dd"),
         });
       });
     },
