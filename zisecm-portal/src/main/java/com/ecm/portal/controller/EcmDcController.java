@@ -2509,6 +2509,36 @@ public class EcmDcController extends ControllerAbstract {
 		EcmContent en = null; 
 		EcmDocument doc = new EcmDocument();
 		doc.setAttributes(args);
+		String m=args.get("parentDocId").toString();
+		
+		if(args.get("TYPE_NAME").toString().equals("相关文件")) {
+			String cond="";
+			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"' and "
+					+ "C_IN_CODING='"+doc.getAttributeValue("C_IN_CODING").toString()+"' AND REVISION='"+doc.getAttributeValue("REVISION").toString()+"'";
+			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
+			String id="";
+			if(list != null && list.size() > 0) {
+				id = list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
+			}else {
+				id="";
+				mp.put("MES", "此文件\""+args.get("CODING").toString()+"\"无对应IED!");
+				return mp;
+			}
+		}
+		if(m!=null||m!="") {
+			String condition = " ID='" + args.get("parentDocId").toString() + "'";
+			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), condition);
+			String a="";
+			if(list != null && list.size() > 0) {
+				a = list.get(0).get("TITLE")==null?"":list.get(0).get("TITLE").toString();
+			}else {
+				a="";
+			}
+			if(a.equals("")||a==null) {
+				String sql2 = "update ecm_document set TITLE='"+args.get("TITLE")+"' where ID='" + args.get("parentDocId").toString() + "'";
+				List<Map<String, Object>> list2 = ecmDocument.executeSQL(sql2);
+			}
+		}
 		if (uploadFile != null) {
 			en = new EcmContent();
 			en.setName(uploadFile.getOriginalFilename());
@@ -2552,6 +2582,7 @@ public class EcmDcController extends ControllerAbstract {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				mp.put("code", ActionContext.FAILURE);
+				mp.put("MES", "");
 				mp.put("message",e.getMessage());
 				return mp;
 			}
@@ -2559,8 +2590,8 @@ public class EcmDcController extends ControllerAbstract {
 			id= documentService.newObject(getToken(),doc,en);
 		}
 		
-		
 		mp.put("code", ActionContext.SUCESS);
+		mp.put("MES", "");
 		mp.put("id", id);
 		return mp;
 	}

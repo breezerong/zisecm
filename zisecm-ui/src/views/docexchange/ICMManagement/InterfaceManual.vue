@@ -121,9 +121,9 @@ export default {
             // 非split pan 控制区域高度
             startHeight: 135,
             // 顶部百分比*100
-            topPercent: 60,
+            topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 40,
+            topbarHeight: 45,
             // 底部除列表高度
             bottomHeight: 120,
             userCondition: '',

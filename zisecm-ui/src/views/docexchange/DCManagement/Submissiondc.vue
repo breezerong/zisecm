@@ -315,9 +315,9 @@ export default {
             // 非split pan 控制区域高度
             startHeight: 135,
             // 顶部百分比*100
-            topPercent: 60,
+            topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 40,
+            topbarHeight: 45,
             // 底部除列表高度
             bottomHeight: 120,
             buttLoading:false,
@@ -887,8 +887,18 @@ export default {
                     
                     
                     } 
-                else{
-                _self.$message({
+                else if(response.data.MES!=""){
+
+                    _self.$message({
+                        showClose: true,
+                        message: response.data.MES,
+                        duration: 2000,
+                        type: "warning"
+                    });
+                    _self.butt=false;
+                
+                }else{
+                    _self.$message({
                         showClose: true,
                         message: _self.$t('message.newFailured'),
                         duration: 2000,
