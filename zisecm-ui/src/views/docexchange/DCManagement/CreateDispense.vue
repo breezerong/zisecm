@@ -806,40 +806,49 @@ export default {
                         'Content-Type': 'multipart/form-data'
                     })
                     .then(function(response) {
-                    let code = response.data.code;
-                    //console.log(JSON.stringify(response));
-                    if (code == 1) {
-                        // _self.$message("创建成功!");
-                        _self.$message({
-                            showClose: true,
-                            message: "创建成功!",
-                            duration: 2000,
-                            type: "success"
-                        });
-                        _self.butt=false;
-                        _self.propertyVisible = false;
+                        let code = response.data.code;
+                        //console.log(JSON.stringify(response));
+                        if (code == 1) {
+                            // _self.$message("创建成功!");
+                            _self.$message({
+                                showClose: true,
+                                message: "创建成功!",
+                                duration: 2000,
+                                type: "success"
+                            });
+                            _self.butt=false;
+                            _self.propertyVisible = false;
 
-                        // _self.loadTransferGridData();
-                        _self.$refs.mainDataGrid.loadGridData();
+                            // _self.loadTransferGridData();
+                            _self.$refs.mainDataGrid.loadGridData();
 
-                        if(_self.$refs.transferDoc!=undefined){
-                            _self.$refs.transferDoc.loadGridData();
-                        }
-                        if(_self.$refs.relevantDoc!=undefined){
-                            _self.$refs.relevantDoc.loadGridData();
-                        }
-                        
-                        
+                            if(_self.$refs.transferDoc!=undefined){
+                                _self.$refs.transferDoc.loadGridData();
+                            }
+                            if(_self.$refs.relevantDoc!=undefined){
+                                _self.$refs.relevantDoc.loadGridData();
+                            }
+                            
+                            
                         } 
-                    else{
-                    _self.$message({
-                            showClose: true,
-                            message: _self.$t('message.newFailured'),
-                            duration: 2000,
-                            type: "warning"
-                        });
-                        _self.butt=false;
-                    }
+                        else if(response.data.MES!=""){
+                            _self.$message({
+                                showClose: true,
+                                message: response.data.MES,
+                                duration: 2000,
+                                type: "warning"
+                            });
+                            _self.butt=false;
+                        
+                        }else{
+                            _self.$message({
+                                showClose: true,
+                                message: _self.$t('message.newFailured'),
+                                duration: 2000,
+                                type: "warning"
+                            });
+                            _self.butt=false;
+                        }
                     })
                     .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
