@@ -131,6 +131,9 @@
                 <el-form-item>
                     <el-button type="primary" v-on:click="exportData" :title="$t('application.ExportExcel')">{{$t('application.exportExcel')}}</el-button>
                 </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="packDownloadSubFile(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
+                </el-form-item>
                 </el-form>
         </template>
         <template v-slot:main="{layout}">
@@ -168,11 +171,14 @@
                                         <el-form-item>
                                         <el-button type="primary" @click="applyForUnlock">{{$t('application.applyForUnlock')}}</el-button>
                                         </el-form-item>
-                                        <el-form-item>
-                                            <MountFile v-if="isShowMountFile" :selectedItem="selectedTransferDocItems" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
+                                        <el-form-item v-if="isShowMountFile" >
+                                            <MountFile :selectedItem="selectedTransferDocItems" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
+                                        </el-form-item>
+                                        <el-form-item v-if="isShowMountFile">
+                                        <el-button type="warning"  @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
-                                        <el-button type="warning" v-if="isShowMountFile" @click="onDeleleItem(selectedTransferDocItems,[$refs.transferDoc])">{{$t('application.delete')}}</el-button>
+                                            <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
                                         </el-form-item>
                                     </el-form>
                                     </el-col>
@@ -251,6 +257,9 @@
                                             </el-form-item>
                                             <el-form-item>
                                             <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">{{$t('application.delete')}}</el-button>
+                                            </el-form-item>
+                                            <el-form-item>
+                                                <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
                                             </el-form-item>
                                         </el-form>
                                     </el-col>
