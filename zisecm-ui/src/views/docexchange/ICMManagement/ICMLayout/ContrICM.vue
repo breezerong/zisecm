@@ -20,6 +20,7 @@
                 type="date"
                 :placeholder="$t('application.startDate')"
                 value-format="yyyy-MM-dd"
+                :picker-options="pickerOptions"
               ></el-date-picker>
             </el-form-item>
             <el-form-item>
@@ -74,6 +75,11 @@ export default {
   name: "ContactorReport",
   data() {
     return {
+      pickerOptions: {
+        disabledDate(time) {
+            return time.getTime() > Date.now();
+        },
+      },
       loading: false,
       tables: {
         mainTable: {
