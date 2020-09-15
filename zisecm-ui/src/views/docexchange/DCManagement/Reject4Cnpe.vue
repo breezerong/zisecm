@@ -104,18 +104,17 @@
                 <el-form-item>
                     <el-button type="primary" @click="exportData()">{{$t('application.exportExcel')}}</el-button>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item v-if='isReject'>
                     <el-button type="warning" 
-                    v-if='isReject'
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
                     $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
-                <el-form-item>
-                    <MountFile v-if='isReject' :selectedItem="selectedItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
+                <el-form-item v-if='isReject' >
+                    <MountFile :selectedItem="selectedItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item v-if='isReject'>
                     <!-- beforeDispense() -->
-                    <el-button v-if='isReject' type="success" v-on:click="onDispenseDc()">{{$t('application.Dispense')}}</el-button>
+                    <el-button  type="success" v-on:click="onDispenseDc()">{{$t('application.Dispense')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="packDownloadSubFile(selectedItems)">{{$t('application.PackToDownload')}}</el-button>
@@ -707,7 +706,7 @@ export default {
                 if(tab[i]["SYN_APP"]=='TC'){
                      this.$message({
                         showClose: true,
-                        message: "该文函只能作废处理",
+                        message: "文函"+tab[i]["CODING"]+"只能作废处理",
                         duration: 2000,
                     });
                     this.isTC=true
@@ -716,7 +715,14 @@ export default {
                 }
             }
             this.isTC=false
-            this.isReject=true
+            if(this.filters.status=='已作废'){
+                this.isShowMountFile=false;
+                this.isReject=false
+            } 
+            else{
+                this.isShowMountFile=true
+                this.isReject=true
+            }
         },
         selectChangeTransferDoc(val) {
             this.selectedTransferDocItems = val;
