@@ -887,8 +887,18 @@ export default {
                     
                     
                     } 
-                else{
-                _self.$message({
+                else if(response.data.MES!=""){
+
+                    _self.$message({
+                        showClose: true,
+                        message: response.data.MES,
+                        duration: 2000,
+                        type: "warning"
+                    });
+                    _self.butt=false;
+                
+                }else{
+                    _self.$message({
                         showClose: true,
                         message: _self.$t('message.newFailured'),
                         duration: 2000,
