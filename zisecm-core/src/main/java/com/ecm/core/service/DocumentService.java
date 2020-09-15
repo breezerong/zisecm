@@ -514,6 +514,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		valueStr = "'" + id + "',";
 
 		boolean hasCreationDate = false;
+	
 		for (Object key : args.keySet().toArray()) {
 			if (key.toString().equalsIgnoreCase("ID")
 					||key.toString().equalsIgnoreCase("transferId")
@@ -582,6 +583,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			{
 				
 				fieldStr += key.toString() + ",";
+				
 				if(key.toString().equalsIgnoreCase("VERSION_ID") && ((String) args.get(key)==null || ((String)args.get(key)).length()==0))
 				{
 					valueStr += "'" + id + "',";
@@ -599,6 +601,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(!hasCreationDate) {
 			fieldStr += "CREATION_DATE,";
 			valueStr += DBFactory.getDBConn().getDBUtils().getDBDateNow() + ",";
+		}
+		if(args.get("VERSION_ID") == null) {
+			fieldStr += "VERSION_ID,";
+			valueStr += "'" + id + "',";
 		}
 		fieldStr += "CREATOR,OWNER_NAME";
 		valueStr +=  "'" +getSession(token).getCurrentUser().getUserName() 

@@ -60,7 +60,7 @@ public class DocumentExController extends ControllerAbstract{
 					String typeName = doc.getTypeName();
 					if(!StringUtils.isEmpty(coding))
 					{
-						String cond = "TYPE_NAME='"+typeName+"' and CODING='"+coding+"' order by REVISION DESC";
+						String cond = "TYPE_NAME='"+typeName+"' and CODING='"+coding+"' and C_IS_RELEASED=1 order by REVISION DESC";
 						List<Map<String, Object>>  docs = documentService.getObjectMap(getToken(), cond);
 						mp.put("data", docs);
 						mp.put("code", ActionContext.SUCESS);
