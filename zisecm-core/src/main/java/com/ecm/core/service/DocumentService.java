@@ -373,7 +373,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		
 //		contentServices.deleteObject(token, id);
 		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
-		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + doc.getName());
+		String msg  = doc.getCoding() != null ? doc.getCoding() : "";
+		msg += " ; " + doc.getRevision() != null ? doc.getRevision() : "";
+		msg += " ; " + doc.getTitle() != null ? doc.getTitle() : "";
+		msg += " ; " + doc.getName() != null ? doc.getName() : "";
+		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + msg);
 		addFullIndexSearchQueue(token, id);
 		return ret;
 	}
@@ -481,11 +485,14 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	public String newObject(String token, Map<String, Object> args) throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		String typeName = args.get("TYPE_NAME").toString();
-		String name = args.get("NAME") != null ? args.get("NAME").toString() : "";
+		String msg  = args.get("CODING") != null ? args.get("CODING").toString() : "";
+		msg += " ; " + args.get("REVISION") != null ? args.get("REVISION").toString() : "";
+		msg += " ; " + args.get("TITLE") != null ? args.get("TITLE").toString() : "";
+		msg += " ; " + args.get("NAME") != null ? args.get("NAME").toString() : "";
 		String id = createDocument(token, args);
 		addFullIndexSearchQueue(token, id);
 		// 添加新建日志
-		newAudit(token, null, AuditContext.CREATE, id, null, typeName + "," + name);
+		newAudit(token, null, AuditContext.CREATE, id, null, typeName + "," + msg);
 		return id;
 	}
 
@@ -1646,7 +1653,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		EcmDocument doc = ecmDocument.selectByPrimaryKey(id);
 		contentServices.deleteObject(token, id);
 		boolean ret = ecmDocument.deleteByPrimaryKey(id) > 0;
-		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + doc.getName());
+		String msg  = doc.getCoding() != null ? doc.getCoding() : "";
+		msg += " ; " + doc.getRevision() != null ? doc.getRevision() : "";
+		msg += " ; " + doc.getTitle() != null ? doc.getTitle() : "";
+		msg += " ; " + doc.getName() != null ? doc.getName() : "";
+		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + msg);
 		addFullIndexSearchQueue(token, id);
 		return ret;
 	}
