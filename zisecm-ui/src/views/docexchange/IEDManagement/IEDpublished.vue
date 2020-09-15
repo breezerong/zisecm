@@ -1,6 +1,33 @@
 <template>
     <DataLayout>
         <template v-slot:header>
+        <el-dialog title="批量导入IED" :visible.sync="batchDialogVisible" width="80%" >
+            <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
+            <div slot="footer" class="dialog-footer">
+            <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog :title="$t('application.IedFeedBackExcel')" :visible.sync="importdialogVisible" width="70%">
+        <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+                <el-upload
+                    :limit="100"
+                    :file-list="fileList"
+                    action
+                    :on-change="handleChange"
+                    :auto-upload="false"
+                    :multiple="true"
+                >
+                    <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+                </el-upload>
+                </div>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+                <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
+            </div>
+        </el-dialog>
+
             <el-dialog :title="$t('application.iedfeedback')" :visible.sync="feedbackVisual" width="300">
                 <el-form :model="forms.feedForm" :rules="rule" ref="feedForm" label-width="100px">
                 <el-form-item :label="$t('application.EstimDate')" prop="date" >
@@ -35,6 +62,9 @@
                     <el-button type="primary" @click="onIEDChange()">{{$t('application.change')}}</el-button>
                 </el-form-item>
                 <el-form-item>
+                <el-button type="primary" @click="beforImport($refs.mainDataGrid,false,'')">{{$t('application.IedFeedBackExcel')}}</el-button>
+                </el-form-item>
+                <el-form-item>
                     <el-button type="primary" @click="exportData()">{{$t('application.ExportExcel')}}</el-button>
                 </el-form-item>
             </el-form>
@@ -54,8 +84,12 @@
                         <template slot="sequee" slot-scope="scope">
                                             <span :style="(scope.data.row['STATUS']!=null
                                             &&scope.data.row['STATUS']=='变更中')?{'background':'#409EFF'}:''">{{scope.data.$index+1}}</span>
-                                        </template>
-                        </DataGrid>
+                        </template>
+                        <template slot="saveButton" slot-scope="scope">
+                            12312312321321312
+                        </template>
+                    </DataGrid>
+                        
                 </template>
                 <template slot="paneR">
                     <el-tabs v-model="tabs.active">
@@ -82,6 +116,7 @@ import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
 import ExcelUtil from '@/utils/excel.js'
 import AddCondition from '@/views/record/AddCondition.vue'
+import BatchImport from '@/components/controls/ImportIED';
 import IEDVersionView from './IEDVersionView'
 export default {
     name: "IEDpublished",
@@ -92,6 +127,7 @@ export default {
     data(){
         
         return{
+            batchDialogVisible:false , //导入对话框可见性
             // 本地存储高度名称
             topStorageName: 'PublishIEDTopHeight',
             // 非split pan 控制区域高度
@@ -192,6 +228,7 @@ export default {
             feedbackVisual:false,
             iedVersionVisual:false,
             id:"",
+            gridObj:'',
         }
     },
     mounted(){
@@ -201,6 +238,21 @@ export default {
         }, 300);
     },
     methods: {
+         beforImport(obj,isSub,relationName){
+            this.gridObj=obj;
+            this.batchDialogVisible=true;
+            this.$nextTick(()=>{
+                if(isSub){
+                    this.$refs.BatchImport.deliveryId=this.parentId;
+                    this.$refs.BatchImport.relationName=relationName;
+                }else{
+                    this.$refs.BatchImport.deliveryId='';
+                    this.$refs.BatchImport.relationName='';
+                }    
+            })   
+        },
+
+
         async init(){
             let _self =  this
             let url="/admin/uirelation/get"
@@ -461,6 +513,7 @@ export default {
         DataSelect:DataSelect,
         AddCondition:AddCondition,
         DataLayout:DataLayout,
+        BatchImport:BatchImport,
         IEDVersionView:IEDVersionView
     }
 }

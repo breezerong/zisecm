@@ -80,7 +80,7 @@ public class IEDController  extends ControllerAbstract  {
 		}
 		String coding=doc.getCoding();
 		String cond = "TYPE_NAME='IED' AND CODING = '"+coding+"'";
-		doc.addAttribute("C_WBS_CODING","1516-E-L3-N1-A-FU.E1.E314C.ED.11.1");//测试用数据，使用时删除
+		//doc.addAttribute("C_WBS_CODING","1516-E-L3-N1-A-FU.E1.E314C.ED.11.1");//测试用数据，使用时删除
 		Object temp1=doc.getAttributeValue("C_WBS_CODING");
 		/*if(temp1 != null) {
 			String WBS_CODING=temp1.toString();						//获取WBScoding，转换成String
