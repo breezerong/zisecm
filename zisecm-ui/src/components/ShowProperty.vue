@@ -124,6 +124,20 @@ export default {
     setMainSubRelation(obj){
       this.mainSubRelation=obj;
     },
+    validateValueByPolicy(policy){
+        if(policy != null && policy != ""){
+          var p = policy.split(";");
+          if(p[0] != ""){
+            var p1 = p[0].split(":");
+            if(this.getValueByAttr(p1[0]) == p1[1]){
+              return true;
+            }
+          }else{
+            return true;
+          }
+        }
+        return false;
+    },
     validateValue(itemData){
       if(itemData.required){
         if(itemData.validatePolicy != null && itemData.validatePolicy != ""){
@@ -249,26 +263,31 @@ export default {
           }else if(dataRows[i].validatePolicy != null && dataRows[i].validatePolicy != ""){
             if((_self.myItemId == null || _self.myItemId =="") && dataRows[i].validatePolicy.indexOf(";")>-1){
               let p = dataRows[i].validatePolicy.split(";")[1];
-              let fun = p.split(":");
-              if(p.indexOf(">=") > -1){
-                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])<0){
-                  msg += "["+dataRows[i].label+"] 必需大于等于当前日期+" + fun[2]+"天";
-                  ret = false;
-                }
-              }else if(p.indexOf("<=") > -1){
-                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])>0){
-                  msg += "["+dataRows[i].label+"] 必需小于等于当前日期+" + fun[2] + "天";
-                  ret = false;
-                }
-              }else if(p.indexOf(">") > -1){
-                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])>=0){
-                  msg += "["+dataRows[i].label+"] 必需大于当前日期+" + fun[2]+"天";
-                  ret = false;
-                }
-              }else if(p.indexOf("<") > -1){
-                if(_self.validateInputDate(dataRows[i].defaultValue,fun[2])>=0){
-                  msg += "["+dataRows[i].label+"] 必需小于当前日期+" + fun[2]+"天";
-                  ret = false;
+              if(_self.validateValueByPolicy(dataRows[i].validatePolicy.split(";")[0])){
+                let fun = p.split(":");
+                if(p.indexOf("now")>-1){
+                  let dt = new Date();
+                  if(p.indexOf(">=") > -1){
+                    if(_self.validateInputDate(dt, dataRows[i].defaultValue,fun[2])<0){
+                      msg += "["+dataRows[i].label+"] 必需大于等于当前日期+" + fun[2]+"天";
+                      ret = false;
+                    }
+                  }else if(p.indexOf("<=") > -1){
+                    if(_self.validateInputDate(dt,dataRows[i].defaultValue,fun[2])>0){
+                      msg += "["+dataRows[i].label+"] 必需小于等于当前日期+" + fun[2] + "天";
+                      ret = false;
+                    }
+                  }else if(p.indexOf(">") > -1){
+                    if(_self.validateInputDate(dt,dataRows[i].defaultValue,fun[2])>=0){
+                      msg += "["+dataRows[i].label+"] 必需大于当前日期+" + fun[2]+"天";
+                      ret = false;
+                    }
+                  }else if(p.indexOf("<") > -1){
+                    if(_self.validateInputDate(dt,dataRows[i].defaultValue,fun[2])>=0){
+                      msg += "["+dataRows[i].label+"] 必需小于当前日期+" + fun[2]+"天";
+                      ret = false;
+                    }
+                  }
                 }
               }
             }
@@ -282,8 +301,8 @@ export default {
       return ret;
     },
     // 日期比较，输入日期-当前日期 -天数
-    validateInputDate(dateTime, addDay){
-      var now =new Date();
+    validateInputDate(fromDate, dateTime, addDay){
+      let now = fromDate;
       now=now.setDate(now.getDate()+parseInt(addDay));
       var today = new Date(now).Format("yyyyMMdd");
       var dt = new Date(dateTime).Format("yyyyMMdd");
