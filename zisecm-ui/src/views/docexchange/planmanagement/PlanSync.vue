@@ -463,6 +463,7 @@ export default {
 
     onLoadnDataSuccess(select, options) {
       this.search();
+      this.onSplitResize(55)
       //this.getSubContractors();
     },
     onP6SelectOpened(){
