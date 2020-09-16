@@ -285,28 +285,32 @@ public class IEDImportService extends EcmService {
 							/*checkDocument( token,sheet.getRow(i), 
 									attrNames,
 									1,sheet.getRow(i).getLastCellNum());/*/
-							if(sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_COMMENT4",1,sheet.getRow(i).getLastCellNum())).getStringCellValue()!=null) {	//批量反馈，找一个"IED导入"模板里没有的字段进行判断，如果存在，就证明肯定是IED批量反馈
+							int k = getColumnIndex(attrNames, "C_COMMENT4",1,sheet.getRow(i).getLastCellNum());
+							if(k!=-1) {	//批量反馈，找一个"IED导入"模板里没有的字段进行判断，如果存在，就证明肯定是IED批量反馈
 								EcmDocument e1 = new EcmDocument();
 								String Coding = sheet.getRow(i).getCell(getColumnIndex(attrNames, "CODING",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 								String comment = sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_COMMENT4",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 								setValues(e1.getAttributes(), attrNames,sheet.getRow(i),1,sheet.getRow(i).getLastCellNum(),sameValues,null);
-								String date = e1.getAttributeValue("C_ITEM4_DATE").toString();
+								String date = e1.getAttributeValue("C_ITEM4_DATE").toString();	
 								String project = sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 								Feedback(Coding,comment,date,project,token);
 								continue;
 							}
+							String status1 = sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 							String coding= sheet.getRow(i).getCell(getColumnIndex(attrNames, "CODING",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 							String project= sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 							String cond = " TYPE_NAME='IED' and CODING='"+coding+"' and status='新建' and c_project_name='"+project+"'" ;
 							List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
 							if(result.size()!=0) {
-							boolean isUpdate = update( token, parentType,itemStream, sheet.getRow(i),  
-									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
-									null,null);
-							if(isUpdate==true) {
-							sb.append("完成对第"+i+"行的数据更新").append("\r\n");
+							sb.append("第"+i+"行的IED已存在,略过进行下一步操作").append("\r\n");
 							continue;
-							}}
+							}
+							if(status1.equals("修订")) {
+							boolean isUpdate=update(token, parentType,itemStream, sheet.getRow(i),  
+									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+									null,null,sb,i);			//方法用来升版，无论成功与否，都不应继续执行新建方法
+							continue;							//报错信息和具体行数传入
+							}
 							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
 									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 									null,null);
@@ -392,10 +396,10 @@ public class IEDImportService extends EcmService {
 	public boolean update(String token, String typeName,FileInputStream itemStream,
 			Row row, Map<String,Long> fileList,
 			Map<Integer,String> attrNames,String parentId, String relationName,
-			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields) throws Exception {
+			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields,StringBuilder sb,int i) throws Exception {
+			Map <String,Object> attr = new HashMap();
 			EcmDocument doc = new EcmDocument();
 			EcmDocument temp = new EcmDocument();
-			
 			if(parentId!=null) {
 				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,null);
 			}else {
@@ -409,10 +413,23 @@ public class IEDImportService extends EcmService {
 				doc.addAttribute("C_COMMENT2", comment2);
 			}
 			
-			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-			String cond = " TYPE_NAME='IED' and CODING='"+coding+"' and status='新建'" ;
-			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
+			String coding = row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
+			String Oldcoding= row.getCell(getColumnIndex(attrNames, "C_OTHER_CODING",start,end)).getStringCellValue();
+			String cond = " TYPE_NAME='IED' and CODING='"+Oldcoding+"' and status='已生效'" ;	
+			String nowCond =  " TYPE_NAME='IED' and CODING='"+coding+"'and status='新建'";
+			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);			//查找现版本IED
+			List<Map<String,Object>> Nowresult =documentService.getObjectMap(token, nowCond);	//查找新建后的IED是否和待提交中的IED重复
+			if(Nowresult.size()!=0) {
+				sb.append("第"+i+"行IED升版后外部编码与系统现有新建IED冲突，已略过\r\n");
+				return false;
+			}
+						
+			if(result.size()==0) {
+				sb.append("第"+i+"行IED无对应已生效IED，无法进行升版操作，已略过\r\n");
+				return false;		//不存在已生效IED，无法进行升版操作
+			}						//现在已经确认有已生效IED，现在进行数据比较
 			temp.setAttributes(result.get(0));
+			String id = temp.getId();
 			String tempD1=temp.getAttributeValue("C_EX1_DATE").toString();
 			String tempD2=temp.getAttributeValue("C_EX2_DATE").toString();
 			if(!tempD1.equals(comment1)) {												//分别比较内/外部计划
@@ -420,17 +437,16 @@ public class IEDImportService extends EcmService {
 			}
 			if(!tempD2.equals(comment2)) {
 				doc.addAttribute("C_COMMENT2", comment2);
-			}
-			if(result.size()!=0) {
-				String id = temp.getId();
-				doc.addAttribute("ID",id);
-				documentService.updateObject(token, doc, null);
-				return true;
-			}
-									
+			}						//数据比较完成，现在进行升版操作
+			EcmDocument res = new EcmDocument();
+			attr = doc.getAttributes();
+			attr.put("C_IS_RELEASED", 0);
+			res=documentService.checkIn(token, id,attr, null, false);
+			documentService.updateStatus(token, res.getId(), "新建");
+			documentService.updateStatus(token, temp.getId(), "变更中");
+			sb.append("第"+i+"行IED完成升版\r\n");
+				return true;				//升版操作
 		
-		
-		return false;
 	}
 	
 	

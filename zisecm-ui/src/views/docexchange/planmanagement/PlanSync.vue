@@ -235,7 +235,6 @@ export default {
         ID: "",
         C_value: "",
       },
-      value: "",
       dialogP6visual: false,
       tabledata: [
         {
@@ -354,9 +353,6 @@ export default {
             });
           }
         });
-    },
-    rowClick(row) {
-      console.log(row);
     },
     syncing() {
       //新建同步日志方法
