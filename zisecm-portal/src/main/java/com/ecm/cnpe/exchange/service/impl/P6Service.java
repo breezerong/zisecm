@@ -125,7 +125,7 @@ public class P6Service implements IP6Service{
 	@Override
 	public List<ProjectEntity> getP6Projects() {
 		List<ProjectEntity> list = new ArrayList<ProjectEntity>();
-		if(this.p6.isEnable()) {			
+		if(this.p6.isEnable()) {	
 			this.init();
 			boolean isLoginSuccess;
 			try {
