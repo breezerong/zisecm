@@ -448,44 +448,38 @@ export default {
             m.set('FOLDER_ID','');
             m.set('relationName','相关文件');
             m.set('parentDocId',_self.parentId);
-            // console.log(a)
-            let formdata = new FormData();
-            formdata.append("metaData",JSON.stringify(m));
-            axios.post("/dc/newDocumentOrSubDoc",formdata,{
-                    'Content-Type': 'multipart/form-data'
-                })
-            .then(function(response) {
-            let code = response.data.code;
-            if (code == 1) {
-                _self.$message({
-                    showClose: true,
-                    message: _self.$t('message.newSuccess'),//"创建成功!"
-                    duration: 2000,
-                    type: "success"
-                });
-                // _self.showItemProperty();
-                _self.$refs.mainDataGrid.loadGridData();
-                _self.propertyrela=false
-                if(_self.$refs.transferDoc!=undefined){
-                    _self.$refs.transferDoc.loadGridData();
+            let relationName="相关文件"
+            let typeName="相关文件"
+            _self.relationName=relationName;
+            _self.dialogName = typeName;
+            _self.propertyVisible = true;
+            
+            setTimeout(()=>{
+                if(_self.$refs.ShowProperty){
+                    _self.$refs.ShowProperty.myItemId = "";
+                    _self.dialogName=typeName;
+                    _self.$refs.ShowProperty.myTypeName =typeName;
+                    
+                    if(typeName=='相关文件'){
+                        _self.$refs.ShowProperty.showUploadFile = false;
+                        _self.$refs.ShowProperty.formName=_self.relation.formName;
+                    }else{
+                        _self.$refs.ShowProperty.showUploadFile = true;
+                        _self.$refs.ShowProperty.formName="";
+                    }
+                    _self.typeName=typeName;
+                    
+                    _self.$refs.ShowProperty.setMainObject(row);
+                    let mp=new Map();
+                    mp.set("CODING",'CODING');
+                    mp.set("C_IN_CODING",'C_IN_CODING');
+                    mp.set("TITLE",'TITLE');
+                    mp.set("REVISION","REVISION")
+
+                    _self.$refs.ShowProperty.setMainSubRelation(mp);
+                    _self.$refs.ShowProperty.loadFormInfo();
                 }
-                if(_self.$refs.relevantDoc!=undefined){
-                    _self.$refs.relevantDoc.loadGridData();
-                }
-            } 
-            else{
-                _self.$message({
-                    showClose: true,
-                    message: _self.$t('message.newFailured'),
-                    duration: 2000,
-                    type: "warning"
-                });
-            }
-            })
-            .catch(function(error) {
-            _self.$message(_self.$t('message.newFailured'));
-            console.log(error);
-            });
+            },10);
         },
         subdc(){
             let _self = this
@@ -1010,6 +1004,7 @@ export default {
                     });
                     _self.butt=false;
                     _self.propertyVisible = false;
+                    _self.propertyrela=false
 
                     // _self.loadTransferGridData();
                     _self.$refs.mainDataGrid.loadGridData();
@@ -1101,6 +1096,7 @@ export default {
             _self.butt=false
         }
         _self.propertyVisible = false;
+        _self.propertyrela=false;
         this.butt=false
         
         },
