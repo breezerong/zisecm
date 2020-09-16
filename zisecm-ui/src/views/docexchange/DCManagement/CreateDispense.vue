@@ -22,6 +22,14 @@
                     <el-button type="primary" @click="uploadDataSub()">{{$t('application.start')+$t('application.Import')}}</el-button>
                 </div>
             </el-dialog>
+            <!-- 相关文件创建选择IED-->
+            <el-dialog :title="dialog.title" :visible.sync="propertyrela" width="80%" :before-close="handleClose">      
+                <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid">
+                        <template slot="customMoreOption" slot-scope="scope">
+                        <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">选择</el-button>
+                        </template>
+                </DataGrid>
+            </el-dialog>
             <!-- 设计文件附件 -->
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
@@ -320,7 +328,19 @@ export default {
             topbarHeight: 45,
             // 底部除列表高度
             bottomHeight: 125,
-
+            tables:{
+                DialogDataGrid:{
+                    gridViewName:"IEDGrid",
+                    dataUrl:"/dc/getDocuments",
+                    condition:"TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')",                  
+                    isshowOption:true,
+                    isshowCustom:true,
+                    isshowicon:false,
+                    // isInitData:false,
+                    isShowMoreOption:false,
+                    isEditProperty:false
+                },
+            },
             filters: {
                 projectCode: "",
                 docType: "",
@@ -362,7 +382,8 @@ export default {
             selectedTabName:'t01',
             importSubVisible:false,
             docId:"",
-            butt:false
+            butt:false,
+            propertyrela:false
         }
     },
     created(){
@@ -386,6 +407,40 @@ export default {
         }, 300);
     },
     methods: {
+        IEDfeedback(row){
+            let _self = this;
+            let relationName="相关文件"
+            let typeName="相关文件"
+            _self.relationName=relationName;
+            _self.dialogName = typeName;
+            _self.propertyVisible = true;
+            setTimeout(()=>{
+                if(_self.$refs.ShowProperty){
+                    _self.$refs.ShowProperty.myItemId = "";
+                    _self.dialogName=typeName;
+                    _self.$refs.ShowProperty.myTypeName =typeName;
+                    
+                    if(typeName=='相关文件'){
+                        _self.$refs.ShowProperty.showUploadFile = false;
+                        _self.$refs.ShowProperty.formName=_self.relation.formName;
+                    }else{
+                        _self.$refs.ShowProperty.showUploadFile = true;
+                        _self.$refs.ShowProperty.formName="";
+                    }
+                    _self.typeName=typeName;
+                    
+                    _self.$refs.ShowProperty.setMainObject(row);
+                    let mp=new Map();
+                    mp.set("CODING",'CODING');
+                    mp.set("C_IN_CODING",'C_IN_CODING');
+                    mp.set("TITLE",'TITLE');
+                    mp.set("REVISION","REVISION")
+
+                    _self.$refs.ShowProperty.setMainSubRelation(mp);
+                    _self.$refs.ShowProperty.loadFormInfo();
+                }
+            },10);
+        },
         beforeUploadSubFile(uploadpath){
             let _self=this;
             if(_self.selectedTransferDocItems==undefined||_self.selectedTransferDocItems.length!=1){
@@ -652,6 +707,42 @@ export default {
                     _self.parentId='';
                                      
                 }
+                if(typeName=='相关文件'){
+                    var m = new Map();
+                    m.set('parentDocId',_self.parentId);
+                    let formdata = new FormData();
+                    let ID=''
+                    formdata.append("metaData",JSON.stringify(m));
+                        axios.post("/dc/checkRelationDocument",formdata,{
+                        'Content-Type': 'multipart/form-data'
+                    })
+                    .then(function(response) {
+                        let code = response.data.code;
+                        ID=response.data.ID;
+                        if (code == 1) {
+                            _self.tables.DialogDataGrid.condition+=" and ID NOT IN ("+ID+")"
+                            _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
+                            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                            _self.$refs.DialogDataGrid.loadGridInfo()
+                            _self.$refs.DialogDataGrid.loadGridData()
+                            _self.propertyrela=true
+                            return
+                        }else{
+                            _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
+                            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                            _self.$refs.DialogDataGrid.loadGridInfo()
+                            _self.$refs.DialogDataGrid.loadGridData()
+                            _self.propertyrela=true
+                            return
+                        }
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    });
+                    _self.propertyrela=true
+                    return;
+                }
                 _self.relationName=relationName;
                 _self.dialogName = typeName;
                 _self.propertyVisible = true;
@@ -818,6 +909,7 @@ export default {
                             });
                             _self.butt=false;
                             _self.propertyVisible = false;
+                            _self.propertyrela=false
 
                             // _self.loadTransferGridData();
                             _self.$refs.mainDataGrid.loadGridData();
@@ -911,6 +1003,7 @@ export default {
             _self.butt=false
         }
         _self.propertyVisible = false;
+        _self.propertyrela=false
         _self.butt=false
         },
         loadOptionList(queryName,val){

@@ -6,7 +6,26 @@
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
-
+            <!-- 相关文件创建选择IED-->
+            <el-dialog :title="dialog.title" :visible.sync="propertyrela" width="80%" :before-close="handleClose"> 
+                <DataLayout>
+                    <template v-slot:header>
+                        <el-form>
+                        <el-form-item>
+                            <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.iedPublishedInputPlaceholder')"></el-input>
+                            <el-button type="primary" @click="searchIED()">{{$t('application.SearchData')}}</el-button>
+                        </el-form-item> 
+                        </el-form>  
+                        </template>
+                    <template v-slot:main>  
+                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid">
+                                <template slot="customMoreOption" slot-scope="scope">
+                                <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">选择</el-button>
+                                </template>
+                        </DataGrid>
+                    </template>
+                </DataLayout>
+            </el-dialog>
             <!-- 批量导入 -->
             <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
                 <BatchImport ref="BatchImport"  @onImported="onBatchImported" tmpPath='/系统配置/导入模板/文函' v-bind:deliveryId="parentId" width="100%"></BatchImport>
@@ -321,6 +340,19 @@ export default {
             // 底部除列表高度
             bottomHeight: 120,
             buttLoading:false,
+            tables:{
+                DialogDataGrid:{
+                    gridViewName:"IEDGrid",
+                    dataUrl:"/dc/getDocuments",
+                    condition:"TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')",                  
+                    isshowOption:true,
+                    isshowCustom:true,
+                    isshowicon:false,
+                    isInitData:false,
+                    isShowMoreOption:false,
+                    isEditProperty:false
+                },
+            },
             filters: {
                 projectCode: "",
                 docType: "",
@@ -361,7 +393,9 @@ export default {
             importSubVisible:false,
             docId:"",
             isOnly:false,
-            butt:false
+            butt:false,
+            propertyrela:false,
+            inputValueNum:'',
         }
     },
     created(){
@@ -384,6 +418,60 @@ export default {
         }, 300);
     },
     methods: {
+        searchIED(){
+            let _self = this
+            let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
+            let orS = ""
+            var k1=""
+            if(_self.inputValueNum.trim().length>0){
+                wheres.forEach(function(item){
+                    if(orS.length>0){
+                        orS+=" OR "
+                    }
+                    orS+=item + " LIKE '%"+ _self.inputValueNum+"%'"
+                })
+                k1+=" AND (" + orS + ")"
+            }
+            // _self.tables.DialogDataGrid.condition+=k1
+            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition+k1
+            _self.$refs.DialogDataGrid.loadGridInfo()
+            _self.$refs.DialogDataGrid.loadGridData()
+        },
+        IEDfeedback(row){
+            let _self = this;
+            let relationName="相关文件"
+            let typeName="相关文件"
+            _self.relationName=relationName;
+            _self.dialogName = typeName;
+            _self.propertyVisible = true;
+            
+            setTimeout(()=>{
+                if(_self.$refs.ShowProperty){
+                    _self.$refs.ShowProperty.myItemId = "";
+                    _self.dialogName=typeName;
+                    _self.$refs.ShowProperty.myTypeName =typeName;
+                    
+                    if(typeName=='相关文件'){
+                        _self.$refs.ShowProperty.showUploadFile = false;
+                        _self.$refs.ShowProperty.formName=_self.relation.formName;
+                    }else{
+                        _self.$refs.ShowProperty.showUploadFile = true;
+                        _self.$refs.ShowProperty.formName="";
+                    }
+                    _self.typeName=typeName;
+                    
+                    _self.$refs.ShowProperty.setMainObject(row);
+                    let mp=new Map();
+                    mp.set("CODING",'CODING');
+                    mp.set("C_IN_CODING",'C_IN_CODING');
+                    mp.set("TITLE",'TITLE');
+                    mp.set("REVISION","REVISION")
+
+                    _self.$refs.ShowProperty.setMainSubRelation(mp);
+                    _self.$refs.ShowProperty.loadFormInfo();
+                }
+            },10);
+        },
         subdc(){
             let _self = this
             _self.buttLoading=true;
@@ -632,7 +720,7 @@ export default {
                _self.isShowAttachmentDoc=false;
                _self.selectedTabName='t01';
                _self.$nextTick(()=>{
-                   _self.$refs.transferDoc.parentId=row.ID;
+                    _self.$refs.transferDoc.parentId=row.ID;
                     _self.$refs.transferDoc.loadGridData();
                });
                
@@ -690,6 +778,42 @@ export default {
                         });
                         return;
                     }
+                }
+                if(typeName=='相关文件'){
+                    var m = new Map();
+                    m.set('parentDocId',_self.parentId);
+                    let formdata = new FormData();
+                    let ID=''
+                    formdata.append("metaData",JSON.stringify(m));
+                        axios.post("/dc/checkRelationDocument",formdata,{
+                        'Content-Type': 'multipart/form-data'
+                    })
+                    .then(function(response) {
+                        let code = response.data.code;
+                        ID=response.data.ID;
+                        if (code == 1) {
+                            _self.tables.DialogDataGrid.condition+=" and ID NOT IN ("+ID+")"
+                            _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
+                            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                            _self.$refs.DialogDataGrid.loadGridInfo()
+                            _self.$refs.DialogDataGrid.loadGridData()
+                            _self.propertyrela=true
+                            return
+                        }else{
+                            _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
+                            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                            _self.$refs.DialogDataGrid.loadGridInfo()
+                            _self.$refs.DialogDataGrid.loadGridData()
+                            _self.propertyrela=true
+                            return
+                        }
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    });
+                    _self.propertyrela=true
+                    return;
                 }
                 _self.relationName=relationName;
                 _self.dialogName = typeName;
@@ -769,8 +893,6 @@ export default {
             this.selectedTransferDocItems = val;
         },
 
-        
-    
         // 保存文档
         saveItem()
         {
@@ -838,7 +960,6 @@ export default {
             }
             let formdata = new FormData();
             formdata.append("metaData",JSON.stringify(m));
-            
             if(_self.$refs.ShowProperty.file!="")
             {
                 //console.log(_self.file);
@@ -874,6 +995,7 @@ export default {
                     });
                     _self.butt=false;
                     _self.propertyVisible = false;
+                    _self.propertyrela=false
 
                     // _self.loadTransferGridData();
                     _self.$refs.mainDataGrid.loadGridData();
@@ -965,6 +1087,7 @@ export default {
             _self.butt=false
         }
         _self.propertyVisible = false;
+        _self.propertyrela=false;
         this.butt=false
         
         },

@@ -127,7 +127,7 @@
                 <el-table
                   :data="tabledata"
                   style="width: 100%"
-                  :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                  :height="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
                   @row-click="onRowClick"
                 >
                   <el-table-column :label="$t('field.indexNumber')" key="#1" width="70">
@@ -207,7 +207,7 @@ export default {
       tables: {
         main: {
           isInitData: false,
-          isshowoption: true,
+          isshowOption: true,
           isshowCustom: false,
           isShowPropertyButton: true,
           isShowMoreOption: false,
@@ -236,17 +236,12 @@ export default {
         C_value: "",
       },
       dialogP6visual: false,
-      tabledata: [
-        {
-          appName: "123",
-        },
-      ],
+      tabledata: [],
       form: [
         {
           id: "",
         },
       ],
-      value: "",
       input: "",
       currentPage: 1,
       itemCount: 0,
@@ -320,7 +315,6 @@ export default {
       let _self = this;
       var m = new Map();
       var temp = this.P6form.C_value;
-      var c;
       m.set("CODING", this.P6form.CODING);
       m.set("ID", this.P6form.ID);
       m.set("NAME", this.P6form.C_PROJECT_NAME);
@@ -411,39 +405,9 @@ export default {
     },
     rowClick(row) {
       console.log(row);
-      let _self = this;
-      var m = new Map();
       this.ID = row["ID"];
-      m.set("ID", row["ID"]);
-      m.set("pageSize", this.pageSize);
       this.freshtable();
     },
-    /*getSubContractors() {
-      let _self = this;
-      let pm = new Map();
-      pm.set("configName", "GetSubContractor");
-      // pm.set('parentId',"'"+p+"'");
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8",
-          },
-          method: "post",
-          data: JSON.stringify(pm),
-          url: "/dc/getObjectsByConfigClauseNoPage",
-        })
-        .then(function (response) {
-          var i;
-          console.log(response)
-          _self.Subcontractors = response.data.data;
-          for (i = 0; i < _self.Subcontractors.length; i++) {
-            _self.contractors[i] = _self.Subcontractors[i].NAME;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },/*/
     selectfromP6() {
       this.dialogCreatevisual = false;
       this.dialogP6visual = true;
@@ -472,12 +436,10 @@ export default {
     },
 
     create() {
-      let _self = this;
       this.dialogCreatevisual = true;
     },
     exportData() {
       let _self = this;
-      let dataUrl = "/exchange/doc/export";
       var fileDate = new Date();
       let fileDateStr =
         fileDate.getFullYear() +
