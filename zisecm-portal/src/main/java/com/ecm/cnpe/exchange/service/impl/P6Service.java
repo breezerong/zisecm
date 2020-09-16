@@ -138,6 +138,7 @@ public class P6Service implements IP6Service{
 				List<Project> projectList = this.getProjectInfo("",service);
 				for (Project project : projectList) {
 					ProjectEntity item = new ProjectEntity();
+					item.setId(project.getWBSObjectId().getValue()+"");
 					item.setCode(project.getId());
 					item.setName(project.getName());
 					list.add(item);

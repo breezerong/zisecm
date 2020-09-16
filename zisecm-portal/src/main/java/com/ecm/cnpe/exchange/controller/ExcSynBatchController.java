@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.ecm.cnpe.exchange.service.IP6Service;
 import com.ecm.cnpe.exchange.service.impl.IEDImportService;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
@@ -54,6 +56,9 @@ public class ExcSynBatchController  extends ControllerAbstract {
 	@Autowired
 	private ExcSynDetailService detailService;
 	
+	@Autowired
+	private IP6Service p6Service;
+	
 	
 	
 	@RequestMapping(value = "/exchange/ied/getBatch", method = RequestMethod.POST)
@@ -78,6 +83,16 @@ public class ExcSynBatchController  extends ControllerAbstract {
 		mp.put("itemCount", total);
 		return mp;
 	}
+	
+	@RequestMapping(value = "/exchange/ied/getBatch", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getP6Projects(){
+		Map<String, Object> mp = new HashMap<String, Object>();
+		
+		mp.put("data", p6Service.getP6Projects());
+		return mp;
+	}
+	
 	@RequestMapping(value = "/exchange/exchange/createBatch", method = RequestMethod.POST)
 	@ResponseBody
 	public String	createBatch(@RequestBody String argStr) throws Exception{
