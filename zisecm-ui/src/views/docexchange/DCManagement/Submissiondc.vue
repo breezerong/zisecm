@@ -439,15 +439,6 @@ export default {
         },
         IEDfeedback(row){
             let _self = this;
-            var m = new Map();
-            m.set('CODING',row.CODING);
-            m.set('C_IN_CODING',row.C_IN_CODING);
-            m.set('REVISION',row.REVISION);
-            m.set('TITLE',row.TITLE);
-            m.set('TYPE_NAME','相关文件');
-            m.set('FOLDER_ID','');
-            m.set('relationName','相关文件');
-            m.set('parentDocId',_self.parentId);
             let relationName="相关文件"
             let typeName="相关文件"
             _self.relationName=relationName;
