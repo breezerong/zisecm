@@ -2493,6 +2493,51 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
+	/**
+	 * 相关文件IED检查，判断该相关文件CODING 是否与已有IED相同
+	 * 
+	 * @param argStr
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/checkRelationDocument", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> checkRelationDocument(String metaData) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		try {
+			String parentID=args.get("parentDocId").toString();
+			String cond="";
+			String id="";
+			String sql="SELECT * FROM ecm_document where ID IN(SELECT CHILD_ID FROM ecm_relation where PARENT_ID='"+parentID+"')";
+			List<Map<String, Object>>  relist = ecmDocument.executeSQL(sql);
+//			List<Map<String,Object>>  relist =documentService.getObjectMap(getToken(), cond);
+			if(relist != null && relist.size() > 0) {
+				for(Map<String,Object> map:relist) {
+					cond = "SELECT * FROM ecm_document where TYPE_NAME='IED' and CODING='"+map.get("CODING").toString()+"' and "
+							+ "C_IN_CODING='"+map.get("C_IN_CODING").toString()+"' AND REVISION='"+map.get("REVISION").toString()+"'";
+					List<Map<String, Object>>  list = ecmDocument.executeSQL(cond);
+//					List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
+					id += "'";
+					if(list != null && list.size() > 0) {
+						id +=list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
+					}else {
+						id+="";
+						
+					}
+					id+="',";
+				}
+				id = id.substring(0,id.length() - 1);
+				mp.put("code", ActionContext.SUCESS);
+				mp.put("ID",id);
+			}
+			
+			return mp;
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
 	
 	/**
 	 * 创建文件或关联文件
@@ -2511,20 +2556,20 @@ public class EcmDcController extends ControllerAbstract {
 		doc.setAttributes(args);
 		String m=args.get("parentDocId").toString();
 		
-		if(args.get("TYPE_NAME").toString().equals("相关文件")) {
-			String cond="";
-			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"' and "
-					+ "C_IN_CODING='"+doc.getAttributeValue("C_IN_CODING").toString()+"' AND REVISION='"+doc.getAttributeValue("REVISION").toString()+"'";
-			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
-			String id="";
-			if(list != null && list.size() > 0) {
-				id = list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
-			}else {
-				id="";
-				mp.put("MES", "此文件\""+args.get("CODING").toString()+"\"无对应IED!");
-				return mp;
-			}
-		}
+//		if(args.get("TYPE_NAME").toString().equals("相关文件")) {
+//			String cond="";
+//			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"' and "
+//					+ "C_IN_CODING='"+doc.getAttributeValue("C_IN_CODING").toString()+"' AND REVISION='"+doc.getAttributeValue("REVISION").toString()+"'";
+//			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
+//			String id="";
+//			if(list != null && list.size() > 0) {
+//				id = list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
+//			}else {
+//				id="";
+//				mp.put("MES", "此文件\""+args.get("CODING").toString()+"\"无对应IED!");
+//				return mp;
+//			}
+//		}
 		if(m!=null||m!="") {
 			String condition = " ID='" + args.get("parentDocId").toString() + "'";
 			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), condition);
@@ -2562,6 +2607,7 @@ public class EcmDcController extends ControllerAbstract {
 		String id ="";
 		
 		if(args.get("parentDocId")!=null&&!"".equals(args.get("parentDocId"))) {
+
 			String relationName="irel_children";
 			relationName=args.get("relationName")!=null
 					&&!"".equals(args.get("relationName").toString())
@@ -2570,6 +2616,7 @@ public class EcmDcController extends ControllerAbstract {
 			doc.addAttribute("C_PROJECT_NAME", pdoc.getAttributeValue("C_PROJECT_NAME")!=null?
 					pdoc.getAttributeValue("C_PROJECT_NAME").toString():"");
 			doc.setCurrent(false);
+
 			id = documentService.newObject(getToken(),doc,en);
 			EcmRelation relation=new EcmRelation();
 			relation.setParentId(args.get("parentDocId").toString());
