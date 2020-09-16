@@ -36,6 +36,8 @@ import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.entity.EcmForm;
+import com.ecm.core.entity.EcmFormClassification;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
@@ -47,8 +49,10 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
+import com.ecm.core.exception.NoOnlyPolicyException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.exception.SqlDeniedException;
+import com.ecm.core.exception.UniquenessException;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
@@ -353,12 +357,15 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Transactional(rollbackFor = Exception.class)
 	public boolean deleteObject(String token, Object obj) throws NoPermissionException, AccessDeniedException, EcmException {
 		String id = (String) obj;
+		EcmDocument doc = ecmDocument.selectByPrimaryKey(id);
+		if(doc == null) {
+			return true;
+		}
 		if (getPermit(token, id) < ObjectPermission.DELETE) {
 			throw new NoPermissionException(
 					"User " + getSession(token).getCurrentUser().getUserName() + " has no delete permission:" + id);
 		}
-		EcmDocument doc = ecmDocument.selectByPrimaryKey(id);
-		
+
 		List<EcmContent> contents= contentServices.getObjects(token, " PARENT_ID='"+id+"'");
 		
 		for(int i=0;contents!=null&&i<contents.size();i++) {
@@ -482,17 +489,21 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public String newObject(String token, Map<String, Object> args) throws EcmException, AccessDeniedException, NoPermissionException {
+	public String newObject(String token, Map<String, Object> args) throws EcmException, AccessDeniedException, NoPermissionException, UniquenessException {
 		// TODO Auto-generated method stub
-		String typeName = args.get("TYPE_NAME").toString();
-		String msg  = args.get("CODING") != null ? args.get("CODING").toString() : "";
-		msg += " ; " + (args.get("REVISION") != null ? args.get("REVISION").toString() : "");
-		msg += " ; " + (args.get("TITLE") != null ? args.get("TITLE").toString() : "");
-		msg += " ; " + (args.get("NAME") != null ? args.get("NAME").toString() : "");
-		String id = createDocument(token, args);
-		addFullIndexSearchQueue(token, id);
-		// 添加新建日志
-		newAudit(token, null, AuditContext.CREATE, id, null, typeName + "," + msg);
+		String id = null;
+		if(validate(token,args))
+		{
+			String typeName = args.get("TYPE_NAME").toString();
+			String msg  = args.get("CODING") != null ? args.get("CODING").toString() : "";
+			msg += " ; " + (args.get("REVISION") != null ? args.get("REVISION").toString() : "");
+			msg += " ; " + (args.get("TITLE") != null ? args.get("TITLE").toString() : "");
+			msg += " ; " + (args.get("NAME") != null ? args.get("NAME").toString() : "");
+			id = createDocument(token, args);
+			addFullIndexSearchQueue(token, id);
+			// 添加新建日志
+			newAudit(token, null, AuditContext.CREATE, id, null, typeName + "," + msg);
+		}
 		return id;
 	}
 
@@ -1660,6 +1671,188 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		newAudit(token, null, AuditContext.DELETE, id, null, doc.getTypeName() + "," + msg);
 		addFullIndexSearchQueue(token, id);
 		return ret;
+	}
+	
+	
+	/**
+	 * 验证数据唯一（主文件或子文件）
+	 * @param token
+	 * @param data
+	 * @return
+	 * @throws EcmException
+	 * @throws AccessDeniedException 
+	 * @throws UniquenessException 
+	 */
+	public boolean validateOnlyOne(String token,Map<String,Object> data) throws  EcmException, AccessDeniedException, UniquenessException {
+		
+		Object pid=data.get("parentDocId");
+		if(pid!=null&&!"".equals(pid.toString())) {
+			return validateChildOnly(token,data);
+		}
+		return validate(token,data);
+		
+	}
+	
+	/**
+	 * 验证子文件数据唯一
+	 * @param token
+	 * @param data
+	 * @return
+	 * @throws EcmException
+	 * @throws AccessDeniedException 
+	 * @throws UniquenessException 
+	 */
+	public boolean validateChildOnly(String token,Map<String,Object> data) throws  EcmException, AccessDeniedException, UniquenessException {
+		String typeName=data.get("TYPE_NAME").toString();
+		String parentID=data.get("parentDocId").toString();
+		String sql="select * from ( " + 
+				"select a.*,b.PARENT_ID from ecm_document a,ecm_relation b "
+				+ "where a.id=b.CHILD_ID and a.TYPE_NAME='"+typeName+"' and b.parent_id='"+parentID+"'" + 
+				") t where  ";
+		
+//		if(!StringUtils.isEmpty(parentID)) {
+//			
+//		}
+		String condition=getConditionByConfig(token,data);
+		if(condition == null) {
+			return true;
+		}
+		sql+=condition;
+		List<Map<String, Object>> result= this.getMapList(token, sql);
+		if(result==null||result.size()==0) {
+			return true;
+		}else {
+			throw new UniquenessException("对象已存在");
+		}
+		
+	}
+	
+	/**
+	 * 验证数据唯一
+	 * @param token
+	 * @param condition
+	 * @return
+	 * @throws AccessDeniedException 
+	 * @throws UniquenessException 
+	 */
+	public boolean validate(String token,Map<String,Object> data) throws AccessDeniedException, UniquenessException {
+		String condition=getConditionByConfig(token,data);
+		if(condition == null) {
+			return true;
+		}
+		List<Map<String,Object>> result= this.getObjectMap(token, condition);
+		if(result!=null&&result.size()>0) {
+			throw new UniquenessException("对象已存在");
+		}
+		return true;
+	}
+	/**
+	 * 获取判断唯一的规则
+	 * @param token
+	 * @param data
+	 * @return
+	 * @throws NoOnlyPolicyException
+	 * @throws AccessDeniedException 
+	 */
+	private String getConditionByConfig(String token,Map<String,Object> data) throws AccessDeniedException {
+		String typeName=data.get("TYPE_NAME").toString();
+		String condition=" TYPE_NAME='唯一性规则' and SUB_TYPE='"+typeName+"'";
+		List<Map<String, Object>> onlyPolicys= this.getObjectMap(token, condition);
+		if(onlyPolicys==null||onlyPolicys.size()==0) {
+			logger.debug("此类型“"+typeName+"”没有唯一性规则！");
+			return null;
+		}
+		String docCondition=" TYPE_NAME='"+typeName+"'";
+		if(data.get("ID")!=null) {
+			docCondition+=" and ID !='"+data.get("ID").toString()+"'";
+		}
+		String whereSql="";
+		if(onlyPolicys!=null&&onlyPolicys.size()>0) {
+			Map<String,Object> onlyPolicy= (Map<String,Object>)onlyPolicys.get(0);
+			Object policy= onlyPolicy.get("C_COMMENT");
+			if(policy!=null) {
+				List<EcmFormClassification> list;
+				String rulesStr=policy.toString();
+				String[] rules= rulesStr.split(";");
+				for(int i=0;i<rules.length;i++) {
+					String rule = rules[i];
+					rule=rule.substring(rule.indexOf("{")+1,rule.indexOf("}"));
+					
+					try {
+						
+						EcmForm frm = CacheManagerOper.getEcmForms().get(typeName + "_EDIT");
+						if (frm == null) {
+							frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
+						}
+						list = frm.getFormClassifications(getSession(token), "zh-cn");
+						
+					} catch (Exception ex) {
+						EcmForm frm = CacheManagerOper.getEcmForms().get(typeName + "_NEW");
+						if (frm == null) {
+							frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
+						}
+						list = frm.getFormClassifications(getSession(token), "zh-cn");
+
+					}
+					EcmFormItem itemRuls=null;
+					try {
+						for(EcmFormClassification ecmClassification:list) {
+							List<EcmFormItem> formItems= ecmClassification.getEcmFormItems();
+							for(EcmFormItem item:formItems) {
+								if(rule.toUpperCase().equals(item.getAttrName().toUpperCase())) {
+									itemRuls=item;
+									throw new Exception();
+								}
+								
+							}
+						}
+					}catch (Exception e) {
+						// TODO: handle exception
+					}
+					if(itemRuls.getIsRepeat()) {
+						String[] ruleDatas= data.get(rule).toString().split(";");
+						String subCondition="";
+						for(int x=0;x<ruleDatas.length;x++) {
+							String ruleData=ruleDatas[x];
+							if(StringUtils.isEmpty(ruleData)) {
+								continue;
+							}
+							if(x==ruleDatas.length-1) {
+								subCondition+=rule+" like '%"+ruleData+"%' ";
+							}else {
+								subCondition+=rule+" like '%"+ruleData+"%' or ";
+							}
+							
+						}
+						if(i==rules.length-1) {
+							if(!StringUtils.isEmpty(subCondition)) {
+								whereSql+="("+subCondition+") ";
+							}
+						}else {
+							if(!StringUtils.isEmpty(subCondition)) {
+								whereSql+="("+subCondition+") and ";
+							}
+						}
+						
+					}else {
+						if(data.get(rule)!=null) {
+							if(i==rules.length-1) {
+								whereSql+=rule+"='"+data.get(rule).toString()+"'";
+							}else {
+								whereSql+=rule+"='"+data.get(rule).toString()+"' and ";
+							}
+							
+						}
+					}
+					
+				}
+			}
+		}
+		if(!"".equals(whereSql)) {
+			docCondition+=" and ("+whereSql+")";
+		}
+		return docCondition;
+		
 	}
 	
 	
