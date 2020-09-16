@@ -66,6 +66,7 @@ public class IEDController  extends ControllerAbstract  {
 	@RequestMapping(value = "/exchange/ied/newIED", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newIED(String metaData, MultipartFile uploadFile) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();	
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		EcmContent en = null;
@@ -80,8 +81,14 @@ public class IEDController  extends ControllerAbstract  {
 		}
 		String coding=doc.getCoding();
 		String cond = "TYPE_NAME='IED' AND CODING = '"+coding+"'";
+		List<Map<String,Object>> result = documentService.getObjectMap(getToken(), cond);
+		if(result.size()!=0) {
+			mp.put("code",ActionContext.FAILURE);
+			mp.put("mess","IED已存在，不可重复创建,外部编号为 "+coding);
+			return mp;
+		}
 		//doc.addAttribute("C_WBS_CODING","1516-E-L3-N1-A-FU.E1.E314C.ED.11.1");//测试用数据，使用时删除
-		Object temp1=doc.getAttributeValue("C_WBS_CODING");
+		//Object temp1=doc.getAttributeValue("C_WBS_CODING");
 		/*if(temp1 != null) {
 			String WBS_CODING=temp1.toString();						//获取WBScoding，转换成String
 			String wbscond="TYPE_NAME='计划任务' AND C_WBS_CODING = '"+WBS_CODING+"'";
@@ -126,7 +133,6 @@ public class IEDController  extends ControllerAbstract  {
 		
 		String id = documentService.newObject(getToken(), doc, en);
 		
-		Map<String, Object> mp = new HashMap<String, Object>();	
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);
 		return mp;
@@ -191,12 +197,12 @@ public class IEDController  extends ControllerAbstract  {
 		Map<String, Object> current = new HashMap<String,Object>();
 		List<Map<String,Object>> contrast = new ArrayList<Map<String,Object>>();
 		String id = args.get("ID").toString();
-		System.out.println(id);
+		String Ver_id = args.get("Version_id").toString();
 		this.IDS = args.get("ID").toString();
 		EcmDocument temp = new EcmDocument();
 		temp = documentService.getObjectById(getToken(), id);
 		String Coding = temp.getCoding();
-		String cond = "TYPE_NAME = 'IED' AND STATUS='变更中' AND CODING = '"+Coding+"'";
+		String cond = "TYPE_NAME = 'IED' AND STATUS='变更中' AND Version_id = '"+Ver_id+"'";
 		List<Map<String,Object>> result = documentService.getObjectMap(getToken(), cond);
 		now=documentService.getObjectMapById(getToken(), id);		//获取当前IED的map
 		for(int i = 0; i < result.size();i++) {

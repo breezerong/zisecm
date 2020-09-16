@@ -235,7 +235,6 @@ export default {
         ID: "",
         C_value: "",
       },
-      value: "",
       dialogP6visual: false,
       tabledata: [],
       form: [
