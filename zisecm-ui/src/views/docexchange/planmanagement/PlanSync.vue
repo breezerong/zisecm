@@ -78,8 +78,8 @@
       </el-dialog>
       <el-dialog></el-dialog>
 
-      <el-dialog title="从P6选择" :visible.sync="dialogP6visual">
-        <el-row>
+      <el-dialog title="从P6选择" :visible.sync="dialogP6visual" @opened="onP6SelectOpened">
+        <!-- <el-row>
           <DataSelect
             v-model="P6form.value"
             data-url="/exchange/project/myproject"
@@ -92,7 +92,7 @@
             v-model="P6input"
             :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')"
           ></el-input>
-        </el-row>
+        </el-row> -->
         <el-table :data="P6data" ref="P6" row-key="id" border>
           <el-table-column type="index" width="50" label="序号" align="center"></el-table-column>
           <el-table-column
@@ -101,7 +101,7 @@
             :key="item.prop"
             highlight-current-row
           ></el-table-column>
-          <el-table-column width="120" fixed="right">
+          <el-table-column width="120">
             <template slot-scope="scope">
               <el-button @click="selectP6(scope.row)" size="small">选择</el-button>
             </template>
@@ -230,21 +230,16 @@ export default {
       IEDcontrast: false,
 
       P6columns: [
-        { prop: "C_PROJECT_ID", label: "项目号", width: "100" },
-        { prop: "C_CODING", label: "计划编码", width: "240" },
-        { prop: "C_PROJECT_NAME", label: "计划名称", width: "240" },
+        { prop: "id", label: "项目ID",width:100},
+        { prop: "name", label: "项目名称"},
+        { prop: "code", label: "项目编码" ,width:200},
       ],
       P6data: [
         {
-          C_PROJECT_NAME: "第一计划",
-          C_CODING: "FSK45",
-          C_PROJECT_ID: "MK25",
-        },
-        {
-          C_PROJECT_NAME: "第二计划",
-          C_CODING: "FSK55",
-          C_PROJECT_ID: "MK27",
-        },
+          id: "61978",
+          name: "漳州核电厂1+9号机组二三级进度计划-核岛厂房设计(CFC)",
+          code: "1516-E-L2L3-1-Z4-A-FU",
+        }
       ],
       P6form: {
         C_PROJECT_NAME: "",
@@ -415,10 +410,10 @@ export default {
         });
     },
     selectP6(row) {
-      console.log(row.C_PROJECT_NAME);
-      this.P6form.ID = row.C_PROJECT_ID;
-      this.P6form.CODING = row.C_CODING;
-      this.P6form.C_PROJECT_NAME = row.C_PROJECT_NAME;
+      console.log(row);
+      this.P6form.ID = row.id;
+      this.P6form.CODING = row.code;
+      this.P6form.C_PROJECT_NAME = row.name;
       this.dialogP6visual = false;
       this.dialogCreatevisual = true;
     },
@@ -526,6 +521,15 @@ export default {
       this.search();
       this.getSubContractors();
     },
+    onP6SelectOpened(){
+      let _self = this
+      let url = "/exchange/p6/getProjects"
+      axios.post(url).then(function(response){
+        _self.P6data = response.data.data
+      }).catch(function(error){
+        console.log(error)
+      })
+    }
   },
   props: {},
   components: {
