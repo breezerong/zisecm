@@ -34,7 +34,7 @@
       <el-dialog title="新建" :visible.sync="dialogCreatevisual">
         <el-form :model="P6form" :inline="true">
           <el-form-item label="项目号" :label-width="formLabelWidth">
-            <el-input v-model="P6form.ID" width="120px" style="width:200px"></el-input>
+            <el-input v-model="P6form.ID" width="120px" style="width:200px" disabled="true"></el-input>
             <el-button type="primary" @click="selectfromP6()">从P6选择</el-button>
           </el-form-item>
           <el-row>
@@ -290,7 +290,6 @@ export default {
         _self.$router.push({ path: "/NoPermission" });
       });
     }
-    this.getSubContractors();
     this.topPercent = this.getStorageNumber(this.topStorageName, 60);
   },
   methods: {
@@ -453,6 +452,7 @@ export default {
         })
         .then(function (response) {
           var i;
+          console.log(response)
           _self.Subcontractors = response.data.data;
           for (i = 0; i < _self.Subcontractors.length; i++) {
             _self.contractors[i] = _self.Subcontractors[i].NAME;
@@ -523,8 +523,12 @@ export default {
     },
     onP6SelectOpened(){
       let _self = this
-      let url = "/exchange/p6/getProjects"
+      let url = "/exchange/P6/getBatch"
       axios.post(url).then(function(response){
+        console.log(response)
+        if(response.data.data.length<1){
+          return
+        }
         _self.P6data = response.data.data
       }).catch(function(error){
         console.log(error)

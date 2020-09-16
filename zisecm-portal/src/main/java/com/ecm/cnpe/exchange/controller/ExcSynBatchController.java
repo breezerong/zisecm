@@ -84,7 +84,7 @@ public class ExcSynBatchController  extends ControllerAbstract {
 		return mp;
 	}
 	
-	@RequestMapping(value = "/exchange/ied/getBatch", method = RequestMethod.POST)
+	@RequestMapping(value = "/exchange/P6/getBatch", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> getP6Projects(){
 		Map<String, Object> mp = new HashMap<String, Object>();
