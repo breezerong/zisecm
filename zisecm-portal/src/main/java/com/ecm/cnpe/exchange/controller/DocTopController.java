@@ -36,6 +36,8 @@ public class DocTopController extends ControllerAbstract  {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String projectName =args.get("projectName")!=null?args.get("projectName").toString():"";
 		String getLoginName=getSession().getCurrentUser().getLoginName();
+		String userName = getSession().getCurrentUser().getUserName();
+		String company = getSession().getCurrentUser().getCompany();
 		String whereSql="";
 		if(projectName!=null&&!"".equals(projectName)) {
 			if("@project".equals(projectName)) {
@@ -102,7 +104,11 @@ public class DocTopController extends ControllerAbstract  {
 					+ "where TYPE_NAME='IED' and status='已生效' and IS_CURRENT ='1' and C_IS_RELEASED ='1' and("+whereSql+"))";
 			sqlICMNum = "select count(*) as ICMNum from ecm_document "
 					+ "where TYPE_NAME='ICM' and("+whereSql+")) ";
-				
+			String sqlApplyReject="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and b.TO_NAME='"+company+"'"
+					+" and item_type='1' and b.status1='待确认'";
+			String ApplyRejectConfirm="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and"
+					  +" b.TO_NAME='CNPE' and b.ITEM_TYPE='1' and b.status1='待确认'";
+			
 			//分包商基本信息
 			String sqldcNum = "select count(*) as dcNum from "
 					+ "(select a.C_ITEM_TYPE,a.C_COMPANY,a.TYPE_NAME,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
@@ -118,7 +124,9 @@ public class DocTopController extends ControllerAbstract  {
 					+ "(status='' or status is null or status='新建') and "+whereSql+")";
 			sqlList += ""+
 					sqldcNum+") as dcNum,("+
-					sqlSubmissiondcNum+") as submissiondcNum,( ";
+					sqlSubmissiondcNum+") as submissiondcNum,( "+
+					sqlApplyReject+") as MyApplyReject,("+
+					ApplyRejectConfirm+") as ApplyReject,("; ;
 		}else {
 			//CNPE基本信息
 			
@@ -132,8 +140,11 @@ public class DocTopController extends ControllerAbstract  {
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and(status='' or status='新建')";
 			String sqlRejectNum = "select count(*) as dcNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( STATUS='驳回')";
-			
-			
+			String sqlApplyReject="select count(*) from ecm_document a,exc_transfer b where a.id = b.doc_id and"
+								 +" b.status1='待确认' and b.APPLICANT='"+userName+"'";
+			String ApplyRejectConfirm="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and"
+									  +" b.TO_NAME='CNPE' and b.ITEM_TYPE='2' and b.status1='待确认'";
+			 
 			//CNPE项目信息
 			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
 					+ "where TYPE_NAME='计划任务' and("+whereSql+")";
@@ -146,7 +157,8 @@ public class DocTopController extends ControllerAbstract  {
 			sqldcNum+") as dcNum,("+
 			sqldeBlockingNum+") as deBlockingNum, ("+
 			sqldispenseNum+") as dispenseNum, ("+
-			sqlRejectNum+") as RejectNum,(";
+			sqlRejectNum+") as RejectNum,("+sqlApplyReject+") as MyApplyReject,("+
+			ApplyRejectConfirm+") as ApplyReject,(";
 		}
 		sqlList += ""+sqlThreePlanNum+") as ThreePlanNum,("+
 					sqlIEDNum+") as IEDNum, ("+
@@ -165,6 +177,8 @@ public class DocTopController extends ControllerAbstract  {
 			mp.put("RejectNum",numList.get(0).get("RejectNum"));//驳回
 			mp.put("submissiondcNum",numList.get(0).get("submissiondcNum"));//待提交
 			mp.put("ICMNum",numList.get(0).get("ICMNum"));				//延误关闭确认
+			mp.put("MyApplyReject",numList.get(0).get("MyApplyReject"));//我的驳回申请
+			mp.put("ApplyReject",numList.get(0).get("ApplyReject"));	//待确认的驳回申请
 			//项目信息
 			mp.put("ThreePlanNum",numList.get(0).get("ThreePlanNum"));
 			mp.put("IEDNum",numList.get(0).get("IEDNum"));

@@ -86,6 +86,12 @@
       <el-col :span="6" ref="wk6" v-if="isCNPEwk">
       <el-form-item><ecm-data-icons :option="projectDataReject"></ecm-data-icons></el-form-item>
       </el-col>
+      <el-col :span="6" ref="wk7" v-if="isCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectDataMyApplyReject"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="6" ref="wk8" v-if="isCNPEwk">
+      <el-form-item><ecm-data-icons :option="projectDataApplyReject"></ecm-data-icons></el-form-item>
+      </el-col>
       </el-row> 
       </el-form>
       
@@ -440,6 +446,32 @@ export default {
             url: '/cnpe/icmmanagement/icmfeedback'
           },
         ]
+      },
+      projectDataMyApplyReject: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+              {
+            title: this.$t('route.MyApplyReject'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-s-order',
+            url: '/cnpe/DCManagement/myApplyReject'
+          },
+        ]
+      },
+      projectDataApplyReject: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+              {
+            title: this.$t('route.applyReject'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-s-order',
+            url: '/cnpe/DCManagement/applyRejectCnpe'
+          },
+        ]
       }
     };
   },
@@ -523,12 +555,8 @@ export default {
               _self.projectDataDeBlocking.data[0].count=response.data.deBlockingNum;
               _self.projectDataDispense.data[0].count=response.data.dispenseNum;
               _self.projectDataReject.data[0].count=response.data.RejectNum;
-              _self.$refs.wk1.refresh()
-              _self.$refs.wk2.refresh()
-              _self.$refs.wk3.refresh()
-              _self.$refs.wk4.refresh()
-              _self.$refs.wk5.refresh()
-              _self.$refs.wk6.refresh()
+              _self.projectDataApplyReject.data[0].count=response.data.ApplyReject;
+              _self.projectDataMyApplyReject.data[0].count=response.data.MyApplyReject;
           }
           
         })

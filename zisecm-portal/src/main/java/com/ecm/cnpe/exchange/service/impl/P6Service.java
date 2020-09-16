@@ -125,19 +125,20 @@ public class P6Service implements IP6Service{
 	@Override
 	public List<ProjectEntity> getP6Projects() {
 		List<ProjectEntity> list = new ArrayList<ProjectEntity>();
-		if(this.p6.isEnable()) {			
+		if(this.p6.isEnable()) {	
 			this.init();
 			boolean isLoginSuccess;
 			try {
 				isLoginSuccess = this.auth();
 				if(!isLoginSuccess) {
 					System.err.println("P6用户 "+p6.getUsername()+" 登录失败");
-					
+					return list;
 				}
 				ProjectPortType service = this.getProjectService();
 				List<Project> projectList = this.getProjectInfo("",service);
 				for (Project project : projectList) {
 					ProjectEntity item = new ProjectEntity();
+					item.setId(project.getWBSObjectId().getValue()+"");
 					item.setCode(project.getId());
 					item.setName(project.getName());
 					list.add(item);
