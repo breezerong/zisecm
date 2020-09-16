@@ -58,18 +58,6 @@
               data-text-field="name"
             ></DataSelect>
           </el-form-item>
-          <el-form-item label="分包商" :label-width="formLabelWidth" style>
-            <el-select
-              name="selectSubContractor"
-              v-model="P6form.C_TO"
-              placeholder="分包商"
-              style="display:block;"
-            >
-              <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
-                <el-option :label="name" :value="name" :key="nameIndex"></el-option>
-              </div>
-            </el-select>
-          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogCreatevisual = false">{{$t('application.cancel')}}</el-button>
@@ -245,7 +233,6 @@ export default {
         C_PROJECT_NAME: "",
         CODING: "",
         ID: "",
-        C_TO: "",
         C_value: "",
       },
       value: "",
@@ -335,7 +322,6 @@ export default {
       var m = new Map();
       var temp = this.P6form.C_value;
       var c;
-      m.set("C_TO", this.P6form.C_TO);
       m.set("CODING", this.P6form.CODING);
       m.set("ID", this.P6form.ID);
       m.set("NAME", this.P6form.C_PROJECT_NAME);
@@ -436,7 +422,7 @@ export default {
       m.set("pageSize", this.pageSize);
       this.freshtable();
     },
-    getSubContractors() {
+    /*getSubContractors() {
       let _self = this;
       let pm = new Map();
       pm.set("configName", "GetSubContractor");
@@ -461,7 +447,7 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-    },
+    },/*/
     selectfromP6() {
       this.dialogCreatevisual = false;
       this.dialogP6visual = true;
@@ -486,7 +472,7 @@ export default {
       console.log(k1);
       _self.$refs.mainDataGrid.condition = k1;
       _self.$refs.mainDataGrid.loadGridData();
-      _self.getSubContractors();
+      //_self.getSubContractors();
     },
 
     create() {
@@ -519,7 +505,7 @@ export default {
 
     onLoadnDataSuccess(select, options) {
       this.search();
-      this.getSubContractors();
+      //this.getSubContractors();
     },
     onP6SelectOpened(){
       let _self = this
