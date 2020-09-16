@@ -132,7 +132,7 @@ public class P6Service implements IP6Service{
 				isLoginSuccess = this.auth();
 				if(!isLoginSuccess) {
 					System.err.println("P6用户 "+p6.getUsername()+" 登录失败");
-					
+					return list;
 				}
 				ProjectPortType service = this.getProjectService();
 				List<Project> projectList = this.getProjectInfo("",service);
