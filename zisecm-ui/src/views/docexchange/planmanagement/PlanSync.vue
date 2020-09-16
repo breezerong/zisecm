@@ -34,7 +34,7 @@
       <el-dialog title="新建" :visible.sync="dialogCreatevisual">
         <el-form :model="P6form" :inline="true">
           <el-form-item label="项目号" :label-width="formLabelWidth">
-            <el-input v-model="P6form.ID" width="120px" style="width:200px"></el-input>
+            <el-input v-model="P6form.ID" width="120px" style="width:200px" disabled="true"></el-input>
             <el-button type="primary" @click="selectfromP6()">从P6选择</el-button>
           </el-form-item>
           <el-row>
@@ -58,18 +58,6 @@
               data-text-field="name"
             ></DataSelect>
           </el-form-item>
-          <el-form-item label="分包商" :label-width="formLabelWidth" style>
-            <el-select
-              name="selectSubContractor"
-              v-model="P6form.C_TO"
-              placeholder="分包商"
-              style="display:block;"
-            >
-              <div v-for="(name,nameIndex) in contractors" :key="'T2_'+nameIndex">
-                <el-option :label="name" :value="name" :key="nameIndex"></el-option>
-              </div>
-            </el-select>
-          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogCreatevisual = false">{{$t('application.cancel')}}</el-button>
@@ -78,8 +66,8 @@
       </el-dialog>
       <el-dialog></el-dialog>
 
-      <el-dialog title="从P6选择" :visible.sync="dialogP6visual">
-        <el-row>
+      <el-dialog title="从P6选择" :visible.sync="dialogP6visual" @opened="onP6SelectOpened">
+        <!-- <el-row>
           <DataSelect
             v-model="P6form.value"
             data-url="/exchange/project/myproject"
@@ -92,7 +80,7 @@
             v-model="P6input"
             :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')"
           ></el-input>
-        </el-row>
+        </el-row> -->
         <el-table :data="P6data" ref="P6" row-key="id" border>
           <el-table-column type="index" width="50" label="序号" align="center"></el-table-column>
           <el-table-column
@@ -101,7 +89,7 @@
             :key="item.prop"
             highlight-current-row
           ></el-table-column>
-          <el-table-column width="120" fixed="right">
+          <el-table-column width="120">
             <template slot-scope="scope">
               <el-button @click="selectP6(scope.row)" size="small">选择</el-button>
             </template>
@@ -139,7 +127,7 @@
                 <el-table
                   :data="tabledata"
                   style="width: 100%"
-                  :tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                  :height="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
                   @row-click="onRowClick"
                 >
                   <el-table-column :label="$t('field.indexNumber')" key="#1" width="70">
@@ -219,7 +207,7 @@ export default {
       tables: {
         main: {
           isInitData: false,
-          isshowoption: true,
+          isshowOption: true,
           isshowCustom: false,
           isShowPropertyButton: true,
           isShowMoreOption: false,
@@ -230,42 +218,31 @@ export default {
       IEDcontrast: false,
 
       P6columns: [
-        { prop: "C_PROJECT_ID", label: "项目号", width: "100" },
-        { prop: "C_CODING", label: "计划编码", width: "240" },
-        { prop: "C_PROJECT_NAME", label: "计划名称", width: "240" },
+        { prop: "id", label: "项目ID",width:100},
+        { prop: "name", label: "项目名称"},
+        { prop: "code", label: "项目编码" ,width:200},
       ],
       P6data: [
         {
-          C_PROJECT_NAME: "第一计划",
-          C_CODING: "FSK45",
-          C_PROJECT_ID: "MK25",
-        },
-        {
-          C_PROJECT_NAME: "第二计划",
-          C_CODING: "FSK55",
-          C_PROJECT_ID: "MK27",
-        },
+          id: "61978",
+          name: "漳州核电厂1+9号机组二三级进度计划-核岛厂房设计(CFC)",
+          code: "1516-E-L2L3-1-Z4-A-FU",
+        }
       ],
       P6form: {
         C_PROJECT_NAME: "",
         CODING: "",
         ID: "",
-        C_TO: "",
         C_value: "",
       },
       value: "",
       dialogP6visual: false,
-      tabledata: [
-        {
-          appName: "123",
-        },
-      ],
+      tabledata: [],
       form: [
         {
           id: "",
         },
       ],
-      value: "",
       input: "",
       currentPage: 1,
       itemCount: 0,
@@ -295,7 +272,6 @@ export default {
         _self.$router.push({ path: "/NoPermission" });
       });
     }
-    this.getSubContractors();
     this.topPercent = this.getStorageNumber(this.topStorageName, 60);
   },
   methods: {
@@ -340,8 +316,6 @@ export default {
       let _self = this;
       var m = new Map();
       var temp = this.P6form.C_value;
-      var c;
-      m.set("C_TO", this.P6form.C_TO);
       m.set("CODING", this.P6form.CODING);
       m.set("ID", this.P6form.ID);
       m.set("NAME", this.P6form.C_PROJECT_NAME);
@@ -374,9 +348,6 @@ export default {
             });
           }
         });
-    },
-    rowClick(row) {
-      console.log(row);
     },
     syncing() {
       //新建同步日志方法
@@ -415,10 +386,10 @@ export default {
         });
     },
     selectP6(row) {
-      console.log(row.C_PROJECT_NAME);
-      this.P6form.ID = row.C_PROJECT_ID;
-      this.P6form.CODING = row.C_CODING;
-      this.P6form.C_PROJECT_NAME = row.C_PROJECT_NAME;
+      console.log(row);
+      this.P6form.ID = row.id;
+      this.P6form.CODING = row.code;
+      this.P6form.C_PROJECT_NAME = row.name;
       this.dialogP6visual = false;
       this.dialogCreatevisual = true;
     },
@@ -435,37 +406,8 @@ export default {
     },
     rowClick(row) {
       console.log(row);
-      let _self = this;
-      var m = new Map();
       this.ID = row["ID"];
-      m.set("ID", row["ID"]);
-      m.set("pageSize", this.pageSize);
       this.freshtable();
-    },
-    getSubContractors() {
-      let _self = this;
-      let pm = new Map();
-      pm.set("configName", "GetSubContractor");
-      // pm.set('parentId',"'"+p+"'");
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8",
-          },
-          method: "post",
-          data: JSON.stringify(pm),
-          url: "/dc/getObjectsByConfigClauseNoPage",
-        })
-        .then(function (response) {
-          var i;
-          _self.Subcontractors = response.data.data;
-          for (i = 0; i < _self.Subcontractors.length; i++) {
-            _self.contractors[i] = _self.Subcontractors[i].NAME;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
     },
     selectfromP6() {
       this.dialogCreatevisual = false;
@@ -491,16 +433,14 @@ export default {
       console.log(k1);
       _self.$refs.mainDataGrid.condition = k1;
       _self.$refs.mainDataGrid.loadGridData();
-      _self.getSubContractors();
+      //_self.getSubContractors();
     },
 
     create() {
-      let _self = this;
       this.dialogCreatevisual = true;
     },
     exportData() {
       let _self = this;
-      let dataUrl = "/exchange/doc/export";
       var fileDate = new Date();
       let fileDateStr =
         fileDate.getFullYear() +
@@ -524,8 +464,21 @@ export default {
 
     onLoadnDataSuccess(select, options) {
       this.search();
-      this.getSubContractors();
+      //this.getSubContractors();
     },
+    onP6SelectOpened(){
+      let _self = this
+      let url = "/exchange/p6/getProjects"
+      axios.post(url).then(function(response){
+        console.log(response)
+        if(response.data.data.length<1){
+          return
+        }
+        _self.P6data = response.data.data
+      }).catch(function(error){
+        console.log(error)
+      })
+    }
   },
   props: {},
   components: {

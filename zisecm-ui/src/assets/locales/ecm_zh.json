@@ -246,7 +246,8 @@
     "iedContrast":"IED对比",
     "Dispense":"分发",
     "DelayCloseReason":"是否认可延误关闭原因",
-    "startRejectApply": "发起驳回申请"
+    "startRejectApply": "发起驳回申请",
+    "IedFeedBackExcel":"IED批量反馈"
 },
 "skin": {
     "Blue": "天空蓝",

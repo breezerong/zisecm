@@ -7,8 +7,16 @@ public class ProjectEntity implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -8804516439829660326L;
+	private String id="";
 	private String name;
 	private String code;
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}

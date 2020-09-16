@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.ecm.cnpe.exchange.service.IP6Service;
 import com.ecm.cnpe.exchange.service.impl.IEDImportService;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
@@ -54,6 +56,9 @@ public class ExcSynBatchController  extends ControllerAbstract {
 	@Autowired
 	private ExcSynDetailService detailService;
 	
+	@Autowired
+	private IP6Service p6Service;
+	
 	
 	
 	@RequestMapping(value = "/exchange/ied/getBatch", method = RequestMethod.POST)
@@ -78,6 +83,16 @@ public class ExcSynBatchController  extends ControllerAbstract {
 		mp.put("itemCount", total);
 		return mp;
 	}
+	
+	@RequestMapping(value = "/exchange/p6/getProjects", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getP6Projects(){
+		Map<String, Object> mp = new HashMap<String, Object>();
+		
+		mp.put("data", p6Service.getP6Projects());
+		return mp;
+	}
+	
 	@RequestMapping(value = "/exchange/exchange/createBatch", method = RequestMethod.POST)
 	@ResponseBody
 	public String	createBatch(@RequestBody String argStr) throws Exception{
@@ -93,7 +108,7 @@ public class ExcSynBatchController  extends ControllerAbstract {
 		for(String childId : list) {
 		EcmDocument doc= documentService.getObjectById(getToken(), childId);
 		String id = doc.getId();	//获取联动ID，根据ID去查批次号，返回的list长度为0就说明数据库里没有同步日志，可以创建
-		String cond = "BATCH_NUM = '"+id+"'";//执行
+		String cond = "BATCH_NUM = '"+id+"' and status='新建'";//执行
 		List<ExcSynBatch> result=batchService.selectByCondition(pager,cond);
 		if(result.size()==0) {
 			temp.setAppName("P6");

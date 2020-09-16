@@ -35,7 +35,15 @@
       <el-col :span="6" v-if="isSubwk">
       <el-form-item><ecm-data-icons :option="projectDataDispensedc"></ecm-data-icons></el-form-item>
       </el-col>
-      
+      <el-col :span="6" v-if="isSubwk">
+      <el-form-item><ecm-data-icons :option="projectDataMyApplyReject"></ecm-data-icons></el-form-item>
+      </el-col>
+      <el-col :span="6" v-if="isSubwk">
+      <el-form-item><ecm-data-icons :option="projectDataApplyReject"></ecm-data-icons></el-form-item>
+      </el-col>
+
+
+
       <el-col :span="6" v-if="isOnlySubjk">
       <el-form-item>
       <ecm-data-icons ref="p1" :option="projectDataICM"></ecm-data-icons>
@@ -328,7 +336,33 @@ export default {
             url: '/cnpe/DCManagement/rejectedDC'
           }
         ]
-      }
+      },
+      projectDataMyApplyReject: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+         {
+            title: this.$t('route.MyApplyReject'),
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-delete',
+            url: '/cnpe/DCManagement/myApplyReject'
+          }
+        ]
+      },
+      projectDataApplyReject: {
+        color: 'rgb(63, 161, 255)',
+        span: 24,
+        data: [
+         {
+            title: this.$t('route.applyReject'),
+            count: 0,
+            color: 'rgb(255, 0, 0)',
+            icon: 'el-icon-document-delete',
+            url: '/cnpe/DCManagement/applyRejectSub'
+          }
+        ]
+      },
     };
   },
 
@@ -449,6 +483,8 @@ export default {
               _self.projectDataReceivingdc.data[0].count=response.data.receivedNum;
               _self.projectDataSubmissiondc.data[0].count=response.data.submissiondcNum;
               _self.projectDataDispensedc.data[0].count=response.data.RejectNum;
+              _self.projectDataMyApplyReject.data[0].count=response.data.MyApplyReject
+              _self.projectDataApplyReject.data[0].count=response.data.ApplyReject
           }
           
         })

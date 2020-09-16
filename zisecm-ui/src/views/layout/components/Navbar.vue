@@ -87,6 +87,7 @@ export default {
     },
     logout() {
       let _self = this;
+      // _self.closeAllTags();
       axios.post("/userLogout","").then(function(response) {
         _self.$store.commit("DEL_ALL_VIEWS")
         var loca = window.location;
