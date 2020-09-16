@@ -509,7 +509,7 @@ export default {
     },
     onP6SelectOpened(){
       let _self = this
-      let url = "/exchange/P6/getBatch"
+      let url = "/exchange/p6/getProjects"
       axios.post(url).then(function(response){
         console.log(response)
         if(response.data.data.length<1){
