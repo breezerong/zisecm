@@ -87,6 +87,7 @@ export default {
     },
     logout() {
       let _self = this;
+      // _self.closeAllTags();
       axios.post("/userLogout","").then(function(response) {
         var loca = window.location;
         if (loca.search != null && loca.search != "") {
