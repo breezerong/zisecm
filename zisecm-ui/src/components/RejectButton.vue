@@ -33,6 +33,7 @@ export default {
     methods:{
         clickShowDialog(){
             let _self=this;
+           
             _self.showDialog=true;
         },
         onOk(){
@@ -48,6 +49,7 @@ export default {
                     _self.rejectByCnpe();
                 }
             }
+            _self.rejectComment = "";
             _self.showDialog=false;
         },
         rejectByContractor(){

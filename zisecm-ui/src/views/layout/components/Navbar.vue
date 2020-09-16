@@ -89,6 +89,7 @@ export default {
       let _self = this;
       // _self.closeAllTags();
       axios.post("/userLogout","").then(function(response) {
+        _self.$store.commit("DEL_ALL_VIEWS")
         var loca = window.location;
         if (loca.search != null && loca.search != "") {
           if (loca.search.substr(1, 9) == "LoginName") {

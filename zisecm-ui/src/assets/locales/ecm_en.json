@@ -249,7 +249,8 @@
     "delayNum":"DelayReply Nums",
     "Dispense":"Dispense",
     "DelayCloseReason":"Current Delay Reason is Right?",
-    "startRejectApply": "StartRejectApply"
+    "startRejectApply": "StartRejectApply",
+    "IedFeedBackExcel":"IED Batch Feedback"
 },
 "skin": {
     "Blue": "Blue",

@@ -64,4 +64,7 @@ export default {
     border-bottom: 1px solid #ebeef5;
     box-sizing: border-box;
 }
+.el-button {
+    padding: 12px 12px !important;
+}
 </style>
