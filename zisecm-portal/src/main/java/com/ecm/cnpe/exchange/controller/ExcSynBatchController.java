@@ -108,7 +108,7 @@ public class ExcSynBatchController  extends ControllerAbstract {
 		for(String childId : list) {
 		EcmDocument doc= documentService.getObjectById(getToken(), childId);
 		String id = doc.getId();	//获取联动ID，根据ID去查批次号，返回的list长度为0就说明数据库里没有同步日志，可以创建
-		String cond = "BATCH_NUM = '"+id+"'";//执行
+		String cond = "BATCH_NUM = '"+id+"' and status='新建'";//执行
 		List<ExcSynBatch> result=batchService.selectByCondition(pager,cond);
 		if(result.size()==0) {
 			temp.setAppName("P6");
