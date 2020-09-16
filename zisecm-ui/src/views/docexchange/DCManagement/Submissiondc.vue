@@ -20,7 +20,7 @@
                     <template v-slot:main>  
                         <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid">
                                 <template slot="customMoreOption" slot-scope="scope">
-                                <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">选择</el-button>
+                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
                                 </template>
                         </DataGrid>
                     </template>
@@ -437,7 +437,7 @@ export default {
             _self.$refs.DialogDataGrid.loadGridInfo()
             _self.$refs.DialogDataGrid.loadGridData()
         },
-        IEDfeedback(row){
+        IEDChoose(row){
             let _self = this;
             let relationName="相关文件"
             let typeName="相关文件"

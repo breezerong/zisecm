@@ -23,12 +23,24 @@
                 </div>
             </el-dialog>
             <!-- 相关文件创建选择IED-->
-            <el-dialog :title="dialog.title" :visible.sync="propertyrela" width="80%" :before-close="handleClose">      
-                <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid">
-                        <template slot="customMoreOption" slot-scope="scope">
-                        <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">选择</el-button>
+            <el-dialog :title="dialog.title" :visible.sync="propertyrela" width="80%" :before-close="handleClose"> 
+                <DataLayout>
+                    <template v-slot:header>
+                        <el-form>
+                        <el-form-item>
+                            <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.iedPublishedInputPlaceholder')"></el-input>
+                            <el-button type="primary" @click="searchIED()">{{$t('application.SearchData')}}</el-button>
+                        </el-form-item> 
+                        </el-form>  
                         </template>
-                </DataGrid>
+                    <template v-slot:main>  
+                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid">
+                                <template slot="customMoreOption" slot-scope="scope">
+                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
+                                </template>
+                        </DataGrid>
+                    </template>
+                </DataLayout>
             </el-dialog>
             <!-- 设计文件附件 -->
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
@@ -383,7 +395,8 @@ export default {
             importSubVisible:false,
             docId:"",
             butt:false,
-            propertyrela:false
+            propertyrela:false,
+            inputValueNum:'',
         }
     },
     created(){
@@ -407,7 +420,26 @@ export default {
         }, 300);
     },
     methods: {
-        IEDfeedback(row){
+        searchIED(){
+            let _self = this
+            let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
+            let orS = ""
+            var k1=""
+            if(_self.inputValueNum.trim().length>0){
+                wheres.forEach(function(item){
+                    if(orS.length>0){
+                        orS+=" OR "
+                    }
+                    orS+=item + " LIKE '%"+ _self.inputValueNum+"%'"
+                })
+                k1+=" AND (" + orS + ")"
+            }
+            // _self.tables.DialogDataGrid.condition+=k1
+            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition+k1
+            _self.$refs.DialogDataGrid.loadGridInfo()
+            _self.$refs.DialogDataGrid.loadGridData()
+        },
+        IEDChoose(row){
             let _self = this;
             let relationName="相关文件"
             let typeName="相关文件"
