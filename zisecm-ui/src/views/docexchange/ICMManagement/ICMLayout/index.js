@@ -1,5 +1,7 @@
 export {default as ICMBaseReport} from './ICMBase'
 export {default as ICMReportGrid} from './ICMExport'
 export {default as ICMExchangeGrid} from './ICMExchange'
+export {default as ICMOpenGrid} from './ICMOpen'
+export {default as ICMCloseGrid} from './ICMClose'
 export {default as CNPECompleteReport} from './CNPEComplete'
 export {default as ContactorReport} from './ContrICM'
