@@ -39,6 +39,23 @@ public class DocumentService4Cnpe extends DocumentService{
 	private String filterColumns = ",ID,CREATION_DATE,CREATOR,MODIFIER,OWNER_NAME,"
 			+ "MODIFIED_DATE,FORMAT_NAME,CONTENT_SIZE,"
 			+ "IS_CURRENT,IS_HIDDEN,SYSTEM_VERSION,VERSION_ID,LOCK_OWNER,LOCK_DATE,LOCK_CLIENT,";
+//	private String icmColumns = "C_DESIGN_UNIT,C_PROJECT_CODE,C_PROJECT_NAME,C_IN_CODING,CODING,C_WBS_CODING,TITLE," + 
+//								"C_CODE1,C_CODE2,C_CODE3,C_CODE4,C_CODE5,C_CODE6," + 
+//								"SUB_TYPE,C_COMMENT," + 
+//								"C_ITEM1_DATE,C_ITEM2_DATE,C_ITEM_STATUS1,C_ITEM_STATUS2" + 
+//								"C_DISPL_CODE,C_ITEM_STATUS,C_HOST,C_DEPARTMENT,C_DRAFTER,,C_APPROVER,C_PARTICIPATION,C_COPY_TO," + 
+//								"C_STRING1,C_STRING2,C_STRING3,C_STRING4," + 
+//								"C_COMMENT1," + 
+//								"C_EX1_DATE,C_EX1_STRING,C_EX3_DATE,C_EX3_STRING,C_EX2_DATE,C_EX2_STRING,C_EX4_DATE,C_EX4_STRING," + 
+//								"C_IDENTIFY,C_COMMENT5,C_ITEM5_DATE,C_STRING6,C_EQUIPMENT,C_COUNT1," + 
+//								"C_EX5_DATE,C_EX5_STRING,C_FROM_CODING,C_ITEM4_DATE,C_COMMENT3,C_COMMENT6," + 
+//								"C_ITEM_STATUS3,C_DRAFTER1,C_DRAFT1_DATE,C_COMMENT2,C_EX6_DATE,C_EX7_DATE,C_EX6_STRING," + 
+//								"C_TYPE1,C_COMMENT7,C_REF_CODING,C_EX8_DATE,C_EX7_STRING,C_ITEM_STATUS4," + 
+//								"C_DRAFTER2,C_DRAFT2_DATE,C_ITEM3_DATE,C_ITEM6_DATE,C_EX8_STRING," + 
+//								"C_ITEM_STATUS6,C_ITEM_STATUS7,C_ITEM_STATUS8,C_ITEM_STATUS9,C_ITEM_STATUS10," + 
+//								"C_EX9_STRING,C_EX10_STRING,C_EX11_STRING,C_EX12_STRING,C_EX13_STRING,C_EX14_STRING," + 
+//								"C_EX9_DATE,C_EX10_DATE,C_EX11_DATE,C_EX12_DATE,C_EX13_DATE,C_EX14_DATE," + 
+//								"C_COUNT2,C_COUNT3,C_COUNT4,LIFECYCLE_DIR,C_ORDER_INDEX";
 
 	
 	
@@ -111,6 +128,152 @@ public class DocumentService4Cnpe extends DocumentService{
 		// TODO Auto-generated method stub
 		return list;
 	}
+	
+	public List<Map<String, Object>> getObjectsICM(String token, String gridName, String folderId, Pager pager,
+			String condition, String orderBy){
+		String currentUser="";
+		LoginUser userObj=null;
+		try {
+			userObj=getSession(token).getCurrentUser();
+			currentUser = userObj.getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		String gvCondition=gv.getCondition();
+		
+		String columns ="a.ID,a.TYPE_NAME,a.C_COMPANY,a.C_DESIGN_UNIT," + 
+						"a.C_PROJECT_CODE," + 
+						"a.C_PROJECT_NAME," + 
+						"a.C_IN_CODING," + 
+						"a.CODING," + 
+						"a.C_WBS_CODING," + 
+						"a.TITLE," + 
+						"a.C_CODE1," + 
+						"a.C_CODE2," + 
+						"a.C_CODE3," + 
+						"a.C_CODE4," + 
+						"a.C_CODE5," + 
+						"a.C_CODE6," + 
+						"a.SUB_TYPE," + 
+						"a.C_COMMENT," + 
+						"a.C_ITEM1_DATE," + 
+						"a.C_ITEM2_DATE," + 
+						"a.C_ITEM_STATUS1," + 
+						"a.C_ITEM_STATUS2," + 
+						"a.C_DISPL_CODE," + 
+						"a.C_ITEM_STATUS," + 
+						"a.C_HOST," + 
+						"a.C_DEPARTMENT," + 
+						"a.C_DRAFTER," + 
+						"a.C_APPROVER," + 
+						"a.C_PARTICIPATION," + 
+						"a.C_COPY_TO," + 
+						"a.C_STRING1," + 
+						"a.C_STRING2," + 
+						"a.C_STRING3," + 
+						"a.C_STRING4," + 
+						"a.C_COMMENT1," + 
+						"a.C_EX1_DATE," + 
+						"a.C_EX1_STRING," + 
+						"a.C_EX3_DATE," + 
+						"a.C_EX3_STRING," + 
+						"a.C_EX2_DATE," + 
+						"a.C_EX2_STRING," + 
+						"a.C_EX4_DATE," + 
+						"a.C_EX4_STRING," + 
+						"a.C_IDENTIFY," + 
+						"a.C_COMMENT5," + 
+						"a.C_ITEM5_DATE," + 
+						"a.C_STRING6," + 
+						"a.C_EQUIPMENT," + 
+						"a.C_COUNT1," + 
+						"a.C_EX5_DATE," + 
+						"a.C_EX5_STRING," + 
+						"a.C_FROM_CODING," + 
+						"a.C_ITEM4_DATE," + 
+						"a.C_COMMENT3," + 
+						"a.C_COMMENT6," + 
+						"a.C_ITEM_STATUS3," + 
+						"a.C_DRAFTER1," + 
+						"a.C_DRAFT1_DATE," + 
+						"a.C_COMMENT2," + 
+						"a.C_EX6_DATE," + 
+						"a.C_EX7_DATE," + 
+						"a.C_EX6_STRING," + 
+						"a.C_TYPE1," + 
+						"a.C_COMMENT7," + 
+						"a.C_REF_CODING," + 
+						"a.C_EX8_DATE," + 
+						"a.C_EX7_STRING," + 
+						"a.C_ITEM_STATUS4," + 
+						"a.C_DRAFTER2," + 
+						"a.C_DRAFT2_DATE," + 
+						"a.C_ITEM3_DATE," + 
+						"a.C_ITEM6_DATE," + 
+						"a.C_EX8_STRING," + 
+						"a.C_ITEM_STATUS6," + 
+						"a.C_ITEM_STATUS7," + 
+						"a.C_ITEM_STATUS8," + 
+						"a.C_ITEM_STATUS9," + 
+						"a.C_ITEM_STATUS10," + 
+						"a.C_EX9_STRING," + 
+						"a.C_EX10_STRING," + 
+						"a.C_EX11_STRING," + 
+						"a.C_EX12_STRING," + 
+						"a.C_EX13_STRING," + 
+						"a.C_EX14_STRING," + 
+						"a.C_EX9_DATE," + 
+						"a.C_EX10_DATE," + 
+						"a.C_EX11_DATE," + 
+						"a.C_EX12_DATE," + 
+						"a.C_EX13_DATE," + 
+						"a.C_EX14_DATE," + 
+						"case when a.C_EX1_DATE is null then datediff(day, a.C_EX6_DATE,GETDATE()) else datediff(day, a.C_EX6_DATE,a.C_EX1_DATE) end AS C_COUNT2," + 
+						"case when a.C_EX3_DATE is null then datediff(day, a.C_EX7_DATE,GETDATE()) else datediff(day, a.C_EX7_DATE,a.C_EX3_DATE) end AS C_COUNT3," + 
+						"case when a.C_EX2_DATE is null then datediff(day, a.C_ITEM3_DATE,GETDATE()) else datediff(day, a.C_ITEM3_DATE,a.C_EX2_DATE) end AS C_COUNT4, " + 
+						"case when a.C_EX4_DATE is null then datediff(day, a.C_ITEM6_DATE,GETDATE()) else datediff(day, a.C_ITEM6_DATE,a.C_EX4_DATE) end AS LIFECYCLE_DIR, ";
+		
+		String sql="select ID "+ getGridColumn(gv, gridName) +" from (" + "select "+ columns 
+				 + "b.CODING AS C_DESC1,b.C_ITEM_DATE AS C_REVIEW2_DATE,b.C_DRAFTER AS C_DESC2,"
+				 + "b.C_DRAFT_DATE,b.C_CHECKER,b.C_CHECK_DATE,b.C_REVIEWER1,b.C_REVIEW1_DATE,"
+				 + "b.C_APPROVER AS C_DESC3,"
+				 + "b.C_APPROVE_DATE,b.REVISION,"
+				 + "b.C_ITEM_STATUS AS C_STORE_STATUS,b.C_ITEM_STATUS1 AS C_SSC_CODING,"
+				 + "b.C_OTHER_CODING, b.C_REPLY_PLAN_DATE,"
+				 + "b.C_EX2_STRING AS C_PROCESS_STATUS1, b.C_EX2_DATE AS C_ITEM8_DATE,"
+				 + "b.C_DRAFTER1 AS C_ISLAND_TYPE,"
+				 + "case when b.C_EX2_DATE is null then datediff(day, b.C_EX3_DATE,GETDATE()) else datediff(day, b.C_EX3_DATE,b.C_EX2_DATE) end AS C_ORDER_INDEX,"
+				 + "c.NAME,"
+				 + "b.C_DRAFTER1 AS C_REJECTOR, b.C_DRAFT1_DATE AS C_REVIEW6_DATE, b.C_COMMENT2 AS C_BATCH_CODE, b.C_EX3_DATE AS C_REVIEW5_DATE,"
+				 + "b.C_COMMENT3 AS C_RETENTION, b.C_TYPE1 AS C_ARCHIVE_NUM,"
+				 + "b.C_COMMENT4, b.C_COMMENT5 AS SYN_STATUS, b.C_EX6_DATE AS C_REVIEW4_DATE, b.C_COMMENT6 AS C_INST_AREA_ZONE "
+				 + "FROM ecm_document a, ecm_document b, ecm_document c "
+				 + "WHERE a.TYPE_NAME = 'ICM' AND b.TYPE_NAME = '接口信息意见单' AND c.TYPE_NAME = '公司' AND a.C_CODE6 = c.C_CODE1)t "
+				 + "WHERE " + gvCondition;
+		
+		if (!StringUtils.isEmpty(folderId)) {
+			sql += " and folder_id='" + folderId + "'";
+		}
+		if (!EcmStringUtils.isEmpty(condition)) {
+			sql += " and (" + condition + ")";
+		}
+		if (!EcmStringUtils.isEmpty(orderBy)) {
+			sql += " order by " + orderBy;
+		} else {
+			sql += " " + gv.getOrderBy();
+		}
+		
+		sql=SqlUtils.replaceSql(sql, userObj);
+		System.out.println(sql);
+		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
+		// TODO Auto-generated method stub
+		
+		return list;
+	}
+	
 	/**
 	 * 
 	 * @param token
