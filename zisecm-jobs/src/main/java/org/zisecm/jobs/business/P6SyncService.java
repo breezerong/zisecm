@@ -181,6 +181,7 @@ public class P6SyncService {
 		List<Activity> list = null;
 		List<ActivityFieldType> fieldList = new ArrayList<ActivityFieldType>();
 		fieldList.add(ActivityFieldType.ID);
+		fieldList.add(ActivityFieldType.NAME);
 		fieldList.add(ActivityFieldType.STATUS);
 		fieldList.add(ActivityFieldType.PROJECT_ID);
 		fieldList.add(ActivityFieldType.PROJECT_NAME);

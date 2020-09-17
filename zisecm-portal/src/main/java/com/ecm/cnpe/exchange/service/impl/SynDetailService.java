@@ -14,6 +14,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.EcmObjectService;
+import com.ecm.portal.util.CustomInfo;
 /**
  * 
  * @Title:同步日志服务
@@ -27,8 +28,8 @@ public class SynDetailService extends EcmObjectService<ExcSynDetail> implements 
 	@Autowired
 	private ExcSynDetailMapper excSysnDetailMapper;
 	
-	public static String ignoreCompany = "中国核动力研究院";
-	public static String inCompany = "CNPE";
+	public static String ignoreCompany = "中国核动力研究设计院";
+	public static String inCompany = CustomInfo.OwnerCompany;
 	
 	@Override
 	public String newObject(String token, Object obj) throws EcmException, AccessDeniedException, NoPermissionException {

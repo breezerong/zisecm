@@ -1,5 +1,5 @@
 <template>
-  <el-form label-width="120px" v-loading="loading" @submit.native.prevent>
+  <el-form label-width="120px" @submit.native.prevent>
     <el-row>
       <el-col :span="8">
         <el-form-item label="导入模板">
@@ -13,7 +13,7 @@
       <el-col :span="16" style="text-align:left">
         <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">下载模板</el-button>
       
-        <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">{{$t('application.start')+$t('application.Import')}}</el-button>
+        <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()" v-loading="loading">{{$t('application.start')+$t('application.Import')}}</el-button>
         &nbsp; &nbsp;
          <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
       </el-col>
@@ -132,6 +132,7 @@ export default {
         _self.$message("请选择导入Excel文件!");
         return;
       }
+      _self.loading = true;
       // if(_self.deliveryId==null || _self.deliveryId.length==0){
       //    _self.$message("请选择移交单导入!");
       //   return;
@@ -157,7 +158,7 @@ export default {
         })
         .then(function(response) {
           _self.importMessage = response.data.data;
-          // _self.loading = false;
+          _self.loading = false;
           _self.$message("导入成功!");
           _self.cleanFiles();
           _self.$emit("onImported");
@@ -165,6 +166,7 @@ export default {
         })
         .catch(function(error) {
           _self.$message("导入失败!");
+          _self.loading = false;
           console.log(error);
         });
     },

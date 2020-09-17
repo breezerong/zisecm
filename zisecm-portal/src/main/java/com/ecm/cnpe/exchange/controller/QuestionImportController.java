@@ -19,6 +19,7 @@ import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.util.CustomInfo;
 
 @RestController
 
@@ -55,7 +56,7 @@ public class QuestionImportController extends ControllerAbstract {
 		String id = documentService.newObject(getToken(), doc, null);
 		EcmDocument temp = new EcmDocument();
 		temp = documentService.getObjectById(getToken(), id);
-		OptionLogger.logger(getToken(), detailService, temp, "反馈确认", "CNPE");
+		OptionLogger.logger(getToken(), detailService, temp, "反馈确认", CustomInfo.OwnerCompany);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);

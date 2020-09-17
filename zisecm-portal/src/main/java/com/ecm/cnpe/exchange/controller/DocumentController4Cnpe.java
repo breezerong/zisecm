@@ -29,6 +29,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.util.CustomInfo;
 
 @Controller
 public class DocumentController4Cnpe extends ControllerAbstract {
@@ -76,6 +77,28 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 	 * @return
 	 * @throws Exception
 	 */
+	@RequestMapping(value = "/dc/getDocumentsICMUnion", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> getDocumentsICMUnion(@RequestBody String argStr) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			List<Map<String, Object>> list = documentService.getObjectsICM(getToken(), args.get("gridName").toString(),
+					args.get("folderId")==null?"":args.get("folderId").toString(), pager, args.get("condition").toString(),
+					args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
 	@RequestMapping(value = "/dc/dispenseDc", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> dispenseDc(@RequestBody String argStr) throws Exception {
@@ -272,8 +295,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 				doc.setReceiver(this.getSession().getCurrentUser().getUserName());
 				doc.setReceiveDate(new Date());
 				excTransferService.updateObject(doc);
-//				OptionLogger.logger(detailService, doc, "分包商接收", "CNPE");
-				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
+				OptionLogger.logger(getToken(), detailService, doc, CustomInfo.OwnerCompany);
 								
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -364,8 +386,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 					doc.setStatus1("已驳回");
 				}
 				excTransferService.updateObject(doc);
-//				OptionLogger.logger(detailService, doc, "分包商驳回", "CNPE");
-				OptionLogger.logger(getToken(), detailService, doc, "CNPE");
+				OptionLogger.logger(getToken(), detailService, doc, CustomInfo.OwnerCompany);
 				
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -518,7 +539,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 						obj.setStatus1("待确认");
 						obj.setComment1(msg);
 						obj.setDocId(childId);
-						obj.setToName("CNPE");
+						obj.setToName(CustomInfo.OwnerCompany);
 						excTransferService.newObject(obj);
 						OptionLogger.logger(getToken(), detailService, obj, "申请驳回", obj.getToName());
 					}else {

@@ -14,13 +14,13 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
-import com.ecm.core.exception.NoOnlyPolicyException;
-import com.ecm.portal.service.OnlyPolicyService;
+import com.ecm.core.exception.UniquenessException;
+import com.ecm.core.service.DocumentService;
 
 @Controller
 public class ValidateData extends ControllerAbstract {
 	@Autowired
-	private OnlyPolicyService policyService;
+	private DocumentService documentService;
 	@RequestMapping(value = "/dc/validateOnly", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> validateOnly(@RequestBody String argStr){
@@ -28,14 +28,8 @@ public class ValidateData extends ControllerAbstract {
 		Map<String,Object> mp=new HashMap<String, Object>();
 		boolean isOk=false;
 		try {
-			isOk= policyService.validateOnlyOne(getToken(), args);
+			isOk= documentService.validateOnlyOne(getToken(), args);
 			mp.put("isOk", isOk);
-		} catch (NoOnlyPolicyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			mp.put("isOk", true);
-			mp.put("code", ActionContext.SUCESS);
-			return mp;
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,6 +44,10 @@ public class ValidateData extends ControllerAbstract {
 			mp.put("msg", e.getMessage());
 			mp.put("code", ActionContext.FAILURE);
 			return mp;
+		} catch (UniquenessException e) {
+			// TODO Auto-generated catch block
+			mp.put("isOk", false);
+			mp.put("msg", e.getMessage());
 		}
 		mp.put("code", ActionContext.SUCESS);
 		return mp;

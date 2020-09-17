@@ -120,7 +120,7 @@
                             v-bind:tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="ApplyRejectGrid"
-                            condition=" ITEM_TYPE=2 and C_EX7_STRING='待确认' and TO_NAME='CNPE' "
+                            :condition=" 'ITEM_TYPE=2 and C_EX7_STRING=\'待确认\' and TO_NAME=\'' + ownerCompany + '\' '"
                             @rowclick="rowClick"
                             :isshowCustom="false"
                             :isEditProperty="false"
@@ -482,7 +482,7 @@ export default {
             },
         searchItem(){
             let _self=this;
-            let key=" ITEM_TYPE=2 and C_EX7_STRING='待确认' and TO_NAME='CNPE' "
+            let key=" ITEM_TYPE=2 and C_EX7_STRING='待确认' and TO_NAME='"+_self.ownerCompany+"' "
             if(_self.filters.projectCode!=''){
                 key+=" and C_PROJECT_NAME = "+_self.filters.projectCode;
             }else{

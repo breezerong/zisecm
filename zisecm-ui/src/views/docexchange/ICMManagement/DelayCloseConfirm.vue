@@ -179,7 +179,7 @@ export default {
     },
     search(){
         console.log(this.currentUser().company)        
-        if(this.currentUser().company=='CNPE'){
+        if(this.currentUser().company==_self.ownerCompany){
             this.isCNPE=true
         }
 

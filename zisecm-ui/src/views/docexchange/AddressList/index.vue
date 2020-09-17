@@ -306,8 +306,8 @@ export default {
       let _self = this;
       var m = new Map();
       var cond = "";
-      if(this.currentUser().company!='CNPE'){
-       cond= " (companyName ='"+this.currentUser().company+"' or companyName='CNPE')";
+      if(this.currentUser().company!=_self.ownerCompany){
+       cond= " (companyName ='"+this.currentUser().company+"' or companyName='"+_self.ownerCompany+"')";
       }else{
         cond=" 1=1 ";
       }

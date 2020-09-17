@@ -95,7 +95,7 @@ export default {
       // console.log("_self.noGroup:"+_self.noGroup);
       var m = new Map();
       
-      if(_self.currentUser().company=='CNPE'){
+      if(_self.currentUser().company==_self.ownerCompany){
         m.set(
         "condition",
         _self.inputkey == ""

@@ -65,6 +65,7 @@ Vue.prototype.onPreviousStatus=previousStatus;
 Vue.prototype.onWithdraw=withdraw;
 Vue.prototype.onPreviousStatusCnpe=previousStatusCnpe;
 Vue.prototype.onNextStatusCnpe=nextStatusCnpe;
+Vue.prototype.ownerCompany='中国核电工程有限公司';
 
 Vue.prototype.setStorageNumber = function(key,val){
   localStorage.setItem("ziecm-"+key, val);

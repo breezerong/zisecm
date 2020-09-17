@@ -30,7 +30,7 @@
             <el-col :span="24">
               <DataGrid
                 ref="mainDataGrid"
-                data-url="/dc/getDocuments"
+                data-url="/dc/getDocumentsICMUnion"
                 :isShowMoreOption="false"
                 :isshowOption="true"
                 :isshowCustom="false"
@@ -51,6 +51,7 @@ import ShowProperty from "@/components/ShowProperty";
 import DataGrid from "@/components/DataGrid";
 import DataSelect from "@/components/ecm-data-select";
 import DataLayout from "@/components/ecm-data-layout";
+import ExcelUtil from '@/utils/excel.js';
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 export default {
@@ -74,17 +75,16 @@ export default {
     search1() {
       let _self = this;
 
-      var k1 =
-        "TYPE_NAME='ICM'";
+      var k1 ="";
 
       if (_self.icmReportStatistc != undefined && _self.icmReportStatistc != "所有项目") {
-        k1 += " AND C_PROJECT_NAME in (" + _self.icmReportStatistc + ")";
+        k1 += "C_PROJECT_NAME in (" + _self.icmReportStatistc + ")";
       }
 
-      let user = this.currentUser();
+/*       let user = this.currentUser();
       if (user.userType == 2 && user.company != null) {
         k1 += " AND C_COMPANY='" + user.company + "'";
-      }
+      } */
 
       _self.$refs.mainDataGrid.condition = k1;
       _self.$refs.mainDataGrid.loadGridData();
@@ -100,7 +100,7 @@ export default {
         "" +
         fileDate.getDate();
       let params = {
-        gridName: "ICMReportGrid",
+        gridName: "ICMExchangeList",
         lang: "zh-cn",
         condition: this.$refs.mainDataGrid.condition,
         filename: "ICM_ExchangeList_" + fileDateStr + ".xlsx",
