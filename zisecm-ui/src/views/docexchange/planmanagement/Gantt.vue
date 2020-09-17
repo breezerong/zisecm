@@ -107,6 +107,7 @@ export default {
         onLoadnDataSuccess(select,options){
             this.search()
             this.tables.mainGrid.doLayout()
+            this.onSplitResize(55);
         },
         onSelectChange(val){
             this.forms.headForm.project = val
