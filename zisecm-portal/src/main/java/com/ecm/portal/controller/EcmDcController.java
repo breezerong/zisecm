@@ -2151,7 +2151,7 @@ public class EcmDcController extends ControllerAbstract {
 						if (!StringUtils.isEmpty(folderId)) {
 							doc.setFolderId(folderId);
 						}
-
+						doc.setVersionId(doc.getId());
 						doc.setContentSize((long) 0);
 						doc.setFormatName("");
 						doc.setModifiedDate(new Date());
