@@ -268,6 +268,43 @@
                                     @selectchange="attachmentDocSelect"
                                 ></DataGrid>
                             </el-tab-pane>
+                            <el-tab-pane label="内容项" name="t04" v-if="isShowMeet">
+                                <el-row>
+                                    <el-col :span="24">
+                                    <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                        <el-form-item>
+                                        <el-button type="primary" @click="beforeCreateDocItem('会议纪要内容项','会议纪要内容项')">{{$t('application.new')}}</el-button>
+                                        </el-form-item>
+                                        <!-- <el-form-item>
+                                        <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
+                                        </el-form-item> -->
+                                        <!-- <el-form-item>
+                                            <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
+                                        </el-form-item> -->
+                                        <el-form-item>
+                                        <el-button type="warning" @click="onDeleleItem(MeetDocSelected,[$refs.MeetDoc])">{{$t('application.delete')}}</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                    </el-col>
+                                </el-row>
+                                <!--列表-->
+                                <DataGrid
+                                        ref="MeetDoc"
+                                        key="MeetDocKey"
+                                        dataUrl="/dc/getDocuByRelationParentId"
+                                        v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                        v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                        gridViewName="MOMContentGrid"
+                                        condition=" and a.NAME='会议纪要内容项'"
+                                        :isShowMoreOption="false"
+                                        :isshowCustom="false"
+                                        :isEditProperty="true"
+                                        :isShowChangeList="false"
+                                        :isshowicon="false"
+                                        @selectchange="MeetDocSelect"
+                                        ></DataGrid>
+                            
+                            </el-tab-pane>
                         </el-tabs>
                     </template>
                 </split-pane>
@@ -353,6 +390,8 @@ export default {
             butt:false,
             propertyrela:false,
             inputValueNum:'',
+            isShowMeet:true,
+            MeetDocSelected:[],
         }
     },
     created(){
@@ -652,6 +691,7 @@ export default {
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=false;
                _self.selectedTabName='t01';
+               _self.isShowMeet=false;
                _self.$nextTick(()=>{
                    _self.$refs.transferDoc.parentId=row.ID;
                     _self.$refs.transferDoc.loadGridData();
@@ -665,7 +705,7 @@ export default {
                 _self.isShowDesgin=false;
                 _self.isShowRelevant=true;
                 _self.isShowAttachmentDoc=false;
-                
+                _self.isShowMeet=false;
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
@@ -681,9 +721,14 @@ export default {
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;
                _self.selectedTabName='t03';
+               if(row.TYPE_NAME=='会议纪要'){
+                    _self.isShowMeet=true;
+                }
                _self.$nextTick(()=>{
-               _self.$refs.attachmentDoc.parentId=row.ID;
-                 _self.$refs.attachmentDoc.loadGridData();
+                    _self.$refs.MeetDoc.parentId=row.ID;
+                    _self.$refs.MeetDoc.loadGridData();
+                    _self.$refs.attachmentDoc.parentId=row.ID;
+                    _self.$refs.attachmentDoc.loadGridData();
                });
             }
         },
@@ -695,9 +740,12 @@ export default {
             
             _self.childrenTypeSelectVisible=true;
         },
+        MeetDocSelect(val){
+            this.MeetDocSelected=val;
+        },
         beforeCreateDocItem(typeName,relationName) {
                 let _self = this;
-                if(typeName!='设计文件'&&typeName!='相关文件'){
+                if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'){
                     _self.parentId='';
                                      
                 }
