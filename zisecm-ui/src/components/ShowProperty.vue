@@ -105,7 +105,7 @@ export default {
   },
   mounted() {
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
-    this.loadFormInfo();
+    //this.loadFormInfo();
     this.clientPermission = sessionStorage.getItem(
         "access-clientPermission"
       );
@@ -481,7 +481,10 @@ export default {
                 //console.log(JSON.stringify(frmItems[i].attrName)+":"+frmItems[i].defaultValue);
               }
             }
+          
         _self.dataList = indata;
+        _self.mainObject = null;  
+          _self.mainSubRelation = null;
       }
       else
       {
