@@ -23,7 +23,7 @@
                 </div>
             </el-dialog>
             <!-- 相关文件创建选择IED-->
-            <el-dialog :title="dialog.title" :visible.sync="propertyrela" width="80%" :before-close="handleClose"> 
+            <el-dialog :title="dialog.title" :visible.sync="propertyrela" width="80%" :before-close="handleClose" > 
                 <DataLayout>
                     <template v-slot:header>
                         <el-form>
@@ -34,7 +34,7 @@
                         </el-form>  
                         </template>
                     <template v-slot:main>  
-                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid">
+                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid"  :tableHeight="360">
                                 <template slot="customMoreOption" slot-scope="scope">
                                 <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
                                 </template>
@@ -474,7 +474,8 @@ export default {
                 k1+=" AND (" + orS + ")"
             }
             // _self.tables.DialogDataGrid.condition+=k1
-            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition+k1
+            let key = _self.tables.DialogDataGrid.condition
+            _self.$refs.DialogDataGrid.condition=key+k1
             _self.$refs.DialogDataGrid.loadGridInfo()
             _self.$refs.DialogDataGrid.loadGridData()
         },
