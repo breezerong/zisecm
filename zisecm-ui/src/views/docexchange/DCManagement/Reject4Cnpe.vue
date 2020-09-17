@@ -6,6 +6,26 @@
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
+            <!-- 相关文件创建选择IED-->
+            <el-dialog :title="dialog.title" :visible.sync="propertyrela" width="80%" :before-close="handleClose"> 
+                <DataLayout>
+                    <template v-slot:header>
+                        <el-form>
+                        <el-form-item>
+                            <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.iedPublishedInputPlaceholder')"></el-input>
+                            <el-button type="primary" @click="searchIED()">{{$t('application.SearchData')}}</el-button>
+                        </el-form-item> 
+                        </el-form>  
+                        </template>
+                    <template v-slot:main>  
+                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid">
+                                <template slot="customMoreOption" slot-scope="scope">
+                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
+                                </template>
+                        </DataGrid>
+                    </template>
+                </DataLayout>
+            </el-dialog>
             <!-- 创建附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
                 <el-form size="mini" v-loading='uploading'>
@@ -65,7 +85,7 @@
                     v-bind:typeName="typeName"
                 ></ShowProperty>
                 <div slot="footer" class="dialog-footer">
-                    <el-button @click="saveItem">{{$t('application.save')}}</el-button>
+                    <el-button @click="saveItem" :loading="butt">{{$t('application.save')}}</el-button>
                     <el-button @click="propertyVisible = false">{{$t('application.cancel')}}</el-button>
                 </div>
             </el-dialog>
@@ -282,6 +302,19 @@ export default {
                 title:"",
                 visible:false
             },
+            tables:{
+                DialogDataGrid:{
+                    gridViewName:"IEDGrid",
+                    dataUrl:"/dc/getDocuments",
+                    condition:"TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')",                  
+                    isshowOption:true,
+                    isshowCustom:true,
+                    isshowicon:false,
+                    // isInitData:false,
+                    isShowMoreOption:false,
+                    isEditProperty:false
+                },
+            },
 			docId:"",
             filters: {
                 projectCode: "",
@@ -316,7 +349,10 @@ export default {
             isShowAttachmentDoc:true,
             selectedTabName:'t01',
             TRS:[],
-            isTC:false
+            isTC:false,
+            butt:false,
+            propertyrela:false,
+            inputValueNum:'',
         }
     },
     created(){
@@ -340,6 +376,59 @@ export default {
         this.searchItem()
     },
     methods: {
+        searchIED(){
+            let _self = this
+            let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
+            let orS = ""
+            var k1=""
+            if(_self.inputValueNum.trim().length>0){
+                wheres.forEach(function(item){
+                    if(orS.length>0){
+                        orS+=" OR "
+                    }
+                    orS+=item + " LIKE '%"+ _self.inputValueNum+"%'"
+                })
+                k1+=" AND (" + orS + ")"
+            }
+            // _self.tables.DialogDataGrid.condition+=k1
+            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition+k1
+            _self.$refs.DialogDataGrid.loadGridInfo()
+            _self.$refs.DialogDataGrid.loadGridData()
+        },
+        IEDChoose(row){
+            let _self = this;
+            let relationName="相关文件"
+            let typeName="相关文件"
+            _self.relationName=relationName;
+            _self.dialogName = typeName;
+            _self.propertyVisible = true;
+            setTimeout(()=>{
+                if(_self.$refs.ShowProperty){
+                    _self.$refs.ShowProperty.myItemId = "";
+                    _self.dialogName=typeName;
+                    _self.$refs.ShowProperty.myTypeName =typeName;
+                    
+                    if(typeName=='相关文件'){
+                        _self.$refs.ShowProperty.showUploadFile = false;
+                        _self.$refs.ShowProperty.formName=_self.relation.formName;
+                    }else{
+                        _self.$refs.ShowProperty.showUploadFile = true;
+                        _self.$refs.ShowProperty.formName="";
+                    }
+                    _self.typeName=typeName;
+                    
+                    _self.$refs.ShowProperty.setMainObject(row);
+                    let mp=new Map();
+                    mp.set("CODING",'CODING');
+                    mp.set("C_IN_CODING",'C_IN_CODING');
+                    mp.set("TITLE",'TITLE');
+                    mp.set("REVISION","REVISION")
+
+                    _self.$refs.ShowProperty.setMainSubRelation(mp);
+                    _self.$refs.ShowProperty.loadFormInfo();
+                }
+            },10);
+        },
         dbClick(row){
             this.docId=row.ID;
             this.dialog.visible=true;
@@ -612,6 +701,42 @@ export default {
                     _self.parentId='';
                                      
                 }
+                if(typeName=='相关文件'){
+                    var m = new Map();
+                    m.set('parentDocId',_self.parentId);
+                    let formdata = new FormData();
+                    let ID=''
+                    formdata.append("metaData",JSON.stringify(m));
+                        axios.post("/dc/checkRelationDocument",formdata,{
+                        'Content-Type': 'multipart/form-data'
+                    })
+                    .then(function(response) {
+                        let code = response.data.code;
+                        ID=response.data.ID;
+                        if (code == 1) {
+                            _self.tables.DialogDataGrid.condition+=" and ID NOT IN ("+ID+")"
+                            _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
+                            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                            _self.$refs.DialogDataGrid.loadGridInfo()
+                            _self.$refs.DialogDataGrid.loadGridData()
+                            _self.propertyrela=true
+                            return
+                        }else{
+                            _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
+                            _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                            _self.$refs.DialogDataGrid.loadGridInfo()
+                            _self.$refs.DialogDataGrid.loadGridData()
+                            _self.propertyrela=true
+                            return
+                        }
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    });
+                    _self.propertyrela=true
+                    return;
+                }
                 _self.relationName=relationName;
                 _self.dialogName = typeName;
                 _self.propertyVisible = true;
@@ -728,138 +853,161 @@ export default {
             this.selectedTransferDocItems = val;
         },
         // 保存文档
-        saveItem() {
-        if (!this.$refs.ShowProperty.validFormValue()) {
-            return;
-        }
-        let _self = this;
-        var m = new Map();
-        let dataRows = this.$refs.ShowProperty.dataList;
-        var i;
-        for (i in dataRows) {
-            if (dataRows[i].attrName && dataRows[i].attrName != "") {
-            if (
-                dataRows[i].attrName != "FOLDER_ID" &&
-                dataRows[i].attrName != "ID"
-            ) {
-                m.set(dataRows[i].attrName, dataRows[i].defaultValue);
+        saveItem()
+        {
+            let _self = this;
+            if(!this.$refs.ShowProperty.validFormValue()){
+                return;
             }
+            _self.butt=true
+            var m = new Map();
+            var c;
+            for(c in _self.$refs.ShowProperty.dataList){
+                let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+                var i;
+                for (i in dataRows) {
+                if(dataRows[i].attrName && dataRows[i].attrName !='')
+                {
+                    if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                    {
+                    var val = dataRows[i].defaultValue;
+                    if(val && dataRows[i].isRepeat){
+                        var temp = "";
+                    // console.log(val);
+                        for(let j=0,len=val.length;j<len;j++){
+                        temp = temp + val[j]+";";
+                        //console.log(temp);
+                        }
+                        temp = temp.substring(0,temp.length-1);
+                        val = temp;
+                        console.log(val);
+                    }
+                    m.set(dataRows[i].attrName, val);
+                    }
+                }
+                }
             }
-        }
-        if (_self.$refs.ShowProperty.myItemId != "") {
-            m.set("ID", _self.$refs.ShowProperty.myItemId);
-        }
-        if (_self.$refs.ShowProperty.myTypeName != "") {
-            m.set("TYPE_NAME", _self.$refs.ShowProperty.myTypeName);
-            m.set("folderPath", _self.$refs.ShowProperty.folderPath);
-            m.set("parentDocId", _self.parentId);
-            m.set("relationName",_self.relationName);
-        }
-        let formdata = new FormData();
-        formdata.append("metaData", JSON.stringify(m));
-
-        if (_self.$refs.ShowProperty.file != "") {
-            //console.log(_self.file);
-            formdata.append("uploadFile", _self.$refs.ShowProperty.file.raw);
-        }
-        // console.log(JSON.stringify(m));
-        if (_self.$refs.ShowProperty.myItemId == "") {
-            _self
-            .axios({
-                headers: {
-                "Content-Type": "multipart/form-data"
-                // x-www-form-urlencoded'
-                //"Content-Type": "application/json;charset=UTF-8"
-                },
-                method: "post",
-                data: formdata,
-                url: "/dc/newDocumentOrSubDoc"
-            })
-            .then(function(response) {
-                let code = response.data.code;
-                //console.log(JSON.stringify(response));
-                if (code == 1) {
-                // _self.$message("创建成功!");
-                _self.$message({
-                    showClose: true,
-                    message: "创建成功!",
-                    duration: 2000,
-                    type: "success"
-                });
-                _self.propertyVisible = false;
-
-                // _self.loadTransferGridData();
-                if(_self.$refs.mainDataGrid){
-                    _self.$refs.mainDataGrid.loadGridData();
+            if(_self.$refs.ShowProperty.myItemId!='')
+            {
+                m.set('ID',_self.$refs.ShowProperty.myItemId);
+            }
+            if(_self.$refs.ShowProperty.myTypeName!='')
+            {
+                m.set('TYPE_NAME',_self.$refs.ShowProperty.myTypeName);
+                m.set('FOLDER_ID',_self.$refs.ShowProperty.myFolderId);
+                m.set("parentDocId", _self.parentId);
+                m.set("relationName",_self.relationName);
+            }
+            _self.validateData(m,function(isOk){
+                if(isOk==false){
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t('message.dataIsnotOnly'),
+                        duration: 2000,
+                        type: 'error'
+                    });
+                    _self.butt=false;
+                    return;
                 }
-                if(_self.$refs.transferDoc){
-                    _self.$refs.transferDoc.loadGridData();
-                }
-                if(_self.$refs.relevantDoc){
-                    _self.$refs.relevantDoc.loadGridData();
-                }
+                let formdata = new FormData();
+                formdata.append("metaData",JSON.stringify(m));
                 
-                } else {
-                // _self.$message("新建失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "新建失败!",
-                    duration: 2000,
-                    type: "warning"
-                });
+                if(_self.$refs.ShowProperty.file!="")
+                {
+                    //console.log(_self.file);
+                    formdata.append("uploadFile",_self.$refs.ShowProperty.file.raw);
                 }
-            })
-            .catch(function(error) {
-                // _self.$message("新建失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "新建失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                console.log(error);
-            });
-        } else {
-            _self
-            .axios({
-                headers: {
-                "Content-Type": "application/json;charset=UTF-8"
-                },
-                method: "post",
-                data: JSON.stringify(m),
-                url: "/dc/saveDocument"
-            })
-            .then(function(response) {
-                let code = response.data.code;
-                //console.log(JSON.stringify(response));
-                if (code == 1) {
-                    
-                    _self.$emit("onSaved", "update");
-                } else {
-                // _self.$message("保存失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "保存失败!",
-                    duration: 5000,
-                    type: "error"
-                });
+                // console.log(JSON.stringify(m));
+                if(_self.$refs.ShowProperty.myItemId=='')
+                {
+                    axios.post("/dc/newDocumentOrSubDoc",formdata,{
+                        'Content-Type': 'multipart/form-data'
+                    })
+                    .then(function(response) {
+                        let code = response.data.code;
+                        //console.log(JSON.stringify(response));
+                        if (code == 1) {
+                            // _self.$message("创建成功!");
+                            _self.$message({
+                                showClose: true,
+                                message: "创建成功!",
+                                duration: 2000,
+                                type: "success"
+                            });
+                            _self.butt=false;
+                            _self.propertyVisible = false;
+                            _self.propertyrela=false
+
+                            // _self.loadTransferGridData();
+                            _self.$refs.mainDataGrid.loadGridData();
+
+                            if(_self.$refs.transferDoc!=undefined){
+                                _self.$refs.transferDoc.loadGridData();
+                            }
+                            if(_self.$refs.relevantDoc!=undefined){
+                                _self.$refs.relevantDoc.loadGridData();
+                            }
+                            
+                            
+                        } 
+                        else if(response.data.MES!=""){
+                            _self.$message({
+                                showClose: true,
+                                message: response.data.MES,
+                                duration: 2000,
+                                type: "warning"
+                            });
+                            _self.butt=false;
+                        
+                        }else{
+                            _self.$message({
+                                showClose: true,
+                                message: _self.$t('message.newFailured'),
+                                duration: 2000,
+                                type: "warning"
+                            });
+                            _self.butt=false;
+                        }
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    _self.butt=false;
+                    });
                 }
-            })
-            .catch(function(error) {
-                // _self.$message("保存失败!");
-                _self.$message({
-                    showClose: true,
-                    message: "保存失败!",
-                    duration: 5000,
-                    type: "error"
-                });
-                console.log(error);
+                else
+                {
+                    if(_self.$refs.ShowProperty.permit<5){
+                    _self.$message(_self.$t('message.hasnoPermssion'));
+                    _self.butt=false;
+                    return ;
+                    }
+                    axios.post("/dc/saveDocument",JSON.stringify(m))
+                    .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if(code==1){
+                        _self.butt=false;
+                        _self.$emit('onSaved','update');
+                    }
+                    else{
+                        _self.butt=false;
+                        _self.$message(_self.$t('message.saveFailured'));
+                    }
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.saveFailured'));
+                    _self.butt=false;
+                    console.log(error);
+                    });
+                }
             });
-        }
+        
         },
         // 保存结果事件
         onSaved(indata) {
         let _self=this;
+        _self.butt=true
         if (indata == "update") {
             // _self.$message(_self.$t("message.saveSuccess"));
             _self.$message({
@@ -868,6 +1016,7 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         } else {
             // _self.$message("新建成功!");
             _self.$message({
@@ -876,8 +1025,11 @@ export default {
                 duration: 2000,
                 type: 'success'
             });
+            _self.butt=false
         }
         _self.propertyVisible = false;
+        _self.propertyrela=false
+        _self.butt=false
         
         },
         loadOptionList(queryName,val){
