@@ -86,7 +86,7 @@
                                             &&scope.data.row['STATUS']=='变更中')?{'background':'#409EFF'}:''">{{scope.data.$index+1}}</span>
                         </template>
                         <template slot="saveButton" slot-scope="scope">
-                            12312312321321312
+                           <el-button @click='change()'>变更</el-button>
                         </template>
                     </DataGrid>
                         
@@ -252,7 +252,53 @@ export default {
             })   
         },
 
+        change(){
+            let _self=this;
+            let formData= _self.$refs.mainDataGrid.$refs.ShowProperty.getFormData();
+            let mp = formData.get('metaData')
+            let m= JSON.parse(formData.get('metaData'))
+            let status
+            let itemStatus
+            for(let i = 0 ;i < m.length;i++){
+                if(m[i][0]=='STATUS'){
+                status = m[i][1]}
+                if(m[i][0]=='C_ITEM_STATUS2'){
+                    itemStatus==m[i][1]
+                }
+            }              
+            if(itemStatus=='Y'){
+            let msg = _self.$t('message.publishedChangeForY')
+            _self.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
+            return
+            }
+            if(status=='变更中'){
+            let msg = _self.$t('message.publishedChangeForChanging')
+            _self.$message({ showClose: true, message: msg, duration: 2000, type: "warning"})
+            return
+            }
+            let alert = _self.$t('message.publishedAlert')
+            let msg1 = _self.$t('message.publishedChangeConfirm')
+            _self.$confirm(msg1,alert, {confirmButtonText: this.$t('application.ok'),cancelButtonText: this.$t('application.cancel'),type: 'warning'}).then(() => {
+                 axios.post("/exchange/ied/changeIEDSingle",mp).then(function(response){
+                     let code = response.data.code
+                     if(code==3){
+                     let msg1 = _self.$t('message.publishedFailedForCoding')
+                     _self.$message({showClose: true, message: msg1, duration: 2000, type: "error"})
+                     }
+                     if(code==1){
+                      let msg = _self.$t('message.publishedChangeSuccessed')
+                     _self.$message({showClose: true, message: msg, duration: 2000, type: "success"})
+                     _self.$refs.mainDataGrid.propertyVisible = false
+                     _self.$refs.mainDataGrid.loadGridData()}
+                  }).catch(function(error){
+                     console.log(error)
+                 })
+                }).catch(() => {
+                
+             })
+        },
 
+    
         async init(){
             let _self =  this
             let url="/admin/uirelation/get"

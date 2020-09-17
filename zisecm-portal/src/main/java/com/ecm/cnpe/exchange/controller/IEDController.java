@@ -169,6 +169,45 @@ public class IEDController  extends ControllerAbstract  {
 		result.put("code", ActionContext.SUCESS);
 		return result;		
 	}
+	
+	@PostMapping("/exchange/ied/changeIEDSingle")
+	@ResponseBody
+	public Map<String, Object> changeIEDSingle(@RequestBody String  metadata){
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(metadata);
+		String id = args.get("ID").toString();
+		String coding = args.get("CODING").toString();
+			try {
+				EcmDocument docObj = documentService.getObjectById(getToken(), id);
+				EcmDocument newDoc = documentService.getObjectById(getToken(), id);
+				Map<String, Object> map = new HashMap<String, Object>();
+				String cond = "TYPE_NAME='IED' AND CODING='"+coding+"' and status='新建'";
+				List<Map<String,Object>> res =documentService.getObjectMap(getToken(), cond);	
+				if(res.size()>0) {
+					result.put("code", "3");
+					return result;
+				}
+				map = args;
+				map.put("C_ITEM_STATUS1", "修订");
+				map.put("C_IS_RELEASED", 0);
+				newDoc=documentService.checkIn(getToken(), id, map, null, false);
+				documentService.updateStatus(getToken(), newDoc.getId(), "新建");
+				documentService.updateStatus(getToken(), docObj.getId(), "变更中");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		result.put("code", ActionContext.SUCESS);
+		return result;		
+	}
+	
+	
+	
+	
+	
+	
+	
 	@PostMapping("/exchange/ied/iedFeedback")
 	@ResponseBody
 	public Map<String, Object> IEDFeedBack(String metaData)  throws Exception{
