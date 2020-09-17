@@ -9,6 +9,12 @@
     <el-tab-pane label="ICM接口及交换信息完整清单" name="ICMExchange">
       <ICMExchangeGrid></ICMExchangeGrid>
     </el-tab-pane>
+    <el-tab-pane label="接口打开完成情况报表" name="ICMOpen">
+      <ICMOpenGrid></ICMOpenGrid>
+    </el-tab-pane>
+    <el-tab-pane label="接口关闭完成情况报表" name="ICMClose">
+      <ICMCloseGrid></ICMCloseGrid>
+    </el-tab-pane>
     <el-tab-pane label="CNPE各所接口完成统计" name="CNPEComplete">
       <CNPECompleteReport></CNPECompleteReport>
     </el-tab-pane>
@@ -18,7 +24,7 @@
   </el-tabs>
 </template>
 <script type="text/javascript">
-import { ICMBaseReport, ICMReportGrid, ICMExchangeGrid, CNPECompleteReport, ContactorReport} from "./ICMLayout/";
+import { ICMBaseReport, ICMReportGrid, ICMExchangeGrid, ICMOpenGrid, ICMCloseGrid, CNPECompleteReport, ContactorReport} from "./ICMLayout/";
 export default {
   name: "ICMReport",
   data() {
@@ -34,6 +40,8 @@ export default {
     ICMBaseReport,
     ICMReportGrid,
     ICMExchangeGrid,
+    ICMOpenGrid,
+    ICMCloseGrid,
     CNPECompleteReport,
     ContactorReport,
   },
