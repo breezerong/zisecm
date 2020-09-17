@@ -19,6 +19,7 @@ import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.util.CustomInfo;
 
 @RestController
 
@@ -93,7 +94,7 @@ public class DocTopController extends ControllerAbstract  {
 		String sqlThreePlanNum="",sqlIEDNum="",sqlICMNum="",sqlreceivedNum="";
 		sqlList="select ("+
 		sqlSum+") as sumNum, (";
-		if(getLCompany.equals("CNPE")==false) {
+		if(getLCompany.equals(CustomInfo.OwnerCompany)==false) {
 			whereSql+=" and (C_COMPANY='"+getLCompany+"'";
 			//分包商项目信息
 			sqlThreePlanNum = "select count(*) as ThreePlanNum from "
@@ -107,7 +108,7 @@ public class DocTopController extends ControllerAbstract  {
 			String sqlApplyReject="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and b.TO_NAME='"+company+"'"
 					+" and item_type='1' and b.status1='待确认'";
 			String ApplyRejectConfirm="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and"
-					  +" b.TO_NAME='CNPE' and b.ITEM_TYPE='1' and b.status1='待确认'";
+					  +" b.TO_NAME='"+CustomInfo.OwnerCompany+"' and b.ITEM_TYPE='1' and b.status1='待确认'";
 			
 			//分包商基本信息
 			String sqldcNum = "select count(*) as dcNum from "
@@ -143,7 +144,7 @@ public class DocTopController extends ControllerAbstract  {
 			String sqlApplyReject="select count(*) from ecm_document a,exc_transfer b where a.id = b.doc_id and"
 								 +" b.status1='待确认' and b.APPLICANT='"+userName+"'";
 			String ApplyRejectConfirm="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and"
-									  +" b.TO_NAME='CNPE' and b.ITEM_TYPE='2' and b.status1='待确认'";
+									  +" b.TO_NAME='"+CustomInfo.OwnerCompany+"' and b.ITEM_TYPE='2' and b.status1='待确认'";
 			 
 			//CNPE项目信息
 			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
@@ -244,7 +245,7 @@ public class DocTopController extends ControllerAbstract  {
 			whereSql+=")";
 		}
 		String getLCompany=getSession().getCurrentUser().getCompany();
-		if(getLCompany.equals("CNPE")==false) {
+		if(getLCompany.equals(CustomInfo.OwnerCompany)==false) {
 			whereSql+=" and (C_COMPANY='"+getLCompany+"' or TO_NAME='"+getLCompany+"')";
 		}
 		String sql="select STATUS,count(*) as c from ecm_document where (c_item_type='文函' or type_name='设计文件') and c_is_released=1 "+whereSql+" GROUP by status ";

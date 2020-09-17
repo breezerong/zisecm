@@ -424,7 +424,7 @@ export default {
     refreshData() {
       let _self = this;
       var m = new Map();
-      var cond = " (COMPANY_NAME ='"+this.currentUser().company+"' or COMPANY_NAME='CNPE')";
+      var cond = " (COMPANY_NAME ='"+this.currentUser().company+"' or COMPANY_NAME='"+_self.ownerCompany+"')";
       if (_self.inputkey && _self.inputkey.length > 0) {
         cond +=" and NAME like '%" +
           _self.inputkey +

@@ -31,6 +31,7 @@ import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.util.CustomInfo;
 
 @RestController
 
@@ -70,7 +71,7 @@ public class ICMController  extends ControllerAbstract  {
 			doc.setAclName(folder.getAclName());
 			String id = documentService.newObject(getToken(), doc, null);
 			doc.setId(id);
-			OptionLogger.logger(getToken(), detailService,doc, "新建","CNPE");
+			OptionLogger.logger(getToken(), detailService,doc, "新建",CustomInfo.OwnerCompany);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("id", id);
 		}catch (AccessDeniedException e) {
@@ -166,7 +167,7 @@ public class ICMController  extends ControllerAbstract  {
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		EcmDocument doc = new EcmDocument();
 		doc.setAttributes(args);
-		OptionLogger.logger(getToken(), detailService,doc, "修改","CNPE");
+		OptionLogger.logger(getToken(), detailService,doc, "修改",CustomInfo.OwnerCompany);
 	}
 	
 	@RequestMapping(value ="/exchange/ICM/AcceptICMFeedback",method = RequestMethod.POST)
@@ -178,7 +179,7 @@ public class ICMController  extends ControllerAbstract  {
 		temp = documentService.getObjectById(getToken(), ids.get(i));
 		temp.addAttribute("C_PROCESS_STATUS", "已确认");
 		documentService.updateObject(getToken(), temp, null);	
-		OptionLogger.logger(getToken(), detailService, temp, "延误打开确认", "CNPE");
+		OptionLogger.logger(getToken(), detailService, temp, "延误打开确认", CustomInfo.OwnerCompany);
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);

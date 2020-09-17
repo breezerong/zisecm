@@ -36,6 +36,7 @@ import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.util.CustomInfo;
 
 /**
  * 用户控制器
@@ -348,10 +349,10 @@ public class UserManager extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			userService.updateObject(getToken(), obj);
-			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
+			if(CustomInfo.OwnerCompany.equals(this.getSession().getCurrentUser().getCompany())) {
 				OptionLogger.loggerUser(getToken(), detailService, obj, obj.getCompanyName(),"修改用户");
 			}else {
-				OptionLogger.loggerUser(getToken(), detailService, obj, "CNPE","修改用户");
+				OptionLogger.loggerUser(getToken(), detailService, obj, CustomInfo.OwnerCompany,"修改用户");
 			}
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
@@ -421,10 +422,10 @@ public class UserManager extends ControllerAbstract {
 				fileName = uploadFile.getOriginalFilename();
 			}
 			userService.newObject(getToken(), en, instream, fileName);
-			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
+			if(CustomInfo.OwnerCompany.equals(this.getSession().getCurrentUser().getCompany())) {
 				OptionLogger.loggerUser(getToken(), detailService, en, en.getCompanyName(),"新建用户");
 			}else {
-				OptionLogger.loggerUser(getToken(), detailService, en, "CNPE","新建用户");
+				OptionLogger.loggerUser(getToken(), detailService, en, CustomInfo.OwnerCompany,"新建用户");
 			}
 			
 			if (instream != null) {
@@ -530,10 +531,10 @@ public class UserManager extends ControllerAbstract {
 			
 			EcmGroup group= groupService.getObjectById(getToken(), args.get("roleId").toString());
 			
-			if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
+			if(CustomInfo.OwnerCompany.equals(this.getSession().getCurrentUser().getCompany())) {
 				OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),user.getCompanyName(),"移除用户");
 			}else {
-				OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),"CNPE","移除用户");
+				OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),CustomInfo.OwnerCompany,"移除用户");
 			}
 			
 			mp.put("code", ActionContext.SUCESS);
