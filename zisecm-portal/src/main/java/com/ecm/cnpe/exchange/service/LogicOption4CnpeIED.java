@@ -41,6 +41,7 @@ public class LogicOption4CnpeIED {
 		String coding = mainDoc.getCoding();
 		String id = mainDoc.getId();
 		EcmDocument tempE2 = documentService.getObjectById(token, id);
+		if(tempE2.getAttributeValue("C_EX1_DATE")!=null && tempE2.getAttributeValue("C_EX2_DATE")!=null) {
 		String MainEx1 = tempE2.getAttributeValue("C_EX1_DATE").toString();
 		String MainEx2 = tempE2.getAttributeValue("C_EX2_DATE").toString(); // 提交版
 		String tempE1EX1;					//服务器当前版数据
@@ -66,7 +67,7 @@ public class LogicOption4CnpeIED {
 					tempE1.addAttribute("C_ITEM2_DATE", tempE1EX2);
 					System.out.println(tempE1.getAttributeValue("C_ITEM2_DATE"));
 				}
-			}
+			}}
 			documentService.updateObject(token, tempE1, null);
 		}
 		LoginUser user;

@@ -408,6 +408,7 @@
     "inputQuestionLimit":"Limited in Title",
     "iedPublishedInputPlaceholder":"ExternalCode, InternalCode and Title",
     "publishedChangeForY":"The status is displayed as 'Y' and cannot be changed. Please cancel this option",
+    "publishedFailedForCoding":"Coding is duplicated after change,operation failure",
     "publishedChangeForChanging":"'Changing' option cannot be changed again. Please cancel this option",
     "publishedChangeSuccessed":"Selected Items is now Successfully changed ",
     "publishedNonSelected":"Please select items for change",
