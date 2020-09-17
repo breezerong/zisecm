@@ -127,7 +127,7 @@ export default {
             let parentId = tree.id
             let param = {
                 id:parentId,
-                condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") "
+                condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") and SUB_TYPE='WBS' "
             }
             axios.post(url,param).then(function(result){
                 resolve(result.data.data)
@@ -137,7 +137,7 @@ export default {
             let _self = this
             let url = "/exchange/plant/list"
             let param = {
-                condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") "
+                condition : " C_PROJECT_NAME in ("+this.forms.headForm.project+") and SUB_TYPE='WBS' "
             }
             _self.tables.mainGrid.data=[]
             axios.post(url,param).then(function(result){

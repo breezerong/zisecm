@@ -78,7 +78,7 @@ public class PlantMnanager extends ControllerAbstract {
 	}
 	
 	private String getStartDate(String condition) {
-		StringBuffer sql = new StringBuffer("select top 1 C_ITEM1_DATE startDate from ecm_document where TYPE_NAME='计划任务'");
+		StringBuffer sql = new StringBuffer("select top 1 C_ITEM1_DATE startDate from ecm_document where TYPE_NAME='计划任务' and C_ITEM1_DATE is not null  ");
 		if(!StringUtils.isEmpty(condition)) {
 			sql.append(" and ");
 			sql.append(condition);

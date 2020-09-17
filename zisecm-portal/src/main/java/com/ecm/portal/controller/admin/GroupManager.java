@@ -22,6 +22,7 @@ import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.util.CustomInfo;
 
 /**
  * 用户控制器
@@ -184,10 +185,10 @@ public class GroupManager extends ControllerAbstract {
 		
 		EcmGroup group= groupService.getObjectById(getToken(), args.get("deptId").toString());
 		
-		if("CNPE".equals(this.getSession().getCurrentUser().getCompany())) {
+		if(CustomInfo.OwnerCompany.equals(this.getSession().getCurrentUser().getCompany())) {
 			OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),user.getCompanyName(),"添加到角色");
 		}else {
-			OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),"CNPE","添加到角色");
+			OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),CustomInfo.OwnerCompany,"添加到角色");
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", result ? ActionContext.SUCESS : ActionContext.FAILURE);
