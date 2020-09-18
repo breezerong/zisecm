@@ -1,7 +1,34 @@
 <template>
     <DataLayout>
         <template v-slot:header>
-           <el-dialog :title="$t('application.iedfeedback')" :visible.sync="feedbackVisual" width="300">
+        <el-dialog title="批量导入IED" :visible.sync="batchDialogVisible" width="80%" >
+            <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
+            <div slot="footer" class="dialog-footer">
+            <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog :title="$t('application.IedFeedBackExcel')" :visible.sync="importdialogVisible" width="70%">
+        <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+                <el-upload
+                    :limit="100"
+                    :file-list="fileList"
+                    action
+                    :on-change="handleChange"
+                    :auto-upload="false"
+                    :multiple="true"
+                >
+                    <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+                </el-upload>
+                </div>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+                <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
+            </div>
+        </el-dialog>
+
+            <el-dialog :title="$t('application.iedfeedback')" :visible.sync="feedbackVisual" width="300">
                 <el-form :model="forms.feedForm" :rules="rule" ref="feedForm" label-width="100px">
                 <el-form-item :label="$t('application.EstimDate')" prop="date" >
                 <el-date-picker type="date" :placeholder="$t('application.selectDate')" v-model="forms.feedForm.date"></el-date-picker>
