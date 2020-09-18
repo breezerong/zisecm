@@ -11,8 +11,8 @@
               </el-select>
             </el-form-item>
              <el-form-item>
-                <el-button @click="createNewName">{{$t('application.new')}}</el-button><!--  @click="showCreateName" -->
-                <el-button>{{$t('application.delete')}}</el-button><!--  @click="deleteGridView" -->
+                <el-button @click="createGridView">{{$t('application.new')}}</el-button><!--  @click="showCreateName" -->
+                <el-button @click="deleteGridView">{{$t('application.delete')}}</el-button><!--  @click="deleteGridView" -->
              </el-form-item>
           </el-form>
         </el-row>
@@ -107,6 +107,7 @@ export default {
     return{
       customNames:[],
       selectedName:"",
+      currentLanguage:"zh-cn",
       tables:{
         source:{
           attrs:{
@@ -132,6 +133,11 @@ export default {
   mounted(){
     this.loadCustomName()
     this.tables.source.data = this.sysColumnInfo
+  },
+  watch: {
+    '$store.state.app.language':function(nv,ov){
+        this.currentLanguage=nv;        
+      }
   },
   methods:{
     saveCustomColumn(){
@@ -162,6 +168,7 @@ export default {
         console.log(error)
       })
     },
+    
     cancelCustomColumn(){
       this.clearData()
       this.$emit("onClose")
@@ -233,7 +240,7 @@ export default {
         this.tables.target.data.splice(index, 0, downData)
       }
     },
-    createNewName(){
+    createGridView(){
       let _self = this
       this.$prompt('请输入列名称', '新建列名', {
           confirmButtonText: '确定',
@@ -256,6 +263,21 @@ export default {
             message: '你的邮箱是: ' + value
           });
         }).catch();
+    },
+    deleteGridView(){
+      let _self = this
+      let m = new Map();
+      m.set('gridName',this.gridViewName);
+      m.set('DESCRIPTION',this.selectedName);
+      m.set("lang", this.currentLanguage);
+      let url = "/admin/deleteCustomGridView"
+      axios.post(url,JSON.stringify(m)).then(function(response){
+        if(response.data.code==1){
+          _self.$message({showClose: true,message: "删除成功！",duration: 2000,type: "Success"});
+          _self.selectedName=""
+          _self.loadCustomName()
+        }
+      }).catch(function(error){})
     }
   }
 }
