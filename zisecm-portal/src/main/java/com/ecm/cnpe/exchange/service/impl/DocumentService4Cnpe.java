@@ -199,7 +199,8 @@ public class DocumentService4Cnpe extends DocumentService{
 						"a.C_ITEM_STATUS3," + 
 						"a.C_DRAFTER1," + 
 						"a.C_DRAFT1_DATE," + 
-						"a.C_COMMENT2," + 
+						"a.C_COMMENT2," +
+						"a.C_COMMENT8," +
 						"a.C_EX6_DATE," + 
 						"a.C_EX7_DATE," + 
 						"a.C_EX6_STRING," + 
