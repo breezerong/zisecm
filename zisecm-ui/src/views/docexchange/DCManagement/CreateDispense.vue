@@ -34,7 +34,7 @@
                         </el-form>  
                         </template>
                     <template v-slot:main>  
-                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid"  :tableHeight="360">
+                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid"  :tableHeight="360" :isshowCustom="false" :isShowChangeList="false">
                                 <template slot="customMoreOption" slot-scope="scope">
                                 <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
                                 </template>
@@ -346,6 +346,43 @@
                                         ></DataGrid>
                             
                             </el-tab-pane>
+                            <el-tab-pane label="材料变更清单" name="t05" v-if="isShowMaterial">
+                                <el-row>
+                                    <el-col :span="24">
+                                    <el-form :inline="true" :model="filters" @submit.native.prevent>
+                                        <el-form-item>
+                                        <el-button type="primary" @click="beforeCreateDocItem('材料变更清单','材料变更清单')">{{$t('application.new')}}</el-button>
+                                        </el-form-item>
+                                        <!-- <el-form-item>
+                                        <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
+                                        </el-form-item> -->
+                                        <!-- <el-form-item>
+                                            <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
+                                        </el-form-item> -->
+                                        <el-form-item>
+                                        <el-button type="warning" @click="onDeleleItem(MaterialDocSelected,[$refs.MaterialDoc])">{{$t('application.delete')}}</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                    </el-col>
+                                </el-row>
+                                <!--列表-->
+                                <DataGrid
+                                    ref="MaterialDoc"
+                                    key="MaterialDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="MaterialChangeGrid"
+                                    condition=" and a.NAME='材料变更清单'"
+                                    :isShowMoreOption="false"
+                                    :isshowCustom="false"
+                                    :isEditProperty="true"
+                                    :isShowChangeList="false"
+                                    :isshowicon="false"
+                                    @selectchange="MaterialDocSelect"
+                                ></DataGrid>
+                            
+                            </el-tab-pane>
                         </el-tabs>
                     </template>
                 </split-pane>
@@ -379,7 +416,7 @@ export default {
             bottomHeight: 125,
             tables:{
                 DialogDataGrid:{
-                    gridViewName:"IEDGrid",
+                    gridViewName:"SearchIEDGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')",                  
                     isshowOption:true,
@@ -436,6 +473,8 @@ export default {
             inputValueNum:'',
             isShowMeet:true,
             MeetDocSelected:[],
+            isShowMaterial:true,
+            MaterialDocSelected:[],
         }
     },
     created(){
@@ -730,6 +769,7 @@ export default {
                _self.isShowAttachmentDoc=false;
                _self.selectedTabName='t01';
                 _self.isShowMeet=false;
+                _self.isShowMaterial=false;
                _self.$nextTick(()=>{
                    _self.$refs.transferDoc.parentId=row.ID;
                     _self.$refs.transferDoc.loadGridData();
@@ -744,8 +784,17 @@ export default {
                 _self.isShowRelevant=true;
                 _self.isShowAttachmentDoc=false;
                 _self.isShowMeet=false;
+                if(row.TYPE_NAME=='DEN设计变更通知单'){
+                    _self.isShowMaterial=true
+                }else{
+                    _self.isShowMaterial=false
+                }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
+                    _self.$refs.MaterialDoc.parentId=row.ID;
+                    _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.MaterialDoc,function(val){
+                    _self.relation=val;
+                    });
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
                     // _self.$refs.relevantDoc.loadGridInfo();
@@ -759,9 +808,12 @@ export default {
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;
                _self.selectedTabName='t03';
-               
+               _self.isShowMaterial=false;
                 if(row.TYPE_NAME=='会议纪要'){
                     _self.isShowMeet=true;
+                }else{
+                    
+                    _self.isShowMeet=false;
                 }
                _self.$nextTick(()=>{
                    
@@ -772,6 +824,9 @@ export default {
                });
             }
             
+        },
+        MaterialDocSelect(val){
+            this.MaterialDocSelected=val;
         },
         relevantDocSelect(val){
             this.relevantDocSelected=val;
@@ -786,7 +841,7 @@ export default {
         },
         beforeCreateDocItem(typeName,relationName) {
                 let _self = this;
-                if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'){
+                if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'&&typeName!='材料变更清单'){
                     _self.parentId='';
                                      
                 }

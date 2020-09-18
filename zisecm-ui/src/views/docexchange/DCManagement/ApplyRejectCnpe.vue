@@ -208,6 +208,24 @@
                                         ></DataGrid>
                             
                             </el-tab-pane>
+                            <el-tab-pane label="材料变更清单" name="t05" v-if="isShowMaterial">
+                                <!--列表-->
+                                <DataGrid
+                                    ref="MaterialDoc"
+                                    key="MaterialDocKey"
+                                    dataUrl="/dc/getDocuByRelationParentId"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    gridViewName="MaterialChangeGrid"
+                                    condition=" and a.NAME='材料变更清单'"
+                                    :isShowMoreOption="false"
+                                    :isshowCustom="false"
+                                    :isEditProperty="true"
+                                    :isShowChangeList="false"
+                                    :isshowicon="false"
+                                    @selectchange="MaterialDocSelect"
+                                ></DataGrid>
+                            </el-tab-pane>
                         </el-tabs>
                     </template>
                 </split-pane>
@@ -271,6 +289,8 @@ export default {
             selectedTabName:'t01',
             isShowMeet:true,
             MeetDocSelected:[],
+            isShowMaterial:true,
+            MaterialDocSelected:[],
         }
     },
     created(){
@@ -423,6 +443,7 @@ export default {
                _self.isShowAttachmentDoc=false;
                _self.selectedTabName='t01';
                _self.isShowMeet=false;
+               _self.isShowMaterial=false;
                _self.$nextTick(()=>{
                    _self.$refs.transferDoc.parentId=row.ID;
                     _self.$refs.transferDoc.loadGridData();
@@ -437,8 +458,17 @@ export default {
                 _self.isShowRelevant=true;
                 _self.isShowAttachmentDoc=false;
                 _self.isShowMeet=false;
+                if(row.TYPE_NAME=='DEN设计变更通知单'){
+                    _self.isShowMaterial=true
+                }else{
+                    _self.isShowMaterial=false
+                }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
+                    _self.$refs.MaterialDoc.parentId=row.ID;
+                    _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.MaterialDoc,function(val){
+                    _self.relation=val;
+                    });
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
                     // _self.$refs.relevantDoc.loadGridInfo();
@@ -452,8 +482,12 @@ export default {
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;
                _self.selectedTabName='t03';
+               _self.isShowMaterial=false;
                if(row.TYPE_NAME=='会议纪要'){
                     _self.isShowMeet=true;
+                }else{
+                    
+                    _self.isShowMeet=false;
                 }
                _self.$nextTick(()=>{
                _self.$refs.MeetDoc.parentId=row.ID;
@@ -464,6 +498,9 @@ export default {
             }
             
             
+        },
+        MaterialDocSelect(val){
+            this.MaterialDocSelected=val;
         },
         relevantDocSelect(val){
             this.relevantDocSelected=val;

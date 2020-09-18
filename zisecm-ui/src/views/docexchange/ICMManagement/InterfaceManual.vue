@@ -202,7 +202,7 @@ export default {
             })
             
         }
-        let roles=this.GetUserRoles(_self.ownerCompany)
+        let roles=this.GetUserRoles()
         if(roles==1){
             this.tables.main.isEditProperty=true
             this.roles1=true
@@ -225,29 +225,24 @@ export default {
         loadsuccess(){
             if(this.currentUser().company!=_self.ownerCompany){
                 this.tables.main.condition+=" AND (C_CODE5='"+this.currentUser().companyCode1+"' OR C_CODE6='"+this.currentUser().companyCode1+"')"
-                this.userCondition = " (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"') and "
+                this.userCondition = " (C_CODE5='"+this.currentUser().companyCode1+"' OR C_CODE6='"+this.currentUser().companyCode1+"') and "
             }
             this.$refs.mainDataGrid.condition = this.tables.main.condition
             this.$refs.mainDataGrid.loadGridData()
         },
         //角色判断
-        GetUserRoles(rolename){
+        GetUserRoles(){
             let result = 0
             let CurrentUser=JSON.parse(sessionStorage.getItem("ecm-current-user"))
-            if(CurrentUser.company==rolename){
-                CurrentUser.roles.forEach(function(item){
-                    if(item==CurrentUser.company+"_接口人员"){
-                        result=1
+                CurrentUser.roles.forEach((item)=>{
+                    if(item=="CNPE_接口人员"){
+                        result = 1
+                        return
+                    }else if(item=="分包商接口人员"){
+                        result = 2
+                        return
                     }
                 })
-            }else{
-                CurrentUser.roles.forEach(function(item){
-                    if(item=="分包商接口人员"){
-                        result=2
-                    }
-                })
-                
-            }
             return result
         },
         //单击行

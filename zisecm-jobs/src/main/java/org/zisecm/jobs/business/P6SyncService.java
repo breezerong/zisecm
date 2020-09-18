@@ -52,7 +52,7 @@ public class P6SyncService {
 
 	private List<Map<String, Object>> loadlist;
 	
-	private ProjectPortType projectPort;
+	//private ProjectPortType projectPort;
 	
 	private boolean init() {
 		httpClientPolicy = new HTTPClientPolicy();
@@ -111,6 +111,14 @@ public class P6SyncService {
 	}
 	
 	private WBSPortType getWbsService() {
+		if(httpClientPolicy==null) {
+			this.init();
+			try {
+				this.auth();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		WBSService wbsService = new WBSService(wbsURL);
 		WBSPortType wbsPort = wbsService.getWBSPort();
 		Client wbsClient = ClientProxy.getClient(wbsPort);
@@ -120,6 +128,14 @@ public class P6SyncService {
 	}
 	
 	private ProjectPortType getProjectService() {
+		if(httpClientPolicy==null) {
+			this.init();
+			try {
+				this.auth();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		ProjectService service = new ProjectService(projectURL);
 		ProjectPortType porttype = service.getProjectPort();
 		Client client = ClientProxy.getClient(porttype);
@@ -129,6 +145,14 @@ public class P6SyncService {
 	}
 	
 	private ActivityPortType getActivityService() {
+		if(httpClientPolicy==null) {
+			this.init();
+			try {
+				this.auth();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		ActivityService service = new ActivityService(activityURL);
 		ActivityPortType porttype = service.getActivityPort();
 		Client client = ClientProxy.getClient(porttype);
@@ -246,7 +270,7 @@ public class P6SyncService {
 					obj.put(WBSFieldType.NAME.name(), wbs.getName());
 					obj.put(WBSFieldType.PARENT_OBJECT_ID.name(), wbs.getParentObjectId().getValue());
 					obj.put(WBSFieldType.STATUS.name(), wbs.getStatus());
-					obj.put(WBSFieldType.CREATE_DATE.name(), getDate(wbs.getCreateDate().getValue()));
+					//obj.put(WBSFieldType.CREATE_DATE.name(), getDate(wbs.getCreateDate().getValue()));
 					
 					getActivitiesByWbs(wbs.getObjectId()+"",actList);
 					
@@ -289,5 +313,31 @@ public class P6SyncService {
 		}
 		return value.toString().replace("T", " ");
 		
+	}
+	
+	public List<Project> getProjectList()  {
+		ProjectPortType projectPort =  this.getProjectService();
+		List<Project> projectList = null;
+		List<String> fieldList = new ArrayList<String>();
+		fieldList.add("Id");
+		fieldList.add("Name");
+		fieldList.add("ObjectId");
+		fieldList.add("WBSObjectId");
+		fieldList.add("WBSCodeSeparator");
+		// 项目计划开始时间
+		fieldList.add("StartDate");
+		// 项目完成时间
+		fieldList.add("ScheduledFinishDate");
+		try {
+			projectList = projectPort.readProjects(fieldList, "", null);
+			if(projectList!=null && projectList.size()>0) {
+				return projectList;
+			}else {
+				return new ArrayList<Project>();
+			}
+		} catch (com.cnpe.p6.projectservice.IntegrationFault e) {
+			e.printStackTrace();
+			return new ArrayList<Project>();
+		}
 	}
 }

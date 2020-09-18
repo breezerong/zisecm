@@ -144,7 +144,7 @@ export default {
       projectDataIED: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '三级计划',
+        data:[{title: '计划作业',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
@@ -163,7 +163,7 @@ export default {
         projectDataTPLAN: {
         color: 'rgb(63, 161, 255)',
         span: 6,
-        data:[{title: '三级计划',
+        data:[{title: '计划作业',
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',

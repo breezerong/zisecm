@@ -79,12 +79,13 @@ public class SyncWbs {
 		for (ExcSynBatch excSynBatch : synBatchList) {
 			Map<String,Object> syncProjectInfo = documentService.getObjectMapById(ecmSession.getToken(), excSynBatch.getBatchNum());
 			String projectId = syncProjectInfo.get("CODING").toString();
-			
+			String projectName = syncProjectInfo.get("C_PROJECT_NAME").toString();
 			int newCount = 0;
 			int updateCount = 0;
 			int failCount = 0;
 			
 			Project project = p6Service.getProjectInfo(projectId);
+			excSynBatch.setExecuteDate(new Date());
 			if(project==null) {
 				excSynBatch.setStatus("错误");
 				excSynBatch.setNewCount(newCount);
@@ -114,15 +115,15 @@ public class SyncWbs {
 						EcmDocument actDocObj = null;
 						if(list== null || list.size()<1) {
 							actDocObj = new EcmDocument();
-							actDocObj.setName(activity.getName());
 							actDocObj.setTypeName("计划任务");
+							actDocObj.setName(activity.getName());
 							actDocObj.setSubType("Activity");
 							
 							actDocObj.addAttribute("SYN_ID", activity.getId());
 							actDocObj.addAttribute("C_TYPE1", "99");
 							
 							actDocObj.addAttribute("C_PROJECT_CODE", projectId);
-							actDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							actDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							XMLGregorianCalendar datevalue = activity.getStartDate();
 							if(this.getDateObj(datevalue) !=null) {
 								actDocObj.addAttribute("C_ITEM1_DATE", this.getDateObj(datevalue));
@@ -145,7 +146,7 @@ public class SyncWbs {
 						}else {
 							actDocObj = list.get(0);
 							actDocObj.addAttribute("C_PROJECT_CODE", projectId);
-							actDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							actDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							XMLGregorianCalendar datevalue = activity.getStartDate();
 							if(this.getDateObj(datevalue) !=null) {
 								actDocObj.addAttribute("C_ITEM1_DATE", this.getDateObj(datevalue));
@@ -182,15 +183,15 @@ public class SyncWbs {
 						if(list== null || list.size()<1) {
 							wbsDocObj = new EcmDocument();
 							wbsDocObj.setName(wbs.get("NAME").toString());
-							wbsDocObj.setTypeName("计划任务");
-							wbsDocObj.setSubType("WBS");
 							String parent = wbs.get("PARENT_OBJECT_ID").toString().equals(project.getWBSObjectId().getValue()+"")?"":wbs.get("PARENT_OBJECT_ID").toString();
 							wbsDocObj.addAttribute("C_IN_CODING", parent);
+							wbsDocObj.setTypeName("计划任务");
+							wbsDocObj.setSubType("WBS");
 							
 							String wbsCode = wbs.get("CODE").toString();
 							wbsDocObj.addAttribute("C_WBS_CODING", wbsCode);
 							wbsDocObj.addAttribute("C_PROJECT_CODE", projectId);
-							wbsDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							wbsDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							wbsDocObj.addAttribute("SYN_ID", wbs.get("OBJECT_ID").toString());
 							
 							Date startDate = getActDate(actList, wbsCode,1);
@@ -215,7 +216,7 @@ public class SyncWbs {
 							String wbsCode = wbs.get("CODE").toString();
 							wbsDocObj.addAttribute("C_WBS_CODING", wbsCode);
 							wbsDocObj.addAttribute("C_PROJECT_CODE", projectId);
-							wbsDocObj.addAttribute("C_PROJECT_NAME", project.getName());
+							wbsDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							wbsDocObj.addAttribute("SYN_ID", wbs.get("OBJECT_ID").toString());
 							
 							Date startDate = getActDate(actList, wbsCode,1);

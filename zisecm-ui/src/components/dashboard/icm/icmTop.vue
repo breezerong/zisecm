@@ -73,7 +73,7 @@ export default {
       projectData3: {
         data: [
           {
-            title: "三级计划",
+            title: "计划作业",
             count: 0,
             color: "rgb(63, 161, 255)",
             icon: "'el-icon-s-unfold",
