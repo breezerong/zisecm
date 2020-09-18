@@ -332,6 +332,7 @@ export default {
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
                         _self.dialogtypeName=typeName;
+                        _self.$refs.ShowProperty.showUploadFile = false;
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
                 },10);
