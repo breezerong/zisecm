@@ -202,7 +202,7 @@ export default {
             })
             
         }
-        let roles=this.GetUserRoles(_self.ownerCompany)
+        let roles=this.GetUserRoles(this.ownerCompany)
         if(roles==1){
             this.tables.main.isEditProperty=true
             this.roles1=true
@@ -223,7 +223,7 @@ export default {
             //console.log(JSON.stringify(topPercent))
         },
         loadsuccess(){
-            if(this.currentUser().company!=_self.ownerCompany){
+            if(this.currentUser().company!=this.ownerCompany){
                 this.tables.main.condition+=" AND (C_CODE5='"+this.currentUser().companyCode1+"' OR C_CODE6='"+this.currentUser().companyCode1+"')"
                 this.userCondition = " (C_CODE1='"+this.currentUser().companyCode1+"' OR C_CODE2='"+this.currentUser().companyCode1+"') and "
             }
