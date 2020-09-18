@@ -487,7 +487,7 @@ export default {
                     _self.dialogName=typeName;
                     _self.$refs.ShowProperty.myTypeName =typeName;
                     
-                    if(typeName=='相关文件'){
+                    if(typeName=='相关文件'||typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                         _self.$refs.ShowProperty.showUploadFile = false;
                         _self.$refs.ShowProperty.formName=_self.relation.formName;
                     }else{
