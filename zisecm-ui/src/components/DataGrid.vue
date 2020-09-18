@@ -3,52 +3,32 @@
     <div>
       <!-- 创建分发 -->
         
-      <el-dialog
-        :append-to-body="true"
-        title="编辑列"
-        :visible.sync="editColumn"
-        @close="onCloseCustom"
-        width="60%"
-      >
-      <el-dialog
-        title="新建名称"
-        :visible.sync="inputColumn"
-        @close="inputColumn = false;"
-        width="60%"
-        :append-to-body='true'
-      >
-      <el-input  placeholder="请输入自定义显示名称" v-model="selectedName"></el-input>
-      <div slot="footer" class="dialog-footer">
-          <el-button @click="createCustomGrid()">{{$t('application.save')}}</el-button>
-          <el-button @click="inputColumn = false">{{$t('application.cancel')}}</el-button>
-        </div>
-      </el-dialog>
-      <el-row>
-        <el-col :span="2">名称</el-col>
-        <el-col :span='8'>
-          <el-select v-model="selectedName" placeholder="请选择">
-            <el-option
-              v-for="item in customNames"
-              :key="item.id"
-              :label="item.description"
-              :value="item.description">
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="8">
-          <el-button @click="showCreateName">{{$t('application.new')}}</el-button>
-          <el-button @click="deleteGridView">{{$t('application.delete')}}</el-button>
-        </el-col>
-      </el-row>
-        <el-transfer
-          filterable
-          :titles="['Source', 'Target']"
-          v-model="selectedColumns"
-          :render-content="renderContent"
-          @right-check-change="rightCheckChange"
-          @change="rightChange"
-          :data="leftData"
-          target-order="push">
+      <!--  <el-dialog :append-to-body="true" title="编辑列" :visible.sync="editColumn" @close="onCloseCustom"  width="60%" >
+        <el-dialog title="新建名称" :visible.sync="inputColumn"  @close="inputColumn = false;"  width="60%" :append-to-body='true' >
+          <el-input  placeholder="请输入自定义显示名称" v-model="selectedName"></el-input>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="createCustomGrid()">{{$t('application.save')}}</el-button>
+            <el-button @click="inputColumn = false">{{$t('application.cancel')}}</el-button>
+          </div>
+        </el-dialog>
+        <el-row>
+          <el-col :span="2">名称</el-col>
+          <el-col :span='8'>
+            <el-select v-model="selectedName" placeholder="请选择">
+              <el-option
+                v-for="item in customNames"
+                :key="item.id"
+                :label="item.description"
+                :value="item.description">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="8">
+            <el-button @click="showCreateName">{{$t('application.new')}}</el-button>
+            <el-button @click="deleteGridView">{{$t('application.delete')}}</el-button>
+          </el-col>
+        </el-row>
+        <el-transfer filterable :titles="['Source', 'Target']" v-model="selectedColumns" :render-content="renderContent" @right-check-change="rightCheckChange" @change="rightChange" :data="leftData" target-order="push">
           <el-button class="transfer-footer" slot="right-footer" size="small" @click="moveUp">上移</el-button>
           <el-button class="transfer-footer" slot="right-footer" size="small" @click="moveDown">下移</el-button>
         </el-transfer>
@@ -56,6 +36,13 @@
           <el-button @click="saveCustomColumn()">{{$t('application.save')}}</el-button>
           <el-button @click="editColumn = false">{{$t('application.cancel')}}</el-button>
         </div>
+      </el-dialog> -->
+
+      <!--  -->
+      <el-dialog :append-to-body="true" title="编辑列" :visible.sync="editColumn" @close="onCloseCustom"  width="80%" >
+        <EcmCustomColumns :sysColumnInfo="sysColumnInfo" :gridViewName="gridViewName" @onClose="editColumn=false">
+
+        </EcmCustomColumns>
       </el-dialog>
       
       <el-dialog
@@ -281,6 +268,7 @@
 </template>
 <script type="text/javascript">
 import ShowProperty from "@/components/ShowProperty";
+import EcmCustomColumns from '@/components/ecm-custom-columns'
 export default {
   name: "dataGrid",
   data() {
@@ -374,7 +362,8 @@ export default {
       }
   },
   components: {
-    ShowProperty: ShowProperty
+    ShowProperty: ShowProperty,
+    EcmCustomColumns:EcmCustomColumns
   },
   mounted(){
     // this.ready();
@@ -533,7 +522,6 @@ export default {
     },
   createCustomGrid(){
     let _self=this;
-    let mp=new Array();
     if(_self.selectedName==''){
       _self.$message({
                       showClose: true,
