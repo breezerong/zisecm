@@ -822,7 +822,9 @@ export default {
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
                     _self.$refs.MaterialDoc.parentId=row.ID;
-                    _self.$refs.MaterialDoc.loadGridInfo();
+                    _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.MaterialDoc,function(val){
+                    _self.relation=val;
+                    });
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
                     // _self.$refs.relevantDoc.loadGridInfo();
@@ -868,7 +870,7 @@ export default {
         },
         beforeCreateDocItem(typeName,relationName) {
                 let _self = this;
-                if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'){
+                if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'&&typeName!='材料变更清单'){
                     _self.parentId='';
                                      
                 }else{
