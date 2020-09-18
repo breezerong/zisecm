@@ -377,7 +377,7 @@ export const cnpeRouter=
             title:'Cnpe3levelPlan'
         },
         path: '/cnpe/plan/threelevelplan',
-        name: '三级计划',
+        name: '计划作业',
         component: () => import('@/views/docexchange/planmanagement/ThreeLevelPlan.vue')
     },
     {

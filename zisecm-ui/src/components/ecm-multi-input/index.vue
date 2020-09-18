@@ -42,6 +42,7 @@ export default {
     }
   },
    watch: {
+    
     // value(newVal) {
     //   if(newVal != null){
     //     this.dynamicTags = newVal.split(";");
@@ -73,6 +74,9 @@ export default {
       handleInputConfirm() {
         let inputValue = this.inputValue;
         if (inputValue) {
+          if(!this.value || this.value == null){
+            this.value = [];
+          }
           this.value.push(inputValue);
         }
         this.inputVisible = false;

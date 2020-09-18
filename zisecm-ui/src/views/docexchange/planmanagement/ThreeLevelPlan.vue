@@ -83,7 +83,7 @@ export default {
         main: {
           gridViewName: "PlanTaskGrid",
           dataUrl: "/dc/getDocuments",
-          condition: "TYPE_NAME='计划任务' AND C_PROJECT_NAME = '@project'",
+          condition: "TYPE_NAME='计划任务' AND C_PROJECT_NAME = '@project' and SUB_TYPE='Activity'",
           isshowOption: true,
           isShowMoreOption: false,
           isshowCustom: true,
@@ -169,7 +169,7 @@ export default {
       _self.$refs.rfDg.itemDataList = [];
       let wheres = ["C_WBS_CODING", "NAME"];
       let orS = "";
-      var k1 = " TYPE_NAME='计划任务' AND C_PROJECT_NAME = '@project'";
+      var k1 = " TYPE_NAME='计划任务' AND C_PROJECT_NAME = '@project' and SUB_TYPE='Activity'";
       if (_self.inputValueNum.trim().length > 0) {
         wheres.forEach(function (item) {
           if (orS.length > 0) {
@@ -204,7 +204,7 @@ export default {
     onSelectChange(val) {
       let _self = this;
       _self.$refs.mainDataGrid.condition =
-        "TYPE_NAME='计划任务' and C_PROJECT_NAME in (" + val + ")";
+        "TYPE_NAME='计划任务' and C_PROJECT_NAME in (" + val + ")  and SUB_TYPE='Activity'";
       _self.$refs.mainDataGrid.loadGridData();
       _self.$refs.rfDg.itemDataList = [];
     },

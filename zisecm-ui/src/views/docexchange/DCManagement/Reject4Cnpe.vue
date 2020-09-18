@@ -18,7 +18,7 @@
                         </el-form>  
                         </template>
                     <template v-slot:main>  
-                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid" :tableHeight="360">
+                        <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid" :tableHeight="360" isshowCustom="false" :isShowChangeList="false">
                                 <template slot="customMoreOption" slot-scope="scope">
                                 <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
                                 </template>
@@ -341,7 +341,7 @@ export default {
             },
             tables:{
                 DialogDataGrid:{
-                    gridViewName:"IEDGrid",
+                    gridViewName:"SearchIEDGrid",
                     dataUrl:"/dc/getDocuments",
                     condition:"TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')",                  
                     isshowOption:true,

@@ -63,7 +63,7 @@
         :title="typeName+$t('application.property')"
         :visible.sync="propertyVisible"
         @close="propertyVisible = false"
-        width="90%"
+        width="92%"
         style="text-align:center"
       >
         <ShowProperty
