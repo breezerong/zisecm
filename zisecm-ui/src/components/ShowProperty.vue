@@ -105,7 +105,9 @@ export default {
   },
   mounted() {
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
-    //this.loadFormInfo();
+    if( this.mainObject == null || this.mainObject.length ==0){
+      this.loadFormInfo();
+    }
     this.clientPermission = sessionStorage.getItem(
         "access-clientPermission"
       );
