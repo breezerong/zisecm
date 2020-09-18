@@ -168,7 +168,7 @@ export default {
         span: 6,
         data: [
           {
-            title: "三级计划",
+            title: "计划作业",
             count: 125,
             color: "rgb(63, 161, 255)",
             icon: "el-icon-s-order",
