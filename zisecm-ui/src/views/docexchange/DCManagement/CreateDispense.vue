@@ -762,6 +762,9 @@ export default {
                
                 if(row.TYPE_NAME=='会议纪要'){
                     _self.isShowMeet=true;
+                }else{
+                    
+                    _self.isShowMeet=false;
                 }
                _self.$nextTick(()=>{
                    

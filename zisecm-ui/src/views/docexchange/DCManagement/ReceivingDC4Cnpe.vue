@@ -602,6 +602,9 @@ export default {
                _self.selectedTabName='t03';
                if(row.TYPE_NAME=='会议纪要'){
                     _self.isShowMeet=true;
+                }else{
+                    
+                    _self.isShowMeet=false;
                 }
                _self.$nextTick(()=>{
                _self.$refs.MeetDoc.parentId=row.ID;
