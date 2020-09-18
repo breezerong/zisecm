@@ -225,6 +225,7 @@ export default {
                 });
             _self.$refs.mainDataGrid.loadGridData();
             _self.formVisual=false    
+            _self.search()
             }
             else{
                 _self.$message({

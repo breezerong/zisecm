@@ -282,23 +282,40 @@ public class IEDImportService extends EcmService {
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
 						try {
-							/*checkDocument( token,sheet.getRow(i), 
-									attrNames,
-									1,sheet.getRow(i).getLastCellNum());/*/
 							int k = getColumnIndex(attrNames, "C_COMMENT4",1,sheet.getRow(i).getLastCellNum());
 							if(k!=-1) {	//批量反馈，找一个"IED导入"模板里没有的字段进行判断，如果存在，就证明肯定是IED批量反馈
 								EcmDocument e1 = new EcmDocument();
-								String Coding = sheet.getRow(i).getCell(getColumnIndex(attrNames, "CODING",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
-								String comment = sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_COMMENT4",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
+					
 								setValues(e1.getAttributes(), attrNames,sheet.getRow(i),1,sheet.getRow(i).getLastCellNum(),sameValues,null);
-								String date = e1.getAttributeValue("C_ITEM4_DATE").toString();	
-								String project = sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
+								Map attrs = e1.getAttributes();
+								if(attrs.get("CODING")!=null&&attrs.get("C_COMMENT4")!=null&&attrs.get("C_ITEM4_DATE")!=null&&attrs.get("C_PROJECT_NAME")!=null) {					//必填项空数据影响检查
+								String Coding = attrs.get("CODING").toString();
+								String comment = attrs.get("C_COMMENT4").toString();
+								String date = attrs.get("C_ITEM4_DATE").toString();	
+								String project = attrs.get("C_PROJECT_NAME").toString();
 								Feedback(Coding,comment,date,project,token);
+								continue;}
+								if(attrs.get("CODING")==null||attrs.get("C_COMMENT4")==null||attrs.get("C_ITEM4_DATE")==null
+										||attrs.get("C_PROJECT_NAME")==null) {
+									sb.append("第"+i+"行数据必填项出现空字段,请检查,该行操作已略过\r\n");
+									continue;
+								}
+								
+							}					//IED唯一性检查
+							EcmDocument e1 = new EcmDocument();
+							setValues(e1.getAttributes(), attrNames,sheet.getRow(i),1,sheet.getRow(i).getLastCellNum(),sameValues,null);
+							Map attrs = e1.getAttributes();
+							if(attrs.get("C_ITEM_STATUS1")==null||attrs.get("CODING")==null||attrs.get("C_PROJECT_NAME")==null) {
+								
+								sb.append("第"+i+"行数据必填项出现空字段,请检查,该行操作已略过\r\n");
 								continue;
 							}
 							String status1 = sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_ITEM_STATUS1",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 							String coding= sheet.getRow(i).getCell(getColumnIndex(attrNames, "CODING",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
 							String project= sheet.getRow(i).getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
+				
+							
+							
 							String cond = " TYPE_NAME='IED' and CODING='"+coding+"' and status='新建' and c_project_name='"+project+"'" ;
 							List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
 							if(result.size()!=0) {
@@ -311,6 +328,8 @@ public class IEDImportService extends EcmService {
 									null,null,sb,i);			//方法用来升版，无论成功与否，都不应继续执行新建方法
 							continue;							//报错信息和具体行数传入
 							}
+							
+							
 							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
 									fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 									null,null);
@@ -387,7 +406,6 @@ public class IEDImportService extends EcmService {
 		temp.setAttributes(mp);
 		temp.addAttribute("C_ITEM4_DATE", date);
 		temp.addAttribute("C_COMMENT4", Comment);
-		System.out.println(date);
 		documentService.updateObject(token, temp, null);
 		
 	}
@@ -397,7 +415,8 @@ public class IEDImportService extends EcmService {
 			Row row, Map<String,Long> fileList,
 			Map<Integer,String> attrNames,String parentId, String relationName,
 			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields,StringBuilder sb,int i) throws Exception {
-			Map <String,Object> attr = new HashMap();
+			Map <String,Object> attrsd = new HashMap();			//doc属性集
+			Map <String,Object> attr = new HashMap();			
 			EcmDocument doc = new EcmDocument();
 			EcmDocument temp = new EcmDocument();
 			if(parentId!=null) {
@@ -405,9 +424,16 @@ public class IEDImportService extends EcmService {
 			}else {
 				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,sameFields);
 			}
-			String idt = doc.getAttributeValue("C_IDENTIFY").toString(); 				//变更标识
-			String comment1=doc.getAttributeValue("C_EX1_DATE").toString();
-			String comment2=doc.getAttributeValue("C_EX2_DATE").toString();
+			attrsd = doc.getAttributes();
+			if(attrsd.get("C_IDENTIFY")==null||attrsd.get("C_EX1_DATE")==null||
+					attrsd.get("C_EX2_DATE")==null||attrsd.get("C_OTHER_CODING")==null) {
+				sb.append("第"+i+"行数据出现必填项为空,请检查,该行操作已略过\r\n");
+				return false;
+			}
+			String idt = attrsd.get("C_IDENTIFY").toString(); 				//变更标识
+			String comment1=attrsd.get("C_EX1_DATE").toString();
+			String comment2=attrsd.get("C_EX2_DATE").toString();
+			
 			if(idt.equals("CAN")) {
 				doc.addAttribute("C_COMMENT1", comment1);
 				doc.addAttribute("C_COMMENT2", comment2);
@@ -430,14 +456,24 @@ public class IEDImportService extends EcmService {
 			}						//现在已经确认有已生效IED，现在进行数据比较
 			temp.setAttributes(result.get(0));
 			String id = temp.getId();
-			String tempD1=temp.getAttributeValue("C_EX1_DATE").toString();
-			String tempD2=temp.getAttributeValue("C_EX2_DATE").toString();
+			String tempD1;
+			String tempD2;
+			if(temp.getAttributeValue("C_EX1_DATE")==null) {
+				tempD1="";
+			}
+			if(temp.getAttributeValue("C_EX1_DATE")==null) {
+				tempD2="";
+			}
+			else {
+			tempD1=temp.getAttributeValue("C_EX1_DATE").toString();
+			tempD2=temp.getAttributeValue("C_EX2_DATE").toString();
+			
 			if(!tempD1.equals(comment1)) {												//分别比较内/外部计划
 				doc.addAttribute("C_COMMENT1", comment1);
 			}
 			if(!tempD2.equals(comment2)) {
 				doc.addAttribute("C_COMMENT2", comment2);
-			}						//数据比较完成，现在进行升版操作
+			}										//数据比较完成，现在进行升版操作
 			EcmDocument res = new EcmDocument();
 			attr = doc.getAttributes();
 			attr.put("C_IS_RELEASED", 0);
@@ -445,87 +481,9 @@ public class IEDImportService extends EcmService {
 			documentService.updateStatus(token, res.getId(), "新建");
 			documentService.updateStatus(token, temp.getId(), "变更中");
 			sb.append("第"+i+"行IED完成升版\r\n");
-				return true;				//升版操作
-		
-	}
-	
-	
-	private boolean checkDocument(String token,  Row row, 
-			Map<Integer,String> attrNames,
-			int start,int end) throws Exception {
-		List<EcmDocument> list = new ArrayList<EcmDocument>();
-		
-		String project= row.getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",1,row.getLastCellNum())).getStringCellValue();
-		String codes= row.getCell(getColumnIndex(attrNames, "CODING",1,row.getLastCellNum())).getStringCellValue();
-		String conds="Type_Name='IED' and c_project_name='"+project+"' and status!='新建'";
-		List<Map<String,Object>> resultA =documentService.getObjectMap(token, conds);
-		if(resultA.size()!=0) {
-			throw new Exception("IED 已存在，编码："+codes);
-		}
-		int index  = getColumnIndex(attrNames, "C_ITEM_STATUS1",start,end);
-		Cell cell = row.getCell(index);
-		String submitType= cell.getStringCellValue();
-		
-		if(submitType.equals("新增")) {
-			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-			String cond = " TYPE_NAME='IED' and CODING='"+coding+"'";
-			try {
-			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
-				if(result!=null&&result.size()>0) {
-					throw new Exception("IED 已存在，编码："+coding);
-				}
-				
-				
-				/*String wbsCoding = row.getCell(getColumnIndex(attrNames, "C_WBS_CODING",start,end)).getStringCellValue();
-				String projectName = row.getCell(getColumnIndex(attrNames, "C_PROJECT_NAME",start,end)).getStringCellValue();
-				if(!StringUtils.isEmpty(wbsCoding)) {
-					cond = " TYPE_NAME='计划任务' and C_WBS_CODING='"+wbsCoding+"' and C_PROJECT_NAME='"+projectName+"'";
-					list =documentService.getObjects(token, cond);
-					
-					if(list.size()==0) {
-						throw new Exception("WBS 编码不已存在，编码："+wbsCoding);
-					}
-				}/*/
-				
-				
-			} catch (EcmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SqlDeniedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-		
-		}
-		if(submitType.equals("修订")){
-			try {
-			String coding= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-			String cond = "select * from ecm_document where TYPE_NAME='IED' and CODING='"+coding+"'";
+				return true;						//升版操作
 			
-			List<Map<String,Object>> result =documentService.getMapList(token, cond);
-			System.out.println(result.size());
-			List<EcmDocument> newList=new ArrayList<>();
-			for(int i=0;i<result.size();i++){
-				String id;
-				EcmDocument temp = new EcmDocument();
-				temp.setAttributes(result.get(i));		//从List<Map<String,object>>里取出我们要的对象，然后取ID备用
-				id=temp.getId();
-				//newList.add(temp);
-				System.out.println("取到的ID"+id);
-			}
-			throw new Exception("检测到方法使用，编码："+coding);
-			
-			
-		}
-			catch (EcmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SqlDeniedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return false;
 	}
 	
 	
