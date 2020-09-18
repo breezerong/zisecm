@@ -15,7 +15,7 @@
             <ShowProperty
                 ref="ShowProperty"
                 width="100%"
-                itemId="1"
+                itemId=""
                 v-bind:typeName="dialogtypeName"
             ></ShowProperty>
             <div slot="footer" class="dialog-footer">
@@ -332,6 +332,7 @@ export default {
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
                         _self.dialogtypeName=typeName;
+                        _self.$refs.ShowProperty.showUploadFile = false;
                         _self.$refs.ShowProperty.loadFormInfo();
                     }
                 },10);
