@@ -77,9 +77,9 @@
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
                         <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
                         <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
-                        <el-tooltip effect="dark" content="查看版本">
-                            <el-button type="default" @click="IEDVersion(scope.data.row)" size="mini" icon="el-icon-s-order" circle></el-button>
-                        </el-tooltip>
+                        
+                        <el-button type="default" :title="$t('application.viewRevision')" @click="IEDVersion(scope.data.row)" size="mini" icon="el-icon-s-order" ></el-button>
+                       
                         </template>
                         <template slot="sequee" slot-scope="scope">
                                             <span :style="(scope.data.row['STATUS']!=null

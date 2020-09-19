@@ -191,7 +191,7 @@
             </template>
           </template>
           </template>
-          <el-table-column v-if="isshowOption" :label="$t('application.operation')" width="190">
+          <el-table-column v-if="isshowOption" :label="$t('application.operation')" :width="optionWidth*55 +20">
             
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
@@ -330,7 +330,8 @@ export default {
     isShowMoreOption:{type:Boolean,default:true},//是否显示功能菜单
     isShowPropertyButton:{type:Boolean,default:true},//是否显示属性按钮
     showOptions:{type:String,default:"查看内容,查看属性,加入购物车,升版"},//功能菜单显示控制
-    isShowChangeList:{type:Boolean,default:true}//是否显示列表选择
+    isShowChangeList:{type:Boolean,default:true},//是否显示列表选择
+    optionWidth:{type:Number,default:3}//操作列宽度，放几个按钮
   },
   watch: {
     showFields(val, oldVal) {
