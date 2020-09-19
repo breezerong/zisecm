@@ -561,10 +561,11 @@ export default {
                 }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
-                    _self.$refs.MaterialDoc.parentId=row.ID;
-                    _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.MaterialDoc,function(val){
-                    _self.relation=val;
-                    });
+                    if(row.TYPE_NAME=='DEN设计变更通知单'){
+                        _self.$refs.MaterialDoc.parentId=row.ID;
+                        _self.$refs.MaterialDoc.loadGridInfo();
+                        _self.$refs.MaterialDoc.loadGridData();
+                    }
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
                     // _self.$refs.relevantDoc.loadGridInfo();
