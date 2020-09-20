@@ -75,6 +75,9 @@ public class CacheManagerOper {
 	//缓存活动配置对象
 	private static final Map<String,EcmCfgActivity> CFG_ACTIVITY = new HashMap<String,EcmCfgActivity>();
 	
+	//客制化缓存
+	private static final Map<String,Object> CUSTOM_CACHE = new HashMap<String,Object>();
+	
 	
 	private static Boolean FinishLoadCacheTag=false;
 	/**
@@ -237,6 +240,10 @@ public class CacheManagerOper {
 
 	public static void setSuggestionCache(List<EcmSuggestion> list) {
 		SUGGESTION_CACHE = list;
+	}
+
+	public static Map<String,Object> getCustomCache() {
+		return CUSTOM_CACHE;
 	}
 	
 }

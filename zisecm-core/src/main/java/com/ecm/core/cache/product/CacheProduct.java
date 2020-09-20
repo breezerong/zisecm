@@ -88,6 +88,8 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 
 	@Autowired
 	private CacheManagerFinishLoadCacheTag cacheManagerFinishLoadCacheTag;//活动配置
+	
+	
 
 //	@Autowired
 //	SyncPublicNet syncPublicNet;
