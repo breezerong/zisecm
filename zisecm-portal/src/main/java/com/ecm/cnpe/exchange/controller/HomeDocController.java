@@ -95,7 +95,7 @@ public class HomeDocController extends ControllerAbstract {
 				+ "where login_name='"
 				+ getLoginName + "')))";
 		String sqlplanNum = "select count(*) as planNum from ecm_document where TYPE_NAME='计划' and "+ whereSql +"";
-		String sqlthereplanNum = "select count(*) as thereplanNum from ecm_document where TYPE_NAME='计划任务' and "+ whereSql +"";
+		String sqlthereplanNum = "select count(*) as thereplanNum from ecm_document where TYPE_NAME='计划任务' and sub_type='Activity' and "+ whereSql +"";
 		String sqliedNum = "select count(*) as iedNum from ecm_document where TYPE_NAME='IED' and STATUS = '已生效' and C_IS_RELEASED='1' AND IS_CURRENT='1' and "+ whereSql +"";
 		String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
 				+ " (C_ITEM_TYPE='文函' )and "+whereSql+" ";
@@ -107,7 +107,7 @@ public class HomeDocController extends ControllerAbstract {
 		+ whereSql; 
 		String sqlDelayReplyConfirm="select count(*) as feedbackicmNum from ecm_document ed where (C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')";
 		String sqlcomplanNum = "select count(*) as complanNum from ecm_document where TYPE_NAME='计划' and "+ whereSql +" and (C_TO='"+ getLCompany +"')";
-		String sqlcomthereplanNum = "select count(*) as comthereplanNum from ecm_document where TYPE_NAME='计划任务' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
+		String sqlcomthereplanNum = "select count(*) as comthereplanNum from ecm_document where TYPE_NAME='计划任务' and sub_type='Activity' and "+ whereSql; 
 		String sqlcomiedNum = "select count(*) as comiedNum from ecm_document where TYPE_NAME='IED' and C_ITEM_STATUS2 = 'Y' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
 		String sqlcomicmNum = "select count(*) as comicmNum from ecm_document ed where TYPE_NAME='ICM' and "+ whereSql +" and (C_COMPANY='"+getLCompany+"')";
 		String sqlcomdcNum = "select count(*) as comdcNum from "

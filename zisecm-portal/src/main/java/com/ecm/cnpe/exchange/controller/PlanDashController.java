@@ -29,6 +29,7 @@ import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.RelationService;
 import com.ecm.portal.controller.ControllerAbstract;
+import com.ecm.portal.util.CustomInfo;
 
 @Controller
 public class PlanDashController extends ControllerAbstract{
@@ -75,7 +76,7 @@ public class PlanDashController extends ControllerAbstract{
 				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
 			}
 		}
-		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' "+whereSql;	
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' and sub_type='Activity' "+whereSql;	
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
@@ -654,6 +655,7 @@ public class PlanDashController extends ControllerAbstract{
 			     + "(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
 			     + "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
 			     + "C_IS_RELEASED=1  and("+whereSql+" or  TO_NAME='"+getLCompany+"')";/*/
+		String companys = CustomInfo.OwnerCompany;
 		String sql = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
 				+ " (C_ITEM_TYPE='文函' )and "+whereSql+" ";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
@@ -703,7 +705,7 @@ public class PlanDashController extends ControllerAbstract{
 		LoginUser userObj=null;
 		userObj=getSession().getCurrentUser();
 		String company= userObj.getCompany();
-		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' "+whereSql+"and c_company ='"+company+"'";
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' and sub_type='Activity' "+whereSql;
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
@@ -906,7 +908,7 @@ public class PlanDashController extends ControllerAbstract{
 		String Projectsql="select count(*) as count from ecm_document ed where ed.TYPE_NAME='项目' and ed.NAME in (select eg.NAME from ecm_group eg where id in (select egu.group_id from ecm_group_user egu where egu.USER_ID in "
 				+ "(select id from ecm_user where login_name='"+ name + "')))";
 		String Plansql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划' "+whereSql;
-		String Tlansql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' "+whereSql+"and c_company ='"+company+"'";
+		String Tlansql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' "+whereSql+"and sub_type='Activity' ";
 		String Iedsql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND status='已生效' and c_is_released='1' and is_current='1' and c_company ='"+company+"'";
 		String Icmsql="select count(*) as count from ecm_document WHERE TYPE_NAME='ICM'"+whereSql+"AND C_COMPANY='"+company+"'";
 		String sqlList = "select ("+
@@ -970,7 +972,6 @@ public class PlanDashController extends ControllerAbstract{
 		String company = userObj.getCompany();
 		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' AND C_IS_RELEASED='1' AND IS_CURRENT='1' AND C_COMPANY='"+company+"'"+whereSql+"AND STATUS = '已生效'";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
-		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
 		Map<String,Object> result=new HashMap<String, Object>();
 		for(int i=0;i<data.size();i++) {

@@ -40,6 +40,7 @@ public class DocTopController extends ControllerAbstract  {
 		String userName = getSession().getCurrentUser().getUserName();
 		String company = getSession().getCurrentUser().getCompany();
 		String whereSql="";
+		String whereSqlSPEC="";
 		if(projectName!=null&&!"".equals(projectName)) {
 			if("@project".equals(projectName)) {
 				LoginUser userObj=null;
@@ -47,22 +48,27 @@ public class DocTopController extends ControllerAbstract  {
 					userObj=getSession().getCurrentUser();
 					List<String> projectList= userObj.getMyProjects();
 					whereSql+=" (";
+					whereSqlSPEC+=" (";
 					for(int i=0;i<projectList.size();i++) {
 						String project=projectList.get(i);
 						if(i==0) {
 							whereSql+="C_PROJECT_NAME ='"+project+"'";
+							whereSqlSPEC+="C_PROJECT_NAME ='"+project+"'";
 						}else {
 							whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+							whereSqlSPEC+=" or C_PROJECT_NAME ='"+project+"'";
 						}
 						
 					}
 					whereSql+=")";
+					whereSqlSPEC+=")";
 				} catch (AccessDeniedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else {
 				whereSql+=" C_PROJECT_NAME in("+projectName+")";
+				whereSqlSPEC+=" C_PROJECT_NAME in("+projectName+")";
 			}
 			
 		}
@@ -71,16 +77,20 @@ public class DocTopController extends ControllerAbstract  {
 			userObj=getSession().getCurrentUser();
 			List<String> projectList= userObj.getMyProjects();
 			whereSql+="(";
+			whereSqlSPEC+=" (";
 			for(int i=0;i<projectList.size();i++) {
 				String project=projectList.get(i);
 				if(i==0) {
 					whereSql+="C_PROJECT_NAME ='"+project+"'";
+					whereSqlSPEC+="C_PROJECT_NAME ='"+project+"'";
 				}else {
 					whereSql+=" or C_PROJECT_NAME ='"+project+"'";
+					whereSqlSPEC+=" or C_PROJECT_NAME ='"+project+"'";
 				}
 				
 			}
 			whereSql+=")";
+			whereSqlSPEC+=")";
 		}
 		String getLCompany=getSession().getCurrentUser().getCompany();
 		
@@ -97,10 +107,7 @@ public class DocTopController extends ControllerAbstract  {
 		if(getLCompany.equals(CustomInfo.OwnerCompany)==false) {
 			whereSql+=" and (C_COMPANY='"+getLCompany+"'";
 			//分包商项目信息
-			sqlThreePlanNum = "select count(*) as ThreePlanNum from "
-					+"(select a.C_COMPANY,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
-					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t "
-					+ "where TYPE_NAME='计划任务' and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
+			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document where type_name='计划任务' and sub_type='Activity' and ("+whereSqlSPEC+")";
 			sqlIEDNum = "select count(*) as IEDNum from ecm_document  "
 					+ "where TYPE_NAME='IED' and status='已生效' and IS_CURRENT ='1' and C_IS_RELEASED ='1' and("+whereSql+"))";
 			sqlICMNum = "select count(*) as ICMNum from ecm_document "
@@ -114,7 +121,7 @@ public class DocTopController extends ControllerAbstract  {
 			String sqldcNum = "select count(*) as dcNum from "
 					+ "(select a.C_ITEM_TYPE,a.C_COMPANY,a.TYPE_NAME,a.C_IS_RELEASED,a.C_PROJECT_NAME,b.TO_NAME "
 					+ "from ecm_document a, exc_transfer b where a.id=b.doc_id)t where "
-					+ " (C_ITEM_TYPE='文函') and "
+					+ " (C_ITEM_TYPE='文函' and type_Name!='设计文件') and "
 					+ "C_IS_RELEASED=1 and("+whereSql+" or  TO_NAME='"+getLCompany+"'))";
 			sqlreceivedNum = "select count(*) as receivedNum from "
 					+ "(select a.C_COMPANY,a.TYPE_NAME,a.C_PROJECT_NAME,a.C_ITEM_TYPE,b.STATUS as STATUS,b.TO_NAME "
@@ -123,24 +130,25 @@ public class DocTopController extends ControllerAbstract  {
 			String sqlSubmissiondcNum="select count(*) as submissiondcNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and "
 					+ "(status='' or status is null or status='新建') and "+whereSql+")";
+			String sqlReject ="select count(*) from ecm_document ed where C_ITEM_TYPE ='文函' and TYPE_NAME !='设计文件'  and STATUS ='驳回' and c_company = '"+getLCompany+"'";
 			sqlList += ""+
 					sqldcNum+") as dcNum,("+
 					sqlSubmissiondcNum+") as submissiondcNum,( "+
 					sqlApplyReject+") as MyApplyReject,("+
-					ApplyRejectConfirm+") as ApplyReject,("; ;
+					ApplyRejectConfirm+") as ApplyReject,(" + sqlReject +" ) as RejectNum,(";
 		}else {
 			//CNPE基本信息
-			
-			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and"
-					+"(C_ITEM_TYPE='文函') and "+whereSql+" ";
+			String companys = CustomInfo.OwnerCompany;
+			String sqldcNum = "select count(*) as dcNum from ecm_document ed where ed.C_IS_RELEASED=1 and "
+					+"C_ITEM_TYPE='文函' and type_name!='设计文件' and status='已确认' and "+whereSql;
 			sqlreceivedNum = "select count(*) as receivedNum from ecm_document "
 					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( status='待确认')";
 			String sqldeBlockingNum = "select count(*) as deBlockingNum from ecm_document "
 					+ "where TYPE_NAME='设计文件' and ( C_PROCESS_STATUS='申请解锁')";
 			String sqldispenseNum = "select count(*) as dispenseNum from ecm_document "
-					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and(status='' or status='新建')";
-			String sqlRejectNum = "select count(*) as dcNum from ecm_document "
-					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and ( STATUS='驳回')";
+					+ "where C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and(status='' or status='新建') and c_company='"+companys+"'";
+			String sqlRejectNum = "select count(*) as dcNum from ecm_document a,exc_transfer b where a.id=b.doc_id"
+					+ " and C_ITEM_TYPE='文函' and TYPE_NAME!='相关文件' and b.item_type='1' and ( b.STATUS='驳回')";
 			String sqlApplyReject="select count(*) from ecm_document a,exc_transfer b where a.id = b.doc_id and"
 								 +" b.status1='待确认' and b.APPLICANT='"+userName+"'";
 			String ApplyRejectConfirm="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and"
@@ -148,7 +156,7 @@ public class DocTopController extends ControllerAbstract  {
 			 
 			//CNPE项目信息
 			sqlThreePlanNum = "select count(*) as ThreePlanNum from ecm_document "
-					+ "where TYPE_NAME='计划任务' and("+whereSql+")";
+					+ "where TYPE_NAME='计划任务'  and sub_type='Activity' and ("+whereSql+") 	";
 			sqlIEDNum = "select count(*) as IEDNum from ecm_document "
 					+ "where TYPE_NAME='IED' and("+whereSql+")" +"and status='已生效' and c_is_released='1' and is_current='1'";
 			sqlICMNum = "select count(*) as ICMNum from ecm_document "

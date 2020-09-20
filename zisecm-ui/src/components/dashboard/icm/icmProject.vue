@@ -8,6 +8,7 @@
         <ecm-data-icons ref="T2" :option="projectDataIED"></ecm-data-icons>
         <ecm-data-icons ref="T3" :option="projectDataICM"></ecm-data-icons>
         <ecm-data-icons ref="T4" :option="projectDataDC"></ecm-data-icons>
+        <ecm-data-icons ref="T5" :option="projectDataDE"></ecm-data-icons>
       </el-col>
       <el-col  :span="10">
         <div id="docChart1" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
@@ -94,6 +95,17 @@ export default {
             url: '/cnpe/MoreViewerBrowe/projectviewer'
         }]
       },
+      projectDataDE: {
+        color: 'rgb(63, 161, 255)',
+        span: 6,
+        data: [{
+            title: this.$t('application.designdoc'),
+            count: 0,
+            color: 'rgb(63, 161, 255)',
+            icon: 'el-icon-document',
+            url: ''
+        }]
+      },
     };
   },
   created() {
@@ -138,12 +150,9 @@ export default {
           }
           axios.post("/dc/getDCReportData",JSON.stringify(mp))
             .then(function(response) {
-                // docChartData1: {
-                //     xAxisData: [],
-                //     yAxisData: []
-                // }
                 if(response.data.code==1){
                     let result=response.data.data;
+                    let res = [{value:'',name:''}]
                     let xArray=new Array();
                     let yArray=new Array();
                     for (let key in result){
@@ -161,17 +170,22 @@ export default {
       axios.post("/exchange/docTop/docSumNum",JSON.stringify(mp))
       .then(function (response) {
           if(response.data.code==1){
-           
-              console.log(response.data)
               _self.projectDataTPLAN.data[0].count=response.data.ThreePlanNum;
               _self.projectDataIED.data[0].count=response.data.IEDNum;
               _self.projectDataICM.data[0].count=response.data.ICMNum;
               _self.projectDataDC.data[0].count=response.data.dcNum
-              _self.$refs.T1.refresh()
-              _self.$refs.T2.refresh()
-              _self.$refs.T3.refresh()
           }
           
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+        axios.post("/dc/getDesignData",JSON.stringify(mp))
+        .then(function (response) {
+          if(response.data.code==1){
+            console.log(response.data.data)
+           _self.projectDataDE.data[0].count=response.data.data.DEnum
+        }
         })
         .catch(function (error) {
           console.log(error);
