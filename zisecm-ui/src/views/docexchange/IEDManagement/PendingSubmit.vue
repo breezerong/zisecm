@@ -102,6 +102,7 @@
                 <el-col :span="24">                   
                     <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" 
                     isshowOption v-bind="tables.main":tableHeight="layout.height-163"
+                    :optionWidth = "2"
                     gridViewName="IEDGrid" 
                     @cellMouseEnter="cellMouseEnter"
                     @cellMouseleave="cellMouseleave"

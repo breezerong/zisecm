@@ -19,6 +19,7 @@
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
             isshowOption
+            :optionWidth = "1"
             gridViewName="IEDRejectGrid"
             v-bind="tables.main"
             :tableHeight="layout.height-166"

@@ -38,7 +38,9 @@ export default {
 }
 .el-input__inner {
   height: 36px;
+  padding-left: 10px !important;
 }
+
 /* .el-tree-node.is-current{
   color: #ffffff !important;
 } */

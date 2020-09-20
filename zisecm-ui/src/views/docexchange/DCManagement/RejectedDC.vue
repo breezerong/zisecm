@@ -708,10 +708,11 @@ export default {
                 }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
-                    _self.$refs.MaterialDoc.parentId=row.ID;
-                    _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.MaterialDoc,function(val){
-                    _self.relation=val;
-                    });
+                    if(row.TYPE_NAME=='DEN设计变更通知单'){
+                        _self.$refs.MaterialDoc.parentId=row.ID;
+                        _self.$refs.MaterialDoc.loadGridInfo();
+                        _self.$refs.MaterialDoc.loadGridData();
+                    }
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
                     // _self.$refs.relevantDoc.loadGridInfo();
@@ -816,10 +817,14 @@ export default {
                         _self.$refs.ShowProperty.myItemId = "";
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
-                        if(typeName=='相关文件'||typeName=='会议纪要内容项'||typeName=='材料变更清单'){
+                        if(typeName=='相关文件'){
                             _self.$refs.ShowProperty.showUploadFile = false;
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
-                        }else{
+                        }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
+                            _self.$refs.ShowProperty.showUploadFile = false;
+                        }
+                        else{
+                            _self.$refs.ShowProperty.showUploadFile = false;
                             _self.$refs.ShowProperty.formName="";
                         }
                         _self.typeName=typeName;
@@ -1005,7 +1010,12 @@ export default {
                         if(_self.$refs.relevantDoc!=undefined){
                             _self.$refs.relevantDoc.loadGridData();
                         }
-                        
+                        if(_self.$refs.MaterialDoc!=undefined){
+                            _self.$refs.MaterialDoc.loadGridData();
+                        }
+                        if(_self.$refs.MeetDoc!=undefined){
+                            _self.$refs.MeetDoc.loadGridData();
+                        }
                         
                         } 
                     else{

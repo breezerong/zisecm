@@ -2,6 +2,12 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 待提交文函 -->
+            <el-dialog :title="$t('application.Import')" :visible.sync="MeetMaterialDialogVisible" width="80%" >
+            <MeetMaterialImport ref="MeetMaterialImport"  @onImported="onMeetMaterialImport" v-bind:deliveryId="parentId" width="100%"></MeetMaterialImport>
+            <div slot="footer" class="dialog-footer">
+            <el-button @click="MeetMaterialDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+            </div>
+        </el-dialog>
             <!-- 设计文件附件 -->
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
@@ -315,7 +321,7 @@
                                         <el-button type="primary" @click="beforeCreateDocItem('会议纪要内容项','会议纪要内容项')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
                                         <!-- <el-form-item>
-                                        <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.mainDataGrid,false,'会议纪要内容项','/系统配置/导入模板/会议纪要内容项')">{{$t('application.Import')}}</el-button>
                                         </el-form-item> -->
                                         <!-- <el-form-item>
                                             <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
@@ -398,6 +404,7 @@ import DataSelect from '@/components/ecm-data-select'
 import MountFile from '@/components/MountFile.vue';
 import AttachmentFile from "@/views/dc/AttachmentFile.vue"
 import DataLayout from '@/components/ecm-data-layout'
+import MeetMaterialImport from '@/components/controls/ImportMeetMaterial';
 export default {
     // CNPE 待提交文函
     name: "Submissiondc",
@@ -474,6 +481,7 @@ export default {
             MeetDocSelected:[],
             isShowMaterial:true,
             MaterialDocSelected:[],
+            MeetMaterialDialogVisible:false,
         }
     },
     created(){
@@ -529,7 +537,6 @@ export default {
                     _self.$refs.ShowProperty.myItemId = "";
                     _self.dialogName=typeName;
                     _self.$refs.ShowProperty.myTypeName =typeName;
-                    
                     if(typeName=='相关文件'){
                         _self.$refs.ShowProperty.showUploadFile = false;
                         _self.$refs.ShowProperty.formName=_self.relation.formName;
@@ -623,6 +630,24 @@ export default {
         beforImport(obj,isSub,relationName,path){
             this.gridObj=obj;
             this.batchDialogVisible=true;
+            this.$nextTick(()=>{
+                if(isSub){
+                    this.$refs.BatchImport.deliveryId=this.parentId;
+                    this.$refs.BatchImport.relationName=relationName;
+                    
+                }else{
+                    this.$refs.BatchImport.deliveryId='';
+                    this.$refs.BatchImport.relationName='';
+                }
+                this.$refs.BatchImport.tmpPath=path;
+                this.$refs.BatchImport.loadTemplate();
+            })
+            
+            
+        },
+        beforMeetMaterialImport(obj,isSub,relationName,path){
+            this.gridObj=obj;
+            this.MeetMaterialDialogVisible=true;
             this.$nextTick(()=>{
                 if(isSub){
                     this.$refs.BatchImport.deliveryId=this.parentId;
@@ -821,10 +846,14 @@ export default {
                 }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
-                    _self.$refs.MaterialDoc.parentId=row.ID;
-                    _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.MaterialDoc,function(val){
-                    _self.relation=val;
-                    });
+                    if(row.TYPE_NAME=='DEN设计变更通知单'){
+                        _self.$refs.MaterialDoc.parentId=row.ID;
+                        _self.$refs.MaterialDoc.loadGridInfo();
+                        _self.$refs.MaterialDoc.loadGridData();
+                    }
+                    // _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.MaterialDoc,function(val){
+                    // _self.relation=val;
+                    // });
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
                     // _self.$refs.relevantDoc.loadGridInfo();
@@ -930,10 +959,13 @@ export default {
                         _self.dialogName=typeName;
                         _self.$refs.ShowProperty.myTypeName =typeName;
                         
-                        if(typeName=='相关文件'||typeName=='会议纪要内容项'||typeName=='材料变更清单'){
+                        if(typeName=='相关文件'){
                             _self.$refs.ShowProperty.showUploadFile = false;
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
-                        }else{
+                        }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
+                            _self.$refs.ShowProperty.showUploadFile = false;
+                        }
+                        else{
                             _self.$refs.ShowProperty.showUploadFile = true;
                             _self.$refs.ShowProperty.formName="";
                         }
@@ -1111,6 +1143,12 @@ export default {
                     if(_self.$refs.relevantDoc!=undefined){
                         _self.$refs.relevantDoc.loadGridData();
                     }
+                    if(_self.$refs.MaterialDoc!=undefined){
+                        _self.$refs.MaterialDoc.loadGridData();
+                    }
+                    if(_self.$refs.MeetDoc!=undefined){
+                        _self.$refs.MeetDoc.loadGridData();
+                    }
                     
                     
                     } 
@@ -1222,7 +1260,8 @@ export default {
         BatchImport:BatchImport,
         MountFile:MountFile,
         AttachmentFile:AttachmentFile,
-        DataLayout:DataLayout
+        DataLayout:DataLayout,
+        MeetMaterialImport:MeetMaterialImport
     }
 }
 </script>
