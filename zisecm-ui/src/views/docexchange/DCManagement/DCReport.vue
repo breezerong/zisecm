@@ -22,6 +22,7 @@
           </el-col>
           <el-col :span="24" >
             <div id="docChart1" :style="{height: divHeight, border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
+            <div id="docChart9" :style="{height: divHeight, border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
           </el-col>
         </el-tab-pane>
         <el-tab-pane label="漏号统计" name="tab02">
@@ -140,6 +141,7 @@ export default {
       page: 1,
       divHeight: '540px',
       docChart1: Object,
+      docChart9:Object,
       docChartData1: {
         xAxisData: [],
         yAxisData: []
@@ -149,6 +151,8 @@ export default {
   mounted(){
     let _self = this;
     _self.docChart1 = _self.echarts.init(document.getElementById('docChart1'));
+    _self.docChart9 = _self.echarts.init(document.getElementById('docChart9'));
+    _self.initPieChart();
     _self.initChart();
     // _self.$nextTick(()=>{
     //     _self.loadDocChart(_self.docChart1, _self.docChartData1);
@@ -191,6 +195,7 @@ export default {
 
       },
       initChart(){
+          this.initPieChart()
           let _self=this;
           let mp=new Map();
           if(_self.filters.projectCode){
@@ -262,6 +267,73 @@ export default {
     // //     this.dataList = res.data.data
     // //   })
     // },
+
+   initPieChart(){
+      let _self=this;
+          let mp=new Map();
+          if(_self.filters.projectCode){
+              mp.set('projectName',_self.filters.projectCode);
+          }else{
+              mp.set('projectName','@project');
+          }
+          if(_self.filters.startDate){
+              mp.set('startDate',_self.filters.startDate);
+          }
+          if(_self.filters.endDate){
+              mp.set('endDate',_self.filters.endDate);
+          }
+          axios.post("/dc/getDCReportData",JSON.stringify(mp))
+            .then(function(response) {
+                if(response.data.code==1){
+                    let result=response.data.data;
+                    let res = []
+                    let name=[]
+                    let value =[]
+                    let xArray=new Array();
+                    let yArray=new Array();
+                    for (let key in result){
+                        let temp = {name:'',value:''}
+                        xArray.push(key);
+                        yArray.push(result[key]);
+                        temp.name=key
+                        temp.value=result[key]
+                        res.push(temp);
+                    }
+                    console.log(res)
+                    _self.loadPieChart(_self.docChart9, res);
+                }
+            })
+      .catch(function(error) {
+          console.log(error);
+      });
+    },
+
+loadPieChart(chartObj, indata){
+      chartObj.setOption({
+            title: { text: this.$t('application.DCDash') },
+            tooltip: {
+              trigger:'item',
+              formatter:"{a}<br/>{b} : {c} ({d}%)"
+            },
+            grid: {  
+              left: '10%',
+              bottom:'35%'
+            },
+           
+            series : [
+        {
+           label: { normal: { show: true, formatter: "{a}{b} : {c} ({d}%)" } },
+            name:'',
+            type: 'pie',    // 设置图表类型为饼图
+            radius: '70%',  // 饼图的半径，外半径为可视区尺寸（容器高宽中较小一项）的 55% 长度。
+            data: indata
+        }
+    ]
+        });
+    },
+
+
+
     loadDocChart(chartObj, indata){
       chartObj.setOption({
             title: { text: '文函统计' },
@@ -297,7 +369,7 @@ export default {
                 }
             }]
         });
-    }
+    },
   },
   components:{
       DataSelect:DataSelect,
