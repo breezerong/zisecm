@@ -10,7 +10,6 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -26,8 +25,8 @@ module.exports = {
      */
 
     // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'cheap-module-eval-source-map',
-
+    //devtool: 'cheap-module-eval-source-map',
+    devtool: 'source-map',
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
@@ -45,27 +44,6 @@ module.exports = {
         }
       }
     },
-    /*//相当于访问http://localhost:8080
-    proxyTable: {
-      '/': {
-        target: 'http://localhost:8080/',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/': ''
-        }
-      }
-    },
-    //相当于访问http://localhost:8080
-    proxyTable: {
-      '/zisecm': {
-        target: 'http://localhost:8080/',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/zisecm': ''
-        }
-      }
-    },
-    */
   },
 
   build: {
