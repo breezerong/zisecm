@@ -4,15 +4,13 @@
       <el-row>
           <el-form size="small" label-width="100" inline>
             <el-form-item label="名称">
-              <el-select v-model="selectedName" placeholder="请选择">
-                <el-option v-for="item in customNames"
-                  :key="item.id" :label="item.description" :value="item.description">
-                </el-option>
+              <el-select v-model="selectedName">
+                <el-option v-for="item in customNames" :key="item.attrName" :label="item.description" :value="item.description" @click.native="onSelectChange(item)">{{item.description}}</el-option>
               </el-select>
             </el-form-item>
              <el-form-item>
-                <el-button @click="createGridView">{{$t('application.new')}}</el-button><!--  @click="showCreateName" -->
-                <el-button @click="deleteGridView">{{$t('application.delete')}}</el-button><!--  @click="deleteGridView" -->
+                <el-button @click="createGridView">{{$t('application.new')}}</el-button>
+                <el-button @click="deleteGridView">{{$t('application.delete')}}</el-button>
              </el-form-item>
           </el-form>
         </el-row>
@@ -25,7 +23,6 @@
             <el-table-column label="行号" type="index" width="60"></el-table-column>
             <el-table-column label="属性名" prop="label"></el-table-column>
             <el-table-column label="宽度" prop="width" width="100"></el-table-column>
-            <el-table-column label="序号" prop="orderIndex" width="80"></el-table-column>
             <el-table-column label="操作" width="60" fixed="right">
               <template slot-scope="scope">
                 <el-button :plain="true" type="primary" size="small" icon="edit" @click="addItem(scope.row)">添加</el-button>
@@ -92,6 +89,7 @@
 
 <script>
 export default {
+  name:"EcmCustomColumns",
   props:{
     gridViewName:{
       type:String,default:""
@@ -140,6 +138,26 @@ export default {
       }
   },
   methods:{
+    onSelectChange(item){
+      let id = item.id
+      let name = item.description
+     this.loadCustomInfo(id,name)
+    },
+    loadCustomInfo(id,name){
+      let _self=this;
+      var m = new Map();
+      m.set('gridId',id);
+      m.set("lang", _self.currentLanguage);
+      let url = "/dc/getOneEcmCustomGridViewInfo" 
+      axios.post(url,JSON.stringify(m)).then(function(response) {
+        if(response.data.code==1){
+          _self.tables.target.data = response.data.data
+          _self.selectedName = name
+        }
+      }).catch(function(error){
+        console.log(error);
+      })
+    },
     saveCustomColumn(){
       let _self=this;
       if(_self.selectedName==''){
@@ -153,7 +171,7 @@ export default {
         item.orderIndex=index
         postArray.push(item)
       }
-      var postData = new Map();
+      let postData = new Map();
       postData.set("gridName",this.gridViewName)
       postData.set("DESCRIPTION",this.selectedName)
       postData.set('items',postArray);
@@ -185,7 +203,7 @@ export default {
       let url = "/admin/getAllGridViewsOfCurrentUser"
       axios.post(url).then(function(response){
         if(response.data.code==1){
-          _self.customNames=response.data.data;
+          _self.customNames=response.data.data
         }
       }).catch(function(error){
         console.log(error)
@@ -209,7 +227,7 @@ export default {
       selections.forEach(function(item){
           let isExist = false
           targetList.forEach(function(sub){
-            if(item.id == sub.id){
+            if(item.attrName == sub.attrName){
               isExist = true
             }
           })

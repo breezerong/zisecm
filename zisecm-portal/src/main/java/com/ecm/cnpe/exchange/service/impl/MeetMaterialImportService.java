@@ -216,9 +216,6 @@ public class MeetMaterialImportService extends EcmService {
 							newId = newDocument( token, parentType,null, sheet.getRow(i),  
 									fileList, attrNames,null,relationName,number, 1,
 									childStartIndex-1,sameValues,sameFields);
-							if(!StringUtils.isEmpty(newId)) {
-								newRelation(token, deliveryId,relationName, newId, i,null);
-							}
 						}
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
@@ -235,32 +232,12 @@ public class MeetMaterialImportService extends EcmService {
 						}
 						String tempId = null;
 						try {
-							
-							String res=checkDocument( token,sheet.getRow(i), 
-									attrNames,
-									1,sheet.getRow(i).getLastCellNum());
 							List<EcmDocument> list = new ArrayList<EcmDocument>();
 							int index  = getColumnIndex(attrNames, "C_IDENTIFY",1,sheet.getRow(i).getLastCellNum());
 							Cell cell = sheet.getRow(i).getCell(index);
 							String submitType= cell.getStringCellValue();
-							if(res!=null) {
-								if(submitType.equals("MOD")) {
-									updataDocument( token, parentType,itemStream, sheet.getRow(i),  
-											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
-											null,null,res);
-									
-								}else if(submitType.equals("DEL")) {
-									delDocument( token, parentType,itemStream, sheet.getRow(i),  
-											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
-											null,null,res);
-								}else {
-									sb.append("ICM不存在").append("\r\n");;
-									
-								}
-							}else {
-								if(submitType.equals("ADD")) {
 									newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
-											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+											fileList, attrNames,deliveryId,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 											null,null);
 									if(hasRendition) {
 										String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
@@ -294,13 +271,7 @@ public class MeetMaterialImportService extends EcmService {
 											}
 										}
 									}
-								}else {
-									sb.append("ICM已存在").append("\r\n");;
-									
-								}
 							}
-							
-						}
 						finally {
 							//删除缓存文件
 							if(itemStream!=null) {
@@ -313,31 +284,9 @@ public class MeetMaterialImportService extends EcmService {
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
 						try {
-							String res=checkDocument( token,sheet.getRow(i), 
-									attrNames,
-									1,sheet.getRow(i).getLastCellNum());
 							List<EcmDocument> list = new ArrayList<EcmDocument>();
-							int index  = getColumnIndex(attrNames, "C_IDENTIFY",1,sheet.getRow(i).getLastCellNum());
-							Cell cell = sheet.getRow(i).getCell(index);
-							String submitType= cell.getStringCellValue();
-							if(res!=null&&res!=""){
-								if(submitType.equals("MOD")) {
-									updataDocument( token, parentType,itemStream, sheet.getRow(i),  
-											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
-											null,null,res);
-									
-								}else if(submitType.equals("DEL")) {
-									delDocument( token, parentType,itemStream, sheet.getRow(i),  
-											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
-											null,null,res);
-								}else {
-									sb.append("ICM不存在").append("\r\n");
-									
-								}
-							}else {
-								if(submitType.equals("ADD")) {
-									newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
-											fileList, attrNames,null,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
+								newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
+											fileList, attrNames,deliveryId,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 											null,null);
 									if(hasRendition) {
 										String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
@@ -371,16 +320,6 @@ public class MeetMaterialImportService extends EcmService {
 											}
 										}
 									}
-									if(!StringUtils.isEmpty(newId)) {
-										newRelation(token, deliveryId,relationName, newId, i,null);
-									}
-								}else {
-									sb.append("ICM已存在").append("\r\n");
-									
-								}
-							}
-							
-							
 						}
 						finally {
 							//删除缓存文件
@@ -409,32 +348,6 @@ public class MeetMaterialImportService extends EcmService {
 		return sb.toString();
 	}
 	
-	
-	private  String checkDocument(String token,  Row row, 
-		Map<Integer,String> attrNames,
-		int start,int end) throws Exception {
-		String id;
-			String coding1= row.getCell(getColumnIndex(attrNames, "C_CODE1",start,end)).getStringCellValue();
-			String coding2= row.getCell(getColumnIndex(attrNames, "C_CODE2",start,end)).getStringCellValue();
-			String coding3= row.getCell(getColumnIndex(attrNames, "C_CODE3",start,end)).getStringCellValue();
-			String coding4= row.getCell(getColumnIndex(attrNames, "C_CODE4",start,end)).getStringCellValue();
-			String coding5= row.getCell(getColumnIndex(attrNames, "C_CODE5",start,end)).getStringCellValue();
-			String coding6= row.getCell(getColumnIndex(attrNames, "C_CODE6",start,end)).getStringCellValue();
-			String cond = " TYPE_NAME='ICM' and C_CODE1='"+coding1+"'"
-					+ " and C_CODE2='"+coding2+"'"
-					+ " and C_CODE3='"+coding3+"'"
-					+ " and C_CODE4='"+coding4+"'"
-					+ " and C_CODE5='"+coding5+"'"
-					+ " and C_CODE6='"+coding6+"'";
-			List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
-			
-			if(result != null && result.size() > 0) {
-				id = result.get(0).get("ID")==null?"":result.get(0).get("ID").toString();
-			}else {
-				id="";
-			}
-			return id;
-	}
 	
 	private String getToken() {
 		// TODO Auto-generated method stub
@@ -514,72 +427,6 @@ public class MeetMaterialImportService extends EcmService {
 			newRelation(token, parentId,relationName, docId, index,desc);
 		}
 		return docId;
-	}
-	private void updataDocument(String token, String typeName,FileInputStream itemStream,
-			Row row, Map<String,Long> fileList,
-			Map<Integer,String> attrNames,String parentId, String relationName,
-			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields,String id) throws Exception {
-			EcmDocument doc = new EcmDocument();
-			doc.setTypeName(typeName);
-			if(MeetMaterialImportService.importDocFolderId==null||"".equals(MeetMaterialImportService.importDocFolderId)) {
-//				ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
-				MeetMaterialImportService.importDocFolderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
-			}
-			doc.setFolderId(MeetMaterialImportService.importDocFolderId);
-			EcmContent content = null;
-			if(itemStream!=null) {
-				content = new EcmContent();
-				content.setName(row.getCell(0).getStringCellValue());
-				content.setContentSize(fileList.get(content.getName()));
-				content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
-				content.setInputStream(itemStream);
-				
-				doc.getAttributes().put("C_IMPORT_NAME", content.getName());
-				doc.getAttributes().put("FORMAT_NAME", content.getFormatName());
-				doc.getAttributes().put("CONTENT_SIZE", content.getContentSize());
-			}
-			if(parentId!=null) {
-				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,null);
-			}else {
-				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,sameFields);
-			}
-			setDefaultValues(documentService.getSession(token),doc.getAttributes());
-			doc.getAttributes().put("C_BATCH_CODE", batchName);
-			doc.getAttributes().put("ID", id);
-			documentService.updateObject(token, doc, null);
-	}
-	private void delDocument(String token, String typeName,FileInputStream itemStream,
-			Row row, Map<String,Long> fileList,
-			Map<Integer,String> attrNames,String parentId, String relationName,
-			String batchName,int start,int end,Map<String,Object> sameValues, String sameFields,String id) throws Exception {
-			EcmDocument doc = new EcmDocument();
-			doc.setTypeName(typeName);
-			if(MeetMaterialImportService.importDocFolderId==null||"".equals(MeetMaterialImportService.importDocFolderId)) {
-//				ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
-				MeetMaterialImportService.importDocFolderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
-			}
-			doc.setFolderId(MeetMaterialImportService.importDocFolderId);
-			EcmContent content = null;
-			if(itemStream!=null) {
-				content = new EcmContent();
-				content.setName(row.getCell(0).getStringCellValue());
-				content.setContentSize(fileList.get(content.getName()));
-				content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
-				content.setInputStream(itemStream);
-				
-				doc.getAttributes().put("C_IMPORT_NAME", content.getName());
-				doc.getAttributes().put("FORMAT_NAME", content.getFormatName());
-				doc.getAttributes().put("CONTENT_SIZE", content.getContentSize());
-			}
-			if(parentId!=null) {
-				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,null);
-			}else {
-				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,sameFields);
-			}
-			setDefaultValues(documentService.getSession(token),doc.getAttributes());
-			doc.getAttributes().put("C_BATCH_CODE", batchName);
-			doc.getAttributes().put("ID", id);
-			documentService.updateObject(token, doc, null);
 	}
 	/**
 	 * 读取Cell值
