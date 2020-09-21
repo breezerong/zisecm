@@ -73,13 +73,14 @@ export default {
   },
   props: {
     deliveryId: { type: [String], required: true },
-    relationName: { type: [String],default:'' }
+    relationName: { type: [String],default:'' },
+    tmpPath:{type:String,required:true}
   },
   methods: {
     loadTemplate(){
       let _self = this;
       _self.loading = true;
-      axios.get("/MeetMaterialimport/getImportTemplates").then(function(response) {
+      axios.post("/MeetMaterialimport/getImportTemplates",_self.tmpPath).then(function(response) {
           _self.templateData = response.data.data;
           _self.loading = false;
         })

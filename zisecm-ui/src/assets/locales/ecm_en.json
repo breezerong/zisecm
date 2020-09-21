@@ -229,7 +229,7 @@
     "IEDPublished":"IED Published",
     "PendingSubmit":"Submission IED",
     "IEDRejected":"Rejected IED",
-    "TPlan":"ThreeLevel Plan",
+    "TPlan":"PlanWorks",
     "ICM":"ICM",
     "ReceivedDC":"Receiving DC",
     "RejectedDC":"Rejected DC",
@@ -251,7 +251,9 @@
     "DelayCloseReason":"Current Delay Reason is Right?",
     "startRejectApply": "StartRejectApply",
     "IedFeedBackExcel":"IED Batch Feedback",
-    "Reply":"Reply"
+    "IN_CODING":"IN_CODING",
+    "CODING":"CODING",
+    "TITLE":"TITLE"    
 },
 "skin": {
     "Blue": "Blue",

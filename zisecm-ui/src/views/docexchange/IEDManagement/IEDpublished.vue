@@ -86,7 +86,7 @@
                                             &&scope.data.row['STATUS']=='变更中')?{'background':'#409EFF'}:''">{{scope.data.$index+1}}</span>
                         </template>
                         <template slot="saveButton" slot-scope="scope">
-                           <el-button @click='change()'>变更</el-button>
+                           <el-button @click='change(scope.data.row)'>变更</el-button>
                         </template>
                     </DataGrid>
                         
@@ -263,7 +263,7 @@ export default {
                 if(m[i][0]=='STATUS'){
                 status = m[i][1]}
                 if(m[i][0]=='C_ITEM_STATUS2'){
-                    itemStatus==m[i][1]
+                    itemStatus=m[i][1]
                 }
             }              
             if(itemStatus=='Y'){
@@ -282,8 +282,8 @@ export default {
                  axios.post("/exchange/ied/changeIEDSingle",mp).then(function(response){
                      let code = response.data.code
                      if(code==3){
-                     let msg1 = _self.$t('message.publishedFailedForCoding')
-                     _self.$message({showClose: true, message: msg1, duration: 2000, type: "error"})
+                     let msg = _self.$t('message.publishedFailedForCoding')
+                     _self.$message({showClose: true, message: msg, duration: 2000, type: "error"})
                      }
                      if(code==1){
                       let msg = _self.$t('message.publishedChangeSuccessed')

@@ -34,12 +34,12 @@
             <el-col :span="24">
               <DataGrid
                 ref="mainDataGrid"
-                data-url="/dc/getDocumentsICMUnion"
+                data-url="/dc/getDocDesign"
                 :isShowMoreOption="false"
                 :isshowOption="true"
                 :isshowCustom="false"
                 :isshowicon="false"
-                gridViewName="ICMOpenGrid"
+                gridViewName="DCTransferGridDesign"
                 condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
                 :tableHeight="layout.height-210"
               ></DataGrid>
@@ -60,12 +60,12 @@ import ExcelUtil from "@/utils/excel.js";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 export default {
-  name: "ICMOpenGrid",
+  name: "DCTransferGridDesign",
   data() {
     return {
       tables: {
         main: {
-          gridName: "ICMOpenGrid",
+          gridName: "DCTransferGridDesign",
           datalist: [],
           height: "",
         },
@@ -89,8 +89,6 @@ export default {
         k1 += "C_PROJECT_NAME in (" + _self.icmReportStatistc + ")";
       }
 
-      k1 += " AND C_ITEM1_DATE is not null AND C_ITEM2_DATE is not null";
-
       _self.$refs.mainDataGrid.condition = k1;
       _self.$refs.mainDataGrid.loadGridData();
     },
@@ -105,11 +103,11 @@ export default {
         "" +
         fileDate.getDate();
       let params = {
-        gridName: "ICMExchangeList",
+        gridName: "DCTransferGridDesign",
         lang: "zh-cn",
         condition: this.$refs.mainDataGrid.condition,
-        filename: "ICM_OpenReport_" + fileDateStr + ".xlsx",
-        sheetname: "ICM_OpenReport",
+        filename: "ICM_DesignDoc_" + fileDateStr + ".xlsx",
+        sheetname: "ICM_DesignDoc",
       };
       ExcelUtil.export(params);
     },
