@@ -158,6 +158,7 @@
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGrid"
                             :isshowCustom="false"
+                            :optionWidth = "2"
                             :isEditProperty="false"
                             showOptions="查看内容"
                             :isShowChangeList="false"
@@ -208,6 +209,7 @@
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="false"
+                                    :optionWidth = "2"
                                     :isEditProperty="false"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
@@ -225,8 +227,9 @@
                                     ref="relevantDoc"
                                     key="relevantDocKey"
                                     dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight+40"
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    :optionWidth = "1"
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='相关文件'"
                                     :isShowMoreOption="false"
@@ -267,6 +270,7 @@
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
+                                    :optionWidth = "2"
                                     :isshowCustom="false"
                                     :isEditProperty="false"
                                     showOptions="查看内容"
@@ -284,6 +288,7 @@
                                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                         gridViewName="MOMContentGrid"
                                         condition=" and a.NAME='会议纪要内容项'"
+                                        :optionWidth = "1"
                                         :isShowMoreOption="false"
                                         :isshowCustom="false"
                                         :isEditProperty="true"
@@ -303,9 +308,10 @@
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="MaterialChangeGrid"
                                     condition=" and a.NAME='材料变更清单'"
+                                    :optionWidth = "1"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="false"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="MaterialDocSelect"
@@ -488,39 +494,51 @@ export default {
                 }
             }
             m.set('TYPE_NAME',_self.$refs.replyProperty.myTypeName);
-            let formdata = new FormData();
-            formdata.append("metaData",JSON.stringify(m));
-            formdata.append("replyDocId",_self.replyDocId);
-            formdata.append("includeRefDoc",_self.includeRefDoc);
-            if(_self.file!="")
-            {
-                //console.log(_self.file);
-                formdata.append("uploadFile",_self.$refs.replyProperty.file.raw);
-            }
-        
-            axios.post("/exchange/doc/newReplyDoc",formdata,{
-                'Content-Type': 'multipart/form-data'
-            })
-            .then(function(response) {
-                let code = response.data.code;
-                //console.log(JSON.stringify(response));
-                if(code==1){
+            _self.validateData(m,function(isOk){
+                if(isOk==false){
                     _self.$message({
-                            showClose: true,
-                            message: _self.$t('message.newSuccess'),
-                            duration: 2000,
-                            type: "success"
-                        });
+                        showClose: true,
+                        message: _self.$t('message.dataIsnotOnly'),
+                        duration: 2000,
+                        type: 'error'
+                    });
+                    _self.butt=false;
+                    return;
                 }
-                else{
+                let formdata = new FormData();
+                formdata.append("metaData",JSON.stringify(m));
+                formdata.append("replyDocId",_self.replyDocId);
+                formdata.append("includeRefDoc",_self.includeRefDoc);
+                if(_self.file!="")
+                {
+                    //console.log(_self.file);
+                    formdata.append("uploadFile",_self.$refs.replyProperty.file.raw);
+                }
+            
+                axios.post("/exchange/doc/newReplyDoc",formdata,{
+                    'Content-Type': 'multipart/form-data'
+                })
+                .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if(code==1){
+                        _self.$message({
+                                showClose: true,
+                                message: _self.$t('message.newSuccess'),
+                                duration: 2000,
+                                type: "success"
+                            });
+                    }
+                    else{
+                        _self.$message(_self.$t('message.newFailured'));
+                    }
+                    _self.replyVisible=false;
+                })
+                .catch(function(error) {
                     _self.$message(_self.$t('message.newFailured'));
-                }
-                _self.replyVisible=false;
-            })
-            .catch(function(error) {
-                _self.$message(_self.$t('message.newFailured'));
-                console.log(error);
-                _self.replyVisible=false;
+                    console.log(error);
+                    _self.replyVisible=false;
+                });
             });
         },
         dbClick(row){

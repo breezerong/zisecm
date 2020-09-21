@@ -47,7 +47,8 @@
             isshowOption
             gridViewName="延误关闭确认"
             condition="(C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME=ICM)"
-            v-bind="tables.main":tableHeight="layout.height-166"
+            :optionWidth = "1"
+            v-bind="tables.main" :tableHeight="layout.height-166"
             @rowclick="rowClick" 
             @selectchange="selectChange"
            ></DataGrid>

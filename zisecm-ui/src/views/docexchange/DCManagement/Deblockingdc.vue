@@ -44,6 +44,7 @@
                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                         gridViewName="DrawingGrid"
                         condition=" C_PROCESS_STATUS='申请解锁'"
+                        :optionWidth = "2"
                         @rowclick="rowClick"
                         :isshowCustom="false"
                         :isEditProperty="false"

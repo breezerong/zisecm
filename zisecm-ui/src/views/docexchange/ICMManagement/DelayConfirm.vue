@@ -38,6 +38,7 @@
             isshowOption
             gridViewName="ICM延误回复确认"
             condition="(C_PROCESS_STATUS in ('新建','已确认') ) and (TYPE_NAME='接口信息传递单' or TYPE_NAME='接口信息意见单')"
+            :optionWidth = "1"
             v-bind="tables.main":tableHeight="layout.height-166"
             @rowclick="rowClick" 
             @selectchange="selectChange"
