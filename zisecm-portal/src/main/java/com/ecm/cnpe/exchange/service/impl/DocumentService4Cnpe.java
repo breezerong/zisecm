@@ -251,7 +251,7 @@ public class DocumentService4Cnpe extends DocumentService{
 				 + "b.C_COMMENT3 AS C_RETENTION, b.C_TYPE1 AS C_ARCHIVE_NUM,"
 				 + "b.C_COMMENT4, b.C_COMMENT5 AS SYN_STATUS, b.C_EX6_DATE AS C_REVIEW4_DATE, b.C_COMMENT6 AS C_INST_AREA_ZONE "
 				 + "FROM ecm_document a, ecm_document b, ecm_document c "
-				 + "WHERE a.TYPE_NAME = 'ICM' AND b.TYPE_NAME = '接口信息意见单' AND c.TYPE_NAME = '公司' "
+				 + "WHERE a.TYPE_NAME = 'ICM' AND (b.TYPE_NAME = '接口信息意见单' OR b.TYPE_NAME = '接口信息传递单' ) AND c.TYPE_NAME = '公司' "
 				 + "AND a.C_CODE1 = b.C_CODE1 AND a.C_CODE2 = b.C_CODE2 AND a.C_CODE3 = b.C_CODE3 AND a.C_CODE4 = b.C_CODE4 "
 				 + "AND a.C_CODE5 = b.C_CODE5 AND a.C_CODE6 = b.C_CODE6 AND a.C_CODE6 = c.C_CODE1)t "
 				 + "WHERE " + gvCondition;
