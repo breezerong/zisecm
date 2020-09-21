@@ -22,7 +22,6 @@
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="行号" type="index" width="60"></el-table-column>
             <el-table-column label="属性名" prop="label"></el-table-column>
-            <el-table-column label="宽度" prop="width" width="100"></el-table-column>
             <el-table-column label="操作" width="60" fixed="right">
               <template slot-scope="scope">
                 <el-button :plain="true" type="primary" size="small" icon="edit" @click="addItem(scope.row)">添加</el-button>
@@ -38,7 +37,7 @@
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-button>移除</el-button>
+              <el-button @click="removeTagetRow">移除</el-button>
             </el-col>
           </el-row>
         </el-col>
@@ -91,6 +90,9 @@
 export default {
   name:"EcmCustomColumns",
   props:{
+    typeName:{
+      type:String,default:""
+    },
     gridViewName:{
       type:String,default:""
     },
@@ -130,6 +132,7 @@ export default {
   },
   mounted(){
     this.loadCustomName()
+    this.loadSysColumnInfo()
     this.tables.source.data = this.sysColumnInfo
   },
   watch: {
@@ -138,6 +141,16 @@ export default {
       }
   },
   methods:{
+    loadSysColumnInfo(){
+      let _self = this
+      let url = "/admin/getFormItems/"+this.gridViewName+"/"+this.currentLanguage
+      axios.post(url).then(function(response){
+        _self.tables.source.data = response.data.data
+        console.log(response)
+      }).catch(function(error){
+
+      })
+    },
     onSelectChange(item){
       let id = item.id
       let name = item.description
@@ -169,6 +182,13 @@ export default {
       for (let index = 1; index <= datalist.length; index++) {
         let item = datalist[index-1]
         item.orderIndex=index
+        let removeAttrs = ["enableChange","defaultValue","classification","maxCount","required",
+        "searchable","isHide","controlType","valueList","isRepeat",
+        "readOnly","parentId","minCount","widthType","queryName",
+        "id","validatePolicy"]
+        removeAttrs.forEach(function(attr){
+          delete item[attr]
+        })
         postArray.push(item)
       }
       let postData = new Map();
@@ -235,6 +255,10 @@ export default {
             _self.tables.target.data.push(item)
           }
       })
+    },
+    removeTagetRow(){
+      let selection = this.tables.target.selections
+      console.log(selection.length)
     },
     moveUp(index, row){
       if (index == 0) {
