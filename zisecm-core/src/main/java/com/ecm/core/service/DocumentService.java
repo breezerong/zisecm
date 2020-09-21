@@ -410,8 +410,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			doc.setVersionId(doc.getId());
 			doc.setContentSize((long) 0);
 			doc.setFormatName("");
-			doc.setModifiedDate(new Date());
-			doc.setModifier(getCurrentUser(token).getUserName());
+			
 			EcmContent content = null;
 			//包含电子文件复制，后续实现
 			if(includeContent) {
@@ -422,6 +421,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					doc.addAttribute(attr, attrValues.get(attr));
 				}
 			}
+			doc.setCreationDate(new Date());
+			doc.setCreator(getCurrentUser(token).getUserName());
+			doc.setModifiedDate(new Date());
+			doc.setModifier(getCurrentUser(token).getUserName());
 			this.newObject(token, doc, content);
 			return doc.getId();
 		}

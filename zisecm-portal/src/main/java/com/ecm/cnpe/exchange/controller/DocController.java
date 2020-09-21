@@ -727,6 +727,7 @@ public class DocController  extends ControllerAbstract  {
 					if(folderId == null) {
 						folderId = folderPathService.getFolderId(token, refDoc.getAttributes(), "3");
 					}
+					refDoc.setFolderId(folderId);
 					String childId = documentService.newObject(token, refDoc, null);
 					newRelation(token, toId, "相关文件", childId, i,null);
 					i++;
@@ -767,7 +768,7 @@ public class DocController  extends ControllerAbstract  {
 	}
 	
 	private List<Map<String, Object>> getChildData(String token,String parentId, String relationName) throws EcmException{
-		String sql = "select a.CODING,a.C_IN_CODING,a.TITLE,a.REVISION from ecm_document a, ecm_relation b where a.ID=b.CHILD_ID "
+		String sql = "select a.ID,a.CODING,a.C_IN_CODING,a.TITLE,a.REVISION from ecm_document a, ecm_relation b where a.ID=b.CHILD_ID "
 				+" and b.PARENT_ID='"+parentId+"' AND b.NAME='"+relationName+"'";
 		return documentService.getMapList(token, sql);
 	}
