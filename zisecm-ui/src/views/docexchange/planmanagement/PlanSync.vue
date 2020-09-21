@@ -67,20 +67,6 @@
       <el-dialog></el-dialog>
 
       <el-dialog title="从P6选择" :visible.sync="dialogP6visual" @opened="onP6SelectOpened">
-        <!-- <el-row>
-          <DataSelect
-            v-model="P6form.value"
-            data-url="/exchange/project/myproject"
-            data-value-field="name"
-            data-text-field="name"
-            includeAll
-          ></DataSelect>
-          <el-input
-            style="width:200px"
-            v-model="P6input"
-            :placeholder="$t('application.Coding')+$t('application.or')+$t('application.Title')"
-          ></el-input>
-        </el-row> -->
         <el-table :data="P6data" ref="P6" row-key="id" border>
           <el-table-column type="index" width="50" label="序号" align="center"></el-table-column>
           <el-table-column
