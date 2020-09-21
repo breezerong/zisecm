@@ -61,7 +61,7 @@ public class IEDController  extends ControllerAbstract  {
 			return attrname;
 		}
 	}
-	
+	public String lang;										//语言，找列的时候要用
 	public String IDS;										//公用ID，找列的时候要用
 	@RequestMapping(value = "/exchange/ied/newIED", method = RequestMethod.POST)
 	@ResponseBody
@@ -236,6 +236,8 @@ public class IEDController  extends ControllerAbstract  {
 		Map<String, Object> current = new HashMap<String,Object>();
 		List<Map<String,Object>> contrast = new ArrayList<Map<String,Object>>();
 		String id = args.get("ID").toString();
+		String lan = args.get("lang").toString();
+		this.lang = lan;
 		String Ver_id = args.get("Version_id").toString();
 		this.IDS = args.get("ID").toString();
 		EcmDocument temp = new EcmDocument();
@@ -384,7 +386,6 @@ public class IEDController  extends ControllerAbstract  {
 		//String lang = args.get(zh-cn).toString();
 		//String formName=args.get("formName").toString();
 		String itemInfo = "IED";
-		String lang = "zh-cn";
 		String formName="";
 		EcmDocument en = null;
 		List<EcmFormClassification> list = null;
@@ -398,7 +399,7 @@ public class IEDController  extends ControllerAbstract  {
 			if (frm == null) {
 				frm = CacheManagerOper.getEcmForms().get(formName + "_1");
 			}
-			list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
+			list = frm.getFormClassifications(documentService.getSession(getToken()), this.lang);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
 			EcmForm frm = CacheManagerOper.getEcmForms().get(itemInfo + "_NEW");
