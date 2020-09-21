@@ -5,7 +5,7 @@
             <el-dialog :title="$t('application.Import')" :visible.sync="MeetMaterialDialogVisible" width="80%" >
                 <MeetMaterialImport ref="MeetMaterialImport"  @onImported="onMeetMaterialImport" v-bind:deliveryId="parentId" width="100%"></MeetMaterialImport>
                 <div slot="footer" class="dialog-footer">
-                <el-button @click="MeetMaterialDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+                <el-button @click="ImportClose()" size="medium">{{$t('application.close')}}</el-button>
                 </div>
             </el-dialog>
             <!-- 创建设计文件附件 -->
@@ -513,6 +513,11 @@ export default {
         }, 300);
     },
     methods: {
+        ImportClose(){
+            let _self=this
+            _self.MeetMaterialDialogVisible=false
+            _self.$refs.MeetMaterialImport.ImportClose()
+        },
         beforMeetMaterialImport(obj,isSub,relationName,path){
             this.gridObj=obj;
             this.MeetMaterialDialogVisible=true;
@@ -714,6 +719,9 @@ export default {
             })
             
             
+        },
+        onBatchImported(){
+            this.gridObj.loadGridData();
         },
         //批量导入完成
         onBatchImported(){

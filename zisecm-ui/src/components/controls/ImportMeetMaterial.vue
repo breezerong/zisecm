@@ -77,6 +77,13 @@ export default {
     tmpPath:{type:String,required:true}
   },
   methods: {
+    ImportClose(){
+      let _self = this
+      _self.selectedTemplate=""
+      _self.importMessage=""
+      _self.fileList1=[];
+      _self.progressNum=0
+    },
     loadTemplate(){
       let _self = this;
       _self.loading = true;
