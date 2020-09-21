@@ -68,7 +68,7 @@ export default {
     };
   },
   mounted() {
-    this.loadTemplate();
+    // this.loadTemplate();
     this.progressNum=0;
   },
   props: {
@@ -95,6 +95,7 @@ export default {
           _self.$message("读取模板失败!");
           console.log(error);
         });
+      
     },
     downloadTemplate(){
       let _self = this;
