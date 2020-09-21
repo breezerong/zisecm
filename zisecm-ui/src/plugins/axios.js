@@ -35,6 +35,18 @@ _axios.interceptors.request.use(function(config) {
 
 // Add a response interceptor
 _axios.interceptors.response.use(function(response) {
+  /*
+    if (response.request.responseType === 'arraybuffer' && !response.headers['content-disposition']) {
+        //当没有content-disposition这个字段时return的数据
+      return response.data 
+    }
+    if (response.request.responseType === 'arraybuffer' && response.headers['content-disposition']) {
+       //当存在content-disposition这个字段时，return出来的数据
+      const temp = {}
+      temp.data = response.data
+      temp.filename = response.headers['content-disposition']
+      return temp
+   }*/
 	// 未登录跳转到登录页面
 	if (response.data && response.data.code && response.data.code === '1001') {
 	  // console.info(response.data)

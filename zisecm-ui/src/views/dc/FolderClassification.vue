@@ -168,6 +168,30 @@
       </div>
     </el-dialog>
     <el-dialog
+      title="Json包导入"
+      :visible.sync="importDialogVisible"
+      v-loading="uploading"
+    >
+      <el-form  label-position="right" label-width="120px">
+        <el-form-item label="文件" :label-width="formLabelWidth">
+          <el-upload
+            :limit="1"
+            :file-list="jsonFileList"
+            action
+            :on-change="handleJsonFileChange"
+            :auto-upload="false"
+            :multiple="false"
+          >
+            <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="importDialogVisible = false">{{$t('application.cancel')}}</el-button>
+        <el-button type="primary" @click="importPackage()">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
       title="文件列表"
       :visible.sync="itemDialogVisible"
       width="80%"
@@ -235,6 +259,16 @@
             <el-button type="primary" icon="el-icon-document-copy" @click="copyItem()">复制</el-button>
             <el-button type="primary" icon="el-icon-upload2" @click="showUpdateFile(0)">更新</el-button>
             <el-button type="primary" icon="el-icon-upload2" @click="showUpdateFile(1)">副本</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-download"
+              @click="handleExportItem()"
+            >导出</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-upload2"
+              @click="importDialogVisible = true"
+            >导入</el-button>
           </el-col>
         </el-row>
       <div :style="{position:'relative',height: asideHeight+'px'}">
@@ -388,6 +422,9 @@ export default {
       moveDialogVisible: false,
       udialogVisible: false,
       itemDialogVisible: false,
+      importDialogVisible: false,
+      jsonFileList: [],
+      jsonFile: null,
       newFileList: [],
       currentId: "",
       isMoveFolder:false,
@@ -409,6 +446,7 @@ export default {
       currentFolder: [],
       currentDocument: [],
       dataListFull: "",
+      uploadFile:null,
       inputkey: "",
       loading: false,
       uploading: false,
@@ -509,6 +547,9 @@ export default {
     handleFileChange(file, fileList) {
       this.uploadFile = file;
     },
+    handleJsonFileChange(file, fileList) {
+      this.jsonFile = file;
+    },
     updateNewFile() {
       let _self = this;
       if (_self.selectedItems && _self.selectedItems.length > 0) {
@@ -518,6 +559,29 @@ export default {
           _self.uploadRendition();
         }
       }
+    },
+    importPackage(){
+      let _self = this;
+      _self.uploading = true;
+      let formdata = new FormData();
+      formdata.append("folderId", _self.currentFolder.id);
+      if (_self.jsonFile != "") {
+        formdata.append("jsonFile", _self.jsonFile.raw);
+      }
+      axios
+        .post("/admin/importPackage", formdata, {
+          "Content-Type": "multipart/form-data"
+        })
+        .then(function(response) {
+          _self.importDialogVisible = false;
+          _self.loadGridData(_self.currentFolder);
+          _self.$message("导入成功!");
+          _self.uploading = false;
+        })
+        .catch(function(error) {
+          console.log(error);
+          _self.uploading = false;
+        });
     },
     uploadPrimry() {
       let _self = this;
@@ -852,6 +916,53 @@ export default {
       }
       this.propertyVisible = false;
       this.loadGridData(this.currentFolder);
+    },
+    handleExportItem(){
+      let _self = this;
+      var m = [];
+      let tab = _self.selectedItems;
+      var i;
+      for (i in tab) {
+        m.push(tab[i]["ID"]);
+      }
+      axios
+        .post("/admin/getPackage", JSON.stringify(m))
+        .then(function(response) {
+          const content = JSON.stringify(response.data)
+          //_self.exportRaw("package.txt", content)
+        
+          const blob = new Blob([content]) // 构造一个blob对象来处理数据
+          const fileName = 'package.json' // 导出文件名
+          // 对于<a>标签，只有 Firefox 和 Chrome（内核） 支持 download 属性
+          // IE10以上支持blob但是依然不支持download
+          if ('download' in document.createElement('a')) { // 支持a标签download的浏览器
+            const link = document.createElement('a') // 创建a标签
+            link.download = fileName // a标签添加属性
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            document.body.appendChild(link)
+            link.click() // 执行下载
+            URL.revokeObjectURL(link.href) // 释放url
+            document.body.removeChild(link) // 释放标签
+          } else { // 其他浏览器
+            navigator.msSaveBlob(blob, fileName)
+          }
+        })
+        .catch(function(error) {
+          _self.$message("打包失败");
+          console.log(error);
+        });
+    },
+    exportRaw(name, data) {
+      var urlObject = window.URL || window.webkitURL || window;
+      var export_blob = new Blob([data]);
+      var save_link = document.createElementNS(
+        "http://www.w3.org/1999/xhtml",
+        "a"
+      );
+      save_link.href = urlObject.createObjectURL(export_blob);
+      save_link.download = name;
+      this.fakeClick(save_link);
     },
     // 删除文档事件
     onDeleleItem() {
