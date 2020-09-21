@@ -1,6 +1,13 @@
 <template>
     <DataLayout>
         <template v-slot:header>
+            <!-- 材料变更清单Excel导入 -->
+            <el-dialog :title="$t('application.Import')" :visible.sync="MeetMaterialDialogVisible" width="80%" >
+                <MeetMaterialImport ref="MeetMaterialImport"  @onImported="onMeetMaterialImport" v-bind:deliveryId="parentId" width="100%"></MeetMaterialImport>
+                <div slot="footer" class="dialog-footer">
+                <el-button @click="MeetMaterialDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+                </div>
+            </el-dialog>
             <!-- 创建设计文件附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importSubVisible" width="70%">
                 <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -316,6 +323,9 @@
                                         <el-form-item>
                                         <el-button type="primary" @click="beforeCreateDocItem('会议纪要内容项','会议纪要内容项')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
+                                        <el-form-item>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MeetDoc,true,'会议纪要内容项','/系统配置/导入模板/文函/会议纪要内容项')">{{$t('application.Import')}}</el-button>
+                                        </el-form-item>
                                         <!-- <el-form-item>
                                         <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
                                         </el-form-item> -->
@@ -352,6 +362,9 @@
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
                                         <el-form-item>
                                         <el-button type="primary" @click="beforeCreateDocItem('材料变更清单','材料变更清单')">{{$t('application.new')}}</el-button>
+                                        </el-form-item>
+                                        <el-form-item>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MaterialDoc,true,'材料变更清单','/系统配置/导入模板/文函/材料变更清单')">{{$t('application.Import')}}</el-button>
                                         </el-form-item>
                                         <!-- <el-form-item>
                                         <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
@@ -399,7 +412,7 @@ import ExcelUtil from '@/utils/excel.js'
 import MountFile from '@/components/MountFile.vue';
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
-import MeetMaterial from '@/components/controls/ImportMeetMaterial';
+import MeetMaterialImport from '@/components/controls/ImportMeetMaterial';
 export default {
     // CNPE 待分发文函
     name: "CreateDispense",
@@ -476,6 +489,7 @@ export default {
             MeetDocSelected:[],
             isShowMaterial:true,
             MaterialDocSelected:[],
+            MeetMaterialDialogVisible:false,
         }
     },
     created(){
@@ -499,6 +513,24 @@ export default {
         }, 300);
     },
     methods: {
+        beforMeetMaterialImport(obj,isSub,relationName,path){
+            this.gridObj=obj;
+            this.MeetMaterialDialogVisible=true;
+            this.$nextTick(()=>{
+                if(isSub){
+                    this.$refs.MeetMaterialImport.deliveryId=this.parentId;
+                    this.$refs.MeetMaterialImport.relationName=relationName;
+                    
+                }else{
+                    this.$refs.MeetMaterialImport.deliveryId='';
+                    this.$refs.MeetMaterialImport.relationName='';
+                }
+                this.$refs.MeetMaterialImport.tmpPath=path;
+                this.$refs.MeetMaterialImport.loadTemplate();
+            })
+            
+            
+        },
         searchIED(){
             let _self = this
             let wheres = ["TITLE","C_WBS_CODING","CODING","C_IN_CODING"]
@@ -1262,6 +1294,7 @@ export default {
         DataSelect:DataSelect,
         DataLayout:DataLayout,
         AttachmentFile:AttachmentFile,
+        MeetMaterialImport:MeetMaterialImport
     }
 }
 </script>
