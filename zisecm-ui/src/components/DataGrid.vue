@@ -60,7 +60,7 @@
           <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
         </div>
       </el-dialog>
-     
+
         <el-table
           :key="rkey"
           id="datatable"
@@ -621,7 +621,7 @@ export default {
               _self.showFields.push(element.attrName);
             }
           });
-          _self.tableHeight = "100%";
+          // _self.tableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
