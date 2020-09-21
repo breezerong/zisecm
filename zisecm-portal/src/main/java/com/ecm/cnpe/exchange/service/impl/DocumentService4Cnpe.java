@@ -251,8 +251,67 @@ public class DocumentService4Cnpe extends DocumentService{
 				 + "b.C_COMMENT3 AS C_RETENTION, b.C_TYPE1 AS C_ARCHIVE_NUM,"
 				 + "b.C_COMMENT4, b.C_COMMENT5 AS SYN_STATUS, b.C_EX6_DATE AS C_REVIEW4_DATE, b.C_COMMENT6 AS C_INST_AREA_ZONE "
 				 + "FROM ecm_document a, ecm_document b, ecm_document c "
-				 + "WHERE a.TYPE_NAME = 'ICM' AND b.TYPE_NAME = '接口信息意见单' AND c.TYPE_NAME = '公司' AND a.C_CODE6 = c.C_CODE1)t "
+				 + "WHERE a.TYPE_NAME = 'ICM' AND b.TYPE_NAME = '接口信息意见单' AND c.TYPE_NAME = '公司' "
+				 + "AND a.C_CODE1 = b.C_CODE1 AND a.C_CODE2 = b.C_CODE2 AND a.C_CODE3 = b.C_CODE3 AND a.C_CODE4 = b.C_CODE4 "
+				 + "AND a.C_CODE5 = b.C_CODE5 AND a.C_CODE6 = b.C_CODE6 AND a.C_CODE6 = c.C_CODE1)t "
 				 + "WHERE " + gvCondition;
+		
+		if (!StringUtils.isEmpty(folderId)) {
+			sql += " and folder_id='" + folderId + "'";
+		}
+		if (!EcmStringUtils.isEmpty(condition)) {
+			sql += " and (" + condition + ")";
+		}
+		if (!EcmStringUtils.isEmpty(orderBy)) {
+			sql += " order by " + orderBy;
+		} else {
+			sql += " " + gv.getOrderBy();
+		}
+		
+		sql=SqlUtils.replaceSql(sql, userObj);
+		System.out.println(sql);
+		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
+		// TODO Auto-generated method stub
+		
+		return list;
+	}
+	
+	public List<Map<String, Object>> getDesignDC(String token, String gridName, String folderId, Pager pager,
+			String condition, String orderBy){
+		String currentUser="";
+		LoginUser userObj=null;
+		try {
+			userObj=getSession(token).getCurrentUser();
+			currentUser = userObj.getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		String gvCondition=gv.getCondition();
+		
+		String columns ="a.ID, a.TYPE_NAME, a.C_PROJECT_NAME, a.SUB_TYPE,a.C_FROM_CODING,a.C_IN_CODING,a.CODING,a.TITLE,a.REVISION,a.C_ITEM_STATUS,a.C_PAGE_SIZE," + 
+						"a.C_PAGE_COUNT," + 
+						"a.C_COMPANY," + 
+						"a.C_COUNT1," + 
+						"a.C_COUNT2," + 
+						"a.C_COUNT3," + 
+						"a.C_LANGUAGE," + 
+						"a.CREATION_DATE," + 
+						"a.C_ITEM_DATE," + 
+						"a.C_REF_CODING," + 
+						"a.C_SEND_DATE," + 
+						"a.C_RECEIVE_DATE,";
+		
+		String sql="select ID "+ getGridColumn(gv, gridName) +" from (" + "select "+ columns + 
+				   "b.C_EX1_STRING," + 
+				   "b.C_ITEM8_DATE," + 
+				   "b.C_STRING5," + 
+				   "b.C_ITEM5_DATE " + 
+				   "FROM ecm_document a, ecm_document b " + 
+				   "where a.TYPE_NAME = '设计文件' AND b.TYPE_NAME = 'IED' AND  a.C_IN_CODING = b.C_IN_CODING AND a.CODING = b.CODING)t " + 
+				   "WHERE " + gvCondition;
 		
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
