@@ -322,7 +322,7 @@
                                         <el-button type="primary" @click="beforeCreateDocItem('会议纪要内容项','会议纪要内容项')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
-                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MeetDoc,true,'会议纪要内容项','/系统配置/导入模板/会议纪要内容项')">{{$t('application.Import')}}</el-button>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MeetDoc,true,'会议纪要内容项','/系统配置/导入模板/文函/会议纪要内容项')">{{$t('application.Import')}}</el-button>
                                         </el-form-item>
                                         <!-- <el-form-item>
                                             <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
@@ -359,7 +359,7 @@
                                         <el-button type="primary" @click="beforeCreateDocItem('材料变更清单','材料变更清单')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
-                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MaterialDoc,true,'材料变更清单','/系统配置/导入模板/材料变更清单')">{{$t('application.Import')}}</el-button>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MaterialDoc,true,'材料变更清单','/系统配置/导入模板/文函/材料变更清单')">{{$t('application.Import')}}</el-button>
                                         </el-form-item>
                                         <!-- <el-form-item>
                                             <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
