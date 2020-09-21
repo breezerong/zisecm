@@ -101,7 +101,7 @@
             <el-row>
                 <el-col :span="24">                   
                     <DataGrid ref="mainDataGrid"  dataUrl="/dc/getDocuments" 
-                    isshowOption v-bind="tables.main":tableHeight="layout.height-163"
+                    isshowOption v-bind="tables.main" :tableHeight="layout.height-163"
                     :optionWidth = "2"
                     gridViewName="IEDGrid" 
                     @cellMouseEnter="cellMouseEnter"
@@ -459,7 +459,6 @@ export default {
       console.log(this.selectedItems)
     },
     search(condition){
-        var k1
         let _self = this
         let wheres = ["TITLE","C_IN_CODING","CODING"]
         let orS = ""
@@ -510,7 +509,6 @@ export default {
     },
         exportData(){
             let _self =this
-            let dataUrl = "/exchange/doc/export"
             var fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             let params = {
