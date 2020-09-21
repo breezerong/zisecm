@@ -14,6 +14,15 @@
             <el-form-item label="排序" :label-width="formLabelWidth">
               <el-input v-model="form.orderBy" auto-complete="off"></el-input>
             </el-form-item>
+            <el-form-item label="类型" :label-width="formLabelWidth">
+              <!-- <el-input v-model="form.typeName" auto-complete="off"></el-input> -->
+            
+              <el-select v-model="form.typeName" filterable >
+              <div v-for="item in typeNameList" :key="item.NAME">
+                <el-option :label="item.NAME" :value="item.NAME"></el-option>
+              </div>
+            </el-select>
+            </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
@@ -22,10 +31,6 @@
         </el-dialog>
               <el-container>
       <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>列表管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
         <el-row class="topbar">
           <el-col :span="4">
             <el-input
@@ -80,13 +85,20 @@
             <el-input  v-model="scope.row.orderBy"></el-input>
           </template>
         </el-table-column>
+        <el-table-column label="类型" width="200">
+          <template slot-scope="scope">
+            <!-- <el-input  v-model="scope.row.typeName"></el-input> -->
+            <el-select v-model="scope.row.typeName" filterable >
+              <div v-for="item in typeNameList" :key="item.NAME">
+                <el-option :label="item.NAME" :value="item.NAME"></el-option>
+              </div>
+            </el-select>
+          </template>
+        </el-table-column>
         <el-table-column label="操作"  width="320">
           <template slot-scope="scope">
             <router-link :to="{path:'/managercenter/gridviewitemmanager',query:{parentid:scope.row.id,name:scope.row.name}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link>
             &nbsp; 
-            <!-- 
-            <el-button :plain="true" type="success" size="small" icon="edit" @click="showitem(scope.row)">查看</el-button>
-            -->
             <el-button :plain="true" type="primary" size="small" icon="edit" @click="saveitem(scope.row)">保存</el-button>
             <el-button :plain="true" type="warning" size="small" icon="edit" @click="copyitem(scope.row)">复制</el-button>
             <el-button :plain="true" type="danger" size="small" icon="delete" @click="delitem(scope.row)">{{$t('application.delete')}}</el-button>
@@ -99,13 +111,13 @@
 </template>
 
 <script type="text/javascript">
-// $.ajaxSetup({
-//   contentType: "application/json"
-// });
-
+import EcmDataSelect from '@/components/ecm-data-select'
 export default {
   name: "GridViewManager",
   permit: 9,
+  components:{
+    EcmDataSelect
+  },
   data() {
     return {
       dataList: [],
@@ -120,10 +132,11 @@ export default {
         condition: "",
         orderBy:""
       },
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
+      typeNameList:[]
     };
   },
-   created(){ 
+   created(){
      
     let _self = this;
     _self.loading = true;
@@ -137,8 +150,13 @@ export default {
         console.log(error);
         _self.loading = false;
       });
-
-    },
+      let queryObj={"queryName":"类型列表"}
+    axios.post("/query/getquery",JSON.stringify(queryObj)).then(function(resp){
+      _self.typeNameList = resp.data.data
+    }).catch(function(error) {
+        console.log(error);
+    });
+  },
   methods: {
     refreshData() {
       let _self = this;

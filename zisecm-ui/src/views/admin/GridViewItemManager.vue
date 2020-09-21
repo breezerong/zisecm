@@ -333,9 +333,7 @@ export default {
     },
     search() {
       let _self = this;
-      let tab = _self.dataListFull;
       _self.dataList = [];
-      var i;
       if (_self.inputkey != "" || _self.parentid != "") {
         _self.dataList = _self.dataListFull.filter(function(item) {
           return (
