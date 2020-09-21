@@ -342,5 +342,22 @@ public interface IDocumentService {
 	 */
 	void newRevisionTo(String token, String docId, Map<String, Object> attrMap, String toId, boolean isCurrent)
 			throws Exception;
+	/**
+	 * 根据现有对象创建新对象
+	 * @Title:
+	 * @author Haihong Rong
+	 * @date:   2020-9-20 21:34:06 
+	 * @Description:       
+	 * @param token
+	 * @param id 对象ID
+	 * @param attrValues 需要修改的属性值
+	 * @param includeContent 是否包含电子文件
+	 * @return 新对象ID
+	 * @throws EcmException
+	 * @throws AccessDeniedException 
+	 * @throws Exception 
+	 */
+	String saveAsNew(String token, String id, Map<String, Object> attrValues, boolean includeContent)
+			throws EcmException, AccessDeniedException, Exception;
 	
 }

@@ -247,7 +247,8 @@
     "Dispense":"分发",
     "DelayCloseReason":"是否认可延误关闭原因",
     "startRejectApply": "发起驳回申请",
-    "IedFeedBackExcel":"IED批量反馈"
+    "IedFeedBackExcel":"IED批量反馈",
+    "Reply":"回复"
 },
 "skin": {
     "Blue": "天空蓝",

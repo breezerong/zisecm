@@ -766,7 +766,7 @@ export default {
                 "or CODING like '%" +
                 _self.filters.title +
                 "%' " +
-                "or C_OTHER_COIDNG like '%" +
+                "or C_OTHER_CODING like '%" +
                 _self.filters.title +
                 "%' " +
                 ")";

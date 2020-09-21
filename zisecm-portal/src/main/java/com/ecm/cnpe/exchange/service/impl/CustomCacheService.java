@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,12 +73,18 @@ public class CustomCacheService {
 				if(policy !=null && policy.length()>0) {
 					policy = policy.trim();
 					String[] attrs = policy.split(";");
-					if(attrs.length>1) {
-						// 配置中为 源属性：目标属性，需要转换成key目标属性，value源属性
-						en.getAttrNames().put(attrs[1], attrs[0]);
-					}else {
-						en.getAttrNames().put(policy, policy);
+					for(String str : attrs) {
+						if(!StringUtils.isEmpty(str)) {
+							String[]  strs = str.split(":");
+							if(strs.length>1) {
+								// 配置中为 源属性：目标属性，需要转换成key目标属性，value源属性
+								en.getAttrNames().put(strs[1], strs[0]);
+							}else {
+								en.getAttrNames().put(str, str);
+							}
+						}
 					}
+					
 				}
 				clist.add(en);
 			}
