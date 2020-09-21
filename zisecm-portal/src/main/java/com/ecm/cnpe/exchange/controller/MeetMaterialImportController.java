@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ecm.cnpe.exchange.service.impl.ICMImportService;
 import com.ecm.cnpe.exchange.service.impl.IEDImportService;
+import com.ecm.cnpe.exchange.service.impl.MeetMaterialImportService;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
@@ -51,7 +52,7 @@ public class MeetMaterialImportController extends ControllerAbstract{
 	private NumberService numberService;
 	
 	@Autowired
-	private ICMImportService importService;
+	private MeetMaterialImportService importService;
 	
 	@Autowired
 	private DocumentService documentService;
@@ -63,20 +64,20 @@ public class MeetMaterialImportController extends ControllerAbstract{
 	private FolderService folderService;
 	
 	
-	@RequestMapping(value = "/MeetMaterialimport/getImportList/{id}", method = RequestMethod.GET)
-	@ResponseBody
-	public Map<String, Object> getImportList(@PathVariable("id") String id) throws Exception {
-		String condition = "C_FROM_CODE='"+id+"' and TYPE_NAME='ICM' ";
-		Pager pager = new Pager();
-		pager.setPageIndex(0);
-		pager.setPageSize(2000);
-		List<Map<String, Object>> objList = documentService.getObjectsByConditon(getToken(), "BatchImportGrid", null, pager, condition, "CREATION_DATE DESC");
-		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", objList);
-		return mp;
-	}
-	
+//	@RequestMapping(value = "/MeetMaterialimport/getImportList/{id}", method = RequestMethod.GET)
+//	@ResponseBody
+//	public Map<String, Object> getImportList(@PathVariable("id") String id) throws Exception {
+//		String condition = "C_FROM_CODE='"+id+"' and TYPE_NAME='会议纪要内容项' ";
+//		Pager pager = new Pager();
+//		pager.setPageIndex(0);
+//		pager.setPageSize(2000);
+//		List<Map<String, Object>> objList = documentService.getObjectsByConditon(getToken(), "BatchImportGrid", null, pager, condition, "CREATION_DATE DESC");
+//		Map<String, Object> mp = new HashMap<String, Object>();
+//		mp.put("code", ActionContext.SUCESS);
+//		mp.put("data", objList);
+//		return mp;
+//	}
+//	
 	@RequestMapping(value = "/MeetMaterialimport/getImportTemplates", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getImportTemplates() throws Exception {

@@ -2,12 +2,13 @@
     <DataLayout>
         <template v-slot:header>
             <!-- 待提交文函 -->
+            <!-- 材料变更清单Excel导入 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="MeetMaterialDialogVisible" width="80%" >
-            <MeetMaterialImport ref="MeetMaterialImport"  @onImported="onMeetMaterialImport" v-bind:deliveryId="parentId" width="100%"></MeetMaterialImport>
-            <div slot="footer" class="dialog-footer">
-            <el-button @click="MeetMaterialDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
-            </div>
-        </el-dialog>
+                <MeetMaterialImport ref="MeetMaterialImport"  @onImported="onMeetMaterialImport" v-bind:deliveryId="parentId" width="100%"></MeetMaterialImport>
+                <div slot="footer" class="dialog-footer">
+                <el-button @click="MeetMaterialDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+                </div>
+            </el-dialog>
             <!-- 设计文件附件 -->
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
@@ -320,9 +321,9 @@
                                         <el-form-item>
                                         <el-button type="primary" @click="beforeCreateDocItem('会议纪要内容项','会议纪要内容项')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
-                                        <!-- <el-form-item>
-                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.mainDataGrid,false,'会议纪要内容项','/系统配置/导入模板/会议纪要内容项')">{{$t('application.Import')}}</el-button>
-                                        </el-form-item> -->
+                                        <el-form-item>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MeetDoc,true,'会议纪要内容项','/系统配置/导入模板/会议纪要内容项')">{{$t('application.Import')}}</el-button>
+                                        </el-form-item>
                                         <!-- <el-form-item>
                                             <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
                                         </el-form-item> -->
@@ -357,9 +358,9 @@
                                         <el-form-item>
                                         <el-button type="primary" @click="beforeCreateDocItem('材料变更清单','材料变更清单')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
-                                        <!-- <el-form-item>
-                                        <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
-                                        </el-form-item> -->
+                                        <el-form-item>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MaterialDoc,true,'材料变更清单','/系统配置/导入模板/材料变更清单')">{{$t('application.Import')}}</el-button>
+                                        </el-form-item>
                                         <!-- <el-form-item>
                                             <MountFile :selectedItem="relevantDocSelected" @refresh='refreshReleventDocData'>{{$t('application.ReplaceDoc')}}</MountFile>
                                         </el-form-item> -->
@@ -650,15 +651,15 @@ export default {
             this.MeetMaterialDialogVisible=true;
             this.$nextTick(()=>{
                 if(isSub){
-                    this.$refs.BatchImport.deliveryId=this.parentId;
-                    this.$refs.BatchImport.relationName=relationName;
+                    this.$refs.MeetMaterialImport.deliveryId=this.parentId;
+                    this.$refs.MeetMaterialImport.relationName=relationName;
                     
                 }else{
-                    this.$refs.BatchImport.deliveryId='';
-                    this.$refs.BatchImport.relationName='';
+                    this.$refs.MeetMaterialImport.deliveryId='';
+                    this.$refs.MeetMaterialImport.relationName='';
                 }
-                this.$refs.BatchImport.tmpPath=path;
-                this.$refs.BatchImport.loadTemplate();
+                this.$refs.MeetMaterialImport.tmpPath=path;
+                this.$refs.MeetMaterialImport.loadTemplate();
             })
             
             
@@ -875,10 +876,11 @@ export default {
                     _self.isShowMeet=false;
                 }
                _self.$nextTick(()=>{
-               _self.$refs.MeetDoc.parentId=row.ID;
-                 _self.$refs.MeetDoc.loadGridData();
-               _self.$refs.attachmentDoc.parentId=row.ID;
-                 _self.$refs.attachmentDoc.loadGridData();
+                    _self.$refs.MeetDoc.parentId=row.ID;
+                    _self.$refs.MeetDoc.loadGridInfo();
+                    _self.$refs.MeetDoc.loadGridData();
+                    _self.$refs.attachmentDoc.parentId=row.ID;
+                    _self.$refs.attachmentDoc.loadGridData();
                });
             }
             
