@@ -1,39 +1,42 @@
 <template>
-<DataLayout>
-    <template v-slot:header style="height: auto"></template>
-    <template v-slot:main="{layout}">
   <el-tabs v-model="activeName">
     <el-tab-pane label="基本接口报表" name="ICMBase">
-      <ICMBaseReport :tableHeight="layout.height-210"></ICMBaseReport>
+      <ICMBaseReport></ICMBaseReport>
     </el-tab-pane>
     <el-tab-pane label="ICM手册导出报表" name="ICMExport">
-      <ICMReportGrid :tableHeight="layout.height-210"></ICMReportGrid>
+      <ICMReportGrid></ICMReportGrid>
     </el-tab-pane>
     <el-tab-pane label="ICM接口及交换信息完整清单" name="ICMExchange">
-      <ICMExchangeGrid :tableHeight="layout.height-210"></ICMExchangeGrid>
+      <ICMExchangeGrid></ICMExchangeGrid>
     </el-tab-pane>
     <el-tab-pane label="接口打开完成情况报表" name="ICMOpen">
-      <ICMOpenGrid :tableHeight="layout.height-210"></ICMOpenGrid>
+      <ICMOpenGrid></ICMOpenGrid>
     </el-tab-pane>
     <el-tab-pane label="接口关闭完成情况报表" name="ICMClose">
-      <ICMCloseGrid :tableHeight="layout.height-210"></ICMCloseGrid>
+      <ICMCloseGrid></ICMCloseGrid>
     </el-tab-pane>
     <el-tab-pane label="接口回复完成情况报表" name="ICMReply">
-      <ICMReplyGrid :tableHeight="layout.height-210"></ICMReplyGrid>
+      <ICMReplyGrid></ICMReplyGrid>
     </el-tab-pane>
     <el-tab-pane label="CNPE各所接口完成统计" name="CNPEComplete">
-      <CNPECompleteReport :tableHeight="layout.height-210"></CNPECompleteReport>
+      <CNPECompleteReport></CNPECompleteReport>
     </el-tab-pane>
     <el-tab-pane label="合同商接口完成统计" name="ContrICM">
-      <ContactorReport :tableHeight="layout.height-210"></ContactorReport>
+      <ContactorReport></ContactorReport>
     </el-tab-pane>
   </el-tabs>
-    </template>
-</DataLayout>
 </template>
 <script type="text/javascript">
-import { ICMBaseReport, ICMReportGrid, ICMExchangeGrid, ICMOpenGrid, ICMCloseGrid, ICMReplyGrid, CNPECompleteReport, ContactorReport} from "./ICMLayout/";
-import DataLayout from "@/components/ecm-data-layout";
+import {
+  ICMBaseReport,
+  ICMReportGrid,
+  ICMExchangeGrid,
+  ICMOpenGrid,
+  ICMCloseGrid,
+  ICMReplyGrid,
+  CNPECompleteReport,
+  ContactorReport,
+} from "./ICMLayout/";
 export default {
   name: "ICMReport",
   data() {
@@ -46,7 +49,6 @@ export default {
 
   props: {},
   components: {
-    DataLayout: DataLayout,
     ICMBaseReport,
     ICMReportGrid,
     ICMExchangeGrid,
@@ -59,7 +61,7 @@ export default {
 };
 </script>
 <style scoped>
-.el-header {
-  height: auto;
+.el-form-item {
+  margin-bottom: 0px;
 }
 </style>
