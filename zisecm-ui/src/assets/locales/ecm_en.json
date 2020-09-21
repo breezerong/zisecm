@@ -250,7 +250,10 @@
     "Dispense":"Dispense",
     "DelayCloseReason":"Current Delay Reason is Right?",
     "startRejectApply": "StartRejectApply",
-    "IedFeedBackExcel":"IED Batch Feedback"
+    "IedFeedBackExcel":"IED Batch Feedback",
+    "IN_CODING":"IN_CODING",
+    "CODING":"CODING",
+    "TITLE":"TITLE"    
 },
 "skin": {
     "Blue": "Blue",

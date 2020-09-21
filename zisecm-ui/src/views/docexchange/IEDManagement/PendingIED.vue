@@ -11,19 +11,19 @@
         <el-table-column
         fixed
         prop="C_IN_CODING"
-        label="内部编码"
+        :label="$t('application.IN_CODING')"
         width="150"
         ></el-table-column>
         <el-table-column
         fixed
         prop="CODING"
-        label="外部编码"
+        :label="$t('application.CODING')"
         width="150"
         ></el-table-column>
         <el-table-column
         fixed
         prop="TITLE"
-        label="标题"
+        :label="$t('application.TITLE')"
         width="150"
         ></el-table-column>
         <el-table-column v-for="item in IEDcolumns" v-bind="item" :key="item"
