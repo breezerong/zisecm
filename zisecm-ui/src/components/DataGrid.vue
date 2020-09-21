@@ -9,7 +9,7 @@
         </EcmCustomColumns>
       </el-dialog>
       
-      <el-dialog
+      <el-dialog v-dialogDrag
         :append-to-body="true"
         :title="typeName+$t('application.property')"
         :visible.sync="propertyVisible"
@@ -229,6 +229,7 @@
   </div>
 </template>
 <script type="text/javascript">
+import '@/utils/dialog'
 import ShowProperty from "@/components/ShowProperty";
 import EcmCustomColumns from '@/components/ecm-custom-columns'
 export default {
