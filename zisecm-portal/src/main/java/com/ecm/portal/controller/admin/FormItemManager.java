@@ -1,11 +1,13 @@
 package com.ecm.portal.controller.admin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +21,11 @@ import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormClassification;
 import com.ecm.core.entity.EcmFormItem;
+import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.FormItemService;
+import com.ecm.core.service.FormService;
+import com.ecm.core.service.GridViewService;
 import com.ecm.portal.controller.ControllerAbstract;
 
 /**
@@ -31,6 +36,11 @@ import com.ecm.portal.controller.ControllerAbstract;
 @Controller
 public class FormItemManager extends ControllerAbstract{
 	/**
+	 * 表单数据访问
+	 */
+	@Autowired
+	private FormService formService;
+	/**
 	 * 表单项数据访问
 	 */
 	@Autowired
@@ -38,6 +48,49 @@ public class FormItemManager extends ControllerAbstract{
 	
 	@Autowired
 	private CacheManagerEcmForm cacheManagerEcmForm;
+	
+	@Autowired
+	private GridViewService ecmGridView;
+	
+	@ResponseBody
+	@RequestMapping("/admin/getFormItems/{gridviewName}/{language}")
+	public Map<String,Object> getFormItemsByGridViewName(@PathVariable("gridviewName") String gridviewName,@PathVariable("language") String language){
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			EcmGridView gObj = ecmGridView.getObjectByName(getToken(), gridviewName);
+			EcmForm formObj = this.getECMForm(gObj.getTypeName(), "NEW");
+			String formId = formObj.getId();
+			List<EcmFormItem> list = formItemService.getFormItems(getToken(),formId);
+			List<EcmFormItem> datalist = new ArrayList<EcmFormItem>();
+			for (EcmFormItem item : list) {
+				datalist.add(item.clone(language));
+			}
+			
+			mp.put("code", ActionContext.SUCESS);
+			
+			mp.put("data", datalist); 
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	/**
+	 * 跟他讲名称和事件获取对象
+	 * 
+	 * @param name
+	 * @param action
+	 * @return
+	 * @throws AccessDeniedException 
+	 */
+	private EcmForm getECMForm(String name, String action) throws AccessDeniedException {
+		List<EcmForm> list = formService.getAllObject(getToken());
+		for (EcmForm frm : list) {
+			if (frm.getTypeName().equals(name) && frm.getAction().equals(action))
+				return frm;
+		}
+		return null;
+	}
 	
 	/**
 	 * 获取所有表单项

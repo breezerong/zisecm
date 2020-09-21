@@ -11,29 +11,42 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.ecm.cnpe.exchange.controller.param.DocParam;
+import com.ecm.cnpe.exchange.entity.ReplyCfgEntity;
 import com.ecm.cnpe.exchange.service.ProjectViewService;
+import com.ecm.cnpe.exchange.service.impl.CustomCacheService;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
+import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
+import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.db.SqlUtils;
+import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcSynDetailService;
+import com.ecm.core.service.FolderPathService;
+import com.ecm.core.service.FolderService;
+import com.ecm.core.service.RelationService;
 import com.ecm.portal.controller.ControllerAbstract;
 
 @RestController
@@ -44,6 +57,15 @@ public class DocController  extends ControllerAbstract  {
 	private DocumentService documentService;
 	@Autowired
 	private ProjectViewService projDesignService;
+	@Autowired
+	private CustomCacheService customCacheService;
+
+	@Autowired
+	private RelationService relationService;
+	
+	@Autowired
+	private FolderPathService folderPathService;
+	
 	@Autowired
 	private ExcSynDetailService synDetailService;
 	private final String queryBase = "SELECT ID,APP_NAME, CREATION_DATE, EXPORT_DATE, IMPORT_DATE, STATUS, ERROR_MESSAGE FROM exc_syn_detail";
@@ -633,6 +655,121 @@ public class DocController  extends ControllerAbstract  {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@PostMapping("getReplyInfo")
+	@ResponseBody
+	public Map<String, Object> getReplyInfo(@RequestBody String id) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> valmp = new HashMap<String, Object>();
+		if(!StringUtils.isEmpty(id)) {
+			EcmDocument doc = documentService.getObjectById(getToken(), id);
+			if(doc != null) {
+				ReplyCfgEntity en = customCacheService.getReplyCfg(getToken(), doc.getTypeName());
+				if( en == null) {
+					mp.put("code", ActionContext.FAILURE);
+				}else {
+					mp.put("code", ActionContext.SUCESS);
+					mp.put("typeName", en.getToType());
+					mp.put("includeRefDoc", en.isIncludeRefDoc());
+					for(String attr: en.getAttrNames().keySet()) {
+						valmp.put(attr, doc.getAttributeValue(en.getAttrNames().get(attr)));
+					}
+					mp.put("data", valmp);
+				}
+			}
+		}else {
+			mp.put("code", ActionContext.FAILURE);
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "newReplyDoc", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> newReplyDoc(String metaData,String replyDocId, boolean includeRefDoc, MultipartFile uploadFile) throws Exception {
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		EcmContent en = null;
+		EcmDocument doc = new EcmDocument();
+		doc.setAttributes(args);
+		doc.setStatus("新建");
+		if (uploadFile != null) {
+			en = new EcmContent();
+			en.setName(uploadFile.getOriginalFilename());
+			en.setContentSize(uploadFile.getSize());
+			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+			en.setInputStream(uploadFile.getInputStream());
+		}
+		String id = documentService.newObject(getToken(), doc, en);
+		if(includeRefDoc) {
+			createRefDocs(getToken(),replyDocId, id);
+		}
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("id", id);
+		return mp;
+	}
+	
+	private void createRefDocs(String token,String fromId, String toId) throws Exception {
+		EcmDocument fromDoc = documentService.getObjectById(token, fromId);
+		String folderId = null;
+		List<Map<String, Object>> refList = null;
+		if(fromDoc.getTypeName().equals("文件传递单")) {
+			refList = getChildData(token, fromId, "设计文件");
+			if(refList != null) {
+				int i =1;
+				for(Map<String, Object> mp: refList) {
+					EcmDocument refDoc = new EcmDocument();
+					refDoc.setTypeName("相关文件");
+					refDoc.addAttribute("CODING",mp.get("CODING"));
+					refDoc.addAttribute("C_IN_CODING",mp.get("C_IN_CODING"));
+					refDoc.addAttribute("TITLE",mp.get("TITLE"));
+					refDoc.addAttribute("REVISION",mp.get("REVISION"));
+					if(folderId == null) {
+						folderId = folderPathService.getFolderId(token, refDoc.getAttributes(), "3");
+					}
+					String childId = documentService.newObject(token, refDoc, null);
+					newRelation(token, toId, "相关文件", childId, i,null);
+					i++;
+				}
+			}
+		}else {
+			refList = getChildData(token, fromId, "相关文件");
+			if(refList != null) {
+				int i =1;
+				for(Map<String, Object> mp: refList) {
+					String childId = documentService.saveAsNew(token, mp.get("ID").toString(), null, false);
+					newRelation(token, toId, "相关文件", childId, i,null);
+					i++;
+				}
+			}
+		}
+		
+	}
+	
+	private void newRelation(String token, String parentId, String relationName, String childId, int orderIndex,
+			String description) throws EcmException {
+		if (!StringUtils.isEmpty(parentId)) {
+			EcmRelation rel = new EcmRelation();
+			rel.setParentId(parentId);
+			rel.setChildId(childId);
+			if (relationName == null || "".equals(relationName)) {
+				rel.setName("irel_children");
+			} else {
+				rel.setName(relationName);
+			}
+
+			rel.setOrderIndex(orderIndex);
+			if (description != null) {
+				rel.setDescription(description);
+			}
+			relationService.newObject(token, rel);
+		}
+	}
+	
+	private List<Map<String, Object>> getChildData(String token,String parentId, String relationName) throws EcmException{
+		String sql = "select a.CODING,a.C_IN_CODING,a.TITLE,a.REVISION from ecm_document a, ecm_relation b where a.ID=b.CHILD_ID "
+				+" and b.PARENT_ID='"+parentId+"' AND b.NAME='"+relationName+"'";
+		return documentService.getMapList(token, sql);
 	}
 	
 	private String getStrValue(Map<String, Object> args, String key) {
