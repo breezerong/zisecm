@@ -204,7 +204,7 @@ public class DCReportController  extends ControllerAbstract{
 //				+ "'NCR不符合项报告答复', '设计变更通知DEN', '图文传真', '会议纪要', '设计审查意见', '设计审查意见答复') group by TYPE_NAME";
 		
 		String sql="select count(*) as c from ecm_document "
-				+ "where 1=1 "+whereSql+" and TYPE_NAME ='设计文件'";
+				+ "where 1=1 "+whereSql+" and TYPE_NAME ='设计文件' and status='已接收'";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		Map<String,Object> result=new HashMap<>();
 		for(Map<String,Object> d : data) {
