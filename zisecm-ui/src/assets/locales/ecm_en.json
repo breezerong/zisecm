@@ -253,7 +253,8 @@
     "IedFeedBackExcel":"IED Batch Feedback",
     "IN_CODING":"IN_CODING",
     "CODING":"CODING",
-    "TITLE":"TITLE"    
+    "TITLE":"TITLE",
+    "IEDOperExcel":"IED Batch Operate"
 },
 "skin": {
     "Blue": "Blue",

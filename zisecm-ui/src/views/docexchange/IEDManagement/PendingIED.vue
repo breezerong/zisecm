@@ -1,5 +1,37 @@
 <template>    
         <DataLayout >
+    <el-dialog title="批量导入IED" :visible.sync="batchDialogVisible" width="80%" >
+            <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
+            <div slot="footer" class="dialog-footer">
+            <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
+        <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
+                <el-upload
+                    :limit="100"
+                    :file-list="fileList"
+                    action
+                    :on-change="handleChange"
+                    :auto-upload="false"
+                    :multiple="true"
+                >
+                    <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+                </el-upload>
+                </div>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="importdialogVisible = false">{{$t('application.cancel')}}</el-button>
+                <el-button type="primary" @click="uploadData()">{{$t('application.start')+$t('application.Import')}}</el-button>
+            </div>
+        </el-dialog>
+
+
+
+
+
+
     <el-dialog 
         :title="$t('application.iedContrast')"
         :visible.sync="IEDcontrast"
@@ -65,7 +97,10 @@
                 <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
             </el-form-item>
                 <el-form-item>  
-            <el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button>
+                <el-button type="success" @click="submit()">{{$t('application.Receive')}}</el-button>
+                </el-form-item>
+                <el-form-item>  
+                <el-button type="success" @click="beforImport($refs.mainDataGrid,false,'')">{{$t('application.IEDOperExcel')}}</el-button>
                 </el-form-item>
                 <el-form-item>
             <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
@@ -116,10 +151,13 @@ import DataGrid from "@/components/DataGrid";
 import ExcelUtil from '@/utils/excel.js'
 import DataSelect from '@/components/ecm-data-select'
 import DataLayout from '@/components/ecm-data-layout'
+import BatchImport from '@/components/controls/ImportIED';
 export default {
     name: "PendingIED",
     data(){
         return{
+            gridObj:'',
+
             tables:{
                 main:{
                     gridName:"IEDGrid",
@@ -172,6 +210,20 @@ export default {
         this.getSubContractors()
     },
     methods: { 
+        beforImport(obj,isSub,relationName){
+            this.gridObj=obj;
+            this.batchDialogVisible=true;
+            this.$nextTick(()=>{
+                if(isSub){
+                    this.$refs.BatchImport.deliveryId=this.parentId;
+                    this.$refs.BatchImport.relationName=relationName;
+                }else{
+                    this.$refs.BatchImport.deliveryId='';
+                    this.$refs.BatchImport.relationName='';
+                }    
+            })   
+        },
+
         goContrast(row){
             let _self = this
             console.log(row)
@@ -374,6 +426,7 @@ export default {
         DataGrid:DataGrid,
         DataSelect:DataSelect,
         RejectButton:RejectButton,
+        BatchImport:BatchImport,
         DataLayout:DataLayout,
     }
 }

@@ -40,11 +40,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
+import com.ecm.cnpe.exchange.entity.StatusEntity;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeIED;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeInterface;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeRelevantDoc;
+import com.ecm.cnpe.exchange.service.LogicOption4CnpeTransfer;
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.CollectionUtil;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
 import com.ecm.common.util.FileUtils;
+import com.ecm.common.util.JSONUtils;
+import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.entity.EcmAttribute;
@@ -55,6 +63,7 @@ import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmRelation;
+import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -62,6 +71,8 @@ import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmService;
+import com.ecm.core.service.ExcSynDetailService;
+import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
@@ -83,6 +94,20 @@ public class IEDImportService extends EcmService {
 	private FolderService folderService;
 	@Autowired
 	private FolderPathService folderPathService;
+	
+	@Autowired
+	private LogicOption4CnpeInterface logicOptionInterfaceService;
+	@Autowired
+	private LogicOption4CnpeRelevantDoc logicOptionRelevantService;
+	@Autowired
+	private LogicOption4CnpeTransfer logicOptionTransferService;
+	@Autowired
+	private LogicOption4CnpeIED logicOptionCnpeIEDService;
+	@Autowired
+	private ExcSynDetailService detailService;
+	
+	@Autowired
+	private ExcTransferServiceImpl excTransferService;
 	
 	private static String importExcelFolderId;
 	
@@ -282,6 +307,49 @@ public class IEDImportService extends EcmService {
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
 						try {
+							int fh = getColumnIndex(attrNames, "TYPE",1,sheet.getRow(i).getLastCellNum());
+							if(fh!=-1) {			//IED批次操作自带字段，找到这个说明肯定是IED批次操作
+							EcmDocument e1 = new EcmDocument();
+							setValues(e1.getAttributes(), attrNames,sheet.getRow(i),1,sheet.getRow(i).getLastCellNum(),sameValues,null);
+							Map attrs = e1.getAttributes();
+							if(attrs.get("CODING")==null||sheet.getRow(i).getCell(getColumnIndex(attrNames, "TYPE",1,sheet.getRow(i).getLastCellNum())).getStringCellValue()==null) {			//第一波唯一性检查，CODING和TYPE必用
+								sb.append("第"+i+"行IED外部编码或操作类型出现空值，已略过");
+								continue;
+							}
+							
+							//String types = sheet.getRow(i).getCell(getColumnIndex(attrNames, "TYPE",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
+							if(attrs.get("CODING")!=null) {		
+							String coding = attrs.get("CODING").toString();
+							EcmDocument temp = new EcmDocument(); 							//找目标IED的ID，丢进方法里进行逻辑处理
+							String cond ="TYPE_NAME='IED' and status ='审核中' and coding = '"+coding+"'";
+							List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
+							if(result.size()==0) {
+								sb.append("第"+i+"行IED的状态不为审核中,无法进行操作,已略过\r\n");
+								continue;
+							}
+							temp.setAttributes(result.get(0));
+							String id = temp.getId();										//找到ID,准备进行下一波操作
+							if(sheet.getRow(i).getCell(getColumnIndex(attrNames, "TYPE",1,sheet.getRow(i).getLastCellNum())).getStringCellValue()!=null) {	//先判断操作类型是否为空
+								String type= sheet.getRow(i).getCell(getColumnIndex(attrNames, "TYPE",1,sheet.getRow(i).getLastCellNum())).getStringCellValue();
+								if(type.equals("驳回")&&attrs.get("C_REJECT_COMMENT")!=null) {
+									String comment = e1.getAttributeValue("C_REJECT_COMMENT").toString();
+									reject(token,id,comment);
+									continue;
+								}
+								
+								else if(type.equals("驳回")&&attrs.get("C_REJECT_COMMENT")==null) {
+									sb.append("第"+i+"行IED缺少驳回理由,无法进行操作,已略过\r\n");
+									continue;
+								}
+								if(type.equals("接收")) {									//走接收逻辑
+									accept(token,id,sb);
+									sucessCount++;
+									continue;
+								}
+							}
+							
+							}
+							}					//至此IED批次操作代码结束
 							int k = getColumnIndex(attrNames, "C_COMMENT4",1,sheet.getRow(i).getLastCellNum());
 							if(k!=-1) {	//批量反馈，找一个"IED导入"模板里没有的字段进行判断，如果存在，就证明肯定是IED批量反馈
 								EcmDocument e1 = new EcmDocument();
@@ -953,4 +1021,141 @@ public class IEDImportService extends EcmService {
 		}
 		return false;
 	}
+	public void accept(String token,String id,StringBuilder sb) throws Exception {
+		EcmDocument doc= documentService.getObjectById(token, id);
+		String currentStatus= doc.getStatus();
+		if(currentStatus==null||"".equals(currentStatus)) {
+			currentStatus="新建";
+		}
+		if("新建".equals(currentStatus)) {
+			doc.addAttribute("c_item_date", new Date());
+		}
+		
+		String nextStatus= StatusEntity.getNextDcStatusValue(currentStatus, doc.getTypeName(), false);
+		doc.setStatus(nextStatus);
+		if("已生效".equals(nextStatus) || "已确认".equals(nextStatus)) {
+			doc.addAttribute("C_RECEIVER",this.getSession(token).getCurrentUser().getUserName());
+			doc.addAttribute("C_RECEIVE_DATE", new Date());
+		}
+		if("驳回".equals(currentStatus) || "已驳回".equals(currentStatus)) {
+			doc.addAttribute("C_REJECTOR",this.getSession(token).getCurrentUser().getUserName());
+			doc.addAttribute("C_REJECT_DATE", new Date());
+		}
+		if("IED".equals(doc.getTypeName())) {
+			if("已生效".equals(nextStatus)) {
+				//doc.addAttribute("C_ITEM_STATUS2", "Y");
+				logicOptionCnpeIEDService.IEDOption(token, doc);
+				OptionLogger.logger(token, detailService, doc, "接收", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				
+			}
+			documentService.updateObject(token, doc, null);
+			//
+			/**
+			 * if(判断状态){
+			 * 	OptionLogger.logger(detailService, doc, "动作", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+			 * }
+			 */
+			if("审核中".equals(nextStatus)) {
+				OptionLogger.logger(token, detailService, doc, "提交", doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+			}
+			//
+		}else if("图文传真,会议纪要".contains(doc.getTypeName())){
+			documentService.updateObject(token, doc, null);
+			doc.addAttribute("C_IS_RELEASED", 1);
+		}else {
+			if("待确认".equals(nextStatus)) {
+				//验证数据是否存在
+				if("文件传递单".equals(doc.getTypeName())) {
+					logicOptionTransferService.transferSubValidate(token, doc);
+				}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
+					logicOptionInterfaceService.interfaceValidateOption(token, doc);
+				}else {
+					logicOptionRelevantService.relevantValidateOption(token,doc);
+				}
+			}
+			if("已确认".equals(nextStatus)) {
+				if("文件传递单".equals(doc.getTypeName())) {
+					logicOptionTransferService.transferOption(token, doc,false);
+				}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
+					logicOptionInterfaceService.interfaceOption(token, doc);
+				}else {
+					logicOptionRelevantService.relevantOption(token,doc,false);
+				}
+				doc.addAttribute("C_IS_RELEASED", 1);
+			}
+			documentService.updateObject(token, doc, null);
+			
+		}
+		
+//		OptionLogger.logger(detailService, doc, "CNPE接收", 
+//				doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+		if("驳回".equals(currentStatus)) {
+			OptionLogger.logger(token, detailService, doc, "驳回提交", 
+					doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+		}else {
+			OptionLogger.logger(token, detailService, doc, 
+					doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+		}
+	}
+	public void reject(String token,String id,String comment) {
+		try {
+				EcmDocument doc= documentService.getObjectById(token, id);
+				String currentStatus= doc.getStatus();
+				if(currentStatus==null||"".equals(currentStatus)||"新建".equals(currentStatus)) {
+					return;
+				}
+				
+				String previousStatus= StatusEntity.getPreviousDcStatusValue(currentStatus, doc.getTypeName(), false);
+				if(previousStatus == null) {
+					previousStatus = "驳回";
+				}
+				doc.setStatus(previousStatus);
+				doc.addAttribute("C_REJECT_COMMENT", comment);
+				doc.addAttribute("C_REJECTOR", this.getSession(token).getCurrentUser().getUserName());
+				doc.addAttribute("C_REJECT_DATE", new Date());
+				documentService.updateObject(token, doc, null);
+				
+				
+				// 如果是驳回申请，需要更新移交单属性
+				
+				String condition = "DOC_ID='"+id+"' AND ITEM_TYPE=2";
+				List<ExcTransfer> tlist = excTransferService.selectByCondition(condition);
+				// 最多一条移交记录
+				if(tlist.size()>0) {
+					
+					ExcTransfer obj = tlist.get(0);
+					if("待确认".equalsIgnoreCase(obj.getStatus1())){
+						obj.setStatus1("已驳回");
+						obj.setRejecter(this.getSession(token).getCurrentUser().getUserName());
+						obj.setRejectDate(new Date());
+						excTransferService.updateObject(obj);
+					}
+				}
+				
+				
+				if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
+					logicOptionInterfaceService.interfaceRejectOption(token, doc);
+				}else if("文件传递单".equals(doc.getTypeName())){
+					//待扩展需求
+				}else {
+					logicOptionRelevantService.relevantRejectOption(token,doc);
+				}
+				
+				if("IED".equals(doc.getTypeName())) {
+					OptionLogger.logger(token, detailService, doc, "驳回", 
+							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				}else {
+					OptionLogger.logger(token, detailService, doc,
+							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				}
+				
+				
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+	
+		}	
+	}
+	
+	
 }

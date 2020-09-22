@@ -21,8 +21,7 @@
             <div>
               <subIcmProject v-if="isSub"></subIcmProject>
               <icmProject v-if='isCNPE'></icmProject>       
-              <generalProject v-if="isCNPEGen"></generalProject>
-              <subGeneralTop v-if="issubGen"></subGeneralTop>
+
             </div>
           </el-card>
         </el-col>
@@ -242,6 +241,7 @@ export default {
     getRoles() {
       //用户类型判断
       this.tempRoles = this.currentUser().roles;
+      console.log(this.currentUser().roles)
       for (var i = 0; i < this.tempRoles.length; i++) {
         if (
           this.tempRoles[i] == "分包商文控人员" ||
@@ -249,7 +249,10 @@ export default {
           this.tempRoles[i] == "CNPE_计划人员" ||
           this.tempRoles[i] == "CNPE_接口人员" ||
           this.tempRoles[i] == "分包商接口人员" ||
-          this.tempRoles[i] == "分包商计划人员"
+          this.tempRoles[i] == "分包商计划人员" ||
+          this.tempRoles[i] == "CNPE_设总"  ||
+          this.tempRoles[i] == "分包商设总"
+  
         ) {
           this.userRoles[i] = this.tempRoles[i];
         }
