@@ -251,7 +251,8 @@
     "IN_CODING":"内部编码",
     "CODING":"外部编码",
     "TITLE":"标题",
-    "Reply":"回复"
+    "Reply":"回复",
+    "IEDOperExcel":"IED批量操作"
 },
 "skin": {
     "Blue": "天空蓝",
