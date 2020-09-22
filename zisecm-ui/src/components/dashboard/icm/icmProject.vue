@@ -46,7 +46,7 @@ export default {
       dataList: [],
       total: 0,
       page: 1,
-      divWidth: '500px',
+      divWidth: '720px',
       divHeight: '300px',
       docChart1: Object,
       docChartData1: {

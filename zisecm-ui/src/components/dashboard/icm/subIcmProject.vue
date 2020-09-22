@@ -46,7 +46,7 @@ export default {
       },
       isSubPlan:false,
       isSubWK:false,
-      divWidth: '500px',
+      divWidth: '720px',
       divHeight: '300px',
       tempRoles:[],
       userRoles:[],
@@ -284,7 +284,7 @@ getRoles() {
           console.log(error);
         });
 
-        axios.post("/dc/getDesignData",JSON.stringify(mp))
+        axios.post("/dc/getSubDesignData",JSON.stringify(mp))
         .then(function (response) {
           if(response.data.code==1){
             console.log(response.data.data)
