@@ -1,13 +1,5 @@
 <template>
-  <div>
-    <el-row>
-      <el-col :span="4">
-      </el-col>
-      <el-col  :span="10">
-        <div id="docChart5" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
-      </el-col>
-    </el-row>
-  </div>
+  <div id="docChart5" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
 </template>
 
 
@@ -31,7 +23,7 @@ export default {
       dataList: [],
       total: 0,
       page: 1,
-      divWidth: '720px',
+      divWidth: '100%',
       divHeight: '300px',
       docChart5: Object,
       docChartData5: {
