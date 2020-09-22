@@ -226,12 +226,15 @@ export default {
 
         goContrast(row){
             let _self = this
-            console.log(row)
             this.IEDcontrast=true
+            var ver_id
+            ver_id = row.VERSION_ID
             this.id = row.ID
             var m = new Map();
             m.set("ID",this.id)
+            m.set("Version_id",ver_id)
             let formdata = new FormData();
+            m.set('lang',_self.getLang());
             formdata.append("metaData",JSON.stringify(m));
              axios.post("/exchange/ied/iedContrast",formdata,{
                 'Content-Type': 'multipart/form-data'
