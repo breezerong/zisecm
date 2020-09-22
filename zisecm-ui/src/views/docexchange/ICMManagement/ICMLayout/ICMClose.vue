@@ -77,11 +77,12 @@ export default {
         k1 += "C_PROJECT_NAME in (" + _self.icmReportStatistc + ")";
       }
 
-      k1 += " AND C_ITEM3_DATE is not null AND C_ITEM6_DATE is not null";
-      /*       let user = this.currentUser();
+      let user = this.currentUser();
       if (user.userType == 2 && user.company != null) {
         k1 += " AND C_COMPANY='" + user.company + "'";
-      } */
+      }
+
+      k1 += " AND C_ITEM3_DATE is not null AND C_ITEM6_DATE is not null";
 
       _self.$refs.mainDataGrid.condition = k1;
       _self.$refs.mainDataGrid.loadGridData();
