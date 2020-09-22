@@ -386,6 +386,7 @@ export default {
     // 加载表格数据
     loadGridData() {
       let _self = this;
+      let tbHeight = _self.tableHeight;
       _self.loading = true;
       var m = new Map();
       m.set("gridName", _self.gridViewName);
@@ -410,6 +411,7 @@ export default {
           _self.itemDataList = response.data.data;
           _self.itemCount = response.data.pager?response.data.pager.total:0;
           _self.loading = false;
+          _self.tableHeight = tbHeight;
         })
         .catch(function(error) {
           console.log(error);
