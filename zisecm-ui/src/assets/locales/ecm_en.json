@@ -254,7 +254,8 @@
     "IN_CODING":"Int.Coding",
     "CODING":"Coding",
     "TITLE":"Title",
-    "Reply":"Reply"  
+    "Reply":"Reply"  ,
+    "IEDOperExcel":"IED Batch Operate"
 },
 "skin": {
     "Blue": "Blue",

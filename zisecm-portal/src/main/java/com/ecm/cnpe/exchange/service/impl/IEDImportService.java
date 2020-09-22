@@ -495,7 +495,7 @@ public class IEDImportService extends EcmService {
 			attrsd = doc.getAttributes();
 			if(attrsd.get("C_IDENTIFY")==null||attrsd.get("C_EX1_DATE")==null||
 					attrsd.get("C_EX2_DATE")==null||attrsd.get("C_OTHER_CODING")==null) {
-				sb.append("第"+i+"行数据出现必填项为空,请检查,该行操作已略过\r\n");
+				sb.append("第"+i+"行变更必填项出现空值,请检查,该行操作已略过\r\n");
 				return false;
 			}
 			String idt = attrsd.get("C_IDENTIFY").toString(); 				//变更标识

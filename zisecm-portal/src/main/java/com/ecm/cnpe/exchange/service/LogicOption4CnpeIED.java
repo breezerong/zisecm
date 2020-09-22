@@ -67,8 +67,8 @@ public class LogicOption4CnpeIED {
 					tempE1.addAttribute("C_ITEM2_DATE", tempE1EX2);
 					System.out.println(tempE1.getAttributeValue("C_ITEM2_DATE"));
 				}
-			}}
-			documentService.updateObject(token, tempE1, null);
+			}
+			documentService.updateObject(token, tempE1, null);}
 		}
 		LoginUser user;
 		user = documentService.getCurrentUser(token);
