@@ -307,7 +307,7 @@ export default {
             count: 0,
             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-document-checked',
-            url: '/cnpe/DCManagement/receivingdc'
+            url: '/cnpe/DCManagement/ReceivingDC4Cnpe'
           },
         ]
       },
