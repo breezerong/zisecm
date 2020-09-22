@@ -46,7 +46,7 @@ export default {
       },
       isSubPlan:false,
       isSubWK:false,
-      divWidth: '500px',
+      divWidth: '720px',
       divHeight: '300px',
       tempRoles:[],
       userRoles:[],

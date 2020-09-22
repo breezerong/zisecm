@@ -359,7 +359,7 @@ public class PlanDashController extends ControllerAbstract{
 				whereSql+=" and C_PROJECT_NAME in("+projectName+")";
 			}
 		}
-		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND STATUS = '待提交'";
+		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND STATUS = '新建'";
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();

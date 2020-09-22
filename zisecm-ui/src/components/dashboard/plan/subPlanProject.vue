@@ -35,7 +35,7 @@ export default {
         xAxisData: [],
         yAxisData: []
       },
-      divWidth: '500px',
+      divWidth: '720px',
       divHeight: '300px',
       dataReport: [],
       count:'',
