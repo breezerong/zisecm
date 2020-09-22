@@ -77,6 +77,11 @@ export default {
         k1 += "C_PROJECT_NAME in (" + _self.icmReportStatistc + ")";
       }
 
+      let user = this.currentUser();
+      if (user.userType == 2 && user.company != null) {
+        k1 += " AND C_COMPANY='" + user.company + "'";
+      }
+
       k1 += " AND C_REPLY_PLAN_DATE is not null";
 
       _self.$refs.mainDataGrid.condition = k1;

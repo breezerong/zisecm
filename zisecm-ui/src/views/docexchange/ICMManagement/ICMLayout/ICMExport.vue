@@ -26,18 +26,18 @@
         </el-form-item>
       </el-form>
     </template>
-    <template  v-slot:main="{layout}">
+    <template v-slot:main="{layout}">
       <DataGrid
-            ref="mainDataGrid"
-            data-url="/dc/getDocumentsICMUnion"
-            :isShowMoreOption="false"
-            :isshowOption="true"
-            :isshowCustom="false"
-            :isshowicon="false"
-            gridViewName="ICMReportGrid"
-            condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
-            :tableHeight="layout.height-210"
-          ></DataGrid>
+        ref="mainDataGrid"
+        data-url="/dc/getDocuments"
+        :isShowMoreOption="false"
+        :isshowOption="true"
+        :isshowCustom="false"
+        :isshowicon="false"
+        gridViewName="ICMReportGrid"
+        condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
+        :tableHeight="layout.height-210"
+      ></DataGrid>
     </template>
   </DataLayout>
 </template>
@@ -64,13 +64,18 @@ export default {
     search1() {
       let _self = this;
 
-      var k1 = "";
+      var k1 = "TYPE_NAME = 'ICM'";
 
       if (
         _self.icmReportStatistc != undefined &&
         _self.icmReportStatistc != "所有项目"
       ) {
-        k1 += " C_PROJECT_NAME in (" + _self.icmReportStatistc + ")";
+        k1 += " AND C_PROJECT_NAME in (" + _self.icmReportStatistc + ")";
+      }
+
+      let user = this.currentUser();
+      if (user.userType == 2 && user.company != null) {
+        k1 += " AND C_COMPANY='" + user.company + "'";
       }
 
       _self.$refs.mainDataGrid.condition = k1;
