@@ -36,6 +36,46 @@ public class Operator {
 		
 	}
 	/**
+	 * 获取主表配置
+	 * @return
+	 */
+	public static List<ConfBean> getMainBeans(){
+		return cf.getMainconfs();
+	}
+	/**
+	 * 获取子表配置
+	 * @return
+	 */
+	public static List<ConfBean> getSubBeans(){
+		return cf.getSubconfs();
+	}
+	/**
+	 * 通过Id获取主表配置
+	 * @param id
+	 * @return
+	 */
+	public static ConfBean getMainBeanById(String id) {
+		for(ConfBean conf:cf.getMainconfs()) {
+			if(id.equals(conf.getId())) {
+				return conf;
+			}
+		}
+		return null;
+	}
+	/**
+	 * 通过Id获取子文件confbean
+	 * @param id
+	 * @return
+	 */
+	public static ConfBean getSubBeanById(String id) {
+		for(ConfBean conf:cf.getSubconfs()) {
+			if(id.equals(conf.getId())) {
+				return conf;
+			}
+		}
+		return null;
+	}
+	/**
 	 * 向远端传数据
 	 * @param sourceTypeName
 	 * @param tagertSystemName
@@ -43,7 +83,7 @@ public class Operator {
 	 */
 	public static ConfBean getConfBeanBySourceTypeName(String sourceTypeName,String tagertSystemName) {
 		
-		for(ConfBean conf:cf.getConfs()) {
+		for(ConfBean conf:cf.getMainconfs()) {
 			if(conf.getSourceTypeName()!=null
 					&&sourceTypeName.equals(conf.getSourceTypeName())
 					&&tagertSystemName.equals(conf.getTargetSystem())) {
@@ -60,7 +100,7 @@ public class Operator {
 	 */
 	public static ConfBean getConfBeanBySourceTypeName(String sourceTypeName) {
 			
-			for(ConfBean conf:cf.getConfs()) {
+			for(ConfBean conf:cf.getMainconfs()) {
 				if(conf.getSourceTypeName()!=null
 						&&sourceTypeName.equals(conf.getSourceTypeName())) {
 					return conf;
@@ -77,7 +117,7 @@ public class Operator {
 	 */
 	public static List<ConfBean> getConfBeanByTargetName(String targetTypeName,String systemName) {
 		List<ConfBean> confBeans=new ArrayList<ConfBean>();
-		for(ConfBean conf:cf.getConfs()) {
+		for(ConfBean conf:cf.getMainconfs()) {
 			if(conf.getTcTypeName()!=null
 					&&targetTypeName.equals(conf.getTcTypeName())
 					&&systemName.equals(conf.getTargetSystem())) {
@@ -96,7 +136,7 @@ public class Operator {
 	 */
 	public static List<ConfBean> getConfBeanByTcTableName(String tcTableName,String systemName) {
 		List<ConfBean> confBeans=new ArrayList<ConfBean>();
-		for(ConfBean conf:cf.getConfs()) {
+		for(ConfBean conf:cf.getMainconfs()) {
 			if(conf.getTcTypeName()!=null
 					&&tcTableName.equals(conf.getTcTableName())
 					&&systemName.equals(conf.getTargetSystem())) {
@@ -107,24 +147,21 @@ public class Operator {
 		return confBeans;
 			
 	}
+	
+	
+	
 	/**
-	 * 往TC发送数据
+	 * 构造往TC发送子文件数据
 	 * @param data
 	 * @return
 	 * @throws Exception 
 	 */
-	public static Map<String,Object> OperationContractorData(String token,DocumentService docService,
-			Map<String,Object> data,String typeName,String targetSystem) throws Exception{
-		
-		if(typeName==null||"".equals(typeName)) {
-			typeName=data.get("TYPE_NAME").toString();
-		}
-		ConfBean conf=getConfBeanBySourceTypeName(typeName,targetSystem);
-		Map<String,Object> newData=new HashMap<String, Object>();
+	public static RelationShip OperationContractorSubData(String token,DocumentService docService,
+			Map<String,Object> data,RelationShip relationShip) throws Exception{
+		relationShip.setData(null);
+		ConfBean subTableConfig= getSubBeanById(relationShip.getRefformId());
 		Map<String,Object> rowData=new HashMap<String, Object>();
-		newData.put("tcTable", conf.getTcTableName());
-		newData.put("tcType", conf.getTcTypeName());
-		for(AttrBean attr:conf.getAttributes()) {
+		for(AttrBean attr:subTableConfig.getAttributes()) {
 			String sName= attr.getSourceName();
 			String tName= attr.getTargetName();
 			String defaultValue=attr.getDefaultValue();
@@ -133,7 +170,6 @@ public class Operator {
 				EcmDocument project=null;
 				if(projects!=null&&projects.size()>0) {
 					project= projects.get(0);
-					
 				}else {
 					throw new Exception("系统中午对应的项目："+data.get(sName).toString());
 				}
@@ -151,8 +187,70 @@ public class Operator {
 			}
 			
 		}
-		newData.put("data", rowData);
-		return newData;
+		relationShip.setData(rowData);
+		return relationShip;
+		
+	}
+	/**
+	 * 替换SQL中的标记
+	 * @param data 数据
+	 * @param sql 查询
+	 * @return
+	 * @throws Exception
+	 */
+	public static String operationSql(Map<String,Object> data,String sql) throws Exception {
+		while(sql.indexOf("#{")>-1) {
+			String tempColumn="";
+			tempColumn=sql.substring(sql.indexOf("#{")+2,sql.indexOf("}"));
+			Object obj=data.get(tempColumn);
+			if(obj==null) {
+				throw new Exception("配置中#{"+tempColumn+"}无对应信息");
+			}
+					
+			String tempValue=data.get(tempColumn).toString();
+			sql=sql.replace("#{"+tempColumn+"}", tempValue);
+		}
+		return sql;
+	}
+	
+	/**
+	 * 构造往TC发送主文件数据
+	 * @param data
+	 * @return
+	 * @throws Exception 
+	 */
+	public static ConfBean OperationContractorData(String token,DocumentService docService,
+			Map<String,Object> data,ConfBean conf) throws Exception{
+		conf.setData(null);
+		Map<String,Object> rowData=new HashMap<String, Object>();
+		for(AttrBean attr:conf.getAttributes()) {
+			String sName= attr.getSourceName();
+			String tName= attr.getTargetName();
+			String defaultValue=attr.getDefaultValue();
+			if("projectId".equals(tName)) {
+				List<EcmDocument> projects= docService.getObjects(token, "NAME='"+data.get(sName).toString()+"'");
+				EcmDocument project=null;
+				if(projects!=null&&projects.size()>0) {
+					project= projects.get(0);
+				}else {
+					throw new Exception("系统中午对应的项目："+data.get(sName).toString());
+				}
+				DataEntity dt=new DataEntity();
+				dt.setAttrName(tName);
+				dt.setAttrValue(project.getCoding());
+				dt.setDataType(attr.getDataType());
+				rowData.put(tName, dt);
+			}else {
+				DataEntity dt=new DataEntity();
+				dt.setAttrName(tName);
+				dt.setAttrValue((sName.equals("")||data.get(sName)==null)?defaultValue:data.get(sName));
+				dt.setDataType(attr.getDataType());
+				rowData.put(tName, dt);
+			}
+			
+		}
+		conf.setData(rowData);
+		return conf;
 		
 	}
 	/**
@@ -185,7 +283,7 @@ public class Operator {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String filePath=Operator.class.getResource("/").getPath()+"/Config.xml";
         ConfigBean cf = (ConfigBean) unmarshaller.unmarshal(new File(filePath));
-        System.out.println(cf.getConfs().size());
+        System.out.println(cf.getMainconfs().size());
 	}
 
 }
