@@ -9,7 +9,7 @@
         </EcmCustomColumns>
       </el-dialog>
       
-      <el-dialog
+      <el-dialog v-dialogDrag
         :append-to-body="true"
         :title="typeName+$t('application.property')"
         :visible.sync="propertyVisible"
@@ -60,7 +60,7 @@
           <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
         </div>
       </el-dialog>
-     
+
         <el-table
           :key="rkey"
           id="datatable"
@@ -229,6 +229,7 @@
   </div>
 </template>
 <script type="text/javascript">
+import '@/utils/dialog'
 import ShowProperty from "@/components/ShowProperty";
 import EcmCustomColumns from '@/components/ecm-custom-columns'
 export default {
@@ -620,7 +621,7 @@ export default {
               _self.showFields.push(element.attrName);
             }
           });
-          _self.tableHeight = "100%";
+          // _self.tableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {

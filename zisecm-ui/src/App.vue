@@ -23,13 +23,16 @@ export default {
 .el-table__body tr.hover-row.el-table__row--striped.current-row > td,
 .el-table__body tr.hover-row.el-table__row--striped > td,
 .el-table__body tr.hover-row > td {
-  background-color: rgb(187, 187, 187) !important;
+  background-color: #ebe6de !important;
 }
 .el-date-editor.el-input,
 .el-date-editor.el-input__inner {
   width: 140px;
 }
-.el-table td,.el-table th{
+.el-date-editor.el-input__inner {
+  padding-left: 25px !important;
+}
+.el-table td{
   padding:1px 0 !important;
 }
 .el-form-item {
@@ -38,9 +41,12 @@ export default {
 }
 .el-input__inner {
   height: 36px;
-  padding-left: 10px !important;
+  padding-left: 10px;
 }
-
+.el-table th {
+  padding:1px 0 !important;
+  background-color: #eef1f6 !important;
+}
 /* .el-tree-node.is-current{
   color: #ffffff !important;
 } */

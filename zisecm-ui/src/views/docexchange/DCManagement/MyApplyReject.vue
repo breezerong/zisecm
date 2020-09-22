@@ -34,6 +34,7 @@
             dataUrl="/dc/getDocuments4Cnpe"
             isshowOption
             gridViewName="我的驳回申请"
+            :optionWidth = "2"
             condition=""
             v-bind="tables.main" 
             :tableHeight="layout.height-166"

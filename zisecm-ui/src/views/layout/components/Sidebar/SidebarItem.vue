@@ -13,7 +13,7 @@
                   <i v-if="sitem.icon!=null" :class="sitem.icon  + ' menu-white'"></i>
                   {{sitem.label}}
               </el-menu-item>
-            <router-link v-else :to="sitem.url">
+            <router-link v-else :to="sitem.url" :key="sitem.id">
               <el-menu-item :index="sitem.url" :key="sitem.id" :class="{'submenu-title-noDropdown':!isNest}">
                   <!--<svg-icon v-if="sitem.icon!=null" :icon-class="sitem.icon"></svg-icon>-->
                    <i v-if="sitem.icon!=null" :class="sitem.icon  + ' menu-white'"></i> 
@@ -31,7 +31,7 @@
         </el-menu-item>
       </template>
       <template v-else>
-        <router-link :to="item.url">
+        <router-link :to="item.url" :key="item.id">
           <el-menu-item :index="item.url" :key="item.id+'_e'" :class="{'submenu-title-noDropdown':!isNest}">
              <i v-if="item.icon!=null" :class="item.icon + ' menu-white'"></i> 
             <!--<svg-icon v-if="item.icon!=null" :icon-class="item.icon"></svg-icon>-->
@@ -144,8 +144,7 @@ export default {
     }
   },
   created() {
-
-    //this.loadMenu();
+    this.loadMenu();
   },
   mounted(){
     if (this.currentUser()) {

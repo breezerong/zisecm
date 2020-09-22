@@ -34,13 +34,15 @@
                 <el-row>
                 <el-col :span="24">
                     <!--condition="creator='@currentuser' AND company='@company' AND status='已驳回'">
-                    <!-- condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
+                    condition="FOLDER_ID IN (select ID from ecm_folder where NAME='IED' and PARENT_ID in (select ID from ecm_folder where NAME='设计分包'))" -->
             <DataGrid ref="mainDataGrid" 
             dataUrl="/dc/getDocuments"
             isshowOption
             gridViewName="反馈确认"
             condition='TYPE_NAME="ICM" AND C_PROCESS_STATUS="新建"'
-            v-bind="tables.main":tableHeight="layout.height-166"
+            :optionWidth = "2"
+            v-bind="tables.main" 
+            :tableHeight="layout.height-166"
             @rowclick="rowClick" 
             @selectchange="selectChange"
            ></DataGrid>

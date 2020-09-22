@@ -38,6 +38,7 @@ import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
 import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
+import com.ecm.portal.archive.controller.ImportController;
 import com.ecm.portal.archive.services.ArchiveFolderService;
 import com.ecm.portal.archive.services.ArchiveRelationService;
 import com.ecm.portal.archive.services.ImportService;
@@ -64,27 +65,28 @@ public class MeetMaterialImportController extends ControllerAbstract{
 	private FolderService folderService;
 	
 	
-//	@RequestMapping(value = "/MeetMaterialimport/getImportList/{id}", method = RequestMethod.GET)
-//	@ResponseBody
-//	public Map<String, Object> getImportList(@PathVariable("id") String id) throws Exception {
-//		String condition = "C_FROM_CODE='"+id+"' and TYPE_NAME='会议纪要内容项' ";
-//		Pager pager = new Pager();
-//		pager.setPageIndex(0);
-//		pager.setPageSize(2000);
-//		List<Map<String, Object>> objList = documentService.getObjectsByConditon(getToken(), "BatchImportGrid", null, pager, condition, "CREATION_DATE DESC");
-//		Map<String, Object> mp = new HashMap<String, Object>();
-//		mp.put("code", ActionContext.SUCESS);
-//		mp.put("data", objList);
-//		return mp;
-//	}
-//	
-	@RequestMapping(value = "/MeetMaterialimport/getImportTemplates", method = RequestMethod.GET)
+	@RequestMapping(value = "/MeetMaterialimport/getImportList/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> getImportTemplates() throws Exception {
-		if(MeetMaterialImportController.imporFolderId==null) {
-			MeetMaterialImportController.imporFolderId = folderService.getObjectByPath(getToken(), "/系统配置/导入模板/ICM").getId();
-		}
-		String sql = "select ID,NAME from ecm_document where FOLDER_ID='"+MeetMaterialImportController.imporFolderId+"' and TYPE_NAME='模板'  order by NAME";
+	public Map<String, Object> getImportList(@PathVariable("id") String id) throws Exception {
+		String condition = "C_FROM_CODE='"+id+"' and TYPE_NAME='会议纪要内容项' ";
+		Pager pager = new Pager();
+		pager.setPageIndex(0);
+		pager.setPageSize(2000);
+		List<Map<String, Object>> objList = documentService.getObjectsByConditon(getToken(), "BatchImportGrid", null, pager, condition, "CREATION_DATE DESC");
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", objList);
+		return mp;
+	}
+	
+	@RequestMapping(value = "/MeetMaterialimport/getImportTemplates", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getImportTemplates(@RequestBody(required = false) String path) throws Exception {
+//		if(ImportController.imporFolderId==null) {
+//			ImportController.imporFolderId = folderService.getObjectByPath(getToken(), "/系统配置/导入模板").getId();
+//		}
+		ImportController.imporFolderId = folderService.getObjectByPath(getToken(), path).getId();
+		String sql = "select ID,NAME from ecm_document where FOLDER_ID='"+ImportController.imporFolderId+"' and TYPE_NAME='模板'  order by NAME";
 		List<Map<String, Object>> objList = queryService.executeSQL(getToken(), sql);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);

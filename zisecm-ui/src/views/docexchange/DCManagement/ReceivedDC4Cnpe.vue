@@ -6,6 +6,25 @@
             <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
+
+             <!-- 回复窗口 -->
+        <el-dialog
+            :title="$t('application.Reply')"
+            :visible.sync="replyVisible"
+            width="90%"
+            >
+            <ShowProperty
+                ref="replyProperty"
+                width="100%"
+                itemId=""
+                v-bind:typeName="replyTypeName"
+            ></ShowProperty>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="saveReplyItem">{{$t('application.save')}}</el-button>
+                <el-button @click="replyVisible = false">{{$t('application.cancel')}}</el-button>
+            </div>
+        </el-dialog>
+
         <!-- 创建附件 -->
         <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
             <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
@@ -139,13 +158,19 @@
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGrid"
                             :isshowCustom="false"
+                            :optionWidth = "2"
                             :isEditProperty="false"
                             showOptions="查看内容"
                             :isShowChangeList="false"
                             condition=" status='已接收' and ITEM_TYPE=1 and C_PROJECT_NAME = '@project' and TO_NAME='@company'"
                             @rowclick="rowClick"
                             @selectchange="selectChange"
-                        ></DataGrid>
+                        >
+                        <template slot="dropdownItem" slot-scope="scope" v-if="showReplyButton(scope.data.row)">
+                            <el-dropdown-item icon="el-icon-chat-line-square" @click.native="showReplyDialog(scope.data.row)">{{$t('application.Reply')}}</el-dropdown-item>
+                        </template>
+                        
+                        </DataGrid>
                     </template>
                     <template slot="paneR">
                         <el-tabs v-model="selectedTabName">
@@ -184,6 +209,7 @@
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='设计文件'"
                                     :isshowCustom="false"
+                                    :optionWidth = "2"
                                     :isEditProperty="false"
                                     showOptions="查看内容"
                                     :isShowChangeList="false"
@@ -201,8 +227,9 @@
                                     ref="relevantDoc"
                                     key="relevantDocKey"
                                     dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight+40"
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                    :optionWidth = "1"
                                     gridViewName="DrawingGrid"
                                     condition=" and a.NAME='相关文件'"
                                     :isShowMoreOption="false"
@@ -243,6 +270,7 @@
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="AttachmentGrid"
                                     condition=" and a.NAME='附件'"
+                                    :optionWidth = "2"
                                     :isshowCustom="false"
                                     :isEditProperty="false"
                                     showOptions="查看内容"
@@ -260,6 +288,7 @@
                                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                         gridViewName="MOMContentGrid"
                                         condition=" and a.NAME='会议纪要内容项'"
+                                        :optionWidth = "1"
                                         :isShowMoreOption="false"
                                         :isshowCustom="false"
                                         :isEditProperty="true"
@@ -279,9 +308,10 @@
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="MaterialChangeGrid"
                                     condition=" and a.NAME='材料变更清单'"
+                                    :optionWidth = "1"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="false"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="MaterialDocSelect"
@@ -354,6 +384,11 @@ export default {
             MeetDocSelected:[],
             isShowMaterial:true,
             MaterialDocSelected:[],
+
+            includeRefDoc: false,
+            replyVisible: false,
+            replyTypeName: "",
+            replyDocId:"",
         }
     },
     created(){
@@ -375,6 +410,137 @@ export default {
         }, 300);
     },
     methods: {
+        showReplyButton(row){
+            let rowTypeName = row.TYPE_NAME;
+            if(rowTypeName == '文件传递单' || rowTypeName == '接口信息传递单' || 
+            rowTypeName == '设计审查意见' || rowTypeName == '设计审查意见答复' || 
+            rowTypeName == 'CR澄清要求答复单' || rowTypeName == 'FCR现场变更答复单' || 
+            rowTypeName == 'NCR不符合项报告答复单' || rowTypeName == 'DCR设计变更申请单' || rowTypeName == 'TCR试验澄清申请答复单'
+            ){
+                return true;
+            }
+            return false;
+        },
+         showReplyDialog(row){
+            let _self = this;
+            _self.replyVisible = true;
+            _self.replyDocId = row.ID;
+            this.$nextTick(()=>{
+                if(_self.$refs.replyProperty){
+                    axios.post("/exchange/doc/getReplyInfo",_self.replyDocId)
+                    .then(function(response) {
+                    if(response.data.code == 1){
+                        _self.includeRefDoc = response.data.includeRefDoc;
+                        _self.$refs.replyProperty.typeName = response.data.typeName;
+                        _self.$refs.replyProperty.myTypeName = response.data.typeName;
+                        let mp=new Map();
+                        for (const key in response.data.data) {
+                                mp.set(key,key);
+                        }
+                        _self.$refs.replyProperty.setMainSubRelation(mp);
+                        _self.$refs.replyProperty.setMainObject(response.data.data);
+                        _self.$refs.replyProperty.loadFormInfo();
+                    }else{
+                        _self.replyVisible=false;
+                    }
+                    
+                })
+                .catch(function(error) {
+                    _self.replyVisible=false;
+                    console.log(error);
+                    _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.newFailured'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                });
+                }
+            },200);
+            
+        },
+
+        saveReplyItem()
+        {
+            let _self = this;
+            if(!_self.$refs.replyProperty.validFormValue()){
+                return;
+            }
+            var m = new Map();
+            var c;
+            for(c in _self.$refs.replyProperty.dataList){
+                let dataRows = _self.$refs.replyProperty.dataList[c].ecmFormItems;
+                var i;
+                for (i in dataRows) {
+                if(dataRows[i].attrName && dataRows[i].attrName !='')
+                {
+                    if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                    {
+                    var val = dataRows[i].defaultValue;
+                    if(val && dataRows[i].isRepeat){
+                        var temp = "";
+                    // console.log(val);
+                        for(let j=0,len=val.length;j<len;j++){
+                        temp = temp + val[j]+";";
+                        //console.log(temp);
+                        }
+                        temp = temp.substring(0,temp.length-1);
+                        val = temp;
+                        //console.log(val);
+                    }
+                    m.set(dataRows[i].attrName, val);
+                    }
+                }
+                }
+            }
+            m.set('TYPE_NAME',_self.$refs.replyProperty.myTypeName);
+            _self.validateData(m,function(isOk){
+                if(isOk==false){
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t('message.dataIsnotOnly'),
+                        duration: 2000,
+                        type: 'error'
+                    });
+                    _self.butt=false;
+                    return;
+                }
+                let formdata = new FormData();
+                formdata.append("metaData",JSON.stringify(m));
+                formdata.append("replyDocId",_self.replyDocId);
+                formdata.append("includeRefDoc",_self.includeRefDoc);
+                if(_self.file!="")
+                {
+                    //console.log(_self.file);
+                    formdata.append("uploadFile",_self.$refs.replyProperty.file.raw);
+                }
+            
+                axios.post("/exchange/doc/newReplyDoc",formdata,{
+                    'Content-Type': 'multipart/form-data'
+                })
+                .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if(code==1){
+                        _self.$message({
+                                showClose: true,
+                                message: _self.$t('message.newSuccess'),
+                                duration: 2000,
+                                type: "success"
+                            });
+                    }
+                    else{
+                        _self.$message(_self.$t('message.newFailured'));
+                    }
+                    _self.replyVisible=false;
+                })
+                .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    _self.replyVisible=false;
+                });
+            });
+        },
         dbClick(row){
             this.docId=row.ID;
             this.dialog.visible=true;

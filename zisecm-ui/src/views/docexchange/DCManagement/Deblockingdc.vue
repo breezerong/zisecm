@@ -44,6 +44,7 @@
                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                         gridViewName="DrawingGrid"
                         condition=" C_PROCESS_STATUS='申请解锁'"
+                        :optionWidth = "2"
                         @rowclick="rowClick"
                         :isshowCustom="false"
                         :isEditProperty="false"
@@ -251,7 +252,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){

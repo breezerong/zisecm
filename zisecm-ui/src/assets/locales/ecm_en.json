@@ -251,10 +251,10 @@
     "DelayCloseReason":"Current Delay Reason is Right?",
     "startRejectApply": "StartRejectApply",
     "IedFeedBackExcel":"IED Batch Feedback",
-    "IN_CODING":"IN_CODING",
-    "CODING":"CODING",
-    "TITLE":"TITLE",
-    "IEDOperExcel":"IED Batch Operate"
+    "IN_CODING":"Int.Coding",
+    "CODING":"Coding",
+    "TITLE":"Title",
+    "Reply":"Reply"  
 },
 "skin": {
     "Blue": "Blue",

@@ -188,7 +188,7 @@
                         v-bind:isshowSelection="true"
                         gridViewName="DCTransferGrid"
                         condition=" (status!='新建' and status is not null and status !='') and c_company='@company' and C_PROJECT_NAME = '@project'"
-
+                        :optionWidth = "2"
                         @rowclick="rowClick"
                         @selectchange="selectChange"
                         :isshowCustom="false"
@@ -235,6 +235,7 @@
                                 :isshowCustom="false"
                                 :isEditProperty="false"
                                 showOptions="查看内容"
+                                :optionWidth = "2"
                                 :isShowChangeList="false"
                                 @dbclick="dbClick"
                                 @selectchange="selectChangeTransferDoc"
@@ -263,6 +264,7 @@
                                 v-bind:isshowSelection="true"
                                 gridViewName="DrawingGrid"
                                 condition=" and a.NAME='相关文件'"
+                                :optionWidth = "1"
                                 :isShowMoreOption="false"
                                 :isshowCustom="false"
                                 :isEditProperty="false"
@@ -304,6 +306,7 @@
                                 v-bind:isshowSelection="true"
                                 gridViewName="AttachmentGrid"
                                 condition=" and a.NAME='附件'"
+                                :optionWidth = "2"
                                 :isshowCustom="false"
                                 :isEditProperty="false"
                                 showOptions="查看内容"
@@ -321,9 +324,10 @@
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="MOMContentGrid"
                                     condition=" and a.NAME='会议纪要内容项'"
+                                    :optionWidth = "1"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="false"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="MeetDocSelect"
@@ -340,9 +344,10 @@
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="MaterialChangeGrid"
                                     condition=" and a.NAME='材料变更清单'"
+                                    :optionWidth = "1"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
-                                    :isEditProperty="true"
+                                    :isEditProperty="false"
                                     :isShowChangeList="false"
                                     :isshowicon="false"
                                     @selectchange="MaterialDocSelect"
@@ -766,7 +771,7 @@ export default {
                 "or CODING like '%" +
                 _self.filters.title +
                 "%' " +
-                "or C_OTHER_COIDNG like '%" +
+                "or C_OTHER_CODING like '%" +
                 _self.filters.title +
                 "%' " +
                 ")";

@@ -1,52 +1,47 @@
 <template>
   <DataLayout>
-    <template v-slot:header style="height: auto"></template>
+    <template v-slot:header>
+      <el-form inline>
+        <el-form-item>
+          <DataSelect
+            v-model="icmReportStatistc"
+            data-url="/exchange/project/myproject"
+            data-value-field="name"
+            data-text-field="name"
+            includeAll
+          ></DataSelect>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="search1()">{{$t('application.SearchData')}}</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
+        </el-form-item>
+        <el-form-item>
+          <AddCondition
+            v-bind:typeName="typeName"
+            :inputType="hiddenInput"
+            @change="onSearchConditionChange"
+          ></AddCondition>
+        </el-form-item>
+      </el-form>
+    </template>
     <template v-slot:main="{layout}">
-      <el-container>
-        <el-header style="height:auto;">
-          <el-form :inline="true">
-            <el-form-item>
-              <DataSelect
-                v-model="icmReportStatistc"
-                data-url="/exchange/project/myproject"
-                data-value-field="name"
-                data-text-field="name"
-                includeAll
-              ></DataSelect>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="search1()">{{$t('application.SearchData')}}</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click.native="exportData">{{$t('application.ExportExcel')}}</el-button>
-            </el-form-item>
-            <el-form-item>
-              <AddCondition
-                v-bind:typeName="typeName"
-                :inputType="hiddenInput"
-                @change="onSearchConditionChange"
-              ></AddCondition>
-            </el-form-item>
-          </el-form>
-        </el-header>
-        <el-main>
-          <el-row>
-            <el-col :span="24">
-              <DataGrid
-                ref="mainDataGrid"
-                data-url="/dc/getDocumentsICMUnion"
-                :isShowMoreOption="false"
-                :isshowOption="true"
-                :isshowCustom="false"
-                :isshowicon="false"
-                gridViewName="ICMOpenGrid"
-                condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
-                :tableHeight="layout.height-210"
-              ></DataGrid>
-            </el-col>
-          </el-row>
-        </el-main>
-      </el-container>
+      <el-row>
+        <el-col :span="24">
+          <DataGrid
+            ref="mainDataGrid"
+            data-url="/dc/getDocumentsICMUnion"
+            :isShowMoreOption="false"
+            :isshowOption="true"
+            :isshowCustom="false"
+            :isshowicon="false"
+            gridViewName="ICMOpenGrid"
+            condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
+            :tableHeight="layout.height-210"
+          ></DataGrid>
+        </el-col>
+      </el-row>
     </template>
   </DataLayout>
 </template>
@@ -60,19 +55,12 @@ import ExcelUtil from "@/utils/excel.js";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 export default {
-  name: "ICMOpenGrid",
+  name: "ICMOpenP",
   data() {
     return {
-      tables: {
-        main: {
-          gridName: "ICMOpenGrid",
-          datalist: [],
-          height: "",
-        },
-      },
-
       icmReportStatistc: "",
-      hiddenInput:'hidden',
+      hiddenInput: "hidden",
+      typeName: "ICM",
     };
   },
 
@@ -113,6 +101,10 @@ export default {
       };
       ExcelUtil.export(params);
     },
+
+    onSearchConditionChange: function (val) {
+      this.search(val);
+    },
   },
 
   components: {
@@ -125,7 +117,7 @@ export default {
 };
 </script>
 <style scoped>
-.el-header {
-  height: auto;
+.el-form-item {
+  margin-bottom: 0px;
 }
 </style>

@@ -145,7 +145,6 @@ export default {
     generalTop,
     subGeneralProject,
     subGeneralTop,
-    subGeneralProject,
   },
   data() {
     return {
@@ -241,8 +240,7 @@ export default {
     getRoles() {
       //用户类型判断
       this.tempRoles = this.currentUser().roles;
-      console.log(this.currentUser().roles)
-      for (var i = 0; i < this.tempRoles.length; i++) {
+      for (let i = 0; i < this.tempRoles.length; i++) {
         if (
           this.tempRoles[i] == "分包商文控人员" ||
           this.tempRoles[i] == "CNPE_文控人员" ||
@@ -257,7 +255,7 @@ export default {
           this.userRoles[i] = this.tempRoles[i];
         }
       }
-      for (var i = 0; i < this.userRoles.length; i++) {
+      for (let i = 0; i < this.userRoles.length; i++) {
         if (this.userRoles[i] == "分包商文控人员") {
           this.isSubWK = true;
           this.isSub = true;
@@ -410,14 +408,12 @@ export default {
     },
     //加载全文搜索的勾选项
     loadCards() {
-      let _self = this;
-      var m = new Map();
+      let _self = this;      
       axios
         .post("/admin/getArchivesFolder", 0)
         .then(function (response) {
           _self.cards = response.data.data;
-          var i = 0;
-          for (i = 0; i < _self.cards.length; i++) {
+          for (let i = 0; i < _self.cards.length; i++) {
             _self.cardsLabel[i] = _self.cards[i].name;
           }
         })
@@ -476,7 +472,6 @@ export default {
     querySearch(queryString, cb) {
       let _self = this;
       _self.loading = true;
-      _self;
       axios
         .post("/search/getSuggestion", JSON.stringify(_self.inputkey))
         .then(function (response) {

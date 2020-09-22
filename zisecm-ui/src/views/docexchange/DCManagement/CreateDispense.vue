@@ -5,7 +5,7 @@
             <el-dialog :title="$t('application.Import')" :visible.sync="MeetMaterialDialogVisible" width="80%" >
                 <MeetMaterialImport ref="MeetMaterialImport"  @onImported="onMeetMaterialImport" v-bind:deliveryId="parentId" width="100%"></MeetMaterialImport>
                 <div slot="footer" class="dialog-footer">
-                <el-button @click="MeetMaterialDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
+                <el-button @click="ImportClose()" size="medium">{{$t('application.close')}}</el-button>
                 </div>
             </el-dialog>
             <!-- 创建设计文件附件 -->
@@ -194,6 +194,7 @@
                             v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                             gridViewName="DCTransferGrid"
                             condition=" (status='' or status='新建') and C_COMPANY='@company'"
+                            :optionWidth = "2"
                             :isshowCustom="false"
                             :isEditProperty="true"
                             showOptions="查看内容"
@@ -235,6 +236,7 @@
                                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                         gridViewName="DrawingGrid"
                                         condition=" and a.NAME='设计文件'"
+                                        :optionWidth = "2"
                                         :isshowCustom="false"
                                         :isEditProperty="true"
                                         showOptions="查看内容"
@@ -275,6 +277,7 @@
                                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                         gridViewName="DrawingGrid"
                                         condition=" and a.NAME='相关文件'"
+                                        :optionWidth = "1"
                                         :isShowMoreOption="false"
                                         :isshowCustom="false"
                                         :isEditProperty="true"
@@ -309,6 +312,7 @@
                                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                         gridViewName="AttachmentGrid"
                                         condition=" and a.NAME='附件'"
+                                        :optionWidth = "2"
                                         :isshowCustom="false"
                                         :isEditProperty="true"
                                         showOptions="查看内容"
@@ -324,7 +328,7 @@
                                         <el-button type="primary" @click="beforeCreateDocItem('会议纪要内容项','会议纪要内容项')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
-                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MeetDoc,true,'会议纪要内容项','/系统配置/导入模板/文函/会议纪要内容项')">{{$t('application.Import')}}</el-button>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MeetDoc,true,'会议纪要内容项','/系统配置/导入模板/会议纪要内容项')">{{$t('application.Import')}}</el-button>
                                         </el-form-item>
                                         <!-- <el-form-item>
                                         <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
@@ -347,6 +351,7 @@
                                         v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                         gridViewName="MOMContentGrid"
                                         condition=" and a.NAME='会议纪要内容项'"
+                                        :optionWidth = "1"
                                         :isShowMoreOption="false"
                                         :isshowCustom="false"
                                         :isEditProperty="true"
@@ -364,7 +369,7 @@
                                         <el-button type="primary" @click="beforeCreateDocItem('材料变更清单','材料变更清单')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
-                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MaterialDoc,true,'材料变更清单','/系统配置/导入模板/文函/材料变更清单')">{{$t('application.Import')}}</el-button>
+                                        <el-button type="primary" @click="beforMeetMaterialImport($refs.MaterialDoc,true,'材料变更清单','/系统配置/导入模板/材料变更清单')">{{$t('application.Import')}}</el-button>
                                         </el-form-item>
                                         <!-- <el-form-item>
                                         <el-button type="primary" @click="beforImport($refs.relevantDoc,true,'相关文件')">{{$t('application.Import')}}</el-button>
@@ -387,6 +392,7 @@
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="MaterialChangeGrid"
                                     condition=" and a.NAME='材料变更清单'"
+                                    :optionWidth = "1"
                                     :isShowMoreOption="false"
                                     :isshowCustom="false"
                                     :isEditProperty="true"
@@ -513,6 +519,11 @@ export default {
         }, 300);
     },
     methods: {
+        ImportClose(){
+            let _self=this
+            _self.MeetMaterialDialogVisible=false
+            _self.$refs.MeetMaterialImport.ImportClose()
+        },
         beforMeetMaterialImport(obj,isSub,relationName,path){
             this.gridObj=obj;
             this.MeetMaterialDialogVisible=true;
@@ -714,6 +725,9 @@ export default {
             })
             
             
+        },
+        onBatchImported(){
+            this.gridObj.loadGridData();
         },
         //批量导入完成
         onBatchImported(){
@@ -981,7 +995,7 @@ export default {
                 +"or C_FROM like '%"+_self.filters.title+"%' "
                 +"or C_TO like '%"+_self.filters.title+"%' "
                 +"or CODING like '%"+_self.filters.title+"%' "
-                +"or C_OTHER_COIDNG like '%"+_self.filters.title+"%' "
+                +"or C_OTHER_CODING like '%"+_self.filters.title+"%' "
                 +")";
             }
             if(key!=''){
