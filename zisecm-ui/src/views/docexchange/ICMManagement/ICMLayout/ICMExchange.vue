@@ -55,7 +55,7 @@ import ExcelUtil from "@/utils/excel.js";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 export default {
-  name: "ICMExchangeGrid",
+  name: "ICMExchangeP",
   data() {
     return {
       icmReportStatistc: "",
@@ -103,6 +103,10 @@ export default {
         sheetname: "ICM_ExchangeList",
       };
       ExcelUtil.export(params);
+    },
+
+    onSearchConditionChange: function (val) {
+      this.search(val);
     },
   },
 

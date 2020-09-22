@@ -55,7 +55,7 @@ import ExcelUtil from "@/utils/excel.js";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 export default {
-  name: "ICMCloseGrid",
+  name: "ICMCloseP",
   data() {
     return {
       icmReportStatistc: "",

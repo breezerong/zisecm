@@ -26,10 +26,8 @@
         </el-form-item>
       </el-form>
     </template>
-    <template v-slot:main="{layout}">
-      <el-row>
-        <el-col :span="24">
-          <DataGrid
+    <template  v-slot:main="{layout}">
+      <DataGrid
             ref="mainDataGrid"
             data-url="/dc/getDocumentsICMUnion"
             :isShowMoreOption="false"
@@ -40,8 +38,6 @@
             condition="TYPE_NAME='' and C_PROJECT_NAME = '@project'"
             :tableHeight="layout.height-210"
           ></DataGrid>
-        </el-col>
-      </el-row>
     </template>
   </DataLayout>
 </template>
@@ -55,7 +51,7 @@ import ExcelUtil from "@/utils/excel.js";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 export default {
-  name: "ICMReportGrid",
+  name: "ICMReportP",
   data() {
     return {
       icmReportStatistc: "",
@@ -98,6 +94,10 @@ export default {
         sheetname: "ICM_Export",
       };
       ExcelUtil.export(params);
+    },
+
+    onSearchConditionChange: function (val) {
+      this.search(val);
     },
   },
 
