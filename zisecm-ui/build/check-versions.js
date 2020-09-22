@@ -15,7 +15,7 @@ const versionRequirements = [
     versionRequirement: packageConfig.engines.node
   }
 ]
-
+/*
 if (shell.which('npm')) {
   versionRequirements.push({
     name: 'npm',
@@ -23,7 +23,7 @@ if (shell.which('npm')) {
     versionRequirement: packageConfig.engines.npm
   })
 }
-
+*/
 module.exports = function () {
   const warnings = []
 
