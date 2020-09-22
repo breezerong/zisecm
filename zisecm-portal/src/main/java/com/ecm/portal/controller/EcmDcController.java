@@ -2570,18 +2570,20 @@ public class EcmDcController extends ControllerAbstract {
 //				return mp;
 //			}
 //		}
-		if(m!=null||m!="") {
-			String condition = " ID='" + args.get("parentDocId").toString() + "'";
-			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), condition);
-			String a="";
-			if(list != null && list.size() > 0) {
-				a = list.get(0).get("TITLE")==null?"":list.get(0).get("TITLE").toString();
-			}else {
-				a="";
-			}
-			if(a.equals("")||a==null) {
-				String sql2 = "update ecm_document set TITLE='"+args.get("TITLE")+"' where ID='" + args.get("parentDocId").toString() + "'";
-				List<Map<String, Object>> list2 = ecmDocument.executeSQL(sql2);
+		if(args.get("TYPE_NAME").toString().equals("相关文件")||args.get("TYPE_NAME").toString().equals("设计文件")) {
+			if(m!=null||m!="") {
+				String condition = " ID='" + args.get("parentDocId").toString() + "'";
+				List<Map<String,Object>> list =documentService.getObjectMap(getToken(), condition);
+				String a="";
+				if(list != null && list.size() > 0) {
+					a = list.get(0).get("TITLE")==null?"":list.get(0).get("TITLE").toString();
+				}else {
+					a="";
+				}
+				if(a.equals("")||a==null) {
+					String sql2 = "update ecm_document set TITLE='"+args.get("TITLE")+"' where ID='" + args.get("parentDocId").toString() + "'";
+					List<Map<String, Object>> list2 = ecmDocument.executeSQL(sql2);
+				}
 			}
 		}
 		if (uploadFile != null) {
