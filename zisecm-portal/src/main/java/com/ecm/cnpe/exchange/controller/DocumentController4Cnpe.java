@@ -544,7 +544,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 							obj.setStatus1("待确认");
 							obj.setComment1(msg);
 							excTransferService.updateObject(obj);
-							OptionLogger.logger(getToken(), detailService, obj, "驳回申请", obj.getToName());
+							OptionLogger.logger(getToken(), detailService, obj, "申请驳回", obj.getToName());
 						}
 					}
 				}

@@ -287,7 +287,7 @@
                                         ></DataGrid>
                             
                             </el-tab-pane>
-                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                            <el-tab-pane :label="$t('application.Attachment')" name="t03" >
                                 <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
