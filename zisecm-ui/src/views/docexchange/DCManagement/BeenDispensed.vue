@@ -259,7 +259,7 @@
                                 ref="relevantDoc"
                                 key="relevantDocKey"
                                 data-url="/dc/getDocuByRelationParentId"
-                                v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight+40"
                                 v-bind:isshowOption="true"
                                 v-bind:isshowSelection="true"
                                 gridViewName="DrawingGrid"
@@ -320,7 +320,7 @@
                                     ref="MeetDoc"
                                     key="MeetDocKey"
                                     dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight+40"
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="MOMContentGrid"
                                     condition=" and a.NAME='会议纪要内容项'"
@@ -340,7 +340,7 @@
                                     ref="MaterialDoc"
                                     key="MaterialDocKey"
                                     dataUrl="/dc/getDocuByRelationParentId"
-                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight+40"
                                     v-bind:isshowOption="true" v-bind:isshowSelection ="true"
                                     gridViewName="MaterialChangeGrid"
                                     condition=" and a.NAME='材料变更清单'"
@@ -378,7 +378,7 @@ export default {
             // 本地存储高度名称
             topStorageName: 'BeenDispensedHeight',
             // 非split pan 控制区域高度
-            startHeight: 150,
+            startHeight: 135,
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
