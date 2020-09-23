@@ -20,10 +20,10 @@
         <el-col :span="8">
 
           <el-table ref="sourceTable" :data="tables.source.data" v-bind="tables.source.attrs" @selection-change="onSelectTableDataSource">
-            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column label="行号" type="index" width="60"></el-table-column>
             <el-table-column label="属性名" prop="label"></el-table-column>
-            <el-table-column label="操作" width="60" fixed="right">
+            <el-table-column label="操作" width="75" fixed="right">
               <template slot-scope="scope">
                 <el-button :plain="true" type="primary" size="small" icon="edit" @click="addItem(scope.row)">添加</el-button>
               </template>
