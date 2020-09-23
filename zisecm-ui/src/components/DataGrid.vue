@@ -4,7 +4,7 @@
       <!-- 创建分发 -->
        <!--  -->
       <el-dialog :append-to-body="true" title="编辑列" :visible.sync="editColumn" @close="onCloseCustom"  width="80%" destroy-on-close>
-        <EcmCustomColumns ref="ecmCustomColumns" :sysColumnInfo="sysColumnInfo" :gridViewName="gridViewName" @onClose="onCloseCustom">
+        <EcmCustomColumns ref="ecmCustomColumns" :gridViewName="gridViewName" @onClose="onCloseCustom">
 
         </EcmCustomColumns>
       </el-dialog>
