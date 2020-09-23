@@ -102,6 +102,7 @@ export default {
     },
     handleLogin() {
       let _self = this;
+      _self.$store.commit("DEL_ALL_VIEWS")
       var tocomp = _self.$route.query.redirect;
       if (!tocomp) {
         tocomp = "/";

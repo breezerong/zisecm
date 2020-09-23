@@ -241,7 +241,7 @@
                                 ></DataGrid>
                             
                             </el-tab-pane>
-                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                            <el-tab-pane :label="$t('application.Attachment')" name="t03" >
                                 <el-row>
                                     <el-col :span="24">
                                         <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -343,7 +343,7 @@ export default {
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 45,
+            topbarHeight: 35,
             // 底部除列表高度
             bottomHeight: 120,
             dialog:{
@@ -414,8 +414,8 @@ export default {
             let rowTypeName = row.TYPE_NAME;
             if(rowTypeName == '文件传递单' || rowTypeName == '接口信息传递单' || 
             rowTypeName == '设计审查意见' || rowTypeName == '设计审查意见答复' || 
-            rowTypeName == 'CR澄清要求答复单' || rowTypeName == 'FCR现场变更答复单' || 
-            rowTypeName == 'NCR不符合项报告答复单' || rowTypeName == 'DCR设计变更申请单' || rowTypeName == 'TCR试验澄清申请答复单'
+            rowTypeName == 'CR澄清要求申请单' || rowTypeName == 'FCR现场变更申请单' || 
+            rowTypeName == 'NCR不符合项报告单' || rowTypeName == 'DCR设计变更申请单' || rowTypeName == 'TCR试验澄清申请单'
             ){
                 return true;
             }
@@ -687,14 +687,14 @@ export default {
                 _self.isShowRelevant=true;
                 _self.isShowAttachmentDoc=false;
                 _self.isShowMeet=false;
-                if(row.TYPE_NAME=='DEN设计变更通知单'){
+                if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                     _self.isShowMaterial=true
                 }else{
                     _self.isShowMaterial=false
                 }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
-                    if(row.TYPE_NAME=='DEN设计变更通知单'){
+                    if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                         _self.$refs.MaterialDoc.parentId=row.ID;
                         _self.$refs.MaterialDoc.loadGridInfo();
                         _self.$refs.MaterialDoc.loadGridData();

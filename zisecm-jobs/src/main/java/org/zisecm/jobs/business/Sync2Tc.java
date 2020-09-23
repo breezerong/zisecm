@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.zisecm.jobs.bean.conf.ConfBean;
 import org.zisecm.jobs.bean.conf.Operator;
 import org.zisecm.jobs.entity.DataEntity;
 import org.zisecm.jobs.tc.clientx.Session;
@@ -66,54 +67,91 @@ public class Sync2Tc {
 	private SyncTcOption tcOption;
 	@Autowired
 	private SyncTcService syncTcService;
-	
 	@Scheduled(cron = "0/20 * * * * ?")
-	public void run() {
-		String sql="";
-
+	public void run2() {
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		IEcmSession ecmSession = null;
 		try {
 			ecmSession = authService.login("jobs", workflowSpecialUserName, env.getProperty("ecm.password"));
-			String condition=" status='已确认' and TYPE_NAME in('文件传递单','FU通知','作废通知','接口意见','接口传递'," + 
-					"'CR澄清要求答复','FCR现场变更申请答复','NCR不符合项报告答复'," + 
-					"'DCR设计变更申请答复','TCR试验澄清申请答复','设计变更通知DEN'," + 
-					"'图文传真','会议纪要','设计审查意见') and SYN_STATUS is null";
-			List<Map<String,Object>> data= documentService.getObjectMap(ecmSession.getToken(), condition);
-			for(Map<String,Object> mp:data) {
-				Map<String,Object> afterMp= Operator.OperationContractorData(ecmSession.getToken(),
-						documentService,mp,null, "tc");
-//				DataManagementService dms= getDmService();
-//				EcmContent en = null;
-//				en = contentService.getPrimaryContent(ecmSession.getToken(), mp.get("ID").toString());
-//				String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
-//				
-//				String tcId ="";
-//				CreateItemsOutput output=tcOption.createFileRevision(mp, afterMp);
-//				tcId=output.item.get_item_id();
-//						createItem(dms,mp, afterMp.get("tcTable").toString(), 
-//						(Map<String, Object>) afterMp.get("data"),fullPath+en.getFilePath());
-				String tcId= syncTcService.setFileData(mp, afterMp);
-				mp.put("SYN_ID", tcId);
-				mp.put("SYN_STATUS", "已同步");
-				EcmDocument doc=new EcmDocument();
-				doc.setAttributes(mp);
-				documentService.updateObject(ecmSession.getToken(), doc, null);
+			List<ConfBean> cfs= Operator.getMainBeans();
+			for(int i=0;i<cfs.size();i++) {
+				ConfBean cfb=cfs.get(i);
+				String syncSql= cfb.getSyncQuerySql();
+				List<Map<String,Object>> data= documentService.getObjectMap(ecmSession.getToken(), syncSql);
+				for(Map<String,Object> mp:data) {
+										
+					cfb= Operator.OperationContractorData(ecmSession.getToken(),
+							documentService,mp,cfb);
+
+					String tcId= syncTcService.setFileData(mp, cfb);
+					mp.put("SYN_ID", tcId);
+					mp.put("SYN_STATUS", "已同步");
+					EcmDocument doc=new EcmDocument();
+					doc.setAttributes(mp);
+					documentService.updateObject(ecmSession.getToken(), doc, null);
+				}
 			}
-			
-		}catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}finally {
 			if(ecmSession!=null) {
 				
 				authService.logout(ecmSession.getToken());
 			}
 		}
-	
+		
 		
 		
 	}
+	
+//	@Scheduled(cron = "0/20 * * * * ?")
+//	public void run() {
+//		String sql="";
+//
+//		String workflowSpecialUserName = env.getProperty("ecm.username");
+//		IEcmSession ecmSession = null;
+//		try {
+//			ecmSession = authService.login("jobs", workflowSpecialUserName, env.getProperty("ecm.password"));
+//			String condition=" status='已确认' and TYPE_NAME in('文件传递单','FU通知','作废通知','接口意见','接口传递'," + 
+//					"'CR澄清要求答复','FCR现场变更申请答复','NCR不符合项报告答复'," + 
+//					"'DCR设计变更申请答复','TCR试验澄清申请答复','设计变更通知DEN'," + 
+//					"'图文传真','会议纪要','设计审查意见') and SYN_STATUS is null";
+//			List<Map<String,Object>> data= documentService.getObjectMap(ecmSession.getToken(), condition);
+//			for(Map<String,Object> mp:data) {
+//				Map<String,Object> afterMp= Operator.OperationContractorData(ecmSession.getToken(),
+//						documentService,mp,null, "tc");
+////				DataManagementService dms= getDmService();
+////				EcmContent en = null;
+////				en = contentService.getPrimaryContent(ecmSession.getToken(), mp.get("ID").toString());
+////				String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+////				
+////				String tcId ="";
+////				CreateItemsOutput output=tcOption.createFileRevision(mp, afterMp);
+////				tcId=output.item.get_item_id();
+////						createItem(dms,mp, afterMp.get("tcTable").toString(), 
+////						(Map<String, Object>) afterMp.get("data"),fullPath+en.getFilePath());
+//				String tcId= syncTcService.setFileData(mp, afterMp);
+//				mp.put("SYN_ID", tcId);
+//				mp.put("SYN_STATUS", "已同步");
+//				EcmDocument doc=new EcmDocument();
+//				doc.setAttributes(mp);
+//				documentService.updateObject(ecmSession.getToken(), doc, null);
+//			}
+//			
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//			e.printStackTrace();
+//		}finally {
+//			if(ecmSession!=null) {
+//				
+//				authService.logout(ecmSession.getToken());
+//			}
+//		}
+//	
+//		
+//		
+//	}
 	
 	public static String createItem(DataManagementService dmService,Map<String,Object> mp,String typeName,
 			Map<String,Object> data,

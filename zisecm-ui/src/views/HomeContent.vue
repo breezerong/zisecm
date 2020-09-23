@@ -14,15 +14,14 @@
               <subGeneralTop v-if="issubGen"></subGeneralTop>
             </div>
           </el-card>
-          <el-card :body-style="{ height: '320px',width:'900px' }">
+          <el-card :body-style="{ height: '320px',width:'100%' }">
             <div slot="header" class="clearfix" style="padding-bottom:5px;">
               <span style="float: left;" class="ecmtitle">{{$t('application.projectInfo')}}</span>
             </div>
-            <div>
+            
               <subIcmProject v-if="isSub"></subIcmProject>
               <icmProject v-if='isCNPE'></icmProject>       
 
-            </div>
           </el-card>
         </el-col>
         <el-col :span="8">

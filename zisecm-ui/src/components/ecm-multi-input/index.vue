@@ -5,6 +5,7 @@
       v-for="tag in value"
       closable
       :disable-transitions="false"
+      @click="handleClick(tag)"
       @close="handleClose(tag)">
       {{tag}}
     </el-tag>
@@ -25,7 +26,9 @@
 export default {
   model: {
     prop: "value",
-    event: "change"
+    event: "change",
+    isEdit: false,
+    editIndex : 0
   },
   props:{
     value:{
@@ -63,8 +66,18 @@ export default {
         this.value.splice(this.value.indexOf(tag), 1);
         
       },
+    handleClick(tag) {
+        this.isEdit = true;
+        this.editIndex = this.value.indexOf(tag);
+        this.inputValue = tag;
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
 
       showInput() {
+        this.isEdit = false;
         this.inputVisible = true;
         this.$nextTick(_ => {
           this.$refs.saveTagInput.$refs.input.focus();
@@ -72,12 +85,19 @@ export default {
       },
 
       handleInputConfirm() {
+        //debugger
         let inputValue = this.inputValue;
-        if (inputValue) {
-          if(!this.value || this.value == null){
-            this.value = [];
+        if(this.isEdit){
+          this.value.fill(inputValue, this.editIndex,this.editIndex+1);
+        }
+        else{
+          
+          if (inputValue) {
+            if(!this.value || this.value == null){
+              this.value = [];
+            }
+            this.value.push(inputValue);
           }
-          this.value.push(inputValue);
         }
         this.inputVisible = false;
         this.inputValue = '';

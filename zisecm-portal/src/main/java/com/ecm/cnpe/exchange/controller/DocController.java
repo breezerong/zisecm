@@ -699,6 +699,12 @@ public class DocController  extends ControllerAbstract  {
 			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
 			en.setInputStream(uploadFile.getInputStream());
 		}
+		String folderId = folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+		if(folderId != null) {
+			doc.setFolderId(folderId);
+		}else {
+			doc.setAclName("acl_all_write");
+		}
 		String id = documentService.newObject(getToken(), doc, en);
 		if(includeRefDoc) {
 			createRefDocs(getToken(),replyDocId, id);

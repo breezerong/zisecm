@@ -2835,7 +2835,7 @@ public class Query {
 	 * @return
 	 * @throws Exception
 	 */
-	public ModelObject[] queryFilesRevision(String typeName,String isExport)
+	public ModelObject[] queryFilesRevision(String startDate,String endDate)
 			throws Exception {
 
 		ImanQuery query = null;
@@ -2851,7 +2851,7 @@ public class Query {
 			}
 
 			for (int i = 0; i < savedQueries.queries.length; i++) {
-				if (savedQueries.queries[i].name.equals("查询需要同步至设计分包的Item")) {
+				if (savedQueries.queries[i].name.equals("查询需要导出的传递单")) {
 					query = savedQueries.queries[i].query;
 					break;
 				}
@@ -2871,15 +2871,15 @@ public class Query {
 		}
 
 		try {
-			String[] entries = new String[2];
-			entries[0] = "类型";
-			entries[1] = "是否已导出";
-			
+			String[] entries = new String[3];
+			entries[0] = "发布日期晚于";
+			entries[1] = "发布日期早于";
+			entries[2] = "收发文标记";
 
-			String[] values = new String[2];
-			values[0] = typeName;
-			values[1] = isExport;
-			
+			String[] values = new String[3];
+			values[0] = startDate;
+			values[1] = endDate;
+			values[2] = "1";
 
 			int limit = 0;
 

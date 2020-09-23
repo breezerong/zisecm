@@ -95,7 +95,7 @@
                                                     ></DataGrid>
                                             
                                             </el-tab-pane>
-                                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                                            <el-tab-pane :label="$t('application.Attachment')" name="t03" >
                                             <!-- 打包下载 -->
                                             <el-button type="primary" @click="packDownloadSubFile(selectedAttachment)">{{$t('application.PackToDownload')}}</el-button>
                                             
@@ -354,7 +354,7 @@ export default {
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 45,
+            topbarHeight: 35,
             // 底部除列表高度
             bottomHeight: 120,
 

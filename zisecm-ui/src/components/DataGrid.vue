@@ -3,8 +3,8 @@
     <div>
       <!-- 创建分发 -->
        <!--  -->
-      <el-dialog :append-to-body="true" title="编辑列" :visible.sync="editColumn" @close="onCloseCustom"  width="80%" >
-        <EcmCustomColumns ref="ecmCustomColumns" :sysColumnInfo="sysColumnInfo" :gridViewName="gridViewName" @onClose="onCloseCustom">
+      <el-dialog :append-to-body="true" title="编辑列" :visible.sync="editColumn" @close="onCloseCustom"  width="80%" destroy-on-close>
+        <EcmCustomColumns ref="ecmCustomColumns" :gridViewName="gridViewName" @onClose="onCloseCustom">
 
         </EcmCustomColumns>
       </el-dialog>
@@ -79,7 +79,7 @@
           @cell-mouse-leave="cellMouseLeave"
         >
           <el-table-column v-if="isshowSelection" type="selection" width="40"></el-table-column>
-          <el-table-column :label="$t('field.indexNumber')" key="#1" width="70">
+          <el-table-column :label="$t('field.indexNumber')" key="#1" width="70" >
             <template slot-scope="scope">
               <slot name="sequee" :data="scope">
                 <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
@@ -154,7 +154,7 @@
             </template>
           </template>
           </template>
-          <el-table-column v-if="isshowOption" :label="$t('application.operation')" :width="optionWidth*55 +20">
+          <el-table-column v-if="isshowOption" :label="$t('application.operation')" :width="optionWidth*55">
             
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
@@ -170,7 +170,7 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="(item,idx) in customList"
                     :key="idx+'_Cz'"
-                    @click.native="showCustomInfo(item.id)">{{item.description}}</el-dropdown-item>
+                    @click.native="showCustomInfo(item)">{{item.name}}</el-dropdown-item>
                     
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -350,42 +350,10 @@ export default {
       });
       
     },
-    // 加载表格样式
-    // loadGridInfo() {
-    //   let _self = this;
-    //   _self.loading = true;
-    //   var m = new Map();
-    //   m.set("gridName", _self.gridViewName);
-    //   m.set("lang", _self.currentLanguage);
-    //   _self
-    //     .axios({
-    //       headers: {
-    //         "Content-Type": "application/json;charset=UTF-8"
-    //       },
-    //       method: "post",
-    //       data: JSON.stringify(m),
-    //       url: "/dc/getGridViewInfo"
-    //     })
-    //     .then(function(response) {
-    //       _self.showFields = [];
-    //       _self.columnList = response.data.data;
-    //       _self.sysColumnInfo=response.data.data;
-    //       _self.columnList.forEach(element => {
-    //         if (element.visibleType == 1) {
-    //           _self.showFields.push(element.attrName);
-    //         }
-    //       });
-    //       _self.tableHeight = "100%";
-    //       _self.loading = false;
-    //     })
-    //     .catch(function(error) {
-    //       console.log(error);
-    //       _self.loading = false;
-    //     });
-    // },
     // 加载表格数据
     loadGridData() {
       let _self = this;
+      // let tbHeight = _self.tableHeight;
       _self.loading = true;
       var m = new Map();
       m.set("gridName", _self.gridViewName);
@@ -410,6 +378,10 @@ export default {
           _self.itemDataList = response.data.data;
           _self.itemCount = response.data.pager?response.data.pager.total:0;
           _self.loading = false;
+          setTimeout(() => {
+            _self.tableHeight = _self.tableHeight-1;
+          }, 100);
+          
         })
         .catch(function(error) {
           console.log(error);
@@ -432,7 +404,7 @@ export default {
       let _self=this;
       var m = new Map();
       m.set('gridName',_self.gridViewName);
-      m.set('DESCRIPTION',_self.selectedName);
+      m.set('NAME',_self.selectedName);
       m.set("lang", _self.currentLanguage);
       _self.axios({
             headers: {
@@ -460,7 +432,8 @@ export default {
             console.log(error);
             });
     },
-    showCustomInfo(id){
+    showCustomInfo(item){
+      let id = item.id
       let _self=this;
       var m = new Map();
       m.set('gridId',id);
@@ -484,7 +457,7 @@ export default {
             console.log(error);
             });
     },
-  createCustomGrid(){
+    createCustomGrid(){
     let _self=this;
     if(_self.selectedName==''){
       _self.$message({
@@ -497,7 +470,7 @@ export default {
     }
         var m = new Map();
         m.set('gridName',_self.gridViewName);
-        m.set('DESCRIPTION',_self.selectedName);
+        m.set('NAME',_self.selectedName);
         
         _self.axios({
             headers: {
@@ -526,26 +499,19 @@ export default {
             });
   },
   loadCustomName(){
-    
-    let _self=this;
-    _self.axios({
-            headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-            },
-            method: 'post',
-            url: "/admin/getAllGridViewsOfCurrentUser"
-        })
-            .then(function(response) {
-              if(response.data.code==1){
-                // _self.$set(_self.customNames,response.data.data);
-                _self.customNames=response.data.data;
-                _self.customList=response.data.data;
-              }
-              
-            })
-            .catch(function(error) {
-            console.log(error);
-            });
+    let _self = this
+      let url = "/admin/getAllGridViewsOfCurrentUser"
+      let params = {
+        "gridName":this.gridViewName
+      }
+      axios.post(url,JSON.stringify(params)).then(function(response){
+        if(response.data.code==1){
+          _self.customNames=response.data.data;
+          _self.customList=response.data.data;
+        }
+      }).catch(function(error){
+        console.log(error)
+      })
   },
   saveCustomColumn(){
     let _self=this;
@@ -569,7 +535,7 @@ export default {
     }
         var m = new Map();
         m.set('gridName',_self.gridViewName);
-        m.set('DESCRIPTION',_self.selectedName);
+        m.set('NAME',_self.selectedName);
         m.set('items',mp);
         _self.axios({
             headers: {

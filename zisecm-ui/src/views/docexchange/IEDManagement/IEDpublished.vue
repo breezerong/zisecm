@@ -74,6 +74,7 @@
             <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
                 <template slot="paneL">
                     <DataGrid ref="mainDataGrid" v-bind="tables.main" :tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight" 
+                    :optionWidth = "3.5"
                     @rowclick="onDataGridRowClick"  @selectchange="onSelectChange">
                         <template slot="customMoreOption" slot-scope="scope" v-if="view==false">
                         <el-button type="primary" @click="IEDfeedback(scope.data.row)" size="mini">{{$t('application.feedback')}}</el-button>
@@ -135,7 +136,7 @@ export default {
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 45,
+            topbarHeight: 35,
             // 底部除列表高度
             bottomHeight: 80,
 

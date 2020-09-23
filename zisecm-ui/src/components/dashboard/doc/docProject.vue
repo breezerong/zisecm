@@ -1,19 +1,12 @@
 <template>
-  <div> 
-    <el-row>
-      <el-col :span="4">
-      </el-col>
-      <el-col  :span="10">
         <div id="docChart2" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
-      </el-col>
-    </el-row>
-  </div>
 </template>
 
 
 <script type="text/javascript">
 import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
 import DataSelect from '@/components/ecm-data-select'
+import DataLayout from '@/components/ecm-data-layout'
 export default {
  name: "planProjDashBoard",
  data() {
@@ -32,7 +25,7 @@ export default {
       dataList: [],
       total: 0,
       page: 1,
-      divWidth: '720px',
+      divWidth: '100%',
       divHeight: '300px',
       docChart2: Object,
       docChartData2: {
@@ -180,6 +173,7 @@ export default {
   components: {
     ecmDataIcons:ecmDataIcons,
     DataSelect:DataSelect,
+    DataLayout:DataLayout
   },
 };
 

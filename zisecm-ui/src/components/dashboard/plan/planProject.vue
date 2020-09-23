@@ -1,13 +1,5 @@
 <template>
-     <div>      
-      <el-row>
-      <el-col :span="4">
-      </el-col>
-      <el-col :span="10" >
-      <div id="docChart4" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>
-      </el-col>
-      </el-row> 
-     </div>
+  <div id="docChart4" :style="{height: divHeight,width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px',}"></div>
 </template>
 <script type="text/javascript">
 import ecmDataIcons from '@/components/ecm-data-icons/ecm-data-icons'
@@ -35,7 +27,7 @@ export default {
         xAxisData: [],
         yAxisData: []
       },
-      divWidth: '720px',
+      divWidth: '100%',
       divHeight: '300px',
       dataReport: [],
       count:'',

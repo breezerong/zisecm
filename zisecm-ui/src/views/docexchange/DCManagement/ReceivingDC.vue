@@ -216,7 +216,7 @@
                                 ></DataGrid>
                             
                             </el-tab-pane>
-                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                            <el-tab-pane :label="$t('application.Attachment')" name="t03" >
                                 <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -320,7 +320,7 @@ export default {
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 45,
+            topbarHeight: 35,
             // 底部除列表高度
             bottomHeight:120,
             dialog:{
@@ -576,14 +576,14 @@ export default {
                 _self.isShowRelevant=true;
                 _self.isShowAttachmentDoc=false;
                 _self.isShowMeet=false;
-                if(row.TYPE_NAME=='DEN设计变更通知单'){
+                if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                     _self.isShowMaterial=true
                 }else{
                     _self.isShowMaterial=false
                 }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
-                    if(row.TYPE_NAME=='DEN设计变更通知单'){
+                    if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                         _self.$refs.MaterialDoc.parentId=row.ID;
                         _self.$refs.MaterialDoc.loadGridInfo();
                         _self.$refs.MaterialDoc.loadGridData();

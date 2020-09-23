@@ -378,13 +378,13 @@ export default {
             // 本地存储高度名称
             topStorageName: 'BeenDispensedHeight',
             // 非split pan 控制区域高度
-            startHeight: 135,
+            startHeight: 150,
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 45,
+            topbarHeight: 35,
             // 底部除列表高度
-            bottomHeight: 110,
+            bottomHeight: 120,
 
             showRejectDialog: false,
 
@@ -654,14 +654,14 @@ export default {
                 _self.isShowRelevant = true;
                 _self.isShowAttachmentDoc = false;
                 _self.isShowMeet=false;
-                if(row.TYPE_NAME=='DEN设计变更通知单'){
+                if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                     _self.isShowMaterial=true
                 }else{
                     _self.isShowMaterial=false
                 }
                 _self.$nextTick(() => {
                     _self.$refs.relevantDoc.parentId = row.ID;
-                    if(row.TYPE_NAME=='DEN设计变更通知单'){
+                    if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                         _self.$refs.MaterialDoc.parentId=row.ID;
                         _self.$refs.MaterialDoc.loadGridInfo();
                         _self.$refs.MaterialDoc.loadGridData();

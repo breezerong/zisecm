@@ -10,14 +10,13 @@
         <ecm-data-icons ref="T4" :option="projectDataDC"></ecm-data-icons>
          <ecm-data-icons ref="T5" :option="projectDataDE"></ecm-data-icons>
       </el-col>
-       <el-col  :span="10">
-        <div id="docChart1" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
-        <docProject v-if="isSubWK" ref="doc"></docProject>
+       <el-col  :span="20">
         <planProject v-if="isSubPlan"  ref="plan"></planProject>
+        <docProject v-if="isSubWK" ref="doc"></docProject>
+        <div id="docChart1" :style="{height: divHeight, width:divWidth,border:'0px solid  #CFC4CC','border-radius': '4px','margin':'5px'}"></div>
       </el-col>
       </el-row> 
      </div>
- </div>
 </template>
 
 
@@ -46,7 +45,7 @@ export default {
       },
       isSubPlan:false,
       isSubWK:false,
-      divWidth: '720px',
+      divWidth: '100%',
       divHeight: '300px',
       tempRoles:[],
       userRoles:[],

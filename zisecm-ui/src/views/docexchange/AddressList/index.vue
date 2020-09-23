@@ -179,7 +179,7 @@
               <span>{{scope.row.isActived?"是":"否"}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="240">
+          <el-table-column label="操作" width="70">
             <template slot-scope="scope">
                <el-button
                     type="primary"
