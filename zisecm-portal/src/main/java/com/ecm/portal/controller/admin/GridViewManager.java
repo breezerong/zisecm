@@ -212,11 +212,11 @@ public class GridViewManager extends ControllerAbstract{
 		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
 		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
-		 String description= args.get("DESCRIPTION")==null?"":args.get("DESCRIPTION").toString();
+		 String name= args.get("NAME")==null?"":args.get("NAME").toString();
 		 try {
 			String creator=this.getSession().getCurrentUser().getUserName();
 			
-			String condition=" DESCRIPTION='"+description+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
+			String condition=" NAME='"+name+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
 			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
 			String newId="";
 			if(gridView!=null) {
@@ -245,22 +245,22 @@ public class GridViewManager extends ControllerAbstract{
 		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
 		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
-		 String description= args.get("DESCRIPTION")==null?"":args.get("DESCRIPTION").toString();
+		 String name= args.get("NAME")==null?"":args.get("NAME").toString();
 		 try {
 			String creator=this.getSession().getCurrentUser().getUserName();
 			
-			String condition=" DESCRIPTION='"+description+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
+			String condition=" NAME='"+name+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
 			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
 			String newId="";
 			if(gridView==null) {
 //				gridView= ecmGridView.getObjectByName(getToken(), gridName);
 				gridView=new EcmGridView();
-				gridView.setName(new Date().toString());
+				gridView.setName(name);
 				gridView.setCreationDate(new Date());
 				gridView.setCreator(creator);
 				gridView.setGridType(1);
 				gridView.setGridTag(gridName);
-				gridView.setDescription(description);
+				gridView.setDescription(gridName + " custom columns");
 				newId= ecmGridView.copyToCustomGridView(getToken(), gridView);
 				
 			}else {
@@ -296,13 +296,16 @@ public class GridViewManager extends ControllerAbstract{
 	 
 	 @RequestMapping(value="/admin/getAllGridViewsOfCurrentUser", method = RequestMethod.POST)  
 	 @ResponseBody
-	 public  Map<String, Object>  getAllGridViewsOfCurrentUser(){
-		 
+	 public  Map<String, Object>  getAllGridViewsOfCurrentUser(@RequestBody  String argStr){
+		 Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
-		
+		 String gridName= args.get("gridName")==null?"":args.get("gridName").toString();
 		try {
 			String creator=this.getSession().getCurrentUser().getUserName();
 			String condition=" CREATOR='"+creator+"' and GRID_TYPE=1 ";
+			if(gridName!=null) {
+				condition+="and GRID_TAG='"+gridName+"'";
+			}
 			List<EcmGridView> data= ecmGridView.getObjectsByCondition(getToken(), condition);
 			mp.put("data", data);
 			mp.put("code", ActionContext.SUCESS);
