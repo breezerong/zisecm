@@ -473,8 +473,12 @@ export default {
                    val=_self.mainObject[_self.mainSubRelation.get(frmItems[i].attrName)];
                    frmItems[i].defaultValue = val;
                 }
-                if(frmItems[i].isRepeat && frmItems[i].defaultValue==null && frmItems[i].controlType=='TextBox'){
-                  frmItems[i].defaultValue =[]
+                if(frmItems[i].isRepeat){
+                  if(frmItems[i].defaultValue==null && frmItems[i].controlType=='TextBox'){
+                    frmItems[i].defaultValue =[]
+                  }else{
+                     frmItems[i].defaultValue =  frmItems[i].defaultValue.split(";");
+                  }
                 }
                 
                 // if("TYPE_NAME"==frmItems[i].attrName){
