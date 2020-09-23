@@ -5,7 +5,7 @@
         <split-pane v-on:resize="onSplitResize" :min-percent='20' :default-percent='topPercent' split="horizontal">
           <template slot="paneL">
               <DataGrid ref="mainDg" v-bind="tables.mainDg" 
-              :optionWidth = "2"
+              :optionWidth = "3"
               :tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight"
               @rowclick="onDataGridRowClick"></DataGrid>
           </template>
