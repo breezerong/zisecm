@@ -415,7 +415,7 @@ export default {
             if(rowTypeName == '文件传递单' || rowTypeName == '接口信息传递单' || 
             rowTypeName == '设计审查意见' || rowTypeName == '设计审查意见答复' || 
             rowTypeName == 'CR澄清要求申请单' || rowTypeName == 'FCR现场变更申请单' || 
-            rowTypeName == 'NCR不符合项报告申请单' || rowTypeName == 'DCR设计变更申请单' || rowTypeName == 'TCR试验澄清申请答复单'
+            rowTypeName == 'NCR不符合项报告单' || rowTypeName == 'DCR设计变更申请单' || rowTypeName == 'TCR试验澄清申请答复单'
             ){
                 return true;
             }
