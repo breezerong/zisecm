@@ -707,14 +707,14 @@ export default {
                 _self.isShowRelevant=true;
                 _self.isShowAttachmentDoc=false;
                 _self.isShowMeet=false;
-                if(row.TYPE_NAME=='DEN设计变更通知单'){
+                if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                     _self.isShowMaterial=true
                 }else{
                     _self.isShowMaterial=false
                 }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
-                    if(row.TYPE_NAME=='DEN设计变更通知单'){
+                    if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
                         _self.$refs.MaterialDoc.parentId=row.ID;
                         _self.$refs.MaterialDoc.loadGridInfo();
                         _self.$refs.MaterialDoc.loadGridData();
