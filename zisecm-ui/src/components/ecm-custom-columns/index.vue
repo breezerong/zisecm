@@ -5,7 +5,7 @@
           <el-form size="small" label-width="100" inline>
             <el-form-item label="名称">
               <el-select v-model="selectedName">
-                <el-option v-for="item in customNames" :key="item.attrName" :label="item.description" :value="item.description" @click.native="onSelectChange(item)">{{item.description}}</el-option>
+                <el-option v-for="item in customNames" :key="item.name" :label="item.name" :value="item.name" @click.native="onSelectChange(item)">{{item.name}}</el-option>
               </el-select>
             </el-form-item>
              <el-form-item>
@@ -18,6 +18,7 @@
     <el-main>
       <el-row>
         <el-col :span="8">
+
           <el-table ref="sourceTable" :data="tables.source.data" v-bind="tables.source.attrs" @selection-change="onSelectTableDataSource">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="行号" type="index" width="60"></el-table-column>
@@ -34,8 +35,6 @@
             <el-col :span="24">
               <el-button @click="addItemToTarget">添加</el-button>
             </el-col>
-          </el-row>
-          <el-row>
             <el-col :span="24">
               <el-button @click="removeTagetRow">移除</el-button>
             </el-col>
@@ -153,7 +152,7 @@ export default {
     },
     onSelectChange(item){
       let id = item.id
-      let name = item.description
+      let name = item.name
      this.loadCustomInfo(id,name)
     },
     loadCustomInfo(id,name){
@@ -193,7 +192,7 @@ export default {
       }
       let postData = new Map();
       postData.set("gridName",this.gridViewName)
-      postData.set("DESCRIPTION",this.selectedName)
+      postData.set("NAME",this.selectedName)
       postData.set('items',postArray);
       let url = "/admin/createOrUpdateGridView"
       axios.post(url,JSON.stringify(postData)).then(function(response){
@@ -221,7 +220,10 @@ export default {
     loadCustomName(){
       let _self = this
       let url = "/admin/getAllGridViewsOfCurrentUser"
-      axios.post(url).then(function(response){
+      let params = {
+        "gridName":this.gridViewName
+      }
+      axios.post(url,JSON.stringify(params)).then(function(response){
         if(response.data.code==1){
           _self.customNames=response.data.data
         }
@@ -252,13 +254,27 @@ export default {
             }
           })
           if(isExist==false){
+            item.width="200"
+            item.visibleType="1"
+            item.allowOrderby=true
             _self.tables.target.data.push(item)
           }
       })
     },
     removeTagetRow(){
+      let datalist = this.tables.target.data
       let selection = this.tables.target.selections
-      console.log(selection.length)
+      let itemlist = new Array()
+      selection.forEach(function(item){
+        itemlist.push(item.attrName)
+      })
+      for (let index = datalist.length-1 ; index >=0 ; index--) {
+        const atname = datalist[index].attrName
+        if(itemlist.includes(atname)){
+          datalist.splice(index,1)
+        }
+      }
+      this.tables.target.data = datalist
     },
     moveUp(index, row){
       if (index == 0) {
@@ -291,7 +307,7 @@ export default {
           _self.selectedName = value
           let m = new Map();
           m.set('gridName',_self.gridViewName);
-          m.set('DESCRIPTION',_self.selectedName);
+          m.set('NAME',_self.selectedName);
           let url = "/admin/createOrUpdateGridView"
           axios.post(url,JSON.stringify(m)).then(function(response){
             if(response.data.code==1) {
@@ -310,7 +326,7 @@ export default {
       let _self = this
       let m = new Map();
       m.set('gridName',this.gridViewName);
-      m.set('DESCRIPTION',this.selectedName);
+      m.set('NAME',this.selectedName);
       m.set("lang", this.currentLanguage);
       let url = "/admin/deleteCustomGridView"
       axios.post(url,JSON.stringify(m)).then(function(response){
@@ -328,5 +344,7 @@ export default {
 <style scoped>
 .center_buttons .el-row .el-col{
   text-align: center;
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>
