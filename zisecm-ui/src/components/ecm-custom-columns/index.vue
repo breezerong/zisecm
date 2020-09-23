@@ -145,9 +145,8 @@ export default {
       let url = "/admin/getFormItems/"+this.gridViewName+"/"+this.currentLanguage
       axios.post(url).then(function(response){
         _self.tables.source.data = response.data.data
-        console.log(response)
       }).catch(function(error){
-
+        console.log(error)
       })
     },
     onSelectChange(item){
