@@ -175,7 +175,7 @@
                                 ></DataGrid>
                             
                             </el-tab-pane>
-                            <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if='isShowAttachmentDoc'>
+                            <el-tab-pane :label="$t('application.Attachment')" name="t03" >
                                 <!--列表-->
                                 <DataGrid
                                     ref="attachmentDoc"
