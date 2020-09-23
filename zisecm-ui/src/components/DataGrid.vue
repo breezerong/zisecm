@@ -154,7 +154,7 @@
             </template>
           </template>
           </template>
-          <el-table-column v-if="isshowOption" :label="$t('application.operation')" :width="optionWidth*55 +20">
+          <el-table-column v-if="isshowOption" :label="$t('application.operation')" :width="optionWidth*55">
             
             <template slot="header">
               <el-button icon="el-icon-s-grid" size="small" @click="dialogFormShow" title="选择展示字段"></el-button>
@@ -386,7 +386,7 @@ export default {
     // 加载表格数据
     loadGridData() {
       let _self = this;
-      let tbHeight = _self.tableHeight;
+      // let tbHeight = _self.tableHeight;
       _self.loading = true;
       var m = new Map();
       m.set("gridName", _self.gridViewName);
@@ -411,7 +411,10 @@ export default {
           _self.itemDataList = response.data.data;
           _self.itemCount = response.data.pager?response.data.pager.total:0;
           _self.loading = false;
-          _self.tableHeight = tbHeight;
+          setTimeout(() => {
+            _self.tableHeight = _self.tableHeight-1;
+          }, 100);
+          
         })
         .catch(function(error) {
           console.log(error);

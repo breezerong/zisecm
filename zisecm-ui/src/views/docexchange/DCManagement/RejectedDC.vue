@@ -409,7 +409,7 @@ export default {
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 45,
+            topbarHeight: 35,
             // 底部除列表高度
             bottomHeight: 120,
             dialog:{

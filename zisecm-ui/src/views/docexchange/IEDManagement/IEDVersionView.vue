@@ -43,7 +43,7 @@ export default {
       topStorageName: 'IEDVersionViewHeight',
       startHeight: 140,
       topPercent: 65,
-      topbarHeight: 45,
+      topbarHeight: 35,
       bottomHeight: 80,
       tables:{
         mainDg:{

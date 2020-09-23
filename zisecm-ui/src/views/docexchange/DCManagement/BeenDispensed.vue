@@ -378,13 +378,13 @@ export default {
             // 本地存储高度名称
             topStorageName: 'BeenDispensedHeight',
             // 非split pan 控制区域高度
-            startHeight: 135,
+            startHeight: 150,
             // 顶部百分比*100
             topPercent: 65,
             // 顶部除列表高度
-            topbarHeight: 45,
+            topbarHeight: 35,
             // 底部除列表高度
-            bottomHeight: 110,
+            bottomHeight: 120,
 
             showRejectDialog: false,
 
