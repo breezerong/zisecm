@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TimeZone;
 
-import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.StringUtils;
+import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
@@ -590,7 +591,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			{
 				String date = args.get(key).toString();
 				if(args.get(key) instanceof Date) {
-					date = DateUtils.formatDate((Date)args.get(key),"yyyy-MM-dd HH:mm:ss");
+					date = DateUtils.DateToStr((Date)args.get(key),"yyyy-MM-dd HH:mm:ss");
 					date = "'"+date+"'";
 				}else {
 					date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
