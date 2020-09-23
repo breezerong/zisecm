@@ -64,9 +64,7 @@
        <el-col :span="6" ref="p11" v-if="isCNPEjk">
       <el-form-item><ecm-data-icons :option="projectDataDelayConfirm"></ecm-data-icons></el-form-item>
       </el-col>
-    <el-col :span="6" ref="p12" v-if="isCNPEjk">
-      <el-form-item><ecm-data-icons :option="projectDataDelayReplyConfirm"></ecm-data-icons></el-form-item>
-      </el-col>
+
 
       <el-col :span="6" ref="wk1" v-if="isOnlyCNPEwk">
       <el-form-item><ecm-data-icons :option="projectData"></ecm-data-icons></el-form-item>
@@ -295,17 +293,6 @@ export default {
           },
         ],
       },
-      projectDataDelayConfirm: {
-        data: [
-          {
-            title: this.$t('application.delayConfirm'),
-            count: 0,
-            color: "rgb(255, 0, 0)",
-            icon: "el-icon-document-delete",
-            url: "/cnpe/icmmanagement/icmfeedback",
-          },
-        ],
-      },
       projectDataDelayNum: {
         data: [
           {
@@ -319,27 +306,19 @@ export default {
           
         ],
       },
-      projectDataDelayConfirm: {
+  
+ 
+
+        projectDataDelayConfirm: {
         data: [
           {
-            title: this.$t('application.delayConfirm'),
+              title: this.$t('application.delayConfirm'),
             count: 0,
-            color: 'rgb(63, 161, 255)',
+             color: 'rgb(255, 0, 0)',
             icon: 'el-icon-s-order',
-            url: ''
+            url: '/cnpe/icmmanagement/delayconfirm'
           },
-        ],
-      },
-    projectDataDelayConfirm: {
-        data: [
-          {
-            title: this.$t('application.delayConfirm'),
-            count: 0,
-            color: 'rgb(63, 161, 255)',
-            icon: 'el-icon-s-order',
-            url: ''
-          },
-        ],
+        ]
       },
 
 
@@ -441,7 +420,7 @@ export default {
               {
             title: this.$t('application.delayOpenConfirm'),
             count: 0,
-            color: 'rgb(63, 161, 255)',
+            color: 'rgb(255, 0,0)',
             icon: 'el-icon-s-order',
             url: '/cnpe/icmmanagement/icmfeedback'
           },
@@ -786,10 +765,11 @@ export default {
           _self.projectData5.data[0].count = response.data.dcNum;
           _self.projectData6.data[0].count = response.data.icmNum;
           _self.projectData7.data[0].count = response.data.feedbackicmNum;
+          _self.projectDataDelayOpenConfirm.data[0].count=response.data.delayCloseNum
           _self.projectDataDCC.data[0].count=response.data.delayCloseNum;
           _self.projectDataDelayConfirm.data[0].count=response.data.delayReplyConfirm
           _self.projectDataDelayNum.data[0].count=response.data.delayNum
-          _self.projectDatare.data[0].count=response.data.delayReplyConfirm
+          
           _self.$refs.p1.refresh()
           _self.$refs.p2.refresh()
           _self.$refs.p3.refresh()

@@ -547,7 +547,7 @@ public class PlanDashController extends ControllerAbstract{
 		LoginUser userObj=null;
 		userObj=getSession().getCurrentUser();
 		String company = userObj.getCompany();
-		String sql="select count(*) as count from ecm_document WHERE TYPE_NAME='ICM'"+whereSql+"AND C_COMPANY='"+company+"'";
+		String sql="select count(*) as count from ecm_document WHERE (C_CODE5='N' OR C_CODE6='N') and  TYPE_NAME='ICM'"+whereSql;
 		List<Map<String, Object>> data= documentService.getMapList(getToken(), sql);
 		System.out.println(sql);
 		Map<String,Object> d = new HashMap<String,Object>();
@@ -910,7 +910,7 @@ public class PlanDashController extends ControllerAbstract{
 		String Plansql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划' "+whereSql;
 		String Tlansql="select count(*) as count from ecm_document WHERE TYPE_NAME='计划任务' "+whereSql+"and sub_type='Activity' ";
 		String Iedsql="select count(*) as count from ecm_document WHERE TYPE_NAME='IED' "+whereSql+"AND status='已生效' and c_is_released='1' and is_current='1' and c_company ='"+company+"'";
-		String Icmsql="select count(*) as count from ecm_document WHERE TYPE_NAME='ICM'"+whereSql+"AND C_COMPANY='"+company+"'";
+		String Icmsql="select count(*) as count from ecm_document WHERE TYPE_NAME='ICM'"+whereSql+"and (C_CODE5='N' OR C_CODE6='N')";
 		String sqlList = "select ("+
 				Projectsql+") as projectNum, ("+
 				Plansql+") as planNum,("+

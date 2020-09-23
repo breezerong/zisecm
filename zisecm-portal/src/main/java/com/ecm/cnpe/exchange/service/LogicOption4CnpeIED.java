@@ -41,9 +41,17 @@ public class LogicOption4CnpeIED {
 		String coding = mainDoc.getCoding();
 		String id = mainDoc.getId();
 		EcmDocument tempE2 = documentService.getObjectById(token, id);
-		if(tempE2.getAttributeValue("C_EX1_DATE")!=null && tempE2.getAttributeValue("C_EX2_DATE")!=null) {
-		String MainEx1 = tempE2.getAttributeValue("C_EX1_DATE").toString();
-		String MainEx2 = tempE2.getAttributeValue("C_EX2_DATE").toString(); // 提交版
+		//if(tempE2.getAttributeValue("C_EX1_DATE")!=null && tempE2.getAttributeValue("C_EX2_DATE")!=null) 
+		String MainEx1; 
+		String MainEx2; 								// 提交版
+		if(tempE2.getAttributeValue("C_EX1_DATE")==null) {
+			MainEx1="";
+		}
+		if(tempE2.getAttributeValue("C_EX2_DATE")==null) {
+			MainEx2="";
+		}
+		MainEx1 = tempE2.getAttributeValue("C_EX1_DATE").toString();
+		MainEx2 = tempE2.getAttributeValue("C_EX2_DATE").toString();
 		String tempE1EX1;					//服务器当前版数据
 		String tempE1EX2;
 		String cond = "TYPE_NAME='IED' AND CODING= '" + coding + "'" + "AND IS_CURRENT=1 AND STATUS = '变更中'";
@@ -69,7 +77,7 @@ public class LogicOption4CnpeIED {
 				}
 			}
 			documentService.updateObject(token, tempE1, null);}
-		}
+		
 		LoginUser user;
 		user = documentService.getCurrentUser(token);
 		Date d1 = new Date();

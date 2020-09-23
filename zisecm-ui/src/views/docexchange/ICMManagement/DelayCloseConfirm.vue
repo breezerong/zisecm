@@ -46,7 +46,7 @@
             dataUrl="/dc/getDocuments"
             isshowOption
             gridViewName="延误关闭确认"
-            condition="(C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME=ICM)"
+            
             :optionWidth = "1"
             v-bind="tables.main" :tableHeight="layout.height-166"
             @rowclick="rowClick" 
@@ -179,12 +179,11 @@ export default {
                 }})
     },
     search(){
+         let _self = this
         console.log(this.currentUser().company)        
         if(this.currentUser().company==_self.ownerCompany){
             this.isCNPE=true
         }
-
-        let _self = this
         var k1="(C_PROCESS_STATUS in ('新建') ) and (TYPE_NAME='ICM')"
          if(_self.value != null &&_self.value!='所有'){
                 k1+=" AND C_PROJECT_NAME in ("+_self.value +")"

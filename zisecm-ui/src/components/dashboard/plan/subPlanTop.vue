@@ -132,7 +132,7 @@ export default {
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
+                url: '/cnpe/icmmanagement/delayconfirm'}],
       },
         projectDataFeedbackICM: {
         color: 'rgb(63, 161, 255)',
@@ -141,7 +141,7 @@ export default {
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
+                url: '/cnpe/icmmanagement/delayfeedback'}],
       },
       projectData1: {
         color: 'rgb(63, 161, 255)',
@@ -150,7 +150,7 @@ export default {
                 count: 11,
                 color: 'rgb(63, 161, 255)',
                 icon: 'el-icon-s-unfold',
-                url: '/ied/releaseied'}],
+                url: ''}],
         
       },
       projectDataDC: {
@@ -318,7 +318,7 @@ export default {
           {
             title: this.$t('application.PendingSubmitDC'),
             count: 0,
-            color: 'rgb(255, 0, 0)',
+            color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-checked',
             url: '/cnpe/DCManagement/submissiondc'
           },
@@ -344,7 +344,7 @@ export default {
          {
             title: this.$t('route.MyApplyReject'),
             count: 0,
-            color: 'rgb(255, 0, 0)',
+            color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document-delete',
             url: '/cnpe/DCManagement/myApplyReject'
           }
@@ -400,7 +400,8 @@ export default {
         axios.post("/exchange/homeTop/homeSumNum",JSON.stringify(mp))
         .then(function (response) {
           if(response.data.code==1){
-              _self.projectDataFeedbackICM.data[0].count=response.data.feedbackicmNum;
+            console.log(response.data)
+              _self.projectDataFeedbackICM.data[0].count=response.data.delay;
               _self.projectDataDRN.data[0].count=response.data.delayNum
           }
           

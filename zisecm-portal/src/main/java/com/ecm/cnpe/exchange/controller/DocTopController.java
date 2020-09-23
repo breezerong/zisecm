@@ -111,7 +111,7 @@ public class DocTopController extends ControllerAbstract  {
 			sqlIEDNum = "select count(*) as IEDNum from ecm_document  "
 					+ "where TYPE_NAME='IED' and status='已生效' and IS_CURRENT ='1' and C_IS_RELEASED ='1' and("+whereSql+"))";
 			sqlICMNum = "select count(*) as ICMNum from ecm_document "
-					+ "where TYPE_NAME='ICM' and("+whereSql+")) ";
+					+ "where TYPE_NAME='ICM' and (C_CODE5='N' OR C_CODE6='N') and("+whereSqlSPEC+") ";
 			String sqlApplyReject="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and b.TO_NAME='"+company+"'"
 					+" and item_type='1' and b.status1='待确认'";
 			String ApplyRejectConfirm="select count(*) from ecm_document a,exc_transfer b where a.id=b.doc_id and"

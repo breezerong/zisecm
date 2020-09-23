@@ -947,8 +947,9 @@ export default {
                             _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
                             _self.$refs.DialogDataGrid.loadGridInfo()
                             _self.$refs.DialogDataGrid.loadGridData()
+                            console.log(_self.$refs.DialogDataGrid.condition)
                             _self.propertyrela=true
-                            return
+                            return 
                         }else{
                             _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
                             _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition

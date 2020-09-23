@@ -62,7 +62,7 @@
 
 
        <el-dialog 
-        title="IEDContrast"
+        :title="$t('application.iedContrast')"
         :visible.sync="IEDcontrast"
         @close="IEDcontrast = false"
         width="80%">

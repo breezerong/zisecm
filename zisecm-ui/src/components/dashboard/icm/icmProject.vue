@@ -79,7 +79,7 @@ export default {
         data: [{
             title: this.$t('application.ICM'),
             count: 0,
-            color: 'rgb(255, 0, 0)',
+            color: 'rgb(63, 161, 255)',
             icon: 'el-icon-document',
             url: '/cnpe/MoreViewerBrowe/projectviewer'
         }]

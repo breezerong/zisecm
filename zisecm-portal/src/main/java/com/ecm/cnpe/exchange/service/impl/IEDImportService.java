@@ -468,7 +468,7 @@ public class IEDImportService extends EcmService {
 	public void Feedback(String Coding,String Comment,String date,String project,String token) throws NoPermissionException, AccessDeniedException, EcmException {					//IED批量反馈
 		EcmDocument temp = new EcmDocument();
 		Map<String,Object> mp = new HashMap();
-		String cond = " TYPE_NAME='IED' and CODING='"+Coding+"' and status='已生效' and c_project_name='"+project+"'" ;
+		String cond = " TYPE_NAME='IED' and CODING='"+Coding+"' and status='已生效'" ;
 		List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
 		mp = result.get(0);
 		temp.setAttributes(mp);
