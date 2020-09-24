@@ -127,10 +127,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	@Override
 	public boolean exportData(String actionName) throws Exception {
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("ecm.username");
+		String userName = env.getProperty("ecm.username");
 		String token = null;
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+			ecmSession = authService.login("workflow", userName, env.getProperty("ecm.password"));
 			token = ecmSession.getToken();
 			folderName = getFolderName();
 			List<SyncBean> resultObjList = new ArrayList<SyncBean>();
@@ -339,7 +339,15 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("问题回复".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_问题回复";
+		}else if ("申请驳回".equals(type)||"确认驳回".equals(type)) {
+			transfers = excTransferMapper.executeSQL(
+					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS,STATUS1,COMMENT1" + 
+					" FROM exc_transfer where ID in('"
+							+ docId + "') ");
+			// 分包商申请驳回，内网不存在分发对象，直接创建
+			beanType = "update_"+type;
 		}
+
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
 		syncBean.setTransfers(transfers);
@@ -514,11 +522,11 @@ public class SyncPublicNet implements ISyncPublicNet {
 			}
 		}
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("ecm.username");
+		String userName = env.getProperty("ecm.username");
 		String token = null;
 		File zipFile=null;
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+			ecmSession = authService.login("workflow", userName, env.getProperty("ecm.password"));
 			token = ecmSession.getToken();
 			String zipFolderPath = fileDirectory.getAbsolutePath() + "/";
 			for (Iterator<File> iterator = zipFileList.iterator(); iterator.hasNext();) {

@@ -21,15 +21,7 @@ public class SysConfig {
 		return departmentRootId;
 	}
 
-	// 设置静态属性值，不能用静态方法，否则Springboot 不会调用
-	/**
-	 * 部门根ID
-	 * @param departmentRootId
-	 */
-	@Value("${department.root.id}")
-	public void setDepartmentRootId(String departmentRootId) {
-		SysConfig.departmentRootId = departmentRootId;
-	}
+
 
 
 	public static String getUnauthorized() {
@@ -80,17 +72,6 @@ public class SysConfig {
 	public void setSyncPath(String syncPathPrivate) {
 		SysConfig.syncPathPrivate = syncPathPrivate;
 	}
-	
-
-	public static String getSingleQuotationMark() {
-		return singleQuotationMark;
-	}
-
-	@Value("${single.quotation.mark}")
-	public void setSingleQuotationMark(String singleQuotationMark) {
-		SysConfig.singleQuotationMark = singleQuotationMark;
-	}
-
 
 	public static String getNullDate() {
 		return nullDate;
@@ -120,10 +101,6 @@ public class SysConfig {
 
 	private static String syncPathPublic;
 	private static String syncPathPrivate;
-	
-	
-	private static String singleQuotationMark;
-	
 	
 	private static String nullDate;
 
