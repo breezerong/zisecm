@@ -126,7 +126,6 @@ export default {
         project:{type:String,default:""}
     },
     data(){
-        
         return{
             batchDialogVisible:false , //导入对话框可见性
             // 本地存储高度名称
@@ -252,7 +251,6 @@ export default {
                 }    
             })   
         },
-
         change(){
             let _self=this;
             let formData= _self.$refs.mainDataGrid.$refs.ShowProperty.getFormData();
@@ -298,8 +296,6 @@ export default {
                 
              })
         },
-
-    
         async init(){
             let _self =  this
             let url="/admin/uirelation/get"
@@ -479,10 +475,8 @@ export default {
         exportData(){
             //let dataUrl = "/exchange/doc/export"
             let info = this.$refs.mainDataGrid.getGridViewInfo()
-            console.log(info)
             let fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
-            console.log(this.$refs.mainDataGrid.condition)
             let params = {
                 gridName:info.gridviewName,
                 isCustom:info.isCustom,
