@@ -343,7 +343,7 @@ public class IEDImportService extends EcmService {
 								}
 								if(type.equals("接收")) {									//走接收逻辑
 									accept(token,id,sb);
-									sucessCount++;
+									//sucessCount++;											
 									continue;
 								}
 							}
