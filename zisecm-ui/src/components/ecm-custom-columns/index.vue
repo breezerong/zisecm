@@ -5,7 +5,7 @@
           <el-form size="small" label-width="100" inline>
             <el-form-item label="名称">
               <el-select v-model="selectedName">
-                <el-option v-for="item in customNames" :key="item.name" :label="item.name" :value="item.name" @click.native="onSelectChange(item)">{{item.name}}</el-option>
+                <el-option v-for="item in customNames" :key="item.name" :label="item.description" :value="item.name" @click.native="onSelectChange(item)"></el-option>
               </el-select>
             </el-form-item>
              <el-form-item>
@@ -22,7 +22,7 @@
           <el-table ref="sourceTable" :data="tables.source.data" v-bind="tables.source.attrs" @selection-change="onSelectTableDataSource">
             <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column label="行号" type="index" width="60"></el-table-column>
-            <el-table-column label="属性名" prop="label"></el-table-column>
+            <el-table-column label="属性显示" prop="label"></el-table-column>
             <el-table-column label="操作" width="75" fixed="right">
               <template slot-scope="scope">
                 <el-button :plain="true" type="primary" size="small" icon="edit" @click="addItem(scope.row)">添加</el-button>
@@ -44,7 +44,7 @@
           <el-table ref="targetTable" :data="tables.target.data" v-bind="tables.target.attrs"  @selection-change="onSelectTableDataTarget">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="行号" type="index" width="60"></el-table-column>
-            <el-table-column label="属性名" prop="label"></el-table-column>
+            <el-table-column label="属性显示" prop="label"></el-table-column>
             <el-table-column label="宽度" width="100">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.width"></el-input>
@@ -152,9 +152,10 @@ export default {
     onSelectChange(item){
       let id = item.id
       let name = item.name
-     this.loadCustomInfo(id,name)
+      let desc = item.description
+     this.loadCustomInfo(id,name,desc)
     },
-    loadCustomInfo(id,name){
+    loadCustomInfo(id,name,desc){
       let _self=this;
       var m = new Map();
       m.set('gridId',id);
@@ -175,6 +176,8 @@ export default {
         _self.$message({ message: '名称为空！', type: 'warning' })
         return;
       }
+      let uname = this.currentUser().userName
+      let gvname = this.selectedName.replace(uname+"_","")
       let datalist = this.tables.target.data
       let postArray = new Array()
       for (let index = 1; index <= datalist.length; index++) {
@@ -191,7 +194,7 @@ export default {
       }
       let postData = new Map();
       postData.set("gridName",this.gridViewName)
-      postData.set("NAME",this.selectedName)
+      postData.set("NAME",gvname)
       postData.set('items',postArray);
       let url = "/admin/createOrUpdateGridView"
       axios.post(url,JSON.stringify(postData)).then(function(response){
