@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.exception.AccessDeniedException;
@@ -239,6 +240,18 @@ public class GridViewManager extends ControllerAbstract{
 		 
 	 }
 	 
+	 private EcmGridView getGridView(String gridName) {
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		if(gv==null) {
+			try {
+				gv = ecmGridView.getObjectByName(getToken(), gridName);
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}
+		return gv;
+	 }
+	 
 	 @RequestMapping(value="/admin/createOrUpdateGridView", method = RequestMethod.POST)  
 	 @ResponseBody
 	 public  Map<String, Object>  createOrUpdateGridView(@RequestBody  String argStr){
@@ -248,21 +261,26 @@ public class GridViewManager extends ControllerAbstract{
 		 String name= args.get("NAME")==null?"":args.get("NAME").toString();
 		 try {
 			String creator=this.getSession().getCurrentUser().getUserName();
+			String fullName = creator+"_"+name;
 			
-			String condition=" NAME='"+name+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
+			String condition=" NAME='"+fullName+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
+			EcmGridView tagGrid = getGridView(gridName);
 			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
 			String newId="";
 			if(gridView==null) {
 //				gridView= ecmGridView.getObjectByName(getToken(), gridName);
 				gridView=new EcmGridView();
-				gridView.setName(name);
+				gridView.setName(fullName);
 				gridView.setCreationDate(new Date());
 				gridView.setCreator(creator);
+				gridView.setTypeName(tagGrid.getTypeName());
 				gridView.setGridType(1);
 				gridView.setGridTag(gridName);
-				gridView.setDescription(gridName + " custom columns");
+				gridView.setDescription(name);
+				gridView.setCondition(tagGrid.getCondition());
+				gridView.setOrderBy(tagGrid.getOrderBy());
 				newId= ecmGridView.copyToCustomGridView(getToken(), gridView);
-				
+				CacheManagerOper.getEcmGridViews().put(fullName, gridView);
 			}else {
 				itemService.deleteByParentId(getToken(), gridView.getId());
 				newId=gridView.getId();
