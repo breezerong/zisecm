@@ -356,15 +356,14 @@ public class IEDImportService extends EcmService {
 					
 								setValues(e1.getAttributes(), attrNames,sheet.getRow(i),1,sheet.getRow(i).getLastCellNum(),sameValues,null);
 								Map attrs = e1.getAttributes();
-								if(attrs.get("CODING")!=null&&attrs.get("C_COMMENT4")!=null&&attrs.get("C_ITEM4_DATE")!=null&&attrs.get("C_PROJECT_NAME")!=null) {					//必填项空数据影响检查
+								if(attrs.get("CODING")!=null&&attrs.get("C_COMMENT4")!=null&&attrs.get("C_ITEM4_DATE")!=null) {					//必填项空数据影响检查
 								String Coding = attrs.get("CODING").toString();
 								String comment = attrs.get("C_COMMENT4").toString();
 								String date = attrs.get("C_ITEM4_DATE").toString();	
-								String project = attrs.get("C_PROJECT_NAME").toString();
-								Feedback(Coding,comment,date,project,token);
+								Feedback(Coding,comment,date,token);
 								continue;}
 								if(attrs.get("CODING")==null||attrs.get("C_COMMENT4")==null||attrs.get("C_ITEM4_DATE")==null
-										||attrs.get("C_PROJECT_NAME")==null) {
+										) {
 									sb.append("第"+i+"行数据必填项出现空字段,请检查,该行操作已略过\r\n");
 									continue;
 								}
@@ -465,7 +464,7 @@ public class IEDImportService extends EcmService {
 	}
 	
 	
-	public void Feedback(String Coding,String Comment,String date,String project,String token) throws NoPermissionException, AccessDeniedException, EcmException {					//IED批量反馈
+	public void Feedback(String Coding,String Comment,String date,String token) throws NoPermissionException, AccessDeniedException, EcmException {					//IED批量反馈
 		EcmDocument temp = new EcmDocument();
 		Map<String,Object> mp = new HashMap();
 		String cond = " TYPE_NAME='IED' and CODING='"+Coding+"' and status='已生效'" ;

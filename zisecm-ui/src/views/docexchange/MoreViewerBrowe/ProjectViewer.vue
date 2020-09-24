@@ -555,13 +555,13 @@ export default {
                 this.typeName=data.name;
                 let user = this.currentUser();
                 if(user.userType==2 && user.company!=null){
-                    this.$refs.mainDataGrid.condition=this.condition=" TYPE_NAME='"+this.typeName+"' "
+                    this.$refs.mainDataGrid.condition=this.condition=" C_IS_RELEASED = 1 AND TYPE_NAME='"+this.typeName+"' "
                     // +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认')"
                     +" and C_PROJECT_NAME = '"+this.projectName+"' AND (C_COMPANY='"+user.company +"'"
                     +" or C_TO like'%"+user.company+"%')";
                     this.$refs.mainDataGrid.loadGridData();
                 }else{
-                    this.$refs.mainDataGrid.condition=this.condition=" TYPE_NAME='"+this.typeName+"' "
+                    this.$refs.mainDataGrid.condition=this.condition=" C_IS_RELEASED = 1 AND TYPE_NAME='"+this.typeName+"' "
                     // +"and (ID  in (select DOC_ID from exc_transfer) or STATUS='已确认') "
                     +"and C_PROJECT_NAME = '"+this.projectName+"' ";
                     this.$refs.mainDataGrid.loadGridData();
