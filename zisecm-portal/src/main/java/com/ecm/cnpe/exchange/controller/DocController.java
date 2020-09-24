@@ -188,7 +188,7 @@ public class DocController  extends ControllerAbstract  {
 		List<Object[]> datalist = new ArrayList<Object[]>();
 		EcmGridView gv = null;
 		List<EcmGridViewItem> list = null;
-		if(params.getIsCustom()) {
+		if(params.getIsCustom() !=null && params.getIsCustom()==true ) {
 			try {
 				String ctreator = this.getSession().getCurrentUser().getUserName();
 				String condition = " NAME='"+ params.getGridName() +"' AND GRID_TYPE=1 and  CREATOR='"+ctreator+"'";
