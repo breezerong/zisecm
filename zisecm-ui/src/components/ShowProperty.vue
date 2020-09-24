@@ -474,7 +474,7 @@ export default {
                    frmItems[i].defaultValue = val;
                 }
                 if(frmItems[i].isRepeat){
-                  if(frmItems[i].controlType=='TextBox' || frmItems[i].controlType=='SQLSelect' || frmItems[i].controlType=='ValueSelect'){
+                  if(frmItems[i].controlType=='TextBox' || frmItems[i].controlType=='Select' || frmItems[i].controlType=='SQLSelect' || frmItems[i].controlType=='ValueSelect'){
                     if(frmItems[i].defaultValue==null){
                       frmItems[i].defaultValue =[]
                     }else{
