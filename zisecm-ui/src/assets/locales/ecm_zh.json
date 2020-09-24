@@ -130,6 +130,7 @@
     "obtained":"下架",
     "destroy":"销毁",
     "show":"显示",
+    "showType":"显示类型",
     "fileBox":"卷盒",
     "warehousing":"上架",
     "addToShopingCart":"添加到借阅单",
@@ -252,7 +253,8 @@
     "CODING":"外部编码",
     "TITLE":"标题",
     "Reply":"回复",
-    "IEDOperExcel":"IED批量操作"
+    "IEDOperExcel":"IED批量操作",
+    "InputFilterKeyWord":"输入过滤关键字"
 },
 "skin": {
     "Blue": "天空蓝",
