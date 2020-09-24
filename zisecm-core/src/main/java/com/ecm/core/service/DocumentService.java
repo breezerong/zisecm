@@ -90,6 +90,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	private EcmLifeCycleMapper lifeCycleMapper;
 	@Autowired
 	private EcmLifeCycleItemMapper lifeCycleItemMapper;
+	
+	@Autowired
+	private GridViewService gridViewService;
+	@Autowired
+	private GridViewItemService gridViewItemService;
 	/**
 	 * 通过配置子句查询对象
 	 * @param token
@@ -179,6 +184,20 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		// TODO Auto-generated method stub
 		return ecmDocument.getObjectsByCondition(page,condition);
 	}
+	
+	private EcmGridView getGridView(String token,String gridName) {
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		if(gv==null) {
+			gv = gridViewService.getObjectByName(token, gridName);
+			List<EcmGridViewItem> itemlist =gridViewItemService.getEcmCustomGridViewInfo(token, gv.getId());
+			if(itemlist==null) {
+				itemlist = new ArrayList<EcmGridViewItem>();
+			}
+			gv.setGridViewItems(itemlist);
+		}
+		return gv;
+	}
+	
 	@Override
 	public List<Map<String, Object>> getObjects(String token, String gridName, String folderId, Pager pager,
 			String condition, String orderBy) {
@@ -192,7 +211,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			e.printStackTrace();
 		}
 		
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		EcmGridView gv = getGridView(token,gridName);
 		String gvCondition=gv.getCondition();
 		
 		String sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
