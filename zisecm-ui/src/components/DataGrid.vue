@@ -170,7 +170,7 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="(item,idx) in customList"
                     :key="idx+'_Cz'"
-                    @click.native="showCustomInfo(item)">{{item.name}}</el-dropdown-item>
+                    @click.native="showCustomInfo(item)">{{item.description}}</el-dropdown-item>
                     
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -268,7 +268,11 @@ export default {
       itemCount:0,
       formName:'',
       currentLanguage:"zh-cn",
-      propertiesData:[]
+      propertiesData:[],
+      gridviewInfo:{
+        gridviewName:"",
+        isCustom:false
+      }
     };
   },
   props: {
@@ -331,6 +335,8 @@ export default {
   },
   mounted(){
     // this.ready();
+    this.gridviewInfo.gridviewName = this.gridViewName
+    this.gridviewInfo.isCustom = false
     this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";
     this.loadCustomName();
     this.loadGridInfo();
@@ -346,17 +352,15 @@ export default {
     getPropertiesData(){
       this.$nextTick(()=>{
         this.propertiesData=this.$ref.ShowProperty.getFormData();
-        
       });
-      
     },
     // 加载表格数据
-    loadGridData() {
+    loadGridData(gvname) {
       let _self = this;
       // let tbHeight = _self.tableHeight;
       _self.loading = true;
       var m = new Map();
-      m.set("gridName", _self.gridViewName);
+      m.set("gridName", this.gridviewInfo.gridviewName);
       // m.set('folderId',indata.id);
       m.set("condition", _self.condition);
       if(_self.parentId!=''){
@@ -365,28 +369,17 @@ export default {
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex",  _self.currentPage - 1);
       m.set("orderBy", "");
-      _self
-        .axios({
-          headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-          },
-          method: "post",
-          data: JSON.stringify(m),
-          url: _self.dataUrl
-        })
-        .then(function(response) {
-          _self.itemDataList = response.data.data;
-          _self.itemCount = response.data.pager?response.data.pager.total:0;
-          _self.loading = false;
-          setTimeout(() => {
-            _self.tableHeight = _self.tableHeight-1;
-          }, 100);
-          
-        })
-        .catch(function(error) {
+      axios.post(this.dataUrl,JSON.stringify(m)).then(function(response){
+        _self.itemDataList = response.data.data;
+        _self.itemCount = response.data.pager?response.data.pager.total:0;
+        _self.loading = false;
+        setTimeout(() => {
+          _self.tableHeight = _self.tableHeight-1;
+        }, 100);
+      }).catch(function(error){
           console.log(error);
           _self.loading = false;
-        });
+      })
     },
 
     onCloseCustom(){
@@ -438,24 +431,19 @@ export default {
       var m = new Map();
       m.set('gridId',id);
       m.set("lang", _self.currentLanguage);
-      _self.axios({
-            headers: {
-            "Content-Type": "application/json;charset=UTF-8"
-            },
-            method: 'post',
-            data: JSON.stringify(m),
-            url: "/dc/getOneEcmCustomGridViewInfo"
-        })
-            .then(function(response) {
-              if(response.data.code==1){
-                _self.columnList=response.data.data;
+      let url ="/dc/getOneEcmCustomGridViewInfo"
+      axios.post(url,JSON.stringify(m)).then(function(response) {
+        if(response.data.code==1){
+          _self.gridviewInfo.gridviewName = item.name
+          _self.gridviewInfo.isCustom = true
+          _self.columnList=response.data.data;
+          _self.loadGridData()
 
-              }
-              
-            })
-            .catch(function(error) {
-            console.log(error);
-            });
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
     },
     createCustomGrid(){
     let _self=this;
@@ -508,10 +496,16 @@ export default {
         if(response.data.code==1){
           _self.customNames=response.data.data;
           _self.customList=response.data.data;
+
+          _self.gridviewInfo.gridviewName = _self.gridViewName
+          _self.gridviewInfo.isCustom = false
         }
       }).catch(function(error){
         console.log(error)
       })
+  },
+  getGridViewInfo(){
+    return this.gridviewInfo
   },
   saveCustomColumn(){
     let _self=this;
