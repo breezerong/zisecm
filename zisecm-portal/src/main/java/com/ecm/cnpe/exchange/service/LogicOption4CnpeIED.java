@@ -42,18 +42,19 @@ public class LogicOption4CnpeIED {
 		String id = mainDoc.getId();
 		EcmDocument tempE2 = documentService.getObjectById(token, id);
 		//if(tempE2.getAttributeValue("C_EX1_DATE")!=null && tempE2.getAttributeValue("C_EX2_DATE")!=null) 
-		String MainEx1; 
-		String MainEx2; 								// 提交版
+		String MainEx1=""; 
+		String MainEx2=""; 								// 提交版
 		if(tempE2.getAttributeValue("C_EX1_DATE")==null) {
 			MainEx1="";
 		}
 		if(tempE2.getAttributeValue("C_EX2_DATE")==null) {
 			MainEx2="";
 		}
+		if(tempE2.getAttributeValue("C_EX1_DATE")!=null && tempE2.getAttributeValue("C_EX2_DATE")!=null) {
 		MainEx1 = tempE2.getAttributeValue("C_EX1_DATE").toString();
-		MainEx2 = tempE2.getAttributeValue("C_EX2_DATE").toString();
-		String tempE1EX1;					//服务器当前版数据
-		String tempE1EX2;
+		MainEx2 = tempE2.getAttributeValue("C_EX2_DATE").toString();}
+		String tempE1EX1="";					//服务器当前版数据
+		String tempE1EX2="";
 		String cond = "TYPE_NAME='IED' AND CODING= '" + coding + "'" + "AND IS_CURRENT=1 AND STATUS = '变更中'";
 		String sql = "select * from ecm_document where TYPE_NAME='IED' AND CODING= '" + coding + "'" + "AND IS_CURRENT=1 AND STATUS = '变更中'";
 		temp = documentService.getMapList(token, sql);			//服务器当前版本集
@@ -65,8 +66,10 @@ public class LogicOption4CnpeIED {
 			tempE1.addAttribute("STATUS", "已变更");
 			// 修改当前版本
 			if (temp.size() != 0) {
-				tempE1EX1 = tempM1.get("C_EX1_DATE").toString();					//服务器对象数据集仅作用于此，取出C_EX1/2
-				tempE1EX2 = tempM1.get("C_EX2_DATE").toString();
+				if(tempM1.get("C_EX1_DATE")!=null) {
+				tempE1EX1 = tempM1.get("C_EX1_DATE").toString();}//服务器对象数据集仅作用于此，取出C_EX1/2
+				if(tempM1.get("C_EX1_DATE")!=null) {
+				tempE1EX2 = tempM1.get("C_EX2_DATE").toString();}
 				if (!tempE1EX1.equals(MainEx1)) {
 					tempE1.addAttribute("C_ITEM1_DATE", tempE1EX1);
 					System.out.println(tempE1.getAttributeValue("C_ITEM1_DATE"));
