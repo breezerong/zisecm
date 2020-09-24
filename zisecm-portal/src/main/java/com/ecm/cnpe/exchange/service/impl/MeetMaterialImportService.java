@@ -284,7 +284,14 @@ public class MeetMaterialImportService extends EcmService {
 						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
 						FileInputStream itemStream = null;
 						try {
-							List<EcmDocument> list = new ArrayList<EcmDocument>();
+							
+							String res="2";
+							if(parentType.equals("材料变更清单")) {
+								res=checkDocument( token,sheet.getRow(i), 
+									attrNames,
+									1,sheet.getRow(i).getLastCellNum());
+							}	
+							if(res!=null&&res!=""){
 								newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  
 											fileList, attrNames,deliveryId,relationName, number, 1,sheet.getRow(i).getLastCellNum(),
 											null,null);
@@ -320,6 +327,13 @@ public class MeetMaterialImportService extends EcmService {
 											}
 										}
 									}
+							}
+							else {
+								sb.append("第").append(i+1).append("行不存在IED").append("\r\n");
+								failedCount ++;
+								continue;
+							}
+								
 						}
 						finally {
 							//删除缓存文件
@@ -355,7 +369,23 @@ public class MeetMaterialImportService extends EcmService {
 	}
 
 
-	
+	private  String checkDocument(String token,  Row row, 
+			Map<Integer,String> attrNames,
+			int start,int end) throws Exception {
+			String id;
+				String coding1= row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
+				String coding2= row.getCell(getColumnIndex(attrNames, "REVISION",start,end)).getStringCellValue();
+				String cond = " TYPE_NAME='IED' and CODING='"+coding1+"'"
+						+ " and REVISION='"+coding2+"'";
+				List<Map<String,Object>> result =documentService.getObjectMap(token, cond);
+				
+				if(result != null && result.size() > 0) {
+					id = result.get(0).get("ID")==null?"":result.get(0).get("ID").toString();
+				}else {
+					id="";
+				}
+				return id;
+		}
 	
 	private String newDocument(String token, String typeName,FileInputStream itemStream,
 			Row row, Map<String,Long> fileList,

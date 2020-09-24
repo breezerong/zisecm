@@ -2556,20 +2556,20 @@ public class EcmDcController extends ControllerAbstract {
 		doc.setAttributes(args);
 		String m=args.get("parentDocId").toString();
 		
-//		if(args.get("TYPE_NAME").toString().equals("相关文件")) {
-//			String cond="";
-//			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"' and "
-//					+ "C_IN_CODING='"+doc.getAttributeValue("C_IN_CODING").toString()+"' AND REVISION='"+doc.getAttributeValue("REVISION").toString()+"'";
-//			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
-//			String id="";
-//			if(list != null && list.size() > 0) {
-//				id = list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
-//			}else {
-//				id="";
-//				mp.put("MES", "此文件\""+args.get("CODING").toString()+"\"无对应IED!");
-//				return mp;
-//			}
-//		}
+		if(args.get("TYPE_NAME").toString().equals("材料变更清单")) {
+			String cond="";
+			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"'"
+					+ " AND REVISION='"+doc.getAttributeValue("REVISION").toString()+"'";
+			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
+			String id="";
+			if(list != null && list.size() > 0) {
+				id = list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
+			}else {
+				id="";
+				mp.put("MES", "此文件\""+args.get("CODING").toString()+"\"无对应IED!");
+				return mp;
+			}
+		}
 		if(args.get("TYPE_NAME").toString().equals("相关文件")||args.get("TYPE_NAME").toString().equals("设计文件")) {
 			if(m!=null||m!="") {
 				String condition = " ID='" + args.get("parentDocId").toString() + "'";

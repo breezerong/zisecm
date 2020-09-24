@@ -132,6 +132,7 @@
     "obtained":"Obtained",
     "destroy":"Destroy",
     "show":"Show",
+    "showType":"Show Type",
     "fileBox":"FileBox",
     "warehousing":"Warehousing",
     "theme": "Theme",
@@ -255,7 +256,8 @@
     "CODING":"Coding",
     "TITLE":"Title",
     "Reply":"Reply"  ,
-    "IEDOperExcel":"IED Batch Operate"
+    "IEDOperExcel":"IED Batch Operate",
+    "InputFilterKeyWord":"Input Filter Key Word"
 },
 "skin": {
     "Blue": "Blue",

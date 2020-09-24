@@ -46,6 +46,8 @@ import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
+import com.ecm.core.service.GridViewItemService;
+import com.ecm.core.service.GridViewService;
 import com.ecm.core.service.RelationService;
 import com.ecm.portal.controller.ControllerAbstract;
 
@@ -68,6 +70,12 @@ public class DocController  extends ControllerAbstract  {
 	
 	@Autowired
 	private ExcSynDetailService synDetailService;
+	
+	@Autowired
+	private GridViewService gridViewService;
+	
+	@Autowired
+	private GridViewItemService gridViewItemService;
 	private final String queryBase = "SELECT ID,APP_NAME, CREATION_DATE, EXPORT_DATE, IMPORT_DATE, STATUS, ERROR_MESSAGE FROM exc_syn_detail";
 	
 	@PostMapping("exportTC")
@@ -178,11 +186,28 @@ public class DocController  extends ControllerAbstract  {
 	public void getExportExcel(HttpServletRequest request, HttpServletResponse response, @RequestBody DocParam params) {
 		ExcelUtil excelUtil = new ExcelUtil();
 		List<Object[]> datalist = new ArrayList<Object[]>();
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(params.getGridName());
-		gv.getGridViewItems();
-		StringBuffer sql = new StringBuffer("select ID,");
+		EcmGridView gv = null;
+		List<EcmGridViewItem> list = null;
+		if(params.getIsCustom() !=null && params.getIsCustom()==true ) {
+			try {
+				String ctreator = this.getSession().getCurrentUser().getUserName();
+				String condition = " NAME='"+ params.getGridName() +"' AND GRID_TYPE=1 and  CREATOR='"+ctreator+"'";
+				gv = gridViewService.getObjectByCondition(getToken(), condition);
+				gv.getGridViewItems();
+				list = gridViewItemService.getEcmCustomGridViewInfo(getToken(), gv.getId());
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}else {
+			gv = CacheManagerOper.getEcmGridViews().get(params.getGridName());
+			
+			gv.getGridViewItems();
+			list = gv.getGridViewItems(params.getLang());
+		}
 		
-		List<EcmGridViewItem> list = gv.getGridViewItems(params.getLang());
+		StringBuffer sql = new StringBuffer("select ID,");
+	
+		
 		String[] titleName = new String[list.size() + 1];
 		String[] titleCNName = new String[list.size() + 1];
 		StringBuffer queryAttr = new StringBuffer();

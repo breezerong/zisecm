@@ -420,6 +420,7 @@ public class DocumentService4Cnpe extends DocumentService{
 					coding=obj.toString();
 				}
 				doc.addAttribute("CODING", coding+"-作废");
+				doc.addAttribute("C_IS_RELEASED", 0);
 				this.updateObject(token, doc,null);
 			}
 			ExcTransfer excTransfer= getOneExcTransferByDocId(token, docId,tempTRS);

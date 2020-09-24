@@ -4,6 +4,8 @@ public class DocParam {
 	
 	private String gridName;
 	
+	private Boolean isCustom;
+	
 	private String lang;
 	
 	private String condition;
@@ -19,7 +21,14 @@ public class DocParam {
 	private String parentId;
 	
 	
-	
+	public Boolean getIsCustom() {
+		return isCustom;
+	}
+
+	public void setIsCustom(Boolean isCustom) {
+		this.isCustom = isCustom;
+	}
+
 	public String getParentId() {
 		return parentId;
 	}

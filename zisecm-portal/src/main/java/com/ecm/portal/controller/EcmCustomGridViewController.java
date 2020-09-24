@@ -19,11 +19,15 @@ import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.GridViewItemService;
+import com.ecm.core.service.GridViewService;
 
 @Controller
 public class EcmCustomGridViewController extends ControllerAbstract {
 	@Autowired
 	private GridViewItemService itemService;
+	
+	@Autowired
+	private GridViewService gridViewService;
 	
 	@RequestMapping(value = "/dc/getOneEcmCustomGridViewInfo", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
@@ -54,6 +58,23 @@ public class EcmCustomGridViewController extends ControllerAbstract {
 		
 	}
 	
+	private EcmGridView getGridView(String gridName) {
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		if(gv==null) {
+			try {
+				gv = gridViewService.getObjectByName(getToken(), gridName);
+				List<EcmGridViewItem> itemlist =itemService.getEcmCustomGridViewInfo(getToken(), gv.getId());
+				if(itemlist==null) {
+					itemlist = new ArrayList<EcmGridViewItem>();
+				}
+				gv.setGridViewItems(itemlist);
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}
+		return gv;
+	}
+	
 	@RequestMapping(value = "/dc/getEcmCustomGridViewInfo", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getEcmCustomGridViewInfo(@RequestBody String argStr){
@@ -61,7 +82,7 @@ public class EcmCustomGridViewController extends ControllerAbstract {
 		String gridName = args.get("gridName").toString();
 		String gridId=args.get("gridId")!=null?args.get("gridId").toString():"";
 		String lang = args.get("lang").toString();
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		EcmGridView gv = getGridView(gridName);
 		List<EcmGridViewItem> list = gv.getGridViewItems(lang);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
