@@ -474,16 +474,18 @@ export default {
             }
             _self.$refs.mainDataGrid.condition=k1
             _self.tables.main.condition=k1;
-            //_self.exportData()
             _self.$refs.mainDataGrid.loadGridData();
         },
         exportData(){
             //let dataUrl = "/exchange/doc/export"
-            var fileDate = new Date()
+            let info = this.$refs.mainDataGrid.getGridViewInfo()
+            console.log(info)
+            let fileDate = new Date()
             let fileDateStr = fileDate.getFullYear()+""+fileDate.getMonth()+""+ fileDate.getDate()
             console.log(this.$refs.mainDataGrid.condition)
             let params = {
-                gridName:this.tables.main.gridViewName,
+                gridName:info.gridviewName,
+                isCustom:info.isCustom,
                 lang:"zh-cn",
                 condition: this.tables.main.condition,
                 filename:"IED_Published_"+fileDateStr+".xlsx",
