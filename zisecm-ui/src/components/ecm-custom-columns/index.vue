@@ -18,39 +18,42 @@
     <el-main>
       <el-row>
         <el-col :span="8">
-
-          <el-table ref="sourceTable" :data="tables.source.data" v-bind="tables.source.attrs" @selection-change="onSelectTableDataSource">
+          <el-input v-model="searchS" :placeholder="$t('application.InputFilterKeyWord')"></el-input>
+          <el-table ref="sourceTable" :data="tables.source.data.filter(data => !searchS || data.label.toLowerCase().includes(searchS.toLowerCase()) || data.attrName.toLowerCase().includes(searchS.toLowerCase()))" v-bind="tables.source.attrs" @selection-change="onSelectTableDataSource">
             <el-table-column type="selection" width="45"></el-table-column>
-            <el-table-column label="行号" type="index" width="60"></el-table-column>
-            <el-table-column label="属性显示" prop="label"></el-table-column>
-            <el-table-column label="操作" width="75" fixed="right">
+            <el-table-column :label="$t('field.indexNumber')" type="index" width="60"></el-table-column>
+            <el-table-column :label="$t('application.property')" prop="label"></el-table-column>
+            <el-table-column :label="$t('application.operation')" width="75" fixed="right">
               <template slot-scope="scope">
                 <el-button :plain="true" type="primary" size="small" icon="edit" @click="addItem(scope.row)">添加</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-col>
-        <el-col :span="2" class="center_buttons">
+        <el-col :span="1" class="center_buttons">
           <el-row>
+            <el-col :span="24">&nbsp;</el-col>
+            <el-col :span="24">&nbsp;</el-col>
             <el-col :span="24">
-              <el-button @click="addItemToTarget">添加</el-button>
+              <el-button @click="addItemToTarget" size="small">{{$t('application.Add')}}</el-button>
             </el-col>
             <el-col :span="24">
-              <el-button @click="removeTagetRow">移除</el-button>
+              <el-button @click="removeTagetRow" size="small">{{$t('application.remove')}}</el-button>
             </el-col>
           </el-row>
         </el-col>
-        <el-col :span="14">
-          <el-table ref="targetTable" :data="tables.target.data" v-bind="tables.target.attrs"  @selection-change="onSelectTableDataTarget">
+        <el-col :span="15">
+          <el-input v-model="searchT" :placeholder="$t('application.InputFilterKeyWord')"></el-input>
+          <el-table ref="targetTable" :data="tables.target.data.filter(data => !searchT || data.label.toLowerCase().includes(searchT.toLowerCase()) || data.attrName.toLowerCase().includes(searchT.toLowerCase()))" v-bind="tables.target.attrs"  @selection-change="onSelectTableDataTarget">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column label="行号" type="index" width="60"></el-table-column>
-            <el-table-column label="属性显示" prop="label"></el-table-column>
+            <el-table-column :label="$t('field.indexNumber')" type="index" width="60"></el-table-column>
+            <el-table-column :label="$t('application.property')" prop="label"></el-table-column>
             <el-table-column label="宽度" width="100">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.width"></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="显示类型" width="120">
+            <el-table-column :label="$t('application.showType')" width="120">
               <template slot-scope="scope">
                 <el-select v-model="scope.row.visibleType">
                   <el-option label="显示" value="1"></el-option>
@@ -107,10 +110,11 @@ export default {
       customNames:[],
       selectedName:"",
       currentLanguage:"zh-cn",
+      searchS:"",
+      searchT:"",
       tables:{
         source:{
           attrs:{
-           
             border:true,
             height:300
           },
@@ -119,7 +123,6 @@ export default {
         },
         target:{
           attrs:{
-            
             border:true,
             height:300
           },
