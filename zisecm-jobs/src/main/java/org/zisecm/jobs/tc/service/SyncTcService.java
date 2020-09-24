@@ -268,7 +268,8 @@ public class SyncTcService {
 	    					if(relationShip.getSearchConf()==null) {
 	    						throw new Exception("请确认"+cfb.getId()+"中的relationoperation是否配置了查询配置");
 	    					}
-	    					addRelation4Children(token, session, documentService, dmService, createItemOutput.itemRev, relationShip, docList);
+	    					addRelation4Children(token, session, documentService, dmService, 
+	    							createItemOutput.itemRev, relationShip, docList);
 	    			  }
 	    		  }
 	    	  }
@@ -523,25 +524,29 @@ public class SyncTcService {
 		}
 
 		try {
-			
-			
 			List<String> entries=new ArrayList<String>();
 			List<String> values=new ArrayList<String>();
 			
 			for(int i=0;i<conditions.size();i++) {
 				Condition c= conditions.get(i);
 				entries.add(c.getName());
-				DataEntity dt= (DataEntity) ship.getData().get(c.getValue());
-				String type= dt.getDataType();
 				String val="";
-				if("Time".equals(type)) {
-					SimpleDateFormat fmt=new SimpleDateFormat("yyyy-M-dd");
-					Date date= fmt.parse(dt.getAttrValue().toString());
-					val= fmt.format(date);
+				if(ship.getData().get(c.getValue())==null) {
+					val=c.getValue();
+				}else {
+					DataEntity dt= (DataEntity) ship.getData().get(c.getValue());
+					String type= dt.getDataType();
+					
+					if("Time".equals(type)) {
+						SimpleDateFormat fmt=new SimpleDateFormat("yyyy-M-dd");
+						Date date= fmt.parse(dt.getAttrValue().toString());
+						val= fmt.format(date);
+					}else {
+						val=dt.getAttrValue().toString();
+					}
 				}
 				values.add(val);
 			}
-			
 			QueryInput[] savedQueryInput = new QueryInput[1];
 			savedQueryInput[0] = new QueryInput();
 			savedQueryInput[0].query = query;
@@ -551,9 +556,7 @@ public class SyncTcService {
 //			savedQueryInput[0].values = new String[] { itemId, revId };
 			savedQueryInput[0].entries = (String[])entries.toArray();
 			savedQueryInput[0].values = (String[])values.toArray();
-			
 			SavedQueriesResponse response = queryService.executeSavedQueries(savedQueryInput);
-
 			QueryResults found = response.arrayOfResults[0];
 
 			/*

@@ -14,7 +14,7 @@
 <!-- 			</attributes> -->
 <!-- 		</conf> -->
 		<conf sourceTypeName="文件传递单" targetSystem="tc" syncQuerySql="" workflowName="" tcTypeName="文件传递单" tcTableName="CN9FileTFRevision">
-<!-- 			tc同步至设计分包定时查询 -->
+		<!--tc同步至设计分包定时查询 -->
 			<queryConstructor name="">
 				<conditions>
 					<condition name="" value=""></condition>

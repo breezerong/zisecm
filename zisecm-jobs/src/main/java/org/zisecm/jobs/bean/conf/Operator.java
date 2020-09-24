@@ -12,11 +12,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.zisecm.jobs.entity.DataEntity;
+import org.zisecm.jobs.tc.tools.SyncTcTools;
 
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.DocumentService;
+import com.teamcenter.services.strong.core.DataManagementService;
+import com.teamcenter.soa.client.model.ModelObject;
 
 public class Operator {
 	private static ConfigBean cf;
@@ -253,6 +256,27 @@ public class Operator {
 		return conf;
 		
 	}
+	/**
+	 * 来自TC数据
+	 * @param data
+	 * @return
+	 */
+	public static Map<String,Object> OperationTcData(DataManagementService dmService,ModelObject obj,ConfBean cfb){
+		List<Map<String,Object>> newData=new ArrayList<Map<String,Object>>();
+		Map<String,Object> row=new HashMap<String, Object>();
+		row.put("TYPE_NAME", cfb.getSourceTypeName());
+		for(AttrBean attrBean:cfb.getAttributes()) {
+			String tName=attrBean.getTargetName();
+			String sName=attrBean.getSourceName();
+			String val= SyncTcTools.getProperty(dmService, obj, tName);
+			row.put(sName, val);
+		}
+		
+		
+		return row;
+		
+	}
+	
 	/**
 	 * 来自TC数据
 	 * @param data
