@@ -147,7 +147,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 			}else {
 				
 				if("文件传递单".equals(doc.getTypeName())) {
-					logicOptionTransferService.transferOption(getToken(), doc,true);
+					logicOptionTransferService.transferOption(getToken(), detailService, doc, true);
 				}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
 					logicOptionInterfaceService.interfaceOption(getToken(), doc);
 				}else {
