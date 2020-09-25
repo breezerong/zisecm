@@ -530,11 +530,14 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			doc.setFormatName(content.getFormatName());
 			doc.setContentSize(content.getContentSize());
 		}
-		newObject(token, doc.getAttributes());
-		if (content != null) {
+		String id = newObject(token, doc.getAttributes());
+		if (content != null&&id!=null) {
 			contentServices.newObject(token, content);
+			return doc.getId();
+		}else {
+			return "";
 		}
-		return doc.getId();
+		
 	}
 
 	@Override
@@ -1792,7 +1795,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		List<Map<String,Object>> result= this.getObjectMap(token, condition);
 		if(result!=null&&result.size()>0) {
-			throw new UniquenessException("对象已存在");
+			return false;
+//			throw new UniquenessException("对象已存在");
 		}
 		return true;
 	}

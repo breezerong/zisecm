@@ -201,11 +201,19 @@ public class SyncPublicNet implements ISyncPublicNet {
 //				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
 //			}
 
-		for (int i = 0; i < docIds.size(); i++) {
-			SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
-			TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
-			// exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
+
+		if("计划同步".equals(actionName)) {
+			SyncBean sb = generateSyncBean(token, actionName, null);
+			//TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
 			resultObjList.add(sb);
+		}else {
+			
+			for (int i = 0; i < docIds.size(); i++) {
+				SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
+				//TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
+				exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
+				resultObjList.add(sb);
+			}
 		}
 		return excSynDetailObjList;
 	}
@@ -255,7 +263,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 */
 	private SyncBean generateSyncBean(String token, String type, String docId) throws EcmException {
 		SyncBean syncBean = new SyncBean();
-		List<EcmRelation> relations = ecmRelationMapper.selectByCondition(" PARENT_ID='" + docId + "' ");
+		List<EcmRelation> relations = null;
+		if(docId==null) {
+			relations = new ArrayList<EcmRelation>();
+		}else {			
+			ecmRelationMapper.selectByCondition(" PARENT_ID='" + docId + "' ");
+		}
 		syncBean.setRelations(relations);
 		StringBuilder sb = new StringBuilder();
 		sb.append("'").append(docId).append("'");
@@ -333,7 +346,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 //			initResultList(transfers, col);
 			beanType = "update_分包商接收";
 		} else if ("驳回".equals(type)) {
-			String col = "ID,STATUS,C_REJECTER,C_REJECT_DATE,C_REJECT_COMMENT";
+			String col = "ID,STATUS,C_REJECTOR,C_REJECT_DATE,C_REJECT_COMMENT";
 			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(transfers, col);
 			beanType = "update_驳回";
@@ -355,6 +368,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 							+ docId + "') ");
 			// 分包商申请驳回，内网不存在分发对象，直接创建
 			beanType = "update_"+type;
+		}else if ("计划同步".equals(type)) {
+			String condition = "select C_PROJECT_NAME from ecm_document where TYPE_NAME='计划' AND ID IN (select BATCH_NUM from exc_syn_batch where STATUS='已同步')";
+			documents = documentService.getObjectMap(token, " TYPE_NAME='计划任务' and SUB_TYPE in ('WBS','Activity') and C_PROJECT_NAME in ("+ condition +")");
+			beanType = "create_"+type;
 		}
 
 		syncBean.setBeanType(beanType);
@@ -435,10 +452,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 			en = contents.get(i);
 			// 导出主文件
 			InputStream in = getContentStream(en);
-			String fileName = folderPath + generateFileNamePrefix(en);
+			String fileName = generateFileNamePrefix(en);
 			en.setFilePath(fileName);
-			FileUtils.copyInputStreamToFile(in, new File(fileName));
-
+			FileUtils.copyInputStreamToFile(in, new File(folderPath + fileName));
+			in.close();
 		}
 	}
 
@@ -551,7 +568,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 					if (actionName.equals("导入用户")) {
 						importUserInner(token, syncBeanList);
 					} else {
-						importDataInner(token, syncBeanList);
+						importDataInner(token, syncBeanList, zipFileFullPath.replace(".zip", ""));
 					}
 					writeJsonResult(zipFile, "DONE_");
 
@@ -623,7 +640,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 * @throws Exception
 	 * @throws FileNotFoundException
 	 */
-	private void importDataInner(String token, List<SyncBean> syncBeanList)
+	private void importDataInner(String token, List<SyncBean> syncBeanList, String zipFolder)
 			throws EcmException, AccessDeniedException, NoPermissionException, Exception, FileNotFoundException {
 		for (Iterator<SyncBean> iterator = syncBeanList.iterator(); iterator.hasNext();) {
 			SyncBean en =  iterator.next();
@@ -697,9 +714,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 			for (int i = 0; contents != null && i < contents.size(); i++) {
 				//TODOApplication.getNeedTOChange("正式环境需取消注释");
 				BufferedInputStream fis = new BufferedInputStream(
-						new FileInputStream(contents.get(i).getFilePath()));
+						new FileInputStream(zipFolder+"/"+contents.get(i).getFilePath()));
 				contents.get(i).setInputStream(fis);
 				contentService.newObject(token, contents.get(i));
+				fis.close();
 			}
 
 			//TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");

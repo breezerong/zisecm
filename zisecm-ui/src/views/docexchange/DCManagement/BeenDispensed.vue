@@ -273,7 +273,7 @@
                                 @selectchange="relevantDocSelect"
                             ></DataGrid>
                         </el-tab-pane>
-                        <el-tab-pane :label="$t('application.Attachment')" name="t03" v-if="isShowAttachmentDoc">
+                        <el-tab-pane :label="$t('application.Attachment')" name="t03">
                             <el-row>
                                 <el-col :span="24">
                                 <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -697,10 +697,12 @@ export default {
                    
                _self.$refs.MeetDoc.parentId=row.ID;
                  _self.$refs.MeetDoc.loadGridData();
-                _self.$refs.attachmentDoc.parentId = row.ID;
-                _self.$refs.attachmentDoc.loadGridData();
                 });
             }
+            _self.$nextTick(()=>{
+                _self.$refs.attachmentDoc.parentId=row.ID;
+                _self.$refs.attachmentDoc.loadGridData();
+            });
         },
         MaterialDocSelect(val){
             this.MaterialDocSelected=val;
