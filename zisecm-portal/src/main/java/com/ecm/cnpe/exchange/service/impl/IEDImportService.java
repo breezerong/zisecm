@@ -1075,7 +1075,8 @@ public class IEDImportService extends EcmService {
 			}
 			if("已确认".equals(nextStatus)) {
 				if("文件传递单".equals(doc.getTypeName())) {
-					logicOptionTransferService.transferOption(token, doc,false);
+//					logicOptionTransferService.transferOption(token, doc,false);
+					logicOptionTransferService.transferOption(token, detailService, doc, false);
 				}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
 					logicOptionInterfaceService.interfaceOption(token, doc);
 				}else {
