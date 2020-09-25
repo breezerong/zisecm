@@ -273,9 +273,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 		if(docId==null) {
 			relations = new ArrayList<EcmRelation>();
 		}else {			
-			ecmRelationMapper.selectByCondition(" PARENT_ID='" + docId + "' ");
+			relations = ecmRelationMapper.selectByCondition(" PARENT_ID='" + docId + "' ");
 		}
-		syncBean.setRelations(relations);
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("'").append(docId).append("'");
 		for (int i = 0; i < relations.size(); i++) {
@@ -283,6 +283,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 			sb.append(relations.get(i).getChildId());
 			sb.append("'");
 		}
+		String onlyDoc = "'"+docId+"'";
+		boolean updateConent = true;
+		boolean updateRelation = true;
 		List<Map<String, Object>> documents = new ArrayList<Map<String, Object>>();
 		List<ExcSynBatch> synBatchList = new ArrayList<ExcSynBatch>();
 		List<Map<String, Object>> transfers = null;
@@ -291,26 +294,38 @@ public class SyncPublicNet implements ISyncPublicNet {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_提交";
 		} else if ("驳回提交".equals(type)) {
-			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
 			beanType = "update_驳回提交";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("延误打开反馈".equals(type)) {
-			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
 			beanType = "update_延误打开反馈";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("延误反馈确认".equals(type)) {
-			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
 			beanType = "update_延误反馈确认";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("新建".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建";
 		} else if ("变更".equals(type)) {
-			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
 			beanType = "create_变更";
+			updateConent = false;
+			updateRelation = false;
 		}else if ("删除".equals(type)) {
-			documents = documentService.getMapList(token, "SELECT ID, TYPE_NAME from ecm_document where ID in(" + sb.toString() + ") ");
+			documents = documentService.getMapList(token, "SELECT ID, TYPE_NAME from ecm_document where ID in(" + onlyDoc + ") ");
 			beanType = "delete_删除";
+			updateConent = false;
+			updateRelation = false;
 		}else if ("修改".equals(type)) {
-			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
 			beanType = "update_修改";
+			
+			updateRelation = false;
 		} else if ("分发".equals(type)) {
 			transfers = excTransferMapper.executeSQL(
 					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS FROM exc_transfer where ID in('"
@@ -330,38 +345,52 @@ public class SyncPublicNet implements ISyncPublicNet {
 			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(documents, col);
 			beanType = "update_CNPE驳回";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("CNPE接收".equals(type)) {
 			String col = "ID,STATUS,C_RECEIVER,C_RECEIVE_DATE";
 			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(documents, col);
+			updateConent = false;
+			updateRelation = false;
 			beanType = "update_CNPE接收";
 		} else if ("申请解锁".equals(type) || "解锁".equals(type)) {
 			String col = "ID,C_PROCESS_STATUS";
 			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(documents, col);
 			beanType = "update_解锁_申请解锁";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("分包商驳回".equals(type)) {
 			String col = "ID,STATUS,REJECTER,REJECT_DATE,COMMENT";
 			transfers = excTransferMapper
 					.executeSQL("select " + col + " from exc_transfer where ID in('" + docId + "') ");
 //			initResultList(transfers, col);
 			beanType = "update_分包商驳回";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("分包商接收".equals(type)) {
 			String col = "ID,STATUS,RECEIVER,RECEIVE_DATE";
 			transfers = excTransferMapper
 					.executeSQL("select " + col + " from exc_transfer where ID in('" + docId + "') ");
 //			initResultList(transfers, col);
 			beanType = "update_分包商接收";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("驳回".equals(type)) {
 			String col = "ID,STATUS,C_REJECTOR,C_REJECT_DATE,C_REJECT_COMMENT";
 			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(transfers, col);
 			beanType = "update_驳回";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("接收".equals(type)) {
 			String col = "ID,STATUS,C_RECEIVER,C_RECEIVE_DATE";
 			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(transfers, col);
 			beanType = "update_接收";
+			updateConent = false;
+			updateRelation = false;
 		} else if ("新建问题".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建问题";
@@ -375,19 +404,30 @@ public class SyncPublicNet implements ISyncPublicNet {
 							+ docId + "') ");
 			// 分包商申请驳回，内网不存在分发对象，直接创建
 			beanType = "update_"+type;
+			updateConent = false;
+			updateRelation = false;
 		}else if ("计划同步".equals(type)) {
+			// 已导出，已内外网同步
 			String condition = "select C_PROJECT_NAME from ecm_document where TYPE_NAME='计划' AND ID IN (select BATCH_NUM from exc_syn_batch where STATUS='已同步')";
 			documents = documentService.getObjectMap(token, " TYPE_NAME='计划任务' and SUB_TYPE in ('WBS','Activity') and C_PROJECT_NAME in ("+ condition +")");
 			synBatchList = excSynBatchMapper.getByCondition("STATUS='已同步'");
 			beanType = "create_"+type;
+			updateConent = false;
+			updateRelation = false;
 		}
 
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
 		syncBean.setTransfers(transfers);
 		syncBean.setSynBatchList(synBatchList);
-		List<EcmContent> contents = ecmContentMapper.selectByCondition(" PARENT_ID in(" + sb.toString() + ") ");
-		syncBean.setContents(contents);
+		
+		if(updateRelation) {
+			syncBean.setRelations(relations);
+		}
+		if(updateConent) {
+			List<EcmContent> contents = ecmContentMapper.selectByCondition(" PARENT_ID in(" + sb.toString() + ") ");
+			syncBean.setContents(contents);
+		}
 
 		return syncBean;
 	}
@@ -457,7 +497,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private void exportFile(SyncBean sb, String folderPath) throws Exception {
 		List<EcmContent> contents = sb.getContents();
 		EcmContent en = null;
-		for (int i = 0; i < contents.size(); i++) {
+		for (int i = 0 ; contents != null && i < contents.size(); i++) {
 			en = contents.get(i);
 			// 导出主文件
 			InputStream in = getContentStream(en);
@@ -486,7 +526,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		temp.setAppName("DOCEX");
 		temp.setCreationDate(updateDate);
 		temp.setActionName("同步");
-		temp.setStatus("新建");
+		temp.setStatus(status);
 		temp.setBatchNum(batchNum);
 		batchService.newObject(temp);
 		return true;
