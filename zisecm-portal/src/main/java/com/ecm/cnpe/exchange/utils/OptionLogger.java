@@ -14,6 +14,15 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.ExcSynDetailService;
 
 public class OptionLogger {
+	/**
+	 * 
+	 * @param token
+	 * @param detailService
+	 * @param doc 
+	 * @param actionName
+	 * @param companyName
+	 * @throws AccessDeniedException
+	 */
 	public static void logger(String token, ExcSynDetailService detailService,EcmDocument doc,String actionName,String companyName) throws AccessDeniedException {
 		ExcSynDetail detail=new ExcSynDetail();
 		detail.setAppName("DOCEX");
@@ -44,7 +53,14 @@ public class OptionLogger {
 		detailService.newObject(detail);
 	}
 	
-
+	/**
+	 * 
+	 * @param token
+	 * @param detailService
+	 * @param doc
+	 * @param companyName
+	 * @throws AccessDeniedException
+	 */
 	public static void logger(String token, ExcSynDetailService detailService, EcmDocument doc, String companyName) throws AccessDeniedException {
 		ExcSynDetail detail = new ExcSynDetail();
 		detail.setAppName("DOCEX");
@@ -73,7 +89,15 @@ public class OptionLogger {
 				}
 		detailService.newObject(detail);
 	}
-
+	/**
+	 * 
+	 * @param token
+	 * @param detailService
+	 * @param user
+	 * @param companyName
+	 * @param ActionName
+	 * @throws AccessDeniedException
+	 */
 	public static void loggerUser(String token, ExcSynDetailService detailService, EcmUser user, String companyName,
 			String ActionName) throws AccessDeniedException {
 		ExcSynDetail detail = new ExcSynDetail();
@@ -139,7 +163,14 @@ public class OptionLogger {
 				}
 		detailService.newObject(detail);
 	}
-
+	/**
+	 * 
+	 * @param token
+	 * @param detailService
+	 * @param doc
+	 * @param companyName
+	 * @throws AccessDeniedException
+	 */
 	public static void logger(String token, ExcSynDetailService detailService, ExcTransfer doc, String companyName) throws AccessDeniedException {
 		ExcSynDetail detail = new ExcSynDetail();
 		detail.setAppName("DOCEX");
@@ -168,7 +199,15 @@ public class OptionLogger {
 				}
 		detailService.newObject(detail);
 	}
-
+	/**
+	 * 
+	 * @param token
+	 * @param detailService
+	 * @param doc
+	 * @param actionName
+	 * @param companyName
+	 * @throws AccessDeniedException
+	 */
 	public static void logger(String token, ExcSynDetailService detailService, ExcTransfer doc, String actionName,
 			String companyName) throws AccessDeniedException {
 		ExcSynDetail detail = new ExcSynDetail();
