@@ -510,10 +510,12 @@ export default {
                    
                 _self.$refs.MeetDoc.parentId=row.ID;
                  _self.$refs.MeetDoc.loadGridData();
-                 _self.$refs.attachmentDoc.parentId=row.ID;
-                 _self.$refs.attachmentDoc.loadGridData();
                });
             }
+            _self.$nextTick(()=>{
+                _self.$refs.attachmentDoc.parentId=row.ID;
+                _self.$refs.attachmentDoc.loadGridData();
+            });
             
             
         },
