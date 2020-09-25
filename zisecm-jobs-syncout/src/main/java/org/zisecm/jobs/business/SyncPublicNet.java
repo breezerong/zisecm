@@ -60,6 +60,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
+import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcSynBatchService;
 import com.ecm.core.service.ExcTransferServiceImpl;
@@ -84,6 +85,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private EcmDocumentMapper ecmDocumentMapper;
 	@Autowired
 	private DocumentService documentService;
+	@Autowired
+	private ContentService contentService;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -127,10 +130,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	@Override
 	public boolean exportData(String actionName) throws Exception {
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("ecm.username");
+		String userName = env.getProperty("ecm.username");
 		String token = null;
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+			ecmSession = authService.login("workflow", userName, env.getProperty("ecm.password"));
 			token = ecmSession.getToken();
 			folderName = getFolderName();
 			List<SyncBean> resultObjList = new ArrayList<SyncBean>();
@@ -279,7 +282,13 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("新建".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建";
-		} else if ("修改".equals(type)) {
+		} else if ("变更".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "create_变更";
+		}else if ("删除".equals(type)) {
+			documents = documentService.getMapList(token, "SELECT ID, TYPE_NAME from ecm_document where ID in(" + sb.toString() + ") ");
+			beanType = "delete_删除";
+		}else if ("修改".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "update_修改";
 		} else if ("分发".equals(type)) {
@@ -339,7 +348,15 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("问题回复".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_问题回复";
+		}else if ("申请驳回".equals(type)||"确认驳回".equals(type)) {
+			transfers = excTransferMapper.executeSQL(
+					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS,STATUS1,COMMENT1" + 
+					" FROM exc_transfer where ID in('"
+							+ docId + "') ");
+			// 分包商申请驳回，内网不存在分发对象，直接创建
+			beanType = "update_"+type;
 		}
+
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
 		syncBean.setTransfers(transfers);
@@ -514,11 +531,11 @@ public class SyncPublicNet implements ISyncPublicNet {
 			}
 		}
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("ecm.username");
+		String userName = env.getProperty("ecm.username");
 		String token = null;
 		File zipFile=null;
 		try {
-			ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
+			ecmSession = authService.login("workflow", userName, env.getProperty("ecm.password"));
 			token = ecmSession.getToken();
 			String zipFolderPath = fileDirectory.getAbsolutePath() + "/";
 			for (Iterator<File> iterator = zipFileList.iterator(); iterator.hasNext();) {
@@ -628,10 +645,37 @@ public class SyncPublicNet implements ISyncPublicNet {
 						edObj.addAttribute("C_ITEM_STATUS", "已回复");
 						documentService.updateObject(token, edObj);
 					}
+					else if(beanType.equals("create_变更"))
+					{
+						//更新上一版IED 状态为“变更中”
+						EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
+						if(doc != null) {
+							if(doc.getTypeName().equalsIgnoreCase("IED")) {
+								String condition = " IS_CURRENT = 1 AND VERSION_ID='"+doc.getVersionId()+"'";
+								List<EcmDocument> docList = documentService.getObjects(token, condition);
+								if(docList.size()>0) {
+									documentService.updateStatus(token, docList.get(0).getId(), "变更中");
+								}
+							}
+						}
+						
+					}
 				} else if (beanType.startsWith("update")) {
 					documentService.updateObject(token, documents.get(i));
 					if (beanType.equals("create_驳回提交")) {
 						relationService.deleteAllRelationByParentId(token, documents.get(i).get("ID").toString());
+					}
+				}else if(beanType.startsWith("delete")) {
+					EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
+					if(doc != null) {
+						if(doc.getTypeName().equalsIgnoreCase("IED")) {
+							String condition = " IS_CURRENT = 1 AND VERSION_ID='"+doc.getVersionId()+"'";
+							List<EcmDocument> docList = documentService.getObjects(token, condition);
+							if(docList.size()>0) {
+								documentService.updateStatus(token, docList.get(0).getId(), "已生效");
+							}
+						}
+						documentService.deleteObjectById(token, doc.getId());
 					}
 				}
 			}
@@ -651,14 +695,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 				}
 			}
 			for (int i = 0; contents != null && i < contents.size(); i++) {
-				TODOApplication.getNeedTOChange("正式环境需取消注释");
-//				BufferedInputStream fis = new BufferedInputStream(
-//						new FileInputStream(contents.get(i).getFilePath()));
-//				contents.get(i).setInputStream(fis);
-//				contentService.newObject(token, contents.get(i));
+				//TODOApplication.getNeedTOChange("正式环境需取消注释");
+				BufferedInputStream fis = new BufferedInputStream(
+						new FileInputStream(contents.get(i).getFilePath()));
+				contents.get(i).setInputStream(fis);
+				contentService.newObject(token, contents.get(i));
 			}
 
-			TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
+			//TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
 		}
 	}
 

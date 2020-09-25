@@ -2432,6 +2432,8 @@ public class EcmDcController extends ControllerAbstract {
 						if(List.get(0).get("STATUS").equals("变更中")) {
 							String sql="UPDATE ecm_document SET STATUS='已生效' WHERE ID='"+List.get(0).get("ID")+"'";
 							ecmDocument.executeSQL(sql);
+							OptionLogger.logger(getToken(), detailService, dc, "删除",
+									dc.getAttributeValue("C_COMPANY")!=null?dc.getAttributeValue("C_COMPANY").toString():"");
 						}
 					}
 				}

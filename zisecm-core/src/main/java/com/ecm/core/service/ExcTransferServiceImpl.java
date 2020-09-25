@@ -121,6 +121,12 @@ public class ExcTransferServiceImpl  implements IExcTransferService {
 	public void updateObject(Map<String, Object> args) throws NoPermissionException, AccessDeniedException, EcmException {
 
 		String id = args.get("ID").toString();
+		ExcTransfer  en = mapper.selectByPrimaryKey(id);
+		//不存在，则直接创建
+		if(en == null) {
+			this.createTransfer(args);
+			return ;
+		}
 		String sql = "update  exc_transfer set ";
 		boolean isFirst = true;
 

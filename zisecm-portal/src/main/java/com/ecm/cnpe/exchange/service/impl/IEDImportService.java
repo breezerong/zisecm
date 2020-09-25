@@ -523,18 +523,19 @@ public class IEDImportService extends EcmService {
 			}						//现在已经确认有已生效IED，现在进行数据比较
 			temp.setAttributes(result.get(0));
 			String id = temp.getId();
-			String tempD1;
-			String tempD2;
+			String tempD1="";
+			String tempD2="";
 			if(temp.getAttributeValue("C_EX1_DATE")==null) {
 				tempD1="";
 			}
-			if(temp.getAttributeValue("C_EX1_DATE")==null) {
+			if(temp.getAttributeValue("C_EX2_DATE")==null) {
 				tempD2="";
 			}
-			else {
+			else if(temp.getAttributeValue("C_EX1_DATE")==null&&temp.getAttributeValue("C_EX2_DATE")==null) {
+	
 			tempD1=temp.getAttributeValue("C_EX1_DATE").toString();
 			tempD2=temp.getAttributeValue("C_EX2_DATE").toString();
-			
+			}
 			if(!tempD1.equals(comment1)) {												//分别比较内/外部计划
 				doc.addAttribute("C_COMMENT1", comment1);
 			}
@@ -548,7 +549,7 @@ public class IEDImportService extends EcmService {
 			documentService.updateStatus(token, res.getId(), "新建");
 			documentService.updateStatus(token, temp.getId(), "变更中");
 			sb.append("第"+i+"行IED完成升版\r\n");
-			}
+			
 				return true;						//升版操作
 			
 	}
