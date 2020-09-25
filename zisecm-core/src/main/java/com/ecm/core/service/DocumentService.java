@@ -618,7 +618,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}else {
 					date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 				}
-				if (date == null || date.length() < 1)
+				if (date == null || date.length() < 5)
 				{
 					continue;
 				}else {
