@@ -87,7 +87,7 @@
                                             &&scope.data.row['STATUS']=='变更中')?{'background':'#409EFF'}:''">{{scope.data.$index+1}}</span>
                         </template>
                         <template slot="saveButton" slot-scope="scope">
-                           <el-button @click='change(scope.data.row)'>变更</el-button>
+                           <el-button v-if='isNotCnpe' @click='change(scope.data.row)'>变更</el-button>
                         </template>
                     </DataGrid>
                         
@@ -127,6 +127,7 @@ export default {
     },
     data(){
         return{
+            isNotCnpe:true,
             batchDialogVisible:false , //导入对话框可见性
             // 本地存储高度名称
             topStorageName: 'PublishIEDTopHeight',
@@ -238,6 +239,14 @@ export default {
         }, 300);
     },
     methods: {
+        getUserRole(){
+            let user = this.currentUser();
+            if(user.userType != 2 ){
+                this.isNotCnpe=false
+            }
+        },
+
+
          beforImport(obj,isSub,relationName){
             this.gridObj=obj;
             this.batchDialogVisible=true;
@@ -393,6 +402,7 @@ export default {
             if(this.view==true && this.project.length>0){
                 this.forms.headForm.project = this.project
             }
+            this.getUserRole()
             this.search("")
         },
         onSearchConditionChange:function(val){
