@@ -257,7 +257,8 @@
     "TITLE":"Title",
     "Reply":"Reply"  ,
     "IEDOperExcel":"IED Batch Operate",
-    "InputFilterKeyWord":"Input Filter Key Word"
+    "InputFilterKeyWord":"Input Filter Key Word",
+    "transmit":"Transmit"
 },
 "skin": {
     "Blue": "Blue",

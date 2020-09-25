@@ -254,7 +254,8 @@
     "TITLE":"标题",
     "Reply":"回复",
     "IEDOperExcel":"IED批量操作",
-    "InputFilterKeyWord":"输入过滤关键字"
+    "InputFilterKeyWord":"输入过滤关键字",
+    "transmit":"传递"
 },
 "skin": {
     "Blue": "天空蓝",
