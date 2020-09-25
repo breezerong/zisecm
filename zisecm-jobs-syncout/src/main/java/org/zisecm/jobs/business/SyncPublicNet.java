@@ -60,6 +60,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
+import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcSynBatchService;
 import com.ecm.core.service.ExcTransferServiceImpl;
@@ -84,6 +85,8 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private EcmDocumentMapper ecmDocumentMapper;
 	@Autowired
 	private DocumentService documentService;
+	@Autowired
+	private ContentService contentService;
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -279,7 +282,13 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("新建".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建";
-		} else if ("修改".equals(type)) {
+		} else if ("变更".equals(type)) {
+			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
+			beanType = "create_变更";
+		}else if ("删除".equals(type)) {
+			documents = documentService.getMapList(token, "SELECT ID, TYPE_NAME from ecm_document where ID in(" + sb.toString() + ") ");
+			beanType = "delete_删除";
+		}else if ("修改".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "update_修改";
 		} else if ("分发".equals(type)) {
@@ -636,10 +645,37 @@ public class SyncPublicNet implements ISyncPublicNet {
 						edObj.addAttribute("C_ITEM_STATUS", "已回复");
 						documentService.updateObject(token, edObj);
 					}
+					else if(beanType.equals("create_变更"))
+					{
+						//更新上一版IED 状态为“变更中”
+						EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
+						if(doc != null) {
+							if(doc.getTypeName().equalsIgnoreCase("IED")) {
+								String condition = " IS_CURRENT = 1 AND VERSION_ID='"+doc.getVersionId()+"'";
+								List<EcmDocument> docList = documentService.getObjects(token, condition);
+								if(docList.size()>0) {
+									documentService.updateStatus(token, docList.get(0).getId(), "变更中");
+								}
+							}
+						}
+						
+					}
 				} else if (beanType.startsWith("update")) {
 					documentService.updateObject(token, documents.get(i));
 					if (beanType.equals("create_驳回提交")) {
 						relationService.deleteAllRelationByParentId(token, documents.get(i).get("ID").toString());
+					}
+				}else if(beanType.startsWith("delete")) {
+					EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
+					if(doc != null) {
+						if(doc.getTypeName().equalsIgnoreCase("IED")) {
+							String condition = " IS_CURRENT = 1 AND VERSION_ID='"+doc.getVersionId()+"'";
+							List<EcmDocument> docList = documentService.getObjects(token, condition);
+							if(docList.size()>0) {
+								documentService.updateStatus(token, docList.get(0).getId(), "已生效");
+							}
+						}
+						documentService.deleteObjectById(token, doc.getId());
 					}
 				}
 			}
@@ -659,14 +695,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 				}
 			}
 			for (int i = 0; contents != null && i < contents.size(); i++) {
-				TODOApplication.getNeedTOChange("正式环境需取消注释");
-//				BufferedInputStream fis = new BufferedInputStream(
-//						new FileInputStream(contents.get(i).getFilePath()));
-//				contents.get(i).setInputStream(fis);
-//				contentService.newObject(token, contents.get(i));
+				//TODOApplication.getNeedTOChange("正式环境需取消注释");
+				BufferedInputStream fis = new BufferedInputStream(
+						new FileInputStream(contents.get(i).getFilePath()));
+				contents.get(i).setInputStream(fis);
+				contentService.newObject(token, contents.get(i));
 			}
 
-			TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
+			//TODOApplication.getNeedTOChange("如果是升版，需要更新历史版本的字段");
 		}
 	}
 

@@ -17,33 +17,35 @@ public class SyncPublicNetApp {
 			if(CacheManagerOper.getFinishLoadCacheTag()) {
 				
 			//			System.out.println(SyncPublicNetApp.class.getName());
-//			syncPublicNet.exportData("提交");
-//			syncPublicNet.exportData("新建");
-//			syncPublicNet.exportData("新建问题");
-//			syncPublicNet.exportData("CNPE驳回");
-//			syncPublicNet.exportData("CNPE接收");
-//			syncPublicNet.exportData("分发");
-//			syncPublicNet.exportData("分包商驳回");
-//			syncPublicNet.exportData("修改");
-//			syncPublicNet.exportData("驳回");
-//			syncPublicNet.exportData("接收");
-//			syncPublicNet.exportData("导出用户");
-//			syncPublicNet.exportData("问题回复");
-//			syncPublicNet.exportData("延误打开反馈");
-//			syncPublicNet.exportData("延误打开确认");
-//			syncPublicNet.exportData("延误关闭反馈");
-//			syncPublicNet.exportData("延误关闭确认");
-//			syncPublicNet.exportData("延误回复反馈");
-//			syncPublicNet.exportData("延误回复确认");
+			syncPublicNet.exportData("删除");	
+			syncPublicNet.exportData("变更");	
+			syncPublicNet.exportData("提交");
+			syncPublicNet.exportData("新建");
+			syncPublicNet.exportData("新建问题");
+			syncPublicNet.exportData("CNPE驳回");
+			syncPublicNet.exportData("CNPE接收");
+			syncPublicNet.exportData("分发");
+			syncPublicNet.exportData("分包商驳回");
+			syncPublicNet.exportData("修改");
+			syncPublicNet.exportData("驳回");
+			syncPublicNet.exportData("接收");
+			syncPublicNet.exportData("导出用户");
+			syncPublicNet.exportData("问题回复");
+			syncPublicNet.exportData("延误打开反馈");
+			syncPublicNet.exportData("延误打开确认");
+			syncPublicNet.exportData("延误关闭反馈");
+			syncPublicNet.exportData("延误关闭确认");
+			syncPublicNet.exportData("延误回复反馈");
+			syncPublicNet.exportData("延误回复确认");
 			
 			syncPublicNet.exportData("申请驳回");
-//			syncPublicNet.exportData("确认驳回");
-//			syncPublicNet.exportData("拒绝驳回");
-//			syncPublicNet.exportData("延误回复反馈");
-//			syncPublicNet.exportData("延误回复确认");
+			syncPublicNet.exportData("确认驳回");
+			syncPublicNet.exportData("拒绝驳回");
+			syncPublicNet.exportData("延误回复反馈");
+			syncPublicNet.exportData("延误回复确认");
 		
 			syncPublicNet.importData("");//导入数据
-//			syncPublicNet.importData("导入用户");//导入用户
+			syncPublicNet.importData("导入用户");//导入用户
 		
 			syncPublicNet.UpdateImportResultStatus();//done
 			};
