@@ -2622,21 +2622,28 @@ public class EcmDcController extends ControllerAbstract {
 			doc.setCurrent(false);
 
 			id = documentService.newObject(getToken(),doc,en);
-			EcmRelation relation=new EcmRelation();
-			relation.setParentId(args.get("parentDocId").toString());
-			
-			relation.setChildId(id);
-			relation.setName(relationName);
-			try {
-				relationService.newObject(getToken(), relation);
-			} catch (EcmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(id!="") {
+				EcmRelation relation=new EcmRelation();
+				relation.setParentId(args.get("parentDocId").toString());
+				
+				relation.setChildId(id);
+				relation.setName(relationName);
+				try {
+					relationService.newObject(getToken(), relation);
+				} catch (EcmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("MES", "");
+					mp.put("message",e.getMessage());
+					return mp;
+				}
+			}else {
 				mp.put("code", ActionContext.FAILURE);
-				mp.put("MES", "");
-				mp.put("message",e.getMessage());
+				mp.put("MES", "对象已存在");
 				return mp;
 			}
+			
 		}else {
 			id= documentService.newObject(getToken(),doc,en);
 		}
