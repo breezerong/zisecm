@@ -47,6 +47,7 @@ import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmRelationMapper;
+import com.ecm.core.dao.ExcSynBatchMapper;
 import com.ecm.core.dao.ExcSynDetailMapper;
 import com.ecm.core.dao.ExcTransferMapper;
 import com.ecm.core.entity.EcmContent;
@@ -101,6 +102,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private RelationService relationService;
 	@Autowired
 	ExcSynDetailMapper excSynDetailMapper;
+	
+	@Autowired
+	ExcSynBatchMapper excSynBatchMapper;
+	
 	@Autowired
 	private AuthService authService;
 	@Autowired
@@ -153,6 +158,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				ZipUtil.zip(folderFullPath + "/", zipFilePath);
 				writeMD5Info(zipFilePath);
 				FileUtils.deleteDirectory(new File(folderFullPath));
+				updateExcSynBatchStatus(resultObjList, "已导出");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -278,6 +284,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 			sb.append("'");
 		}
 		List<Map<String, Object>> documents = new ArrayList<Map<String, Object>>();
+		List<ExcSynBatch> synBatchList = new ArrayList<ExcSynBatch>();
 		List<Map<String, Object>> transfers = null;
 		String beanType = "create";
 		if ("提交".equals(type)) {
@@ -371,12 +378,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 		}else if ("计划同步".equals(type)) {
 			String condition = "select C_PROJECT_NAME from ecm_document where TYPE_NAME='计划' AND ID IN (select BATCH_NUM from exc_syn_batch where STATUS='已同步')";
 			documents = documentService.getObjectMap(token, " TYPE_NAME='计划任务' and SUB_TYPE in ('WBS','Activity') and C_PROJECT_NAME in ("+ condition +")");
+			synBatchList = excSynBatchMapper.getByCondition("STATUS='已同步'");
 			beanType = "create_"+type;
 		}
 
 		syncBean.setBeanType(beanType);
 		syncBean.setDocuments(documents);
 		syncBean.setTransfers(transfers);
+		syncBean.setSynBatchList(synBatchList);
 		List<EcmContent> contents = ecmContentMapper.selectByCondition(" PARENT_ID in(" + sb.toString() + ") ");
 		syncBean.setContents(contents);
 
@@ -480,6 +489,25 @@ public class SyncPublicNet implements ISyncPublicNet {
 		temp.setStatus("新建");
 		temp.setBatchNum(batchNum);
 		batchService.newObject(temp);
+		return true;
+	}
+	
+	/**
+	 * 1.2.3
+	 * 
+	 */
+	private boolean updateExcSynBatchStatus(List<SyncBean> resultObjList, String status) {
+		
+		for (SyncBean syncBean : resultObjList) {
+			List<ExcSynBatch> list = syncBean.getSynBatchList();
+			if(list!=null && list.size()>0) {				
+				for (ExcSynBatch excSynBatch : list) {
+					excSynBatch.setStatus("已导出");
+					excSynBatchMapper.updateByPrimaryKey(excSynBatch);
+				}
+			}
+		}
+		
 		return true;
 	}
 
