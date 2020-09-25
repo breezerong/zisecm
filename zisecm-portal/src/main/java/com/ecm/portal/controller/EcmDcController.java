@@ -2515,7 +2515,7 @@ public class EcmDcController extends ControllerAbstract {
 //			List<Map<String,Object>>  relist =documentService.getObjectMap(getToken(), cond);
 			if(relist != null && relist.size() > 0) {
 				for(Map<String,Object> map:relist) {
-					cond = "SELECT * FROM ecm_document where TYPE_NAME='IED' and CODING='"+map.get("CODING").toString()+"' and "
+					cond = "SELECT * FROM ecm_document where TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中') AND CODING='"+map.get("CODING").toString()+"' and "
 							+ "C_IN_CODING='"+map.get("C_IN_CODING").toString()+"' AND REVISION='"+map.get("REVISION").toString()+"'";
 					List<Map<String, Object>>  list = ecmDocument.executeSQL(cond);
 //					List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
