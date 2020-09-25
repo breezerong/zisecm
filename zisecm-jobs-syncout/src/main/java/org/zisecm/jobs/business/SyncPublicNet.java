@@ -201,11 +201,19 @@ public class SyncPublicNet implements ISyncPublicNet {
 //				docIds.add("ef1bebb3fb2e4d77a8c61b2589432548");
 //			}
 
-		for (int i = 0; i < docIds.size(); i++) {
-			SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
+
+		if("计划同步".equals(actionName)) {
+			SyncBean sb = generateSyncBean(token, actionName, null);
 			//TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
-			exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
 			resultObjList.add(sb);
+		}else {
+			
+			for (int i = 0; i < docIds.size(); i++) {
+				SyncBean sb = generateSyncBean(token, actionName, docIds.get(i));
+				//TODOApplication.getNeedTOChange("正式环境需要导出文件，取消如下注释");
+				exportFile(sb, getSyncPathPublic() + "/" + folderName + "/");
+				resultObjList.add(sb);
+			}
 		}
 		return excSynDetailObjList;
 	}
@@ -255,7 +263,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 	 */
 	private SyncBean generateSyncBean(String token, String type, String docId) throws EcmException {
 		SyncBean syncBean = new SyncBean();
-		List<EcmRelation> relations = ecmRelationMapper.selectByCondition(" PARENT_ID='" + docId + "' ");
+		List<EcmRelation> relations = null;
+		if(docId==null) {
+			relations = new ArrayList<EcmRelation>();
+		}else {			
+			ecmRelationMapper.selectByCondition(" PARENT_ID='" + docId + "' ");
+		}
 		syncBean.setRelations(relations);
 		StringBuilder sb = new StringBuilder();
 		sb.append("'").append(docId).append("'");
@@ -355,6 +368,10 @@ public class SyncPublicNet implements ISyncPublicNet {
 							+ docId + "') ");
 			// 分包商申请驳回，内网不存在分发对象，直接创建
 			beanType = "update_"+type;
+		}else if ("计划同步".equals(type)) {
+			String condition = "select C_PROJECT_NAME from ecm_document where TYPE_NAME='计划' AND ID IN (select BATCH_NUM from exc_syn_batch where STATUS='已同步')";
+			documents = documentService.getObjectMap(token, " TYPE_NAME='计划任务' and SUB_TYPE in ('WBS','Activity') and C_PROJECT_NAME in ("+ condition +")");
+			beanType = "create_"+type;
 		}
 
 		syncBean.setBeanType(beanType);

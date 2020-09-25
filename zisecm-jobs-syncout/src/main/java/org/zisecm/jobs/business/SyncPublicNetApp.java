@@ -43,6 +43,8 @@ public class SyncPublicNetApp {
 			syncPublicNet.exportData("拒绝驳回");
 			syncPublicNet.exportData("延误回复反馈");
 			syncPublicNet.exportData("延误回复确认");
+			
+			syncPublicNet.exportData("计划同步");
 		
 			syncPublicNet.importData("");//导入数据
 			syncPublicNet.importData("导入用户");//导入用户

@@ -120,7 +120,8 @@ public class StatusController extends ControllerAbstract{
 					}
 					if("已确认".equals(nextStatus)) {
 						if("文件传递单".equals(doc.getTypeName())) {
-							logicOptionTransferService.transferOption(getToken(), doc,false);
+							logicOptionTransferService.transferOption(getToken(), detailService,doc,false);
+							
 						}else if("接口信息传递单".equals(doc.getTypeName())||"接口信息意见单".equals(doc.getTypeName())) {
 							logicOptionInterfaceService.interfaceOption(getToken(), doc);
 						}else {
