@@ -258,7 +258,14 @@
     "Reply":"Reply"  ,
     "IEDOperExcel":"IED Batch Operate",
     "InputFilterKeyWord":"Input Filter Key Word",
-    "transmit":"Transmit"
+    "transmit":"Transmit",
+    "dcproper":"Document Properties",
+    "relationDC":"Relation DC",
+    "DCver":"Doc Version",
+    "Rendition":"Rendition",
+    "relevantDoc":"Relevant Doc",
+    "replyDoc":"Reply Doc",
+    "Changeinfo":"Change Info"
 },
 "skin": {
     "Blue": "Blue",
