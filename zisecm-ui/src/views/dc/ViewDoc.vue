@@ -325,7 +325,7 @@ export default {
       this.dialog.visible = false
     },
     dialogSubmit(){
-      if(this.dialog.title=='文档属性'){
+      if(this.dialog.title=='文档属性' && this.currentUser().systemPermission>5){
         
         this.$refs.ShowProperty.saveItem();
         

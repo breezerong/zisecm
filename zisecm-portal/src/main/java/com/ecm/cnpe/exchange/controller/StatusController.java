@@ -196,7 +196,7 @@ public class StatusController extends ControllerAbstract{
 				doc.addAttribute("C_REJECT_DATE", new Date());
 				documentService.updateObject(getToken(), doc, null);
 				
-				
+
 				// 如果是驳回申请，需要更新移交单属性
 				
 				String condition = "DOC_ID='"+childId+"' AND ITEM_TYPE=2";
@@ -210,6 +210,8 @@ public class StatusController extends ControllerAbstract{
 						obj.setRejecter(this.getSession().getCurrentUser().getUserName());
 						obj.setRejectDate(new Date());
 						excTransferService.updateObject(obj);
+						OptionLogger.logger(getToken(), detailService, obj, "确认驳回", 
+								doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 					}
 				}
 				
