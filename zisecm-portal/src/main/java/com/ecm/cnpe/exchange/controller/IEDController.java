@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
@@ -30,6 +31,7 @@ import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormClassification;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.portal.controller.ControllerAbstract;
 import com.ecm.core.service.FolderService;
@@ -42,6 +44,11 @@ public class IEDController  extends ControllerAbstract  {
 	private FolderService folderService;
 	@Autowired
 	private FolderPathService folderPathService;
+	
+	@Autowired
+	private ExcSynDetailService detailService;
+	
+	
 	
 	@Autowired
 	private DocumentService documentService;
@@ -162,6 +169,8 @@ public class IEDController  extends ControllerAbstract  {
 				newDoc=documentService.checkIn(getToken(), id, map, null, false);
 				documentService.updateStatus(getToken(), newDoc.getId(), "新建");
 				documentService.updateStatus(getToken(), docObj.getId(), "变更中");
+				OptionLogger.logger(getToken(), detailService, newDoc, "变更",
+						newDoc.getAttributeValue("C_COMPANY")!=null?newDoc.getAttributeValue("C_COMPANY").toString():"");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
