@@ -138,7 +138,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		String userName = env.getProperty("ecm.username");
 		String token = null;
 		try {
-			ecmSession = authService.login("workflow", userName, env.getProperty("ecm.password"));
+			ecmSession = authService.login("内外网同步", userName, env.getProperty("ecm.password"));
 			token = ecmSession.getToken();
 			folderName = getFolderName();
 			List<SyncBean> resultObjList = new ArrayList<SyncBean>();
@@ -408,9 +408,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 			updateRelation = false;
 		}else if ("计划同步".equals(type)) {
 			// 已导出，已内外网同步
-			String condition = "select C_PROJECT_NAME from ecm_document where TYPE_NAME='计划' AND ID IN (select BATCH_NUM from exc_syn_batch where STATUS='已同步')";
+			String condition = "select C_PROJECT_NAME from ecm_document where TYPE_NAME='计划' AND ID IN (select BATCH_NUM from exc_syn_batch where APP_NAME='P6' AND STATUS='已同步')";
 			documents = documentService.getObjectMap(token, " TYPE_NAME='计划任务' and SUB_TYPE in ('WBS','Activity') and C_PROJECT_NAME in ("+ condition +")");
-			synBatchList = excSynBatchMapper.getByCondition("STATUS='已同步'");
+			synBatchList = excSynBatchMapper.getByCondition("APP_NAME='P6' AND STATUS='已同步'");
 			beanType = "create_"+type;
 			updateConent = false;
 			updateRelation = false;
@@ -620,7 +620,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		String token = null;
 		File zipFile=null;
 		try {
-			ecmSession = authService.login("workflow", userName, env.getProperty("ecm.password"));
+			ecmSession = authService.login("内外网同步", userName, env.getProperty("ecm.password"));
 			token = ecmSession.getToken();
 			String zipFolderPath = fileDirectory.getAbsolutePath() + "/";
 			for (Iterator<File> iterator = zipFileList.iterator(); iterator.hasNext();) {
@@ -745,11 +745,12 @@ public class SyncPublicNet implements ISyncPublicNet {
 						}
 						
 					}
-				} else if (beanType.startsWith("update")) {
-					documentService.updateObject(token, documents.get(i));
 					if (beanType.equals("create_驳回提交")) {
 						relationService.deleteAllRelationByParentId(token, documents.get(i).get("ID").toString());
 					}
+				} else if (beanType.startsWith("update")) {
+					documentService.updateObject(token, documents.get(i));
+					
 				}else if(beanType.startsWith("delete")) {
 					EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
 					if(doc != null) {
