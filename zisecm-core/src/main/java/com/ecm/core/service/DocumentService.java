@@ -531,8 +531,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			doc.setContentSize(content.getContentSize());
 		}
 		String id = newObject(token, doc.getAttributes());
-		if (content != null&&id!=null) {
+		if (content != null) {
 			contentServices.newObject(token, content);
+		}
+		if(id!=null){
 			return doc.getId();
 		}else {
 			return "";
@@ -618,7 +620,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}else {
 					date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 				}
-				if (date == null || date.length() < 1)
+				if (date == null || date.length() < 5)
 				{
 					continue;
 				}else {
