@@ -1,5 +1,27 @@
 <template>
     <DataLayout >
+
+
+            <!-- 回复窗口 -->
+        <el-dialog
+            :title="$t('application.Reply')"
+            :visible.sync="replyVisible"
+            width="90%"
+            >
+            <ShowProperty
+                ref="replyProperty"
+                width="100%"
+                itemId=""
+                v-bind:typeName="replyTypeName"
+            ></ShowProperty>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="saveReplyItem">{{$t('application.save')}}</el-button>
+                <el-button @click="replyVisible = false">{{$t('application.cancel')}}</el-button>
+            </div>
+        </el-dialog>
+
+
+
         <el-dialog :title="$t('application.Import') + ' ICM'" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
@@ -82,9 +104,14 @@
                         <DataGrid ref="mainDataGrid"
                         v-bind="tables.main" 
                         :tableHeight="(layout.height-startHeight)*topPercent/100-topbarHeight" 
+                        :isshowCustom="false"
                         @selectchange="selectChange"
                         @rowclick="onDataGridRowClick"
-                        @onPropertiesSaveSuccess="onPropertiesSaveSuccess"></DataGrid>
+                        @onPropertiesSaveSuccess="onPropertiesSaveSuccess">
+                         <template slot="customMoreOption" slot-scope="scope">
+                             <el-button type="primary" @click.native="showReplyDialog(scope.data.row)" size="mini">{{$t('application.transmit')}}</el-button>
+                         </template>
+                        </DataGrid>
                     </template>
                     <template slot="paneR">
                         <el-tabs v-model="tabs.active">
@@ -116,6 +143,8 @@ export default {
     name: "InterfaceManual",
     data(){
         return{
+            replyTypeName:"",
+            replyVisible:false,
             // 本地存储高度名称
             topStorageName: 'ICMHeight',
             // 非split pan 控制区域高度
@@ -215,6 +244,129 @@ export default {
         }, 300);
     },
     methods: {
+    showReplyDialog(row){
+            let _self = this;
+            _self.replyVisible = true;
+            _self.replyDocId = row.ID;
+            this.$nextTick(()=>{
+                if(_self.$refs.replyProperty){
+                    axios.post("/exchange/doc/getReplyInfo",_self.replyDocId)
+                    .then(function(response) {
+                    if(response.data.code == 1){
+                        _self.includeRefDoc = response.data.includeRefDoc;
+                        _self.$refs.replyProperty.typeName = response.data.typeName;
+                        _self.$refs.replyProperty.myTypeName = response.data.typeName;
+                        let mp=new Map();
+                        for (const key in response.data.data) {
+                                mp.set(key,key);
+                        }
+                        _self.$refs.replyProperty.setMainSubRelation(mp);
+                        _self.$refs.replyProperty.setMainObject(response.data.data);
+                        _self.$refs.replyProperty.loadFormInfo();
+                    }else{
+                        _self.replyVisible=false;
+                    }
+                    
+                })
+                .catch(function(error) {
+                    _self.replyVisible=false;
+                    console.log(error);
+                    _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.newFailured'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                });
+                }
+            },200);
+            
+        },
+
+
+        saveReplyItem()
+        {
+            let _self = this;
+            if(!_self.$refs.replyProperty.validFormValue()){
+                return;
+            }
+            var m = new Map();
+            var c;
+            for(c in _self.$refs.replyProperty.dataList){
+                let dataRows = _self.$refs.replyProperty.dataList[c].ecmFormItems;
+                var i;
+                for (i in dataRows) {
+                if(dataRows[i].attrName && dataRows[i].attrName !='')
+                {
+                    if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                    {
+                    var val = dataRows[i].defaultValue;
+                    if(val && dataRows[i].isRepeat){
+                        var temp = "";
+                    // console.log(val);
+                        for(let j=0,len=val.length;j<len;j++){
+                        temp = temp + val[j]+";";
+                        //console.log(temp);
+                        }
+                        temp = temp.substring(0,temp.length-1);
+                        val = temp;
+                        //console.log(val);
+                    }
+                    m.set(dataRows[i].attrName, val);
+                    }
+                }
+                }
+            }
+            m.set('TYPE_NAME',_self.$refs.replyProperty.myTypeName);
+            _self.validateData(m,function(isOk){
+                if(isOk==false){
+                    _self.$message({
+                        showClose: true,
+                        message: _self.$t('message.dataIsnotOnly'),
+                        duration: 2000,
+                        type: 'error'
+                    });
+                    _self.butt=false;
+                    return;
+                }
+                let formdata = new FormData();
+                formdata.append("metaData",JSON.stringify(m));
+                formdata.append("replyDocId",_self.replyDocId);
+                formdata.append("includeRefDoc",_self.includeRefDoc);
+                if(_self.file!="")
+                {
+                    //console.log(_self.file);
+                    formdata.append("uploadFile",_self.$refs.replyProperty.file.raw);
+                }
+            
+                axios.post("/exchange/doc/newReplyDoc",formdata,{
+                    'Content-Type': 'multipart/form-data'
+                })
+                .then(function(response) {
+                    let code = response.data.code;
+                    //console.log(JSON.stringify(response));
+                    if(code==1){
+                        _self.$message({
+                                showClose: true,
+                                message: _self.$t('message.newSuccess'),
+                                duration: 2000,
+                                type: "success"
+                            });
+                    }
+                    else{
+                        _self.$message(_self.$t('message.newFailured'));
+                    }
+                    _self.replyVisible=false;
+                })
+                .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    _self.replyVisible=false;
+                });
+            });
+        },
+
+
         // 上下分屏事件
         onSplitResize(topPercent){
             // 顶部百分比*100

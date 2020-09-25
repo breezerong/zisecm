@@ -531,8 +531,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			doc.setContentSize(content.getContentSize());
 		}
 		String id = newObject(token, doc.getAttributes());
-		if (content != null&&id!=null) {
+		if (content != null) {
 			contentServices.newObject(token, content);
+		}
+		if(id!=null){
 			return doc.getId();
 		}else {
 			return "";
