@@ -1,9 +1,9 @@
 <template>
   <DataLayout>
     <template v-slot:header style="height: auto"></template>
-    <template v-slot:main="{layout}">
+    <template v-slot:main="{ layout }">
       <container>
-        <el-header style="height:auto;">
+        <el-header style="height: auto">
           <el-form :inline="true">
             <el-form-item>
               <DataSelect
@@ -33,13 +33,14 @@
               ></el-date-picker>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="handleReport()">{{$t('application.SearchData')}}</el-button>
+              <el-button type="primary" @click="handleReport()">{{
+                $t("application.SearchData")
+              }}</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button
-                type="primary"
-                @click="icmDataStatistic()"
-              >{{$t('application.ExportExcel')}}</el-button>
+              <el-button type="primary" @click="icmDataStatistic()">{{
+                $t("application.ExportExcel")
+              }}</el-button>
             </el-form-item>
           </el-form>
         </el-header>
@@ -51,7 +52,7 @@
             stripe
             size="mini"
             v-loading="loading"
-            :height="layout.height-160"
+            :height="layout.height - 160"
           >
             <el-table-column type="index" width="30" fixed></el-table-column>
             <el-table-column
@@ -78,7 +79,7 @@ export default {
     return {
       pickerOptions: {
         disabledDate(time) {
-            return time.getTime() > Date.now();
+          return time.getTime() > Date.now();
         },
       },
       loading: false,
@@ -86,15 +87,51 @@ export default {
         mainTable: {
           data: [],
           columns: [
-            { prop: "externalICM", label: "外部接口统计", fixed: true, width: 110 },
-            { prop: "publishPro", label: "发布方", width: 110 },
-            { prop: "acceptPro", label: "接收方", width: 110 },
-            { prop: "planPro", label: "计划", width: 110 },
-            { prop: "acturComplete", label: "实际完成", width: 110 },
-            { prop: "notComplete", label: "尚未完成", width: 110 },
-            { prop: "delayNr", label: "无原因延误", width: 110 },
-            { prop: "schComplete", label: "按期完成", width: 110 },
-            { prop: "schComPer", label: "按期完成率", width: 110, 
+            {
+              prop: "externalICM",
+              label: this.$t("application.externalICM"),
+              fixed: true,
+              width: 110,
+            },
+            {
+              prop: "publishPro",
+              label: this.$t("application.toNum"),
+              width: 110,
+            },
+            {
+              prop: "acceptPro",
+              label: this.$t("application.fromNum"),
+              width: 110,
+            },
+            {
+              prop: "planPro",
+              label: this.$t("application.subPlan"),
+              width: 110,
+            },
+            {
+              prop: "acturComplete",
+              label: this.$t("application.acturComplete"),
+              width: 110,
+            },
+            {
+              prop: "notComplete",
+              label: this.$t("application.notComplete"),
+              width: 110,
+            },
+            {
+              prop: "delayNr",
+              label: this.$t("application.delayNr"),
+              width: 110,
+            },
+            {
+              prop: "schComplete",
+              label: this.$t("application.schComplete"),
+              width: 110,
+            },
+            {
+              prop: "schComPer",
+              label: this.$t("application.schComPer"),
+              width: 110,
               formatter: function (row, column) {
                 let p = row.schComPer;
                 if (p > 0.0) {
@@ -106,7 +143,10 @@ export default {
                 return "";
               },
             },
-            { prop: "cumComPer", label: "累计完成率", width: 110, 
+            {
+              prop: "cumComPer",
+              label: this.$t("application.cumComPer"),
+              width: 110,
               formatter: function (row, column) {
                 let p = row.cumComPer;
                 if (p > 0.0) {
@@ -130,6 +170,73 @@ export default {
     };
   },
   created() {},
+
+  watch: {
+    "$store.state.app.language": function (nv, ov) {
+      this.tables.mainTable.columns = [
+        {
+          prop: "externalICM",
+          label: this.$t("application.externalICM"),
+          fixed: true,
+          width: 110,
+        },
+        { prop: "publishPro", label: this.$t("application.toNum"), width: 110 },
+        {
+          prop: "acceptPro",
+          label: this.$t("application.fromNum"),
+          width: 110,
+        },
+        { prop: "planPro", label: this.$t("application.subPlan"), width: 110 },
+        {
+          prop: "acturComplete",
+          label: this.$t("application.acturComplete"),
+          width: 110,
+        },
+        {
+          prop: "notComplete",
+          label: this.$t("application.notComplete"),
+          width: 110,
+        },
+        { prop: "delayNr", label: this.$t("application.delayNr"), width: 110 },
+        {
+          prop: "schComplete",
+          label: this.$t("application.schComplete"),
+          width: 110,
+        },
+        {
+          prop: "schComPer",
+          label: this.$t("application.schComPer"),
+          width: 110,
+          formatter: function (row, column) {
+            let p = row.schComPer;
+            if (p > 0.0) {
+              return Math.round(p * 10000) / 100 + "%";
+            }
+            if (p == 0.0) {
+              return p + "%";
+            }
+            return "";
+          },
+        },
+        {
+          prop: "cumComPer",
+          label: this.$t("application.cumComPer"),
+          width: 110,
+          formatter: function (row, column) {
+            let p = row.cumComPer;
+            if (p > 0.0) {
+              return Math.round(p * 10000) / 100 + "%";
+            }
+            if (p == 0.0) {
+              return p + "%";
+            }
+            return "";
+          },
+        },
+      ];
+    },
+  },
+
   mounted() {
     if (!this.validataPermission()) {
       //跳转至权限提醒页
@@ -138,6 +245,7 @@ export default {
         _self.$router.push({ path: "/NoPermission" });
       });
     }
+    this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
   methods: {
     getNowTime() {
@@ -201,7 +309,8 @@ export default {
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "ICM_Contactor_Statistic_" + new Date().Format("yyyy-MM-dd"),
+          filename:
+            "ICM_Contactor_Statistic_" + new Date().Format("yyyy-MM-dd"),
         });
       });
     },
