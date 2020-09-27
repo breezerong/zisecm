@@ -538,7 +538,7 @@ export default {
             let code = response.data.code;
             //console.log(JSON.stringify(response));
             if (code == 1) {
-              // _self.$message("创建成功!");
+              // _self.$message(_self.$t('message.newSuccess'));
               _self.$message({
                 showClose: true,
                 message: _self.$t('message.newSuccess'),
@@ -550,7 +550,7 @@ export default {
               // _self.loadTransferGridData();
               _self.loadGridData(null);
             } else {
-              // _self.$message("新建失败!");
+              // _self.$message(_self.$t('message.newFailured'));
               _self.$message({
                 showClose: true,
                 message: _self.$t('message.newFailured'),
@@ -560,7 +560,7 @@ export default {
             }
           })
           .catch(function(error) {
-            // _self.$message("新建失败!");
+            // _self.$message(_self.$t('message.newFailured'));
             _self.$message({
                 showClose: true,
                 message: _self.$t('message.newFailured'),
@@ -592,7 +592,7 @@ export default {
               });
               _self.upgradepropertyVisible = false;
             } else {
-              // _self.$message("保存失败!");
+              // _self.$message(_self.$t('message.saveFailured'));
               _self.$message({
                 showClose: true,
                 message: _self.$t('message.saveFailured'),
@@ -602,7 +602,7 @@ export default {
             }
           })
           .catch(function(error) {
-            // _self.$message("保存失败!");
+            // _self.$message(_self.$t('message.saveFailured'));
             _self.$message({
                 showClose: true,
                 message:  _self.$t('message.saveFailured'),
@@ -664,7 +664,7 @@ export default {
             let code = response.data.code;
             //console.log(JSON.stringify(response));
             if (code == 1) {
-              // _self.$message("创建成功!");
+              // _self.$message(_self.$t('message.newSuccess'));
               _self.$message({
                 showClose: true,
                 message: _self.$t('message.newSuccess'),
@@ -676,7 +676,7 @@ export default {
               // _self.loadTransferGridData();
               _self.loadGridData(null);
             } else {
-              // _self.$message("新建失败!");
+              // _self.$message(_self.$t('message.newFailured'));
               _self.$message({
                 showClose: true,
                 message: _self.$t('message.newFailured'),
@@ -686,7 +686,7 @@ export default {
             }
           })
           .catch(function(error) {
-            // _self.$message("新建失败!");
+            // _self.$message(_self.$t('message.newFailured'));
             _self.$message({
                 showClose: true,
                 message: _self.$t('message.newFailured'),
@@ -711,7 +711,7 @@ export default {
             if (code == 1) {
               _self.$emit("onSaved", "update");
             } else {
-              // _self.$message("保存失败!");
+              // _self.$message(_self.$t('message.saveFailured'));
               _self.$message({
                 showClose: true,
                 message: _self.$t('message.saveFailured'),
@@ -721,7 +721,7 @@ export default {
             }
           })
           .catch(function(error) {
-            // _self.$message("保存失败!");
+            // _self.$message(_self.$t('message.saveFailured'));
             _self.$message({
                 showClose: true,
                 message:  _self.$t('message.saveFailured'),

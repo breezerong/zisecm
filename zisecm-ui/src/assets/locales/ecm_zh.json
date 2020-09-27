@@ -255,7 +255,9 @@
     "Reply":"回复",
     "IEDOperExcel":"IED批量操作",
     "InputFilterKeyWord":"输入过滤关键字",
-    "transmit":"传递"
+    "transmit":"传递",
+    "ContentItems":"内容项",
+    "MaterialChangeList":"材料变更清单"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -395,7 +397,8 @@
     "delayOpenConfirm":"延误打开确认",
     "delayCloseConfirm":"延误关闭确认",
     "applyReject": "待确认驳回申请",
-    "MyApplyReject": "我的驳回申请"
+    "MyApplyReject": "我的驳回申请",
+    "ApplyReject": "驳回申请"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -450,7 +453,8 @@
     "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目",
     "noMainFile":"请选择一条主文件",
     "pleaseSelectDC":"请选择要操作的文函！",
-    "dataIsnotOnly":"此数据已在系统中存在！"
+    "dataIsnotOnly":"此数据已在系统中存在！",
+    "reason":"原因"
     
 },
 "field": {

@@ -575,7 +575,7 @@ export default {
         .then(function(response) {
           _self.importDialogVisible = false;
           _self.loadGridData(_self.currentFolder);
-          _self.$message("导入成功!");
+          _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
           _self.uploading = false;
         })
         .catch(function(error) {

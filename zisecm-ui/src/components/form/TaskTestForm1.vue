@@ -316,10 +316,10 @@ getFormData(selId){
       })
       .then(function(response) {
         _self.importdialogVisible = false;
-        // _self.$message("导入成功!");
+        // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
         _self.$message({
               showClose: true,
-              message: "导入成功!",
+              message: _self.$t('application.Import')+_self.$t('message.success'),
               duration: 2000,
               type: 'success'
             });

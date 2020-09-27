@@ -305,7 +305,7 @@
                                     @selectchange="attachmentDocSelect"
                                 ></DataGrid>
                             </el-tab-pane>
-                            <el-tab-pane label="内容项" name="t04" v-if="isShowMeet">
+                            <el-tab-pane :label="$t('application.ContentItems')" name="t04" v-if="isShowMeet">
                             <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -343,7 +343,7 @@
                                     ></DataGrid>
                             
                         </el-tab-pane>
-                        <el-tab-pane label="材料变更清单" name="t05" v-if="isShowMaterial">
+                        <el-tab-pane :label="$t('application.MaterialChangeList')" name="t05" v-if="isShowMaterial">
                                 <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -666,10 +666,10 @@ export default {
                 // _self.refreshData();
                 _self.uploading=false;
                 _self.$refs.attachmentDoc.loadGridData();
-                // _self.$message("导入成功!");
+                // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
                 _self.$message({
                         showClose: true,
-                        message: "导入成功!",
+                        message: _self.$t('application.Import')+_self.$t('message.success'),
                         duration: 2000,
                         type: 'success'
                     });
@@ -997,10 +997,10 @@ export default {
                     let code = response.data.code;
                     //console.log(JSON.stringify(response));
                     if (code == 1) {
-                        // _self.$message("创建成功!");
+                        // _self.$message(_self.$t('message.newSuccess'));
                         _self.$message({
                             showClose: true,
-                            message: _self.$t('message.newSuccess'),//"创建成功!"
+                            message: _self.$t('message.newSuccess'),//_self.$t('message.newSuccess')
                             duration: 2000,
                             type: "success"
                         });

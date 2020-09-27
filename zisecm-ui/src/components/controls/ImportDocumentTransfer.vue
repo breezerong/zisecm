@@ -155,7 +155,7 @@ export default {
         .then(function(response) {
           _self.importMessage = response.data.data;
           // _self.loading = false;
-          _self.$message("导入成功!");
+          _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
           _self.cleanFiles();
           _self.$emit("onImported");
           

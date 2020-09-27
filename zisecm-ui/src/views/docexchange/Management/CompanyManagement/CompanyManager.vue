@@ -225,10 +225,10 @@ export default {
             let code = response.data.code;
             //console.log(JSON.stringify(response));
             if (code == 1) {
-                // _self.$message("创建成功!");
+                // _self.$message(_self.$t('message.newSuccess'));
                 _self.$message({
                     showClose: true,
-                    message: "创建成功!",
+                    message: _self.$t('message.newSuccess'),
                     duration: 2000,
                     type: "success"
                 });

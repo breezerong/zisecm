@@ -258,7 +258,9 @@
     "Reply":"Reply"  ,
     "IEDOperExcel":"IED Batch Operate",
     "InputFilterKeyWord":"Input Filter Key Word",
-    "transmit":"Transmit"
+    "transmit":"Transmit",
+    "ContentItems":"Content Items",
+    "MaterialChangeList":"Material Change List"
 },
 "skin": {
     "Blue": "Blue",
@@ -374,7 +376,8 @@
     "delayOpenConfirm":"DelayOpenConfirm",
     "delayCloseConfirm":"DelayCloseConfim",
     "applyReject": "ConfirmRejectApply",
-    "MyApplyReject": "MyRejectApply"
+    "MyApplyReject": "MyRejectApply",
+    "ApplyReject": "Reject Apply"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -429,7 +432,8 @@
     "failureForNew":"Operation Failed!Don't create duplicate items under the same project",
     "noMainFile":"Please select a master file",
     "pleaseSelectDC":"Please select document for operate!",
-    "dataIsnotOnly":"This data already exists"
+    "dataIsnotOnly":"This data already exists",
+    "reason":"Reason"
 },
 "field": {
     "indexNumber":"S/N",
