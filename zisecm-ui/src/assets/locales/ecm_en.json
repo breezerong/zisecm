@@ -259,6 +259,8 @@
     "IEDOperExcel":"IED Batch Operate",
     "InputFilterKeyWord":"Input Filter Key Word",
     "transmit":"Transmit",
+    "ContentItems":"Content Items",
+    "MaterialChangeList":"Material Change List",
     "dcproper":"Document Properties",
     "relationDC":"Relation DC",
     "DCver":"Doc Version",
@@ -281,7 +283,20 @@
     "odshutdownICMcount":"Overdue Not Open",
     "shreplyICMcount":"Should Reply",
     "hareplyICMcount":"Had Replied",
-    "odreplyICMcount":"Overdue Not Reply"
+    "odreplyICMcount":"Overdue Not Reply",
+    "CurrentVer":"Current format:",
+    "CantViewOnline":" is not supported online browsing.Please borrow current doc and view in local",
+    "noE-File":"There is no electronic file in the current file",
+    "noPermit":"You do not have permission to view the content of the current document. If you need to view it, please click the borrow button in the upper right corner to apply for authorization.",
+    "importSuccess":"Import succeeful",
+    "downloadTemplate":"Download Template",
+    "cleanFiles":"Clean all files",
+    "Excel":"Excel File",
+    "ImportTemplate":"Import Template",
+    "LoadTemplateFailed":"LoadTemplateFailed",
+    "importFailed":"importFailed",
+    "PleaseSelect":"Please Select Excel to import",
+    "PleaseSelectTemplate":"Please Select Template"
 },
 "skin": {
     "Blue": "Blue",
@@ -405,7 +420,8 @@
     "ICMClose":"Interface Closed Completion Report",
     "ICMReply":"Interface Replied Completion Report",
     "CNPEComplete":"CNPE ICM Completion Statistics of Each Unit",
-    "ContrICM":"ICM Completion Statistics of Contractors"
+    "ContrICM":"ICM Completion Statistics of Contractors",
+    "ApplyReject": "Reject Apply"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -461,7 +477,14 @@
     "noMainFile":"Please select a master file",
     "pleaseSelectDC":"Please select document for operate!",
     "dataIsnotOnly":"This data already exists",
-    "queDismorefive":"The problem description should not be less than 5 characters long"
+    "queDismorefive":"The problem description should not be less than 5 characters long",
+    "reason":"Reason",
+    "Contractor":"Contractor",
+    "Batch":"Batch",
+    "template":" Template",
+    "file":"File",
+    "ElectronicFiles":"Electronic Files",
+    "ClearFiles":"Clear all files"
 },
 "field": {
     "indexNumber":"S/N",
@@ -485,7 +508,8 @@
     "format":"Format",
     "type":"Type",
     "permission":"Permission",
-    "expireDate":"Expire Date"
+    "expireDate":"Expire Date",
+    "size":"Size"
 },
 "tagsView": {
 "close": "Close",

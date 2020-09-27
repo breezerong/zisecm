@@ -77,7 +77,7 @@
           ></el-table-column>
           <el-table-column width="120">
             <template slot-scope="scope">
-              <el-button @click="selectP6(scope.row)" size="small">选择</el-button>
+              <el-button @click="selectP6(scope.row)" size="small">{{$t('application.select')}}</el-button>
             </template>
           </el-table-column>
         </el-table>

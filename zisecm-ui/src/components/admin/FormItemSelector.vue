@@ -55,7 +55,7 @@
                       </el-table-column>
                       <el-table-column label="操作" width="80">
                         <template slot-scope="scope">
-                          <el-button :plain="true" type="primary" size="small" icon="edit" @click="selectItem(scope.row)">选择</el-button>
+                          <el-button :plain="true" type="primary" size="small" icon="edit" @click="selectItem(scope.row)">{{$t('application.select')}}</el-button>
                         </template>
                       </el-table-column>
                     </el-table>

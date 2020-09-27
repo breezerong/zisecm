@@ -18,7 +18,7 @@
     
     <el-table-column v-if="downloadEnable" align="right">
       <template slot-scope="scope">
-        <el-button size="mini" @click="download(scope.row)">下载</el-button>
+        <el-button size="mini" @click="download(scope.row)">{{$t('application.download')}}</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -31,10 +31,10 @@ export default {
             gridviewName:'GeneralGrid',
             gridList: [
               //{id:'1',attrName:'name',label:'文件名'},
-              {id:'2',attrName:'formatName',label:'格式'},
-              {id:'3',attrName:'contentSize',label:'大小'},
-              {id:'4',attrName:'creationDate',label:'创建时间'},
-              {id:'5',attrName:'modifiedDate',label:'修改时间'}
+              {id:'2',attrName:'formatName',label:this.$t('field.format')},
+              {id:'3',attrName:'contentSize',label:this.$t('field.size')},
+              {id:'4',attrName:'creationDate',label:this.$t('application.creationDate')},
+              {id:'5',attrName:'modifiedDate',label:this.$t('field.modifiedDate')}
             ],
             currentLanguage: "zh-cn",
             tabledata:[]

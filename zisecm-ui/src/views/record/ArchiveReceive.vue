@@ -930,18 +930,18 @@ export default {
             let code = response.data.code;
             //console.log(JSON.stringify(response));
             if (code == 1) {
-              _self.$message("创建成功!");
+              _self.$message(_self.$t('message.newSuccess'));
               _self.propertyVisible = false;
 
               _self.loadTransferGridData();
               _self.loadGridData(null);
               _self.showInnerFile(null);
             } else {
-              _self.$message("新建失败!");
+              _self.$message(_self.$t('message.newFailured'));
             }
           })
           .catch(function(error) {
-            _self.$message("新建失败!");
+            _self.$message(_self.$t('message.newFailured'));
             console.log(error);
           });
       } else {
@@ -960,11 +960,11 @@ export default {
             if (code == 1) {
               _self.$emit("onSaved", "update");
             } else {
-              _self.$message("保存失败!");
+              _self.$message(_self.$t('message.saveFailured'));
             }
           })
           .catch(function(error) {
-            _self.$message("保存失败!");
+            _self.$message(_self.$t('message.saveFailured'));
             console.log(error);
           });
       }
@@ -1391,10 +1391,10 @@ export default {
         .then(function(response) {
           _self.importdialogVisible = false;
           // _self.refreshData();
-          // _self.$message("导入成功!");
+          // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
           _self.$message({
               showClose: true,
-              message: "导入成功!",
+              message: _self.$t('application.Import')+_self.$t('message.success'),
               duration: 2000,
               type: 'success'
             });

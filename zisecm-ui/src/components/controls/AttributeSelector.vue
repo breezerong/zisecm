@@ -22,7 +22,7 @@
           <el-table-column prop="length" label="长度" width="120" sortable></el-table-column>
                       <el-table-column label="操作" width="80">
                         <template slot-scope="scope">
-                          <el-button :plain="true" type="primary" size="small" icon="edit" @click="handleSelect(scope.row)">选择</el-button>
+                          <el-button :plain="true" type="primary" size="small" icon="edit" @click="handleSelect(scope.row)">{{$t('application.select')}}</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -37,7 +37,7 @@
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="4">
-      <el-button icon="el-icon-s-unfold" @click="handleShowAttrDialog">选择</el-button>
+      <el-button icon="el-icon-s-unfold" @click="handleShowAttrDialog">{{$t('application.select')}}</el-button>
     </el-col>
   </el-container>
   </div>

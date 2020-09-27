@@ -255,6 +255,8 @@
     "IEDOperExcel":"IED批量操作",
     "InputFilterKeyWord":"输入过滤关键字",
     "transmit":"传递",
+    "ContentItems":"内容项",
+    "MaterialChangeList":"材料变更清单",
     "dcproper":"文档属性",
     "relationDC":"关联文档",
     "DCver":"文档版本",
@@ -277,7 +279,21 @@
     "odshutdownICMcount":"逾期未关闭接口",
     "shreplyICMcount":"应回复接口",
     "hareplyICMcount":"已回复接口",
-    "odreplyICMcount":"逾期未回复接口"
+    "odreplyICMcount":"逾期未回复接口",
+    "CurrentFormat":"当前格式:",
+    "CantViewOnline":"不支持在线查看，请借阅下载查看",
+    "noE-File":"当前文件没有电子文件",
+    "noPermit":"您没有查看当前文档内容权限，如果需要查看，请点击右上角借阅按钮进行申请授权",
+    "importSuccess":"导入成功",
+    "downloadTemplate":"下载模板",
+    "cleanFiles":"清除所有文件",
+    "Excel":"Excel文件",
+    "ImportTemplate":"导入模板",
+    "LoadTemplateFailed":"读取模板失败",
+    "importFailed":"导入失败",
+    "PleaseSelect":"请选择要导入的Excel文件",
+    "PleaseSelectTemplate":"请选择模板"
+    
 },
 "skin": {
     "Blue": "天空蓝",
@@ -425,7 +441,8 @@
     "ICMClose":"接口关闭完成情况报表",
     "ICMReply":"接口回复完成情况报表",
     "CNPEComplete":"CNPE各所接口完成统计",
-    "ContrICM":"合同商接口完成统计"
+    "ContrICM":"合同商接口完成统计",
+    "ApplyReject": "驳回申请"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -481,7 +498,14 @@
     "noMainFile":"请选择一条主文件",
     "pleaseSelectDC":"请选择要操作的文函！",
     "dataIsnotOnly":"此数据已在系统中存在！",
-    "queDismorefive":"问题描述不能少于5个字符"
+    "queDismorefive":"问题描述不能少于5个字符",
+    "reason":"原因",
+    "Contractor":"分包商",
+    "Batch":"批量",
+    "template":"模板",
+    "file":"文件",
+    "ElectronicFiles":"电子文件",
+    "ClearFiles":"清除所有文件"
 },
 "field": {
     "indexNumber":"序号",
@@ -505,7 +529,8 @@
     "format":"格式",
     "type":"类型",
     "permission":"权限",
-    "expireDate":"到期日期"
+    "expireDate":"到期日期",
+    "size":"大小"
 },
 "tagsView": {
 "close": "关闭",

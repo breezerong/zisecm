@@ -1,6 +1,6 @@
 <template>
   <div>
-     <el-dialog title="批量导入文档" :visible.sync="importDialogVisible" width="60%" >
+     <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="importDialogVisible" width="60%" >
         <ImportDocument ref="ImportDocument"  @onImported="onImported" width="100%" v-bind:deliveryId="deliveryId"></ImportDocument>
         <div slot="footer" class="dialog-footer">
           <el-button @click="importDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
@@ -111,7 +111,7 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="Excel文件">
+          <el-form-item :label="'Excel'+$t('message.file')">
             <el-upload
               :limit="1"
               :file-list="fileList1" 
@@ -124,7 +124,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="电子文件">
+          <el-form-item :label="'Excel'+$t('message.ElectronicFiles')">
              <el-upload
               :limit="100"
               :file-list="fileList2" 
@@ -352,7 +352,7 @@ export default {
           _self.loading = false;
         })
         .catch(function(error) {
-          _self.$message("导入失败!");
+          _self.$message(_self.$t('application.importFailed'));
           console.log(error);
         });
     },

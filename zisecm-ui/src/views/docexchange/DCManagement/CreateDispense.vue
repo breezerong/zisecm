@@ -43,7 +43,7 @@
                     <template v-slot:main>  
                         <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid"  :tableHeight="360" :isshowCustom="false" :isShowChangeList="false">
                                 <template slot="customMoreOption" slot-scope="scope">
-                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
+                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">{{$t('application.select')}}</el-button>
                                 </template>
                         </DataGrid>
                     </template>
@@ -67,7 +67,7 @@
             </div>
         </el-dialog>
         <!-- 批量导入 -->
-        <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
+        <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported"  
             tmpPath='/系统配置/导入模板/文函' v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
@@ -320,7 +320,7 @@
                                         @selectchange="attachmentDocSelect"
                                         ></DataGrid>
                             </el-tab-pane>
-                            <el-tab-pane label="内容项" name="t04" v-if="isShowMeet">
+                            <el-tab-pane :label="$t('application.ContentItems')" name="t04" v-if="isShowMeet">
                                 <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -361,7 +361,7 @@
                                         ></DataGrid>
                             
                             </el-tab-pane>
-                            <el-tab-pane label="材料变更清单" name="t05" v-if="isShowMaterial">
+                            <el-tab-pane :label="$t('application.MaterialChangeList')" name="t05" v-if="isShowMaterial">
                                 <el-row>
                                     <el-col :span="24">
                                     <el-form :inline="true" :model="filters" @submit.native.prevent>
@@ -634,10 +634,10 @@ export default {
                 _self.importSubVisible = false;
                 // _self.refreshData();
                 _self.uploading=false;
-                // _self.$message("导入成功!");
+                // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
                 _self.$message({
                         showClose: true,
-                        message: "导入成功!",
+                        message: _self.$t('application.Import')+_self.$t('message.success'),
                         duration: 2000,
                         type: 'success'
                     });
@@ -792,10 +792,10 @@ export default {
                 // _self.refreshData();
                 _self.uploading=false;
                 _self.$refs.attachmentDoc.loadGridData();
-                // _self.$message("导入成功!");
+                // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
                 _self.$message({
                         showClose: true,
-                        message: "导入成功!",
+                        message: _self.$t('application.Import')+_self.$t('message.success'),
                         duration: 2000,
                         type: 'success'
                     });
@@ -905,11 +905,13 @@ export default {
                     })
                     .then(function(response) {
                         let code = response.data.code;
+                        console.log(ID)
                         ID=response.data.ID;
                         if (code == 1) {
                             _self.tables.DialogDataGrid.condition+=" and ID NOT IN ("+ID+")"
                             _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
                             _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                            console.log(_self.$refs.DialogDataGrid.condition)
                             _self.$refs.DialogDataGrid.loadGridInfo()
                             _self.$refs.DialogDataGrid.loadGridData()
                             _self.propertyrela=true
@@ -1090,10 +1092,10 @@ export default {
                         let code = response.data.code;
                         //console.log(JSON.stringify(response));
                         if (code == 1) {
-                            // _self.$message("创建成功!");
+                            // _self.$message(_self.$t('message.newSuccess'));
                             _self.$message({
                                 showClose: true,
-                                message: "创建成功!",
+                                message: _self.$t('message.newSuccess'),
                                 duration: 2000,
                                 type: "success"
                             });

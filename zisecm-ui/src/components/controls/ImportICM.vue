@@ -2,7 +2,7 @@
   <el-form label-width="120px" v-loading="loading" @submit.native.prevent>
     <el-row>
       <el-col :span="8">
-        <el-form-item label="导入模板">
+        <el-form-item :label="$t('application.Import')+$t('message.template')">
           <el-select v-model="selectedTemplate">
             <div v-for="(item,idx) in templateData" :key="idx">
               <el-option :label="item.NAME" :value="item.ID" :key="idx+10"></el-option>
@@ -11,11 +11,11 @@
         </el-form-item>
       </el-col>
       <el-col :span="16" style="text-align:left">
-        <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">下载模板</el-button>
+        <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">{{$t('application.download')+$t('message.template')}}</el-button>
       
         <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()">{{$t('application.start')+$t('application.Import')}}</el-button>
         &nbsp; &nbsp;
-         <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
+         <el-button plain type="primary" @click="cleanFiles()">{{$t('message.ClearFiles')}}</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -25,7 +25,7 @@
     </el-row>
     <el-row>
       <el-col :span="10">
-        <el-form-item label="Excel文件" style="float: left;">
+        <el-form-item :label="'Excel'+$t('message.file')" style="float: left;">
           <el-upload
             :limit="1"
             :file-list="fileList1"
@@ -84,7 +84,7 @@ export default {
           _self.loading = false;
         })
         .catch(function(error) {
-          _self.$message("读取模板失败!");
+          _self.$message(_self.$t('application.LoadTemplateFailed'));
           console.log(error);
         });
     },
@@ -95,7 +95,7 @@ export default {
       //   return;
       // }
       if(_self.selectedTemplate==null || _self.selectedTemplate.length==0){
-        _self.$message("请选择模板!");
+        _self.$message(_self.$t('application.PleaseSelectTemplate'));
         return;
       }
       // 拦截器会自动替换成目标url
@@ -111,7 +111,7 @@ export default {
     batchImport() {
       let _self = this;
       if (_self.fileList1 == null || _self.fileList1.length == 0||_self.fileList1[0].raw==null) {
-        _self.$message("请选择导入Excel文件!");
+         _self.$message(_self.$t('application.PleaseSelect'));
         return;
       }
       // if(_self.deliveryId==null || _self.deliveryId.length==0){
@@ -140,13 +140,13 @@ export default {
         .then(function(response) {
           _self.importMessage = response.data.data;
           // _self.loading = false;
-          _self.$message("导入成功!");
+          _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
           _self.cleanFiles();
           _self.$emit("onImported");
           
         })
         .catch(function(error) {
-          _self.$message("导入失败!");
+          _self.$message(_self.$t('application.importFailed'));
           console.log(error);
         });
     },

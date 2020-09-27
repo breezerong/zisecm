@@ -15,7 +15,7 @@
         <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
+    <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="batchDialogVisible" width="80%" >
         <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectedOneTransfer.ID"></BatchImport>
         <div slot="footer" class="dialog-footer">
           <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
@@ -1191,10 +1191,10 @@ export default {
             let code = response.data.code;
             //console.log(JSON.stringify(response));
             if (code == 1) {
-              // _self.$message("创建成功!");
+              // _self.$message(_self.$t('message.newSuccess'));
               _self.$message({
                 showClose: true,
-                message: "创建成功!",
+                message: _self.$t('message.newSuccess'),
                 duration: 2000,
                 type: "success"
               });
@@ -1203,20 +1203,20 @@ export default {
               // _self.loadTransferGridData();
               _self.loadGridData(null);
             } else {
-              // _self.$message("新建失败!");
+              // _self.$message(_self.$t('message.newFailured'));
               _self.$message({
                 showClose: true,
-                message: "新建失败!",
+                message: _self.$t('message.newFailured'),
                 duration: 2000,
                 type: "warning"
               });
             }
           })
           .catch(function(error) {
-            // _self.$message("新建失败!");
+            // _self.$message(_self.$t('message.newFailured'));
             _self.$message({
                 showClose: true,
-                message: "新建失败!",
+                message: _self.$t('message.newFailured'),
                 duration: 5000,
                 type: "error"
               });
@@ -1238,20 +1238,20 @@ export default {
             if (code == 1) {
               _self.$emit("onSaved", "update");
             } else {
-              // _self.$message("保存失败!");
+              // _self.$message(_self.$t('message.saveFailured'));
               _self.$message({
                 showClose: true,
-                message: "保存失败!",
+                message: _self.$t('message.saveFailured'),
                 duration: 5000,
                 type: "error"
               });
             }
           })
           .catch(function(error) {
-            // _self.$message("保存失败!");
+            // _self.$message(_self.$t('message.saveFailured'));
             _self.$message({
                 showClose: true,
-                message: "保存失败!",
+                message: _self.$t('message.saveFailured'),
                 duration: 5000,
                 type: "error"
               });
@@ -1774,10 +1774,10 @@ export default {
           _self.importdialogVisible = false;
           // _self.refreshData();
           _self.uploading=false;
-          // _self.$message("导入成功!");
+          // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
           _self.$message({
                 showClose: true,
-                message: "导入成功!",
+                message: _self.$t('application.Import')+_self.$t('message.success'),
                 duration: 2000,
                 type: 'success'
               });
@@ -1803,10 +1803,10 @@ export default {
         .then(function(response) {
           let code = response.data.code;
           if (code == "1") {
-            // _self.$message("创建成功!");
+            // _self.$message(_self.$t('message.newSuccess'));
             _self.$message({
                 showClose: true,
-                message: "创建成功!",
+                message: _self.$t('message.newSuccess'),
                 duration: 2000,
                 type: 'success'
               });
@@ -1816,10 +1816,10 @@ export default {
             // _self.loadGridData(null);
             // _self.showInnerFile(null);
           } else {
-            // _self.$message("新建失败!");
+            // _self.$message(_self.$t('message.newFailured'));
             _self.$message({
                 showClose: true,
-                message: "新建失败!",
+                message: _self.$t('message.newFailured'),
                 duration: 5000,
                 type: 'error'
               });

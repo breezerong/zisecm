@@ -18,7 +18,7 @@
         </el-row>
         <el-row>
           <el-col :span="4">
-            <el-form-item label="Excel文件" style="float: left;">
+            <el-form-item :label="'Excel'+$t('message.file')" style="float: left;">
               <el-upload
                 :limit="1"
                 :file-list="fileList"
@@ -62,7 +62,7 @@ export default {
     batchUpdate(){
       let _self = this;
       if (_self.fileList == null || _self.fileList.length == 0||_self.fileList[0].raw==null) {
-        _self.$message("请选择导入Excel文件!");
+         _self.$message(_self.$t('application.PleaseSelect'));
         return;
       }
       let formdata = new FormData();

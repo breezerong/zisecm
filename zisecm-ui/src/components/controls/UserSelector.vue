@@ -45,7 +45,7 @@
               size="small"
               icon="edit"
               @click="selectitem(scope.row)"
-            >选择</el-button>
+            >{{$t('application.select')}}</el-button>
           </template>
         </el-table-column>
       </el-table>

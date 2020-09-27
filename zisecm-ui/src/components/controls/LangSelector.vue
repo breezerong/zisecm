@@ -90,7 +90,7 @@
               size="medium"
               icon="edit"
               @click="handleSelect(scope.row)"
-            >选择</el-button>
+            >{{$t('application.select')}}</el-button>
               <el-button
                 :plain="true"
                 type="info"
@@ -124,7 +124,7 @@
       <input value="value1" type="hidden" />
     </el-col>
     <el-col :span="4">
-      <el-button icon="el-icon-s-unfold" @click="handleLangShowDialog">选择</el-button>
+      <el-button icon="el-icon-s-unfold" @click="handleLangShowDialog">{{$t('application.select')}}</el-button>
     </el-col>
   </el-container>
   </div>
