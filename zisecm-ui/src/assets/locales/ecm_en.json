@@ -532,7 +532,8 @@
     "nameIsNull":"Object Name is null",
     "noUpper":"Cannot move up any more",
     "oneDataOnly":"Only one piece of data can be selected for sorting",
-    "noDowner":"Cannot move down any more"
+    "noDowner":"Cannot move down any more",
+    "Voided":"Voided"
 },
 "field": {
     "indexNumber":"S/N",
