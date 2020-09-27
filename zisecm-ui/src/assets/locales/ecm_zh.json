@@ -330,6 +330,10 @@
     "schClose":"按期关闭",
     "perSchClose":"按期关闭率",
     "perClose":"关闭完成率",
+    "editColumn":"编辑列",
+    "chooseColumn":"选择要显示的字段",
+    "customColumn":"自定义列表",
+
     "perComplete":"完成百分比"
 },
 "skin": {

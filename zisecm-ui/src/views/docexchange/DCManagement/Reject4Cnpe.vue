@@ -127,7 +127,7 @@
                 <el-form-item v-if='isReject'>
                     <el-button type="warning" 
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
+                    $refs.relevantDoc,$refs.attachmentDoc,$refs.MeetDoc,$refs.MaterialDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item v-if='isReject' >
                     <MountFile :selectedItem="selectedItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
@@ -592,7 +592,12 @@ export default {
                     if(_self.$refs.attachmentDoc){
                         _self.$refs.attachmentDoc.itemDataList=[];
                     }
-                    
+                    if(_self.$refs.MeetDoc){
+                        _self.$refs.MeetDoc.itemDataList=[];
+                    }
+                    if(_self.$refs.MaterialDoc){
+                        _self.$refs.MaterialDoc.itemDataList=[];
+                    }
                     _self.$message({
                         showClose: true,
                         message: _self.$t("message.DispenseSuccess"),
@@ -941,6 +946,8 @@ export default {
             _self.$refs.transferDoc.itemDataList=[];
             _self.$refs.relevantDoc.itemDataList=[];
             _self.$refs.attachmentDoc.itemDataList=[];
+            _self.$refs.MeetDoc.itemDataList=[];
+            _self.$refs.MaterialDoc.itemDataList=[];
         },
         // 表格行选择
         selectChange(val) {
@@ -1050,7 +1057,7 @@ export default {
                             // _self.$message(_self.$t('message.newSuccess'));
                             _self.$message({
                                 showClose: true,
-                                message: _self.$t('message.newSuccess'),
+                                message: _self.$t('message.newSuccess'),//_self.$t('message.newSuccess')
                                 duration: 2000,
                                 type: "success"
                             });
@@ -1059,22 +1066,36 @@ export default {
                             _self.propertyrela=false
 
                             // _self.loadTransferGridData();
-                            _self.$refs.mainDataGrid.loadGridData();
-
-                            if(_self.$refs.transferDoc!=undefined){
-                                _self.$refs.transferDoc.loadGridData();
+                            if(_self.$refs.ShowProperty.myTypeName !="设计文件"&&
+                            _self.$refs.ShowProperty.myTypeName !="相关文件"&&
+                            _self.$refs.ShowProperty.myTypeName !="附件"&&
+                            _self.$refs.ShowProperty.myTypeName !="会议纪要内容项"&&
+                            _self.$refs.ShowProperty.myTypeName !="材料变更清单"){
+                                _self.$refs.mainDataGrid.loadGridData();
+                                _self.$refs.transferDoc.itemDataList=[];
+                                _self.$refs.relevantDoc.itemDataList=[];
+                                _self.$refs.attachmentDoc.itemDataList=[];
+                                _self.$refs.MeetDoc.itemDataList=[];
+                                _self.$refs.MaterialDoc.itemDataList=[];
                             }
-                            if(_self.$refs.relevantDoc!=undefined){
-                                _self.$refs.relevantDoc.loadGridData();
+                            else{
+                                if(_self.$refs.transferDoc!=undefined){
+                                    _self.$refs.transferDoc.loadGridData();
+                                }
+                                if(_self.$refs.relevantDoc!=undefined){
+                                    _self.$refs.relevantDoc.loadGridData();
+                                }
+                                if(_self.$refs.attachmentDoc!=undefined){
+                                    _self.$refs.attachmentDoc.loadGridData();
+                                }
+                                if(_self.$refs.MaterialDoc!=undefined){
+                                    _self.$refs.MaterialDoc.loadGridData();
+                                }
+                                if(_self.$refs.MeetDoc!=undefined){
+                                    _self.$refs.MeetDoc.loadGridData();
+                                }
                             }
-                            if(_self.$refs.MaterialDoc!=undefined){
-                                _self.$refs.MaterialDoc.loadGridData();
-                            }
-                            if(_self.$refs.MeetDoc!=undefined){
-                                _self.$refs.MeetDoc.loadGridData();
-                            }
-                            
-                        } 
+                        }  
                         else if(response.data.MES!=""){
                             _self.$message({
                                 showClose: true,

@@ -67,15 +67,21 @@ public class LogicOption4CnpeIED {
 			// 修改当前版本
 			if (temp.size() != 0) {
 				if(tempM1.get("C_EX1_DATE")!=null) {
-				tempE1EX1 = tempM1.get("C_EX1_DATE").toString();}//服务器对象数据集仅作用于此，取出C_EX1/2
+					tempE1EX1 = tempM1.get("C_EX1_DATE").toString();//服务器对象数据集仅作用于此，取出C_EX1/2
+				}
+				if(tempM1.get("C_EX1_DATE")==null||!tempM1.get("C_EX1_DATE").toString().equals(tempM1.get("C_EX2_DATE").toString())) {
+	
+				}
+				
+				
 				if(tempM1.get("C_EX1_DATE")!=null) {
 				tempE1EX2 = tempM1.get("C_EX2_DATE").toString();}
 				if (!tempE1EX1.equals(MainEx1)) {
-					tempE1.addAttribute("C_ITEM1_DATE", tempE1EX1);
+					tempE1.addAttribute("C_ITEM1_DATE", MainEx1);
 					System.out.println(tempE1.getAttributeValue("C_ITEM1_DATE"));
 				}
 				if (!tempE1EX2.equals(MainEx2)) {
-					tempE1.addAttribute("C_ITEM2_DATE", tempE1EX2);
+					tempE1.addAttribute("C_ITEM2_DATE", MainEx2);
 					System.out.println(tempE1.getAttributeValue("C_ITEM2_DATE"));
 				}
 			}
