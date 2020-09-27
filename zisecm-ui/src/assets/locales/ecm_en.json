@@ -330,7 +330,20 @@
     "delayCloseNr":"Causaless Delay Close",
     "schClose":"Close On Schedule",
     "perSchClose":"Close Rates On Schedule",
-    "perClose":"Comleted Close Rates"
+    "perClose":"Comleted Close Rates",
+    "nameIsNull":"Object Name is null",
+    "noUpper":"Cannot move up any more",
+    "oneDataOnly":"Only one piece of data can be selected for sorting",
+    "noDowner":"Cannot move down any more",
+    "PleaseSelectOneFile":"Please select one file data",
+    "ShowDrawSpec":"You can only display the drawings of your department and internal disclosure",
+    "ShowDrawFailed":"Show drawlings failed",
+    "ShowDrawSuccess":"Show drawlings Successful",
+    "PleaseSelectOneDraw":"Please select the drawing to borrow",
+    "EmptyPlaceOnFile":"The archive unit of the borrowed file is empty and cannot be borrowed out!",
+    "SameFiledUnit":"The archives borrowed can only be filed by the same unit",
+    "PleaseSelectOneBorrow":"Please select the file to borrow",
+    "Clear":"Clear Successful"
 },
 "skin": {
     "Blue": "Blue",
@@ -532,7 +545,17 @@
     "nameIsNull":"Object Name is null",
     "noUpper":"Cannot move up any more",
     "oneDataOnly":"Only one piece of data can be selected for sorting",
-    "noDowner":"Cannot move down any more"
+    "noDowner":"Cannot move down any more", 
+    "ShowDrawFailed":"Show drawlings failed",
+    "ShowDrawSuccess":"Show drawlings Successful",
+    "PleaseSelectOneDraw":"Please select the drawing to borrow",
+    "EmptyPlaceOnFile":"The archive unit of the borrowed file is empty and cannot be borrowed out!",
+    "SameFiledUnit":"The archives borrowed can only be filed by the same unit",
+    "PleaseSelectOneBorrow":"Please select the file to borrow",
+    "Clear":"Clear Successful",
+    "PleaseSelectOneFileRemoved":"Please select the file to be removed",
+    "RemoveSuccess":"Remove Successful",
+    "AddSuccess":"Add Successful"
 },
 "field": {
     "indexNumber":"S/N",

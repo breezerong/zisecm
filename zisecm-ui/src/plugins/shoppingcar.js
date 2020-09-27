@@ -15,7 +15,7 @@ function addToShoppingCar(selectedItemList){
             if (response.data.code) {
               _self.$message({
                 showClose: true,
-                message: "添加成功!",
+                message:_self.$t('message.AddSuccess'),
                 duration: 2000,
                 type: "success"
               });

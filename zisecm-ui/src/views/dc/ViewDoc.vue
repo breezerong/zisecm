@@ -369,7 +369,7 @@ export default {
         if(typeof(obj.C_ARCHIVE_UNIT)=="undefined"){
               _self.$message({
                 showClose: true,
-                message: "所借阅档案，归档单位为空，不能外借!",
+                message: _self.$t('message.EmptyPlaceOnFile'),
                 duration: 5000,
                 type: "warning"
               });

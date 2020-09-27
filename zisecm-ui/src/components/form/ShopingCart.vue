@@ -222,7 +222,7 @@ export default {
           .then(function (response) {
             _self.$message({
               showClose: true,
-              message: "调晒成功",
+              message: self.$t('message.ShowDrawSuccess'),
               duration: 2000,
               type: "warning",
             });
@@ -231,7 +231,7 @@ export default {
           .catch(function (error) {
             _self.$message({
               showClose: true,
-              message: "晒图失败",
+              message: _self.$t('message.ShowDrawFailed'),
               duration: 2000,
               type: "warning",
             });
@@ -242,7 +242,8 @@ export default {
       } else {
         _self.$message({
           showClose: true,
-          message: "请选择需要调图的图纸",
+          message: 
+_self.$t('message.PleaseSelectOneDraw'),
           duration: 5000,
           type: "warning",
         });
@@ -261,7 +262,7 @@ export default {
         //       if(typeof(_self.selectedItemList[i].C_ARCHIVE_UNIT)=="undefined"){
         //       _self.$message({
         //         showClose: true,
-        //         message: "所借阅档案，归档单位为空，不能外借!",
+        //         message: _self.$t('message.EmptyPlaceOnFile'),
         //         duration: 5000,
         //         type: "warning"
         //       });
@@ -271,7 +272,7 @@ export default {
         //     if(C_ARCHIVE_UNIT!=_self.selectedItemList[i].C_ARCHIVE_UNIT){
         //       _self.$message({
         //         showClose: true,
-        //         message: "所借阅档案，归档单位只能是同一个!",
+        //         message: _self.$t('message.SameFiledUnit'),
         //         duration: 5000,
         //         type: "warning"
         //       });
@@ -284,7 +285,7 @@ export default {
       } else {
         _self.$message({
           showClose: true,
-          message: "请选择需要借阅的档案",
+          message:_self.$t('message.PleaseSelectOneBorrow'),
           duration: 5000,
           type: "warning",
         });
@@ -324,7 +325,7 @@ export default {
 
             _self.$message({
               showClose: true,
-              message: "清空成功!",
+              message:_self.$t('message.Clear'),
               duration: 2000,
               type: "success",
             });
@@ -348,7 +349,7 @@ export default {
       if (addItemId.length == 0) {
         _self.$message({
           showClose: true,
-          message: "请选择需要移除的档案",
+          message:_self.$t('message.PleaseSelectOneFileRemoved'),
           duration: 2000,
           type: "warning",
         });
@@ -372,7 +373,7 @@ export default {
 
             _self.$message({
               showClose: true,
-              message: "移除成功!",
+              message:_self.$t('message.RemoveSuccess'),
               duration: 2000,
               type: "success",
             });
@@ -409,7 +410,7 @@ export default {
           _self.formId = response.data.data;
           _self.$message({
             showClose: true,
-            message: "添加成功!",
+            message:_self.$t('message.AddSuccess'),
             duration: 2000,
             type: "success",
           });
