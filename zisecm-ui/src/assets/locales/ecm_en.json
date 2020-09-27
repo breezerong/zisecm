@@ -260,7 +260,14 @@
     "InputFilterKeyWord":"Input Filter Key Word",
     "transmit":"Transmit",
     "ContentItems":"Content Items",
-    "MaterialChangeList":"Material Change List"
+    "MaterialChangeList":"Material Change List",
+    "dcproper":"Document Properties",
+    "relationDC":"Relation DC",
+    "DCver":"Doc Version",
+    "Rendition":"Rendition",
+    "relevantDoc":"Relevant Doc",
+    "replyDoc":"Reply Doc",
+    "Changeinfo":"Change Info"
 },
 "skin": {
     "Blue": "Blue",

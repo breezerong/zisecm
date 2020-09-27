@@ -17,7 +17,8 @@ public class SyncPublicNetApp {
 			if(CacheManagerOper.getFinishLoadCacheTag()) {
 				
 			//			System.out.println(SyncPublicNetApp.class.getName());
-			syncPublicNet.exportData("删除");	
+			syncPublicNet.exportData("删除");
+			syncPublicNet.exportData("升版");
 			syncPublicNet.exportData("变更");	
 			syncPublicNet.exportData("提交");
 			syncPublicNet.exportData("新建");

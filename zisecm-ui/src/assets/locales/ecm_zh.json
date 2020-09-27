@@ -257,7 +257,15 @@
     "InputFilterKeyWord":"输入过滤关键字",
     "transmit":"传递",
     "ContentItems":"内容项",
-    "MaterialChangeList":"材料变更清单"
+    "MaterialChangeList":"材料变更清单",
+    "dcproper":"文档属性",
+    "relationDC":"关联文档",
+    "DCver":"文档版本",
+    "Rendition":"格式副本",
+    "relevantDoc":"相关文件",
+    "replyDoc":"回复文件",
+    "Changeinfo":"变更信息"
+
 },
 "skin": {
     "Blue": "天空蓝",

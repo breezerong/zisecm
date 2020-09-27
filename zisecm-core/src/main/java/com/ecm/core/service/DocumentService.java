@@ -727,7 +727,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		addFullIndexSearchQueue(token, doc.getId());
 	}
 
-	private void updateObject(String token, Map<String, Object> args) throws NoPermissionException, AccessDeniedException, EcmException {
+	@Override
+	public void updateObject(String token, Map<String, Object> args) throws NoPermissionException, AccessDeniedException, EcmException {
 
 		// TODO Auto-generated method stub
 		String id = args.get("ID").toString();
@@ -763,7 +764,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					sql += " " + key.toString() + "=" + DBFactory.getDBConn().getDBUtils().getDBNullDate();
 				} else {
 					String date = "";
-					if (args.get(key) instanceof Timestamp) {
+					if (args.get(key) instanceof Long) {
+						date = DBFactory.getDBConn().getDBUtils().getDBDateString(new Date((long)args.get(key)));
+					}
+					else if (args.get(key) instanceof Timestamp) {
 						date = DBFactory.getDBConn().getDBUtils().getDBDateString(((Timestamp) args.get(key)));
 					}else if(args.get(key) instanceof Date) {
 						date = DBFactory.getDBConn().getDBUtils().getDBDateString(((Date) args.get(key)));

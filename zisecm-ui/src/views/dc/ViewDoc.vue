@@ -63,27 +63,27 @@
             <br/>
             <div>
               <template v-if="docObj!=null">
-              <el-button type="primary" plain @click="menuClick('文档属性')">文档属性</el-button><br/>
+              <el-button type="primary" plain @click="menuClick($t('application.dcproper'))">{{$t('application.dcproper')}}</el-button><br/>
               <template v-if="doc.typeName=='设计文件'">
-                <el-button type="primary" plain @click="menuClick('关联文档')">关联文档</el-button><br/>
+                <el-button type="primary" plain @click="menuClick($t('application.relationDC'))">{{$t('application.relationDC')}}</el-button><br/>
               </template>
-              <el-button type="primary" plain @click="menuClick('文档版本')">文档版本</el-button><br/>
-              <el-button type="primary" plain @click="menuClick('格式副本')">格式副本</el-button><br/>
+              <el-button type="primary" plain @click="menuClick($t('application.DCver'))">{{$t('application.DCver')}}</el-button><br/>
+              <el-button type="primary" plain @click="menuClick($t('application.Rendition'))">{{$t('application.Rendition')}}</el-button><br/>
               <!-- <el-button type="primary" plain @click="menuClick('利用信息')">利用信息</el-button><br/> -->
               <template v-if="doc.typeName=='文件传递单'" >
-                <el-button type="primary" plain @click="menuClick('传递文件')">{{$t('application.TransferDoc')}}</el-button><br/>
+                <el-button type="primary" plain @click="menuClick($t('application.TransferDoc'))">{{$t('application.TransferDoc')}}</el-button><br/>
               </template>
               <template v-if="('FU申请、FU通知单、作废通知单、CR澄清要求申请单、CR澄清要求答复单、CR澄清要求关闭单、'
               +'FCR现场变更申请单、FCR现场变更答复单、FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、'+
             'DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、'+
             'TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复').indexOf(doc.typeName)!=-1">
-                <el-button type="primary" plain @click="menuClick('相关文件')">相关文件</el-button><br/>
+                <el-button type="primary" plain @click="menuClick($t('application.relevantDoc'))">{{$t('application.relevantDoc')}}</el-button><br/>
               </template>
               <template v-if="revertType.indexOf(doc.typeName)!=-1">
-                <el-button type="primary" plain @click="menuClick('回复文件')">回复文件</el-button><br/>
+                <el-button type="primary" plain @click="menuClick($t('application.replyDoc'))">{{$t('application.replyDoc')}}</el-button><br/>
               </template>
-              <el-button type="primary" plain @click="menuClick('附件')">附  件</el-button><br/>
-              <el-button v-if="doc.typeName=='图纸文件'" type="primary" plain @click="menuClick('变更信息')">变更( {{doc.changeCount}} )</el-button>
+              <el-button type="primary" plain @click="menuClick($t('application.Attachment'))">{{$t('application.Attachment')}}</el-button><br/>
+              <el-button v-if="doc.typeName=='图纸文件'" type="primary" plain @click="menuClick($t('application.Changeinfo'))">{{$t('application.change')}}( {{doc.changeCount}} )</el-button>
               </template>
             </div>
         </el-col>
@@ -91,40 +91,40 @@
     </el-main>
 
     <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="90%" :before-close="handleClose">      
-      <template v-if="dialog.title=='文档属性'">
+      <template v-if="dialog.title==$t('application.dcproper')">
         <ShowProperty ref="ShowProperty" :itemId="doc.id" :typeName="doc.typeName" :folderId="doc.folderId"></ShowProperty>
       </template>
-      <template v-if="dialog.title=='关联文档'">
+      <template v-if="dialog.title==$t('application.relationDC')">
        <RelationDocs :docId="docId"></RelationDocs>
       </template>
-       <template v-if="dialog.title=='文档版本'">
+       <template v-if="dialog.title==$t('application.DCver')">
         <DocVersion :docId="docId"></DocVersion>
       </template>
-       <template v-if="dialog.title=='格式副本'">
+       <template v-if="dialog.title==$t('application.Rendition')">
         <ViewRedition :docId="docId" :downloadEnable="doc.permit>=4"></ViewRedition>
       </template>
-      <template v-if="dialog.title=='传递文件'">
+      <template v-if="dialog.title==$t('application.TransferDoc')">
         <InTransferDoc :docId="docId"></InTransferDoc>
       </template>
-      <template v-if="dialog.title=='相关文件'">
+      <template v-if="dialog.title==$t('application.relevantDoc')">
         <RelevantDoc :docId="docId"></RelevantDoc>
       </template>
-      <template v-if="dialog.title=='附件'">
+      <template v-if="dialog.title==$t('application.replyDoc')">
         <AttachmentFile :docId="docId"></AttachmentFile>
       </template>
-      <template v-if="dialog.title=='回复文件'">
+      <template v-if="dialog.title==$t('application.Attachment')">
         <!-- <AttachmentFile :docId="docId"></AttachmentFile> -->
         <RevertFile :docId="docId"></RevertFile>
       </template>
       <template v-if="dialog.title=='利用信息'">
         <UseInfo :docId="docId"></UseInfo>
       </template>
-       <template v-if="dialog.title=='变更信息'">
+       <template v-if="dialog.title==$t('application.Changeinfo')">
         <ChangeDocViewer :coding="doc.code" :revision="doc.revision"></ChangeDocViewer>
       </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog.visible = false">{{$t('application.cancel')}}</el-button>
-        <el-button type="primary" @click="dialogSubmit()">确 定</el-button>
+        <el-button type="primary" @click="dialogSubmit()">{{$t('application.ok')}}</el-button>
       </span>
     </el-dialog>
   </el-container>
@@ -318,6 +318,7 @@ export default {
       window.open(url, '_blank');
     },    
     menuClick(type){
+      console.log(this.$t('application.dcproper'))
       this.dialog.title=type;
       this.dialog.visible=true
     },
@@ -325,8 +326,7 @@ export default {
       this.dialog.visible = false
     },
     dialogSubmit(){
-      if(this.dialog.title=='文档属性' && this.currentUser().systemPermission>5){
-        
+      if(this.dialog.title==this.$t('application.dcproper') && this.currentUser().systemPermission>5){
         this.$refs.ShowProperty.saveItem();
         
         this.dialog.visible = false

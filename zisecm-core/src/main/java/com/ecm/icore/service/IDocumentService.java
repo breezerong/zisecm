@@ -359,5 +359,7 @@ public interface IDocumentService {
 	 */
 	String saveAsNew(String token, String id, Map<String, Object> attrValues, boolean includeContent)
 			throws EcmException, AccessDeniedException, Exception;
+	void updateObject(String token, Map<String, Object> args)
+			throws NoPermissionException, AccessDeniedException, EcmException;
 	
 }

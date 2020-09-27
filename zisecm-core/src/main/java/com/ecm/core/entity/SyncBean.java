@@ -17,6 +17,14 @@ public class SyncBean{
 	private List<EcmContent> contents;
 	private EcmUser ecmUser;
 	
+	private List<ExcSynBatch> synBatchList;
+
+	public List<ExcSynBatch> getSynBatchList() {
+		return synBatchList;
+	}
+	public void setSynBatchList(List<ExcSynBatch> synBatchList) {
+		this.synBatchList = synBatchList;
+	}
 	public EcmUser getEcmUser() {
 		return ecmUser;
 	}
