@@ -4,7 +4,7 @@ export function onDeleleItem(selectedItems,dataGridObj) {
     if(selectedItems.length==0){
       _self.$message({
                   showClose: true,
-                  message: "请选择一条或多条要删除的数据！",
+                  message: _self.$t("message.PleaseSelectDelete"),
                   duration: 2000,
                   type: 'warning'
                 });

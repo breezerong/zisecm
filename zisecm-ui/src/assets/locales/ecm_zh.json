@@ -555,7 +555,8 @@
     "oneDataOnly":"只允许选择一条数据进行排序",
     "noDowner":"没有下移的空间了",
     "PleaseSelectOneFile":"请选择一条文件数据",
-    "Voided":"已作废"
+    "Voided":"已作废",
+    "PleaseSelectDelete":"请选择一条或多条要删除的数据！"
 },
 "field": {
     "indexNumber":"序号",
