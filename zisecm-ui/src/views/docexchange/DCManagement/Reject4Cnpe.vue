@@ -96,15 +96,15 @@
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
-                    <el-option label="所有文函" value></el-option>
+                    <el-option :label="$t('application.all')+' '+$t('application.subDC')" value></el-option>
                     <el-option v-for="(name,nameIndex) in childrenTypes" :key="'Type2_'+nameIndex" :label="name" :value="name"></el-option>
                     
                     </el-select>
                 </el-form-item>
                 <el-form-item style="width:100px;">
                     <el-select v-model="filters.status" v-on:change="changeStatus()">
-                    <el-option label="已作废" value="已作废"></el-option>
-                    <el-option label="驳回" value="驳回"></el-option>
+                    <el-option :label="$t('message.Voided')" value="已作废"></el-option>
+                    <el-option :label="$t('application.Rejected')" value="驳回"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>

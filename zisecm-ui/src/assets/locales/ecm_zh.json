@@ -565,7 +565,9 @@
     "Clear":"清除成功",
     "PleaseSelectOneFileRemoved":"请选择需要移除的档案",
     "RemoveSuccess":"移除成功",
-    "AddSuccess":"添加成功"
+    "AddSuccess":"添加成功",
+    "Voided":"已作废",
+    "PleaseSelectDelete":"请选择一条或多条要删除的数据！"
 },
 "field": {
     "indexNumber":"序号",

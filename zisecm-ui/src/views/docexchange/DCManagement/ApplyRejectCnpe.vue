@@ -72,7 +72,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-select v-model="filters.docType">
-                        <el-option label="所有文函" value></el-option>
+                        <el-option :label="$t('application.all')+' '+$t('application.subDC')" value></el-option>
                     <el-option v-for="(name,nameIndex) in childrenTypes" :key="'Type2_'+nameIndex" :label="name" :value="name"></el-option>
                     </el-select>
                 </el-form-item>

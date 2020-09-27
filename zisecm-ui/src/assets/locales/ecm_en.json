@@ -555,7 +555,9 @@
     "Clear":"Clear Successful",
     "PleaseSelectOneFileRemoved":"Please select the file to be removed",
     "RemoveSuccess":"Remove Successful",
-    "AddSuccess":"Add Successful"
+    "AddSuccess":"Add Successful",
+    "Voided":"Voided",
+    "PleaseSelectDelete":"Please select one or more data to delete!"
 },
 "field": {
     "indexNumber":"S/N",
