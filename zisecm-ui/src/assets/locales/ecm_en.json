@@ -533,7 +533,8 @@
     "noUpper":"Cannot move up any more",
     "oneDataOnly":"Only one piece of data can be selected for sorting",
     "noDowner":"Cannot move down any more",
-    "Voided":"Voided"
+    "Voided":"Voided",
+    "PleaseSelectDelete":"Please select one or more data to delete!"
 },
 "field": {
     "indexNumber":"S/N",
