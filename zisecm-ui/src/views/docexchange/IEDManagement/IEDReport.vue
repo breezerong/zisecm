@@ -3,7 +3,7 @@
     <template v-slot:header style="height: auto"></template>
     <template v-slot:main="{layout}">
       <el-tabs v-model="activeName">
-        <el-tab-pane label="已超期IED" name="first">
+        <el-tab-pane :label="$t('route.extendied')" name="first">
           <el-container>
             <el-header style="height:auto;">
               <el-form :inline="true">
@@ -63,7 +63,7 @@
             </el-main>
           </el-container>
         </el-tab-pane>
-        <el-tab-pane label="未完成IED" name="second">
+        <el-tab-pane :label="$t('route.unfied')" name="second">
           <el-container>
             <el-header style="height:auto;">
               <el-form :inline="true">
@@ -123,7 +123,7 @@
             </el-main>
           </el-container>
         </el-tab-pane>
-        <el-tab-pane label="已完成IED" name="third">
+        <el-tab-pane :label="$t('route.compied')" name="third">
           <el-container>
             <el-header style="height:auto;">
               <el-form :inline="true">
@@ -183,7 +183,7 @@
             </el-main>
           </el-container>
         </el-tab-pane>
-        <el-tab-pane label="IED完成情况统计" name="forth">
+        <el-tab-pane :label="$t('route.comstaied')" name="forth">
           <el-container>
             <el-header style="height:auto;">
               <el-form :inline="true">
@@ -227,12 +227,12 @@
             <el-main>
               <el-table :data="reportData" style="width: 100%;" border>
                 <el-table-column type="index" width="60"></el-table-column>
-                <el-table-column prop="projectName" label="项目名" sortable width="220"></el-table-column>
-                <el-table-column prop="iedCount" label="计划数" sortable width="160"></el-table-column>
-                <el-table-column prop="completedCount" label="完成数" sortable width="160"></el-table-column>
+                <el-table-column prop="projectName" :label="$t('application.projectName')" sortable width="220"></el-table-column>
+                <el-table-column prop="iedCount" :label="$t('application.Plannum')" sortable width="160"></el-table-column>
+                <el-table-column prop="completedCount" :label="$t('application.Completenum')" sortable width="160"></el-table-column>
                 <el-table-column
                   prop="completedPercent"
-                  label="完成百分比"
+                  :label="$t('application.perComplete')"
                   sortable
                   width="160"
                   :formatter="percentFormatter"
