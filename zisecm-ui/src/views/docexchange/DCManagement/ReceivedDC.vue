@@ -125,7 +125,7 @@
                     [$refs.transferDoc,$refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
 
                     <RejectButton v-if="showReject()" :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
-                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
+                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc,$refs.MeetDoc,$refs.MaterialDoc]"></RejectButton>
                 </el-form-item>
                 <el-form-item>
                      <el-button type="primary" :title="$t('application.ExportExcel')" v-on:click="exportData">{{$t('application.exportExcel')}}</el-button>
@@ -814,6 +814,11 @@ export default {
             }
             
             _self.$refs.mainDataGrid.loadGridData();
+            _self.$refs.transferDoc.itemDataList=[];
+            _self.$refs.relevantDoc.itemDataList=[];
+            _self.$refs.attachmentDoc.itemDataList=[];
+            _self.$refs.MeetDoc.itemDataList=[];
+            _self.$refs.MaterialDoc.itemDataList=[];
         },
         // 表格行选择
         selectChange(val) {
@@ -893,7 +898,15 @@ export default {
                 if(_self.$refs.relevantDoc){
                     _self.$refs.relevantDoc.loadGridData();
                 }
-                
+                if(_self.$refs.attachmentDoc){
+                    _self.$refs.attachmentDoc.loadGridData();
+                }
+                if(_self.$refs.MaterialDoc){
+                    _self.$refs.MaterialDoc.loadGridData();
+                }
+                if(_self.$refs.MeetDoc){
+                    _self.$refs.MeetDoc.loadGridData();
+                }
                 } else {
                 // _self.$message(_self.$t('message.newFailured'));
                 _self.$message({
