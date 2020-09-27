@@ -75,17 +75,18 @@ export default {
                status : '',
             },
             processStatus:[{
-                label : "待确认",
+                label : this.$t('application.Pending'),
                 value : "待确认",
             },
             {
-                label : "已驳回",
+                label : this.$t('application.Rejecteded'),
                 value : "已驳回",
             },
             {
-                label : "拒绝驳回",
+                label : this.$t('application.RefuseRejected'),
                 value : "拒绝驳回",
-            },],
+            },
+            ],
             selectedItems: [],
             selectedItemId: "",
             value:'',
@@ -93,6 +94,7 @@ export default {
             Cstatus:'待确认',
             hiddenInput:'hidden',
             typeName:"ICM",
+            language:"",
         }
     },
 
@@ -101,8 +103,23 @@ export default {
 
     },
 
-
-
+    watch:{
+    '$store.state.app.language':function(nv,ov){
+        this.processStatus=[{
+                label : this.$t('application.Pending'),
+                value : "待确认",
+            },
+            {
+                label : this.$t('application.Rejecteded'),
+                value : "已驳回",
+            },
+            {
+                label : this.$t('application.RefuseRejected'),
+                value : "拒绝驳回",
+            },
+            ]
+    }
+    },
  mounted(){
         if(!this.validataPermission()){
             //跳转至权限提醒页
@@ -113,6 +130,7 @@ export default {
             console.log(sessionStorage.data.data.groupname)
         }   
       //this.search()  
+      this.language = localStorage.getItem("localeLanguage") || "zh-cn";
     },
 
     methods: {

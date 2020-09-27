@@ -297,11 +297,9 @@
     "importFailed":"importFailed",
     "PleaseSelect":"Please Select Excel to import",
     "PleaseSelectTemplate":"Please Select Template",
-    "nameIsNull":"Object Name is null",
-    "noUpper":"Cannot move up any more",
-    "oneDataOnly":"Only one piece of data can be selected for sorting",
-    "noDowner":"Cannot move down any more",
-    "PleaseSelectOneFile":"请选择一条文件数据"
+    "Pending":"Pending",
+    "Rejecteded":"Rejected",
+    "RefuseRejected":"Refuse to reject"
 },
 "skin": {
     "Blue": "Blue",
@@ -498,7 +496,12 @@
     "PleaseSelectUnlock":"Please select one or more data to unlock!",
     "PleaseSelectNotunlocked":"Please select the data that is not unlocked",
     "invalid":" can only be invalid",
-    "PDFdocuments":"The submission letter must contain electronic documents in PDF format"
+    "PDFdocuments":"The submission letter must contain electronic documents in PDF format",
+    "PleaseSelectOneFile":"Please select a document",
+    "nameIsNull":"Object Name is null",
+    "noUpper":"Cannot move up any more",
+    "oneDataOnly":"Only one piece of data can be selected for sorting",
+    "noDowner":"Cannot move down any more",
 },
 "field": {
     "indexNumber":"S/N",

@@ -292,7 +292,10 @@
     "LoadTemplateFailed":"读取模板失败",
     "importFailed":"导入失败",
     "PleaseSelect":"请选择要导入的Excel文件",
-    "PleaseSelectTemplate":"请选择模板"
+    "PleaseSelectTemplate":"请选择模板",
+    "Pending":"待确认",
+    "Rejecteded":"已驳回",
+    "RefuseRejected":"拒绝驳回"
     
 },
 "skin": {
