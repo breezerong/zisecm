@@ -2,7 +2,7 @@
       <DataLayout >
         <template v-slot:header>
         <!-- 批量导入 -->
-        <el-dialog title="批量导入IED" :visible.sync="batchDialogVisible" width="80%" >
+        <el-dialog :title="$t('route.batchserverimport')" :visible.sync="batchDialogVisible" width="80%" >
             <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
             <div slot="footer" class="dialog-footer">
             <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
@@ -110,7 +110,7 @@
                     @selectchange="selectChange"
                 >
                 <template slot="customMoreOption" slot-scope="scope">
-                <el-button type="primary" @click="goContrast(scope.data.row)" size="mini">对比</el-button>
+                <el-button type="primary" @click="goContrast(scope.data.row)" size="mini">{{$t('application.iedContrast')}}</el-button>
                 </template>
                 
                 </DataGrid>

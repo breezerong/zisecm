@@ -2,7 +2,7 @@
   <el-container v-title :data-title="$t('application.name')">
     <div>
        <el-dialog
-      title="借阅"
+      :title="$t('application.borrow')"
       :visible.sync="borrowDialogVisible"
       @close="borrowDialogVisible = false"
       width="95%"
@@ -22,7 +22,7 @@
       <el-col :span="4" style="float:right; text-align:right;">
         <template v-if="docObj!=null">
           <!-- <el-button size="mini" icon="el-icon-shopping-cart-2" @click="borrowItem(docObj)">借阅</el-button> -->
-          <el-button v-if="doc.permit>=4" size="mini" icon="el-icon-download" @click="download()">下载</el-button>
+          <el-button v-if="doc.permit>=4" size="mini" icon="el-icon-download" @click="download()">{{$t('application.download')}}</el-button>
         </template>
       </el-col>
     </el-header>
@@ -35,7 +35,7 @@
            <InnerItemViewer v-else-if="viewerType==100" v-bind:id = "doc.id" v-bind:tableHeight="innerTableHeight"></InnerItemViewer>
            <template v-else-if="doc.permit<3">
              <div style="padding-top:40px;">
-              您没有查看当前文档内容权限，如果需要查看，请点击右上角借阅按钮进行申请授权。
+              {{$t('application.noPermit')}}
              </div>
            </template>
            <template v-else>
@@ -49,10 +49,10 @@
              <JTViewer v-else-if="viewerType==7" v-bind:id="doc.id" format="obj" :fileName="doc.C_IMPORT_NAME"></JTViewer>
              <ThreeDsViewer v-else-if="viewerType==8" v-bind:id="doc.id" ></ThreeDsViewer>
              <div v-else-if="doc.contentSize==0" style="padding-top:40px;">
-                当前文件没有电子文件。
+                {{$t('application.noE-File')}}
             </div>
              <div v-else style="padding-top:40px;">
-               当前格式：{{doc.format}}不支持在线查看，请借阅下载查看。
+              {{$t('application.CurrentFormat')}}{{doc.format}}{{$t('application.CantViewOnline')}}
               </div>
            </template>
         </el-col>

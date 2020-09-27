@@ -46,7 +46,7 @@ export default {
         let _self = this;
         var m = new Map();
         m.set("gridName", _self.gridviewName);
-        m.set("lang", _self.currentLanguage);
+        m.set("lang", _self.getLang());
         axios.post("/dc/getGridViewInfo",JSON.stringify(m)).then(function(response) {
           _self.gridList = response.data.data;
           _self.loadData();
@@ -79,7 +79,7 @@ export default {
       this.loadGridView();
     },
     mounted(){
-      this.currentLanguage = localStorage.getItem("localeLanguage") || "zh-cn";      
+      this.currentLanguage = localStorage.getItem("localeLanguage") || "en";      
     }
 }
 </script>

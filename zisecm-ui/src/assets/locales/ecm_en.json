@@ -267,7 +267,20 @@
     "Rendition":"Rendition",
     "relevantDoc":"Relevant Doc",
     "replyDoc":"Reply Doc",
-    "Changeinfo":"Change Info"
+    "Changeinfo":"Change Info",
+    "CurrentVer":"Current format:",
+    "CantViewOnline":" is not supported online browsing.Please borrow current doc and view in local",
+    "noE-File":"There is no electronic file in the current file",
+    "noPermit":"You do not have permission to view the content of the current document. If you need to view it, please click the borrow button in the upper right corner to apply for authorization.",
+    "importSuccess":"Import succeeful",
+    "downloadTemplate":"Download Template",
+    "cleanFiles":"Clean all files",
+    "Excel":"Excel File",
+    "ImportTemplate":"Import Template",
+    "LoadTemplateFailed":"LoadTemplateFailed",
+    "importFailed":"importFailed",
+    "PleaseSelect":"Please Select Excel to import",
+    "PleaseSelectTemplate":"Please Select Template"
 },
 "skin": {
     "Blue": "Blue",
@@ -470,7 +483,8 @@
     "format":"Format",
     "type":"Type",
     "permission":"Permission",
-    "expireDate":"Expire Date"
+    "expireDate":"Expire Date",
+    "size":"Size"
 },
 "tagsView": {
 "close": "Close",
