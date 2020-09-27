@@ -1,7 +1,11 @@
 <template>
 <div>
     <el-form label-position="right" label-width="100px">
-      <!--
+       <!--
+      <el-row>
+        <el-form-item style="float:left"  :label="$t('application.type')" >{{typeName}}</el-form-item>
+      </el-row>
+     
       <div>
         <el-button :plain="true" type="primary" size="small" icon="edit" @click="loaddata()">刷新数据</el-button>
       </div>
@@ -40,7 +44,8 @@
           </el-collapse-item>
         </el-collapse>
     </el-row>
-      <el-form-item style="float:left"  :label="$t('application.type')" >{{typeName}}</el-form-item>
+    <el-row>
+      
       <div v-if="(itemId  == undefined || itemId == '0' || itemId == '') && showUploadFile " style="float:left;margin-left:120px;">
         <el-upload
         :limit="1"
@@ -53,6 +58,7 @@
         </el-upload>
         
       </div>
+    </el-row>
     </el-form>
   </div>
 </template>

@@ -16,8 +16,8 @@
         </el-dialog>
       <!-- 已分发 -->
       <!-- 设计文件附件 -->
-            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
-                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            <el-dialog :title="$t('application.Attachment')" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId" :allowEdit="false"></AttachmentFile>
             </el-dialog>
       <!-- 创建附件 -->
       <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">

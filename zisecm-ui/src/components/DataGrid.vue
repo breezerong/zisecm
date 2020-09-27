@@ -25,6 +25,7 @@
           :typeName="typeName"
           v-bind:itemId="selectedItemId"
         ></ShowProperty>
+        <RelationViewer v-if="showRelationViewer" ref="RelationViewer" :allowEdit="isEditProperty"></RelationViewer>
         <div slot="footer" class="dialog-footer">
           <slot name="saveButton" :data="propertiesData">
             <el-button v-if="isEditProperty" @click="saveItem()">{{$t('application.save')}}</el-button>
@@ -229,9 +230,10 @@
   </div>
 </template>
 <script type="text/javascript">
-import '@/utils/dialog'
-import ShowProperty from "@/components/ShowProperty";
-import EcmCustomColumns from '@/components/ecm-custom-columns'
+import "@/utils/dialog"
+import ShowProperty from "@/components/ShowProperty"
+import EcmCustomColumns from "@/components/ecm-custom-columns"
+import RelationViewer from "@/components/RelationViewer"
 export default {
   name: "dataGrid",
   data() {
@@ -272,7 +274,8 @@ export default {
       gridviewInfo:{
         gridviewName:"",
         isCustom:false
-      }
+      },
+      showRelationViewer: false
     };
   },
   props: {
@@ -331,7 +334,8 @@ export default {
   },
   components: {
     ShowProperty: ShowProperty,
-    EcmCustomColumns:EcmCustomColumns
+    EcmCustomColumns:EcmCustomColumns,
+    RelationViewer:RelationViewer
   },
   mounted(){
     // this.ready();
@@ -351,8 +355,10 @@ export default {
     },
     getPropertiesData(){
       this.$nextTick(()=>{
-        this.propertiesData=this.$ref.ShowProperty.getFormData();
-      });
+        if(this.$ref.ShowProperty){
+          this.propertiesData=this.$ref.ShowProperty.getFormData();
+        }
+      },100);
     },
     // 加载表格数据
     loadGridData(gvname) {
@@ -777,8 +783,19 @@ export default {
           }
           _self.$refs.ShowProperty.loadFormInfo();
           _self.getPropertiesData();
+          if(indata.C_ITEM_TYPE=='文函' && indata.TYPE_NAME != '会议纪要'  
+            && indata.TYPE_NAME != '图文传真' && indata.TYPE_NAME != '接口信息传递单' && indata.TYPE_NAME != '接口信息答复单'){
+            _self.showRelationViewer = true;
+             setTimeout(() => {
+               if(_self.$refs.RelationViewer){
+                 _self.$refs.RelationViewer.loadData(indata);
+               }
+             },100);
+          }else{
+            _self.showRelationViewer = false;
+          }
         }
-      }, 10);
+      }, 100);
     },
     onSaved(indata) {
       if (indata == "update") {

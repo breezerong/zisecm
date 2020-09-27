@@ -3,7 +3,7 @@
         <template v-slot:header>
             <!-- 驳回文函(Cnpe) -->
             <!-- 设计文件附件 -->
-            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+            <el-dialog :title="$t('application.Attachment')" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
             <!-- 相关文件创建选择IED-->
