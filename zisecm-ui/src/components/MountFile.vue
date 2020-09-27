@@ -57,7 +57,7 @@ export default {
                 // _self.$message('请选择一条文件数据');
                 _self.$message({
                         showClose: true,
-                        message: '请选择一条文件数据!',
+                        message: _self.$t('message.pleaseSelectOneDoc'),
                         duration: 2000,
                         type: "warning"
                     });

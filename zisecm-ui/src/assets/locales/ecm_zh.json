@@ -419,7 +419,9 @@
     "delayCloseConfirm":"延误关闭确认",
     "applyReject": "待确认驳回申请",
     "MyApplyReject": "我的驳回申请",
-    "ApplyReject": "驳回申请"
+    "ApplyReject": "驳回申请",
+    "UnresponsiveReport":"未回函报表",
+    "DesigndocReport":"设计文件成品报表"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -481,7 +483,15 @@
     "template":"模板",
     "file":"文件",
     "ElectronicFiles":"电子文件",
-    "ClearFiles":"清除所有文件"
+    "ClearFiles":"清除所有文件",
+    "pleaseSelectOneDesigndoc":"请选择一条设计文件数据!",
+    "pleaseSelectOneDoc":"请选择一条文件数据!",
+    "GenerateReports":"生成报表",
+    "MissingNumberStatistics":"漏号统计",
+    "PleaseSelectUnlock":"请选择一条或多条要解锁的数据！",
+    "PleaseSelectNotunlocked":"请选择未解锁的数据",
+    "invalid":"只能作废处理",
+    "PDFdocuments":"提交文函必需包含PDF格式电子文件"
 },
 "field": {
     "indexNumber":"序号",

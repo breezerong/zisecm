@@ -397,7 +397,9 @@
     "delayCloseConfirm":"DelayCloseConfim",
     "applyReject": "ConfirmRejectApply",
     "MyApplyReject": "MyRejectApply",
-    "ApplyReject": "Reject Apply"
+    "ApplyReject": "Reject Apply",
+    "UnresponsiveReport":"Unresponsive Report",
+    "DesigndocReport":"Design document finished product report"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -459,7 +461,15 @@
     "template":" Template",
     "file":"File",
     "ElectronicFiles":"Electronic Files",
-    "ClearFiles":"Clear all files"
+    "ClearFiles":"Clear all files",
+    "pleaseSelectOneDesigndoc":"Please select a design document",
+    "pleaseSelectOneDoc":"Please select a document",
+    "GenerateReports":"Generate reports",
+    "MissingNumberStatistics":"Missing Number Statistics",
+    "PleaseSelectUnlock":"Please select one or more data to unlock!",
+    "PleaseSelectNotunlocked":"Please select the data that is not unlocked",
+    "invalid":" can only be invalid",
+    "PDFdocuments":"The submission letter must contain electronic documents in PDF format"
 },
 "field": {
     "indexNumber":"S/N",
