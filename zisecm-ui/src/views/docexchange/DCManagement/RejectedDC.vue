@@ -1014,25 +1014,36 @@ export default {
                         _self.propertyrela=false
 
                         // _self.loadTransferGridData();
-                        _self.$refs.mainDataGrid.loadGridData();
-
-                        if(_self.$refs.transferDoc!=undefined){
-                            _self.$refs.transferDoc.loadGridData();
+                        if(_self.$refs.ShowProperty.myTypeName !="设计文件"&&
+                        _self.$refs.ShowProperty.myTypeName !="相关文件"&&
+                        _self.$refs.ShowProperty.myTypeName !="附件"&&
+                        _self.$refs.ShowProperty.myTypeName !="会议纪要内容项"&&
+                        _self.$refs.ShowProperty.myTypeName !="材料变更清单"){
+                            _self.$refs.mainDataGrid.loadGridData();
+                            _self.$refs.transferDoc.itemDataList=[];
+                            _self.$refs.relevantDoc.itemDataList=[];
+                            _self.$refs.attachmentDoc.itemDataList=[];
+                            _self.$refs.MeetDoc.itemDataList=[];
+                            _self.$refs.MaterialDoc.itemDataList=[];
                         }
-                        if(_self.$refs.relevantDoc!=undefined){
-                            _self.$refs.relevantDoc.loadGridData();
+                        else{
+                            if(_self.$refs.transferDoc!=undefined){
+                                _self.$refs.transferDoc.loadGridData();
+                            }
+                            if(_self.$refs.relevantDoc!=undefined){
+                                _self.$refs.relevantDoc.loadGridData();
+                            }
+                            if(_self.$refs.attachmentDoc!=undefined){
+                                _self.$refs.attachmentDoc.loadGridData();
+                            }
+                            if(_self.$refs.MaterialDoc!=undefined){
+                                _self.$refs.MaterialDoc.loadGridData();
+                            }
+                            if(_self.$refs.MeetDoc!=undefined){
+                                _self.$refs.MeetDoc.loadGridData();
+                            }
                         }
-                        if(_self.$refs.attachmentDoc!=undefined){
-                            _self.$refs.attachmentDoc.loadGridData();
-                        }
-                        if(_self.$refs.MaterialDoc!=undefined){
-                            _self.$refs.MaterialDoc.loadGridData();
-                        }
-                        if(_self.$refs.MeetDoc!=undefined){
-                            _self.$refs.MeetDoc.loadGridData();
-                        }
-                        
-                    } 
+                    }  
                     else if(response.data.MES!=""){
 
                         _self.$message({
