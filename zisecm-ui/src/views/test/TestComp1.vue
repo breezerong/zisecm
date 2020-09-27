@@ -352,7 +352,7 @@ export default {
           _self.loading = false;
         })
         .catch(function(error) {
-          _self.$message("导入失败!");
+          _self.$message(_self.$t('application.importFailed'));
           console.log(error);
         });
     },

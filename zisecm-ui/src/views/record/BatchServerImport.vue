@@ -61,7 +61,7 @@ export default {
           _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
         })
         .catch(function(error) {
-          _self.$message("导入失败!");
+          _self.$message(_self.$t('application.importFailed'));
           console.log(error);
         });
     }

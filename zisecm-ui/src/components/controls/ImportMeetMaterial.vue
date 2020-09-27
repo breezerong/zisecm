@@ -92,7 +92,7 @@ export default {
           _self.loading = false;
         })
         .catch(function(error) {
-          _self.$message("读取模板失败!");
+          _self.$message(_self.$t('application.LoadTemplateFailed'));
           console.log(error);
         });
       
@@ -104,7 +104,7 @@ export default {
       //   return;
       // }
       if(_self.selectedTemplate==null || _self.selectedTemplate.length==0){
-        _self.$message("请选择模板!");
+        _self.$message(_self.$t('application.PleaseSelectTemplate'));
         return;
       }
       // 拦截器会自动替换成目标url
@@ -120,7 +120,7 @@ export default {
     batchImport() {
       let _self = this;
       if (_self.fileList1 == null || _self.fileList1.length == 0||_self.fileList1[0].raw==null) {
-        _self.$message("请选择导入Excel文件!");
+         _self.$message(_self.$t('application.PleaseSelect'));
         return;
       }
       // if(_self.deliveryId==null || _self.deliveryId.length==0){
@@ -155,7 +155,7 @@ export default {
           
         })
         .catch(function(error) {
-          _self.$message("导入失败!");
+          _self.$message(_self.$t('application.importFailed'));
           console.log(error);
         });
     },
