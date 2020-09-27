@@ -120,7 +120,7 @@ export default {
             if(_self.selectedItems.length==0){
                 _self.$message({
                             showClose: true,
-                            message: "请选择一条或多条要解锁的数据！",
+                            message: _self.$t('message.PleaseSelectUnlock'),
                             duration: 2000,
                             type: 'warning'
                             });
@@ -163,7 +163,7 @@ export default {
             }else{
                     _self.$message({
                             showClose: true,
-                            message: "请选择未解锁的数据",
+                            message: _self.$t("message.PleaseSelectNotunlocked"),
                             duration: 5000,
                             type: 'error'
                         });

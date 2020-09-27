@@ -1,10 +1,10 @@
 <template>
     <DataLayout>
-        <el-dialog title="驳回申请" :visible.sync="showRejectDialog" width="50%" @close="showRejectDialog=false">
+        <el-dialog :title="$t('route.ApplyReject')"  :visible.sync="showRejectDialog" width="50%" @close="showRejectDialog=false">
             <el-input
               type="textarea"
               :rows="5"
-              placeholder="请输入申请原因"
+              :placeholder="$t('message.pleaseInput')+' '+$t('message.reason')"
               v-model="applyComment">
             </el-input>
             <div slot="footer" class="dialog-footer">
@@ -375,7 +375,7 @@ export default {
             if( _self.selectedItems == null || _self.selectedItems.length == 0){
                 _self.$message({
                     showClose: true,
-                    message: "请勾选一条文件数据!",
+                    message: _self.$t('message.PleaseSelectOneFile'),
                     duration: 3000,
                     type: "warning",
                 });
@@ -405,7 +405,7 @@ export default {
                 _self.showRejectDialog = false;
                 _self.$message({
                     showClose: true,
-                    message: "发起驳回申请成功!",
+                    message:  _self.$t('application.startRejectApply')+_self.$t('message.success'),
                     duration: 3000,
                     type: "success",
                 });
@@ -474,7 +474,7 @@ export default {
                 // _self.$message('请选择一条文件数据');
                 _self.$message({
                         showClose: true,
-                        message: '请选择一条文件数据!',
+                        message: _self.$t('message.PleaseSelectOneFile'),
                         duration: 2000,
                         type: "warning"
                     });

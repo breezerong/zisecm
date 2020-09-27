@@ -665,7 +665,7 @@ export default {
                 // _self.$message('请选择一条文件数据');
                 _self.$message({
                         showClose: true,
-                        message: '请选择一条文件数据!',
+                        message: _self.$t('message.PleaseSelectOneFile'),
                         duration: 2000,
                         type: "warning"
                     });
@@ -951,7 +951,7 @@ export default {
                 if(tab[i]["SYN_APP"]=='TC'){
                      this.$message({
                         showClose: true,
-                        message: "文函"+tab[i]["CODING"]+"只能作废处理",
+                        message: _self.$t('application.Document')+tab[i]["CODING"]+_self.$t('message.invalid'),
                         duration: 2000,
                     });
                     this.isTC=true

@@ -12,7 +12,7 @@
                   <el-select
                     name="selectCProcessStatus"
                     v-model="Cstatus"
-                    placeholder="反馈状态"
+                    :placeholder="$t('application.feedback')+' '+$t('field.status')"
                     style="display:block;"
                 >
             <el-option

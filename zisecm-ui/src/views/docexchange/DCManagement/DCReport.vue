@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-col :span="24">
       <el-tabs value="tab01">
-        <el-tab-pane label="文函统计" name="tab01">
+        <el-tab-pane :label="$t('application.DCDash')" name="tab01">
           <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
             <el-form :inline="true" :model="filters" @submit.native.prevent>
               <el-form-item>
@@ -18,7 +18,7 @@
                 <el-date-picker
                   v-model="filters.startDate"
                   type="date"
-                  placeholder="选择开始日期"
+                  :placeholder="$t('application.pleaseSelect')+$t('application.startDate')"
                   style="display:block;"
                   value-format="yyyy-MM-dd HH:mm:ss"
                 ></el-date-picker>
@@ -27,13 +27,13 @@
                 <el-date-picker
                   v-model="filters.endDate"
                   type="date"
-                  placeholder="选择结束日期"
+                  :placeholder="$t('application.pleaseSelect')+$t('application.endDate')"
                   style="display:block;"
                   value-format="yyyy-MM-dd HH:mm:ss"
                 ></el-date-picker>
               </el-form-item>
               <el-form-item>
-                <el-button :plain="true" @click="initChart">生成报表</el-button>
+                <el-button :plain="true" @click="initChart">{{$t('message.GenerateReports')}}</el-button>
               </el-form-item>
             </el-form>
           </el-col>
@@ -48,7 +48,7 @@
             ></div>
           </el-col>
         </el-tab-pane>
-        <el-tab-pane label="漏号统计" name="tab02">
+        <el-tab-pane :label="$t('message.MissingNumberStatistics')" name="tab02">
           <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
             <el-form :inline="true" :model="filters" @submit.native.prevent>
               <el-form-item>
@@ -69,7 +69,7 @@
                 ></DataSelect>
               </el-form-item>
               <el-form-item>
-                <el-select v-model="filters.supplier" placeholder="请选择分包商">
+                <el-select v-model="filters.supplier" :placeholder="$t('application.pleaseSelect')+$t('message.Contractor')">
                   <el-option label="分包商1" value="1"></el-option>
                   <el-option label="分包商2" value="2"></el-option>
                   <el-option label="分包商3" value="3"></el-option>
@@ -102,7 +102,7 @@
             </el-form>
           </el-col>
         </el-tab-pane>
-        <el-tab-pane label="未回函报表" name="tab03">
+        <el-tab-pane :label="$t('route.UnresponsiveReport')" name="tab03">
           <el-col :span="24" style="padding-top: 0px; padding-bottom: 0px;">
             <el-form :inline="true" :model="noReceiveData" @submit.native.prevent>
               <el-form-item>
@@ -119,7 +119,7 @@
                 <el-date-picker
                   v-model="noReceiveData.startDate"
                   type="date"
-                  placeholder="选择开始日期"
+                  :placeholder="$t('application.pleaseSelect')+$t('application.startDate')"
                   style="display:block;"
                   value-format="yyyy-MM-dd HH:mm:ss"
                 ></el-date-picker>
@@ -128,7 +128,7 @@
                 <el-date-picker
                   v-model="noReceiveData.endDate"
                   type="date"
-                  placeholder="选择结束日期"
+                  :placeholder="$t('application.pleaseSelect')+$t('application.endDate')"
                   style="display:block;"
                   value-format="yyyy-MM-dd HH:mm:ss"
                 ></el-date-picker>
@@ -160,7 +160,7 @@
             @selectchange="selectChange"
           ></DataGrid>
         </el-tab-pane>
-        <el-tab-pane label="设计文件成品报表" name="DesignDoc">
+        <el-tab-pane :label="$t('route.DesigndocReport')" name="DesignDoc">
           <DCTransferGridDesign></DCTransferGridDesign>
         </el-tab-pane>
       </el-tabs>
@@ -394,7 +394,7 @@ export default {
 
     loadDocChart(chartObj, indata) {
       chartObj.setOption({
-        title: { text: "文函统计" },
+        title: { text: this.$t('application.DCDash') },
         tooltip: {},
         grid: {
           left: "10%",

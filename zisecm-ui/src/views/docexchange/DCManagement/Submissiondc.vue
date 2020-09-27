@@ -590,7 +590,7 @@ export default {
             }else{
                 this.$message({
                             showClose: true,
-                            message: "提交文函必需包含PDF格式电子文件",
+                            message: _self.$t("message.PDFdocuments"),
                             duration: 2000,
                             type: 'warning'
                             });
@@ -694,7 +694,7 @@ export default {
                 // _self.$message('请选择一条文件数据');
                 _self.$message({
                         showClose: true,
-                        message: '请选择一条文件数据!',
+                        message: _self.$t('message.PleaseSelectOneFile'),
                         duration: 2000,
                         type: "warning"
                     });
@@ -712,7 +712,7 @@ export default {
                 // _self.$message('请选择一条文件数据');
                 _self.$message({
                         showClose: true,
-                        message: '请选择一条设计文件数据!',
+                        message:  _self.$t('message.pleaseSelectOneDesigndoc'),
                         duration: 2000,
                         type: "warning"
                     });
@@ -1124,7 +1124,7 @@ export default {
                 if(_self.$refs.ShowProperty.myTypeName !='相关文件'&&_self.$refs.ShowProperty.myTypeName !='会议纪要内容项'&&_self.$refs.ShowProperty.myTypeName !='材料变更清单'){
                     _self.$message({
                                 showClose: true,
-                                message: "请选择电子文件",
+                                message: $t('application.pleaseSelect')+$t('message.ElectronicFiles'),
                                 duration: 2000,
                                 type: 'warning'
                                 });

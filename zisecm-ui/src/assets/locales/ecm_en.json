@@ -328,7 +328,12 @@
     "delayCloseNr":"无原因延误关闭",
     "schClose":"按期关闭",
     "perSchClose":"按期关闭率",
-    "perClose":"关闭完成率"
+    "perClose":"关闭完成率",
+    "nameIsNull":"Object Name is null",
+    "noUpper":"Cannot move up any more",
+    "oneDataOnly":"Only one piece of data can be selected for sorting",
+    "noDowner":"Cannot move down any more",
+    "PleaseSelectOneFile":"请选择一条文件数据"
 },
 "skin": {
     "Blue": "Blue",
@@ -445,6 +450,9 @@
     "delayCloseConfirm":"DelayCloseConfim",
     "applyReject": "ConfirmRejectApply",
     "MyApplyReject": "MyRejectApply",
+    "ApplyReject": "Reject Apply",
+    "UnresponsiveReport":"Unresponsive Report",
+    "DesigndocReport":"Design document finished product report",
     "ICMBase":"Basic ICM Report",
     "ICMExport":"ICM Manual Exported Report",
     "ICMExchange":"Complete List of ICM and Exchanged Inf",
@@ -452,8 +460,7 @@
     "ICMClose":"Interface Closed Completion Report",
     "ICMReply":"Interface Replied Completion Report",
     "CNPEComplete":"CNPE ICM Completion Statistics of Each Unit",
-    "ContrICM":"ICM Completion Statistics of Contractors",
-    "ApplyReject": "Reject Apply"
+    "ContrICM":"ICM Completion Statistics of Contractors"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -516,7 +523,14 @@
     "template":" Template",
     "file":"File",
     "ElectronicFiles":"Electronic Files",
-    "ClearFiles":"Clear all files"
+    "ClearFiles":"Clear all files",
+    "pleaseSelectOneDesigndoc":"Please select a design document",
+    "GenerateReports":"Generate reports",
+    "MissingNumberStatistics":"Missing Number Statistics",
+    "PleaseSelectUnlock":"Please select one or more data to unlock!",
+    "PleaseSelectNotunlocked":"Please select the data that is not unlocked",
+    "invalid":" can only be invalid",
+    "PDFdocuments":"The submission letter must contain electronic documents in PDF format"
 },
 "field": {
     "indexNumber":"S/N",

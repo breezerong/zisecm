@@ -20,14 +20,14 @@
             <el-date-picker
               v-model="startDate"
               type="date"
-              placeholder="选择开始日期">
+              :placeholder="$t('application.pleaseSelect')+$t('application.startDate')">
             </el-date-picker>
           </el-col>
           <el-col :span="4">
             <el-date-picker
               v-model="endDate"
               type="date"
-              placeholder="选择结束日期">
+              :placeholder="$t('application.pleaseSelect')+$t('application.endDate')">
             </el-date-picker>
           </el-col>
           <el-col :span="4">
