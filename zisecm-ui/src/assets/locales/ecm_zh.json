@@ -220,7 +220,6 @@
     "myInformation":"我的信息",
     "myAuth":"我的授权",
     "myNotice":"通知公告",
-    
     "Document":"文函",
     "Projects":"项目",
     "Plannum":"计划数",
@@ -262,8 +261,23 @@
     "Rendition":"格式副本",
     "relevantDoc":"相关文件",
     "replyDoc":"回复文件",
-    "Changeinfo":"变更信息"
-
+    "Changeinfo":"变更信息",
+    "StakeHolder":"相关方",
+    "RepNum":"回复数",
+    "RepPerson":"回复人",
+    "Times":"时间",
+    "ReQuestion":"问题回复",
+    "toNum":"发送方",
+    "fromNum":"接收方",
+    "shopenICMcount":"应打开接口",
+    "haopenICMcount":"已打开接口",
+    "odopenICMcount":"逾期未打开接口",
+    "shshutdownICMcount":"应关闭接口",
+    "hashutdownICMcount":"已关闭接口",
+    "odshutdownICMcount":"逾期未关闭接口",
+    "shreplyICMcount":"应回复接口",
+    "hareplyICMcount":"已回复接口",
+    "odreplyICMcount":"逾期未回复接口"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -403,7 +417,15 @@
     "delayOpenConfirm":"延误打开确认",
     "delayCloseConfirm":"延误关闭确认",
     "applyReject": "待确认驳回申请",
-    "MyApplyReject": "我的驳回申请"
+    "MyApplyReject": "我的驳回申请",
+    "ICMBase":"基本接口报表",
+    "ICMExport":"ICM手册导出报表",
+    "ICMExchange":"ICM接口及交换信息完整清单",
+    "ICMOpen":"接口打开完成情况报表",
+    "ICMClose":"接口关闭完成情况报表",
+    "ICMReply":"接口回复完成情况报表",
+    "CNPEComplete":"CNPE各所接口完成统计",
+    "ContrICM":"合同商接口完成统计"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -458,8 +480,8 @@
     "failureForNew":"操作失败!请勿重复创建同一项目下的重复项目",
     "noMainFile":"请选择一条主文件",
     "pleaseSelectDC":"请选择要操作的文函！",
-    "dataIsnotOnly":"此数据已在系统中存在！"
-    
+    "dataIsnotOnly":"此数据已在系统中存在！",
+    "queDismorefive":"问题描述不能少于5个字符"
 },
 "field": {
     "indexNumber":"序号",

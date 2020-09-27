@@ -265,7 +265,23 @@
     "Rendition":"Rendition",
     "relevantDoc":"Relevant Doc",
     "replyDoc":"Reply Doc",
-    "Changeinfo":"Change Info"
+    "Changeinfo":"Change Info",
+    "StakeHolder":"Stakeholder",
+    "RepNum":"Reply Num",
+    "RepPerson":"Reply Person",
+    "Times":"Time",
+    "ReQuestion":"FeedBack",
+    "toNum":"Sender",
+    "fromNum":"Receiver",
+    "shopenICMcount":"Should Open",
+    "haopenICMcount":"Had Opened",
+    "odopenICMcount":"Overdue Not Open",
+    "shshutdownICMcount":"Should Close",
+    "hashutdownICMcount":"Had Closed",
+    "odshutdownICMcount":"Overdue Not Open",
+    "shreplyICMcount":"Should Reply",
+    "hareplyICMcount":"Had Replied",
+    "odreplyICMcount":"Overdue Not Reply"
 },
 "skin": {
     "Blue": "Blue",
@@ -381,7 +397,15 @@
     "delayOpenConfirm":"DelayOpenConfirm",
     "delayCloseConfirm":"DelayCloseConfim",
     "applyReject": "ConfirmRejectApply",
-    "MyApplyReject": "MyRejectApply"
+    "MyApplyReject": "MyRejectApply",
+    "ICMBase":"Basic ICM Report",
+    "ICMExport":"ICM Manual Exported Report",
+    "ICMExchange":"Complete List of ICM and Exchanged Inf",
+    "ICMOpen":"Interface Opened Completion Report",
+    "ICMClose":"Interface Closed Completion Report",
+    "ICMReply":"Interface Replied Completion Report",
+    "CNPEComplete":"CNPE ICM Completion Statistics of Each Unit",
+    "ContrICM":"ICM Completion Statistics of Contractors"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -436,7 +460,8 @@
     "failureForNew":"Operation Failed!Don't create duplicate items under the same project",
     "noMainFile":"Please select a master file",
     "pleaseSelectDC":"Please select document for operate!",
-    "dataIsnotOnly":"This data already exists"
+    "dataIsnotOnly":"This data already exists",
+    "queDismorefive":"The problem description should not be less than 5 characters long"
 },
 "field": {
     "indexNumber":"S/N",
