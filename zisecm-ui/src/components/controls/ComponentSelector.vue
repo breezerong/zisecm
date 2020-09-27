@@ -24,7 +24,7 @@
       <el-input type="text" placeholder="请选择组件" readonly="readonly" v-model="inputValue"></el-input>
     </el-col>
     <el-col :span="4">
-      <el-button icon="el-icon-s-unfold" @click="handleShowDialog">选择</el-button>
+      <el-button icon="el-icon-s-unfold" @click="handleShowDialog">{{$t('application.select')}}</el-button>
     </el-col>
   </el-container>
 </template>

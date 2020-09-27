@@ -440,7 +440,10 @@
     "noMainFile":"Please select a master file",
     "pleaseSelectDC":"Please select document for operate!",
     "dataIsnotOnly":"This data already exists",
-    "reason":"Reason"
+    "reason":"Reason",
+    "Contractor":"Contractor",
+    "Batch":"Batch",
+    "template":" Template"
 },
 "field": {
     "indexNumber":"S/N",

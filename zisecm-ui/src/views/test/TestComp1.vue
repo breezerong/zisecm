@@ -1,6 +1,6 @@
 <template>
   <div>
-     <el-dialog title="批量导入文档" :visible.sync="importDialogVisible" width="60%" >
+     <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="importDialogVisible" width="60%" >
         <ImportDocument ref="ImportDocument"  @onImported="onImported" width="100%" v-bind:deliveryId="deliveryId"></ImportDocument>
         <div slot="footer" class="dialog-footer">
           <el-button @click="importDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>

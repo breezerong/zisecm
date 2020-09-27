@@ -462,7 +462,10 @@
     "noMainFile":"请选择一条主文件",
     "pleaseSelectDC":"请选择要操作的文函！",
     "dataIsnotOnly":"此数据已在系统中存在！",
-    "reason":"原因"
+    "reason":"原因",
+    "Contractor":"分包商",
+    "Batch":"批量",
+    "template":"模板"
     
 },
 "field": {

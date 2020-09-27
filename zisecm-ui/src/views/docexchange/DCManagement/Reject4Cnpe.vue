@@ -20,7 +20,7 @@
                     <template v-slot:main>  
                         <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid" :tableHeight="360" isshowCustom="false" :isShowChangeList="false">
                                 <template slot="customMoreOption" slot-scope="scope">
-                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
+                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">{{$t('application.select')}}</el-button>
                                 </template>
                         </DataGrid>
                     </template>

@@ -7,7 +7,7 @@
         <el-button type="primary" @click="addReuseToVolume()">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
+    <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="batchDialogVisible" width="80%" >
         <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectedOneTransfer.ID"></BatchImport>
         <div slot="footer" class="dialog-footer">
           <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>

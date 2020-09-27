@@ -7,7 +7,7 @@
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
             <!-- 批量导入 -->
-            <el-dialog title="批量导入文档" :visible.sync="batchDialogVisible" width="80%" >
+            <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="batchDialogVisible" width="80%" >
                 <BatchImport ref="BatchImport"  @onImported="onBatchImported" v-bind:deliveryId="parentId" width="100%"></BatchImport>
                 <div slot="footer" class="dialog-footer">
                 <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
@@ -71,7 +71,7 @@
                     <template v-slot:main>  
                         <DataGrid ref="DialogDataGrid" v-bind="tables.DialogDataGrid"  :tableHeight="360" isshowCustom="false" :isShowChangeList="false">
                                 <template slot="customMoreOption" slot-scope="scope">
-                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">选择</el-button>
+                                <el-button type="primary" @click="IEDChoose(scope.data.row)" size="mini">{{$t('application.select')}}</el-button>
                                 </template>
                         </DataGrid>
                     </template>
