@@ -11,11 +11,11 @@
         </el-form-item>
       </el-col>
       <el-col :span="16" style="text-align:left">
-        <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">下载模板</el-button>
+        <el-button type="primary" plain icon="el-icon-download" @click="downloadTemplate()">{{$t('application.download')+$t('message.template')}}</el-button>
       
         <el-button type="primary" plain icon="el-icon-upload2" @click="batchImport()" v-loading="loading">{{$t('application.start')+$t('application.Import')}}</el-button>
         &nbsp; &nbsp;
-         <el-button plain type="primary" @click="cleanFiles()">清除所有文件</el-button>
+         <el-button plain type="primary" @click="cleanFiles()">{{$t('message.ClearFiles')}}</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -25,7 +25,7 @@
     </el-row>
     <el-row>
       <el-col :span="10">
-        <el-form-item label="Excel文件" style="float: left;">
+        <el-form-item :label="'Excel'+$t('message.file')" style="float: left;">
           <el-upload
             :limit="1"
             :file-list="fileList1"
@@ -41,7 +41,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="14">
-        <el-form-item label="电子文件" style="float: left;">
+        <el-form-item :label="'Excel'+$t('message.ElectronicFiles')" style="float: left;">
           <el-container >
           <el-upload
             :limit="400"

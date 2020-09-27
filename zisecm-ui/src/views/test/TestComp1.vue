@@ -111,7 +111,7 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="Excel文件">
+          <el-form-item :label="'Excel'+$t('message.file')">
             <el-upload
               :limit="1"
               :file-list="fileList1" 
@@ -124,7 +124,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="电子文件">
+          <el-form-item :label="'Excel'+$t('message.ElectronicFiles')">
              <el-upload
               :limit="100"
               :file-list="fileList2" 

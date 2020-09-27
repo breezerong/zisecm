@@ -443,7 +443,10 @@
     "reason":"Reason",
     "Contractor":"Contractor",
     "Batch":"Batch",
-    "template":" Template"
+    "template":" Template",
+    "file":"File",
+    "ElectronicFiles":"Electronic Files",
+    "ClearFiles":"Clear all files"
 },
 "field": {
     "indexNumber":"S/N",

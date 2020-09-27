@@ -18,7 +18,7 @@
         </el-row>
         <el-row>
           <el-col :span="4">
-            <el-form-item label="Excel文件" style="float: left;">
+            <el-form-item :label="'Excel'+$t('message.file')" style="float: left;">
               <el-upload
                 :limit="1"
                 :file-list="fileList"
