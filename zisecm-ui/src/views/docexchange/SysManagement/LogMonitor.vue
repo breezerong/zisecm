@@ -1,12 +1,12 @@
 <template>
     <el-tabs v-model="activeName">
-        <el-tab-pane label="从TC同步" name="TCSync">
+        <el-tab-pane :label="$t('route.synfromtc')" name="TCSync">
             <TCSyncGrid></TCSyncGrid>
         </el-tab-pane>
-        <el-tab-pane label="推送到TC" name="TCPush">
+        <el-tab-pane :label="$t('route.pushtotc')" name="TCPush">
             <TCPushGrid></TCPushGrid>
         </el-tab-pane>
-        <el-tab-pane label="内外网同步" name="NetSync">
+        <el-tab-pane :label="$t('route.in&exsyn')" name="NetSync">
             <NetSyncGrid></NetSyncGrid>
         </el-tab-pane>
     </el-tabs>

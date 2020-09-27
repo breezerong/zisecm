@@ -226,6 +226,7 @@
     "Document":"Documents",
     "Projects":"Projects Nums",
     "Plannum":"Plan Nums",
+    "Completenum":"Complete Nums",
     "IEDPublished":"IED Published",
     "PendingSubmit":"Submission IED",
     "IEDRejected":"Rejected IED",
@@ -343,7 +344,8 @@
     "EmptyPlaceOnFile":"The archive unit of the borrowed file is empty and cannot be borrowed out!",
     "SameFiledUnit":"The archives borrowed can only be filed by the same unit",
     "PleaseSelectOneBorrow":"Please select the file to borrow",
-    "Clear":"Clear Successful"
+    "Clear":"Clear Successful",
+    "perComplete":"Percentage Completion"
 },
 "skin": {
     "Blue": "Blue",
@@ -470,7 +472,14 @@
     "ICMClose":"Interface Closed Completion Report",
     "ICMReply":"Interface Replied Completion Report",
     "CNPEComplete":"CNPE ICM Completion Statistics of Each Unit",
-    "ContrICM":"ICM Completion Statistics of Contractors"
+    "ContrICM":"ICM Completion Statistics of Contractors",
+    "extendied":"Extended IED",
+    "unfied":"Uncompleted IED",
+    "compied":"Completed IED",
+    "comstaied":"IED Completion Statistics",
+    "synfromtc":"Syn from TC",
+    "pushtotc":"Push to TC",
+    "in&exsyn":"Internal-External Syn"
 },
 "message": {
     "saveSuccess":"Save Success",

@@ -223,6 +223,7 @@
     "Document":"文函",
     "Projects":"项目",
     "Plannum":"计划数",
+    "Completenum":"完成数",
     "IEDPublished":"已生效IED",
     "PendingSubmit":"待提交IED",
     "IEDRejected":"驳回IED",
@@ -328,7 +329,8 @@
     "delayCloseNr":"无原因延误关闭",
     "schClose":"按期关闭",
     "perSchClose":"按期关闭率",
-    "perClose":"关闭完成率"
+    "perClose":"关闭完成率",
+    "perComplete":"完成百分比"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -479,7 +481,14 @@
     "ICMClose":"接口关闭完成情况报表",
     "ICMReply":"接口回复完成情况报表",
     "CNPEComplete":"CNPE各所接口完成统计",
-    "ContrICM":"合同商接口完成统计"
+    "ContrICM":"合同商接口完成统计",
+    "extendied":"已超期IED",
+    "unfied":"未完成IED",
+    "compied":"已完成IED",
+    "comstaied":"IED完成情况统计",
+    "synfromtc":"从TC同步",
+    "pushtotc":"推送到TC",
+    "in&exsyn":"内外网同步"
 },
 "message": {
     "saveSuccess":"保存成功",
