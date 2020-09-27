@@ -175,7 +175,7 @@
                 <el-form-item>
                     <el-button type="warning" 
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
+                    $refs.relevantDoc,$refs.attachmentDoc,$refs.MeetDoc,$refs.MaterialDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" :title="$t('application.ExportExcel')" v-on:click="exportData">{{$t('application.exportExcel')}}</el-button>
@@ -1008,6 +1008,8 @@ export default {
             _self.$refs.transferDoc.itemDataList=[];
             _self.$refs.relevantDoc.itemDataList=[];
             _self.$refs.attachmentDoc.itemDataList=[];
+            _self.$refs.MeetDoc.itemDataList=[];
+            _self.$refs.MaterialDoc.itemDataList=[];
             
         },
         // 表格行选择
@@ -1111,6 +1113,9 @@ export default {
                             }
                             if(_self.$refs.relevantDoc!=undefined){
                                 _self.$refs.relevantDoc.loadGridData();
+                            }
+                            if(_self.$refs.attachmentDoc!=undefined){
+                                _self.$refs.attachmentDoc.loadGridData();
                             }
                             if(_self.$refs.MaterialDoc!=undefined){
                                 _self.$refs.MaterialDoc.loadGridData();
@@ -1268,6 +1273,12 @@ export default {
                         }
                         if(_self.$refs.attachmentDoc){
                             _self.$refs.attachmentDoc.itemDataList=[];
+                        }
+                        if(_self.$refs.MeetDoc){
+                            _self.$refs.MeetDoc.itemDataList=[];
+                        }
+                        if(_self.$refs.MaterialDoc){
+                            _self.$refs.MaterialDoc.itemDataList=[];
                         }
                         
                         _self.$message({

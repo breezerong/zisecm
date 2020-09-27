@@ -100,7 +100,7 @@
                     <!-- <el-button type="primary" @click="onPreviousStatus(selectedItems,$refs.mainDataGrid,[$refs.transferDoc,
                     $refs.relevantDoc])">{{$t('application.Rejected')}}</el-button> -->
                     <RejectButton :selectedItems="selectedItems" :refreshDataGrid="$refs.mainDataGrid" 
-                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc]"></RejectButton>
+                    :cleanSubDataGrids="[$refs.transferDoc,$refs.relevantDoc,$refs.attachmentDoc,$refs.MeetDoc,$refs.MaterialDoc]"></RejectButton>
                 </el-form-item>
                 <!-- 打包下载 -->
                 <el-form-item>
@@ -405,7 +405,7 @@ export default {
                     return
             }
            _self.onNextStatus(_self.selectedItems,_self.$refs.mainDataGrid,[_self.$refs.transferDoc,
-            _self.$refs.relevantDoc])
+            _self.$refs.relevantDoc,_self.$refs.attachmentDoc,_self.$refs.MeetDoc,_self.$refs.MaterialDoc])
         },
         dbclick(row){
             this.showItemContent(row)
@@ -689,6 +689,11 @@ export default {
                 _self.$refs.mainDataGrid.condition=key;
             }
             _self.$refs.mainDataGrid.loadGridData();
+            _self.$refs.transferDoc.itemDataList=[];
+            _self.$refs.relevantDoc.itemDataList=[];
+            _self.$refs.attachmentDoc.itemDataList=[];
+            _self.$refs.MeetDoc.itemDataList=[];
+            _self.$refs.MaterialDoc.itemDataList=[];
         },
         // 表格行选择
         selectChange(val) {
@@ -768,7 +773,15 @@ export default {
                 if(_self.$refs.relevantDoc){
                     _self.$refs.relevantDoc.loadGridData();
                 }
-                
+                if(_self.$refs.attachmentDoc){
+                    _self.$refs.attachmentDoc.loadGridData();
+                }
+                if(_self.$refs.MaterialDoc){
+                    _self.$refs.MaterialDoc.loadGridData();
+                }
+                if(_self.$refs.MeetDoc){
+                    _self.$refs.MeetDoc.loadGridData();
+                }
                 } else {
                 // _self.$message(_self.$t('message.newFailured'));
                 _self.$message({

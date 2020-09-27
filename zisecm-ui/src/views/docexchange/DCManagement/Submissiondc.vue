@@ -170,7 +170,7 @@
                 <el-form-item>
                     <el-button type="warning" 
                     v-on:click="onDeleleItem(selectedItems,[$refs.mainDataGrid,$refs.transferDoc,
-                    $refs.relevantDoc])">{{$t('application.delete')}}</el-button>
+                    $refs.relevantDoc,$refs.attachmentDoc,$refs.MeetDoc,$refs.MaterialDoc])">{{$t('application.delete')}}</el-button>
                 </el-form-item>
                 <el-form-item>
                     <MountFile :selectedItem="selectedItems" @refresh='searchItem' :title="$t('application.ReplaceDoc')">{{$t('application.replace')}}</MountFile>
@@ -585,8 +585,8 @@ export default {
             }
             let a=this.selectedItems[0].FORMAT_NAME
             if(a=='pdf'||a=='PDF'){
-                this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid,[this.$refs.transferDoc,this.$refs.relevantDoc])
-                 _self.buttLoading=false;
+                this.onNextStatus(this.selectedItems,this.$refs.mainDataGrid,[this.$refs.transferDoc,this.$refs.relevantDoc,this.$refs.attachmentDoc,this.$refs.MeetDoc,this.$refs.MaterialDoc])
+                _self.buttLoading=false;
             }else{
                 this.$message({
                             showClose: true,
@@ -1040,6 +1040,11 @@ export default {
                 _self.$refs.mainDataGrid.condition=key;
             }
             _self.$refs.mainDataGrid.loadGridData();
+            _self.$refs.transferDoc.itemDataList=[];
+            _self.$refs.relevantDoc.itemDataList=[];
+            _self.$refs.attachmentDoc.itemDataList=[];
+            _self.$refs.MeetDoc.itemDataList=[];
+            _self.$refs.MaterialDoc.itemDataList=[];
         },
         // 表格行选择
         selectChange(val) {
@@ -1161,6 +1166,9 @@ export default {
                     }
                     if(_self.$refs.relevantDoc!=undefined){
                         _self.$refs.relevantDoc.loadGridData();
+                    }
+                    if(_self.$refs.attachmentDoc!=undefined){
+                        _self.$refs.attachmentDoc.loadGridData();
                     }
                     if(_self.$refs.MaterialDoc!=undefined){
                         _self.$refs.MaterialDoc.loadGridData();

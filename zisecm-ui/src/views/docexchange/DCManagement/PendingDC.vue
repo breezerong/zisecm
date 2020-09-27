@@ -681,6 +681,8 @@ export default {
             _self.$refs.transferDoc.itemDataList=[];
             _self.$refs.relevantDoc.itemDataList=[];
             _self.$refs.attachmentDoc.itemDataList=[];
+            _self.$refs.MeetDoc.itemDataList=[];
+            _self.$refs.MaterialDoc.itemDataList=[];
 
         },
         // 表格行选择
@@ -761,7 +763,15 @@ export default {
                 if(_self.$refs.relevantDoc){
                     _self.$refs.relevantDoc.loadGridData();
                 }
-                
+                if(_self.$refs.attachmentDoc){
+                    _self.$refs.attachmentDoc.loadGridData();
+                }
+                if(_self.$refs.MaterialDoc){
+                    _self.$refs.MaterialDoc.loadGridData();
+                }
+                if(_self.$refs.MeetDoc){
+                    _self.$refs.MeetDoc.loadGridData();
+                }
                 } else {
                 // _self.$message(_self.$t('message.newFailured'));
                 _self.$message({
