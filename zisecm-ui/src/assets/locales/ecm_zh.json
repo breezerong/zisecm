@@ -481,7 +481,12 @@
     "template":"模板",
     "file":"文件",
     "ElectronicFiles":"电子文件",
-    "ClearFiles":"清除所有文件"
+    "ClearFiles":"清除所有文件",
+    "nameIsNull":"名称为空",
+    "noUpper":"没有上移的空间了",
+    "oneDataOnly":"只允许选择一条数据进行排序",
+    "noDowner":"没有下移的空间了",
+    "PleaseSelectOneFile":"请选择一条文件数据"
 },
 "field": {
     "indexNumber":"序号",

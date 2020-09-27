@@ -411,7 +411,7 @@ export default {
               if(response.data.code==1){
                 _self.$message({
                       showClose: true,
-                      message: "删除成功！",
+                      message: _self.$t('message.deleteSuccess'),
                       duration: 2000,
                       type: "Success"
                     });
@@ -450,7 +450,7 @@ export default {
     if(_self.selectedName==''){
       _self.$message({
                       showClose: true,
-                      message: "名称为空！",
+                      message:_self.$t('message.nameIsNull'),
                       duration: 2000,
                       type: "Error"
                     });
@@ -472,7 +472,7 @@ export default {
               if(response.data.code==1){
                 _self.$message({
                       showClose: true,
-                      message: "保存成功！",
+                      message:_self.$t('message.saveSuccess'),
                       duration: 2000,
                       type: "Success"
                     });
@@ -512,7 +512,7 @@ export default {
     if(_self.selectedName==''){
       _self.$message({
                       showClose: true,
-                      message: "名称为空！",
+                      message:_self.$t('message.nameIsNull'),
                       duration: 2000,
                       type: "Error"
                     });
@@ -543,7 +543,7 @@ export default {
               if(response.data.code==1){
                 _self.$message({
                       showClose: true,
-                      message: "保存成功！",
+                      message:_self.$t('message.saveSuccess'),
                       duration: 2000,
                       type: "Success"
                     });
@@ -617,7 +617,7 @@ export default {
         if (_self.selectedIndex == 0) { //当选择的项的下标为0，即第一个，则提醒没有上移的空间，选择其他项进行上移
             _self.$message({
                       showClose: true,
-                      message: "没有上移的空间了",
+                      message:_self.$t('message.noUpper'),
                       duration: 2000,
                       type: "warning"
                     });
@@ -634,7 +634,7 @@ export default {
       }else{
         _self.$message({
                       showClose: true,
-                      message: "只允许选择一条数据进行排序",
+                      message:_self.$t('message.oneDataOnly'),
                       duration: 2000,
                       type: "error"
                     });
@@ -658,7 +658,7 @@ export default {
         if (_self.selectedIndex == _self.selectedColumns.length-1) { //当选择的项的下标为0，即第一个，则提醒没有上移的空间，选择其他项进行上移
             _self.$message({
                       showClose: true,
-                      message: "没有下移的空间了",
+                      message: _self.$t('message.noDowner'),
                       duration: 2000,
                       type: "warning"
                     });
@@ -675,7 +675,7 @@ export default {
       }else{
         _self.$message({
                       showClose: true,
-                      message: "只允许选择一条数据进行排序",
+                      message:_self.$t('message.oneDataOnly'),
                       duration: 2000,
                       type: "error"
                     });

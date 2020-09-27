@@ -280,7 +280,12 @@
     "LoadTemplateFailed":"LoadTemplateFailed",
     "importFailed":"importFailed",
     "PleaseSelect":"Please Select Excel to import",
-    "PleaseSelectTemplate":"Please Select Template"
+    "PleaseSelectTemplate":"Please Select Template",
+    "nameIsNull":"Object Name is null",
+    "noUpper":"Cannot move up any more",
+    "oneDataOnly":"Only one piece of data can be selected for sorting",
+    "noDowner":"Cannot move down any more",
+    "PleaseSelectOneFile":"请选择一条文件数据"
 },
 "skin": {
     "Blue": "Blue",
