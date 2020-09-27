@@ -343,7 +343,10 @@
     "EmptyPlaceOnFile":"The archive unit of the borrowed file is empty and cannot be borrowed out!",
     "SameFiledUnit":"The archives borrowed can only be filed by the same unit",
     "PleaseSelectOneBorrow":"Please select the file to borrow",
-    "Clear":"Clear Successful"
+    "Clear":"Clear Successful",
+    "editColumn":"Edit Column",
+    "chooseColumn":"Select the field to display",
+    "customColumn":"Custom Columns"
 },
 "skin": {
     "Blue": "Blue",

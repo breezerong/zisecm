@@ -328,7 +328,11 @@
     "delayCloseNr":"无原因延误关闭",
     "schClose":"按期关闭",
     "perSchClose":"按期关闭率",
-    "perClose":"关闭完成率"
+    "perClose":"关闭完成率",
+    "editColumn":"编辑列",
+    "chooseColumn":"选择要显示的字段",
+    "customColumn":"自定义列表"
+
 },
 "skin": {
     "Blue": "天空蓝",

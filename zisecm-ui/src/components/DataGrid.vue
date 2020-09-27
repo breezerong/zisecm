@@ -3,7 +3,7 @@
     <div>
       <!-- 创建分发 -->
        <!--  -->
-      <el-dialog :append-to-body="true" title="编辑列" :visible.sync="editColumn" @close="onCloseCustom"  width="80%" destroy-on-close>
+      <el-dialog :append-to-body="true" :title="$t('application.editColumn')" :visible.sync="editColumn" @close="onCloseCustom"  width="80%" destroy-on-close>
         <EcmCustomColumns ref="ecmCustomColumns" :gridViewName="gridViewName" @onClose="onCloseCustom">
 
         </EcmCustomColumns>
@@ -35,7 +35,7 @@
       </el-dialog>
       <!-- 选字段对话框 -->
       <el-dialog
-        title="选择需要展示的字段"
+        :title="$t('application.chooseColumn')"
         :visible.sync="columnsInfo.dialogFormVisible"
         width="40%"
         center
@@ -46,7 +46,7 @@
           :indeterminate="columnsInfo.isIndeterminate"
           v-model="columnsInfo.checkAll"
           @change="handleCheckAllChange"
-        >全选</el-checkbox>
+        >{{$t('application.selectAll')}}</el-checkbox>
         <div style="margin: 15px 0;"></div>
         <el-checkbox-group v-model="showFields" @change="handleCheckedColsChange">
           <el-checkbox
@@ -57,7 +57,7 @@
         </el-checkbox-group>
         <div slot="footer" class="dialog-footer">
           <el-button @click="columnsInfo.dialogFormVisible=false" size="medium">{{$t('application.cancel')}}</el-button>
-          <el-button type="primary" @click="confirmShow" size="medium">确定</el-button>
+          <el-button type="primary" @click="confirmShow" size="medium">{{$t('application.ok')}}</el-button>
         </div>
       </el-dialog>
 
@@ -175,7 +175,7 @@
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
-              <el-button v-if="isshowCustom" icon="el-icon-setting" size="small" @click="showEditColumn" title="自定义列表"></el-button>
+              <el-button v-if="isshowCustom" icon="el-icon-setting" size="small" @click="showEditColumn" :title="$t('application.customColumn')"></el-button>
               
             </template>
             <template slot-scope="scope">
