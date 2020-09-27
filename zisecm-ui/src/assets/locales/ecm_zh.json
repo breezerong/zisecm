@@ -223,6 +223,7 @@
     "Document":"文函",
     "Projects":"项目",
     "Plannum":"计划数",
+    "Completenum":"完成数",
     "IEDPublished":"已生效IED",
     "PendingSubmit":"待提交IED",
     "IEDRejected":"驳回IED",
@@ -328,7 +329,12 @@
     "delayCloseNr":"无原因延误关闭",
     "schClose":"按期关闭",
     "perSchClose":"按期关闭率",
-    "perClose":"关闭完成率"
+    "perClose":"关闭完成率",
+    "editColumn":"编辑列",
+    "chooseColumn":"选择要显示的字段",
+    "customColumn":"自定义列表",
+
+    "perComplete":"完成百分比"
 },
 "skin": {
     "Blue": "天空蓝",
@@ -479,7 +485,14 @@
     "ICMClose":"接口关闭完成情况报表",
     "ICMReply":"接口回复完成情况报表",
     "CNPEComplete":"CNPE各所接口完成统计",
-    "ContrICM":"合同商接口完成统计"
+    "ContrICM":"合同商接口完成统计",
+    "extendied":"已超期IED",
+    "unfied":"未完成IED",
+    "compied":"已完成IED",
+    "comstaied":"IED完成情况统计",
+    "synfromtc":"从TC同步",
+    "pushtotc":"推送到TC",
+    "in&exsyn":"内外网同步"
 },
 "message": {
     "saveSuccess":"保存成功",
@@ -555,6 +568,17 @@
     "oneDataOnly":"只允许选择一条数据进行排序",
     "noDowner":"没有下移的空间了",
     "PleaseSelectOneFile":"请选择一条文件数据",
+    "ShowDrawSpec":"只能晒本人所在部门且内部公开的图纸",
+    "ShowDrawFailed":"晒图失败",
+    "ShowDrawSuccess":"晒图成功",
+    "PleaseSelectOneDraw":"请选择需要调图的图纸",
+    "EmptyPlaceOnFile":"所借阅档案，归档单位为空，不能外借!",
+    "SameFiledUnit":"所借阅档案，归档单位只能是同一个",
+    "PleaseSelectOneBorrow":"请选择需要借阅的档案",
+    "Clear":"清除成功",
+    "PleaseSelectOneFileRemoved":"请选择需要移除的档案",
+    "RemoveSuccess":"移除成功",
+    "AddSuccess":"添加成功",
     "Voided":"已作废",
     "PleaseSelectDelete":"请选择一条或多条要删除的数据！"
 },
