@@ -281,10 +281,10 @@ export default {
                 // _self.refreshData();
                 _self.uploading=false;
                 _self.$refs.mainDataGrid.loadGridData();
-                // _self.$message("导入成功!");
+                // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
                 _self.$message({
                         showClose: true,
-                        message: _self.$t('application.importSuccess'),
+                        message: _self.$t('application.Import')+_self.$t('message.success'),
                         duration: 2000,
                         type: 'success'
                     });
@@ -384,7 +384,7 @@ export default {
             var mess = response.data.mess;
             //console.log(JSON.stringify(response));
             if (code == 1) {
-                // _self.$message("创建成功!");
+                // _self.$message(_self.$t('message.newSuccess'));
                 _self.$message({
                     showClose: true,
                     message:_self.$t('message.operationSuccess') ,

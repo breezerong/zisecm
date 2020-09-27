@@ -2,7 +2,7 @@
   <el-form label-width="120px" v-loading="loading" @submit.native.prevent>
     <el-row>
       <el-col :span="8">
-        <el-form-item :label="$t('application.ImportTemplate')">
+        <el-form-item :label="$t('application.Import')+$t('message.template')">
           <el-select v-model="selectedTemplate">
             <div v-for="(item,idx) in templateData" :key="idx">
               <el-option :label="item.NAME" :value="item.ID" :key="idx+10"></el-option>
@@ -140,7 +140,7 @@ export default {
         .then(function(response) {
           _self.importMessage = response.data.data;
           // _self.loading = false;
-          _self.$message(_self.$t('application.importSuccess'));
+          _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
           _self.cleanFiles();
           _self.$emit("onImported");
           

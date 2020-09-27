@@ -267,11 +267,11 @@ export default {
             _self.$message("保存成功！")
           }
           else{
-             _self.$message("保存失败!");
+             _self.$message(_self.$t('message.saveFailured'));
           }
         })
         .catch(function(error) {
-          _self.$message("保存失败!");
+          _self.$message(_self.$t('message.saveFailured'));
           console.log(error);
         });
 
@@ -288,11 +288,11 @@ export default {
       //       _self.$message("保存成功！")
       //     }
       //     else{
-      //        _self.$message("新建失败!");
+      //        _self.$message(_self.$t('message.newFailured'));
       //     }
       //   })
       //   .catch(function(error) {
-      //     _self.$message("新建失败!");
+      //     _self.$message(_self.$t('message.newFailured'));
       //     console.log(error);
       //   });
       // }
@@ -317,11 +317,11 @@ export default {
       //       // _self.$emit('onSaved','update');
       //     }
       //     else{
-      //        _self.$message("保存失败!");
+      //        _self.$message(_self.$t('message.saveFailured'));
       //     }
       //   })
       //   .catch(function(error) {
-      //     _self.$message("保存失败!");
+      //     _self.$message(_self.$t('message.saveFailured'));
       //     console.log(error);
       //   });
       // }

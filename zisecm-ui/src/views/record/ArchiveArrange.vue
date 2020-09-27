@@ -681,10 +681,10 @@ export default {
         _self.importdialogVisible = false;
         // _self.refreshData();
         _self.showInnerFile(null);
-        // _self.$message("导入成功!");
+        // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
         _self.$message({
               showClose: true,
-              message: "导入成功!",
+              message: _self.$t('application.Import')+_self.$t('message.success'),
               duration: 2000,
               type: 'success'
             });
@@ -1390,10 +1390,10 @@ export default {
           let code = response.data.code;
           //console.log(JSON.stringify(response));
           if(code==1){
-            // _self.$message("创建成功!");
+            // _self.$message(_self.$t('message.newSuccess'));
             _self.$message({
               showClose: true,
-              message: "创建成功!",
+              message: _self.$t('message.newSuccess'),
               duration: 2000,
               type: 'success'
             });
@@ -1405,20 +1405,20 @@ export default {
             _self.outerDataList=[];
           }
           else{
-            //  _self.$message("新建失败!");
+            //  _self.$message(_self.$t('message.newFailured'));
              _self.$message({
                   showClose: true,
-                  message: "新建失败!",
+                  message: _self.$t('message.newFailured'),
                   duration: 5000,
                   type: "error"
                 });
           }
         })
         .catch(function(error) {
-          // _self.$message("新建失败!");
+          // _self.$message(_self.$t('message.newFailured'));
           _self.$message({
                   showClose: true,
-                  message: "新建失败!",
+                  message: _self.$t('message.newFailured'),
                   duration: 5000,
                   type: "error"
                 });
@@ -1442,20 +1442,20 @@ export default {
             _self.$emit('onSaved','update');
           }
           else{
-            //  _self.$message("保存失败!");
+            //  _self.$message(_self.$t('message.saveFailured'));
              _self.$message({
                   showClose: true,
-                  message: "保存失败!",
+                  message: _self.$t('message.saveFailured'),
                   duration: 5000,
                   type: "error"
                 });
           }
         })
         .catch(function(error) {
-          // _self.$message("保存失败!");
+          // _self.$message(_self.$t('message.saveFailured'));
           _self.$message({
                   showClose: true,
-                  message: "保存失败!",
+                  message: _self.$t('message.saveFailured'),
                   duration: 5000,
                   type: "error"
                 });

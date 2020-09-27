@@ -278,7 +278,7 @@
                                     @selectchange="attachmentDocSelect"
                                 ></DataGrid>
                             </el-tab-pane>
-                            <el-tab-pane label="内容项" name="t04" v-if="isShowMeet">
+                            <el-tab-pane :label="$t('application.ContentItems')" name="t04" v-if="isShowMeet">
                                 <!--列表-->
                                 <DataGrid
                                         ref="MeetDoc"
@@ -298,7 +298,7 @@
                                         ></DataGrid>
                                 
                             </el-tab-pane>
-                            <el-tab-pane label="材料变更清单" name="t05" v-if="isShowMaterial">
+                            <el-tab-pane :label="$t('application.MaterialChangeList')" name="t05" v-if="isShowMaterial">
                                 <!--列表-->
                                 <DataGrid
                                     ref="MaterialDoc"
@@ -648,10 +648,10 @@ export default {
                 // _self.refreshData();
                 _self.uploading=false;
                 _self.$refs.attachmentDoc.loadGridData();
-                // _self.$message("导入成功!");
+                // _self.$message(_self.$t('application.Import')+_self.$t('message.success'));
                 _self.$message({
                         showClose: true,
-                        message: "导入成功!",
+                        message: _self.$t('application.Import')+_self.$t('message.success'),
                         duration: 2000,
                         type: 'success'
                     });
@@ -861,10 +861,10 @@ export default {
                 let code = response.data.code;
                 //console.log(JSON.stringify(response));
                 if (code == 1) {
-                // _self.$message("创建成功!");
+                // _self.$message(_self.$t('message.newSuccess'));
                 _self.$message({
                     showClose: true,
-                    message: "创建成功!",
+                    message: _self.$t('message.newSuccess'),
                     duration: 2000,
                     type: "success"
                 });
@@ -882,20 +882,20 @@ export default {
                 }
                 
                 } else {
-                // _self.$message("新建失败!");
+                // _self.$message(_self.$t('message.newFailured'));
                 _self.$message({
                     showClose: true,
-                    message: "新建失败!",
+                    message: _self.$t('message.newFailured'),
                     duration: 2000,
                     type: "warning"
                 });
                 }
             })
             .catch(function(error) {
-                // _self.$message("新建失败!");
+                // _self.$message(_self.$t('message.newFailured'));
                 _self.$message({
                     showClose: true,
-                    message: "新建失败!",
+                    message: _self.$t('message.newFailured'),
                     duration: 5000,
                     type: "error"
                 });
@@ -918,20 +918,20 @@ export default {
                     
                     _self.$emit("onSaved", "update");
                 } else {
-                // _self.$message("保存失败!");
+                // _self.$message(_self.$t('message.saveFailured'));
                 _self.$message({
                     showClose: true,
-                    message: "保存失败!",
+                    message: _self.$t('message.saveFailured'),
                     duration: 5000,
                     type: "error"
                 });
                 }
             })
             .catch(function(error) {
-                // _self.$message("保存失败!");
+                // _self.$message(_self.$t('message.saveFailured'));
                 _self.$message({
                     showClose: true,
-                    message: "保存失败!",
+                    message: _self.$t('message.saveFailured'),
                     duration: 5000,
                     type: "error"
                 });

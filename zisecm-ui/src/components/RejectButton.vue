@@ -1,10 +1,10 @@
 <template>
     <div>
-        <el-dialog title="驳回" :visible.sync="showDialog" width="50%" @close="showDialog=false">
+        <el-dialog :title="$t('application.Rejected')" :visible.sync="showDialog" width="50%" @close="showDialog=false">
             <el-input
               type="textarea"
               :rows="5"
-              placeholder="请输入内容"
+              :placeholder="$t('message.pleaseInput')+$t('application.Rejected')+' '+$t('message.reason')"
               v-model="rejectComment">
             </el-input>
             <div slot="footer" class="dialog-footer">
@@ -13,7 +13,7 @@
                 >{{$t('application.ok')}}</el-button>
             </div>
         </el-dialog>
-        <el-button type="warning" @click="clickShowDialog">驳回</el-button>
+        <el-button type="warning" @click="clickShowDialog">{{$t('application.Rejected')}}</el-button>
 
     </div>
 </template>

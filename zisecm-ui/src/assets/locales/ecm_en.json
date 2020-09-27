@@ -259,6 +259,8 @@
     "IEDOperExcel":"IED Batch Operate",
     "InputFilterKeyWord":"Input Filter Key Word",
     "transmit":"Transmit",
+    "ContentItems":"Content Items",
+    "MaterialChangeList":"Material Change List",
     "dcproper":"Document Properties",
     "relationDC":"Relation DC",
     "DCver":"Doc Version",
@@ -394,7 +396,8 @@
     "delayOpenConfirm":"DelayOpenConfirm",
     "delayCloseConfirm":"DelayCloseConfim",
     "applyReject": "ConfirmRejectApply",
-    "MyApplyReject": "MyRejectApply"
+    "MyApplyReject": "MyRejectApply",
+    "ApplyReject": "Reject Apply"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -449,7 +452,11 @@
     "failureForNew":"Operation Failed!Don't create duplicate items under the same project",
     "noMainFile":"Please select a master file",
     "pleaseSelectDC":"Please select document for operate!",
-    "dataIsnotOnly":"This data already exists"
+    "dataIsnotOnly":"This data already exists",
+    "reason":"Reason",
+    "Contractor":"Contractor",
+    "Batch":"Batch",
+    "template":" Template"
 },
 "field": {
     "indexNumber":"S/N",
