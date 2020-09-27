@@ -79,18 +79,18 @@ export default {
         mainTable: {
           data: [],
           columns: [
-            { prop: "projectName", label: "项目名称", fixed: true, width: 230 },
-            { prop: "toNum", label: "发送方", width: 100 },
-            { prop: "fromNum", label: "接收方", width: 100 },
-            { prop: "shopenICMcount", label: "应打开接口", width: 100 },
-            { prop: "haopenICMcount", label: "已打开接口", width: 100 },
-            { prop: "odopenICMcount", label: "逾期未打开接口", width: 110 },
-            { prop: "shshutdownICMcount", label: "应关闭接口", width: 100 },
-            { prop: "hashutdownICMcount", label: "已关闭接口", width: 100 },
-            { prop: "odshutdownICMcount", label: "逾期未关闭接口", width: 110 },
-            { prop: "shreplyICMcount", label: "应回复接口", width: 100 },
-            { prop: "hareplyICMcount", label: "已回复接口", width: 100 },
-            { prop: "odreplyICMcount", label: "逾期未回复接口", width: 110 },
+            { prop: "projectName", label: this.$t('application.projectName'), fixed: true, width: 230 },
+            { prop: "toNum", label: this.$t('application.toNum'), width: 100 },
+            { prop: "fromNum", label: this.$t('application.fromNum'), width: 100 },
+            { prop: "shopenICMcount", label: this.$t('application.shopenICMcount'), width: 100 },
+            { prop: "haopenICMcount", label: this.$t('application.haopenICMcount'), width: 100 },
+            { prop: "odopenICMcount", label: this.$t('application.odopenICMcount'), width: 110 },
+            { prop: "shshutdownICMcount", label: this.$t('application.shshutdownICMcount'), width: 100 },
+            { prop: "hashutdownICMcount", label: this.$t('application.hashutdownICMcount'), width: 100 },
+            { prop: "odshutdownICMcount", label: this.$t('application.odshutdownICMcount'), width: 110 },
+            { prop: "shreplyICMcount", label: this.$t('application.shreplyICMcount'), width: 100 },
+            { prop: "hareplyICMcount", label: this.$t('application.hareplyICMcount'), width: 100 },
+            { prop: "odreplyICMcount", label: this.$t('application.odreplyICMcount'), width: 110 },
           ],
         },
       },
@@ -103,9 +103,30 @@ export default {
       },
 
       selectedItems: [],
+      language:"",
     };
   },
   created() {},
+
+  watch:{
+    '$store.state.app.language':function(nv,ov){
+      this.tables.mainTable.columns = [
+        { prop: "projectName", label: this.$t('application.projectName'), fixed: true, width: 230 },
+        { prop: "toNum", label: this.$t('application.toNum'), width: 100 },
+        { prop: "fromNum", label: this.$t('application.fromNum'), width: 100 },
+        { prop: "shopenICMcount", label: this.$t('application.shopenICMcount'), width: 100 },
+        { prop: "haopenICMcount", label: this.$t('application.haopenICMcount'), width: 100 },
+        { prop: "odopenICMcount", label: this.$t('application.odopenICMcount'), width: 110 },
+        { prop: "shshutdownICMcount", label: this.$t('application.shshutdownICMcount'), width: 100 },
+        { prop: "hashutdownICMcount", label: this.$t('application.hashutdownICMcount'), width: 100 },
+        { prop: "odshutdownICMcount", label: this.$t('application.odshutdownICMcount'), width: 110 },
+        { prop: "shreplyICMcount", label: this.$t('application.shreplyICMcount'), width: 100 },
+        { prop: "hareplyICMcount", label: this.$t('application.hareplyICMcount'), width: 100 },
+        { prop: "odreplyICMcount", label: this.$t('application.odreplyICMcount'), width: 110 },
+      ]
+    }
+  },
+
   mounted() {
     if (!this.validataPermission()) {
       //跳转至权限提醒页
@@ -114,6 +135,7 @@ export default {
         _self.$router.push({ path: "/NoPermission" });
       });
     }
+     this.language = localStorage.getItem("localeLanguage") || "zh-cn";
   },
 
   methods: {

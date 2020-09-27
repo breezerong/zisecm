@@ -7,20 +7,20 @@
 			 style="margin-top:100px; border-radius: 10px;">
 			 	<el-col >
 					<div style="text-align: right;">
-						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">回复</el-button>
+						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">{{$t('application.Reply')}}</el-button>
 					</div>
 				</el-col>
 				<el-col>
 					<el-row>
-						<div class="item_title">标题：{{item.TITLE}}</div>
+						<div class="item_title">{{$t('application.Title')}}：{{item.TITLE}}</div>
 					</el-row>
 					<el-row>
-						<div class="item_content" style="background: #f7f7fd;">类型：{{item.SUB_TYPE}} &nbsp;  &nbsp; 相关方：{{item.C_TO}} &nbsp;  &nbsp; 回复数：{{awns.length}}</div>
+						<div class="item_content" style="background: #f7f7fd;">{{$t('application.type')}}：{{item.SUB_TYPE}} &nbsp;  &nbsp; {{$t('application.StakeHolder')}}：{{item.C_TO}} &nbsp;  &nbsp; {{$t('application.RepNum')}}：{{awns.length}}</div>
 					</el-row>
 					<el-row style="background: #f7f7fd;">
 						<el-col :span="row.left">
-							<div class="item_content">创建人：{{item.CREATOR}} &nbsp; <i class="el-icon-info"></i></div>
-							<div class="item_content">时间:{{item.CREATION_DATE}}</div>
+							<div class="item_content">{{$t('application.by_creator')}}：{{item.CREATOR}} &nbsp; <i class="el-icon-info"></i></div>
+							<div class="item_content">{{$t('application.by_creator')}}:{{item.CREATION_DATE}}</div>
 						</el-col>
 						<el-col :span="row.center">
 							<div class="div-left item_content">{{item.C_CONTENT}}</div>
@@ -33,8 +33,8 @@
 					v-for="item in awns.slice((currentPage-1)*10,currentPage*10)">
 						<el-col :span="row.left" class="topic_l">
 							<div>
-							<div class="item_content">回复人:{{item.CREATOR}} &nbsp; <i class="el-icon-info"></i></div>
-							<div class="item_content">时间:{{item.CREATION_DATE}}</div>
+							<div class="item_content">{{$t('application.RepPerson')}}:{{item.CREATOR}} &nbsp; <i class="el-icon-info"></i></div>
+							<div class="item_content">{{$t('application.Times')}}:{{item.CREATION_DATE}}</div>
 							</div>
 						</el-col>
 						<el-col :span="row.center">
@@ -51,24 +51,24 @@
 				</el-col>
 				<el-col v-if="reable" style="padding:20px;">
 					<el-row>
-						<el-col :span="row.left" style="text-align:left;padding:20px;1px;1px;1px;">问题回复：</el-col>
+						<el-col :span="row.left" style="text-align:left;padding:20px;1px;1px;1px;">{{$t('application.ReQuestion')}}：</el-col>
 						<el-col :span="24" style="text-align: left;padding:5px;">
 							<el-input
 							type="textarea" rows="10"
-							placeholder="问题描述不能少于5个字符"
+							:placeholder="$t('message.queDismorefive')"
 							v-model="form.content"
 							style="padding:20px;"
 							></el-input>
 						</el-col>
 						<el-col>
-							<el-button @click="saveFormData" size="medium">确定</el-button>
-							<el-button @click="cancel" size="medium">取消</el-button>
+							<el-button @click="saveFormData" size="medium">{{$t('application.ok')}}</el-button>
+							<el-button @click="cancel" size="medium">{{$t('application.cancel')}}</el-button>
 						</el-col>
 					</el-row>
 				</el-col>
 				<el-col>
 					<div style="text-align: right;">
-						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">回复</el-button>
+						<el-button v-if="replay" @click="reAwnClick"  type="primary" size="small">{{$t('application.Reply')}}</el-button>
 					</div>
 				</el-col>
 			</el-row>

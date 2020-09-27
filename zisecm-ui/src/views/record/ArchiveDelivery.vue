@@ -495,7 +495,7 @@ export default {
         // _self.$message('请选择一条文件数据');
          _self.$message({
                 showClose: true,
-                message: _self.$t('message.pleaseSelectOneDoc'),
+                message: _self.$t('message.PleaseSelectOneFile'),
                 duration: 2000,
                 type: "warning"
               });

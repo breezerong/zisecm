@@ -321,7 +321,7 @@ export default {
                 .then(function(response) {
                     _self.$message({
                         showClose: true,
-                        message: "删除成功！",
+                        message: _self.$t('message.deleteSuccess'),
                         duration: 5000,
                         type: 'success'
                     });
@@ -382,7 +382,7 @@ export default {
                 .then(function(response) {
                     _self.$message({
                         showClose: true,
-                        message: "删除成功！",
+                        message: _self.$t('message.deleteSuccess'),
                         duration: 5000,
                         type: 'success'
                     });
@@ -443,7 +443,8 @@ export default {
                 .then(function(response) {
                     _self.$message({
                         showClose: true,
-                        message: "删除成功！",
+                        message: _self.$t('message.deleteSuccess'),
+
                         duration: 5000,
                         type: 'success'
                     });

@@ -202,7 +202,7 @@ export default {
       let url = "/admin/createOrUpdateGridView"
       axios.post(url,JSON.stringify(postData)).then(function(response){
         if(response.data.code==1){
-          _self.$message({showClose: true,message: "保存成功！", duration: 2000,type: "Success"});
+          _self.$message({showClose: true,message:_self.$t('message.saveSuccess'), duration: 2000,type: "Success"});
           _self.clearData()
           _self.$emit("onClose")
         }
@@ -316,7 +316,7 @@ export default {
           let url = "/admin/createOrUpdateGridView"
           axios.post(url,JSON.stringify(m)).then(function(response){
             if(response.data.code==1) {
-              _self.$message({showClose: true,message: "保存成功！",duration: 2000,type: "Success"});
+              _self.$message({showClose: true,message:_self.$t('message.saveSuccess'),duration: 2000,type: "Success"});
               _self.loadCustomName();
             }
           })
@@ -336,7 +336,8 @@ export default {
       let url = "/admin/deleteCustomGridView"
       axios.post(url,JSON.stringify(m)).then(function(response){
         if(response.data.code==1){
-          _self.$message({showClose: true,message: "删除成功！",duration: 2000,type: "Success"});
+          _self.$message({showClose: true,message: _self.$t('message.deleteSuccess'),
+duration: 2000,type: "Success"});
           _self.selectedName=""
           _self.loadCustomName()
         }
