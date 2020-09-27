@@ -49,6 +49,7 @@
             border
             stripe
             size="mini"
+            v-loading="loading"
             :height="layout.height-160"
           >
             <el-table-column type="index" width="30" fixed></el-table-column>
