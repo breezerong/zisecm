@@ -428,8 +428,7 @@
     "ICMClose":"Interface Closed Completion Report",
     "ICMReply":"Interface Replied Completion Report",
     "CNPEComplete":"CNPE ICM Completion Statistics of Each Unit",
-    "ContrICM":"ICM Completion Statistics of Contractors",
-    "ApplyReject": "Reject Apply"
+    "ContrICM":"ICM Completion Statistics of Contractors"
 },
 "message": {
     "saveSuccess":"Save Success",
@@ -494,7 +493,6 @@
     "ElectronicFiles":"Electronic Files",
     "ClearFiles":"Clear all files",
     "pleaseSelectOneDesigndoc":"Please select a design document",
-    "pleaseSelectOneDoc":"Please select a document",
     "GenerateReports":"Generate reports",
     "MissingNumberStatistics":"Missing Number Statistics",
     "PleaseSelectUnlock":"Please select one or more data to unlock!",
