@@ -525,6 +525,17 @@ export default {
             _self.$refs.MeetMaterialImport.ImportClose()
         },
         beforMeetMaterialImport(obj,isSub,relationName,path){
+            if(relationName=='设计文件'||relationName=='会议纪要内容项'||relationName=='材料变更清单'){
+                if(this.parentId==''){
+                    this.$message({
+                    showClose: true,
+                    message:this.$t('message.noMainFile'),
+                    duration: 2000,
+                    type: 'warning'
+                    });
+                    return;
+                }
+            }
             this.gridObj=obj;
             this.MeetMaterialDialogVisible=true;
             this.$nextTick(()=>{
@@ -710,6 +721,17 @@ export default {
             ExcelUtil.export(params)
         },
         beforImport(obj,isSub,relationName,path){
+            if(relationName=='设计文件'||relationName=='会议纪要内容项'||relationName=='材料变更清单'){
+                if(this.parentId==''){
+                    this.$message({
+                    showClose: true,
+                    message:this.$t('message.noMainFile'),
+                    duration: 2000,
+                    type: 'warning'
+                    });
+                    return;
+                }
+            }
             this.gridObj=obj;
             this.batchDialogVisible=true;
             this.$nextTick(()=>{
@@ -1031,7 +1053,7 @@ export default {
             if(_self.$refs.MeetDoc!=undefined){
                 _self.$refs.MeetDoc.itemDataList=[];
             }
-            
+            _self.parentId=''
         },
         // 表格行选择
         selectChange(val) {

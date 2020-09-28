@@ -969,6 +969,7 @@ export default {
             if(_self.$refs.MeetDoc!=undefined){
                 _self.$refs.MeetDoc.itemDataList=[];
             }
+            _self.parentId='';
         },
         // 表格行选择
         selectChange(val) {

@@ -588,6 +588,15 @@ export default {
             ExcelUtil.export(params)
         },
         beforImport(obj,isSub,relationName){
+            if(this.parentId==''){
+                this.$message({
+                showClose: true,
+                message:this.$t('message.noMainFile'),
+                duration: 2000,
+                type: 'warning'
+                });
+                return;
+            }
             this.gridObj=obj;
             this.batchDialogVisible=true;
             this.$nextTick(()=>{
@@ -901,6 +910,7 @@ export default {
             if(_self.$refs.MeetDoc!=undefined){
                 _self.$refs.MeetDoc.itemDataList=[];
             }
+            _self.parentId='';
         },
         // 表格行选择
         selectChange(val) {
