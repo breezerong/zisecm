@@ -189,7 +189,7 @@
                                 <el-col :span="24">
                                 <el-form :inline="true" :model="filters" @submit.native.prevent>
                                     <el-form-item>
-                                        <el-input width="100px" v-model="filtersICM.title" :placeholder="$t('application.PostNumber')+$t('application.or')+$t('application.Title')"  @keyup.enter.native='searchItemICM'></el-input>
+                                        <el-input width="100px" v-model="filtersICM.title" :placeholder="$t('application.codingDesc')"  @keyup.enter.native='searchItemICM'></el-input>
                                     </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" v-on:click="searchItemICM">{{$t('application.SearchData')}}</el-button>
@@ -724,15 +724,19 @@ export default {
             let key=" "+_self.condition;
            
             if(_self.filtersICM.title!=''){
-                key+=" and (C_WBS_CODING like '%"+_self.filtersICM.title+"%' "
-                +"or C_CODE1 like '%"+_self.filtersICM.title+"%' "
-                +"or C_CODE2 like '%"+_self.filtersICM.title+"%' "
-                +"or C_CODE3 like '%"+_self.filtersICM.title+"%' "
-                +"or C_CODE4 like '%"+_self.filtersICM.title+"%' "
-                +"or C_CODE5 like '%"+_self.filtersICM.title+"%' "
-                +"or C_CODE6 like '%"+_self.filtersICM.title+"%' "
-                +"or CODING like '%"+_self.filtersICM.title+"%' "
-                +"or TITLE like '%"+_self.filtersICM.title+"%' "
+                // key+=" and (C_WBS_CODING like '%"+_self.filtersICM.title+"%' "
+                // +"or C_CODE1 like '%"+_self.filtersICM.title+"%' "
+                // +"or C_CODE2 like '%"+_self.filtersICM.title+"%' "
+                // +"or C_CODE3 like '%"+_self.filtersICM.title+"%' "
+                // +"or C_CODE4 like '%"+_self.filtersICM.title+"%' "
+                // +"or C_CODE5 like '%"+_self.filtersICM.title+"%' "
+                // +"or C_CODE6 like '%"+_self.filtersICM.title+"%' "
+                // +"or CODING like '%"+_self.filtersICM.title+"%' "
+                // +"or TITLE like '%"+_self.filtersICM.title+"%' "
+                // +")";
+
+                key+=" and (CODING like '%"+_self.filtersICM.title+"%' "
+                +"or C_COMMENT like '%"+_self.filtersICM.title+"%' "
                 +")";
             }
             if(_self.advCondition!=''){

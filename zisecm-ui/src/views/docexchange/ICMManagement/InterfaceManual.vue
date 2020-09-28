@@ -78,7 +78,7 @@
                     dataValueField="name" dataTextField="name"></DataSelect>
                 </el-form-item>
                 <el-form-item>
-                    <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.pleaseInput')+$t('field.coding')"></el-input>
+                    <el-input style="width:200px" v-model="inputValueNum" :placeholder="$t('message.pleaseInput')+$t('application.codingDesc')"></el-input>
                     <el-button type="primary" @click="search()">{{$t('application.SearchData')}}</el-button>
                 </el-form-item>
                 <el-form-item>
