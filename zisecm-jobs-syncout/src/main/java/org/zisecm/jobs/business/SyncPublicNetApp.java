@@ -31,7 +31,7 @@ public class SyncPublicNetApp {
 			syncPublicNet.exportData("驳回");
 			syncPublicNet.exportData("接收");
 			syncPublicNet.exportData("导出用户");
-			syncPublicNet.exportData("问题回复");
+			syncPublicNet.exportData("回复问题");
 			syncPublicNet.exportData("延误打开反馈");
 			syncPublicNet.exportData("延误打开确认");
 			syncPublicNet.exportData("延误关闭反馈");

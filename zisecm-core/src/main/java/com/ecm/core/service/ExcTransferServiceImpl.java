@@ -143,7 +143,10 @@ public class ExcTransferServiceImpl  implements IExcTransferService {
 					sql += " " + key.toString() + "=" + DBFactory.getDBConn().getDBUtils().getDBNullDate();
 				} else {
 					String date = "";
-					if (args.get(key) instanceof Timestamp) {
+					if (args.get(key) instanceof Long) {
+						date = DBFactory.getDBConn().getDBUtils().getDBDateString(new Date((long)args.get(key)));
+					}
+					else if (args.get(key) instanceof Timestamp) {
 						date = DBFactory.getDBConn().getDBUtils().getDBDateString(((Timestamp) args.get(key)));
 					}else if(args.get(key) instanceof Date) {
 						date = DBFactory.getDBConn().getDBUtils().getDBDateString(((Date) args.get(key)));

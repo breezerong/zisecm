@@ -56,7 +56,7 @@ public class QuestionImportController extends ControllerAbstract {
 		String id = documentService.newObject(getToken(), doc, null);
 		EcmDocument temp = new EcmDocument();
 		temp = documentService.getObjectById(getToken(), id);
-		OptionLogger.logger(getToken(), detailService, temp, "反馈确认", CustomInfo.OwnerCompany);
+		OptionLogger.logger(getToken(), detailService, temp, "新建问题", CustomInfo.OwnerCompany);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);
