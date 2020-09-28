@@ -312,6 +312,7 @@ export default {
           _self.$refs.ShowProperty.myItemId = "";
           _self.dialogName=typeName;
           _self.$refs.ShowProperty.myTypeName =typeName;
+          _self.$refs.ShowProperty.showUploadFile = false;
           _self.typeName=typeName;
           _self.$refs.ShowProperty.parentDocId=selectedRow.ID;
           _self.$refs.ShowProperty.folderPath = '/设计分包/传递单管理/ATOS';

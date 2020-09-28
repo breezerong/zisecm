@@ -71,6 +71,7 @@ public class ZipUtil {
 		List<ZipEntry> ziplist=foreach(src);
 		// 创建zip的输出流，用来输出zip文件的
 		ZipOutputStream out = new ZipOutputStream(zipdSrc);
+		out.setEncoding("GBK");
 		for(ZipEntry zip: ziplist){
 			File file=new File(src.getParent(),folerName+File.separator+zip.getName());
 			out.putNextEntry(zip);
@@ -96,6 +97,7 @@ public class ZipUtil {
 		List<ZipEntry> ziplist=foreach(src);
 		//创建输出流
 		ZipOutputStream out=new ZipOutputStream(zipdSrc);
+		out.setEncoding("GBK");
 		for(ZipEntry zip:ziplist){
 			File file=new File(src.getParent(),zip.getName());
 			out.putNextEntry(zip);
@@ -127,7 +129,7 @@ public class ZipUtil {
 	 */
 	public static void unZip(File src,File out) throws IOException{
 		// 先创建要解压的文件
-		ZipFile zipFile=new ZipFile(src,"GB18030");
+		ZipFile zipFile=new ZipFile(src,"GBK");
 		//通过entries()循环读取来得到文件。  hasMoreElemerts() 用来判断是否有元素
 		for(Enumeration<ZipEntry> entries = zipFile.getEntries(); entries.hasMoreElements();){
 			//可以连续地调用nextElement()方法来得到 Enumeration枚举对象中的元素
