@@ -1023,6 +1023,7 @@ export default {
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                             _self.$refs.ShowProperty.showUploadFile = false;
+                            __self.$refs.ShowProperty.formName=typeName
                         }
                         else{
                             _self.$refs.ShowProperty.showUploadFile = true;
@@ -1198,7 +1199,7 @@ export default {
                 let code = response.data.code;
                 //console.log(JSON.stringify(response));
                 if (code == 1) {
-                
+                    
                     _self.$message({
                         showClose: true,
                         message: _self.$t('message.newSuccess'),//_self.$t('message.newSuccess')
@@ -1215,6 +1216,7 @@ export default {
                     _self.$refs.ShowProperty.myTypeName !="附件"&&
                     _self.$refs.ShowProperty.myTypeName !="会议纪要内容项"&&
                     _self.$refs.ShowProperty.myTypeName !="材料变更清单"){
+                        _self.$refs.mainDataGrid.loadGridData();
                         if(_self.$refs.transferDoc!=undefined){
                             _self.$refs.transferDoc.itemDataList=[];
                         }
