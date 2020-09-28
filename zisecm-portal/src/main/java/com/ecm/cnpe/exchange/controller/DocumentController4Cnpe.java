@@ -200,7 +200,7 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 					
 					excTransfer.setStatus(nextStatus);
 					excTransferService.newObject(excTransfer);
-					OptionLogger.logger(getToken(), detailService,doc, "新建",copyTos[i]);
+					OptionLogger.logger(getToken(), detailService,doc, "分发",copyTos[i]);
 				}
 				
 			}
