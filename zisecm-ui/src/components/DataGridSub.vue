@@ -25,7 +25,7 @@
           :typeName="typeName"
           v-bind:itemId="selectedItemId"
         ></ShowProperty>
-        <RelationViewer v-if="showRelationViewer" ref="RelationViewer" :allowEdit="isEditProperty"></RelationViewer>
+        
         <div slot="footer" class="dialog-footer">
           <slot name="saveButton" :data="propertiesData">
             <el-button v-if="isEditProperty" @click="saveItem()">{{$t('application.save')}}</el-button>
@@ -233,9 +233,8 @@
 import "@/utils/dialog"
 import ShowProperty from "@/components/ShowProperty"
 import EcmCustomColumns from "@/components/ecm-custom-columns"
-import RelationViewer from "@/components/RelationViewer"
 export default {
-  name: "dataGrid",
+  name: "dataGridSub",
   data() {
     
     return {
@@ -275,8 +274,7 @@ export default {
         gridviewName:"",
         isCustom:false
       },
-      showRelationViewer: false,
-      timer: null
+      showRelationViewer: false
     };
   },
   props: {
@@ -336,7 +334,6 @@ export default {
   components: {
     ShowProperty: ShowProperty,
     EcmCustomColumns:EcmCustomColumns,
-    RelationViewer:RelationViewer
   },
   mounted(){
     // this.ready();
@@ -355,22 +352,17 @@ export default {
       this.$emit("onPropertiesSaveSuccess",props)
     },
     getPropertiesData(){
-      let _self = this;
-      clearInterval(_self.timer);
-        _self.timer = setTimeout(()=>{
-        if(_self.$refs.ShowProperty){
-          _self.propertiesData=_self.$refs.ShowProperty.getFormData();
+      this.$nextTick(()=>{
+        if(this.$ref.ShowProperty){
+          this.propertiesData=this.$ref.ShowProperty.getFormData();
         }
       },100);
-    },
-    loadGridData(){
-      this.loadGridData(null);
     },
     // 加载表格数据
     loadGridData(gvname) {
       let _self = this;
       // let tbHeight = _self.tableHeight;
-       _self.loading = true;
+      _self.loading = true;
       var m = new Map();
       m.set("gridName", this.gridviewInfo.gridviewName);
       // m.set('folderId',indata.id);
@@ -789,17 +781,6 @@ export default {
           }
           _self.$refs.ShowProperty.loadFormInfo();
           _self.getPropertiesData();
-          if(indata.C_ITEM_TYPE=='文函' && indata.TYPE_NAME != '会议纪要'  
-            && indata.TYPE_NAME != '图文传真' && indata.TYPE_NAME != '接口信息传递单' && indata.TYPE_NAME != '接口信息答复单'){
-            _self.showRelationViewer = true;
-             setTimeout(() => {
-               if(_self.$refs.RelationViewer){
-                 _self.$refs.RelationViewer.loadData(indata);
-               }
-             },100);
-          }else{
-            _self.showRelationViewer = false;
-          }
         }
       }, 100);
     },

@@ -10,7 +10,7 @@
             </el-dialog>
             <!-- 创建设计文件附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importSubVisible" width="70%">
-                <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                <el-form size="mini" v-loading='uploading'>
                     <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                     <el-upload
                         :limit="100"
@@ -76,7 +76,7 @@
         </el-dialog>
         <!-- 创建附件 -->
         <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
-            <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+            <el-form size="mini"  v-loading='uploading'>
                 <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                 <el-upload
                     :limit="100"

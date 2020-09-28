@@ -453,10 +453,10 @@ export default {
             let _self = this
             //_self.tables.main.condition+="and C_PROJECT_NAME in ("+this.selectiteam+")"+"and C_PROJECT_NAME='@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
             if(_self.selectiteam  && _self.selectiteam.length>0){
-                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME in("+_self.selectiteam+") AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME in("+_self.selectiteam+") AND (CODING LIKE '%"+ _self.inputValueNum+"%' OR C_COMMENT LIKE '%"+ _self.inputValueNum+"%')";
             }else
             {
-                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME = '@project' AND CODING LIKE '%"+ _self.inputValueNum+"%'";
+                _self.$refs.mainDataGrid.condition = _self.userCondition + " TYPE_NAME='ICM' and C_PROJECT_NAME = '@project' AND (CODING LIKE '%"+ _self.inputValueNum+"%' OR C_COMMENT LIKE '%"+ _self.inputValueNum+"%')";
             }
             
             _self.tables.main.condition=_self.$refs.mainDataGrid.condition

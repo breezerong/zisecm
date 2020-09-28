@@ -38,7 +38,7 @@ export default {
             let _self = this;
             clearInterval(_self.timer);
             _self.timer = setTimeout(()=>{
-               _self.$refs.attachmentDoc.loadGridData();
+               _self.$refs.attachmentDoc.loadGridData(null);
             },200);
             
         }
