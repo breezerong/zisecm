@@ -636,15 +636,17 @@ public class SyncFromTcService {
 
 //				List<FileInfo> fileList = getFileTfAttachment(session, itemRevision, "IMAN_specification", iedItemId,
 //						iedRevId);
-				
-				List<FileInfo> fileList = getFileTfAttachment(session, itemRevision, ship.getName(), document.getCoding(),
-						document.getRevision());
-				if (fileList.size() > 0) {
-					fileInfoList.addAll(fileList);
-				}
+				if(itemRevision!=null) {
+					List<FileInfo> fileList = getFileTfAttachment(session, itemRevision, ship.getName(), document.getCoding(),
+							document.getRevision());
+					if (fileList.size() > 0) {
+						fileInfoList.addAll(fileList);
+					}
 
+					data.setList(fileInfoList);
+				}
+				
 				data.setDocument(document);
-				data.setList(fileInfoList);
 				datas.add(data);
 				// modify end
 
