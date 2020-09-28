@@ -564,7 +564,7 @@ export default {
                     mp.set("C_IN_CODING",'C_IN_CODING');
                     mp.set("TITLE",'TITLE');
                     mp.set("REVISION","REVISION")
-
+                
                     _self.$refs.ShowProperty.setMainSubRelation(mp);
                     _self.$refs.ShowProperty.loadFormInfo();
                 }
@@ -983,6 +983,7 @@ export default {
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                             _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=typeName
                         }
                         else{
                             _self.$refs.ShowProperty.showUploadFile = true;

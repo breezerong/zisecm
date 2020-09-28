@@ -73,10 +73,11 @@
             </el-form-item>
           </el-form>
         </template>
-        <template v-slot:main>
+       
           <DataGridSub
             ref="DialogDataGrid"
             v-bind="tables.DialogDataGrid"
+            condition=""
             :tableHeight="360"
             :isshowCustom="false"
             :isShowChangeList="false"
@@ -90,7 +91,6 @@
               >
             </template>
           </DataGridSub>
-        </template>
     </el-dialog>
     <!-- 设计文件附件 -->
     <el-dialog
@@ -487,6 +487,7 @@
   </div>
 </template>
 <script type="text/javascript">
+import DataGrid from "@/components/DataGrid";
 import ShowProperty from "@/components/ShowProperty";
 import DataGridSub from "@/components/DataGridSub";
 import BatchImport from "@/components/controls/ImportDocument";
@@ -982,7 +983,6 @@ export default {
           _self.$refs.ShowPropertyRV.myItemId = "";
           _self.dialogName = typeName;
           _self.$refs.ShowPropertyRV.myTypeName = typeName;
-
           if (typeName == "相关文件") {
             _self.$refs.ShowPropertyRV.showUploadFile = false;
             _self.$refs.ShowPropertyRV.formName = _self.relation.formName;
@@ -991,6 +991,7 @@ export default {
             typeName == "材料变更清单"
           ) {
             _self.$refs.ShowPropertyRV.showUploadFile = false;
+            _self.$refs.ShowPropertyRV.formName = typeName
           } else {
             _self.$refs.ShowPropertyRV.showUploadFile = true;
             _self.$refs.ShowPropertyRV.formName = "";
@@ -1258,6 +1259,7 @@ export default {
     allowEdit: { type: Boolean, default: true },
   },
   components: {
+    DataGrid:DataGrid,
     ShowProperty: ShowProperty,
     DataGridSub: DataGridSub,
     MountFile: MountFile,
