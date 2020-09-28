@@ -1043,19 +1043,6 @@ export default {
       let _pre_end_date = this.preMultiple
         ? getMax(_pre_target.to, this.selfProps.endDate, true) // 取前置点中最晚的结束时间
         : _pre_target.to[this.selfProps.endDate];
-      /* 在数据循环中处理前置
-      let pres = item[this.selfProps.pre];
-      if(!pres) return;
-      let _pre_target = null, _pre_end_date = null;
-      if(this.preMultiple){
-        if(!Array.isArray(pres) || pres.length ===0) return;
-        _pre_target = this.self_data_list.filter(i => pres.includes(i[this.selfProps.id]));
-        _pre_end_date = getMax(_pre_target, this.selfProps.endDate, true);
-      }else{
-        _pre_target = this.self_data_list.find(i => i[this.selfProps.id] === pres);
-        if(!_pre_target) return;
-        _pre_end_date = _pre_target[this.selfProps.endDate]
-      } */
       // 查看是否需要根据前置时间，如果不符合规则，更新后置时间
       let _start_early_prvend = this.timeIsBefore(
         item[this.selfProps.startDate],
