@@ -597,11 +597,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 					syncBatch.setStatus("已同步");
 					batchService.updateObject(syncBatch);
 				}
-				String fileNewName = temp.getParent() + "/FINISH_" + fileName;
+				// 删除完成数据
 				String fileOrgName = temp.getAbsolutePath();
-				temp.renameTo(new File(fileNewName));
-				new File(fileOrgName + ".MD5.txt")
-						.renameTo(new File(temp.getParent() + "/FINISH_" + fileName + ".MD5.txt"));
+				temp.delete();
+				File f =new File(fileOrgName + ".MD5.txt");
+				if(f.exists()) {
+					f.delete();
+				}
+					
 			}
 		}
 		return false;
