@@ -823,6 +823,17 @@ export default {
                     _self.parentId='';
                                      
                 }
+                else{
+                    if(_self.parentId==''){
+                        _self.$message({
+                        showClose: true,
+                        message:_self.$t('message.noMainFile'),
+                        duration: 2000,
+                        type: 'warning'
+                        });
+                        return;
+                    }
+                }
                 if(typeName=='相关文件'){
                     var m = new Map();
                     m.set('parentDocId',_self.parentId);
@@ -943,11 +954,22 @@ export default {
                 _self.$refs.mainDataGrid.condition=key;
             }
             _self.$refs.mainDataGrid.loadGridData();
-            _self.$refs.transferDoc.itemDataList=[];
-            _self.$refs.relevantDoc.itemDataList=[];
-            _self.$refs.attachmentDoc.itemDataList=[];
-            _self.$refs.MeetDoc.itemDataList=[];
-            _self.$refs.MaterialDoc.itemDataList=[];
+            if(_self.$refs.transferDoc!=undefined){
+                _self.$refs.transferDoc.itemDataList=[];
+            }
+            if(_self.$refs.relevantDoc!=undefined){
+                _self.$refs.relevantDoc.itemDataList=[];
+            }
+            if(_self.$refs.attachmentDoc!=undefined){
+                _self.$refs.attachmentDoc.itemDataList=[];
+            }
+            if(_self.$refs.MaterialDoc!=undefined){
+                _self.$refs.MaterialDoc.itemDataList=[];
+            }
+            if(_self.$refs.MeetDoc!=undefined){
+                _self.$refs.MeetDoc.itemDataList=[];
+            }
+            _self.parentId='';
         },
         // 表格行选择
         selectChange(val) {
@@ -1072,11 +1094,21 @@ export default {
                             _self.$refs.ShowProperty.myTypeName !="会议纪要内容项"&&
                             _self.$refs.ShowProperty.myTypeName !="材料变更清单"){
                                 _self.$refs.mainDataGrid.loadGridData();
-                                _self.$refs.transferDoc.itemDataList=[];
-                                _self.$refs.relevantDoc.itemDataList=[];
-                                _self.$refs.attachmentDoc.itemDataList=[];
-                                _self.$refs.MeetDoc.itemDataList=[];
-                                _self.$refs.MaterialDoc.itemDataList=[];
+                                if(_self.$refs.transferDoc!=undefined){
+                                    _self.$refs.transferDoc.itemDataList=[];
+                                }
+                                if(_self.$refs.relevantDoc!=undefined){
+                                    _self.$refs.relevantDoc.itemDataList=[];
+                                }
+                                if(_self.$refs.attachmentDoc!=undefined){
+                                    _self.$refs.attachmentDoc.itemDataList=[];
+                                }
+                                if(_self.$refs.MaterialDoc!=undefined){
+                                    _self.$refs.MaterialDoc.itemDataList=[];
+                                }
+                                if(_self.$refs.MeetDoc!=undefined){
+                                    _self.$refs.MeetDoc.itemDataList=[];
+                                }
                             }
                             else{
                                 if(_self.$refs.transferDoc!=undefined){
