@@ -894,6 +894,17 @@ export default {
                     _self.parentId='';
                                      
                 }
+                else{
+                    if(_self.parentId==''){
+                        _self.$message({
+                        showClose: true,
+                        message:_self.$t('message.noMainFile'),
+                        duration: 2000,
+                        type: 'warning'
+                        });
+                        return;
+                    }
+                }
                 if(typeName=='相关文件'){
                     var m = new Map();
                     m.set('parentDocId',_self.parentId);
