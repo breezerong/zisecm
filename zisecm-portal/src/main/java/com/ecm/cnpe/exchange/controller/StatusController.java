@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -138,6 +139,14 @@ public class StatusController extends ControllerAbstract{
 				if("驳回".equals(currentStatus)) {
 					OptionLogger.logger(getToken(), detailService, doc, "驳回提交", 
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+				}else if(!"IED".equals(doc.getTypeName())) {
+					if("新建".equals(currentStatus)||StringUtils.isEmpty(currentStatus)) {
+						OptionLogger.logger(getToken(), detailService, doc, "提交", 
+								doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+					}else if("已确认".equals(nextStatus)) {
+						OptionLogger.logger(getToken(), detailService, doc, "接收", 
+								doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
+					}
 				}
 			}
 			mp.put("code", ActionContext.SUCESS);
