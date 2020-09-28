@@ -1,7 +1,12 @@
-package com.ecm.core.entity;
+package org.zisecm.jobs.entity;
 
 import java.util.List;
 import java.util.Map;
+
+import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmRelation;
+import com.ecm.core.entity.EcmUser;
+import com.ecm.core.entity.ExcSynBatch;
 
 public class SyncBean{
 	private String beanType;

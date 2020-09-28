@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.zisecm.jobs.entity.SyncBean;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -57,7 +58,6 @@ import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.ExcSynBatch;
 import com.ecm.core.entity.ExcSynDetail;
-import com.ecm.core.entity.SyncBean;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
@@ -151,15 +151,17 @@ public class SyncPublicNet implements ISyncPublicNet {
 				excSynDetailObjList = exportDataInner(actionName, token, resultObjList);
 			}
 			if (resultObjList.size() > 0) {
-				writeJsonFile(resultObjList, folderName + ".json");
-				updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName);
-				String abusoluteFolderPath = getSyncPathPublic() + "/";
-				String folderFullPath = abusoluteFolderPath + folderName;
-				String zipFilePath = folderFullPath + ".zip";
-				ZipUtil.zip(folderFullPath + "/", zipFilePath);
-				writeMD5Info(zipFilePath);
-				FileUtils.deleteDirectory(new File(folderFullPath));
-				updateExcSynBatchStatus(resultObjList, "已导出");
+				if(!(resultObjList.size()==1 && resultObjList.get(0).getBeanType().equals("create_计划同步") && resultObjList.get(0).getDocuments().size()==0)){
+					writeJsonFile(resultObjList, folderName + ".json");
+					updateExcSynDetailStatus(excSynDetailObjList, "已导出", folderName);
+					String abusoluteFolderPath = getSyncPathPublic() + "/";
+					String folderFullPath = abusoluteFolderPath + folderName;
+					String zipFilePath = folderFullPath + ".zip";
+					ZipUtil.zip(folderFullPath + "/", zipFilePath);
+					writeMD5Info(zipFilePath);
+					FileUtils.deleteDirectory(new File(folderFullPath));
+					updateExcSynBatchStatus(resultObjList, "已导出");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -334,16 +336,16 @@ public class SyncPublicNet implements ISyncPublicNet {
 			updateRelation = false;
 		} else if ("分发".equals(type)) {
 			transfers = excTransferMapper.executeSQL(
-					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS FROM exc_transfer where ID in('"
+					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS FROM exc_transfer where DOC_ID in('"
 							+ docId + "') ");
-			for (int i = 0; i < transfers.size(); i++) {
-				Object transferDocId = transfers.get(i).get("DOC_ID");
-				if (null != transferDocId) {
-					sb.append(",'");
-					sb.append(transferDocId.toString());
-					sb.append("'");
-				}
-			}
+//			for (int i = 0; i < transfers.size(); i++) {
+//				Object transferDocId = transfers.get(i).get("DOC_ID");
+//				if (null != transferDocId) {
+//					sb.append(",'");
+//					sb.append(transferDocId.toString());
+//					sb.append("'");
+//				}
+//			}
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_分发";
 		} else if ("CNPE驳回".equals(type)) {
@@ -385,14 +387,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 			updateRelation = false;
 		} else if ("驳回".equals(type)) {
 			String col = "ID,STATUS,C_REJECTOR,C_REJECT_DATE,C_REJECT_COMMENT";
-			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
+			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(transfers, col);
 			beanType = "update_驳回";
 			updateConent = false;
 			updateRelation = false;
 		} else if ("接收".equals(type)) {
 			String col = "ID,STATUS,C_RECEIVER,C_RECEIVE_DATE";
-			transfers = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
+			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(transfers, col);
 			beanType = "update_接收";
 			updateConent = false;
@@ -400,9 +402,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 		} else if ("新建问题".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_新建问题";
-		} else if ("问题回复".equals(type)) {
+		} else if ("回复问题".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
-			beanType = "create_问题回复";
+			beanType = "create_回复问题";
 		} else if ("申请驳回".equals(type) || "确认驳回".equals(type)) {
 			transfers = excTransferMapper.executeSQL(
 					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS,STATUS1,COMMENT1"
@@ -509,6 +511,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 			InputStream in = getContentStream(en);
 			String fileName = generateFileNamePrefix(en);
 			en.setFilePath(fileName);
+			//String s = new String((folderPath + fileName).getBytes("ISO-8859-1"),"GBK");
 			FileUtils.copyInputStreamToFile(in, new File(folderPath + fileName));
 			in.close();
 		}
@@ -731,7 +734,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 					} else {
 						documentService.updateObject(token, documents.get(i));
 					}
-					if (beanType.equals("create_问题回复")) {
+					if (beanType.equals("create_回复问题")) {
 						EcmDocument edObj = documentService.getObjectById(token,
 								documents.get(i).get("C_FROM_CODING").toString());
 						edObj.addAttribute("C_ITEM_STATUS", "已回复");
@@ -803,7 +806,11 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 			for (int i = 0; transfers != null && i < transfers.size(); i++) {
 				if (beanType.startsWith("create")) {
-					transferService.newObject(transfers.get(i));
+					try {
+						transferService.newObject(transfers.get(i));
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
 				} else if (beanType.startsWith("update")) {
 					transferService.updateObject(transfers.get(i));
 				}
@@ -812,15 +819,23 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 			for (int i = 0; relations != null && i < relations.size(); i++) {
 				if (beanType.startsWith("create")) {
-					relationService.newObject(token, relations.get(i));
+					try {
+						relationService.newObject(token, relations.get(i));
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}	
 				}
 			}
 			for (int i = 0; contents != null && i < contents.size(); i++) {
 				// TODOApplication.getNeedTOChange("正式环境需取消注释");
 				BufferedInputStream fis = new BufferedInputStream(
 						new FileInputStream(zipFolder + "/" + contents.get(i).getFilePath()));
-				contents.get(i).setInputStream(fis);
-				contentService.newObject(token, contents.get(i));
+				try {
+					contents.get(i).setInputStream(fis);
+					contentService.newObject(token, contents.get(i));
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}	
 				fis.close();
 			}
 
