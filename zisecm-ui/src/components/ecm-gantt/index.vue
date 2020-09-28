@@ -58,27 +58,7 @@
           :show-overflow-tooltip="name_show_tooltip"
         >
           <template slot-scope="scope">
-            <el-input
-              v-if="self_cell_edit === '_n_m_' + scope.$index"
-              v-model="scope.row[selfProps.name]"
-              @change="nameChange(scope.row)"
-              @blur="nameBlur()"
-              size="medium"
-              class="u-full"
-              ref="wl-name"
-              placeholder="请输入名称"
-            ></el-input>
-            <strong v-else class="h-full">
-              <span @click="cellEdit( '_n_m_' + scope.$index, 'wl-name')">
-                {{
-                nameFormatter
-                ?
-                nameFormatter(scope.row, scope.column, scope.treeNode,scope.$index)
-                :
-                scope.row[selfProps.name]
-                }}
-              </span>
-            </strong>
+            <strong class="h-full">{{ scope.row[selfProps.name] }}</strong>
           </template>
         </el-table-column>
         <el-table-column
@@ -90,23 +70,7 @@
           :label="$t('application.startDate')"
         >
           <template slot-scope="scope">
-            <el-date-picker
-              v-if="self_cell_edit === '_s_d_' + scope.$index"
-              v-model="scope.row[selfProps.startDate]"
-              @change="startDateChange(scope.row)"
-              @blur="self_cell_edit = null"
-              type="date"
-              size="medium"
-              class="u-full"
-              :clearable="false"
-              ref="wl-start-date"
-              value-format="yyyy-MM-dd"
-              placeholder="请选择开始日期"
-            ></el-date-picker>
-            <div
-              v-else
-              class="h-full"
-              @click="cellEdit( '_s_d_' + scope.$index, 'wl-start-date')"
+            <div class="h-full"
             >{{timeFormat(scope.row[selfProps.startDate])}}</div>
           </template>
         </el-table-column>
@@ -119,23 +83,7 @@
           :label="$t('application.endDate')"
         >
           <template slot-scope="scope">
-            <el-date-picker
-              v-if="self_cell_edit === '_e_d_' + scope.$index"
-              v-model="scope.row[selfProps.endDate]"
-              @change="endDateChange(scope.row)"
-              @blur="self_cell_edit = null"
-              type="date"
-              size="medium"
-              class="u-full"
-              :clearable="false"
-              ref="wl-end-date"
-              value-format="yyyy-MM-dd"
-              placeholder="请选择结束日期"
-            ></el-date-picker>
-            <div
-              v-else
-              class="h-full"
-              @click="cellEdit('_e_d_' + scope.$index, 'wl-end-date')"
+             <div class="h-full"
             >{{timeFormat(scope.row[selfProps.endDate])}}</div>
           </template>
         </el-table-column>
@@ -148,28 +96,8 @@
           :prop="selfProps.endDate"
         >
           <template slot-scope="scope">
-            <!-- @blur="self_cell_edit = null" @blur="preEditBlur" -->
-            <el-select
-              v-if="self_cell_edit === '_p_t_' + scope.$index"
-              @change="preChange"
-              v-model="scope.row[selfProps.pre]"
-              collapse-tags
-              :multiple="preMultiple"
-              ref="wl-pre-select"
-              placeholder="请选择前置任务"
-            >
-              <el-option
-                v-for="item in pre_options"
-                :key="item[selfProps.id]"
-                :label="item[selfProps.name]"
-                :value="item[selfProps.id]"
-              ></el-option>
-            </el-select>
-            <div
-              v-else
-              class="h-full"
-              @click="preCellEdit(scope.row, '_p_t_' + scope.$index, 'wl-pre-select')"
-            >{{preFormat(scope.row)}}</div>
+            <div class="h-full"
+              >{{preFormat(scope.row)}}</div>
           </template>
         </el-table-column>
         <slot></slot>
@@ -254,9 +182,7 @@ const uuidv4 = require("uuid/v4"); // 导入uuid生成插件
 import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(isBetween);
 import {
-  deepClone,
   flattenDeep,
-  getMin,
   getMax,
   flattenDeepParents,
   regDeepParents
@@ -602,7 +528,7 @@ export default {
     /**
      * 前置任务编辑
      */
-    preCellEdit(row, key, ref) {
+    /* preCellEdit(row, key, ref) {
       if (!this.edit) return;
       this.pre_options = [];
       this.self_data_list.forEach(i => {
@@ -614,7 +540,7 @@ export default {
       this.deepFindToSelf(row);
       // 调用单元格编辑
       this.cellEdit(key, ref);
-    },
+    }, */
     /**
      * 找出to为当前元素的form，并将form作为to继续查找
      * item: Object 当前元素
@@ -638,32 +564,6 @@ export default {
           this.deepFindToSelf(i.form);
         }
       });
-    },
-    /**
-     * 单元格编辑
-     * key: string 需要操作的单元格key
-     * ref：object 需要获取焦点的dom
-     */
-    cellEdit(key, ref) {
-      if (!this.edit) return;
-      if (ref === "wl-name") {
-        this.name_show_tooltip = false;
-      }
-      this.self_cell_edit = key;
-      this.$nextTick(() => {
-        this.$refs[ref].focus();
-      });
-    },
-    // 名称编辑事件
-    nameChange(row) {
-      this.self_cell_edit = null;
-      this.name_show_tooltip = true;
-      this.emitNameChange(row);
-    },
-    // 名称列编辑输入框blur事件
-    nameBlur() {
-      this.self_cell_edit = null;
-      this.name_show_tooltip = true;
     },
     // 以下是表格-日期-gantt生成函数----------------------------------------生成gantt表格-------------------------------------
     /**
@@ -1027,18 +927,6 @@ export default {
       return dayjs(date).day();
     },
     // 以下为输出数据函数 --------------------------------------------------------------输出数据------------------------------------
-    // 删除任务
-    /* emitTaskRemove(item) {
-      this.$emit("taskRemove", item);
-    }, */
-    // 添加任务
-   /* emitTaskAdd(item) {
-      this.$emit("taskAdd", item);
-    }, */
-    // 任务名称更改
-    emitNameChange(item) {
-      this.$emit("nameChange", item);
-    },
     // 任务时间更改
     emitTimeChange(item) {
       this.$emit("timeChange", item);

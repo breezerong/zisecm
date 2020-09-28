@@ -113,6 +113,48 @@
                                                     @selectchange="attachmentDocSelect"
                                                     ></DataGrid>
                                             </el-tab-pane>
+                                            <el-tab-pane :label="$t('application.ContentItems')" name="t04" v-if="isShowMeet">
+                                                <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
+                                                <!--列表-->
+                                                <DataGrid
+                                                    ref="MeetDoc"
+                                                    key="MeetDocKey"
+                                                    dataUrl="/dc/getDocuByRelationParentId"
+                                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                                    gridViewName="MOMContentGrid"
+                                                    condition=" and a.NAME='会议纪要内容项'"
+                                                    :optionWidth = "1"
+                                                    :isShowMoreOption="false"
+                                                    :isshowCustom="false"
+                                                    :isEditProperty="true"
+                                                    :isShowChangeList="false"
+                                                    :isshowicon="false"
+                                                    @selectchange="MeetDocSelect"
+                                                ></DataGrid>
+                                            
+                                            </el-tab-pane>
+                                            <el-tab-pane :label="$t('application.MaterialChangeList')" name="t05" v-if="isShowMaterial">
+                                                <el-button type="primary" @click="packDownloadSubFile(selectedTransferDocItems)">{{$t('application.PackToDownload')}}</el-button>
+                                                <!--列表-->
+                                                <DataGrid
+                                                    ref="MaterialDoc"
+                                                    key="MaterialDocKey"
+                                                    dataUrl="/dc/getDocuByRelationParentId"
+                                                    v-bind:tableHeight="(layout.height-startHeight)*(100-topPercent)/100-bottomHeight"
+                                                    v-bind:isshowOption="true" v-bind:isshowSelection ="true"
+                                                    gridViewName="MaterialChangeGrid"
+                                                    condition=" and a.NAME='材料变更清单'"
+                                                    :optionWidth = "1"
+                                                    :isShowMoreOption="false"
+                                                    :isshowCustom="false"
+                                                    :isEditProperty="true"
+                                                    :isShowChangeList="false"
+                                                    :isshowicon="false"
+                                                    @selectchange="MaterialDocSelect"
+                                                ></DataGrid>
+                                            
+                                            </el-tab-pane>
                                         </el-tabs>
                                     </template>
                                 </split-pane>
@@ -369,6 +411,8 @@ export default {
             isShowDesgin:true,
             isShowRelevant:true,
             isShowAttachmentDoc:true,
+            isShowMeet:true,
+            isShowMaterial:true,
             parentId:"",
             selectedTabName:'t01',
             advCondition:"",
@@ -409,6 +453,9 @@ export default {
                selectedItems: [],
                selectedItemId: "",
             },
+            
+            MeetDocSelected:[],
+            MaterialDocSelected:[],
         }
     },
     created(){
@@ -456,6 +503,12 @@ export default {
         },
         attachmentDocSelect(val){
             this.selectedAttachment=val;
+        },
+        MeetDocSelect(val){
+            this.MeetDocSelected=val;
+        },
+        MaterialDocSelect(val){
+            this.MaterialDocSelected=val;
         },
         getTreeData(){
             let _self=this;
@@ -524,6 +577,11 @@ export default {
                 return;
             }
             if(node.data.name=='文函'){
+                this.isShowDesgin=true;
+                this.isShowRelevant=true;
+                this.isShowAttachmentDoc=true;
+                this.isShowMeet=true;
+                this.isShowMaterial=true
                 this.isDC=true;
                 this.isDesign=false;
                 this.isIED=false;
@@ -543,7 +601,11 @@ export default {
                     +"and C_PROJECT_NAME = '"+this.projectName+"' ";
                     this.$refs.mainDataGrid.loadGridData();
                 }
-
+                _self.$refs.transferDoc.itemDataList=[];
+                _self.$refs.relevantDoc.itemDataList=[];
+                _self.$refs.attachmentDoc.itemDataList=[];
+                _self.$refs.MeetDoc.itemDataList=[];
+                _self.$refs.MaterialDoc.itemDataList=[];
             }
             if(node.parent.data.name=="文函"){//文函查询
                 this.isDC=true;
@@ -569,6 +631,42 @@ export default {
                 
                 
                 let _self=this;
+               
+                if(_self.typeName=='文件传递单'){
+                    _self.isShowDesgin=true;
+                    _self.isShowRelevant=false;
+                    _self.isShowAttachmentDoc=false;
+                    _self.selectedTabName='t01';
+                    _self.isShowMeet=false;
+                    _self.isShowMaterial=false
+                }
+                if(("FU申请、FU通知单、作废通知单、CR澄清要求申请单、CR澄清要求答复单、CR澄清要求关闭单、FCR现场变更申请单、FCR现场变更答复单、FCR现场变更关闭单、NCR不符合项报告单、NCR不符合项报告答复单、NCR不符合项报告关闭单、"+
+                "DCR设计变更申请单、DCR设计变更答复单、DCR设计变更关闭单、TCR试验澄清申请单、TCR试验澄清答复单、"+
+                "TCR试验澄清关闭单、DEN设计变更通知单、DEN设计变更通知关闭单、设计审查意见、设计审查意见答复").indexOf(_self.typeName)!=-1){
+                    _self.selectedTabName='t02';
+                    _self.isShowDesgin=false;
+                    _self.isShowRelevant=true;
+                    _self.isShowAttachmentDoc=false;
+                    _self.isShowMeet=false;
+                    if(_self.typeName=='DEN设计变更通知单' || _self.typeName=='FCR现场变更申请单'){
+                        _self.isShowMaterial=true
+                    }else{
+                        _self.isShowMaterial=false
+                    }
+                }
+                if("图文传真,会议纪要,接口信息意见单,接口信息传递单".indexOf(_self.typeName)!=-1){
+                    _self.isShowDesgin=false;
+                    _self.isShowRelevant=false;
+                _self.isShowAttachmentDoc=true;
+                _self.selectedTabName='t03';
+                _self.isShowMaterial=false
+                if(_self.typeName=='会议纪要'){
+                        _self.isShowMeet=true;
+                    }else{
+                        
+                        _self.isShowMeet=false;
+                    }
+                }
                 if(_self.$refs.transferDoc){
                     _self.$refs.transferDoc.itemDataList=[];
                 }
@@ -577,6 +675,12 @@ export default {
                 }
                 if(_self.$refs.attachmentDoc){
                     _self.$refs.attachmentDoc.itemDataList=[];
+                }
+                if(_self.$refs.MeetDoc){
+                    _self.$refs.MeetDoc.itemDataList=[];
+                }
+                if(_self.$refs.MaterialDoc){
+                    _self.$refs.MaterialDoc.itemDataList=[];
                 }
             }else{
                 this.projectName=node.parent.data.name
@@ -699,6 +803,8 @@ export default {
                 _self.$refs.projDesignDoc.condition=key;
             }
             _self.$refs.projDesignDoc.loadGridData();
+            _self.$refs.projRelevantDoc.itemDataList=[];
+            
         },
         searchItemPlan(){
             let _self=this;
@@ -717,6 +823,8 @@ export default {
                 _self.$refs.PlanDataGrid.condition=key;
             }
             _self.$refs.PlanDataGrid.loadGridData();
+            _self.$refs.IEDGrid.itemDataList=[];
+            
         },
 
         searchItemICM(){
@@ -747,6 +855,8 @@ export default {
                 _self.$refs.ICMDataGrid.condition=key;
             }
             _self.$refs.ICMDataGrid.loadGridData();
+            _self.$refs.ICMComments.itemDataList=[];
+            _self.$refs.ICMTransfer.itemDataList=[];
         },
         searchItemIED(){
             let _self=this;
@@ -792,6 +902,21 @@ export default {
                 _self.$refs.mainDataGrid.condition=key;
             }
             _self.$refs.mainDataGrid.loadGridData();
+            if(_self.$refs.transferDoc!=undefined){
+                _self.$refs.transferDoc.itemDataList=[];
+            }
+            if(_self.$refs.relevantDoc!=undefined){
+                _self.$refs.relevantDoc.itemDataList=[];
+            }
+            if(_self.$refs.attachmentDoc!=undefined){
+                _self.$refs.attachmentDoc.itemDataList=[];
+            }
+            if(_self.$refs.MaterialDoc!=undefined){
+                _self.$refs.MaterialDoc.itemDataList=[];
+            }
+            if(_self.$refs.MeetDoc!=undefined){
+                _self.$refs.MeetDoc.itemDataList=[];
+            }
         },
         rowClickPlan(row){
              let _self=this;
@@ -827,6 +952,8 @@ export default {
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=false;
                _self.selectedTabName='t01';
+               _self.isShowMeet=false;
+               _self.isShowMaterial=false
                _self.$nextTick(()=>{
                    _self.$refs.transferDoc.parentId=row.ID;
                     _self.$refs.transferDoc.loadGridData();
@@ -840,9 +967,19 @@ export default {
                 _self.isShowDesgin=false;
                 _self.isShowRelevant=true;
                 _self.isShowAttachmentDoc=false;
-                
+                _self.isShowMeet=false;
+                if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
+                    _self.isShowMaterial=true
+                }else{
+                    _self.isShowMaterial=false
+                }
                 _self.$nextTick(()=>{
                     _self.$refs.relevantDoc.parentId=row.ID;
+                    if(row.TYPE_NAME=='DEN设计变更通知单' || row.TYPE_NAME=='FCR现场变更申请单'){
+                        _self.$refs.MaterialDoc.parentId=row.ID;
+                        _self.$refs.MaterialDoc.loadGridInfo();
+                        _self.$refs.MaterialDoc.loadGridData();
+                    }
                     _self.getRelatinItemByTypeName(row.TYPE_NAME,_self.$refs.relevantDoc,function(val){
                     _self.relation=val;
                     // _self.$refs.relevantDoc.loadGridInfo();
@@ -856,11 +993,24 @@ export default {
                 _self.isShowRelevant=false;
                _self.isShowAttachmentDoc=true;
                _self.selectedTabName='t03';
-               _self.$nextTick(()=>{
-               _self.$refs.attachmentDoc.parentId=row.ID;
-                 _self.$refs.attachmentDoc.loadGridData();
-               });
+               _self.isShowMaterial=false
+               if(row.TYPE_NAME=='会议纪要'){
+                    _self.isShowMeet=true;
+                    _self.$nextTick(()=>{
+                    _self.$refs.MeetDoc.parentId=row.ID;
+                    _self.$refs.MeetDoc.loadGridInfo();
+                    _self.$refs.MeetDoc.loadGridData();
+                    });
+                }else{
+                    
+                    _self.isShowMeet=false;
+                }
+               
             }
+            _self.$nextTick(()=>{
+                    _self.$refs.attachmentDoc.parentId=row.ID;
+                    _self.$refs.attachmentDoc.loadGridData();
+               });
             
         },
     },
