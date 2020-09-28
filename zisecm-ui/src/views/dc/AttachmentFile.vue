@@ -1,6 +1,6 @@
 <template>
     <div>
-        <DataGrid
+        <DataGridSub
                 ref="attachmentDoc"
                 key="attachmentDocKey"
                 dataUrl="/dc/getDocuByRelationParentId"
@@ -17,11 +17,11 @@
                     <template v-if="allowEdit" slot="dropdownItem" slot-scope="scope">
                         <el-dropdown-item icon="el-icon-delete" @click.native="onDeleleItem([scope.data.row],[$refs.attachmentDoc])">删除</el-dropdown-item>
                     </template>
-                </DataGrid>
+                </DataGridSub>
     </div>
 </template>
 <script>
-import DataGrid from "@/components/DataGrid";
+import DataGridSub from "@/components/DataGridSub";
 export default {
     data(){
         return {
@@ -44,7 +44,7 @@ export default {
         }
     },
     components:{
-        DataGrid:DataGrid
+        DataGridSub:DataGridSub
     },
     props:{
         docId:{type:String,default:''},
