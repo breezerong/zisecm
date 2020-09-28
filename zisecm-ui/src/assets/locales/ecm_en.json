@@ -349,7 +349,8 @@
     "chooseColumn":"Select the field to display",
     "customColumn":"Custom Columns",
     "codingDesc":"Coding or Description",
-    "perComplete":"Percentage Completion"
+    "perComplete":"Percentage Completion",
+    "createByIED":"Create By IED"
 },
 "skin": {
     "Blue": "Blue",

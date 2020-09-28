@@ -334,7 +334,8 @@
     "chooseColumn":"选择要显示的字段",
     "customColumn":"自定义列表",
     "codingDesc":"编码或描述",
-    "perComplete":"完成百分比"
+    "perComplete":"完成百分比",
+    "createByIED":"通过IED新建"
 },
 "skin": {
     "Blue": "天空蓝",

@@ -138,12 +138,7 @@ public class StatusController extends ControllerAbstract{
 				if("驳回".equals(currentStatus)) {
 					OptionLogger.logger(getToken(), detailService, doc, "驳回提交", 
 							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
-				}else {
-					OptionLogger.logger(getToken(), detailService, doc, 
-							doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 				}
-				
-				
 			}
 			mp.put("code", ActionContext.SUCESS);
 			
