@@ -64,7 +64,7 @@
     <DataGrid ref="mainDataGrid" dataUrl="/dc/getDocuments"
                     gridViewName="ICM延误回复反馈"
                     isshowOption
-                    :optionWidth = "2.5"
+                    :optionWidth = "2.8"
                     v-bind="tables.main"
                     @rowclick="rowClick" 
                      @selectchange="selectChange"

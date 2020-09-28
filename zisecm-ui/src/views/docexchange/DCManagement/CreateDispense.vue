@@ -10,7 +10,7 @@
             </el-dialog>
             <!-- 创建设计文件附件 -->
             <el-dialog :title="$t('application.Import')" :visible.sync="importSubVisible" width="70%">
-                <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+                <el-form size="mini" v-loading='uploading'>
                     <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                     <el-upload
                         :limit="100"
@@ -50,7 +50,7 @@
                 </DataLayout>
             </el-dialog>
             <!-- 设计文件附件 -->
-            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+            <el-dialog :title="$t('application.Attachment')" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
                 <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
             </el-dialog>
             <!-- 创建分发 -->
@@ -76,7 +76,7 @@
         </el-dialog>
         <!-- 创建附件 -->
         <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
-            <el-form size="mini" :label-width="formLabelWidth" v-loading='uploading'>
+            <el-form size="mini"  v-loading='uploading'>
                 <div style="height:200px;overflow-y:scroll; overflow-x:scroll;">
                 <el-upload
                     :limit="100"

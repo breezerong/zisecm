@@ -348,6 +348,7 @@
     "editColumn":"Edit Column",
     "chooseColumn":"Select the field to display",
     "customColumn":"Custom Columns",
+    "codingDesc":"Coding or Description",
     "perComplete":"Percentage Completion"
 },
 "skin": {

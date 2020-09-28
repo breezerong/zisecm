@@ -109,10 +109,10 @@
       <template v-if="dialog.title==$t('application.relevantDoc')">
         <RelevantDoc :docId="docId"></RelevantDoc>
       </template>
-      <template v-if="dialog.title==$t('application.replyDoc')">
-        <AttachmentFile :docId="docId"></AttachmentFile>
-      </template>
       <template v-if="dialog.title==$t('application.Attachment')">
+        <AttachmentFile :docId="docId" :allowEdit="false"></AttachmentFile>
+      </template>
+      <template v-if="dialog.title==$t('application.replyDoc')">
         <!-- <AttachmentFile :docId="docId"></AttachmentFile> -->
         <RevertFile :docId="docId"></RevertFile>
       </template>
@@ -124,7 +124,9 @@
       </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialog.visible = false">{{$t('application.cancel')}}</el-button>
+        <!--
         <el-button type="primary" @click="dialogSubmit()">{{$t('application.ok')}}</el-button>
+        -->
       </span>
     </el-dialog>
   </el-container>

@@ -47,9 +47,15 @@ export default {
   padding:1px 0 !important;
   background-color: #eef1f6 !important;
 }
-/* .el-tree-node.is-current{
-  color: #ffffff !important;
-} */
+.el-dialog__body {
+    padding: 5px 20px !important;
+}
+.el-dialog__header {
+    padding: 10px 10px !important;
+}
+.el-dialog__footer {
+    padding: 10px 10px !important;
+} 
 .el-tree-node:focus > .el-tree-node__content {
     background-color: #92c6fd;
     font-weight:bold;

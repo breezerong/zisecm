@@ -16,8 +16,8 @@
         <template v-slot:header>
             <!-- 我提交的文函 -->
             <!-- 设计文件附件 -->
-            <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
-                <AttachmentFile ref="subAttachment" :docId="docId"></AttachmentFile>
+            <el-dialog :title="$t('application.Attachment')" :visible.sync="dialog.visible" width="50%" :before-close="handleClose">      
+                <AttachmentFile ref="subAttachment" :docId="docId" :allowEdit="false"></AttachmentFile>
             </el-dialog>
         <!-- 批量导入 -->
         <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="batchDialogVisible" width="80%" >
