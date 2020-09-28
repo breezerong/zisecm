@@ -30,7 +30,7 @@ public class OptionLogger {
 		
 		detail.setFromId(doc.getId());
 		detail.setCreationDate(new Date());
-		detail.setStatus(doc.getStatus());
+		detail.setStatus("新建");
 		if(StringUtils.isEmpty(companyName)) {
 			detail.setToCompany(doc.getAttributeValue("C_COMPANY")!=null?doc.getAttributeValue("C_COMPANY").toString():"");
 		}else {
@@ -68,7 +68,7 @@ public class OptionLogger {
 
 		detail.setFromId(doc.getId());
 		detail.setCreationDate(new Date());
-		detail.setStatus(doc.getStatus());
+		detail.setStatus("新建");
 		if (StringUtils.isEmpty(companyName)) {
 			detail.setToCompany(
 					doc.getAttributeValue("C_COMPANY") != null ? doc.getAttributeValue("C_COMPANY").toString() : "");
@@ -178,7 +178,7 @@ public class OptionLogger {
 		detail.setActionName(StatusEntity.actions.get(doc.getStatus()));
 		detail.setFromId(doc.getId());
 		detail.setCreationDate(new Date());
-		detail.setStatus(doc.getStatus());
+		detail.setStatus("新建");
 		if (StringUtils.isEmpty(companyName)) {
 			detail.setToCompany(
 					doc.getAttributeValue("C_COMPANY") != null ? doc.getAttributeValue("C_COMPANY").toString() : "");

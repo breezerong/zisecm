@@ -336,16 +336,16 @@ public class SyncPublicNet implements ISyncPublicNet {
 			updateRelation = false;
 		} else if ("分发".equals(type)) {
 			transfers = excTransferMapper.executeSQL(
-					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS FROM exc_transfer where ID in('"
+					"SELECT ID, ITEM_TYPE, DOC_ID, FROM_NAME, TO_NAME, CREATION_DATE, CREATOR, REJECTER, REJECT_DATE, SENDER, SEND_DATE, RECEIVER, RECEIVE_DATE, STATUS, COMMENT, SYN_STATUS FROM exc_transfer where DOC_ID in('"
 							+ docId + "') ");
-			for (int i = 0; i < transfers.size(); i++) {
-				Object transferDocId = transfers.get(i).get("DOC_ID");
-				if (null != transferDocId) {
-					sb.append(",'");
-					sb.append(transferDocId.toString());
-					sb.append("'");
-				}
-			}
+//			for (int i = 0; i < transfers.size(); i++) {
+//				Object transferDocId = transfers.get(i).get("DOC_ID");
+//				if (null != transferDocId) {
+//					sb.append(",'");
+//					sb.append(transferDocId.toString());
+//					sb.append("'");
+//				}
+//			}
 			documents = documentService.getObjectMap(token, " ID in(" + sb.toString() + ") ");
 			beanType = "create_分发";
 		} else if ("CNPE驳回".equals(type)) {
@@ -806,7 +806,11 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 			for (int i = 0; transfers != null && i < transfers.size(); i++) {
 				if (beanType.startsWith("create")) {
-					transferService.newObject(transfers.get(i));
+					try {
+						transferService.newObject(transfers.get(i));
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
 				} else if (beanType.startsWith("update")) {
 					transferService.updateObject(transfers.get(i));
 				}
@@ -815,15 +819,23 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 			for (int i = 0; relations != null && i < relations.size(); i++) {
 				if (beanType.startsWith("create")) {
-					relationService.newObject(token, relations.get(i));
+					try {
+						relationService.newObject(token, relations.get(i));
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}	
 				}
 			}
 			for (int i = 0; contents != null && i < contents.size(); i++) {
 				// TODOApplication.getNeedTOChange("正式环境需取消注释");
 				BufferedInputStream fis = new BufferedInputStream(
 						new FileInputStream(zipFolder + "/" + contents.get(i).getFilePath()));
-				contents.get(i).setInputStream(fis);
-				contentService.newObject(token, contents.get(i));
+				try {
+					contents.get(i).setInputStream(fis);
+					contentService.newObject(token, contents.get(i));
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}	
 				fis.close();
 			}
 
