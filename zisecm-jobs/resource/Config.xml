@@ -13,7 +13,8 @@
 <!-- 				<attribute sourceName="TITLE" targetName="k2_title" defaultValue=""></attribute> -->
 <!-- 			</attributes> -->
 <!-- 		</conf> -->
-		<conf sourceTypeName="文件传递单" targetSystem="tc" syncQuerySql="" workflowName="" tcTypeName="文件传递单" tcTableName="CN9FileTFRevision">
+		<conf sourceTypeName="文件传递单" targetSystem="tc" syncQuerySql=" type_name='文件传递单' and STATUS='已确认' and SYN_ID is null" 
+		workflowName="LDM-001-收文流程" tcTypeName="文件传递单" tcTableName="CN9FileTFRevision">
 		<!--tc同步至设计分包定时查询 -->
 			<queryConstructor name="">
 				<conditions>
@@ -27,8 +28,8 @@
 					<!-- 主表创建附件 -->
 					<!-- p2c代表设计分包系统中主表映射值子表，相反c2p是子表映射至主表 refTcType="对应tc的类型" -->
 					<mainattachs>
-						<relationShip id="" childrenDataSql="" fileListColumn="cn9Filelist" 
-						formName="CN9FileItemF" refformId="设计文件Form" name="关系名称"  referenceName="p2c">
+						<relationShip id="" childrenDataSql="select a.*,b.ORDER_INDEX from ecm_document a,ecm_relation b where a.id=b.CHILD_ID and b.name='附件' and b.PARENT_ID='#{ID}'"  fileListColumn="cn9Filelist" 
+						formName="CN9FileItemF" refformId="设计文件Form" name="CN9Attachment"  referenceName="c2p">
 							<searchConf name="">
 								<conditions>
 									<condition name="" value=""></condition>
@@ -41,7 +42,7 @@
 					<!-- 创建form -->
 					<!-- p2c代表设计分包系统中主表映射值子表，相反c2p是子表映射至主表 -->
 					<formoperation>
-						<relationShip id="" childrenDataSql="" fileListColumn="cn9Filelist" formName="CN9FileItemF" 
+						<relationShip id="" childrenDataSql="select a.*,b.ORDER_INDEX from ecm_document a,ecm_relation b where a.id=b.CHILD_ID and b.name='设计文件' and b.PARENT_ID='#{ID}'" fileListColumn="cn9Filelist" formName="CN9FileItemF" 
 						refformId="设计文件Form" name="关系名称" refTcType="对应tc的类型" referenceName="p2c">
 							<searchConf name="">
 								<conditions>
@@ -55,8 +56,8 @@
 					<!--创建关系 -->
 					<!-- p2c代表设计分包系统中主表映射值子表，相反c2p是子表映射至主表 -->
 					<relationoperation>
-						<relationShip id="" childrenDataSql="" fileListColumn="cn9Filelist" formName="CN9FileItemF" 
-						refformId="" name="关系名称" referenceName="p2c">
+						<relationShip id="" childrenDataSql="select a.*,b.ORDER_INDEX from ecm_document a,ecm_relation b where a.id=b.CHILD_ID and b.name='设计文件'  and b.PARENT_ID='#{ID}'" fileListColumn="cn9Filelist" formName="CN9FileItemF" 
+						refformId="" name="IMAN_specification" referenceName="p2c">
 							<searchConf name="">
 								<conditions>
 									<condition name="" value=""></condition>
@@ -69,7 +70,7 @@
 					<!--创建子表 -->
 					<!-- p2c代表设计分包系统中主表映射值子表，相反c2p是子表映射至主表 -->
 					<suboperation>
-						<relationShip id="" childrenDataSql="" refSubId="设计分包设计文件" 
+						<relationShip id="" childrenDataSql="select a.*,b.ORDER_INDEX from ecm_document a,ecm_relation b where a.id=b.CHILD_ID and b.name='设计文件' and b.PARENT_ID='#{ID}'" refSubId="设计分包设计文件" 
 						name="关系名称" refTcType="对应tc的类型" refformId=""  referenceName="p2c">
 							<!-- <searchConf name="">
 								<conditions>
@@ -83,13 +84,12 @@
 					<!--为子表创建附件 -->
 					<!-- p2c代表设计分包系统中主表映射值子表，相反c2p是子表映射至主表 -->
 					<subattachs>
-						<relationShip id="" childrenDataSql="" fileListColumn="cn9Filelist" 
-						formName="CN9FileItemF" refformId="" name="关系名称" refTcType="对应tc的类型" referenceName="p2c">
-							<searchConf name="">
+						<relationShip id="" childrenDataSql="select a.*,b.ORDER_INDEX from ecm_document a,ecm_relation b where a.id=b.CHILD_ID and b.name='设计文件' and b.PARENT_ID='#{ID}'" fileListColumn="cn9Filelist" 
+						formName="CN9FileItemF" refformId="设计分包设计文件" name="CN9Attachment" refTcType="对应tc的类型" referenceName="p2c">
+							<searchConf name="1 计划类 - 设计分包商图纸文件编码版本查询">
 								<conditions>
-									<condition name="" value=""></condition>
-									<condition name="" value=""></condition>
-									<condition name="" value=""></condition>
+									<condition name="外部编码" value="item_id"></condition>
+									<condition name="版次" value="cn9Ver"></condition>
 								</conditions>
 							</searchConf>
 						</relationShip>
@@ -145,8 +145,16 @@
 				<attribute label="项目名称" sourceName="C_PROJECT_NAME" targetName="projectId" dataType="String"></attribute>
 				<attribute label="发自" sourceName="C_FROM" targetName="cn9AuthorUnit" dataType="String"></attribute>
 				<attribute label="主送(发至)" sourceName="C_TO" targetName="cn9RecivUnit" dataType="String"></attribute>
+				<attribute label="发送方渠道号" sourceName="C_COMPANY" targetName="cn9SenderCh">
+					<searchConf name="__CNPE_Find_DesignUnit_Revision2" returnProperty="cn9ChannelCode">
+						<conditions>
+							<condition name="公司名称" value="C_COMPANY"></condition>
+							<condition name="项目 ID" value="projectId"></condition>
+						</conditions>
+					</searchConf>
+				</attribute>
 				<attribute label="发文号" sourceName="CODING" targetName="cn9LetterSendNo" dataType="String"></attribute>
-				<attribute label="对方文号" sourceName="C_OTHER_CODING" targetName="cn9CorrespLeeterRecNo" dataType="String"></attribute>
+				<attribute label="对方文号" sourceName="C_OTHER_CODING" targetName="cn9CorrespLetterRecNo" dataType="String"></attribute>
 				<attribute label="页数" sourceName="C_PAGE_COUNT" targetName="cn9Pages" dataType="Integer"></attribute>
 				<attribute label="抄送" sourceName="C_COPY_TO" targetName="cn9InterCC" dataType="String"></attribute>
 				<attribute label="文件接收人" sourceName="C_STRING5" targetName="cn9FileReceiver" dataType="String"></attribute>
@@ -859,10 +867,10 @@
 		
 	</mainconfs>
 	<subconfs>
-		<conf id="设计文件Form" sourceTypeName="设计文件Form" targetSystem="tc" tcTypeName="CN9FileItemF" tcTableName="CN9FileItemF">
+		<conf id="设计文件Form" sourceTypeName="设计文件" targetSystem="tc" tcTypeName="CN9FileItemF" tcTableName="CN9FileItemF">
 			<attributes>
-				<attribute label="内部编码" sourceName="CODING" targetName="cn9InternalCode" dataType="String"></attribute>
-				<attribute label="外部编码" sourceName="C_IN_CODING" targetName="cn9ExternalCode" dataType="String"></attribute>
+				<attribute label="内部编码" sourceName="C_IN_CODING" targetName="cn9InternalCode" dataType="String"></attribute>
+				<attribute label="外部编码" sourceName="CODING" targetName="cn9ExternalCode" dataType="String"></attribute>
 				<attribute label="版次" sourceName="REVISION" targetName="cn9Rev" dataType="String"></attribute>
 				<attribute label="状态" sourceName="C_ITEM_STATUS" targetName="cn9States" dataType="String"></attribute>
 				<attribute label="页数" sourceName="C_PAGE_COUNT" targetName="cn9Page" dataType="String"></attribute>
@@ -886,13 +894,13 @@
 				<attribute label="子项/系统名称" sourceName="C_SYS_NAME" targetName="cn9SysName" dataType="String"></attribute>
 				<attribute label="机组号" sourceName="C_UNIT" targetName="cn9UnitCode" dataType="String"></attribute>
 				<attribute label="图纸规格" sourceName="C_PAGE_SIZE" targetName="cn9DrawingSpcif" dataType="String"></attribute>
-				<attribute label="成品类型" sourceName="SUB_TYPE" targetName="cn9DrawingType" dataType="String"></attribute>
+<!-- 				<attribute label="成品类型" sourceName="SUB_TYPE" targetName="cn9DrawingType" dataType="String"></attribute> -->
 				<attribute label="专业" sourceName="C_DISPL_NAME" targetName="cn9Displ" dataType="String"></attribute>
 				<attribute label="专业代码" sourceName="C_DISPL_CODE" targetName="cn9DisplCode" dataType="String"></attribute>
 				<attribute label="发文号" sourceName="C_REF_CODING" targetName="cn9ReciveChannelCOde" dataType="String"></attribute>
 				<attribute label="发文日期" sourceName="C_ITEM_DATE" targetName="cn9SendOwnerDate" dataType="Time"></attribute>
 				<attribute label="发文单位" sourceName="C_COMPANY" targetName="cn9ComposeUnit" dataType="String"></attribute>
-				<attribute label="收发文标记" sourceName="" targetName="cn9ReceiveSendFlag" dataType="String" defaultValue="0"></attribute>
+<!-- 				<attribute label="收发文标记" sourceName="" targetName="cn9ReceiveSendFlag" dataType="String" defaultValue="0"></attribute> -->
 			</attributes>
 		</conf>
 	</subconfs>

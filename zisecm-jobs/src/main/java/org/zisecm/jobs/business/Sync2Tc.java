@@ -77,12 +77,12 @@ public class Sync2Tc {
 			for(int i=0;i<cfs.size();i++) {
 				ConfBean cfb=cfs.get(i);
 				String syncSql= cfb.getSyncQuerySql();
+				if(syncSql==null||"".equals(syncSql)) {
+					continue;
+				}
 				List<Map<String,Object>> data= documentService.getObjectMap(ecmSession.getToken(), syncSql);
 				for(Map<String,Object> mp:data) {
 										
-					cfb= Operator.OperationContractorData(ecmSession.getToken(),
-							documentService,mp,cfb);
-
 					String tcId= syncTcService.setFileData(mp, cfb);
 					mp.put("SYN_ID", tcId);
 					mp.put("SYN_STATUS", "已同步");

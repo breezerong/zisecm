@@ -1,7 +1,9 @@
 package org.zisecm.jobs.bean.conf;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.zisecm.jobs.entity.DataEntity;
+import org.zisecm.jobs.tc.clientx.Session;
 import org.zisecm.jobs.tc.tools.SyncTcTools;
 
 import com.ecm.core.entity.EcmDocument;
@@ -19,7 +22,17 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.DocumentService;
 import com.teamcenter.services.strong.core.DataManagementService;
+import com.teamcenter.services.strong.query.SavedQueryService;
+import com.teamcenter.services.strong.query._2006_03.SavedQuery.GetSavedQueriesResponse;
+import com.teamcenter.services.strong.query._2007_09.SavedQuery.QueryResults;
+import com.teamcenter.services.strong.query._2007_09.SavedQuery.SavedQueriesResponse;
+import com.teamcenter.services.strong.query._2008_06.SavedQuery;
+import com.teamcenter.services.strong.query._2008_06.SavedQuery.QueryInput;
 import com.teamcenter.soa.client.model.ModelObject;
+import com.teamcenter.soa.client.model.ServiceData;
+import com.teamcenter.soa.client.model.strong.ImanQuery;
+import com.teamcenter.soa.client.model.strong.ItemRevision;
+import com.teamcenter.soa.exceptions.NotLoadedException;
 
 public class Operator {
 	private static ConfigBean cf;
@@ -159,7 +172,9 @@ public class Operator {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static RelationShip OperationContractorSubData(String token,DocumentService docService,
+	public static RelationShip OperationContractorSubData(String token,Session session,
+			DataManagementService dmService,
+			DocumentService docService,
 			Map<String,Object> data,RelationShip relationShip) throws Exception{
 		relationShip.setData(null);
 		ConfBean subTableConfig= getSubBeanById(relationShip.getRefformId());
@@ -181,6 +196,15 @@ public class Operator {
 				dt.setAttrValue(project.getCoding());
 				dt.setDataType(attr.getDataType());
 				rowData.put(tName, dt);
+			}else if(attr.getSearchConf()!=null) {
+				SearchConf searchConf=attr.getSearchConf();
+				ItemRevision itemRev=queryItemRevision(token,session, searchConf, data,docService);
+				String value=SyncTcTools.getProperty(dmService, itemRev, searchConf.getReturnProperty(),attr.getDataType());
+				DataEntity dt=new DataEntity();
+				dt.setAttrName(tName);
+				dt.setAttrValue(value);
+				dt.setDataType(attr.getDataType());
+				rowData.put(tName, dt);
 			}else {
 				DataEntity dt=new DataEntity();
 				dt.setAttrName(tName);
@@ -194,6 +218,110 @@ public class Operator {
 		return relationShip;
 		
 	}
+	/**
+	 * 查询单条tc数据
+	 * @param session
+	 * @param ship
+	 * @return
+	 * @throws Exception 
+	 */
+	public static ItemRevision queryItemRevision(String token,Session session, SearchConf searchConf,
+			Map<String,Object> data,DocumentService documentService) throws Exception {
+		List<Condition> conditions= searchConf.getConditions();
+		if(conditions==null||conditions.size()==0) {
+			throw new Exception("请确认是否有配置conditions");
+		}
+		
+		ImanQuery query = null;
+		SavedQuery queryService = SavedQueryService.getService(session.getConnection());
+
+		try {
+			GetSavedQueriesResponse savedQueries = ((com.teamcenter.services.strong.query._2006_03.SavedQuery) queryService)
+					.getSavedQueries();
+
+			if (savedQueries.queries.length == 0) {
+				System.out.println("There are no saved queries in the system.");
+				return null;
+			}
+
+			for (int i = 0; i < savedQueries.queries.length; i++) {
+//				if (savedQueries.queries[i].name.equals("Item Revision...")) {
+				if (savedQueries.queries[i].name.equals(searchConf.getName())) {
+					query = savedQueries.queries[i].query;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("GetSavedQueries service request failed.");
+			System.out.println(e.getMessage());
+			return null;
+		}
+
+		if (query == null) {
+			System.out.println("There is not an 'Item Revision...' query.");
+			return null;
+		}
+
+		try {
+			List<String> entries=new ArrayList<String>();
+			List<String> values=new ArrayList<String>();
+			
+			for(int i=0;i<conditions.size();i++) {
+				Condition c= conditions.get(i);
+				entries.add(c.getName());
+				String val="";
+				
+				if("projectId".equals(c.getValue())) {
+					List<EcmDocument> projects= documentService.getObjects(token, "NAME='"+data.get("C_PROJECT_NAME").toString()+"'");
+					EcmDocument project=null;
+					if(projects!=null&&projects.size()>0) {
+						project= projects.get(0);
+					}else {
+						throw new Exception("系统中午对应的项目："+data.get("C_PROJECT_NAME").toString());
+					}
+					val=project.getCoding();
+				}else {
+					if(data.get(c.getValue())==null) {
+						val=c.getValue();
+					}else {
+						val=data.get(c.getValue()).toString();
+					}
+				}
+				
+				values.add(val);
+			}
+			QueryInput[] savedQueryInput = new QueryInput[1];
+			savedQueryInput[0] = new QueryInput();
+			savedQueryInput[0].query = query;
+			savedQueryInput[0].maxNumToReturn = 25;
+			savedQueryInput[0].limitList = new ModelObject[0];
+//			savedQueryInput[0].entries = new String[] { "零组件 ID", "版本" };
+//			savedQueryInput[0].values = new String[] { itemId, revId };
+			savedQueryInput[0].entries = entries.toArray(new String[0]);
+			savedQueryInput[0].values = values.toArray(new String[0]);
+			SavedQueriesResponse response = queryService.executeSavedQueries(savedQueryInput);
+			QueryResults found = response.arrayOfResults[0];
+
+			// add by Sean 20151012
+			if (found.objectUIDS.length == 0) {
+				return null;
+				// add end
+			} else {
+				DataManagementService dmService = DataManagementService.getService(session.getConnection());
+				ServiceData serviceData = dmService.loadObjects(found.objectUIDS);
+				if (serviceData.sizeOfPartialErrors() == 0) {
+					return (ItemRevision) serviceData.getPlainObject(0);
+				}
+			}
+			// add end
+
+		} catch (Exception e) {
+			System.out.println("ExecuteSavedQuery service request failed.");
+			System.out.println(e.getMessage());
+		}
+		return null;
+	}
+	
 	/**
 	 * 替换SQL中的标记
 	 * @param data 数据
@@ -222,7 +350,8 @@ public class Operator {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static ConfBean OperationContractorData(String token,DocumentService docService,
+	public static ConfBean OperationContractorData(String token,Session session,DocumentService docService,
+			DataManagementService dmService,
 			Map<String,Object> data,ConfBean conf) throws Exception{
 		conf.setData(null);
 		Map<String,Object> rowData=new HashMap<String, Object>();
@@ -243,7 +372,17 @@ public class Operator {
 				dt.setAttrValue(project.getCoding());
 				dt.setDataType(attr.getDataType());
 				rowData.put(tName, dt);
-			}else {
+			}else if(attr.getSearchConf()!=null) {
+				SearchConf searchConf=attr.getSearchConf();
+				ItemRevision itemRev=queryItemRevision(token,session, searchConf, data,docService);
+				String value=SyncTcTools.getProperty(dmService, itemRev, searchConf.getReturnProperty(),attr.getDataType());
+				DataEntity dt=new DataEntity();
+				dt.setAttrName(tName);
+				dt.setAttrValue(value);
+				dt.setDataType(attr.getDataType());
+				rowData.put(tName, dt);
+			}
+			else {
 				DataEntity dt=new DataEntity();
 				dt.setAttrName(tName);
 				dt.setAttrValue((sName.equals("")||data.get(sName)==null)?defaultValue:data.get(sName));
@@ -260,16 +399,48 @@ public class Operator {
 	 * 来自TC数据
 	 * @param data
 	 * @return
+	 * @throws NotLoadedException 
+	 * @throws SqlDeniedException 
+	 * @throws EcmException 
 	 */
-	public static Map<String,Object> OperationTcData(DataManagementService dmService,ModelObject obj,ConfBean cfb){
+	public static Map<String,Object> OperationTcData(String token,DocumentService documentService,DataManagementService dmService,ModelObject obj,ConfBean cfb) throws NotLoadedException, EcmException, SqlDeniedException{
 		List<Map<String,Object>> newData=new ArrayList<Map<String,Object>>();
 		Map<String,Object> row=new HashMap<String, Object>();
-		row.put("TYPE_NAME", cfb.getSourceTypeName());
+		
+		DataEntity dtType=new DataEntity();
+		dtType.setAttrName("TYPE_NAME");
+		dtType.setAttrValue(cfb.getSourceTypeName());
+		dtType.setDataType("String");
+		row.put("TYPE_NAME", dtType);
 		for(AttrBean attrBean:cfb.getAttributes()) {
+			DataEntity dt=new DataEntity();
 			String tName=attrBean.getTargetName();
 			String sName=attrBean.getSourceName();
-			String val= SyncTcTools.getProperty(dmService, obj, tName);
-			row.put(sName, val);
+			String val="";
+			if(sName==null||"".equals(sName)) {
+				continue;
+				
+			}
+			if("projectId".equals(tName)) {
+				val=SyncTcTools.getProjectId(dmService, obj);
+				if(val!=null&&!"".equals(val)) {
+					List<EcmDocument> projects=documentService.getObjects(token, " type_name='项目' and CODING='"+val+"'");
+					if(projects!=null&&projects.size()>0) {
+						val=projects.get(0).getName();
+						
+						dt.setAttrName(sName);
+						dt.setAttrValue(val);
+						dt.setDataType(attrBean.getDataType());
+					}
+				}
+			}else {
+				val= SyncTcTools.getProperty(dmService, obj, tName,attrBean.getDataType());
+				dt.setAttrName(sName);
+				dt.setAttrValue(val);
+				dt.setDataType(attrBean.getDataType());
+			}
+			
+			row.put(sName, dt);
 		}
 		
 		

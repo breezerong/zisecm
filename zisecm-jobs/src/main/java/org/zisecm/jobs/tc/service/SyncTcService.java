@@ -72,6 +72,7 @@ import com.teamcenter.soa.client.FileManagementUtility;
 import com.teamcenter.soa.client.model.ModelObject;
 import com.teamcenter.soa.client.model.Preferences;
 import com.teamcenter.soa.client.model.ServiceData;
+import com.teamcenter.soa.client.model.Type;
 import com.teamcenter.soa.client.model.strong.Dataset;
 import com.teamcenter.soa.client.model.strong.Form;
 import com.teamcenter.soa.client.model.strong.ImanQuery;
@@ -108,10 +109,10 @@ public class SyncTcService {
 	public String setFileData(Map<String,Object> data,ConfBean cfb) throws Exception {
 		 IEcmSession ecmSession= getEcmSession();
 		 String token=ecmSession.getToken();
-		Map<String,Object> tcdt=cfb.getData();
+		
 		Session session=SyncTcTools.getSession(env);
 	    logger.info("-----------begin setCRData------------");
-
+	    
 	    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    String start = df.format(new Date());
 	    logger.info("-----------开始时间：" + start + "------------");
@@ -120,6 +121,9 @@ public class SyncTcService {
 	    CreateItemsOutput createItemOutput = null;
 	    DataManagementService dmService = 
 	    DataManagementService.getService(session.getConnection());
+	    cfb= Operator.OperationContractorData(ecmSession.getToken(),session,
+				documentService,dmService,data,cfb);
+	    Map<String,Object> tcdt=cfb.getData();
 	    try
 	    {
 	      DataManagement dataManagement = new DataManagement(session);
@@ -174,27 +178,34 @@ public class SyncTcService {
 							}
 	    			  }
 	    			  
-	    			  SyncTcTools.setObjectProperties(dmService, findChangeRqRevision, (String[])names.toArray(), (String[])values.toArray());
+	    			  SyncTcTools.setObjectProperties(dmService, findChangeRqRevision, names.toArray(new String[0]), values.toArray(new String[0]));
 	    		  }
 	    		  
 	    		  
 	    	  }
-	    	 return findChangeRqRevision.getUid();
+//	    	 return findChangeRqRevision.getUid();
 	      }
-
+	      ModelObject mainData=null;
 //	      createItemOutput = dataManagement.createFileRevision(fileDataRequest);
-	      /***************************创建主表信息********************************************************/
-	      createItemOutput=createFileRevision(getEcmSession().getToken(),documentService,data, cfb);
-	      dmService.refreshObjects(new ModelObject[] { createItemOutput.item });
+	      if(findChangeRqRevision==null) {
+	    	  /***************************创建主表信息********************************************************/
+		      createItemOutput=createFileRevision(getEcmSession().getToken(),documentService,data, cfb);
+		      dmService.refreshObjects(new ModelObject[] { createItemOutput.item });
 
-	      dataManagement.removeAndAssignProject(createItemOutput.item, project);
-	      dataManagement.removeAndAssignProject(createItemOutput.itemRev, project);
+		      dataManagement.removeAndAssignProject(createItemOutput.item, project);
+		      dataManagement.removeAndAssignProject(createItemOutput.itemRev, project);
+		      mainData=createItemOutput.itemRev;
+	      }else {
+	    	  mainData=findChangeRqRevision;
+	      }
+	      
 	      
 	      
 	      /**************************判断是否有子表需要操作***********************************************/
 	      List<SubTable> subTables= cfb.getUprelationShips();
 	      if(subTables==null||subTables.size()==0) {
-	    	 return createItemOutput.item.get_item_id();
+	    	  return mainData.getUid();
+//	    	 return createItemOutput.item.get_item_id();
 	      }
 	      for(int n=0;n<subTables.size();n++) {
 	    	  SubTable subTable=subTables.get(n);
@@ -207,7 +218,7 @@ public class SyncTcService {
 	    			  mSql=Operator.operationSql(data, mSql);
 	    			  List<Map<String,Object>> docList= documentService.getMapList(token, mSql);
 	    			  if(docList!=null&&docList.size()>0) {
-	    				  addAttachements(token, documentService, session, docList, dmService, createItemOutput.itemRev, relationShip);
+	    				  addAttachements(token, documentService, session, docList,data, dmService, mainData/*createItemOutput.itemRev*/, relationShip);
 	    				  
 	    				}
 	    		  }
@@ -223,7 +234,7 @@ public class SyncTcService {
 	    			  sSql=Operator.operationSql(data, sSql);
 	    			  List<Map<String,Object>> docList= documentService.getMapList(token, sSql);
 	    			  if(docList!=null&&docList.size()>0) {
-	    				  createdItems=createSubFileRevision(dmService, token, documentService, docList, relationShip);
+	    				  createdItems=createSubFileRevision(dmService, token,session, documentService, docList, relationShip);
 	    			  }
 	    		  }
 	    	  }
@@ -251,7 +262,7 @@ public class SyncTcService {
 	    			  fSql= Operator.operationSql(data, fSql);
 	    			  List<Map<String,Object>> docList= documentService.getMapList(token, fSql);
 	    			  if(docList!=null&&docList.size()>0) {
-	    					addForm4Main(dmService, token, documentService, docList, createItemOutput.itemRev, relationShip);
+	    					addForm4Main(session,dmService, token, documentService, docList, mainData/*createItemOutput.itemRev*/, relationShip);
 	    				}
 	    				
 	    		  }
@@ -269,7 +280,7 @@ public class SyncTcService {
 	    						throw new Exception("请确认"+cfb.getId()+"中的relationoperation是否配置了查询配置");
 	    					}
 	    					addRelation4Children(token, session, documentService, dmService, 
-	    							createItemOutput.itemRev, relationShip, docList);
+	    							mainData/*createItemOutput.itemRev*/, relationShip, docList);
 	    			  }
 	    		  }
 	    	  }
@@ -278,25 +289,40 @@ public class SyncTcService {
 	      /*****************************发起流程*********************************************/
 	      String docManagerUserId = dataManagement.getUserFromPref(projectId);
 	      User user = null;
-	      if (!docManagerUserId.equals("")) {
-	        user = query.queryUser(docManagerUserId);
-	        if (user != null) {
-	          dataManagement.changeOwner(createItemOutput.item, user);
-	          dataManagement.changeOwner(createItemOutput.itemRev, user);
-	        }
+	      if(findChangeRqRevision==null) {
+	    	  if (!docManagerUserId.equals("")) {
+	  	        user = query.queryUser(docManagerUserId);
+	  	        if (user != null) {
+	  	          dataManagement.changeOwner(createItemOutput.item, user);
+	  	          dataManagement.changeOwner(createItemOutput.itemRev, user);
+	  	        }
+	  	      }
+
+	  	     // boolean isReply = setCRDataRequest.getIsReply().equals("Y");
+	  	      dmService.getProperties(new ModelObject[] { createItemOutput.itemRev }, new String[] { "object_type" });
+	  	      String itemRevType = createItemOutput.itemRev.get_object_type();
+
+//	  	      String processTemplateName = "LDM-001-收文流程";
+	  	      String processTemplateName = cfb.getWorkflowName();
+
+	  	      if (!processTemplateName.equals(""))
+	  	      {
+	  	        workflow.createWorkflow(createItemOutput.itemRev, processTemplateName, user);
+	  	      }
+	      }else {
+	    	  if (!docManagerUserId.equals("")) {
+		  	        user = query.queryUser(docManagerUserId);
+		  	      }
+
+//	  	      String processTemplateName = "LDM-001-收文流程";
+	  	      String processTemplateName = cfb.getWorkflowName();
+
+	  	      if (!processTemplateName.equals(""))
+	  	      {
+	  	        workflow.createWorkflow(mainData/*createItemOutput.itemRev*/, processTemplateName, user);
+	  	      }
 	      }
-
-	     // boolean isReply = setCRDataRequest.getIsReply().equals("Y");
-	      dmService.getProperties(new ModelObject[] { createItemOutput.itemRev }, new String[] { "object_type" });
-	      String itemRevType = createItemOutput.itemRev.get_object_type();
-
-//	      String processTemplateName = "LDM-001-收文流程";
-	      String processTemplateName = cfb.getWorkflowName();
-
-	      if (!processTemplateName.equals(""))
-	      {
-	        workflow.createWorkflow(createItemOutput.itemRev, processTemplateName, user);
-	      }
+	      
 
 	    }
 	    catch (Exception e)
@@ -443,7 +469,7 @@ public class SyncTcService {
 			DataManagementService dmService,ModelObject object,RelationShip ship,List<Map<String,Object>> docList) throws Exception {
 		for(int i=0;i<docList.size();i++) {
 			Map<String,Object> doc= docList.get(i);
-			ship=Operator.OperationContractorSubData(token, ecmDocService, doc, ship);
+			ship=Operator.OperationContractorSubData(token,session,dmService, ecmDocService, doc, ship);
 			ItemRevision itemRev=queryItemRevision(session, ship);
 			if("p2c".equals(ship.getReferenceName())) {
 				addRelation(dmService, itemRev, object, ship.getName());
@@ -554,8 +580,8 @@ public class SyncTcService {
 			savedQueryInput[0].limitList = new ModelObject[0];
 //			savedQueryInput[0].entries = new String[] { "零组件 ID", "版本" };
 //			savedQueryInput[0].values = new String[] { itemId, revId };
-			savedQueryInput[0].entries = (String[])entries.toArray();
-			savedQueryInput[0].values = (String[])values.toArray();
+			savedQueryInput[0].entries = entries.toArray(new String[0]);
+			savedQueryInput[0].values = values.toArray(new String[0]);
 			SavedQueriesResponse response = queryService.executeSavedQueries(savedQueryInput);
 			QueryResults found = response.arrayOfResults[0];
 
@@ -650,7 +676,8 @@ public class SyncTcService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<CreateItemsOutput> createSubFileRevision(DataManagementService dmService,String token,DocumentService docService,
+	public List<CreateItemsOutput> createSubFileRevision(DataManagementService dmService,String token,Session session,
+			DocumentService docService,
 			List<Map<String, Object>> docList, RelationShip relationShip) throws Exception {
 		ConfBean cfb = Operator.getSubBeanById(relationShip.getRefSubId());
 		List<CreateItemsOutput> createdOutputItems=new ArrayList<CreateItemsOutput>();
@@ -658,18 +685,34 @@ public class SyncTcService {
 		String tcType = cfb.getTcTableName();
 		for (int n = 0; n < docList.size(); n++) {
 			//////////////////////// 创建主文件////////////////////////////
+			Map<String, Object> data = docList.get(n);
+			Operator.OperationContractorData(token,session, docService,dmService, data, cfb);
+			Map<String, Object> tcdt = cfb.getData();
+			
 			ItemIdsAndInitialRevisionIds itemidAndRevId = generateItemIds(tcType);
+			HashMap<String, VecStruct> revisionStrMap = new HashMap<>();
+			insertValueMap(revisionStrMap, "item_revision_id", itemidAndRevId.newRevId);
+			
 			CreateItemsOutput output = null;
-			ItemProperties[] itemProps = new ItemProperties[1];
 
 			ItemProperties itemProperty = new ItemProperties();
-
+			
+			String itemId="";
+			if(tcdt.get("item_id")==null) {
+				itemId=itemidAndRevId.newItemId;
+			}else {
+				DataEntity dte=(DataEntity)tcdt.get("item_id");
+				itemId=dte.getAttrValue().toString();
+				tcdt.keySet().remove("item_id");
+			}
+			
 			itemProperty.clientId = "webservice";
 			itemProperty.itemId = itemidAndRevId.newItemId;
 			itemProperty.revId = itemidAndRevId.newRevId;
 
-			Map<String, Object> data = docList.get(n);
-			String object_name = data.get("TITLE") == null ? "" : data.get("TITLE").toString();
+			
+			String object_name = data.get("CODING").toString()+(data.get("REVISION")==null?"":"_"+data.get("REVISION").toString());
+					//data.get("TITLE") == null ? "" : data.get("TITLE").toString();
 			int length = object_name.length();
 			String str = "";
 			if (length > 120) {
@@ -682,7 +725,7 @@ public class SyncTcService {
 			itemProperty.type = tcType.substring(0, tcType.length() - 8);
 			itemProperty.description = "";
 			itemProperty.uom = "";
-
+			ItemProperties[] itemProps = new ItemProperties[1];
 			itemProps[0] = itemProperty;
 
 			CreateItemsResponse response = dmService.createItems(itemProps, null, "");
@@ -703,9 +746,8 @@ public class SyncTcService {
 
 			ItemRevision itemRev = output.itemRev;
 
-			HashMap<String, VecStruct> revisionStrMap = new HashMap<>();
-			insertValueMap(revisionStrMap, "item_revision_id", itemidAndRevId.newRevId);
-			Map<String, Object> tcdt = cfb.getData();
+			
+			
 			Set<String> keys = tcdt.keySet();
 			Iterator<String> it = keys.iterator();
 			while (it.hasNext()) {
@@ -739,7 +781,7 @@ public class SyncTcService {
 
 			////////////////////// 为主文件添加电子文件//////////////////////////////
 
-			Session session = SyncTcTools.getSession(env);
+//			Session session = SyncTcTools.getSession(env);
 			addFile4Main(session, dmService, itemRev, data, cfb);
 			/////////////////////////////////////////////////////////
 			createdOutputItems.add(output);
@@ -880,14 +922,14 @@ public class SyncTcService {
 	 * @param itemRev
 	 * @throws Exception
 	 */
-	public void addForm4Main(DataManagementService dmService,String token,DocumentService docService,
+	public void addForm4Main(Session session,DataManagementService dmService,String token,DocumentService docService,
 			List<Map<String,Object>> docList,ModelObject itemRev,RelationShip relationShip) throws Exception {
 
 		Vector<String> formVec = new Vector<String>();
 		for(int i=0;i<docList.size();i++) {
 			Map<String,Object> row=docList.get(i);
 			String formName=row.get("CODING").toString()+"_"+row.get("REVISION").toString();
-			relationShip= Operator.OperationContractorSubData(token,docService,row,relationShip);
+			relationShip= Operator.OperationContractorSubData(token,session,dmService,docService,row,relationShip);
 			Map<String,Object> rowData= relationShip.getData();
 			Set<String> rowKeys=rowData.keySet();
 			Iterator<String> rowIt= rowKeys.iterator();
@@ -1030,7 +1072,9 @@ public class SyncTcService {
 		if(contentList==null||contentList.size()==0) {
 			return;
 		}
-		String datasetName=data.get("TITLE")!=null?data.get("TITLE").toString():"";
+		String datasetName=(data.get("CODING")!=null?data.get("CODING").toString():"")
+				+(data.get("REVISION")==null?"":"_"+data.get("REVISION").toString());
+				//data.get("TITLE")!=null?data.get("TITLE").toString():"";
 		EcmContent en = contentList.get(0);
 //		String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 //		
@@ -1081,13 +1125,17 @@ public class SyncTcService {
 			DataManagementService dmService,RelationShip ship) throws Exception {
 		for(int x=0;x<data.size();x++) {
 			Map<String,Object> obj=data.get(x);
-			String sql="select b.* from ecm_relation a,"
+			String sql="select b.*,a.ORDER_INDEX from ecm_relation a,"
 					+ "ecm_document b where a.CHILD_ID=b.id and b.TYPE_NAME='附件' "
-					+ "and a.PARENT_ID='"+obj.get("ID").toString()+"'";
+					+ "and a.PARENT_ID='"+obj.get("ID").toString()+"' order by a.ORDER_INDEX";
+			ship=Operator.OperationContractorSubData(token,session,dmService, docService, obj, ship);
 			List<Map<String,Object>> attaches= docService.getMapList(token, sql);
 			if(attaches!=null&&attaches.size()>0) {
 				ItemRevision itemRevChild= queryItemRevision(session, ship);
-				addAttachements(token, docService, session, data, dmService, itemRevChild, ship);
+				if(itemRevChild==null) {
+					return;
+				}
+				addAttachements(token, docService, session, data,obj, dmService, itemRevChild, ship);
 			}
 			
 			
@@ -1101,12 +1149,13 @@ public class SyncTcService {
 	 * @param session
 	 * @param data
 	 * @param dmService
-	 * @param itemRev
+	 * @param mainData
 	 * @param ship
 	 * @throws Exception
 	 */
 	public void addAttachements(String token,DocumentService docService,Session session,List<Map<String,Object>> data,
-			DataManagementService dmService,ItemRevision itemRev,RelationShip ship) throws Exception {
+			Map<String,Object> parentObj,
+			DataManagementService dmService,ModelObject mainData,RelationShip ship) throws Exception {
 		SessionService sessionService = SessionService.getService(session.getConnection());
 		PreferenceManagementService prefService = PreferenceManagementService.getService(session.getConnection());
 		prefService.refreshPreferences();
@@ -1141,7 +1190,9 @@ public class SyncTcService {
 			if(contentList==null||contentList.size()==0) {
 				continue;
 			}
-			String datasetName=doc.get("Name").toString();
+			String datasetName=parentObj.get("CODING").toString()
+					+(parentObj.get("RIVISION")==null?"":"_"+parentObj.get("RIVISION").toString())
+					+(doc.get("ORDER_INDEX")==null?"":"_"+doc.get("ORDER_INDEX").toString());//doc.get("Name").toString();
 			EcmContent en=contentList.get(0);
 			String localFileName=localDir+parentId+"."+en.getFormatName();
 			String datasetType = "";
@@ -1165,11 +1216,11 @@ public class SyncTcService {
 				continue;
 			}
 			//下载电子文件
-				HttpTools.downloadFile(env, localDir,en.getId(),en.getFormatName(), 
+				HttpTools.downloadFile(env, localDir,parentId,en.getFormatName(), 
 						env.getProperty("ecm.baseUrl"));
 			//
 //			createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, "CN9Attachment");
-				createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, ship.getName());
+				createDataset(session,dmService,mainData, datasetType, datasetName, referenceName, localFileName, ship.getName());
 			
 		}
 		

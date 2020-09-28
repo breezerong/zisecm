@@ -8,6 +8,17 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 public class SearchConf {
 	private String name;
+	private String returnProperty;
+	
+	@XmlAttribute
+	public String getReturnProperty() {
+		return returnProperty;
+	}
+
+	public void setReturnProperty(String returnProperty) {
+		this.returnProperty = returnProperty;
+	}
+
 	private List<Condition> Conditions;
 	@XmlAttribute
 	public String getName() {
