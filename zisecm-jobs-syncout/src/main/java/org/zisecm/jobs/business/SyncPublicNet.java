@@ -498,7 +498,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 	private void writeMD5Info(String zipFilePath) throws IOException {
 		String md5 = generateZipFileMD5(zipFilePath);
 		String md5FileName = zipFilePath + ".MD5.txt";
-		FileWriter fw = new FileWriter(md5FileName, true);
+		FileWriter fw = new FileWriter(md5FileName, false);
 		PrintWriter pw = new PrintWriter(fw);
 		pw.println(md5 + "\n"); // 字符串末尾不需要换行符
 		pw.close();
@@ -928,7 +928,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 	private String getFolderName() {
 		Date dt = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
 		return CacheManagerOper.getEcmParameters().get("NetWorkEnv").getValue() + "_" + sdf.format(dt);
 	}
 
@@ -936,6 +936,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 		String md5 = "";
 		try (FileInputStream fis = new FileInputStream(filePath);) {
 			md5 = DigestUtils.md5Hex(IOUtils.toByteArray(fis));
+			fis.close();
 		}
 		return md5;
 
@@ -948,6 +949,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 				InputStreamReader isr = new InputStreamReader(fis, DEFAULT_CHARSET);
 				BufferedReader br = new BufferedReader(isr)) {// 构造一个BufferedReader类来读取文件
 			result = br.readLine();
+			fis.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
