@@ -540,7 +540,7 @@ export default {
         },
         IEDChoose(row){
             let ID = row.ID
-            let _self = this;
+            let _self = this;
             let relationName="相关文件"
             let typeName="相关文件"
             if(this.filters.typeName!=null&&this.filters.relationName!=null){
@@ -1045,12 +1045,13 @@ export default {
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                             _self.$refs.ShowProperty.showUploadFile = false;
-                            __self.$refs.ShowProperty.formName=typeName
+                            _self.$refs.ShowProperty.formName=typeName
                         }
                         else{
                             _self.$refs.ShowProperty.showUploadFile = true;
                             _self.$refs.ShowProperty.formName="";
                         }
+
                         _self.typeName=typeName;
                         if('设计文件'==typeName){
                             _self.$refs.ShowProperty.setMainObject(_self.selectRow);
