@@ -979,6 +979,7 @@ export default {
                 let _self = this;
                 _self.filters.typeName=typeName
                 _self.filters.relationName=relationName
+                _self.tables.DialogDataGrid.condition="TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')"
                 if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'&&typeName!='材料变更清单'){
                     _self.parentId='';
                                      
@@ -998,6 +999,7 @@ export default {
                     m.set('parentDocId',_self.parentId);
                     let formdata = new FormData();
                     let ID=''
+                    
                     formdata.append("metaData",JSON.stringify(m));
                         axios.post("/dc/checkRelationDocument",formdata,{
                         'Content-Type': 'multipart/form-data'
@@ -1011,7 +1013,6 @@ export default {
                             _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
                             _self.$refs.DialogDataGrid.loadGridInfo()
                             _self.$refs.DialogDataGrid.loadGridData()
-                            console.log(_self.$refs.DialogDataGrid.condition)
                             _self.propertyrela=true
                             return 
                         }else{

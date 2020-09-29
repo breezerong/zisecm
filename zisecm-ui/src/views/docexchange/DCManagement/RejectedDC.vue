@@ -731,7 +731,7 @@ export default {
             this.parentId=row.ID;
             let _self=this;
             _self.isShowMountFile = false;
-
+            console.log(this.parentId)
             if(row.TYPE_NAME=='文件传递单'){
                 _self.isShowDesgin=true;
                 _self.isShowRelevant=false;
@@ -794,7 +794,7 @@ export default {
                 _self.$refs.attachmentDoc.parentId=row.ID;
                 _self.$refs.attachmentDoc.loadGridData();
             });
-        },
+                    },
         MaterialDocSelect(val){
             this.MaterialDocSelected=val;
         },
@@ -830,8 +830,10 @@ export default {
                 if(typeName=='相关文件'){
                     var m = new Map();
                     m.set('parentDocId',_self.parentId);
+
                     let formdata = new FormData();
                     let ID=''
+                    _self.tables.DialogDataGrid.condition="TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')"
                     formdata.append("metaData",JSON.stringify(m));
                         axios.post("/dc/checkRelationDocument",formdata,{
                         'Content-Type': 'multipart/form-data'
@@ -839,12 +841,16 @@ export default {
                     .then(function(response) {
                         let code = response.data.code;
                         ID=response.data.ID;
+                        console.log(response)
                         if (code == 1) {
+                            
                             _self.tables.DialogDataGrid.condition+=" and ID NOT IN ("+ID+")"
                             _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
                             _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+
                             _self.$refs.DialogDataGrid.loadGridInfo()
                             _self.$refs.DialogDataGrid.loadGridData()
+
                             _self.propertyrela=true
                             return
                         }else{
