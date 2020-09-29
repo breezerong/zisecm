@@ -188,6 +188,9 @@
                                         <el-button type="primary" @click="beforeCreateDocItem('设计文件','设计文件')">{{$t('application.new')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
+                                            <el-button type="primary" @click="beforeCreateTRSItem('设计文件','设计文件')">{{$t('application.createByIED')}}</el-button>
+                                        </el-form-item>
+                                        <el-form-item>
                                         <el-button type="primary" @click="beforImport($refs.transferDoc,true,'设计文件')">{{$t('application.Import')}}</el-button>
                                         </el-form-item>
                                         <el-form-item>
@@ -435,7 +438,9 @@ export default {
                 docType: "",
                 coding: "",
                 title: "",
-                limit: 10
+                limit: 10,
+                typeName:'',
+                relationName:''
             },
             projects:[],
             typeName:"文件传递单",
@@ -513,19 +518,24 @@ export default {
             _self.$refs.DialogDataGrid.loadGridData()
         },
         IEDChoose(row){
-            let _self = this;
-            let relationName="相关文件"
-            let typeName="相关文件"
-            _self.relationName=relationName;
-            _self.dialogName = typeName;
-            _self.propertyVisible = true;
+            let ID = row.ID
+            let _self = this;
+            let relationName="相关文件"
+            let typeName="相关文件"
+            if(this.filters.typeName!=null&&this.filters.relationName!=null){
+                relationName = this.filters.relationName
+                typeName = this.filters.typeName
+            }
+            _self.relationName=relationName;
+            _self.dialogName = typeName;
+            _self.propertyVisible = true;
             
             setTimeout(()=>{
                 if(_self.$refs.ShowProperty){
                     _self.$refs.ShowProperty.myItemId = "";
                     _self.dialogName=typeName;
                     _self.$refs.ShowProperty.myTypeName =typeName;
-                    
+                    if(typeName!='设计文件'){
                     if(typeName=='相关文件'){
                         _self.$refs.ShowProperty.showUploadFile = false;
                         _self.$refs.ShowProperty.formName=_self.relation.formName;
@@ -541,11 +551,38 @@ export default {
                     mp.set("C_IN_CODING",'C_IN_CODING');
                     mp.set("TITLE",'TITLE');
                     mp.set("REVISION","REVISION")
-
                     _self.$refs.ShowProperty.setMainSubRelation(mp);
                     _self.$refs.ShowProperty.loadFormInfo();
+                    return
                 }
-            },10);
+                if(typeName=='设计文件'){
+                    _self.$refs.ShowProperty.myItemId = "";
+                    _self.dialogName=typeName;
+                    _self.$refs.ShowProperty.myTypeName =typeName;
+                    _self.$refs.ShowProperty.showUploadFile = true;
+                    _self.$refs.ShowProperty.formName="";
+                    _self.typeName=typeName;
+                    if(typeName=='设计文件'){
+                    axios.post("/exchange/doc/getReplyInfo",ID)
+                    .then(function(response) {
+                    if(response.data.code == 1){
+                        _self.includeRefDoc = response.data.includeRefDoc;
+                        _self.$refs.ShowProperty.typeName = response.data.typeName;
+                        _self.$refs.ShowProperty.myTypeName = response.data.typeName;
+                        let mp=new Map();
+                        for (const key in response.data.data) {
+                                mp.set(key,key);
+                        }
+                        _self.$refs.ShowProperty.setMainSubRelation(mp);
+                        _self.$refs.ShowProperty.setMainObject(response.data.data);
+                        _self.$refs.ShowProperty.loadFormInfo();
+                        return 
+                           }
+                    })}
+                    }
+                    }    
+                    },10); 
+
         },
         dbClick(row){
             this.docId=row.ID;
@@ -774,6 +811,8 @@ export default {
         },
         beforeCreateDocItem(typeName,relationName) {
                 let _self = this;
+                _self.filters.typeName=typeName
+                _self.filters.relationName=relationName
                 if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'&&typeName!='材料变更清单'){
                     _self.parentId='';
                                      
@@ -1230,7 +1269,99 @@ export default {
                             });
                 }
                 
-            }
+            },
+
+            beforeCreateTRSItem(typeName,relationName) {
+                let _self = this;
+                if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'&&typeName!='材料变更清单'){
+                    _self.parentId='';
+                                     
+                }else{
+                    if(_self.parentId==''){
+                        _self.$message({
+                            showClose: true,
+                            message: _self.$t('message.noMainFile'),
+                            duration: 2000,
+                            type: "warning"
+                        });
+                        return;
+                    }
+                }
+                if(typeName=='设计文件'){
+                    var m = new Map();
+                    m.set('parentDocId',_self.parentId);
+                    let formdata = new FormData();
+                    let ID=''
+                    formdata.append("metaData",JSON.stringify(m));
+                        axios.post("/dc/checkRelationDocument",formdata,{
+                        'Content-Type': 'multipart/form-data'
+                    })
+                    .then(function(response) {
+                    let code = response.data.code;
+                    var m = new Map();
+                   _self.tables.DialogDataGrid.condition="TYPE_NAME='IED' and IS_CURRENT=1 and C_IS_RELEASED=1 AND (STATUS='已生效' OR STATUS='变更中')"
+                    _self.filters.typeName='设计文件'
+                    _self.filters.relationName='设计文件'
+                    let user = _self.currentUser();
+                    if(user.userType==2 && user.company!=null){
+                    _self.tables.DialogDataGrid.condition+=" AND C_COMPANY='"+user.company +"'"
+                    }
+                    _self.tables.DialogDataGrid.condition+=" and C_PROJECT_NAME='"+_self.selectRow.C_PROJECT_NAME+"'"
+                    console.log(_self.tables.DialogDataGrid.condition)
+                    _self.$refs.DialogDataGrid.condition=_self.tables.DialogDataGrid.condition
+                    _self.$refs.DialogDataGrid.loadGridInfo()
+                    _self.$refs.DialogDataGrid.loadGridData()
+                    _self.propertyrela=true
+                    return;
+                        
+                    })
+                    .catch(function(error) {
+                    _self.$message(_self.$t('message.newFailured'));
+                    console.log(error);
+                    });
+                    _self.propertyrela=true
+                    return;
+                }
+                _self.relationName=relationName;
+                _self.dialogName = typeName;
+                _self.propertyVisible = true;
+                
+                setTimeout(()=>{
+                    if(_self.$refs.ShowProperty){
+                        _self.$refs.ShowProperty.myItemId = "";
+                        _self.dialogName=typeName;
+                        _self.$refs.ShowProperty.myTypeName =typeName;
+                        
+                        if(typeName=='相关文件'){
+                            _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=_self.relation.formName;
+                        }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
+                            _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=typeName
+                        }
+                        else{
+                            _self.$refs.ShowProperty.showUploadFile = true;
+                            _self.$refs.ShowProperty.formName="";
+                        }
+                        _self.typeName=typeName;
+                        if('设计文件'==typeName){
+                            _self.$refs.ShowProperty.setMainObject(_self.selectRow);
+                            let mp=new Map();
+                            mp.set("C_PROJECT_NAME",'C_PROJECT_NAME');
+                            mp.set("C_REF_CODING",'CODING');
+                            mp.set("C_ITEM_DATE",'C_ITEM_DATE');
+
+                            _self.$refs.ShowProperty.setMainSubRelation(mp);
+                        }
+                        
+                        // _self.$refs.ShowProperty.myFolderId = _self.selectTransferRow.id;
+                        _self.$refs.ShowProperty.loadFormInfo();
+                    }
+                },10);
+
+        }
+
+
             
     },
     props: {
