@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog :title="$t('application.Import')" :visible.sync="importdialogVisible" width="70%">
+        <el-dialog :title="$t('application.Import')" :append-to-body="true" :visible.sync="importdialogVisible" width="70%">
             <el-row>
                 <el-col :span="20">
                     <el-progress :text-inside="true" :stroke-width="24" :percentage="progressNum" status="success"></el-progress>

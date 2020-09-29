@@ -1029,7 +1029,7 @@ export default {
     selectChange(val) {
       this.selectedItems = val;
     },
-    selectChangetransferDocRV(val) {
+    selectChangetransferDoc(val) {
       this.selectedtransferDocRVItems = val;
     },
     // 保存文档
