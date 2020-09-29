@@ -38,39 +38,33 @@ public class PlantMnanager extends ControllerAbstract {
 		Map<String, Object> result = new HashMap<String, Object>();
 		
 		StringBuffer sql = new StringBuffer("select " + columns + ",(select count(*) from ecm_document sed where sed.C_IN_CODING = ed.SYN_ID) as childrenCount from ecm_document ed where ed.type_name='计划任务'");
+		String startDate = "";
+		String endDate = "";
 		if(params.containsKey("id")) {
 			sql.append(" and C_IN_CODING='"+params.get("id").toString()+"'");
 		}else {
+			if(params.containsKey("condition")) {
+				sql.append(" and "+params.get("condition").toString());
+				startDate= getStartDate(params.get("condition").toString());
+				endDate = getEndDate(params.get("condition").toString());
+			}else {
+				startDate= getStartDate("");
+				endDate = getEndDate("");
+			}
 			sql.append(" and (C_IN_CODING is null or C_IN_CODING='')");
 		}
 		
-		String startDate = "";
-		String endDate = "";
-		if(params.containsKey("condition")) {
-			sql.append(" and "+params.get("condition").toString());
-			startDate= getStartDate(params.get("condition").toString());
-			endDate = getEndDate(params.get("condition").toString());
-		}else {
-			startDate= getStartDate("");
-			endDate = getEndDate("");
-		}
 		
 		List<Map<String, Object>> list = null;
-		List<Map<String, Object>> resultList = new ArrayList<>();
 		try {
-			System.out.println(sql.toString());
-			list = documentService.getMapList(getToken(), sql.toString());
-			for (Map<String, Object> map : list) {
-				int count = Integer.valueOf(map.get("childrenCount").toString()).intValue();
-				map.put("hasChildren", count>0);
-				resultList.add(map);
-			}
+			String fullSQL = "select *,'hasChildren'=case when childrenCount>0 then 1 else 0 end from ("+ sql.toString()+") f";
+			list = documentService.getMapList(getToken(), fullSQL);
 		} catch (EcmException e) {
 			e.printStackTrace();
 		} catch (AccessDeniedException e) {
 			e.printStackTrace();
 		}
-		result.put("data", resultList);
+		result.put("data", list);
 		result.put("startDate", startDate);
 		result.put("endDate", endDate);
 		result.put("code", ActionContext.SUCESS);

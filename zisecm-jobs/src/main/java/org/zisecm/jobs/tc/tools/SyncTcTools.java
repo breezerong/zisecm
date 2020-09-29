@@ -1,5 +1,6 @@
 package org.zisecm.jobs.tc.tools;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.teamcenter.services.strong.core._2007_06.DataManagement.ExpandGRMRela
 import com.teamcenter.services.strong.core._2007_06.DataManagement.RelationAndTypesFilter2;
 import com.teamcenter.soa.client.model.ModelObject;
 import com.teamcenter.soa.client.model.ServiceData;
+import com.teamcenter.soa.exceptions.NotLoadedException;
 
 public class SyncTcTools {
 	private static Session session;
@@ -55,6 +57,22 @@ public class SyncTcTools {
 
 	    return sess;
 	  }
+	/**
+	 * 获取项目ID
+	 * @param dmService
+	 * @param obj
+	 * @return
+	 * @throws NotLoadedException
+	 */
+	public static String getProjectId(DataManagementService dmService,ModelObject obj) throws NotLoadedException {
+		ModelObject[] projects=getModelObjectArrayValue(dmService, obj, "project_list");
+		String project_id="";
+		if(projects!=null&&projects.length>0) {
+			dmService.getProperties(new ModelObject[] { projects[projects.length-1]}, new String[] {"project_id"});
+			project_id=projects[projects.length-1].getPropertyObject("project_id").getStringValue();
+		}
+		return project_id;
+	}
 	/**
 	 * 更改对象属性数据
 	 * @param dmService
@@ -172,14 +190,24 @@ public class SyncTcTools {
 	 * @param propertyName
 	 * @return
 	 */
-	public static String getProperty(DataManagementService dmService,ModelObject object, String propertyName) {
+	public static String getProperty(DataManagementService dmService,ModelObject object, String propertyName,String typeName) {
 		try {
 			dmService.refreshObjects(new ModelObject[]{object});
 			
 			dmService.getProperties(new ModelObject[] { object },
 					new String[] { propertyName });
-			String value = object.getPropertyObject(propertyName)
-					.getStringValue();
+			String value = "";
+			if("Time".equals(typeName)) {
+				value = object.getPropertyObject(propertyName).getDisplayValue();
+				if("".equals(value)) {
+					return null;
+				}
+				SimpleDateFormat format=new SimpleDateFormat("yyyy-M-dd HH:mm");
+				SimpleDateFormat targetFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				value=targetFormat.format(format.parse(value));
+			}else {
+				value = object.getPropertyObject(propertyName).getStringValue();
+			}
 
 			return value;
 		} catch (Exception e) {

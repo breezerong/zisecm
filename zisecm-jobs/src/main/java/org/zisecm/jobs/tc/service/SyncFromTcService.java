@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +175,7 @@ public class SyncFromTcService {
 				if("startDate".equals(c.getValue())) {
 					val=startDate;
 				}else if("endDate".equals(c.getValue())) {
-					val=startDate;
+					val=endDate;
 				}else {
 					val=c.getValue();
 				}
@@ -180,8 +183,8 @@ public class SyncFromTcService {
 			}
 
 			int limit = 0;
-			ExecuteSavedQueryResponse found = queryService.executeSavedQuery(query, (String[])entries.toArray(),
-					(String[])values.toArray(), limit);
+			ExecuteSavedQueryResponse found = queryService.executeSavedQuery(query, entries.toArray(new String[0]),
+					values.toArray(new String[0]), limit);
 
 			return found.objects;
 		} catch (Exception e) {
@@ -207,19 +210,19 @@ public class SyncFromTcService {
 		
 		logger.info("-----------begin setCRData------------");
 
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-M-dd HH:mm:ss");
 		String start = df.format(new Date());
 		logger.info("-----------开始时间：" + start + "------------");
 		System.out.println("CR开始时间：" + start);
 
-		CreateItemsOutput createItemOutput = null;
+//		CreateItemsOutput createItemOutput = null;
 		DataManagementService dmService = DataManagementService.getService(session.getConnection());
 		try {
-			DataManagement dataManagement = new DataManagement(session);
-			Query query = new Query(session);
-			ConfigBean cf = Operator.getConfig();
+//			DataManagement dataManagement = new DataManagement(session);
+//			Query query = new Query(session);
+//			ConfigBean cf = Operator.getConfig();
 
-			SimpleDateFormat dtFormat=new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dtFormat=new SimpleDateFormat("yyyy-M-dd");
 			String endDate= dtFormat.format(new Date());
 			
 			String dateDifferenceStr= env.getProperty("ecm.dateDifference");
@@ -229,7 +232,7 @@ public class SyncFromTcService {
 			}
 			
 			Calendar calendar = Calendar.getInstance();
-			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-M-dd");
 			calendar.add(Calendar.DAY_OF_MONTH,dateDifference);
 			String date = fmt.format(calendar.getTime());
 			
@@ -253,8 +256,8 @@ public class SyncFromTcService {
 //			List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 
 			for (ModelObject obj : findChangeRqRevision) {
-				String ccUnits= SyncTcTools.getProperty(dmService, obj, "cn9CCUnit");
-				String recivUnit= SyncTcTools.getProperty(dmService, obj, "cn9RecivUnit");
+				String ccUnits= SyncTcTools.getProperty(dmService, obj, "cn9CCUnit","String");
+				String recivUnit= SyncTcTools.getProperty(dmService, obj, "cn9RecivUnit","String");
 //						obj.getPropertyObject("cn9RecivUnit").getStringValue();
 				if("".equals(ccUnits)&&"".equals(recivUnit)) {
 					continue;
@@ -272,7 +275,7 @@ public class SyncFromTcService {
 				}
 				/*********************同步主表数据***********************************/
 				//装数据
-				Map<String,Object> mainData= Operator.OperationTcData(dmService, obj, cfb);
+				Map<String,Object> mainData= Operator.OperationTcData(token,documentService,dmService, obj, cfb);
 				cfb.setData(mainData);
 				String mainDocId= syncMainTable(token, documentService, session,dmService, obj, cfb);
 				/////////////////////////////////////////////////////////////////
@@ -387,7 +390,16 @@ public class SyncFromTcService {
 		
 		// 保存数据至设计分包系统
 		EcmDocument doc = new EcmDocument();
-		doc.setAttributes(cfb.getData());
+//		doc.setAttributes(cfb.getData());
+		
+		Map<String,Object> datas= cfb.getData();
+		Set<String> keys=datas.keySet();
+		Iterator<String> it= keys.iterator();
+		while(it.hasNext()) {
+			String key=it.next();
+			DataEntity dte= (DataEntity)datas.get(key);
+			doc.addAttribute(key, dte.getAttrValue());
+		}
 		
 		//获取主文件电子件
 		List<FileInfo> docFileInfos=getFileTfAttachment(session,(ItemRevision)itemRev,
@@ -589,19 +601,26 @@ public class SyncFromTcService {
 //			dmServ.getProperties(modelObjects,
 //					new String[] { "cn9InternalCode", "cn9ExternalCode", "cn9Rev", "cn9FileName", "cn9States",
 //							"cn9Page", "cn9Paper", "cn9Digital", "cn9Blue", "cn9Language", "cn9DrawNo" });
-			dmServ.getProperties(modelObjects,(String[])cols.toArray());
+			dmServ.getProperties(modelObjects,cols.toArray(new String[0]));
 			List<ResultData> datas = new ArrayList<ResultData>();
 			for (ModelObject modelObject : modelObjects) {
 				ResultData data = new ResultData();
 				EcmDocument document = new EcmDocument();
 				List<FileInfo> fileInfoList = new ArrayList<FileInfo>();
 				Map<String,Object> row=new HashMap<>();
+				Map<String,Object> rowDt=new HashMap<>();
 				row.put("TYPE_NAME", formBean.getSourceTypeName());
 				for(AttrBean attr:attrs) {
 					row.put(attr.getSourceName(), modelObject.getPropertyObject(attr.getTargetName()).getStringValue());
+					
+					DataEntity dt=new DataEntity();
+					dt.setAttrName(attr.getSourceName());
+					dt.setAttrValue( modelObject.getPropertyObject(attr.getTargetName()).getStringValue());
+					dt.setDataType(attr.getDataType());
+					rowDt.put(attr.getSourceName(),dt);
 				}
 				document.setAttributes(row);
-				ship.setData(row);
+				ship.setData(rowDt);
 				
 				if(ship.getSearchConf()==null) {
 					data.setDocument(document);
@@ -617,15 +636,17 @@ public class SyncFromTcService {
 
 //				List<FileInfo> fileList = getFileTfAttachment(session, itemRevision, "IMAN_specification", iedItemId,
 //						iedRevId);
-				
-				List<FileInfo> fileList = getFileTfAttachment(session, itemRevision, ship.getName(), document.getCoding(),
-						document.getRevision());
-				if (fileList.size() > 0) {
-					fileInfoList.addAll(fileList);
-				}
+				if(itemRevision!=null) {
+					List<FileInfo> fileList = getFileTfAttachment(session, itemRevision, ship.getName(), document.getCoding(),
+							document.getRevision());
+					if (fileList.size() > 0) {
+						fileInfoList.addAll(fileList);
+					}
 
+					data.setList(fileInfoList);
+				}
+				
 				data.setDocument(document);
-				data.setList(fileInfoList);
 				datas.add(data);
 				// modify end
 
@@ -896,7 +917,7 @@ public class SyncFromTcService {
 					Map<String,Object> row=new HashMap<String, Object>();
 					for(int x=0;attrs!=null&&x<attrs.size();x++) {
 						AttrBean attr= attrs.get(x);
-						String value=SyncTcTools.getProperty(dmService, itemRev, attr.getTargetName());
+						String value=SyncTcTools.getProperty(dmService, itemRev, attr.getTargetName(),attr.getDataType());
 						row.put(attr.getSourceName(), value);
 					}
 					EcmDocument document=new EcmDocument();
@@ -1214,8 +1235,8 @@ public class SyncFromTcService {
 			savedQueryInput[0].limitList = new ModelObject[0];
 //			savedQueryInput[0].entries = new String[] { "零组件 ID", "版本" };
 //			savedQueryInput[0].values = new String[] { itemId, revId };
-			savedQueryInput[0].entries = (String[])entries.toArray();
-			savedQueryInput[0].values = (String[])values.toArray();
+			savedQueryInput[0].entries = entries.toArray(new String[0]);
+			savedQueryInput[0].values = values.toArray(new String[0]);
 			SavedQueriesResponse response = queryService.executeSavedQueries(savedQueryInput);
 			QueryResults found = response.arrayOfResults[0];
 

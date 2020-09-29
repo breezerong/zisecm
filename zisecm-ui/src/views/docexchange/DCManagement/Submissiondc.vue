@@ -1254,13 +1254,6 @@ export default {
                         if(_self.$refs.MeetDoc!=undefined){
                             _self.$refs.MeetDoc.itemDataList=[];
                         }
-
-                        _self.$refs.mainDataGrid.loadGridData();
-                        _self.$refs.transferDoc.itemDataList=[];
-                        _self.$refs.relevantDoc.itemDataList=[];
-                        _self.$refs.attachmentDoc.itemDataList=[];
-                        _self.$refs.MeetDoc.itemDataList=[];
-                        _self.$refs.MaterialDoc.itemDataList=[];
                     }
                     else{
                         if(_self.$refs.transferDoc!=undefined){
@@ -1443,6 +1436,7 @@ export default {
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                             _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=typeName
                         }
                         else{
                             _self.$refs.ShowProperty.showUploadFile = true;

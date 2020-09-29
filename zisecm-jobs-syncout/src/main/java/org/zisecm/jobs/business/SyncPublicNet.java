@@ -123,7 +123,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 //		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('"+actionName+"')  and status='新建' ");
 		List<ExcSynDetail> excSynDetailObjList = iExcSynDetailService
 				.selectByCondition(" APP_NAME='DOCEX' and ACTION_NAME in('" + actionName
-						+ "')  and (status is null  or status not in('已同步','已导出'))  order by CREATION_DATE asc ");
+						+ "')  and (status is null  or status not in('已同步','已导出','错误'))  order by CREATION_DATE asc ");
 		return excSynDetailObjList;
 
 	}
@@ -280,10 +280,19 @@ public class SyncPublicNet implements ISyncPublicNet {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("'").append(docId).append("'");
-		for (int i = 0; i < relations.size(); i++) {
+		for (int i = 0; relations!=null && i < relations.size(); i++) {
 			sb.append(",'");
 			sb.append(relations.get(i).getChildId());
 			sb.append("'");
+			if(relations.get(i).getName().equals("设计文件")) {
+				List<EcmRelation>  relationsAtt = ecmRelationMapper.selectByCondition(" PARENT_ID='" + relations.get(i).getChildId() + "' AND NAME='附件' ");
+				for (int a = 0; relationsAtt != null && a < relationsAtt.size(); a++) {
+					relations.add(relationsAtt.get(a));
+					sb.append(",'");
+					sb.append(relationsAtt.get(a).getChildId());
+					sb.append("'");
+				}
+			}
 		}
 		String onlyDoc = "'" + docId + "'";
 		boolean updateConent = true;
@@ -588,11 +597,14 @@ public class SyncPublicNet implements ISyncPublicNet {
 					syncBatch.setStatus("已同步");
 					batchService.updateObject(syncBatch);
 				}
-				String fileNewName = temp.getParent() + "/FINISH_" + fileName;
+				// 删除完成数据
 				String fileOrgName = temp.getAbsolutePath();
-				temp.renameTo(new File(fileNewName));
-				new File(fileOrgName + ".MD5.txt")
-						.renameTo(new File(temp.getParent() + "/FINISH_" + fileName + ".MD5.txt"));
+				temp.delete();
+				File f =new File(fileOrgName + ".MD5.txt");
+				if(f.exists()) {
+					f.delete();
+				}
+					
 			}
 		}
 		return false;

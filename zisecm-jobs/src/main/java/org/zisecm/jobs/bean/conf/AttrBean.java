@@ -1,6 +1,7 @@
 package org.zisecm.jobs.bean.conf;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 public class AttrBean {
 	
@@ -14,6 +15,17 @@ public class AttrBean {
 	
 	private String label;
 	
+	private SearchConf searchConf;
+	
+	
+	@XmlElement(name="searchConf")
+	public SearchConf getSearchConf() {
+		return searchConf;
+	}
+
+	public void setSearchConf(SearchConf searchConf) {
+		this.searchConf = searchConf;
+	}
 	@XmlAttribute
 	public String getSourceName() {
 		return sourceName;
