@@ -980,6 +980,7 @@ export default {
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                             _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=typeName
                         }
                         else{
                             _self.$refs.ShowProperty.showUploadFile = true;
@@ -1154,6 +1155,7 @@ export default {
                             _self.$refs.ShowProperty.myTypeName !="附件"&&
                             _self.$refs.ShowProperty.myTypeName !="会议纪要内容项"&&
                             _self.$refs.ShowProperty.myTypeName !="材料变更清单"){
+                                _self.$refs.mainDataGrid.loadGridData();
                                 if(_self.$refs.transferDoc!=undefined){
                                     _self.$refs.transferDoc.itemDataList=[];
                                 }
@@ -1169,7 +1171,6 @@ export default {
                                 if(_self.$refs.MeetDoc!=undefined){
                                     _self.$refs.MeetDoc.itemDataList=[];
                                 }
-                                _self.$refs.mainDataGrid.loadGridData();
                             }
                             else{
                                 if(_self.$refs.transferDoc!=undefined){
