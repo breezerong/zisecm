@@ -295,9 +295,6 @@
                                             <el-form-item>
                                             <el-button type="primary" @click="beforeUploadFile('/dc/addAttachment')">{{$t('application.new')}}</el-button>
                                             </el-form-item>
-                                            <!-- <el-form-item>
-                                            <el-button type="primary" @click="beforImport($refs.attachmentDoc,true,'附件')">{{$t('application.Import')}}</el-button>
-                                            </el-form-item> -->
                                             <el-form-item>
                                             <el-button type="warning" @click="onDeleleItem(selectedAttachment,[$refs.attachmentDoc])">{{$t('application.delete')}}</el-button>
                                             </el-form-item>
@@ -542,23 +539,24 @@ export default {
             _self.$refs.DialogDataGrid.loadGridData()
         },
         IEDChoose(row){
-            let ID = row.ID
-            let _self = this;
-            let relationName="相关文件"
-            let typeName="相关文件"
-            if(this.filters.typeName!=null&&this.filters.relationName!=null){
-                relationName = this.filters.relationName
-                typeName = this.filters.typeName
-            }
-            _self.relationName=relationName;
-            _self.dialogName = typeName;
-            _self.propertyVisible = true;
+            let ID = row.ID
+            let _self = this;
+            let relationName="相关文件"
+            let typeName="相关文件"
+            if(this.filters.typeName!=null&&this.filters.relationName!=null){
+                relationName = this.filters.relationName
+                typeName = this.filters.typeName
+            }
+            _self.relationName=relationName;
+            _self.dialogName = typeName;
+            _self.propertyVisible = true;
             
             setTimeout(()=>{
                 if(_self.$refs.ShowProperty){
                     _self.$refs.ShowProperty.myItemId = "";
                     _self.dialogName=typeName;
                     _self.$refs.ShowProperty.myTypeName =typeName;
+                    if(typeName!='设计文件'){
                     if(typeName=='相关文件'){
                         _self.$refs.ShowProperty.showUploadFile = false;
                         _self.$refs.ShowProperty.formName=_self.relation.formName;
@@ -568,24 +566,46 @@ export default {
                     }
                     _self.typeName=typeName;
                     
-                    if(typeName=='设计文件'){
-                    axios.post("/exchange/doc/getReplyInfo",ID)
-                    .then(function(response) {
-                    if(response.data.code == 1){
-                        _self.includeRefDoc = response.data.includeRefDoc;
-                        _self.$refs.ShowProperty.typeName = response.data.typeName;
-                        _self.$refs.ShowProperty.myTypeName = response.data.typeName;
-                        let mp=new Map();
-                        for (const key in response.data.data) {
-                                mp.set(key,key);
-                        }
-                        _self.$refs.ShowProperty.setMainSubRelation(mp);
-                        _self.$refs.ShowProperty.setMainObject(response.data.data);
-                        _self.$refs.ShowProperty.loadFormInfo();
-                    }
-                    })}
+                    _self.$refs.ShowProperty.setMainObject(row);
+                    let mp=new Map();
+                    mp.set("CODING",'CODING');
+                    mp.set("C_IN_CODING",'C_IN_CODING');
+                    mp.set("TITLE",'TITLE');
+                    mp.set("REVISION","REVISION")
+                    _self.$refs.ShowProperty.setMainSubRelation(mp);
+                    _self.$refs.ShowProperty.loadFormInfo();
+                    return
                 }
-            },10);
+                if(typeName=='设计文件'){
+                    _self.$refs.ShowProperty.myItemId = "";
+                    _self.dialogName=typeName;
+                    _self.$refs.ShowProperty.myTypeName =typeName;
+                    _self.$refs.ShowProperty.showUploadFile = true;
+                    _self.$refs.ShowProperty.formName="";
+                    _self.typeName=typeName;
+                    if(typeName=='设计文件'){
+                    axios.post("/exchange/doc/getReplyInfo",ID)
+                    .then(function(response) {
+                    if(response.data.code == 1){
+                        _self.includeRefDoc = response.data.includeRefDoc;
+                        _self.$refs.ShowProperty.typeName = response.data.typeName;
+                        _self.$refs.ShowProperty.myTypeName = response.data.typeName;
+                        let mp=new Map();
+                        for (const key in response.data.data) {
+                                mp.set(key,key);
+                        }
+                        _self.$refs.ShowProperty.setMainSubRelation(mp);
+                        _self.$refs.ShowProperty.setMainObject(response.data.data);
+                        _self.$refs.ShowProperty.loadFormInfo();
+                        return 
+                           }
+                    })}
+                    }
+                    }    
+                    },10); 
+
+                    
+           
         },
         subdc(){
             let _self = this
@@ -957,6 +977,8 @@ export default {
         },
         beforeCreateDocItem(typeName,relationName) {
                 let _self = this;
+                _self.filters.typeName=typeName
+                _self.filters.relationName=relationName
                 if(typeName!='设计文件'&&typeName!='相关文件'&&typeName!='会议纪要内容项'&&typeName!='材料变更清单'){
                     _self.parentId='';
                                      
