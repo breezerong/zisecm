@@ -548,6 +548,8 @@ public class IEDImportService extends EcmService {
 			res=documentService.checkIn(token, id,attr, null, false);
 			documentService.updateStatus(token, res.getId(), "新建");
 			documentService.updateStatus(token, temp.getId(), "变更中");
+			OptionLogger.logger(token, detailService, res, "变更",
+					res.getAttributeValue("C_COMPANY")!=null?res.getAttributeValue("C_COMPANY").toString():"");
 			sb.append("第"+i+"行IED完成升版\r\n");
 			
 				return true;						//升版操作
