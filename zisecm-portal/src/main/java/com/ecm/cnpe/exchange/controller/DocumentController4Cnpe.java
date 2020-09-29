@@ -225,12 +225,27 @@ public class DocumentController4Cnpe extends ControllerAbstract {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String idsStr=args.get("ids").toString();
 		List<String> idsList = JSONUtils.stringToArray(idsStr);
-
 		for(String childId : idsList) {
-
+			
+		}
+		for(String childId : idsList) {
 			String sql = "update exc_transfer set STATUS='待接收'   where DOC_ID='"+childId+"'";	
-
 			ecmDocument.executeSQL(sql);
+			EcmDocument doc= documentService.getObjectById(getToken(), childId);
+			String contractorStr= doc.getAttributeValue("C_TO")==null?"":doc.getAttributeValue("C_TO").toString();
+			String copyToStr=doc.getAttributeValue("C_COPY_TO")==null?"":doc.getAttributeValue("C_COPY_TO").toString();
+			
+			String codingStr=doc.getCoding();
+			String[] contractors=contractorStr.split(";");
+			String[] copyTos=copyToStr.split(";");
+			String[] codings=codingStr.split(";");
+			for(int i=0;i<contractors.length;i++) {
+					OptionLogger.logger(getToken(), detailService,doc, "分发",contractors[i]);
+			}
+			
+			for(int i=0;i<copyTos.length;i++) {
+					OptionLogger.logger(getToken(), detailService,doc, "分发",copyTos[i]);
+			}
 		}
 		mp.put("code", ActionContext.SUCESS);
 		
