@@ -365,7 +365,7 @@ public class SyncPublicNet implements ISyncPublicNet {
 			updateConent = false;
 			updateRelation = false;
 		} else if ("CNPE接收".equals(type)) {
-			String col = "ID,STATUS,C_RECEIVER,C_RECEIVE_DATE";
+			String col = "ID,STATUS,C_IS_RELEASED,C_RECEIVER,C_RECEIVE_DATE";
 			documents = ecmDocumentMapper.executeSQL("select " + col + " from ecm_document where ID='" + docId + "'");
 //			initResultList(documents, col);
 			updateConent = false;
@@ -770,10 +770,11 @@ public class SyncPublicNet implements ISyncPublicNet {
 					}
 				} else if (beanType.startsWith("update")) {
 					// IED 设计文件升版，需要修改上一版本的属性
-					if (beanType.equals("update_升版")) {
-						String typeName = documents.get(i).get("TYPE_NAME").toString();
+					if (beanType.equals("update_升版") || beanType.equals("update_接收")) {
+						
 						EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
 						if (doc != null) {
+							String typeName = documents.get(i).get("TYPE_NAME").toString();
 							String condition = " IS_CURRENT = 1 AND VERSION_ID='"
 									+ documents.get(i).get("VERSION_ID").toString() + "'";
 							if (typeName.equalsIgnoreCase("IED")) {
@@ -785,6 +786,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 									attrs.put("IS_CURRENT", 0);
 									documentService.updateObject(token, attrs);
 								}
+								documents.get(i).put("IS_CURRENT", 1);
+								documents.get(i).put("C_IS_RELEASED", 1);
+								
 							} else if (typeName.equalsIgnoreCase("设计文件")) {
 								
 								List<EcmDocument> docList = documentService.getObjects(token, condition);
@@ -794,12 +798,13 @@ public class SyncPublicNet implements ISyncPublicNet {
 									attrs.put("IS_CURRENT", 0);
 									documentService.updateObject(token, attrs);
 								}
+								documents.get(i).put("IS_CURRENT", 1);
+								documents.get(i).put("C_IS_RELEASED", 1);
 							}
 						}
 
-					} else {
-						documentService.updateObject(token, documents.get(i));
-					}
+					} 
+					documentService.updateObject(token, documents.get(i));	
 
 				} else if (beanType.startsWith("delete")) {
 					EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
