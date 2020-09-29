@@ -498,6 +498,7 @@ export default {
                         _self.$refs.ShowProperty.formName=_self.relation.formName;
                     }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                         _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=typeName
                     }
                     else{
                         _self.$refs.ShowProperty.showUploadFile = false;
@@ -885,6 +886,7 @@ export default {
                             _self.$refs.ShowProperty.formName=_self.relation.formName;
                         }else if(typeName=='会议纪要内容项'||typeName=='材料变更清单'){
                             _self.$refs.ShowProperty.showUploadFile = false;
+                            _self.$refs.ShowProperty.formName=typeName
                         }
                         else{
                             _self.$refs.ShowProperty.showUploadFile = false;
