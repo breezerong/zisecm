@@ -18,6 +18,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.zisecm.jobs.config.EcmConfig;
 import org.zisecm.jobs.entity.WsEntity;
 import org.zisecm.jobs.entity.WsService;
 
@@ -60,17 +61,17 @@ public class SyncWbs {
 	
 	@Autowired
 	private P6SyncService p6Service;
-	
+
 	@Autowired
-	private Environment env;
+	private EcmConfig ecmConfig;
 	
 	@Scheduled(cron = "${cron.syncwbs}")
 	public void run () {
 		
 		IEcmSession ecmSession = null;
-		String workflowSpecialUserName = env.getProperty("ecm.username");		
+		String workflowSpecialUserName = ecmConfig.getUsername();		
 		try {
-			ecmSession = authService.login("jobs", workflowSpecialUserName, env.getProperty("ecm.password"));
+			ecmSession = authService.login("jobs", workflowSpecialUserName, ecmConfig.getPassword());
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
