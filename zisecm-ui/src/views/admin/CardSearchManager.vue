@@ -171,7 +171,7 @@ export default {
     delitem(indata) {
       let _self = this;
       axios
-        .poset("/admin/deleteCardSearch", JSON.stringify(indata))
+        .post("/admin/deleteCardSearch", JSON.stringify(indata))
         .then(function(response) {
           _self.$message("删除成功!");
           _self.refreshData();
