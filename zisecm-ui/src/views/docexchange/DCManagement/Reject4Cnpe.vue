@@ -487,16 +487,18 @@ export default {
         },
         IEDChoose(row){
             let ID = row.ID
-            let _self = this;
+            let _self = this
             let relationName="相关文件"
             let typeName="相关文件"
             if(this.filters.typeName!=null&&this.filters.relationName!=null){
                 relationName = this.filters.relationName
                 typeName = this.filters.typeName
+                this.filters.typeName = null
+                this.filters.relationName = null
             }
-            _self.relationName=relationName;
-            _self.dialogName = typeName;
-            _self.propertyVisible = true;
+            _self.relationName=relationName
+            _self.dialogName = typeName
+            _self.propertyVisible = true
             
             setTimeout(()=>{
                 if(_self.$refs.ShowProperty){
@@ -870,6 +872,8 @@ export default {
                     }
                 }
                 if(typeName=='相关文件'){
+                    this.filters.typeName = "相关文件";
+                    this.filters.relationName = "相关文件";
                     var m = new Map();
                     m.set('parentDocId',_self.parentId);
                     let formdata = new FormData();
@@ -1350,6 +1354,8 @@ export default {
                     }
                 }
                 if(typeName=='设计文件'){
+                    this.filters.typeName = "设计文件";
+                    this.filters.relationName = "设计文件";
                     var m = new Map();
                     m.set('parentDocId',_self.parentId);
                     let formdata = new FormData();

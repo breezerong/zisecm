@@ -586,6 +586,8 @@ export default {
             if(this.filters.typeName!=null&&this.filters.relationName!=null){
                 relationName = this.filters.relationName
                 typeName = this.filters.typeName
+                this.filters.typeName = null
+                this.filters.relationName = null
             }
             _self.relationName=relationName;
             _self.dialogName = typeName;
@@ -966,6 +968,8 @@ export default {
                     }
                 }
                 if(typeName=='相关文件'){
+                    this.filters.typeName = "相关文件"
+                    this.filters.relationName = "相关文件"
                     var m = new Map();
                     m.set('parentDocId',_self.parentId);
                     let formdata = new FormData();
@@ -1431,6 +1435,8 @@ export default {
                     }
                 }
                 if(typeName=='设计文件'){
+                    this.filters.typeName = "设计文件"
+                    this.filters.relationName = "设计文件"
                     var m = new Map();
                     m.set('parentDocId',_self.parentId);
                     let formdata = new FormData();

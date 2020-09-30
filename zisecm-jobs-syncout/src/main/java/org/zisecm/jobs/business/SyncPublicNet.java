@@ -306,22 +306,18 @@ public class SyncPublicNet implements ISyncPublicNet {
 			beanType = "create_提交";
 		} else if ("驳回提交".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
-			beanType = "update_驳回提交";
-			updateConent = false;
-			updateRelation = false;
+			beanType = "create_驳回提交";
 		} else if ("升版".equals(type)) {
 			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
 			beanType = "update_升版";
 			updateConent = false;
 			updateRelation = false;
-		} else if ("延误打开反馈".equals(type)) {
+		} else if ("延误打开反馈".equals(type) || "延误打开确认".equals(type) ||
+				"延误关闭反馈".equals(type) || "延误关闭确认".equals(type) ||
+				"延误回复反馈".equals(type) || "延误回复确认".equals(type)
+				) {
 			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
-			beanType = "update_延误打开反馈";
-			updateConent = false;
-			updateRelation = false;
-		} else if ("延误反馈确认".equals(type)) {
-			documents = documentService.getObjectMap(token, " ID in(" + onlyDoc + ") ");
-			beanType = "update_延误反馈确认";
+			beanType = "update_"+type;
 			updateConent = false;
 			updateRelation = false;
 		} else if ("新建".equals(type)) {
@@ -774,9 +770,9 @@ public class SyncPublicNet implements ISyncPublicNet {
 						
 						EcmDocument doc = documentService.getObjectById(token, documents.get(i).get("ID").toString());
 						if (doc != null) {
-							String typeName = documents.get(i).get("TYPE_NAME").toString();
+							String typeName = doc.getTypeName();
 							String condition = " IS_CURRENT = 1 AND VERSION_ID='"
-									+ documents.get(i).get("VERSION_ID").toString() + "'";
+									+ doc.getVersionId() + "'";
 							if (typeName.equalsIgnoreCase("IED")) {
 								List<EcmDocument> docList = documentService.getObjects(token, condition);
 								if (docList.size() > 0) {
@@ -848,8 +844,18 @@ public class SyncPublicNet implements ISyncPublicNet {
 				BufferedInputStream fis = new BufferedInputStream(
 						new FileInputStream(zipFolder + "/" + contents.get(i).getFilePath()));
 				try {
+					
 					contents.get(i).setInputStream(fis);
-					contentService.newObject(token, contents.get(i));
+					if(beanType.equals("create_驳回提交")) {
+						EcmContent cont = contentService.getObjectById(token, contents.get(i).getId());
+						if(cont != null) {
+							contentService.updateObject(token, contents.get(i));
+						}else {
+							contentService.newObject(token, contents.get(i));
+						}
+					}else {
+						contentService.newObject(token, contents.get(i));
+					}
 				}catch(Exception ex) {
 					ex.printStackTrace();
 				}	
