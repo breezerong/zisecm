@@ -28,32 +28,32 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from dbo.ecm_cfg_activity order by PROCESS_NAME,ORDER_INDEX
+    from ecm_cfg_activity order by PROCESS_NAME,ORDER_INDEX
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from dbo.ecm_cfg_activity
+    from ecm_cfg_activity
     where ID = #{id,jdbcType=NVARCHAR}
   </select>
   <select id="selectByProcessId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from dbo.ecm_cfg_activity
+    from ecm_cfg_activity
     where PROCESS_ID = #{processId,jdbcType=NVARCHAR} order by ORDER_INDEX
   </select>
   <select id="selectByProcessName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from dbo.ecm_cfg_activity
+    from ecm_cfg_activity
     where PROCESS_NAME = #{processName,jdbcType=NVARCHAR} order by ORDER_INDEX
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from dbo.ecm_cfg_activity
+    delete from ecm_cfg_activity
     where ID = #{id,jdbcType=NVARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmCfgActivity">
-    insert into dbo.ecm_cfg_activity (ID, PROCESS_ID, PROCESS_NAME, 
+    insert into ecm_cfg_activity (ID, PROCESS_ID, PROCESS_NAME, 
       ACTIVITY_NAME, ROLE_NAME, IS_MULTI, 
       NEXT_ACTIVITY, REJECT_ACTIVITY, NEXT_ACTIVITY_LABEL, 
       REJECT_ACTIVITY_LABEL, ENABLE_DELEGATE, ENABLE_REPEAT, 
@@ -66,7 +66,7 @@
       #{selectActivities,jdbcType=NVARCHAR}, #{formAttribute,jdbcType=NVARCHAR}, #{orderIndex,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmCfgActivity">
-    insert into dbo.ecm_cfg_activity
+    insert into ecm_cfg_activity
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         ID,
@@ -175,7 +175,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmCfgActivity">
-    update dbo.ecm_cfg_activity
+    update ecm_cfg_activity
     <set>
       <if test="processId != null">
         PROCESS_ID = #{processId,jdbcType=NVARCHAR},
@@ -230,7 +230,7 @@
     where ID = #{id,jdbcType=NVARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmCfgActivity">
-    update dbo.ecm_cfg_activity
+    update ecm_cfg_activity
     set PROCESS_ID = #{processId,jdbcType=NVARCHAR},
       PROCESS_NAME = #{processName,jdbcType=NVARCHAR},
       ACTIVITY_NAME = #{activityName,jdbcType=NVARCHAR},
