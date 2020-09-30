@@ -21,7 +21,7 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from dbo.ecm_gridview
+    from ecm_gridview
     where ID = #{id,jdbcType=NVARCHAR}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
@@ -36,11 +36,11 @@
     where ${condition}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from dbo.ecm_gridview
+    delete from ecm_gridview
     where ID = #{id,jdbcType=NVARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmGridView">
-    insert into dbo.ecm_gridview (ID, NAME, DESCRIPTION, 
+    insert into ecm_gridview (ID, NAME, DESCRIPTION, 
       CONDITION_STR, ORDER_BY, TYPE_NAME, 
       CREATOR, CREATION_DATE, GRID_TYPE, 
       GRID_TAG)
@@ -50,7 +50,7 @@
       #{gridTag,jdbcType=NVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmGridView">
-    insert into dbo.ecm_gridview
+    insert into ecm_gridview
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         ID,
@@ -120,7 +120,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmGridView">
-    update dbo.ecm_gridview
+    update ecm_gridview
     <set>
       <if test="name != null">
         NAME = #{name,jdbcType=NVARCHAR},
@@ -156,7 +156,7 @@
     where ID = #{id,jdbcType=NVARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ecm.core.entity.EcmGridView">
-    update dbo.ecm_gridview
+    update ecm_gridview
     set NAME = #{name,jdbcType=NVARCHAR},
       DESCRIPTION = #{description,jdbcType=NVARCHAR},
       CONDITION_STR = #{condition,jdbcType=NVARCHAR},
