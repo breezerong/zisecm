@@ -651,10 +651,15 @@ public class SyncPublicNet implements ISyncPublicNet {
 					unZip(zipFileFullPath, zipFolderPath);
 					List<SyncBean> syncBeanList = readJsonResult(zipFile.toString().replace(".zip", "") + "/"
 							+ zipFile.getName().replace(".zip", "") + ".json");
-					if (actionName.equals("导入用户")) {
-						importUserInner(token, syncBeanList);
-					} else {
-						importDataInner(token, syncBeanList, zipFileFullPath.replace(".zip", ""));
+					if (syncBeanList != null && syncBeanList.size()>0) 
+					{
+						String beanType = syncBeanList.get(0).getBeanType();
+						if(beanType.equals("新建用户")||beanType.equals("修改用户")
+								||beanType.equals("添加到角色")||beanType.equals("移除用户")){
+							importUserInner(token, syncBeanList);
+						} else {
+							importDataInner(token, syncBeanList, zipFileFullPath.replace(".zip", ""));
+						}
 					}
 					writeJsonResult(zipFile, "DONE_");
 

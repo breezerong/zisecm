@@ -47,8 +47,8 @@ public class SyncPublicNetApp {
 			
 			syncPublicNet.exportData("计划同步");
 		
-			syncPublicNet.importData("");//导入数据
-			syncPublicNet.importData("导入用户");//导入用户
+			syncPublicNet.importData("");
+			
 		
 			syncPublicNet.UpdateImportResultStatus();//done
 			};
