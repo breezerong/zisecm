@@ -32,6 +32,9 @@ export default {
 .el-table .cell, .el-table th div {
     padding-right: 5px !important;
 }
+.el-table thead {
+    color: #2c2c2c !important;
+}
 .el-date-editor.el-input__inner {
   padding-left: 25px !important;
 }
