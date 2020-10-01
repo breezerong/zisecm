@@ -29,6 +29,9 @@ export default {
 .el-date-editor.el-input__inner {
   width: 140px;
 }
+.el-table .cell, .el-table th div {
+    padding-right: 5px !important;
+}
 .el-date-editor.el-input__inner {
   padding-left: 25px !important;
 }
