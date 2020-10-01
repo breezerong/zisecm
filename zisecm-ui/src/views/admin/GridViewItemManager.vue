@@ -9,17 +9,18 @@
     </el-dialog>
     <el-dialog title="添加" :visible.sync="dialogVisible" :append-to-body="true" width="80%">
       <el-form :model="form">
+        <el-col :span="24">
         <el-form-item label="父Id" :label-width="formLabelWidth">
-          <el-input v-model="form.parentId" auto-complete="off"></el-input>
+          <el-input v-model="form.parentId" auto-complete="off" disabled></el-input>
         </el-form-item>
-        <el-row>
-          <el-col :span="10">
+        </el-col>
+          <el-col :span="12">
             <el-form-item label="属性名称" :label-width="formLabelWidth">
               <AttributeSelector ref="AttributeSelector" v-model="form.attrName"
                 v-bind:inputValue="form.attrName"></AttributeSelector>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
+          <el-col :span="12">
             <el-form-item label="标签" :label-width="formLabelWidth">
               <LangSelector
                 v-model="form.label"
@@ -27,31 +28,33 @@
               ></LangSelector>
             </el-form-item>
           </el-col>
-      
-        </el-row>
-        <el-form-item label="宽度" :label-width="formLabelWidth">
-          <el-input v-model="form.width" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-col :span="12">
+        <el-col :span="6">
+          <el-form-item label="宽度" :label-width="formLabelWidth">
+            <el-input v-model="form.width" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="显示类型" :label-width="formLabelWidth">
-            <el-select v-model="form.visibleType">
+            <el-select v-model="form.visibleType" key="form.visibleType" :disabled="false">
               <el-option label="显示" value="1"></el-option>
               <el-option label="可选" value="2"></el-option>
               <el-option label="隐藏" value="3"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="是否排序" :label-width="formLabelWidth">
-            <el-select v-model="form.allowOrderby">
+        <el-col :span="6">
+          <el-form-item label="是否排序" :label-width="formLabelWidth" >
+            <el-select v-model="form.allowOrderby" key="form.allowOrderby" :disabled="false">
               <el-option label="是" :value="true"></el-option>
               <el-option label="否" :value="false"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-form-item label="序号" :label-width="formLabelWidth">
-          <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-col :span="6">
+          <el-form-item label="序号" :label-width="formLabelWidth">
+            <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
@@ -113,7 +116,7 @@
           </el-table-column>
           <el-table-column label="显示类型" width="120">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.visibleType">
+              <el-select v-model="scope.row.visibleType" key="row.visibleType">
                 <el-option label="显示" value="1"></el-option>
                 <el-option label="可选" value="2"></el-option>
                 <el-option label="隐藏" value="3"></el-option>
@@ -122,7 +125,7 @@
           </el-table-column>
           <el-table-column label="可排序" width="100">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.allowOrderby">
+              <el-select v-model="scope.row.allowOrderby" key="row.allowOrderby">
                 <el-option label="是" :value="true"></el-option>
                 <el-option label="否" :value="false"></el-option>
               </el-select>
@@ -196,7 +199,7 @@ export default {
         value: "",
         visibleType: "1",
         width: "120",
-        orderIndex: 1,
+        orderIndex: 100,
         allowOrderby: false
       },
       formLabelWidth: "120px",
@@ -291,6 +294,8 @@ export default {
       this.form.name = "";
       this.form.description = "";
       this.form.value = "";
+      this.form.visibleType= "4";
+      this.allowOrderby = false;
       this.dialogVisible = true;
     },
     saveItem(indata,isEdit){

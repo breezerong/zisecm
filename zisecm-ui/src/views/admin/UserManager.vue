@@ -425,7 +425,7 @@ export default {
       }
       m.set("condition", cond);
       m.set("pageSize", _self.pageSize);
-      m.set("pageIndex", (_self.currentPage - 1) * _self.pageSize);
+      m.set("pageIndex", _self.currentPage - 1);
       // console.log('pagesize:', _self.pageSize);
       axios
         .post("/admin/getUsers", JSON.stringify(m))
