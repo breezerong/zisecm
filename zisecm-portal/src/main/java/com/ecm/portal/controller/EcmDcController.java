@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
-import com.ecm.cnpe.exchange.entity.StatusEntity;
-import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.ExcelUtil;
@@ -131,11 +129,6 @@ public class EcmDcController extends ControllerAbstract {
 	private EcmRelationMapper ecmRelationMapper;
 	@Autowired
 	private Environment env;
-	@Autowired
-	private ExcTransferServiceImpl excTransferService;
-	
-	@Autowired
-	private ExcSynDetailService detailService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
 
@@ -2404,63 +2397,7 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
-	/**
-	 * 删除文件和关系
-	 * @param argStr
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/dc/delDocumentAndRelationCommon", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
-	@ResponseBody
-	public Map<String, Object> delDocumentAndRelation(@RequestBody String argStr) throws Exception {
-		List<String> list = JSONUtils.stringToArray(argStr);
-		//删除文件
-		for(String childId : list) {
-			
-			try {
-				EcmDocument dc= documentService.getObjectById(getToken(), childId);
-				
-				documentService.deleteObject(getToken(),childId);
-				if("驳回".equals(dc.getStatus())) {
-					OptionLogger.logger(getToken(), detailService, dc, "驳回删除", 
-							dc.getAttributeValue("C_COMPANY")!=null?dc.getAttributeValue("C_COMPANY").toString():"");
-				}
-				if("IED".equals(dc.getTypeName())) {
-					String condition="TYPE_NAME='IED' AND IS_CURRENT=1 AND VERSION_ID='"+dc.getVersionId()+"' AND ID<>'"+dc.getId()+"'";
-					List<Map<String, Object>> List = documentService.getObjectMap(getToken(), condition);
-					if(List != null && List.size() > 0) {
-						if(List.get(0).get("STATUS").equals("变更中")) {
-							String sql="UPDATE ecm_document SET STATUS='已生效' WHERE ID='"+List.get(0).get("ID")+"'";
-							ecmDocument.executeSQL(sql);
-							OptionLogger.logger(getToken(), detailService, dc, "删除",
-									dc.getAttributeValue("C_COMPANY")!=null?dc.getAttributeValue("C_COMPANY").toString():"");
-						}
-					}
-				}
-			}catch(NullPointerException nu) {
-				nu.printStackTrace();
-				continue;
-			}catch (Exception e) {
-				// TODO: handle exception
-				throw e;
-			}
-			
-		}
-		
-		//删除关系
-		String strSql="select id,child_id from ecm_relation where parent_id in('"+String.join("','", list)+"')";
-		List<Map<String,Object>> relationIds=relationService.getMapList(getToken(), strSql);
-		for(Map<String,Object> rMap:relationIds) {
-			documentService.deleteObject(getToken(),rMap.get("child_id").toString());//删除子文件2020/07/01添加
-			relationService.deleteObject(getToken(),rMap.get("id").toString());
-		}
-		
-		
-
-		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		return mp;
-	}
+	
 	/**
 	 * 升版
 	 * 

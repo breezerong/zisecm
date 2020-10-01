@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
-import com.ecm.cnpe.exchange.utils.OptionLogger;
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmGroup;
@@ -349,11 +348,6 @@ public class UserManager extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			userService.updateObject(getToken(), obj);
-			if(CustomInfo.OwnerCompany.equals(this.getSession().getCurrentUser().getCompany())) {
-				OptionLogger.loggerUser(getToken(), detailService, obj, obj.getCompanyName(),"修改用户");
-			}else {
-				OptionLogger.loggerUser(getToken(), detailService, obj, CustomInfo.OwnerCompany,"修改用户");
-			}
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block
@@ -422,11 +416,6 @@ public class UserManager extends ControllerAbstract {
 				fileName = uploadFile.getOriginalFilename();
 			}
 			userService.newObject(getToken(), en, instream, fileName);
-			if(CustomInfo.OwnerCompany.equals(this.getSession().getCurrentUser().getCompany())) {
-				OptionLogger.loggerUser(getToken(), detailService, en, en.getCompanyName(),"新建用户");
-			}else {
-				OptionLogger.loggerUser(getToken(), detailService, en, CustomInfo.OwnerCompany,"新建用户");
-			}
 			
 			if (instream != null) {
 				instream.close();
@@ -530,12 +519,6 @@ public class UserManager extends ControllerAbstract {
 			EcmUser user= userService.getObjectById(this.getToken(), args.get("userId").toString());
 			
 			EcmGroup group= groupService.getObjectById(getToken(), args.get("roleId").toString());
-			
-			if(CustomInfo.OwnerCompany.equals(this.getSession().getCurrentUser().getCompany())) {
-				OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),user.getCompanyName(),"移除用户");
-			}else {
-				OptionLogger.loggerGroup(getToken(), detailService, user, group.getName(),CustomInfo.OwnerCompany,"移除用户");
-			}
 			
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {

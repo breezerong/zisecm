@@ -482,7 +482,7 @@ export default {
       let _self = this;
 
       axios
-        .post("/admin/updateUser", JSON.stringify(indata))
+        .post("/exc/updateUser", JSON.stringify(indata))
         .then(function(response) {
           _self.$message("保存成功!");
         })
@@ -563,7 +563,7 @@ export default {
           formdata.append("uploadFile", _self.file.raw);
         }
         axios
-          .post("/admin/newUser", formdata, {
+          .post("/exc/newUser", formdata, {
             "Content-Type": "multipart/form-data"
           })
           .then(function(response) {

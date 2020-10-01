@@ -266,7 +266,7 @@ export default {
         m.set("userId", indata.id);
         m.set("deptId", _self.selectedItemId);
         axios
-          .post("/admin/addToGroup", JSON.stringify(m))
+          .post("/exc/addToGroup", JSON.stringify(m))
           .then(function(response) {
             _self.refreshUserData();
             _self.$message("添加用户成功!");
@@ -285,7 +285,7 @@ export default {
       m.set("userId", indata.id);
       m.set("roleId", _self.selectedItemId);
       axios
-        .post("/admin/removeUserRole", JSON.stringify(m))
+        .post("/exc/removeUserRole", JSON.stringify(m))
         .then(function(response) {
           _self.$message("移除用户成功!");
           _self.refreshUserData();
