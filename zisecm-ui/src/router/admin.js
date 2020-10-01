@@ -229,7 +229,7 @@ export const adminRouter =
       title: 'relationFileTypeSetting'
     },
     path: '/managercenter/uirelationmanager',
-    component: () => import('@/views/docexchange/UiRelation/'),
+    component: () => import('@/views/admin/UiRelation/'),
     name: '相关类型设置'
   },
   {
