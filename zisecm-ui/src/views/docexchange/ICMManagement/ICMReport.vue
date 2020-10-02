@@ -3,9 +3,6 @@
     <template v-slot:header style="height: auto"></template>
     <template v-slot:main>
       <el-tabs v-model="activeName">
-        <el-tab-pane :label="$t('route.ICMBase')" name="ICMBase">
-          <ICMBaseReport ></ICMBaseReport>
-        </el-tab-pane>
         <el-tab-pane :label="$t('route.ICMExport')" name="ICMExport">
           <ICMReportP ></ICMReportP>
         </el-tab-pane>
