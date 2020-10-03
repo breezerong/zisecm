@@ -60,10 +60,6 @@
           @row-click="selectChange"
           style="width: 100%"
         >
-          <!--
-                    <el-table-column type="selection" width="40" @selection-change="selectChange">
-                    </el-table-column>
-          -->
           <el-table-column label="序号" width="60">
             <template slot-scope="scope">
               <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
@@ -98,15 +94,18 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 100, 200]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="itemCount"
-        ></el-pagination>
+        <el-row>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[10, 20, 50, 100, 200]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="itemCount"
+            key="rolePagination"
+          ></el-pagination>
+        </el-row>
       </el-col>
       <el-col :span="12">
         <el-tabs v-model="activeName" type="card">
@@ -256,7 +255,7 @@ export default {
       roleList: [],
       roleListFull: [],
       activeName: "usertab",
-      tableHeight: window.innerHeight - 180,
+      tableHeight: window.innerHeight - 190,
       tableHeight2: window.innerHeight - 240,
       inputkey: "",
       userInputkey: "",
@@ -443,7 +442,7 @@ export default {
       m.set("groupId", _self.selectedItemId);
       m.set("condition", _self.userInputkey);
       m.set("pageSize", _self.userPageSize);
-      m.set("pageIndex", (_self.userCurrentPage - 1) * _self.userPageSize);
+      m.set("pageIndex", _self.userCurrentPage - 1);
       //console.log('id:', _self.selectedItemId);
       axios
         .post("/admin/getRoleAllUsers", JSON.stringify(m))
