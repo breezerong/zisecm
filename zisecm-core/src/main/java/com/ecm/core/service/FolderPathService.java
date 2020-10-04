@@ -12,6 +12,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ import com.ecm.core.entity.EcmFolder;
  */
 @Service
 public class FolderPathService extends EcmService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(FolderPathService.class);
 
 	@Autowired
 	private EcmQueryMapper ecmQuery;
@@ -145,8 +149,8 @@ public class FolderPathService extends EcmService {
 			if(str.startsWith("{")) {
 				String attrName = str.replace("{", "").replace("}", "");
 				if(values.get(attrName)==null){
-					System.out.println("ID:"+values.get("ID"));
-					System.out.println("Property :"+attrName+", value is null..");
+					logger.info("ID:"+values.get("ID"));
+					logger.info("Property :"+attrName+", value is null..");
 				}
 				folderPath +=  ((String)values.get(attrName)).replace("/", "-");
 			}

@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ecm.common.util.JSONUtils;
@@ -68,6 +69,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.UserService;
 import com.ecm.flowable.config.CustomProcessDiagramGenerator;
+import com.ecm.flowable.listener.JobListener;
 import com.ecm.flowable.service.CustomWorkflowService;
 import com.ecm.flowable.service.IFlowableBpmnModelService;
 
@@ -119,20 +121,49 @@ public class WorkflowController extends ControllerAbstract {
 	 * 
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "deploymentProcess")
+	@RequestMapping(value = "deployProcess", method = RequestMethod.POST)
 	@ResponseBody
-	public String deploymentProcessExpense() throws Exception {
+	public Map<String, Object> deployProcess(String name, MultipartFile bpmnFile) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			InputStream instream = bpmnFile.getInputStream();
+			if(instream != null) {
+				String resourceName = bpmnFile.getOriginalFilename();
+				// 流程部署
+				Deployment deployment = repositoryService.createDeployment().addInputStream(resourceName,
+						instream).name(name).deploy();
+				//增加事件监听
+		        runtimeService.addEventListener(new JobListener());
+				mp.put("data", deployment.getId());
+				mp.put("code", ActionContext.SUCESS);
+				instream.close();
+			}
+			else {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", "Upload file is null.");
+			}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "deleteProcess", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteProcess(@RequestBody String id) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			repositoryService.deleteDeployment(id);
+			mp.put("code", ActionContext.SUCESS);
 
-		// 流程部署
-		Deployment deployment = repositoryService.createDeployment().addInputStream("编校审批.bpmn",
-				new FileInputStream("C:\\Workfolder\\zisecm\\zisecm-portal\\src\\main\\resources\\diagrams\\编校审批.bpmn"))
-		// .addClasspathResource("resources/diagrams/借阅流程.bpmn")
-//	                .name("借阅流程")
-				.deploy();
-		System.out.println("deploy success=" + deployment.getId());
-		// 增加事件监听
-		// runtimeService.addEventListener(new JobListener());
-		return deployment.getId();
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
 	}
 
 	/**

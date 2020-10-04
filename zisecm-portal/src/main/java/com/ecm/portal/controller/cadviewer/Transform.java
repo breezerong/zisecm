@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,6 +21,7 @@ import com.google.gson.JsonObject;
 
 @Controller
 public class Transform extends ControllerAbstract {
+	private static final Logger logger = LoggerFactory.getLogger(Transform.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -32,7 +35,7 @@ public class Transform extends ControllerAbstract {
 		} else {
 			id = request.getParameter("id");
 		}
-		System.out.println("id===================="+id);
+		logger.debug("id===================="+id);
 		resp.setContentType("application/json;charset=UTF-8");
 		PrintWriter out = resp.getWriter();
 		
@@ -54,7 +57,7 @@ public class Transform extends ControllerAbstract {
 		try {
 			ocfurl = "http://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()
 			+"/dc/getContent?id="+id+"&token="+getToken()+"&format=ocf";
-			System.out.println("url============="+ocfurl);
+			logger.debug("url============="+ocfurl);
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

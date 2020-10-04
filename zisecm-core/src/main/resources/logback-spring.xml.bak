@@ -3,9 +3,9 @@
 	<!-- 文件输出格式 -->
 	<property name="PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n" />
 	<!-- test文件路径 -->
-	<property name="TEST_FILE_PATH" value="c:/tmp/test.log" />
+	<property name="TEST_FILE_PATH" value="c:/temp/test.log" />
 	<!-- pro文件路径 -->
-	<property name="PRO_FILE_PATH" value="c:/tmp/app.log" />
+	<property name="PRO_FILE_PATH" value="c:/temp/app.log" />
 
 	<!-- 开发环境 -->
 	<springProfile name="dev">
@@ -14,7 +14,9 @@
 				<pattern>${PATTERN}</pattern>
 			</encoder>
 		</appender>		
-		<logger name="com.ecm.service.pdfsign" level="info" />
+		<!-- 
+		<logger name="com.ecm.core.service" level="info" />
+		 -->
 		<root level="info">
 			<appender-ref ref="CONSOLE" />
 		</root>
@@ -44,7 +46,9 @@
 				<pattern>${PATTERN}</pattern>
 			</encoder>
 		</appender>
-		<logger name="com.ecm.service.pdfsign" level="debug" />
+		<!-- 
+		<logger name="com.ecm.core.service" level="info" />
+		 -->
 		<root level="error">
 			<appender-ref ref="CONSOLE" />
 		</root>
@@ -75,7 +79,9 @@
 				<pattern>${PATTERN}</pattern>
 			</encoder>
 		</appender>
-		<logger name="com.ecm.service.pdfsign" level="debug" />
+		<!-- 
+		<logger name="com.ecm.core.service" level="debug" />
+		 -->
 		<root level="info">
 			<appender-ref ref="CONSOLE" />
 		</root>

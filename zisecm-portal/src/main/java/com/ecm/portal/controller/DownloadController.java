@@ -17,6 +17,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +39,7 @@ import com.ecm.portal.entity.DownloadFile;
 
 @Controller
 public class DownloadController extends ControllerAbstract{
+	private static final Logger logger = LoggerFactory.getLogger(DownloadController.class);
 	@Autowired
 	private ContentService contentService;
 	
@@ -223,7 +226,7 @@ public class DownloadController extends ControllerAbstract{
 
 	public static HttpServletResponse downloadZip(File file, HttpServletResponse response) {
 		if (file.exists() == false) {
-			System.out.println("待压缩的文件目录：" + file + "不存在.");
+			logger.error("待压缩的文件目录：" + file + "不存在.");
 		} else {
 			try {
 				// 以流的形式下载文件。
@@ -291,7 +294,7 @@ public class DownloadController extends ControllerAbstract{
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
-	        System.out.println("----------file download" + filename);
+	        logger.debug("----------file download" + filename);
 	    }
 	}
 }

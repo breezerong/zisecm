@@ -484,7 +484,8 @@
     "comstaied":"IED Completion Statistics",
     "synfromtc":"Syn from TC",
     "pushtotc":"Push to TC",
-    "in&exsyn":"Internal-External Syn"
+    "in&exsyn":"Internal-External Syn",
+    "deployProcess":"DeployProcess"
 },
 "message": {
     "saveSuccess":"Save Success",

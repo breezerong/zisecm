@@ -34,6 +34,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -68,6 +70,7 @@ import com.ecm.icore.service.IEcmSession;
 
 @Service
 public class ToolsService extends EcmService {
+	private static final Logger logger = LoggerFactory.getLogger(ToolsService.class);
 	@Autowired
 	private DocumentService documentService;
 
@@ -522,7 +525,7 @@ public class ToolsService extends EcmService {
 			EcmAttribute en = CacheManagerOper.getEcmAttributes().get(attrName);
 			// EcmFormItem en = getFormItem(frm.getEcmFormItems(),key.toString());
 			if (en == null) {
-				System.out.println("" + attrName + " 不存在.");
+				logger.debug("" + attrName + " 不存在.");
 				return;
 			}
 			switch (en.getFieldType()) {

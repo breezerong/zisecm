@@ -1120,7 +1120,7 @@ public class EcmDcController extends ControllerAbstract {
 					"					from ecm_relation a, ecm_document b where a.NAME not like 'irel%' and ((a.CHILD_ID=b.ID" + 
 					"					and a.PARENT_ID='"+id+"') or (a.PARENT_ID=b.ID " + 
 					"					and a.CHILD_ID='"+id+"')) order by b.CREATION_DATE";
-			// System.out.println(sql);
+			// logger.debug(sql);
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);
@@ -1139,7 +1139,7 @@ public class EcmDcController extends ControllerAbstract {
 			String sql = "select b.ID,a.NAME AS RELATION_NAME,a.PARENT_ID,a.CHILD_ID,b.NAME,b.CODING,b.REVISION,b.TITLE,b.C_SECURITY_LEVEL,b.CREATOR,b.CREATION_DATE,b.C_DOC_DATE" + 
 					"					from ecm_relation a, ecm_document b where a.NAME not like 'irel%' and ((a.CHILD_ID=b.ID" + 
 					"					and a.PARENT_ID='"+id+"')) order by b.CREATION_DATE";
-			// System.out.println(sql);
+			// logger.debug(sql);
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			mp.put("data", list);
 			mp.put("code", ActionContext.SUCESS);
@@ -2073,12 +2073,12 @@ public class EcmDcController extends ControllerAbstract {
 					mp.put("code", ActionContext.SUCESS);
 				} else {
 
-					System.out.println("Content not exists, id:" + id + ",format:" + ext);
+					logger.debug("Content not exists, id:" + id + ",format:" + ext);
 					mp.put("code", ActionContext.FAILURE);
 					mp.put("message", "内容对象为空");
 				}
 			} else {
-				System.out.println("Upload file is null.");
+				logger.debug("Upload file is null.");
 				mp.put("code", ActionContext.FAILURE);
 				mp.put("message", "电子文件为空");
 			}

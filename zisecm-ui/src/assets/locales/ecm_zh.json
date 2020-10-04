@@ -493,7 +493,8 @@
     "comstaied":"IED完成情况统计",
     "synfromtc":"从TC同步",
     "pushtotc":"推送到TC",
-    "in&exsyn":"内外网同步"
+    "in&exsyn":"内外网同步",
+    "deployProcess":"流程部署"
 },
 "message": {
     "saveSuccess":"保存成功",

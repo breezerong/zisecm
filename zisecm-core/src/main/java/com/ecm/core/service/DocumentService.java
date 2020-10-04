@@ -230,8 +230,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		
 		sql=SqlUtils.replaceSql(sql, userObj);
-		System.out.println("[DocumentService.getObjects=>SQL]");
-		System.out.println(sql);
+		logger.info("[DocumentService.getObjects=>SQL]");
+		logger.info(sql);
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		return list;
 	}
@@ -1819,7 +1819,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String condition=" TYPE_NAME='唯一性规则' and SUB_TYPE='"+typeName+"'";
 		List<Map<String, Object>> onlyPolicys= this.getObjectMap(token, condition);
 		if(onlyPolicys==null||onlyPolicys.size()==0) {
-			logger.debug("此类型“"+typeName+"”没有唯一性规则！");
+			logger.error("此类型“"+typeName+"”没有唯一性规则！");
 			return null;
 		}
 		String docCondition=" TYPE_NAME='"+typeName+"'";

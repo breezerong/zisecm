@@ -128,14 +128,14 @@ public class ESSearchService extends EcmService implements ISearchService {
 			List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 			// 加载属性
 			Arrays.stream(response.getHits().getHits()).forEach(i -> {
-				// System.out.println(i.getIndex());
-				// System.out.println(i.getId());
+				// logger.info(i.getIndex());
+				// logger.info(i.getId());
 
 				Map<String, Object> attrs = i.getSourceAsMap();
 				Map<String, Object> values = new HashMap<String, Object>();
 				values.put("ID", i.getId());
 				for (String fieldName : ESClient.getInstance().getIncludeFields()) {
-					// System.out.println(fieldName +":" + attrs.get(fieldName).toString());
+					// logger.info(fieldName +":" + attrs.get(fieldName).toString());
 					values.put(fieldName.toUpperCase(), attrs.get(fieldName));
 				}
 				Map<String, Object> contentVal = new HashMap<String, Object>();
@@ -148,12 +148,12 @@ public class ESSearchService extends EcmService implements ISearchService {
 			List<AggregationEntity> terms = new ArrayList<AggregationEntity>();
 			for (Aggregation item : response.getAggregations()) {
 				ParsedStringTerms term = (ParsedStringTerms) item;
-				// System.out.println(term.getName());
+				// logger.info(term.getName());
 				AggregationEntity en = new AggregationEntity();
 				en.setFieldName(term.getName());
 				for (Bucket val : term.getBuckets()) {
 					en.getGroups().put(val.getKeyAsString(), val.getDocCount());
-					// System.out.println(val.getKey() + ":" + val.getDocCount());
+					// logger.info(val.getKey() + ":" + val.getDocCount());
 				}
 				terms.add(en);
 			}
@@ -161,7 +161,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 			map.put("searchTime", searchTime);
 			map.put("terms", terms);
 			map.put("list", dataList);
-			// System.out.println(response.getHits().getTotalHits().value);
+			// logger.info(response.getHits().getTotalHits().value);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -378,12 +378,12 @@ public class ESSearchService extends EcmService implements ISearchService {
 			List<AggregationEntity> terms = new ArrayList<AggregationEntity>();
 			for (Aggregation item : response.getAggregations()) {
 				ParsedStringTerms term = (ParsedStringTerms) item;
-				// System.out.println(term.getName());
+				// logger.info(term.getName());
 				AggregationEntity en = new AggregationEntity();
 				en.setFieldName(term.getName());
 				for (Bucket val : term.getBuckets()) {
 					en.getGroups().put(val.getKeyAsString(), val.getDocCount());
-					// System.out.println(val.getKey() + ":" + val.getDocCount());
+					// logger.info(val.getKey() + ":" + val.getDocCount());
 				}
 				terms.add(en);
 			}
@@ -403,21 +403,21 @@ public class ESSearchService extends EcmService implements ISearchService {
 			List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 			// 加载属性
 			Arrays.stream(response.getHits().getHits()).forEach(i -> {
-				// System.out.println(i.getIndex());
-				// System.out.println(i.getId());
+				// logger.info(i.getIndex());
+				// logger.info(i.getId());
 
 				Map<String, Object> attrs = i.getSourceAsMap();
 				Map<String, Object> values = new HashMap<String, Object>();
 				values.put("ID", i.getId());
 				for (String fieldName : ESClient.getInstance().getIncludeFields()) {
-					// System.out.println(fieldName +":" + attrs.get(fieldName).toString());
+					// logger.info(fieldName +":" + attrs.get(fieldName).toString());
 					values.put(fieldName.toUpperCase(), attrs.get(fieldName));
 				}
 
-//	            System.out.println("Map方式打印高亮内容");
-//	            System.out.println(i.getHighlightFields());
+//	            logger.info("Map方式打印高亮内容");
+//	            logger.info(i.getHighlightFields());
 //
-//	            System.out.println("遍历高亮集合，打印高亮片段:");
+//	            logger.info("遍历高亮集合，打印高亮片段:");
 				String highlightText = "";
 				for (String hkey : i.getHighlightFields().keySet()) {
 					Text[] text = i.getHighlightFields().get(hkey).getFragments();
@@ -428,7 +428,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 							highlightText += "...";
 							break;
 						}
-						// System.out.println(str.string());
+						// logger.info(str.string());
 					}
 				}
 
@@ -444,7 +444,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 			map.put("searchTime", searchTime);
 			map.put("aggregations", terms);
 			map.put("list", dataList);
-			// System.out.println(response.getHits().getTotalHits().value);
+			// logger.info(response.getHits().getTotalHits().value);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -560,14 +560,14 @@ public class ESSearchService extends EcmService implements ISearchService {
 			List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 			// 加载属性
 			Arrays.stream(response.getHits().getHits()).forEach(i -> {
-				// System.out.println(i.getIndex());
-				// System.out.println(i.getId());
+				// logger.info(i.getIndex());
+				// logger.info(i.getId());
 
 				Map<String, Object> attrs = i.getSourceAsMap();
 				Map<String, Object> values = new HashMap<String, Object>();
 				values.put("ID", i.getId());
 				for (String fieldName : ESClient.getInstance().getIncludeFields()) {
-					// System.out.println(fieldName +":" + attrs.get(fieldName).toString());
+					// logger.info(fieldName +":" + attrs.get(fieldName).toString());
 					values.put(fieldName.toUpperCase(), attrs.get(fieldName));
 				}
 				Map<String, Object> contentVal = new HashMap<String, Object>();
@@ -580,12 +580,12 @@ public class ESSearchService extends EcmService implements ISearchService {
 			List<AggregationEntity> terms = new ArrayList<AggregationEntity>();
 			for (Aggregation item : response.getAggregations()) {
 				ParsedStringTerms term = (ParsedStringTerms) item;
-				// System.out.println(term.getName());
+				// logger.info(term.getName());
 				AggregationEntity en = new AggregationEntity();
 				en.setFieldName(term.getName());
 				for (Bucket val : term.getBuckets()) {
 					en.getGroups().put(val.getKeyAsString(), val.getDocCount());
-					// System.out.println(val.getKey() + ":" + val.getDocCount());
+					// logger.info(val.getKey() + ":" + val.getDocCount());
 				}
 				terms.add(en);
 			}
@@ -593,7 +593,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 			map.put("searchTime", searchTime);
 			map.put("aggregations", terms);
 			map.put("list", dataList);
-			// System.out.println(response.getHits().getTotalHits().value);
+			// logger.info(response.getHits().getTotalHits().value);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

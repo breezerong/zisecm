@@ -3,6 +3,8 @@ package com.ecm.portal.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -12,7 +14,7 @@ import com.ecm.core.service.MailService;
 
 @Service
 public class ServiceDocMail {
-	
+	private static final Logger logger = LoggerFactory.getLogger(ServiceDocMail.class);
 	@Autowired
     private MailService mailService;
 	@Autowired
@@ -21,7 +23,7 @@ public class ServiceDocMail {
 	public boolean sendEndMail(String sendUser) throws Exception {
 
 		try {
-			   //System.out.println("发送邮件开始!");
+			   //logger.debug("发送邮件开始!");
 			  
 			 //创建邮件正文
 			   Map<String,Object> map=new HashMap<String,Object>();
@@ -37,7 +39,7 @@ public class ServiceDocMail {
 			   /* String emailContent = templateEngine.process("taskArrivalMail", context);*/
 			    String emailContent = templateEngine.process("processend", context);
 			    mailService.sendHtmlMail(sendUser,"主题：借阅流程结束通知",emailContent);/**/
-			    //System.out.println("发送完成");
+			    //logger.debug("发送完成");
 			} catch (Exception e) {
 				e.printStackTrace();
 				 throw new Exception("发送邮件测试发生异常！");
@@ -50,7 +52,7 @@ public class ServiceDocMail {
 	public boolean sendTaskMail(String sendUser) throws Exception {
 
 		try {
-			   System.out.println("发送邮件测试!");
+			   logger.debug("发送邮件测试!");
 			  
 			 //创建邮件正文
 			   Map<String,Object> map=new HashMap<String,Object>();
@@ -66,7 +68,7 @@ public class ServiceDocMail {
 			   /* String emailContent = templateEngine.process("taskArrivalMail", context);*/
 			    String emailContent = templateEngine.process("taskArrive", context);
 			    mailService.sendHtmlMail(sendUser,"主题：借阅流程待审批",emailContent);/**/
-			    System.out.println("发送完成");
+			    logger.debug("发送完成");
 			} catch (Exception e) {
 				e.printStackTrace();
 				 throw new Exception("发送邮件测试发生异常！");

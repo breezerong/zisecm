@@ -67,6 +67,7 @@ public class CfgActivityManager extends ControllerAbstract{
 			List<Map<String, Object>> itemList = new ArrayList<Map<String, Object>>();
 			for(ProcessDefinition item: list) {
 				Map<String, Object> p = new HashMap<String, Object>();
+				p.put("deploymentId", item.getDeploymentId());
 				p.put("id", item.getId());
 				p.put("name", item.getName());
 				p.put("version", item.getVersion());
