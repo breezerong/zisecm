@@ -274,35 +274,60 @@ public class SyncFromTcService {
 					continue;
 				}
 				/*********************同步主表数据***********************************/
+				String mainDocId= "";
 				//装数据
-				Map<String,Object> mainData= Operator.OperationTcData(token,documentService,dmService, obj, cfb);
-				cfb.setData(mainData);
-				String mainDocId= syncMainTable(token, documentService, session,dmService, obj, cfb);
-				/////////////////////////////////////////////////////////////////
-				for(int j=0;j<downloadRelationShips.size();j++) {
-					SubTable subTable=downloadRelationShips.get(j);
-					/***************************根据form获取数据**********************************/
-					List<RelationShip> formShips= subTable.getFormoperation();
-					if(formShips!=null&&formShips.size()>0) {
-						for(int n=0;n<formShips.size();n++) {
-							RelationShip formShip=formShips.get(n);
-							getDataByForm(token, documentService, session, dmService, obj, 
-									formShip, mainDocId, relationService);
-						}
-					}
-					
-					/***************************根据关系获取数据*******************************/
-					List<RelationShip> relationShips=subTable.getRelationoperation();
-					if(relationShips!=null&&relationShips.size()>0) {
-						for(int x=0;x<relationShips.size();x++) {
-							RelationShip relationShip=relationShips.get(x);
-							
-							getDataByRelationShip(token, documentService, session, dmService, obj, relationShip,
-									mainDocId, relationService);
-							
-						}
-					}
+				try {
+					Map<String,Object> mainData= Operator.OperationTcData(token,documentService,dmService, obj, cfb);
+					cfb.setData(mainData);
+					mainDocId=syncMainTable(token, documentService, session,dmService, obj, cfb);
+				}catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+					continue;
 				}
+				/////////////////////////////////////////////////////////////////
+				try {
+					for(int j=0;j<downloadRelationShips.size();j++) {
+						SubTable subTable=downloadRelationShips.get(j);
+						/***************************根据form获取数据**********************************/
+						List<RelationShip> formShips= subTable.getFormoperation();
+						if(formShips!=null&&formShips.size()>0) {
+							for(int n=0;n<formShips.size();n++) {
+								RelationShip formShip=formShips.get(n);
+								getDataByForm(token, documentService, session, dmService, obj, 
+										formShip, mainDocId, relationService);
+								
+							}
+						}
+						
+						/***************************根据关系获取数据*******************************/
+						List<RelationShip> relationShips=subTable.getRelationoperation();
+						if(relationShips!=null&&relationShips.size()>0) {
+							for(int x=0;x<relationShips.size();x++) {
+								RelationShip relationShip=relationShips.get(x);
+								
+								getDataByRelationShip(token, documentService, session, dmService, obj, relationShip,
+										mainDocId, relationService);
+								
+							}
+						}
+					}
+				}catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+					if(!"".equals(mainDocId)) {
+						String sql="select child_id from ecm_relation where parent_id='"+mainDocId+"'";
+						List<Map<String,Object>> childDatas= documentService.getMapList(token, sql);
+						for(int x=0;childDatas!=null&&x<childDatas.size();x++) {
+							Map<String,Object> childObj= childDatas.get(x);
+							String childId= childObj.get("child_id").toString();
+							documentService.deleteObject(token, childId);
+						}
+						documentService.deleteObject(token, mainDocId);
+					}
+					continue;
+				}
+				
 				
 				dispense(ecmSession.getToken(),mainDocId);
 			
@@ -644,6 +669,8 @@ public class SyncFromTcService {
 					}
 
 					data.setList(fileInfoList);
+				}else {
+					return null;
 				}
 				
 				data.setDocument(document);
