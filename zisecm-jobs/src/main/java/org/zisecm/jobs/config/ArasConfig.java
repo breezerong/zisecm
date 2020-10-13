@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "aras")
 public class ArasConfig {
 	
-	private String grantType="password";
+private String grantType="password";
 	
 	private String username = "admin";
 	
