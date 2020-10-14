@@ -208,7 +208,13 @@ public class SyncTcTools {
 				SimpleDateFormat format=new SimpleDateFormat("yyyy-M-dd HH:mm");
 				SimpleDateFormat targetFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				value=targetFormat.format(format.parse(value));
-			}else {
+			}else if("array".equals(typeName)) {
+				String[] v=object.getPropertyObject(propertyName).getStringArrayValue();
+				for(int i=0;v!=null&&i<v.length;i++) {
+					value+=v[i]+",";
+				}
+			}
+			else {
 				value = object.getPropertyObject(propertyName).getStringValue();
 			}
 

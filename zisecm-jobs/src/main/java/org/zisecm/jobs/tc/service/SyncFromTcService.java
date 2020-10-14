@@ -324,6 +324,7 @@ public class SyncFromTcService {
 					
 //							obj.getPropertyObject("cn9RecivUnit").getStringValue();
 					if("".equals(ccUnits)&&"".equals(recivUnit)) {
+						SyncTcTools.setObjectProperties(dmService, obj, new String[] {"cn9NewReserveText3"}, new String[] {"1"});
 						continue;
 					}
 					if(!StringUtils.isEmpty(ccUnits)) {

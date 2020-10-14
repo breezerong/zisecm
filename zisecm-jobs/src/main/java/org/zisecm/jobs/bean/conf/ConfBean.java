@@ -173,9 +173,20 @@ public class ConfBean {
 	public String getChildType() {
 		return childType;
 	}
+	
+
 	public void setChildType(String childType) {
 		this.childType = childType;
 	}
 	
+	private SearchConf validateSearchConf;
+	@XmlElement
+	public SearchConf getValidateSearchConf() {
+		return validateSearchConf;
+	}
+
+	public void setValidateSearchConf(SearchConf validateSearchConf) {
+		this.validateSearchConf = validateSearchConf;
+	}
 	
 }

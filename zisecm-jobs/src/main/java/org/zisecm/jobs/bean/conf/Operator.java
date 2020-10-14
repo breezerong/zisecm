@@ -184,7 +184,9 @@ public class Operator {
 			String sName= attr.getSourceName();
 			String tName= attr.getTargetName();
 			String defaultValue=attr.getDefaultValue();
-			if("projectId".equals(tName)) {
+			if(tName==null||"".equals(tName)) {
+				continue;
+			}else  if("projectId".equals(tName)) {
 				List<EcmDocument> projects= docService.getObjects(token, "NAME='"+data.get(sName).toString()+"'");
 				EcmDocument project=null;
 				if(projects!=null&&projects.size()>0) {
@@ -366,7 +368,9 @@ public class Operator {
 			String sName= attr.getSourceName();
 			String tName= attr.getTargetName();
 			String defaultValue=attr.getDefaultValue();
-			if("projectId".equals(tName)) {
+			if("".equals(tName)) {
+				continue;
+			}else if("projectId".equals(tName)) {
 				List<EcmDocument> projects= docService.getObjects(token, "NAME='"+data.get(sName).toString()+"'");
 				EcmDocument project=null;
 				if(projects!=null&&projects.size()>0) {
@@ -434,7 +438,20 @@ public class Operator {
 				continue;
 				
 			}
-			if("projectId".equals(tName)) {
+			if("C_PAGE_COUNT".equals(sName)) {
+				try {
+					val= SyncTcTools.getProperty(dmService, obj, tName,attrBean.getDataType());
+					String[] temp=val.split("+");
+					val=temp[0];
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					val=null;
+				}
+				dt.setAttrName(sName);
+				dt.setAttrValue(val);
+				dt.setDataType(attrBean.getDataType());
+			}else if("projectId".equals(tName)) {
 				val=SyncTcTools.getProjectId(dmService, obj);
 				if(val!=null&&!"".equals(val)) {
 					List<EcmDocument> projects=documentService.getObjects(token, " type_name='项目' and CODING='"+val+"'");

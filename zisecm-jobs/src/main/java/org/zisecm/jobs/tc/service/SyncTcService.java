@@ -119,6 +119,7 @@ public class SyncTcService {
 	    System.out.println("CR开始时间：" + start);
 
 	    CreateItemsOutput createItemOutput = null;
+	    ModelObject mainData=null;
 	    DataManagementService dmService = 
 	    DataManagementService.getService(session.getConnection());
 	    cfb= Operator.OperationContractorData(ecmSession.getToken(),session,
@@ -134,7 +135,9 @@ public class SyncTcService {
 	      String projectId=dt.getAttrValue().toString();
 	      TC_Project project = query.queryProjectExist(projectId);
 
-	      ModelObject findChangeRqRevision = query.queryFileRevision(projectId,data.get("CODING").toString());
+//	      ModelObject findChangeRqRevision = query.queryFileRevision(projectId,data.get("CODING").toString());
+	      Operator.OperationContractorData(token, session, documentService, dmService, data, cfb);
+	      ModelObject findChangeRqRevision=queryItemRevision(session, cfb);
 	      
 	      if (findChangeRqRevision != null) {
 	    	  if("文件传递单".equals(data.get("TYPE_NAME").toString())) {
@@ -151,6 +154,9 @@ public class SyncTcService {
 	    			  Iterator<String> it= keys.iterator();
 	    			  while(it.hasNext()) {
 							String key = it.next();
+							if("projectId".equals(key)) {
+								continue;
+							}
 							names.add(key);
 							DataEntity dataEntity = (DataEntity) dataUp.get(key);
 							if (dataEntity.getDataType() != null && "Time".equals(dataEntity.getDataType())) {
@@ -185,7 +191,7 @@ public class SyncTcService {
 	    	  }
 //	    	 return findChangeRqRevision.getUid();
 	      }
-	      ModelObject mainData=null;
+	     
 //	      createItemOutput = dataManagement.createFileRevision(fileDataRequest);
 	      if(findChangeRqRevision==null) {
 	    	  /***************************创建主表信息********************************************************/
@@ -359,6 +365,9 @@ public class SyncTcService {
 	    System.out.println("文件传递单结束时间：" + end);
 	    logger.info("-----------结束时间：" + end + "------------");
 	    logger.info("-----------end setCRData------------");
+	    if(createItemOutput==null) {
+	    	return mainData.getUid();
+	    }
 	    return createItemOutput.item.get_item_id();
 
 	}
@@ -621,6 +630,105 @@ public class SyncTcService {
 //						return (ItemRevision) serviceData.getPlainObject(0);
 //					}
 //				}
+				return null;
+				// add end
+			} else {
+				DataManagementService dmService = DataManagementService.getService(session.getConnection());
+				ServiceData serviceData = dmService.loadObjects(found.objectUIDS);
+				if (serviceData.sizeOfPartialErrors() == 0) {
+					return (ItemRevision) serviceData.getPlainObject(0);
+				}
+			}
+			// add end
+
+		} catch (Exception e) {
+			System.out.println("ExecuteSavedQuery service request failed.");
+			System.out.println(e.getMessage());
+		}
+		return null;
+	}
+	
+	/**
+	 * 查询单条tc数据
+	 * @param session
+	 * @param ship
+	 * @return
+	 * @throws Exception 
+	 */
+	public ItemRevision queryItemRevision(Session session,ConfBean conf) throws Exception {
+		
+		SearchConf searchConf= conf.getValidateSearchConf();
+		List<Condition> conditions= searchConf.getConditions();
+		if(conditions==null||conditions.size()==0) {
+			throw new Exception("请确认relationShip id="+conf.getId()+"是否有配置conditions");
+		}
+		
+		ImanQuery query = null;
+		SavedQuery queryService = SavedQueryService.getService(session.getConnection());
+
+		try {
+			GetSavedQueriesResponse savedQueries = ((com.teamcenter.services.strong.query._2006_03.SavedQuery) queryService)
+					.getSavedQueries();
+
+			if (savedQueries.queries.length == 0) {
+				System.out.println("There are no saved queries in the system.");
+				return null;
+			}
+
+			for (int i = 0; i < savedQueries.queries.length; i++) {
+//				if (savedQueries.queries[i].name.equals("Item Revision...")) {
+				if (savedQueries.queries[i].name.equals(searchConf.getName())) {
+					query = savedQueries.queries[i].query;
+					break;
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("GetSavedQueries service request failed.");
+			System.out.println(e.getMessage());
+			return null;
+		}
+
+		if (query == null) {
+			System.out.println("There is not an 'Item Revision...' query.");
+			return null;
+		}
+
+		try {
+			List<String> entries=new ArrayList<String>();
+			List<String> values=new ArrayList<String>();
+			
+			for(int i=0;i<conditions.size();i++) {
+				Condition c= conditions.get(i);
+				entries.add(c.getName());
+				String val="";
+				if(conf.getData().get(c.getValue())==null) {
+					val=c.getValue();
+				}else {
+					DataEntity dt= (DataEntity) conf.getData().get(c.getValue());
+					String type= dt.getDataType();
+					
+					if("Time".equals(type)) {
+						SimpleDateFormat fmt=new SimpleDateFormat("yyyy-M-dd");
+						Date date= fmt.parse(dt.getAttrValue().toString());
+						val= fmt.format(date);
+					}else {
+						val=dt.getAttrValue().toString();
+					}
+				}
+				values.add(val);
+			}
+			QueryInput[] savedQueryInput = new QueryInput[1];
+			savedQueryInput[0] = new QueryInput();
+			savedQueryInput[0].query = query;
+			savedQueryInput[0].maxNumToReturn = 25;
+			savedQueryInput[0].limitList = new ModelObject[0];
+			savedQueryInput[0].entries = entries.toArray(new String[0]);
+			savedQueryInput[0].values = values.toArray(new String[0]);
+			SavedQueriesResponse response = queryService.executeSavedQueries(savedQueryInput);
+			QueryResults found = response.arrayOfResults[0];
+
+			// add by Sean 20151012
+			if (found.objectUIDS.length == 0) {
 				return null;
 				// add end
 			} else {
