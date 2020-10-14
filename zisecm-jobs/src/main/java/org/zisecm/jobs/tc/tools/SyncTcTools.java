@@ -1,5 +1,6 @@
 package org.zisecm.jobs.tc.tools;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
@@ -189,9 +190,11 @@ public class SyncTcTools {
 	 * @param object
 	 * @param propertyName
 	 * @return
+	 * @throws NotLoadedException 
+	 * @throws ParseException 
 	 */
-	public static String getProperty(DataManagementService dmService,ModelObject object, String propertyName,String typeName) {
-		try {
+	public static String getProperty(DataManagementService dmService,ModelObject object, String propertyName,String typeName) throws NotLoadedException, ParseException {
+//		try {
 			dmService.refreshObjects(new ModelObject[]{object});
 			
 			dmService.getProperties(new ModelObject[] { object },
@@ -210,9 +213,9 @@ public class SyncTcTools {
 			}
 
 			return value;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
+//		}
 	}
 }

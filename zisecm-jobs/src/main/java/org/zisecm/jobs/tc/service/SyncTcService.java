@@ -280,7 +280,7 @@ public class SyncTcService {
 	    						throw new Exception("请确认"+cfb.getId()+"中的relationoperation是否配置了查询配置");
 	    					}
 	    					addRelation4Children(token, session, documentService, dmService, 
-	    							mainData/*createItemOutput.itemRev*/, relationShip, docList);
+	    							mainData/*createItemOutput.itemRev*/, relationShip, docList,createdItems);
 	    			  }
 	    		  }
 	    	  }
@@ -466,17 +466,30 @@ public class SyncTcService {
 	 * @throws Exception
 	 */
 	public boolean addRelation4Children(String token,Session session,DocumentService ecmDocService,
-			DataManagementService dmService,ModelObject object,RelationShip ship,List<Map<String,Object>> docList) throws Exception {
-		for(int i=0;i<docList.size();i++) {
-			Map<String,Object> doc= docList.get(i);
-			ship=Operator.OperationContractorSubData(token,session,dmService, ecmDocService, doc, ship);
-			ItemRevision itemRev=queryItemRevision(session, ship);
-			if("p2c".equals(ship.getReferenceName())) {
-				addRelation(dmService, itemRev, object, ship.getName());
-			}else if("c2p".equals(ship.getReferenceName())) {
-				addRelation(dmService, object, itemRev, ship.getName());
+			DataManagementService dmService,ModelObject object,RelationShip ship,List<Map<String,Object>> docList,
+			List<CreateItemsOutput> createdItems) throws Exception {
+		if(createdItems==null) {
+			for(int i=0;i<docList.size();i++) {
+				Map<String,Object> doc= docList.get(i);
+				ship=Operator.OperationContractorSubData(token,session,dmService, ecmDocService, doc, ship);
+				ItemRevision itemRev=queryItemRevision(session, ship);
+				if("p2c".equals(ship.getReferenceName())) {
+					addRelation(dmService, itemRev, object, ship.getName());
+				}else if("c2p".equals(ship.getReferenceName())) {
+					addRelation(dmService, object, itemRev, ship.getName());
+				}
+			}
+		}else {
+			for(int i=0;i<createdItems.size();i++) {
+				CreateItemsOutput createdItem=createdItems.get(i);
+				if("p2c".equals(ship.getReferenceName())) {
+					addRelation(dmService, createdItem.itemRev, object, ship.getName());
+				}else if("c2p".equals(ship.getReferenceName())) {
+					addRelation(dmService, object, createdItem.itemRev, ship.getName());
+				}
 			}
 		}
+		
 		return false;
 		
 	}
@@ -745,8 +758,6 @@ public class SyncTcService {
 			}
 
 			ItemRevision itemRev = output.itemRev;
-
-			
 			
 			Set<String> keys = tcdt.keySet();
 			Iterator<String> it = keys.iterator();

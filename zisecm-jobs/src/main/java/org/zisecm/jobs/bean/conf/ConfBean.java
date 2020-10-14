@@ -28,7 +28,7 @@ public class ConfBean {
 	public void setData(Map<String, Object> data) {
 		this.data = data;
 	}
-
+	
 	@XmlElementWrapper(name="attributes")
 	@XmlElement(name="attribute")
 	public List<AttrBean> getAttributes() {
@@ -55,6 +55,27 @@ public class ConfBean {
 		this.downrelationShips = downrelationShips;
 	}
 	
+	private String ccColumn;
+	private String sendToColumn;
+	
+	
+	@XmlAttribute
+	public String getCcColumn() {
+		return ccColumn;
+	}
+
+	public void setCcColumn(String ccColumn) {
+		this.ccColumn = ccColumn;
+	}
+	@XmlAttribute
+	public String getSendToColumn() {
+		return sendToColumn;
+	}
+
+	public void setSendToColumn(String sendToColumn) {
+		this.sendToColumn = sendToColumn;
+	}
+
 	@XmlAttribute
 	public String getSourceTypeName() {
 		return sourceTypeName;

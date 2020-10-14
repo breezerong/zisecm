@@ -1,6 +1,7 @@
 package org.zisecm.jobs.bean.conf;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -199,7 +200,13 @@ public class Operator {
 			}else if(attr.getSearchConf()!=null) {
 				SearchConf searchConf=attr.getSearchConf();
 				ItemRevision itemRev=queryItemRevision(token,session, searchConf, data,docService);
-				String value=SyncTcTools.getProperty(dmService, itemRev, searchConf.getReturnProperty(),attr.getDataType());
+				String value=null;
+				try {
+					value=SyncTcTools.getProperty(dmService, itemRev, searchConf.getReturnProperty(),attr.getDataType());
+				}catch (Exception e) {
+					// TODO: handle exception
+					value=null;
+				}
 				DataEntity dt=new DataEntity();
 				dt.setAttrName(tName);
 				dt.setAttrValue(value);
@@ -375,7 +382,13 @@ public class Operator {
 			}else if(attr.getSearchConf()!=null) {
 				SearchConf searchConf=attr.getSearchConf();
 				ItemRevision itemRev=queryItemRevision(token,session, searchConf, data,docService);
-				String value=SyncTcTools.getProperty(dmService, itemRev, searchConf.getReturnProperty(),attr.getDataType());
+				String value=null;
+				try {
+					value=SyncTcTools.getProperty(dmService, itemRev, searchConf.getReturnProperty(),attr.getDataType());
+				}catch (Exception e) {
+					// TODO: handle exception
+					value=null;
+				}
 				DataEntity dt=new DataEntity();
 				dt.setAttrName(tName);
 				dt.setAttrValue(value);
@@ -433,8 +446,19 @@ public class Operator {
 						dt.setDataType(attrBean.getDataType());
 					}
 				}
+			}else if(tName==null||"".equals(tName)){
+				val= attrBean.getDefaultValue();
+				dt.setAttrName(sName);
+				dt.setAttrValue(val);
+				dt.setDataType(attrBean.getDataType());
 			}else {
-				val= SyncTcTools.getProperty(dmService, obj, tName,attrBean.getDataType());
+				try {
+					val= SyncTcTools.getProperty(dmService, obj, tName,attrBean.getDataType());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					val=null;
+				}
 				dt.setAttrName(sName);
 				dt.setAttrValue(val);
 				dt.setDataType(attrBean.getDataType());

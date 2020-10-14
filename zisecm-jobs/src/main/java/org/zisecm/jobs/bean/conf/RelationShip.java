@@ -27,6 +27,16 @@ public class RelationShip {
 	
 	private String refSubId;//指向子表id根据子表id获取子表配置
 	
+	private String relationName;
+	
+	@XmlAttribute
+	public String getRelationName() {
+		return relationName;
+	}
+	public void setRelationName(String relationName) {
+		this.relationName = relationName;
+	}
+	
 	@XmlAttribute
 	public String getRefSubId() {
 		return refSubId;

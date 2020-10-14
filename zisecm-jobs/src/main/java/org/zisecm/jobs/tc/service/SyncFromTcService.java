@@ -1,5 +1,6 @@
 package org.zisecm.jobs.tc.service;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -46,6 +47,7 @@ import com.ecm.core.ActionContext;
 import com.ecm.core.EcmContext;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.exception.AccessDeniedException;
@@ -54,6 +56,8 @@ import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.ExcTransferServiceImpl;
+import com.ecm.core.service.FolderPathService;
+import com.ecm.core.service.FolderService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
 import com.teamcenter.services.strong.core.DataManagementService;
@@ -101,7 +105,11 @@ public class SyncFromTcService {
 	private LogicOption4CnpeRelevantDoc logicOptionRelevantService;
 	@Autowired
 	private LogicOption4CnpeTransfer logicOptionTransferService;
-
+	@Autowired
+	private FolderPathService folderPathService;
+	@Autowired
+	private FolderService folderService;
+	
 	@Autowired
 	private Environment env;
 
@@ -256,23 +264,81 @@ public class SyncFromTcService {
 //			List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 
 			for (ModelObject obj : findChangeRqRevision) {
-				String ccUnits= SyncTcTools.getProperty(dmService, obj, "cn9CCUnit","String");
-				String recivUnit= SyncTcTools.getProperty(dmService, obj, "cn9RecivUnit","String");
-//						obj.getPropertyObject("cn9RecivUnit").getStringValue();
-				if("".equals(ccUnits)&&"".equals(recivUnit)) {
-					continue;
-				}
-				if(!StringUtils.isEmpty(ccUnits)) {
-					recivUnit+=","+ccUnits;
-				}
-				recivUnit=recivUnit.replaceAll(",", "','");
+				String ccUnits="";
+
+				String recivUnit="";
 				
-				List<EcmDocument> companys= documentService.getObjects(getEcmSession().getToken(), 
-						" type_name='公司' and SUB_TYPE='分包' and name in('"+recivUnit+"') ");
-				if(companys==null||companys.size()==0) {
-					SyncTcTools.setObjectProperties(dmService, obj, new String[] {"cn9NewReserveText3"}, new String[] {"1"});
-					continue;
+				if(!"ICM".equals(cfb.getSourceTypeName())) {
+					String ccColumn= cfb.getCcColumn();
+					if(ccColumn==null||"".equals(ccColumn)) {
+						try {
+							ccUnits= SyncTcTools.getProperty(dmService, obj, "cn9CCUnit","String");
+						}catch (Exception e) {
+							// TODO: handle exception
+							e.printStackTrace();
+							try {
+								ccUnits= SyncTcTools.getProperty(dmService, obj, "cn9ExtCc","String");
+							} catch (Exception e2) {
+								// TODO: handle exception
+								e2.printStackTrace();
+								ccUnits="";
+							}
+							
+						}
+					}else {
+						try {
+							ccUnits= SyncTcTools.getProperty(dmService, obj, ccColumn,"String");
+						} catch (Exception e2) {
+							// TODO: handle exception
+							e2.printStackTrace();
+							ccUnits="";
+						}
+					}
+					
+					
+					
+					String sendToColumn=cfb.getSendToColumn();
+					if(sendToColumn==null||"".equals(sendToColumn)) {
+						try {
+							recivUnit=SyncTcTools.getProperty(dmService, obj, "cn9RecivUnit","String");
+						}catch (Exception e) {
+							// TODO: handle exception
+							e.printStackTrace();
+							try {
+								recivUnit= SyncTcTools.getProperty(dmService, obj, "cn9SendTo","String");
+							} catch (Exception e2) {
+								// TODO: handle exception
+								e2.printStackTrace();
+								recivUnit="";
+							}
+						}
+					}else {
+						try {
+							recivUnit= SyncTcTools.getProperty(dmService, obj, sendToColumn,"String");
+						} catch (Exception e2) {
+							// TODO: handle exception
+							e2.printStackTrace();
+							recivUnit="";
+						}
+					}
+					
+//							obj.getPropertyObject("cn9RecivUnit").getStringValue();
+					if("".equals(ccUnits)&&"".equals(recivUnit)) {
+						continue;
+					}
+					if(!StringUtils.isEmpty(ccUnits)) {
+						recivUnit+=","+ccUnits;
+					}
+					recivUnit=recivUnit.replaceAll(",", "','");
+					
+					List<EcmDocument> companys= documentService.getObjects(getEcmSession().getToken(), 
+							" type_name='公司' and SUB_TYPE='分包' and (name in('"+recivUnit+"') or CODING in ('"+recivUnit+"'))");
+					if(companys==null||companys.size()==0) {
+						SyncTcTools.setObjectProperties(dmService, obj, new String[] {"cn9NewReserveText3"}, new String[] {"1"});
+						continue;
+					}
 				}
+				
 				/*********************同步主表数据***********************************/
 				String mainDocId= "";
 				//装数据
@@ -330,8 +396,12 @@ public class SyncFromTcService {
 				
 				
 				dispense(ecmSession.getToken(),mainDocId);
-			
-
+				SyncTcTools.setObjectProperties(dmService, obj, new String[] {"cn9NewReserveText3"}, new String[] {"1"});
+				String tcId=SyncTcTools.getProperty(dmService, obj, "item_id", "String");
+				EcmDocument doc=documentService.getObjectById(token, mainDocId);
+				doc.addAttribute("SYN_ID", tcId);
+				doc.addAttribute("SYN_STATUS", "已同步");
+				documentService.updateObject(token, doc,null);
 			}
 
 		
@@ -360,6 +430,12 @@ public class SyncFromTcService {
 		for (int x = 0; resultDatas != null && x < resultDatas.size(); x++) {
 			ResultData resultData = resultDatas.get(x);
 			EcmDocument document = resultData.getDocument();
+			String folderId="";
+			folderId= folderPathService.getFolderId(token, document.getAttributes(), "3");
+			EcmFolder folder= folderService.getObjectById(token, folderId);
+			document.setFolderId(folderId);
+			document.setAclName(folder.getAclName());
+			
 			String childId = docService.newObject(token, document, null);
 			List<FileInfo> files = resultData.getList();
 			for (int n = 0; files != null && n < files.size(); n++) {
@@ -374,6 +450,13 @@ public class SyncFromTcService {
 				File file = new File(fileInfo.getUrl());
 				InputStream input = new FileInputStream(file);
 				en.setInputStream(input);
+				
+				String folderIdAttach="";
+				folderIdAttach= folderPathService.getFolderId(token, attachmentDoc.getAttributes(), "3");
+				EcmFolder folderAttach= folderService.getObjectById(token, folderId);
+				attachmentDoc.setFolderId(folderIdAttach);
+				attachmentDoc.setAclName(folderAttach.getAclName());
+				
 				String attachmentId = docService.newObject(token, attachmentDoc, en);
 
 				EcmRelation relation = new EcmRelation();
@@ -389,6 +472,7 @@ public class SyncFromTcService {
 
 			relation.setChildId(childId);
 //					relation.setName("设计文件");
+			relation.setName(ship.getRelationName());
 			relateService.newObject(token, relation);
 
 		}
@@ -429,29 +513,88 @@ public class SyncFromTcService {
 		//获取主文件电子件
 		List<FileInfo> docFileInfos=getFileTfAttachment(session,(ItemRevision)itemRev,
 				"IMAN_specification",doc.getCoding(),StringUtils.isEmpty(doc.getRevision())?"":doc.getRevision());
-		EcmContent mainDocContent=new EcmContent();
+		EcmContent mainDocContent=null;
 		if(docFileInfos!=null&&docFileInfos.size()>0) {
+			mainDocContent=new EcmContent();
 			FileInfo mainFileInfo=docFileInfos.get(0);
 			String mainFileUrl=mainFileInfo.getUrl();
-			File mainFile=new File(mainFileUrl);
-			InputStream in=new FileInputStream(mainFile);
+			InputStream in=new BufferedInputStream(new FileInputStream( mainFileUrl));
 			mainDocContent.setInputStream(in);
 			mainDocContent.setContentSize(mainFileInfo.getSize());
 			mainDocContent.setFormatName(FileUtils.getExtention(mainFileUrl));
 			mainDocContent.setName(mainFileInfo.getName());
 		}
-		String docId = documentService.newObject(token, doc, null);
+		
+		String folderId="";
+		folderId= folderPathService.getFolderId(token, doc.getAttributes(), "3");
+		EcmFolder folder= folderService.getObjectById(token, folderId);
+		doc.setFolderId(folderId);
+		doc.setAclName(folder.getAclName());
+		
+		String docId ="";
+		if(mainDocContent!=null) {
+			docId = documentService.newObject(token, doc, mainDocContent);
+		}else {
+			docId = documentService.newObject(token, doc, null);
+		}
 		
 		// 创建字表数据
 		// 下载电子文件保存至子表
 		
 //		dispense(ecmSession.getToken(),docId);
 	
-		
+		//为主表创建附件
+		addAttach4Main(token, docService, session, (ItemRevision)itemRev, "CN9Attachment", docId,
+				doc.getCoding(), StringUtils.isEmpty(doc.getRevision())?"":doc.getRevision());
 		
 		return docId;
 		
 	}
+	/**
+	 * 为主表创建附件
+	 * @param token
+	 * @param docService
+	 * @param session
+	 * @param itemRev
+	 * @param relationTypeName
+	 * @param docId
+	 * @param fileId
+	 * @param revId
+	 * @throws Exception
+	 */
+	public void addAttach4Main(String token,DocumentService docService,Session session, 
+			ItemRevision itemRev, String relationTypeName,
+			String docId,String fileId, String revId) throws Exception {
+		List<FileInfo> docFileInfos=getFileTfAttachment(session,itemRev,
+				relationTypeName,fileId,revId);
+		for(int n=0;docFileInfos!=null&&n<docFileInfos.size();n++) {
+			FileInfo fileInfo=docFileInfos.get(n);
+			EcmDocument attachmentDoc=new EcmDocument();
+			attachmentDoc.setTypeName("附件");
+			attachmentDoc.setName(fileInfo.getName());
+			EcmContent en=new EcmContent();
+			en.setName(fileInfo.getName());
+			en.setContentSize(fileInfo.getSize());
+			en.setFormatName(FileUtils.getExtention(fileInfo.getName()));
+			File file=new File(fileInfo.getUrl());
+			InputStream input=new FileInputStream(file);
+			en.setInputStream(input);
+			
+			String folderId="";
+			folderId= folderPathService.getFolderId(token, attachmentDoc.getAttributes(), "3");
+			EcmFolder folder= folderService.getObjectById(token, folderId);
+			attachmentDoc.setFolderId(folderId);
+			attachmentDoc.setAclName(folder.getAclName());
+			
+			String attachmentId=docService.newObject(token, attachmentDoc,en);
+			EcmRelation relation=new EcmRelation();
+			relation.setParentId(docId);
+			relation.setChildId(attachmentId);
+			relation.setName("附件");
+			relationService.newObject(token, relation);
+		}
+	}
+	
 	/**
 	 * 根据form信息处理数据
 	 * @param token
@@ -490,6 +633,13 @@ public class SyncFromTcService {
 					File file = new File(fileInfo.getUrl());
 					InputStream input = new FileInputStream(file);
 					en.setInputStream(input);
+					
+					String folderId="";
+					folderId= folderPathService.getFolderId(token, attachmentDoc.getAttributes(), "3");
+					EcmFolder folder= folderService.getObjectById(token, folderId);
+					attachmentDoc.setFolderId(folderId);
+					attachmentDoc.setAclName(folder.getAclName());
+					
 					String attachmentId = docService.newObject(token, attachmentDoc, en);
 
 					EcmRelation relation = new EcmRelation();
@@ -505,6 +655,7 @@ public class SyncFromTcService {
 
 				relation.setChildId(childId);
 //						relation.setName("设计文件");
+				relation.setName(ship.getRelationName());
 				relateService.newObject(token, relation);
 
 			}
@@ -533,11 +684,12 @@ public class SyncFromTcService {
 
 			if ("文件传递单".equals(doc.getTypeName())) {
 				logicOptionTransferService.transferOption(token, doc, true);
-			} else if ("接口信息传递单".equals(doc.getTypeName()) || "接口信息意见单".equals(doc.getTypeName())) {
-				logicOptionInterfaceService.interfaceOption(token, doc);
-			} else {
-				logicOptionRelevantService.relevantOption(token, doc, true);
 			}
+//			else if ("接口信息传递单".equals(doc.getTypeName()) || "接口信息意见单".equals(doc.getTypeName())) {
+//				logicOptionInterfaceService.interfaceOption(token, doc);
+//			} else {
+//				logicOptionRelevantService.relevantOption(token, doc, true);
+//			}
 			doc.addAttribute("C_IS_RELEASED", 1);
 			documentService.updateObject(token, doc, null);
 
@@ -930,26 +1082,37 @@ public class SyncFromTcService {
 				for (int i = 0; i < relationObjects.length; i++) {
 					ModelObject dataset = relationObjects[i];
 					ResultData rs=new ResultData();
+					
+					
+					List<AttrBean> attrs= subCfb.getAttributes();
+					Map<String,Object> row=new HashMap<String, Object>();
+					for(int x=0;attrs!=null&&x<attrs.size();x++) {
+						AttrBean attr= attrs.get(x);
+						String value=null;
+						try {
+							value=SyncTcTools.getProperty(dmService, itemRev, attr.getTargetName(),attr.getDataType());
+						}catch (Exception e) {
+							// TODO: handle exception
+							value=null;
+						}
+						row.put(attr.getSourceName(), value);
+					}
+					EcmDocument document=new EcmDocument();
+					document.setAttributes(row);
+					rs.setDocument(document);
+					
 					// add by xiaolei 20151029 for bug 2369 begin
 					// 如果数据集文件类型不是PDF则不传输
 					String objectType = relationObjects[i].getTypeObject().getName();
 					// modify by xiaolei 20150824 for bug 1965
 					// if(objectType.equals("MSWord") || objectType.equals("MSWordX"))
 //					if (!objectType.equals("PDF") && !objectType.equals("TIF"))
-					if (!objectType.equals("PDF"))
+					if (!objectType.equals("PDF")) {
+						result.add(rs);
 						continue;
-					// add end
-					
-					List<AttrBean> attrs= subCfb.getAttributes();
-					Map<String,Object> row=new HashMap<String, Object>();
-					for(int x=0;attrs!=null&&x<attrs.size();x++) {
-						AttrBean attr= attrs.get(x);
-						String value=SyncTcTools.getProperty(dmService, itemRev, attr.getTargetName(),attr.getDataType());
-						row.put(attr.getSourceName(), value);
 					}
-					EcmDocument document=new EcmDocument();
-					document.setAttributes(row);
-					rs.setDocument(document);
+						
+					// add end
 					
 					// 每个导出的对象有单独的目录
 					String tmpDirName = document.getCoding() + "_" + document.getRevision() + "_" + (new Date()).getTime();
@@ -983,6 +1146,7 @@ public class SyncFromTcService {
 					GetFileResponse getFileResp = fMSFileManagement.getFiles(new ImanFile[] { zIFile });
 					if (getFileResp.sizeOfPartialErrors() > 0) {
 						System.err.println("get files error for " + objectName);
+						result.add(rs);
 						continue;
 					}
 
