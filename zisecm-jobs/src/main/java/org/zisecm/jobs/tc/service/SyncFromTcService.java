@@ -41,6 +41,8 @@ import org.zisecm.jobs.tc.tools.SyncTcTools;
 import org.zisecm.jobs.tc.utils.DataManagement;
 import org.zisecm.jobs.tc.utils.Query;
 import org.zisecm.jobs.tc.utils.Workflow;
+import org.zisecm.jobs.utils.OptionLogger;
+import org.zisecm.jobs.utils.SynDetailService;
 
 import com.ecm.common.util.FileUtils;
 import com.ecm.core.ActionContext;
@@ -55,6 +57,7 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
@@ -109,6 +112,8 @@ public class SyncFromTcService {
 	private FolderPathService folderPathService;
 	@Autowired
 	private FolderService folderService;
+	@Autowired
+	private ExcSynDetailService detailService;
 	
 	@Autowired
 	private Environment env;
@@ -684,11 +689,12 @@ public class SyncFromTcService {
 		} else {
 
 			if ("文件传递单".equals(doc.getTypeName())) {
-				logicOptionTransferService.transferOption(token, doc, true);
+				logicOptionTransferService.transferOption(token, detailService, doc, true);
 			}
 //			else if ("接口信息传递单".equals(doc.getTypeName()) || "接口信息意见单".equals(doc.getTypeName())) {
 //				logicOptionInterfaceService.interfaceOption(token, doc);
-//			} else {
+//			} 
+//			else {
 //				logicOptionRelevantService.relevantOption(token, doc, true);
 //			}
 			doc.addAttribute("C_IS_RELEASED", 1);
@@ -719,6 +725,7 @@ public class SyncFromTcService {
 
 				excTransfer.setStatus(nextStatus);
 				excTransferService.newObject(excTransfer);
+				OptionLogger.logger(token, detailService,doc, "分发",contractors[i]);
 			}
 
 		}
@@ -738,6 +745,7 @@ public class SyncFromTcService {
 
 				excTransfer.setStatus(nextStatus);
 				excTransferService.newObject(excTransfer);
+				OptionLogger.logger(token, detailService,doc, "分发",copyTos[i]);
 			}
 
 		}
