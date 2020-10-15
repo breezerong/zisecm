@@ -13,6 +13,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuthService;
+import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.icore.service.IEcmSession;
 
@@ -25,6 +26,9 @@ public abstract class BaseJob {
 	
 	@Autowired
 	private DocumentService documentService;
+	
+	@Autowired
+	private ContentService contentService;
 	
 	@Autowired
 	private EcmConfig ecmConfig;
@@ -44,6 +48,7 @@ public abstract class BaseJob {
 		List<Map<String,Object>> result = null;
 		try {
 			result = this.documentService.getMapList(token, sql);
+			
 		} catch (EcmException e) {
 			e.printStackTrace();
 			result = new ArrayList<>();
@@ -60,6 +65,10 @@ public abstract class BaseJob {
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
+	}
+	
+	protected ContentService getContentService() {
+		return this.contentService;
 	}
 	
 	protected DocumentService getDocumentService() {
