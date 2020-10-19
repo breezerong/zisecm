@@ -8,21 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -36,8 +29,6 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.alibaba.fastjson.JSON;
 
  public class ExcelUtil {
 
@@ -67,7 +58,8 @@ import com.alibaba.fastjson.JSON;
 	public List<Object[]> read(InputStream fis, int sheetOrder) throws FileNotFoundException, IOException, InvalidFormatException {
 		return read(fis,null,sheetOrder);
 	}	
- 	public List<Object[]> read(InputStream fis,String path,int sheetOrder) throws FileNotFoundException, IOException, InvalidFormatException {
+ 	@SuppressWarnings("incomplete-switch")
+	public List<Object[]> read(InputStream fis,String path,int sheetOrder) throws FileNotFoundException, IOException, InvalidFormatException {
 		if(fis== null) {
 			 fis = new FileInputStream(path);
 		} 
@@ -201,37 +193,11 @@ import com.alibaba.fastjson.JSON;
 //		os.flush();
 		workbook.close();
 	}
-// 	/**
-// 	 * 导出Excel
-// 	 * @param path 本地路径或网络路径
-// 	 * @param sheetName 
-// 	 * @param fieldName 表头
-// 	 * @param data 数据
-// 	 * @param hideFirstRow 首行隐藏
-// 	 * @throws IOException
-// 	 */
-// 	public void makeStreamExcel(String path,String sheetName,String[] fieldName,List<Object[]> data,boolean hideFirstRow) throws IOException {
-// 		XSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data , hideFirstRow);
-// 		File f=new File(path);
-// 		try {
-// 			
-// 			f.createNewFile();
-// 		}catch (Exception e) {
-//			// TODO: handle exception
-// 			File dir=new File(path.substring(0,path.lastIndexOf("/")));
-// 			dir.mkdirs();
-// 			f.createNewFile();
-//		}
-// 		OutputStream os=new FileOutputStream(f);
-//		os.flush();
-//		workbook.write(os);
-//		workbook.close();
-// 	}
+
  	
  	private XSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,boolean hideFirstRow) {
 		// 用来记录最大列宽,自动调整列宽。
 		Integer collength[] = new Integer[fieldName.length];
-
 		// 产生工作薄对象
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		// 产生工作表对象
@@ -273,13 +239,11 @@ import com.alibaba.fastjson.JSON;
 				}else {
 					if (tmp[j] instanceof Date) {
 						cell = row.createCell((short) j);
-						
 						XSSFDataFormat format = workbook.createDataFormat();
 						XSSFCellStyle style = workbook.createCellStyle();
 						style.setDataFormat(format.getFormat("yyyy-MM-dd"));
 						
 						Date dateValue = (Date) tmp[j];
-						
 						cell.setCellValue(dateValue);
 						cell.setCellStyle(style);
 					}else {
