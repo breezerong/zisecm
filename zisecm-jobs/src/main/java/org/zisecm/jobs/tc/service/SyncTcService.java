@@ -1225,7 +1225,10 @@ public class SyncTcService {
 			HttpTools.downloadFile(env, localDir,en.getId(),en.getFormatName(), 
 					env.getProperty("ecm.baseUrl"));
 		//
-		
+//			String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//			String filePath= fullPath+en.getFilePath();
+//			localFileName=filePath;
+			
 		createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, "IMAN_specification");
 		
 	}
@@ -1337,6 +1340,11 @@ public class SyncTcService {
 			//下载电子文件
 				HttpTools.downloadFile(env, localDir,parentId,en.getFormatName(), 
 						env.getProperty("ecm.baseUrl"));
+				
+//				String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//				String filePath= fullPath+en.getFilePath();
+//				localFileName=filePath;
+				
 			//
 //			createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, "CN9Attachment");
 				createDataset(session,dmService,mainData, datasetType, datasetName, referenceName, localFileName, ship.getName());
@@ -1421,6 +1429,9 @@ public class SyncTcService {
 					HttpTools.downloadFile(env, localDir,en.getId(),en.getFormatName(), 
 							env.getProperty("ecm.baseUrl"));
 				//
+//					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//					String filePath= fullPath+en.getFilePath();
+//					localFileName=filePath;
 				createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, "CN9Attachment");
 			}else {
 				String sql="select a.* from ecm_document a,ecm_relation b where a.id=b.child_id and b.name='附件' and b.parent_id='"+doc.get("ID").toString()+"'";
@@ -1465,6 +1476,9 @@ public class SyncTcService {
 							HttpTools.downloadFile(env, localDir,en.getId(),en.getFormatName(), 
 									env.getProperty("ecm.baseUrl"));
 						//
+//							String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//							String filePath= fullPath+en.getFilePath();
+//							localFileName=filePath;
 						createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, "CN9Attachment");
 					}
 				}

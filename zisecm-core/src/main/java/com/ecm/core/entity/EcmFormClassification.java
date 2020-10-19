@@ -40,7 +40,7 @@ public class EcmFormClassification extends EcmSysObject {
 				EcmFormItem itemc = item.clone(langKey);
 				String defaultValue = itemc.getDefaultValue();
 				if("{now}".equalsIgnoreCase(defaultValue)) {
-					itemc.setDefaultValue(DateUtils.currentDate("yyyy-MM-dd"));
+					itemc.setDefaultValue(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss"));
 				}else if("{username}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(session.getCurrentUser().getUserName());
 				}else if("{department}".equalsIgnoreCase(defaultValue)) {
