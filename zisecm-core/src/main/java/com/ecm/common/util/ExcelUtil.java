@@ -8,13 +8,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,6 +30,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -254,11 +264,33 @@ import com.alibaba.fastjson.JSON;
 			// 生成一行
 			row = sheet.createRow(i + 1);
 			for (int j = 0; j < tmp.length; j++) {
-				cell = row.createCell((short) j);
-				// 设置单元格字符类型为String
-				cell.setCellType(CellType.STRING);
-				tempCellContent = (tmp[j] == null) ? "" : tmp[j].toString();
-				cell.setCellValue(new XSSFRichTextString(tempCellContent));
+				
+				if(tmp[j] == null){
+					cell = row.createCell((short) j);
+					cell.setCellType(CellType.STRING);
+					tempCellContent = "";
+					cell.setCellValue(new XSSFRichTextString(tempCellContent));
+				}else {
+					if (tmp[j] instanceof Date) {
+						cell = row.createCell((short) j);
+						
+						XSSFDataFormat format = workbook.createDataFormat();
+						XSSFCellStyle style = workbook.createCellStyle();
+						style.setDataFormat(format.getFormat("yyyy-MM-dd"));
+						
+						Date dateValue = (Date) tmp[j];
+						
+						cell.setCellValue(dateValue);
+						cell.setCellStyle(style);
+					}else {
+						cell = row.createCell((short) j);
+						cell.setCellType(CellType.STRING);
+						tempCellContent = tmp[j].toString();
+						cell.setCellValue(new XSSFRichTextString(tempCellContent));
+					}
+				}
+				
+				
 
 				// 如果自动调整列宽度。
 				if (autoColumnWidth) {
