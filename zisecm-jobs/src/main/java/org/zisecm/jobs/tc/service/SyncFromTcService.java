@@ -355,6 +355,16 @@ public class SyncFromTcService {
 				}catch (Exception e) {
 					// TODO: handle exception
 					e.printStackTrace();
+					if(!"".equals(mainDocId)) {
+						String sql="select child_id from ecm_relation where parent_id='"+mainDocId+"'";
+						List<Map<String,Object>> childDatas= documentService.getMapList(token, sql);
+						for(int x=0;childDatas!=null&&x<childDatas.size();x++) {
+							Map<String,Object> childObj= childDatas.get(x);
+							String childId= childObj.get("child_id").toString();
+							documentService.deleteObject(token, childId);
+						}
+						documentService.deleteObject(token, mainDocId);
+					}
 					continue;
 				}
 				/////////////////////////////////////////////////////////////////

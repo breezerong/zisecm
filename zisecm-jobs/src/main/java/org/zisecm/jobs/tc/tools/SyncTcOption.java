@@ -29,6 +29,7 @@ import org.zisecm.jobs.tc.ws.PLMServerLOT.PLMServerLOTImpl;
 import org.zisecm.jobs.tc.ws.PLMServerLOT.ReturnVal;
 import org.zisecm.jobs.utils.HttpTools;
 
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.service.AuthService;
@@ -160,7 +161,9 @@ public class SyncTcOption {
 			HttpTools.downloadFile(env, localDir,en.getId(),en.getFormatName(), 
 					env.getProperty("ecm.baseUrl"));
 		//
-		
+//			String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//			String filePath= fullPath+en.getFilePath();
+//			localFileName=filePath;
 		createDataset(session,dmService,itemRev, datasetType, datasetName, referenceName, localFileName, "IMAN_specification");
 		
 	}
