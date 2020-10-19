@@ -441,7 +441,7 @@ public class Operator {
 			if("C_PAGE_COUNT".equals(sName)) {
 				try {
 					val= SyncTcTools.getProperty(dmService, obj, tName,attrBean.getDataType());
-					String[] temp=val.split("+");
+					String[] temp=val.split("\\+");
 					val=temp[0];
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
