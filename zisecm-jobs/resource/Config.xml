@@ -903,5 +903,21 @@
 <!-- 				<attribute label="收发文标记" sourceName="" targetName="cn9ReceiveSendFlag" dataType="String" defaultValue="0"></attribute> -->
 			</attributes>
 		</conf>
+		<conf id="会议纪要内容项Form"  sourceTypeName="会议纪要内容项" targetSystem="tc" tcTypeName="会议纪要跟踪项" tcTableName="CN9MinActionItemRevision">
+			<attributes>
+				<attribute label="内容" sourceName="C_CONTENT" targetName="cn9ActionContent" dataType="String"></attribute>
+				<attribute label="描述及后续行动" sourceName="C_COMMENT1" targetName="object_desc" dataType="String"></attribute>
+				<attribute label="责任方" sourceName="C_RESPONSIBLE" targetName="cn9ResponsableCom" dataType="String"></attribute>
+				<attribute label="责任方设总" sourceName="C_REVIEWER1" targetName="cn9ResponsableChefEng" dataType="String"></attribute>
+				<attribute label="责任室" sourceName="C_DEPARTMENT" targetName="cn9ResponsableRoom" dataType="String"></attribute>
+				<attribute label="责任人" sourceName="C_DRAFTER" targetName="cn9ResponsablePerson" dataType="String"></attribute>
+				<attribute label="期限" sourceName="C_ITEM1_DATE" targetName="cn9Deadline" dataType="Time"></attribute>
+				<attribute label="实际完成时间" sourceName="C_ITEM2_DATE" targetName="cn9RealDate" dataType="Time"></attribute>
+				<attribute label="说明" sourceName="C_COMMENT2" targetName="cn9Instruction" dataType="String"></attribute>
+				<attribute label="状态" sourceName="STATUS" targetName="cn9ReleaseState" dataType="String"></attribute>
+				<attribute label="备注" sourceName="C_COMMENT3" targetName="cn9Remark" dataType="String"></attribute>
+			</attributes>
+		</conf>
+		
 	</subconfs>
 </config>

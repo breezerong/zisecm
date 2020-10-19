@@ -22,11 +22,11 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.zisyun</groupId>
-			<artifactId>zisecm-cnpe-p6ws</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.zisyun</groupId> -->
+<!-- 			<artifactId>zisecm-cnpe-p6ws</artifactId> -->
+<!-- 			<version>${project.version}</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -146,7 +146,17 @@
 		    <artifactId>cxf-rt-frontend-jaxws</artifactId>
 		    <version>3.4.0</version>
 		</dependency>
-				
+		
+		<dependency>
+		    <groupId>commons-httpclient</groupId>
+		    <artifactId>commons-httpclient</artifactId>
+		    <version>3.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpmime</artifactId>
+		    <version>4.5.3</version>
+		</dependency>
 				
 	</dependencies>
 	<repositories>

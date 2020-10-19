@@ -1,5 +1,6 @@
 package org.zisecm.jobs.tc.tools;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
@@ -189,9 +190,11 @@ public class SyncTcTools {
 	 * @param object
 	 * @param propertyName
 	 * @return
+	 * @throws NotLoadedException 
+	 * @throws ParseException 
 	 */
-	public static String getProperty(DataManagementService dmService,ModelObject object, String propertyName,String typeName) {
-		try {
+	public static String getProperty(DataManagementService dmService,ModelObject object, String propertyName,String typeName) throws NotLoadedException, ParseException {
+//		try {
 			dmService.refreshObjects(new ModelObject[]{object});
 			
 			dmService.getProperties(new ModelObject[] { object },
@@ -205,14 +208,20 @@ public class SyncTcTools {
 				SimpleDateFormat format=new SimpleDateFormat("yyyy-M-dd HH:mm");
 				SimpleDateFormat targetFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				value=targetFormat.format(format.parse(value));
-			}else {
+			}else if("array".equals(typeName)) {
+				String[] v=object.getPropertyObject(propertyName).getStringArrayValue();
+				for(int i=0;v!=null&&i<v.length;i++) {
+					value+=v[i]+",";
+				}
+			}
+			else {
 				value = object.getPropertyObject(propertyName).getStringValue();
 			}
 
 			return value;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
+//		}
 	}
 }

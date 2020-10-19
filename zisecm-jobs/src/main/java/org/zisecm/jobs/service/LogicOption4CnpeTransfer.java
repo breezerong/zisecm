@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.zisecm.jobs.utils.OptionLogger;
 
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.exception.AccessDeniedException;
@@ -17,6 +18,7 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.ExcSynDetailService;
 
 @Service
 @Scope("prototype")
@@ -56,7 +58,8 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 	 * @throws Exception
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public boolean transferOption(String token,EcmDocument transferDoc,boolean isDispense) throws Exception {
+	public boolean transferOption(String token,ExcSynDetailService detailService,
+			EcmDocument transferDoc,boolean isDispense) throws Exception {
 		List<Map<String,Object>> designDocMaps= getChildsByParentID(token, transferDoc.getId(), "设计文件");
 		
 		for(int j=0;designDocMaps!=null&&j<designDocMaps.size();j++) {
@@ -65,6 +68,8 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 			newDesignDoc.setAttributes(designDocMaps.get(j));
 			boolean isUpgrad= upgradDesignDocument(token,newDesignDoc);
 			if(isUpgrad) {
+				OptionLogger.logger(token, detailService, newDesignDoc, "升版", 
+						newDesignDoc.getAttributeValue("C_COMPANY")!=null?newDesignDoc.getAttributeValue("C_COMPANY").toString():"");
 				EcmDocument oldIED= getIEDByDoc(token,newDesignDoc);
 				if(oldIED==null) {
 					if(isDispense) {
@@ -72,9 +77,11 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 					}else {
 						throw new Exception("此文件\""+newDesignDoc.getCoding()+"\"无对应IED!");
 					}
-					
 				}
-				upgradIED(token,oldIED,newDesignDoc);
+				String iedId= upgradIED(token,oldIED,newDesignDoc);
+				EcmDocument newIed=getObjectById(token, iedId);
+				OptionLogger.logger(token, detailService, newIed, "升版", 
+						newIed.getAttributeValue("C_COMPANY")!=null?newIed.getAttributeValue("C_COMPANY").toString():"");
 			}
 		}
 		return true;
@@ -172,13 +179,12 @@ public class LogicOption4CnpeTransfer extends DocumentService{
 		if(!isA.equals("A")) {
 			status2="N";
 		}
-		System.out.println(status2+"123123");
 		attrMap.put("REVISION",doc.getRevision());
 		attrMap.put("C_SEND_DATE", doc.getAttributeValue("C_ITEM_DATE"));
 		attrMap.put("C_REF_CODING", doc.getAttributeValue("C_REF_CODING"));
 		attrMap.put("C_REVIEW1_DATE", now);
 		attrMap.put("C_ITEM_STATUS2", status2);
-		
+		attrMap.put("TITLE", doc.getAttributeValue("TITLE"));
 		EcmDocument checkInDoc= checkIn(token, oldIED.getId(),attrMap, null, true);
 		
 		

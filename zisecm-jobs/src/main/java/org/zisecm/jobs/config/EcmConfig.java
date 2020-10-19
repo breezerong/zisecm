@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class EcmConfig {
 	private Database database;
 	private String username = "admin";
-	private String password = "password";
+	private String password = "Ecm.520!";
 	private String localDir = "C:/download/";
 	private String baseUrl = "http://localhost:8080/zisecm";
 	private String tcUsername="sjxx";

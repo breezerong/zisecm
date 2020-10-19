@@ -158,17 +158,17 @@ public class LogicOption4CnpeInterface extends DocumentService{
 		}
 		
 		sql+=" and C_CODE1='"+(interfaceDoc.getAttributeValue("C_CODE1")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE1").toString()+"'");
+				:interfaceDoc.getAttributeValue("C_CODE1").toString())+"'";
 		sql+=" and C_CODE2='"+(interfaceDoc.getAttributeValue("C_CODE2")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE2").toString()+"'");
+				:interfaceDoc.getAttributeValue("C_CODE2").toString())+"'";
 		sql+=" and C_CODE3='"+(interfaceDoc.getAttributeValue("C_CODE3")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE3").toString()+"'");
+				:interfaceDoc.getAttributeValue("C_CODE3").toString())+"'";
 		sql+=" and C_CODE4='"+(interfaceDoc.getAttributeValue("C_CODE4")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE4").toString()+"'");
+				:interfaceDoc.getAttributeValue("C_CODE4").toString())+"'";
 		sql+=" and C_CODE5='"+(interfaceDoc.getAttributeValue("C_CODE5")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE5").toString()+"'");
+				:interfaceDoc.getAttributeValue("C_CODE5").toString())+"'";
 		sql+=" and C_CODE6='"+(interfaceDoc.getAttributeValue("C_CODE6")==null?""
-				:interfaceDoc.getAttributeValue("C_CODE6").toString()+"'");
+				:interfaceDoc.getAttributeValue("C_CODE6").toString())+"'";
 		
 
 		

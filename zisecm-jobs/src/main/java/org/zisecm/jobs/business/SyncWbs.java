@@ -81,6 +81,7 @@ public class SyncWbs {
 			Map<String,Object> syncProjectInfo = documentService.getObjectMapById(ecmSession.getToken(), excSynBatch.getBatchNum());
 			String projectId = syncProjectInfo.get("CODING").toString();
 			String projectName = syncProjectInfo.get("C_PROJECT_NAME").toString();
+			String designUnit = syncProjectInfo.get("C_DESIGN_UNIT").toString();
 			int newCount = 0;
 			int updateCount = 0;
 			int failCount = 0;
@@ -123,6 +124,7 @@ public class SyncWbs {
 							actDocObj.addAttribute("SYN_ID", activity.getId());
 							actDocObj.addAttribute("C_TYPE1", "99");
 							
+							actDocObj.addAttribute("C_DESIGN_UNIT", designUnit);
 							actDocObj.addAttribute("C_PROJECT_CODE", projectId);
 							actDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							XMLGregorianCalendar datevalue = activity.getStartDate();
@@ -146,6 +148,7 @@ public class SyncWbs {
 							}
 						}else {
 							actDocObj = list.get(0);
+							actDocObj.addAttribute("C_DESIGN_UNIT", designUnit);
 							actDocObj.addAttribute("C_PROJECT_CODE", projectId);
 							actDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							XMLGregorianCalendar datevalue = activity.getStartDate();
@@ -191,6 +194,7 @@ public class SyncWbs {
 							
 							String wbsCode = wbs.get("CODE").toString();
 							wbsDocObj.addAttribute("C_WBS_CODING", wbsCode);
+							wbsDocObj.addAttribute("C_DESIGN_UNIT", designUnit);
 							wbsDocObj.addAttribute("C_PROJECT_CODE", projectId);
 							wbsDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							wbsDocObj.addAttribute("SYN_ID", wbs.get("OBJECT_ID").toString());
@@ -216,6 +220,7 @@ public class SyncWbs {
 							
 							String wbsCode = wbs.get("CODE").toString();
 							wbsDocObj.addAttribute("C_WBS_CODING", wbsCode);
+							wbsDocObj.addAttribute("C_DESIGN_UNIT", designUnit);
 							wbsDocObj.addAttribute("C_PROJECT_CODE", projectId);
 							wbsDocObj.addAttribute("C_PROJECT_NAME", projectName);
 							wbsDocObj.addAttribute("SYN_ID", wbs.get("OBJECT_ID").toString());

@@ -58,14 +58,16 @@ public class FormItemManager extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			EcmGridView gObj = ecmGridView.getObjectByName(getToken(), gridviewName);
-			EcmForm formObj = this.getECMForm(gObj.getTypeName(), "NEW");
-			String formId = formObj.getId();
-			List<EcmFormItem> list = formItemService.getFormItems(getToken(),formId);
 			List<EcmFormItem> datalist = new ArrayList<EcmFormItem>();
-			for (EcmFormItem item : list) {
-				datalist.add(item.clone(language));
+			if(gObj.getTypeName()!=null) {				
+				EcmForm formObj = this.getECMForm(gObj.getTypeName(), "NEW");
+				String formId = formObj.getId();
+				List<EcmFormItem> list = formItemService.getFormItems(getToken(),formId);
+				
+				for (EcmFormItem item : list) {
+					datalist.add(item.clone(language));
+				}
 			}
-			
 			mp.put("code", ActionContext.SUCESS);
 			
 			mp.put("data", datalist); 
