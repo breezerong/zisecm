@@ -410,8 +410,12 @@ public class SyncFromTcService {
 					continue;
 				}
 				
+				EcmDocument mainObj=documentService.getObjectById(token, mainDocId);
+				if(mainObj.getAttributeValue("TYPE_NAME")!=null
+						&&!"ICM".equals(mainObj.getAttributeValue("TYPE_NAME").toString())) {
+					dispense(ecmSession.getToken(),mainDocId);
+				}
 				
-				dispense(ecmSession.getToken(),mainDocId);
 				SyncTcTools.setObjectProperties(dmService, obj, new String[] {"cn9NewReserveText3"}, new String[] {"1"});
 				String tcId=SyncTcTools.getProperty(dmService, obj, "item_id", "String");
 				EcmDocument doc=documentService.getObjectById(token, mainDocId);
