@@ -128,14 +128,19 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	private void bindUserComapny(LoginUser cuser) {
-		if (cuser == null || StringUtils.isEmpty(cuser.getCompany())) {
-			return;
+		try {
+			if (cuser == null || StringUtils.isEmpty(cuser.getCompany())) {
+				return;
+			}
+			String sql = "select NAME,CODING,C_CODE1 from ecm_document where TYPE_NAME='公司'  and NAME='"+cuser.getCompany()+"'";
+			List<Map<String,Object>> list = ecmDocumentMapper.executeSQL(sql);
+			if(list != null && list.size()>0) {
+				cuser.setCompanyCode((String)list.get(0).get("CODING"));
+				cuser.setCompanyCode1((String)list.get(0).get("C_CODE1"));
+			}
 		}
-		String sql = "select NAME,CODING,C_CODE1 from ecm_document where TYPE_NAME='公司'  and NAME='"+cuser.getCompany()+"'";
-		List<Map<String,Object>> list = ecmDocumentMapper.executeSQL(sql);
-		if(list != null && list.size()>0) {
-			cuser.setCompanyCode((String)list.get(0).get("CODING"));
-			cuser.setCompanyCode1((String)list.get(0).get("C_CODE1"));
+		catch(Exception ex) {
+			
 		}
 	}
 
