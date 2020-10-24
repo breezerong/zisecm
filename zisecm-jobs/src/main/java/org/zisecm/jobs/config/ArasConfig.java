@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "aras")
 public class ArasConfig {
 	
-private String grantType="password";
+	private String grantType="password";
 	
 	private String username = "admin";
 	
@@ -21,8 +21,18 @@ private String grantType="password";
 	
 	private String url="http://121.40.103.187/InnovatorServer";
 	
-	private String tokenUrl="/OAuthServer/connect/token";
+	private String vaultId="67BBB9204FE84A8981ED8313049BA06C";
 	
+	
+	
+	public String getVaultId() {
+		return vaultId;
+	}
+
+	public void setVaultId(String vaultId) {
+		this.vaultId = vaultId;
+	}
+
 	public String getGrantType() {
 		return grantType;
 	}
@@ -80,14 +90,5 @@ private String grantType="password";
 	public void setUrl(String url) {
 		this.url = url;
 	}
-
-	public String getTokenUrl() {
-		return tokenUrl;
-	}
-
-	public void setTokenUrl(String tokenUrl) {
-		this.tokenUrl = tokenUrl;
-	}
-
 	
 }
