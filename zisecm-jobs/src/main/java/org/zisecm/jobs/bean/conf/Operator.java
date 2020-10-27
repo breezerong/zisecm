@@ -393,6 +393,9 @@ public class Operator {
 					// TODO: handle exception
 					value=null;
 				}
+				if(value==null&&attr.getDefaultValue()!=null&&!"".equals(attr.getDefaultValue())) {
+					value=attr.getDefaultValue();
+				}
 				DataEntity dt=new DataEntity();
 				dt.setAttrName(tName);
 				dt.setAttrValue(value);

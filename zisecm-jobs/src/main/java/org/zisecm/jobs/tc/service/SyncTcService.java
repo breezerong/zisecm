@@ -292,6 +292,7 @@ public class SyncTcService {
 	    	  }
 	    			  
 	      }
+	      SyncTcTools.setObjectProperties(dmService, mainData, new String[] {"cn9NewReserveText3"}, new String[] {"1"});
 	      /*****************************发起流程*********************************************/
 	      String docManagerUserId = dataManagement.getUserFromPref(projectId);
 	      User user = null;
