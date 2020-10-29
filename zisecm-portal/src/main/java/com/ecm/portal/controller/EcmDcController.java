@@ -2203,7 +2203,7 @@ public class EcmDcController extends ControllerAbstract {
 				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
 				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
 				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
-				String revision = docObj.getRevision() == null ? "A" : docObj.getRevision();
+				String revision = docObj.getRevision() == null ? "" : docObj.getRevision();
 				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
 					List<EcmContent> contentList = contentMapper.getContents(objectIdsList[i], 1);
 					for (int j = 0; j < contentList.size(); j++) {
@@ -2212,7 +2212,7 @@ public class EcmDcController extends ControllerAbstract {
 						files.add(new File(storePath + en.getFilePath()));
 						fileNames.add(coding +"_"+revision+"/"+coding +"_"+revision+ "." + en.getFormatName());
 						
-						String childAttachSql="select CHILD_ID,NAME from ecm_relation where (NAME='相关文件' or NAME='附件' or name='设计文件') " + 
+						String childAttachSql="select CHILD_ID,NAME from ecm_relation where ( NAME='附件' or name='设计文件') " + 
 								"and PARENT_ID ='"+objectIdsList[i]+"'";
 						List<Map<String,Object>> attacheFiles= ecmRelationMapper.executeSQL(childAttachSql);
 						for(int x=0;attacheFiles!=null&&x<attacheFiles.size();x++) {
@@ -2265,7 +2265,7 @@ public class EcmDcController extends ControllerAbstract {
 						fileNames.add(coding+"_"+revision+"/"+coding+"_"+revision + "." + en.getFormatName());
 					}
 					
-					String sql="select CHILD_ID,NAME from ecm_relation where (NAME='相关文件' or NAME='附件' or name='设计文件') " + 
+					String sql="select CHILD_ID,NAME from ecm_relation where ( NAME='附件' or name='设计文件') " + 
 							"and PARENT_ID ='"+objectIdsList[i]+"'";
 					List<Map<String,Object>> childrenIds= ecmRelationMapper.executeSQL(sql);
 					for(int j=0;childrenIds!=null&&j<childrenIds.size();j++) {
@@ -2284,11 +2284,17 @@ public class EcmDcController extends ControllerAbstract {
 								EcmContent en=enList.get(0);
 								String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 								files.add(new File(storePath + en.getFilePath()));
-								fileNames.add(coding+"_"+revision+"/"+relationName+"/"
-										+childCoding+"_"+childRevision +"/"
-										+childCoding+"_"+childRevision + "." + en.getFormatName());
+								if("附件".equals(relationName)) {
+									fileNames.add(coding+"_"+revision+"/"+relationName+"/"
+											+coding+"_"+revision +"_附件_"+(j+1)+ "." + en.getFormatName());
+								}else {
+									fileNames.add(coding+"_"+revision+"/"+relationName+"/"
+											+childCoding+"_"+childRevision +"/"
+											+childCoding+"_"+childRevision + "." + en.getFormatName());
+								}
+								
 							}
-							String childAttachSql="select CHILD_ID,NAME from ecm_relation where (NAME='相关文件' or NAME='附件' or name='设计文件') " + 
+							String childAttachSql="select CHILD_ID,NAME from ecm_relation where ( NAME='附件' or name='设计文件') " + 
 									"and PARENT_ID ='"+childId+"'";
 							List<Map<String,Object>> attacheFiles= ecmRelationMapper.executeSQL(childAttachSql);
 							for(int x=0;attacheFiles!=null&&x<attacheFiles.size();x++) {

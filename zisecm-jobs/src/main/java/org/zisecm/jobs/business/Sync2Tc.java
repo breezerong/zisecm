@@ -67,7 +67,7 @@ public class Sync2Tc {
 	private SyncTcOption tcOption;
 	@Autowired
 	private SyncTcService syncTcService;
-	@Scheduled(cron = "0/20 * * * * ?")
+	@Scheduled(cron = "${cron.up2tc}")
 	public void run2() {
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		IEcmSession ecmSession = null;

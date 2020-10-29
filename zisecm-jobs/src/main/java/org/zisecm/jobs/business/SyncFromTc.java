@@ -14,7 +14,7 @@ import org.zisecm.jobs.tc.service.SyncFromTcService;
 public class SyncFromTc {
 	@Autowired
 	private SyncFromTcService syncFromTcService;
-	@Scheduled(cron="0/20 * * * * ?")
+	@Scheduled(cron="${cron.downfromtc}")
 	public void run() {
 		try {
 			List<ConfBean> cfs=Operator.getMainBeans();
