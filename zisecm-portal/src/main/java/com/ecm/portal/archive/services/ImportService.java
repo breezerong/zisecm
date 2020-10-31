@@ -235,9 +235,13 @@ public class ImportService extends EcmService {
 										|| !isEmptyCell(sheet.getRow(i).getCell(4)))))) {
 							sameValues = new HashMap<String, Object>();
 							parentId = null;
-							if(existsCheck(token, parentType,sheet.getRow(i),attrNames,1,childStartIndex-1)) {
-								sb.append("第").append(i + 1).append("行数据已存在.").append("\r\n");
-								continue;
+							if("相关文件".equals(childType)) {
+								
+							}else {
+								if(existsCheck(token, parentType,sheet.getRow(i),attrNames,1,childStartIndex-1)) {
+									sb.append("第").append(i + 1).append("行数据已存在.").append("\r\n");
+									continue;
+								}
 							}
 							String excelFileName = getCellValue(sheet.getRow(i).getCell(0));
 							// String itemPath = getItemFilePath(excelFileName, files, uploadFolder);
@@ -275,6 +279,10 @@ public class ImportService extends EcmService {
 							relationName="设计文件";
 						}else if("相关文件".equals(childType)) {
 							relationName="相关文件";
+							tempId = newDocument(token, childType, null,null, sheet.getRow(i),
+									fileList, attrNames, parentId, relationName, number, childStartIndex,
+									sheet.getRow(i).getLastCellNum(), sameValues, null);
+							continue;
 						}
 						tempId = null;
 						String fileNameStr = getCellValue(sheet.getRow(i).getCell(0));
@@ -385,7 +393,7 @@ public class ImportService extends EcmService {
 						
 
 
-					} else {
+					} else {//无子对象关系
 
 						String fileNameStr = getCellValue(sheet.getRow(i).getCell(0));
 						String[] fileNames = fileNameStr.split(";");
@@ -601,6 +609,47 @@ public class ImportService extends EcmService {
 			condition += " AND CODING='"+coding+"'";
 			if(!StringUtils.isEmpty(revision )) {
 				condition += " AND REVISION='"+revision+"'";
+			}
+			List<Map<String, Object>>  list = documentService.getObjectMap(token, condition);
+			if(list != null && list.size()>0) {
+				return true;
+			}
+		}else {
+			return false;
+		}
+		return false;
+	}
+	/**
+	 * 相关文件是否存在检查
+	 * @Title:
+	 * @author Haihong Rong
+	 * @date:   2020-10-31 14:18:04 
+	 * @Description:       
+	 * @param token
+	 * @param typeName
+	 * @param row
+	 * @param attrNames
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	private boolean existsCheckRefDoc(String token,String parentId,Row row, Map<Integer, String> attrNames,int start, int end) {
+		int idx = getColumnIndex(attrNames, "CODING", start, end);
+		String coding = null;
+		if(idx>-1) {
+			coding = row.getCell(idx)==null?null:row.getCell(idx).getStringCellValue();
+		}
+		idx = getColumnIndex(attrNames, "REVISION", start, end);
+		String revision = null;
+		if(idx>-1) {
+			revision = row.getCell(idx)==null?null:row.getCell(idx).getStringCellValue();
+		}
+		String condition = "TYPE_NAME='相关文件'";
+		if(!StringUtils.isEmpty(coding)) {
+			condition += " AND CODING='"+coding+"'";
+			if(!StringUtils.isEmpty(revision )) {
+				condition += " AND REVISION='"+revision+"' and exists(select 1 from ecm_relation b where b.PARENT_ID='"+parentId
+						+"' AND CHILD_ID=ecm_document.ID)";
 			}
 			List<Map<String, Object>>  list = documentService.getObjectMap(token, condition);
 			if(list != null && list.size()>0) {

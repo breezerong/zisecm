@@ -850,6 +850,24 @@ public class EcmDcController extends ControllerAbstract {
 			}
 
 		}
+		if(list != null) {
+			for(EcmFormClassification cf:list) {
+				for(EcmFormItem f:cf.getEcmFormItems()) {
+					if(f.getAttrName().equals("C_TO")|| f.getAttrName().equals("C_COPY_TO")) {
+						if(f.getValidValues()!=null) {
+							// 发送和抄送移除当前用户公司
+								try {
+									f.getValidValues().remove(documentService.getSession(getToken()).getCurrentUser().getCompany());
+								} catch (AccessDeniedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							
+						}
+					}
+				}
+			}
+		}
 		mp.put("data", list);
 		return mp;
 	}
