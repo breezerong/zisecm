@@ -67,7 +67,7 @@ public class Sync2Tc {
 	private SyncTcOption tcOption;
 	@Autowired
 	private SyncTcService syncTcService;
-	@Scheduled(cron = "0/20 * * * * ?")
+	@Scheduled(cron = "${cron.up2tc}")
 	public void run2() {
 		String workflowSpecialUserName = env.getProperty("ecm.username");
 		IEcmSession ecmSession = null;
@@ -83,7 +83,14 @@ public class Sync2Tc {
 				List<Map<String,Object>> data= documentService.getObjectMap(ecmSession.getToken(), syncSql);
 				for(Map<String,Object> mp:data) {
 										
-					String tcId= syncTcService.setFileData(mp, cfb);
+					String tcId= "";
+					try {
+						tcId= syncTcService.setFileData(mp, cfb);
+					}catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+						continue;
+					}
 					mp.put("SYN_ID", tcId);
 					mp.put("SYN_STATUS", "已同步");
 					EcmDocument doc=new EcmDocument();
