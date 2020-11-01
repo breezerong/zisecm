@@ -875,6 +875,9 @@ public class ImportService extends EcmService {
 		if (frm == null) {
 			frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
 		}
+		if (frm == null) {
+			return;
+		}
 		List<EcmFormItem> list = frm.getEcmFormItems(session, null);
 		for (EcmFormItem item : list) {
 			if (!StringUtils.isEmpty(item.getDefaultValue())) {
@@ -935,6 +938,8 @@ public class ImportService extends EcmService {
 	}
 
 	private void setSameValue(Map<String, Object> sameValues, String[] sameFlds, String attrName, String val) {
+		if(sameFlds == null || sameFlds.length==0)
+			return;
 		if (!StringUtils.isEmpty(val)) {
 			for (String fld : sameFlds) {
 				String[] flds = fld.split(":");
