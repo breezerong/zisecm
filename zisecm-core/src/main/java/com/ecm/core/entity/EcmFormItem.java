@@ -1,8 +1,13 @@
 package com.ecm.core.entity;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.ecm.common.util.DateUtils;
 import com.ecm.core.cache.manager.impl.CacheManagerLangInfo;
 
 public class EcmFormItem extends EcmObject{
@@ -45,6 +50,8 @@ public class EcmFormItem extends EcmObject{
     private Integer minCount =0 ;
     
     private Integer maxCount =0;
+    
+    private Map<String, Object> attributes = new HashMap<String, Object>();
     /**
      * 分类
      */
@@ -68,7 +75,145 @@ public class EcmFormItem extends EcmObject{
 	public void setEnableChange(Boolean enableChange) {
 		this.enableChange = enableChange;
 	}
-
+	
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+	public Object getAttributeValue(String key) {
+		Object result=null;
+		switch (key.toUpperCase()) {
+		case "ID":
+			result=this.getId();
+			break;
+		case "ORDER_INDEX":
+			result=this.getOrderIndex();
+			break;
+		case "LABLE":
+			result=this.getLabel();
+			break;
+		case "ATTR_NAME":
+			result=this.getAttrName();
+			break;
+		case "CLASSIFICATION":
+			result=this.getClassification();
+			break;
+		case "REQUIRED":
+			result=this.getRequired();
+			break;
+		case "DEFAULT_VALUE":
+			result=this.getDefaultValue();
+			break;
+		case "value_list":
+			result=this.getValueList();
+			break;
+		case "CONTRIOL_TYPE":
+			result=this.getControlType();
+			break;
+		case "is_hide":
+			result=this.getIsHide();
+			break;
+		case "QUERY_NAME":
+			result=this.getQueryName();
+			break;
+		case "READ_ONLY":
+			result=this.getReadOnly();
+			break;
+		default:
+			result=attributes.get(key.toUpperCase());
+			break;
+		}
+		return result;
+	}
+	
+	public void addAttribute(String key,Object value) {
+		
+		if(this.attributes==null) {
+			this.attributes=new HashMap<String, Object>();
+		}
+		
+		switch (key.toUpperCase()) {
+		case "ID":
+			this.setId(getString(value));
+			break;
+		case "ORDER_INDEX":
+			this.setOrderIndex(Integer.parseInt(value.toString()));;
+			break;
+		case "LABLE":
+			this.setLabel(getString(value));
+			break;
+		case "ATTR_NAME":
+			this.setAttrName(getString(value));
+			break;
+		case "CLASSIFICATION":
+			this.setClassification(getString(value));
+			break;
+		case "REQUIRED":
+			this.setRequired(getString(value).equals("Y")?true:false);
+			break;
+		case "DEFAULT_VALUE":
+			this.setDefaultValue(getString(value));
+			break;
+		case "value_list":
+			this.setValueList(getString(value));
+			break;
+		case "CONTRIOL_TYPE":
+			this.setControlType(getString(value));
+			break;
+		case "is_hide":
+			this.setIsHide(getString(value).equals("1")?true:false);
+			break;
+		case "QUERY_NAME":
+			this.setQueryName(getString(value));
+			break;
+		case "READ_ONLY":
+			this.setReadOnly(getString(value).equals("1")?true:false);
+			break;
+		default:
+			attributes.put(key.toUpperCase(), value);
+			break;
+		}
+		
+	}
+	
+	public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
+		this.setId(getString(attributes.get("ID")));
+		if(attributes.get("ORDER_INDEX")!=null) {
+			this.setOrderIndex(Integer.parseInt(attributes.get("ORDER_INDEX").toString()));
+		}
+		if(attributes.get("LABLE")!=null) {
+			this.setLabel(getString(attributes.get("LABLE")));
+		}
+		if(attributes.get("ATTR_NAME")!=null) {
+			this.setAttrName(getString(attributes.get("ATTR_NAME")));
+		}
+		if(attributes.get("CLASSIFICATION")!=null) {
+			this.setClassification(getString(attributes.get("CLASSIFICATION")));
+		}
+		if(attributes.get("REQUIRED")!=null) {
+			this.setRequired(attributes.get("REQUIRED").toString().equals("Y")?true:false);
+		}
+		if(attributes.get("DEFAULT_VALUE")!=null) {
+			this.setDefaultValue(getString(attributes.get("DEFAULT_VALUE")));
+		}
+		if(attributes.get("value_list")!=null) {
+			this.setValueList(getString(attributes.get("value_list")));
+		}
+		if(attributes.get("CONTRIOL_TYPE")!=null) {
+			this.setControlType(getString(attributes.get("CONTRIOL_TYPE")));
+		}
+		if(attributes.get("is_hide")!=null) {
+			this.setIsHide(attributes.get("is_hide").toString().equals("1")?true:false);
+		}
+		if(attributes.get("QUERY_NAME")!=null) {
+			this.setQueryName(getString(attributes.get("QUERY_NAME")));
+		}
+	    if(attributes.get("READ_ONLY")!=null) {
+	    	this.setReadOnly(attributes.get("READ_ONLY").toString().equals("1")?true:false);
+	    }
+	    this.setWidthType("4");
+	}
+	
 	/**
      * 启用变更事件
      */
@@ -260,5 +405,41 @@ public class EcmFormItem extends EcmObject{
 
 	public void setClassification(String classification) {
 		this.classification = classification;
+	}
+	
+	private String getString(Object val) {
+		if(val==null) {
+			return null;
+		}
+		return val.toString();
+	}
+	
+	private Date getDate(Object val) {
+		if(val == null) {
+			return null;
+		}
+		else if(val instanceof Date) {
+			return (Date)val;
+		}
+		else if(val instanceof Long) {
+			return new Date((long)val);
+		}
+		try {
+			return DateUtils.sdfAll.parse(val.toString());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public boolean isHidden() {
+		return isHide;
+	}
+
+	public void setHidden(boolean isHidden) {
+		this.isHide = isHidden;
+		if(attributes!=null) {
+			attributes.put("IS_HIDDEN",  this.isHide?1:0);
+		}
 	}
 }
