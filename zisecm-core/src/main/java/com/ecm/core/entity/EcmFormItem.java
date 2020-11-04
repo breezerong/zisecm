@@ -29,7 +29,7 @@ public class EcmFormItem extends EcmObject{
 
     private Integer orderIndex;
 
-    private String widthType;
+    private String widthType = "4";
 
     private String label;
 
@@ -177,7 +177,9 @@ public class EcmFormItem extends EcmObject{
 	
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
-		this.setId(getString(attributes.get("ID")));
+		if(attributes.get("ID")!=null) {
+			this.setId(getString(attributes.get("ID")));
+		}
 		if(attributes.get("ORDER_INDEX")!=null) {
 			this.setOrderIndex(Integer.parseInt(attributes.get("ORDER_INDEX").toString()));
 		}
@@ -211,7 +213,7 @@ public class EcmFormItem extends EcmObject{
 	    if(attributes.get("READ_ONLY")!=null) {
 	    	this.setReadOnly(attributes.get("READ_ONLY").toString().equals("1")?true:false);
 	    }
-	    this.setWidthType("4");
+	   
 	}
 	
 	/**
