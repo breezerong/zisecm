@@ -65,7 +65,7 @@ public class SyncWbs {
 	@Autowired
 	private EcmConfig ecmConfig;
 	
-	@Scheduled(cron = "${cron.syncwbs}")
+	//@Scheduled(cron = "${cron.syncwbs}")
 	public void run () {
 		
 		IEcmSession ecmSession = null;
