@@ -46,7 +46,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 		
 		List<Map<String, Object>> list = ecmFolderMapper.searchToMap(sql);
 		
-		return (int) list.get(0).get("itemcount");
+		return  Long.parseLong(list.get(0).get("itemcount").toString());
 	}
 	@Override
 	public EcmFolder getObjectById(String token,String id) {
