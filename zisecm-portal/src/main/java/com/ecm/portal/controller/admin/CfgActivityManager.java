@@ -100,6 +100,7 @@ public class CfgActivityManager extends ControllerAbstract{
 			org.flowable.bpmn.model.Process process = repositoryService.getBpmnModel(processId).getMainProcess();
 	        Collection<FlowElement> list = process.getFlowElements();
 	        List<String> acts = new ArrayList<String>();
+	        acts.add("start");
 	        for (FlowElement f : list) {
 	        	//System.out.println(f.getClass().getName()+":"+f.getId()+": "+f.getName());
 	            if (f instanceof UserTask) {
