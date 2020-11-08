@@ -2518,7 +2518,6 @@ public class EcmDcController extends ControllerAbstract {
 		EcmDocument doc = new EcmDocument();
 		doc.setAttributes(args);
 		String m=args.get("parentDocId").toString();
-		
 		if(args.get("TYPE_NAME").toString().equals("材料变更清单")) {
 			String cond="";
 			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"'"
@@ -2625,6 +2624,19 @@ public class EcmDcController extends ControllerAbstract {
 		doc.setAttributes(args);
 		String m=args.get("parentDocId").toString();
 		
+		
+		if(args.get("TYPE_NAME").toString().equals("设计文件")) {
+			String coding = args.get("CODING").toString();
+			String type = args.get("TYPE_NAME").toString();
+			String cond = "TYPE_NAME='IED' AND CODING = '"+coding+"'";
+			List<Map<String,Object>> ied = documentService.getObjectMap(getToken(), cond);
+			if(ied.size()==0) {
+				mp.put("codes",1);
+			}
+			return mp;
+		}
+		
+		
 		if(args.get("TYPE_NAME").toString().equals("材料变更清单")) {
 			String cond="";
 			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"'"
@@ -2713,7 +2725,7 @@ public class EcmDcController extends ControllerAbstract {
 			
 		}else {
 			id= documentService.newObject(getToken(),doc,en);
-		}
+		}		
 		if(!StringUtils.isEmpty(id) && attachFiles!=null && attachFiles.length>0) {
 			int fileNameIndex =1;
 			for(MultipartFile attrFile: attachFiles) {

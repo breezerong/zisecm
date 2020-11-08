@@ -65,7 +65,7 @@ public class SyncWbs {
 	@Autowired
 	private EcmConfig ecmConfig;
 	
-	@Scheduled(cron = "${cron.syncwbs}")
+	//@Scheduled(cron = "${cron.syncwbs}")
 	public void run () {
 		
 		IEcmSession ecmSession = null;
@@ -162,6 +162,7 @@ public class SyncWbs {
 							}
 							
 							actDocObj.addAttribute("C_WBS_CODING", activity.getWBSPath());
+							actDocObj.setStatus("已更新");
 							try {
 								documentService.creatOrUpdateObject(ecmSession.getToken(), actDocObj, null);
 								updateCount++;
@@ -235,6 +236,7 @@ public class SyncWbs {
 							}
 							
 							try {
+								wbsDocObj.setStatus("已更新");
 								documentService.creatOrUpdateObject(ecmSession.getToken(), wbsDocObj, null);
 								updateCount++;
 							} catch (Exception e) {
