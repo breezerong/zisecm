@@ -422,6 +422,8 @@ public class SyncFromTcService {
 				doc.addAttribute("SYN_ID", tcId);
 				doc.addAttribute("SYN_STATUS", "已同步");
 				documentService.updateObject(token, doc,null);
+				OptionLogger.logger(token, detailService,doc, "来自tc同步",
+						doc.getAttributeValue("C_COMPANY")==null?"":doc.getAttributeValue("C_COMPANY").toString());
 			}
 
 		

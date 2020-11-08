@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
+import org.flowable.bpmn.model.FlowNode;
+import org.flowable.bpmn.model.SequenceFlow;
 import org.flowable.common.engine.api.FlowableObjectNotFoundException;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
@@ -31,8 +33,10 @@ import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl;
 import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.runtime.ActivityInstance;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.job.api.Job;
@@ -184,7 +188,26 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		return result;
 	}
-
+	/**
+	 * 启动流程
+	 *
+	 * @param argStr 参数
+	 */
+	@RequestMapping(value = "/startWorkflowById")
+	@ResponseBody
+	public Map<String, Object> startWorkflowById(@RequestBody String argStr) {
+		// 启动流程
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = customWorkflowService.startWorkflowById(getSession(), args);
+		} catch (AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	
 	/**
 	 * 删除流程
 	 *
@@ -323,6 +346,7 @@ public class WorkflowController extends ControllerAbstract {
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
 		Set<String> processInstanceIdSet = new HashSet<String>();
 		for (Task task : tasks) {
+			
 			map = new HashMap<>();
 			map.put("processInstanceId", task.getProcessInstanceId());
 			processInstanceIdSet.add(task.getProcessInstanceId());
@@ -508,6 +532,7 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		String processDefinitionId = args.get("processDefinitionId").toString();
 		String activityName = args.get("activityName").toString();
+		String taskId=args.get("taskId").toString();
 //			String componentUrl="";
 		EcmCfgActivity EcmCfgActivityObj = null;
 		try {
@@ -517,6 +542,29 @@ public class WorkflowController extends ControllerAbstract {
 			EcmCfgActivityObj = CacheManagerCfgActivity.getCfgActivity(processName, activityName);
 //	        	String componentName=CacheManagerCfgActivity.getCfgActivity(processName, activityName).getComponentName();
 //	    		List<EcmComponent> comps = ecmComponentMapper.selectByCondition("NAME='" + componentName+"'");
+			//获取当前任务的路由
+			Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+			List<ActivityInstance> highLightedFlowInstances = runtimeService.createActivityInstanceQuery()
+                    .activityType(BpmnXMLConstants.ELEMENT_SEQUENCE_FLOW).processInstanceId(task.getProcessInstanceId()).list();
+			ExecutionEntity ee = (ExecutionEntity) runtimeService.createExecutionQuery()
+		            .executionId(task.getExecutionId()).singleResult();
+			BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
+		    FlowNode flowNode = (FlowNode) bpmnModel.getFlowElement(ee.getActivityId());
+		    // 输出连线
+		    List<SequenceFlow> outFlows = flowNode.getOutgoingFlows();
+		    List<String> sequenceNames=new ArrayList<String>();
+		    for(int n=0;outFlows!=null&&n<outFlows.size();n++) {
+		    	String sequenceName= outFlows.get(n).getName();
+		    	if(sequenceName==null||"".equals(sequenceName)) {
+		    		continue;
+		    	}
+		    	sequenceNames.add(sequenceName);
+		    }
+		    if(sequenceNames.size()==0) {
+		    	sequenceNames.add("通过");
+		    }
+		   mp.put("sequenceNames", sequenceNames);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -610,6 +658,7 @@ public class WorkflowController extends ControllerAbstract {
 		EcmAuditWorkitem audit = new EcmAuditWorkitem();
 		HistoricTaskInstance task = historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
 		audit.createId();
+		
 		audit.setCreateTime(new Date());
 		if (dailiString.equals(result)) {
 			audit.setEndTime(new Date());
@@ -1008,7 +1057,7 @@ public class WorkflowController extends ControllerAbstract {
 	public void deleteSuspendedJob(String jobId) {
 		managementService.deleteSuspendedJob(jobId);
 	}
-
+	
 	/**
 	 * 
 	 * @param jobId

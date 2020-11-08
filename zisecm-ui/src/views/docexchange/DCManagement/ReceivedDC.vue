@@ -208,7 +208,7 @@
                                     >
                                         <template slot="sequee" slot-scope="scope">
                                             <span :style="(scope.data.row['C_PROCESS_STATUS']!=null
-                                            &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''">{{scope.data.$index+1}}</span>
+                                            &&scope.data.row['C_PROCESS_STATUS']=='已解锁')?{'background':'red'}:''">{{(scope.data.currentPage-1) * scope.data.pageSize + scope.data.$index+1 }}</span>
                                         </template>
                                         <template slot="dropdownItem" slot-scope="scope">
                                             <el-dropdown-item icon="el-icon-paperclip" @click.native="dbClick(scope.data.row)">{{$t('application.viewAttachment')}}</el-dropdown-item>

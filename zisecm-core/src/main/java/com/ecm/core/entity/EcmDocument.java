@@ -651,7 +651,10 @@ public class EcmDocument extends EcmSysObject{
 	
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
-		this.setId(getString(attributes.get("ID")));
+		if(attributes.get("ID")!=null) {
+			this.setId(getString(attributes.get("ID")));
+		}
+		
 		if(attributes.get("ACL_NAME")!=null) {
 			this.setAclName(getString(attributes.get("ACL_NAME")));
 		}

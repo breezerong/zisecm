@@ -170,21 +170,23 @@ public class CustomWorkflowService {
 //		}
 //		return result;
 //	}
-	/**
-	 * @param args
-	 * @return
-	 */
-
-	@Transactional(rollbackFor = Exception.class)
-	public Map<String, Object> startWorkflow(IEcmSession session, Map<String, Object> args) {
+	
+	private Map<String, Object> start(IEcmSession session,Map<String, Object> args,boolean byKey,boolean byId) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			String userName = session.getCurrentUser().getUserName();
 			String processName = args.get("processName")+" "+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 			Authentication.setAuthenticatedUserId(userName);
 			args.put("startUser", userName);
-			ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(args.get("processInstanceKey").toString(), args);
-			runtimeService.setProcessInstanceName(processInstance.getId(), processName);
+			ProcessInstance processInstance=null;
+			if(byId) {
+				processInstance = runtimeService.startProcessInstanceById(args.get("processInstanceId").toString(), args);
+				runtimeService.setProcessInstanceName(processInstance.getId(), processName);
+			}else {
+				processInstance = runtimeService.startProcessInstanceByKey(args.get("processInstanceKey").toString(), args);
+				runtimeService.setProcessInstanceName(processInstance.getId(), processName);
+			}
+			
 			// 创建流程日志
 			EcmAuditWorkflow audit = new EcmAuditWorkflow();
 			audit.createId();
@@ -203,6 +205,27 @@ public class CustomWorkflowService {
 			result.put("message", e.getMessage());
 		}
 		return result;
+	}
+	
+	/**
+	 * @param args
+	 * @return
+	 */
+
+	@Transactional(rollbackFor = Exception.class)
+	public Map<String, Object> startWorkflowById(IEcmSession session, Map<String, Object> args) {
+		return start(session, args, false, true);
+	}
+	
+	/**
+	 * @param args
+	 * @return
+	 */
+
+	@Transactional(rollbackFor = Exception.class)
+	public Map<String, Object> startWorkflow(IEcmSession session, Map<String, Object> args) {
+		
+		return start(session, args, true, false);
 	}
 
 	/**

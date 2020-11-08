@@ -24,6 +24,7 @@ import org.zisecm.jobs.tc.service.SyncTcService;
 import org.zisecm.jobs.tc.tools.SyncTcOption;
 import org.zisecm.jobs.tc.ws.PLMServerLOT.PLMServerLOTImpl;
 import org.zisecm.jobs.tc.ws.PLMServerLOT.ReturnVal;
+import org.zisecm.jobs.utils.OptionLogger;
 
 import com.teamcenter.services.loose.core._2006_03.FileManagement.DatasetFileInfo;
 import com.teamcenter.services.loose.core._2006_03.FileManagement.GetDatasetWriteTicketsInputData;
@@ -67,6 +68,7 @@ public class Sync2Tc {
 	private SyncTcOption tcOption;
 	@Autowired
 	private SyncTcService syncTcService;
+	
 	@Scheduled(cron = "${cron.up2tc}")
 	public void run2() {
 		String workflowSpecialUserName = env.getProperty("ecm.username");
@@ -96,6 +98,8 @@ public class Sync2Tc {
 					EcmDocument doc=new EcmDocument();
 					doc.setAttributes(mp);
 					documentService.updateObject(ecmSession.getToken(), doc, null);
+					OptionLogger.logger(ecmSession.getToken(), synDetailService,doc, "同步至TC",
+							doc.getAttributeValue("C_COMPANY")==null?"":doc.getAttributeValue("C_COMPANY").toString());
 				}
 			}
 		} catch (Exception e1) {
