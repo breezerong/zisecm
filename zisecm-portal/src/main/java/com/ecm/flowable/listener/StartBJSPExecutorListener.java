@@ -256,7 +256,8 @@ public class StartBJSPExecutorListener implements ExecutionListener, JavaDelegat
 		String formId = varMap.get("formId").toString();
 		try {
 			EcmDocument ecmObject = documentService.getObjectById(ecmSession.getToken(), formId);
-
+			ecmObject.setStatus("流程中");
+			documentService.updateObject(ecmSession.getToken(), ecmObject,null);
 			String process_name = arg0.getVariable("processName").toString();
 			switch (process_name) {
 			case "BianJiaoShenPi":

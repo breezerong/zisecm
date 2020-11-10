@@ -72,7 +72,7 @@ public class FolderPathService extends EcmService {
 	 * 获取文件夹ID
 	 * @param token
 	 * @param values
-	 * @param type 1:移交目录，2：整编目录，3：发布目录
+	 * @param type 1:移交目录，2：整编目录，3：发布目录，
 	 * @return
 	 */
 	@Transactional
@@ -80,7 +80,7 @@ public class FolderPathService extends EcmService {
 		// TODO Auto-generated method stub
 		String id=null;
 		if(type.equals("1")) {
-			EcmFolder fld = folderService.getObjectByPath(token, "/移交文档");
+			EcmFolder fld = folderService.getObjectByPath(token, "/移交库");
 			return fld.getId();
 		}
 		

@@ -349,6 +349,7 @@ public class WorkflowController extends ControllerAbstract {
 			
 			map = new HashMap<>();
 			map.put("processInstanceId", task.getProcessInstanceId());
+			
 			processInstanceIdSet.add(task.getProcessInstanceId());
 			map.put("id", task.getId());
 			map.put("assignee", task.getAssignee());
@@ -532,43 +533,45 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		String processDefinitionId = args.get("processDefinitionId").toString();
 		String activityName = args.get("activityName").toString();
-		String taskId=args.get("taskId").toString();
+		
 //			String componentUrl="";
-		EcmCfgActivity EcmCfgActivityObj = null;
+		EcmCfgActivity ecmCfgActivityObj = null;
 		try {
-
+			
 			String processName = repositoryService.createProcessDefinitionQuery()
 					.processDefinitionId(processDefinitionId).singleResult().getName();
-			EcmCfgActivityObj = CacheManagerCfgActivity.getCfgActivity(processName, activityName);
+			ecmCfgActivityObj = CacheManagerCfgActivity.getCfgActivity(processName, activityName);
 //	        	String componentName=CacheManagerCfgActivity.getCfgActivity(processName, activityName).getComponentName();
 //	    		List<EcmComponent> comps = ecmComponentMapper.selectByCondition("NAME='" + componentName+"'");
 			//获取当前任务的路由
-			Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-			List<ActivityInstance> highLightedFlowInstances = runtimeService.createActivityInstanceQuery()
-                    .activityType(BpmnXMLConstants.ELEMENT_SEQUENCE_FLOW).processInstanceId(task.getProcessInstanceId()).list();
-			ExecutionEntity ee = (ExecutionEntity) runtimeService.createExecutionQuery()
-		            .executionId(task.getExecutionId()).singleResult();
-			BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
-		    FlowNode flowNode = (FlowNode) bpmnModel.getFlowElement(ee.getActivityId());
-		    // 输出连线
-		    List<SequenceFlow> outFlows = flowNode.getOutgoingFlows();
-		    List<String> sequenceNames=new ArrayList<String>();
-		    for(int n=0;outFlows!=null&&n<outFlows.size();n++) {
-		    	String sequenceName= outFlows.get(n).getName();
-		    	if(sequenceName==null||"".equals(sequenceName)) {
-		    		continue;
-		    	}
-		    	sequenceNames.add(sequenceName);
-		    }
-		    if(sequenceNames.size()==0) {
-		    	sequenceNames.add("通过");
-		    }
-		   mp.put("sequenceNames", sequenceNames);
-			
+			if(args.get("taskId")!=null&&!"".equals(args.get("taskId").toString())) {
+				String taskId=args.get("taskId").toString();
+				Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+				
+				ExecutionEntity ee = (ExecutionEntity) runtimeService.createExecutionQuery()
+			            .executionId(task.getExecutionId()).singleResult();
+				BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
+			    FlowNode flowNode = (FlowNode) bpmnModel.getFlowElement(ee.getActivityId());
+			    // 输出连线
+			    List<SequenceFlow> outFlows = flowNode.getOutgoingFlows();
+			    List<String> sequenceNames=new ArrayList<String>();
+			    for(int n=0;outFlows!=null&&n<outFlows.size();n++) {
+			    	String sequenceName= outFlows.get(n).getName();
+			    	if(sequenceName==null||"".equals(sequenceName)) {
+			    		continue;
+			    	}
+			    	sequenceNames.add(sequenceName);
+			    }
+			    if(sequenceNames.size()==0) {
+			    	sequenceNames.add("通过");
+			    }
+			   mp.put("sequenceNames", sequenceNames);
+				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		mp.put("data", EcmCfgActivityObj);
+		mp.put("data", ecmCfgActivityObj);
 		mp.put("success", true);
 		return mp;
 	}

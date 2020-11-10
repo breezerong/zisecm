@@ -18,12 +18,13 @@
     <result column="COMPONENT_NAME" jdbcType="NVARCHAR" property="componentName" />
     <result column="SELECT_ACTIVITIES" jdbcType="NVARCHAR" property="selectActivities" />
     <result column="FORM_ATTRIBUTE" jdbcType="NVARCHAR" property="formAttribute" />
+    <result column="FORM_CONDITION" jdbcType="NVARCHAR" property="formCondition" />
     <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, PROCESS_ID, PROCESS_NAME, ACTIVITY_NAME, ROLE_NAME, IS_MULTI, NEXT_ACTIVITY, 
     REJECT_ACTIVITY, NEXT_ACTIVITY_LABEL, REJECT_ACTIVITY_LABEL, ENABLE_DELEGATE, ENABLE_REPEAT, 
-    ENABLE_EDIT, COMPONENT_NAME,SELECT_ACTIVITIES, FORM_ATTRIBUTE, ORDER_INDEX
+    ENABLE_EDIT, COMPONENT_NAME,SELECT_ACTIVITIES, FORM_ATTRIBUTE,FORM_CONDITION, ORDER_INDEX
   </sql>
   <select id="selectAll" resultMap="BaseResultMap">
     select 
@@ -57,13 +58,13 @@
       ACTIVITY_NAME, ROLE_NAME, IS_MULTI, 
       NEXT_ACTIVITY, REJECT_ACTIVITY, NEXT_ACTIVITY_LABEL, 
       REJECT_ACTIVITY_LABEL, ENABLE_DELEGATE, ENABLE_REPEAT, 
-      ENABLE_EDIT, COMPONENT_NAME, SELECT_ACTIVITIES, FORM_ATTRIBUTE, ORDER_INDEX)
+      ENABLE_EDIT, COMPONENT_NAME, SELECT_ACTIVITIES, FORM_ATTRIBUTE,FORM_CONDITION, ORDER_INDEX)
     values (#{id,jdbcType=NVARCHAR}, #{processId,jdbcType=NVARCHAR}, #{processName,jdbcType=NVARCHAR}, 
       #{activityName,jdbcType=NVARCHAR}, #{roleName,jdbcType=NVARCHAR}, #{isMulti,jdbcType=BIT}, 
       #{nextActivity,jdbcType=NVARCHAR}, #{rejectActivity,jdbcType=NVARCHAR}, #{nextActivityLabel,jdbcType=NVARCHAR}, 
       #{rejectActivityLabel,jdbcType=NVARCHAR}, #{enableDelegate,jdbcType=BIT}, #{enableRepeat,jdbcType=BIT}, 
       #{enableEdit,jdbcType=BIT}, #{componentName,jdbcType=NVARCHAR},
-      #{selectActivities,jdbcType=NVARCHAR}, #{formAttribute,jdbcType=NVARCHAR}, #{orderIndex,jdbcType=INTEGER})
+      #{selectActivities,jdbcType=NVARCHAR}, #{formAttribute,jdbcType=NVARCHAR},#{formCondition,jdbcType=NVARCHAR}, #{orderIndex,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmCfgActivity">
     insert into ecm_cfg_activity
@@ -115,6 +116,9 @@
       </if>
       <if test="formAttribute != null">
         FORM_ATTRIBUTE,
+      </if>
+      <if test="formCondition != null">
+        FORM_CONDITION,
       </if>
       <if test="orderIndex != null">
         ORDER_INDEX,
@@ -169,6 +173,9 @@
       <if test="formAttribute != null">
          #{formAttribute,jdbcType=NVARCHAR},
       </if>
+      <if test="formCondition != null">
+        #{formCondition,jdbcType=NVARCHAR}
+      </if>
       <if test="orderIndex != null">
         #{orderIndex,jdbcType=INTEGER},
       </if>
@@ -222,7 +229,9 @@
       <if test="formAttribute != null">
         FORM_ATTRIBUTE = #{formAttribute,jdbcType=NVARCHAR},
       </if>
-     
+     <if test="formCondition != null">
+       FORM_CONDITION= #{formCondition,jdbcType=NVARCHAR},
+      </if>
       <if test="orderIndex != null">
         ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
       </if>
@@ -246,6 +255,7 @@
       COMPONENT_NAME = #{componentName,jdbcType=NVARCHAR},
       SELECT_ACTIVITIES = #{selectActivities,jdbcType=NVARCHAR},
       FORM_ATTRIBUTE = #{formAttribute,jdbcType=NVARCHAR},
+      FORM_CONDITION= #{formCondition,jdbcType=NVARCHAR},
       ORDER_INDEX = #{orderIndex,jdbcType=INTEGER}
     where ID = #{id,jdbcType=NVARCHAR}
   </update>

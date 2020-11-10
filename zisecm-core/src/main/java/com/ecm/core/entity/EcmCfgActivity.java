@@ -80,8 +80,21 @@ public class EcmCfgActivity extends EcmObject {
      * 选人活动，流程启动start，多个用英文分号分隔
      */
     private String selectActivities;
-    
     /**
+     * 查询条件
+     */
+    private String formCondition;// FORM_CONDITION
+    
+    
+    public String getFormCondition() {
+		return formCondition;
+	}
+
+	public void setFormCondition(String formCondition) {
+		this.formCondition = formCondition;
+	}
+
+	/**
      * 表单属性名称
      */
     private String formAttribute;
