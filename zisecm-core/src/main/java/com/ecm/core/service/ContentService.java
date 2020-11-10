@@ -1,17 +1,26 @@
 package com.ecm.core.service;
 
+import java.awt.FontMetrics;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.JLabel;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +37,14 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IContentService;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfGState;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 /**
  * 内容服务
  * @author Haihong Rong
@@ -351,5 +368,62 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		// TODO Auto-generated method stub
 		return contentMapper.deleteByPrimaryKey(id)>0;
+	}
+	public ByteArrayOutputStream setWatermark(
+			InputStream inputFile, String token) {
+		try {
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			String waterMarkName=format1.format(cal.getTime()) +"  "+ getSession(token).getCurrentUser().getUserName();
+			PdfReader reader = new PdfReader(inputFile);
+			ByteArrayOutputStream ot=new ByteArrayOutputStream();
+			PdfStamper stamper = new PdfStamper(reader, ot);
+//			PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("C:/Users/hp/Desktop/测试文档1111.pdf"));
+			//这里的字体设置比较关键，这个设置是支持中文的写法
+			BaseFont base = BaseFont.createFont("STSong-Light","UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);// 使用系统字体
+			int total = reader.getNumberOfPages() + 1;
+			PdfContentByte under;
+			Rectangle pageRect = null;
+			JLabel label = new JLabel();
+			label.setText(waterMarkName);
+			FontMetrics metrics;
+			metrics = label.getFontMetrics(label.getFont());
+			int textH = metrics.getHeight();  //字符串的高,   只和字体有关
+			int textW = metrics.stringWidth(label.getText());  //字符串的宽
+			// set Transparency
+			PdfGState gs = new PdfGState();
+			// 设置透明度
+			gs.setFillOpacity(0.5f);
+			for (int i = 1; i < total; i++) {
+				pageRect = stamper.getReader().
+				getPageSizeWithRotation(i);
+				// 获得PDF最顶层
+				under = stamper.getOverContent(i);
+				under.saveState();
+				under.setGState(gs);
+				under.restoreState();
+				under.beginText();
+				under.setFontAndSize(base, 15);
+				under.setColorFill(BaseColor.LIGHT_GRAY);
+				// 水印文字成45度角倾斜
+		          for (int height =  textH; height < pageRect.getHeight()*2; height = height + textH * 10) {
+	                  for (int width =  textW; width < pageRect.getWidth()*1.5 + textW; width = width + textW * 1) {
+	                      // rotation:倾斜角度
+	                	  under.setGState(gs);
+	      				under.showTextAligned(Element.ALIGN_MIDDLE, waterMarkName, width - textW, height - textH, 15);
+	                  }
+	              }
+//				under.showTextAligned(Element.ALIGN_CENTER, waterMarkName, x,y, 55);
+				// 添加水印文字
+				under.endText();
+				under.setLineWidth(0.1f);
+				under.stroke();
+			}
+			stamper.close();
+			return ot;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

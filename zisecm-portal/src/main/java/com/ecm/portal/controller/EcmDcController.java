@@ -1,14 +1,19 @@
 package com.ecm.portal.controller;
 
+import java.awt.FontMetrics;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +21,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.JLabel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +84,14 @@ import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.service.ZipDownloadService;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfGState;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 /**
  * @ClassName EcmDcController
@@ -526,6 +540,68 @@ public class EcmDcController extends ControllerAbstract {
 				}
 			}
 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/dc/getContent4Water") // , method = RequestMethod.POST PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public void getContent4water(HttpServletRequest request, HttpServletResponse response) {
+		// String data = getRequestData(request);
+		try {
+			String id = "";
+			if (request.getAttribute("id") != null) {
+				id = request.getAttribute("id").toString();
+			} else {
+				id = request.getParameter("id");
+			}
+			String action = "";
+			if (request.getAttribute("action") != null) {
+				action = request.getAttribute("action").toString();
+			} else {
+				action = request.getParameter("action");
+			}
+			String format = "";
+			if (request.getAttribute("format") != null) {
+				format = request.getAttribute("format").toString();
+			} else {
+				format = request.getParameter("format");
+			}
+			EcmContent en = null;
+			if (!StringUtils.isEmpty(format)) {
+				en = contentService.getObject(getToken(), id, 0, format);
+			} else {
+				en = contentService.getPrimaryContent(getToken(), id);
+			}
+			InputStream iStream = contentService.getContentStream(getToken(), en);
+			// 清空response
+			response.reset();
+			// 设置response的Header
+			response.setCharacterEncoding("UTF-8");
+			response.addHeader("Content-Disposition",
+					"attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
+//			response.addHeader("Content-Length", "" + en.getContentSize());
+			response.setContentType("application/octet-stream");
+			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+			ByteArrayOutputStream ot= contentService.setWatermark(iStream,getToken());
+			response.addHeader("Content-Length", "" + ot.size());
+			try {
+				
+				byte[] buffer = new byte[8 * 1024];
+				int bytesRead;
+				toClient.write(ot.toByteArray());
+			} finally {
+				iStream.close();
+				toClient.flush();
+				toClient.close();
+				if (!StringUtils.isEmpty(action) && action.equals("download")) {
+					contentService.newAudit(getToken(), "portal", AuditContext.DOWNLOAD, id, null, null);
+				} else {
+					contentService.newAudit(getToken(), "portal", AuditContext.READ, id, null, null);
+				}
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
