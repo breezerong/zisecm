@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +25,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.entity.EcmComponent;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
+import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
@@ -260,13 +264,29 @@ public class UserController extends ControllerAbstract{
 	 */
 	@RequestMapping(value = "/user/validatapermission", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> validataPermission(@RequestBody String params){
+	public Map<String, Object> validataPermission(@RequestBody String componentName){
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			Map<String, Object> args = JSONUtils.stringToMap(params);
-			String username=(String) args.get("username");
+			LoginUser user = userService.getCurrentUser(getToken());
+			EcmComponent comp = CacheManagerOper.getEcmComponents().get(componentName);
+			if(comp != null) {
+				String roleName = comp.getRoleName();
+				if(!StringUtils.isEmpty(roleName)) {
+					String[] roles = roleName.split(";");
+					mp.put("code", ActionContext.FAILURE);
+					for(String role: roles) {
+						if(user.getRoles().contains(role)) {
+							mp.put("code", ActionContext.SUCESS);
+							break;
+						}
+					}
+				}else {
+					mp.put("code", ActionContext.SUCESS);
+				}
+			}else {
+				mp.put("code", ActionContext.SUCESS);
+			}
 			
-			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
