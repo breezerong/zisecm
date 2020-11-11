@@ -88,8 +88,11 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		}
 		
 		String password = ecmUser.getPassword();
-		if (password.length() > 30) {
-			loginPassword = SecureUtils.shaEncode(loginPassword);
+		if (password.length() < 16) {
+			password = SecureUtils.md5Encode(password);
+		}
+		if (loginPassword.length() < 16) {
+			loginPassword = SecureUtils.md5Encode(loginPassword);
 		}
 		if (!password.equals(loginPassword)) {
 			throw new Exception("Password wrong.");
@@ -643,13 +646,13 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			return false;
 		}
 		String userPassword = user.getPassword();
-		if (userPassword.length() > 30) {
-			password = SecureUtils.shaEncode(password);
+		if (userPassword.length() > 16) {
+			password = SecureUtils.md5Encode(password);
 		}
 		if (!password.equals(userPassword)) {
 			throw new EcmException("Password wrong.");
 		}
-		String sql = "update ecm_user set PASSWORD='" + SecureUtils.shaEncode(newPassword) + "' where ID='"
+		String sql = "update ecm_user set PASSWORD='" + SecureUtils.md5Encode(newPassword) + "' where ID='"
 				+ user.getId() + "'";
 		List<Map<String, Object>> list = ecmUserMapper.searchToMap(sql);
 		return list.size() > 0;

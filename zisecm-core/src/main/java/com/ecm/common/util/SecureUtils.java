@@ -21,6 +21,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.util.DigestUtils;
 
 public class SecureUtils {
 	/**
@@ -146,10 +147,11 @@ public class SecureUtils {
 	 */
 	public static String md5Encode(String str) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(str.getBytes());
-			return new BigInteger(1,md.digest()).toString(32);
-		} catch (NoSuchAlgorithmException e) {
+			return DigestUtils.md5DigestAsHex(str.getBytes("UTF-8"));
+//			MessageDigest md = MessageDigest.getInstance("MD5");
+//			md.update(str.getBytes());
+//			return new BigInteger(1,md.digest()).toString(32);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
