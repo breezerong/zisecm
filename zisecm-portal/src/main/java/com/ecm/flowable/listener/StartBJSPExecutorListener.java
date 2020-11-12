@@ -130,6 +130,9 @@ public class StartBJSPExecutorListener implements ExecutionListener, JavaDelegat
 				ecmSession = authService.login("workflow", workflowSpecialUserName, env.getProperty("ecm.password"));
 				if (task.getAssignee() != null) {// 普通任务
 					EcmUser user = userService.getObjectByName(ecmSession.getToken(), assignee);
+					if(user==null) {
+						customWorkflowService.delegateTask(task.getId(), assignee);
+					}else {
 					// TODO 如果代理人不为空，就执行代理
 					if (!Strings.isEmpty(user.getDelegateUser())
 							&& DateUtils.compareDate(new Date(), user.getDelegateStart()) >= 0
@@ -141,7 +144,7 @@ public class StartBJSPExecutorListener implements ExecutionListener, JavaDelegat
 					if (email != null && !"".equals(email)) {
 						// serviceDocMail.sendTaskMail(email);
 					}
-
+					}
 					EcmAuditWorkitem audit = new EcmAuditWorkitem();
 					audit.createId();
 					audit.setCreateTime(task.getCreateTime());
