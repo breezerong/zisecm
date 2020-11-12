@@ -42,6 +42,7 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,7 @@ import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
 import com.ecm.core.entity.EcmCfgActivity;
 import com.ecm.core.entity.EcmUser;
+import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.UserService;
@@ -337,9 +339,23 @@ public class WorkflowController extends ControllerAbstract {
 	public HashMap<String, Object> todoTask(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String userId = args.get("userId").toString();
+		
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
-		List<Task> tasks = taskService.createTaskQuery().taskCandidateOrAssigned(userId).orderByTaskCreateTime().desc()
+		List<Task> tasks = null;
+		LoginUser user = null;
+		try {
+			user = userService.getCurrentUser(getToken());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		TaskQuery query=taskService.createTaskQuery().taskCandidateOrAssigned(userId);
+		List<String> roleList= user.getRoles();
+		for(int i=0;roleList!=null&&i<roleList.size();i++) {
+			query.taskCandidateOrAssigned(roleList.get(i));
+		}
+		tasks= query.orderByTaskCreateTime().desc()
 				.listPage(pageIndex, pageSize);
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
