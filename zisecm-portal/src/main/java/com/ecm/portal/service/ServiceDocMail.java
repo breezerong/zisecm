@@ -3,6 +3,8 @@ package com.ecm.portal.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.flowable.engine.RepositoryService;
+import org.flowable.task.api.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,8 @@ public class ServiceDocMail {
     private MailService mailService;
 	@Autowired
 	private SpringTemplateEngine templateEngine;
-	
+	@Autowired
+	private RepositoryService repositoryService;
 	public boolean sendEndMail(String sendUser) throws Exception {
 
 		try {
@@ -49,7 +52,7 @@ public class ServiceDocMail {
 		
 	}
 	
-	public boolean sendTaskMail(String sendUser) throws Exception {
+	public boolean sendTaskMail(String sendUser,Task task) throws Exception {
 
 		try {
 			   logger.debug("发送邮件测试!");
@@ -61,13 +64,17 @@ public class ServiceDocMail {
 //			   map.put("account", "163.com");
 //			   map.put("name",row.get("C_DRAFTER").toString());
 //			   map.put("accountType", "Email");
-			   map.put("workflowName", "借阅流程");
+			   String workflowName= repositoryService.getProcessDefinition(task.getProcessDefinitionId()).getName();
+//			   map.put("workflowName", "借阅流程");
+			   map.put("workflowName", workflowName);
 			   
 			   Context context = new Context();
 			   context.setVariables(map);
 			   /* String emailContent = templateEngine.process("taskArrivalMail", context);*/
 			    String emailContent = templateEngine.process("taskArrive", context);
-			    mailService.sendHtmlMail(sendUser,"主题：借阅流程待审批",emailContent);/**/
+//			    mailService.sendHtmlMail(sendUser,"主题：借阅流程待审批",emailContent);/**/
+			    mailService.sendHtmlMail(sendUser,"主题："+task.getName(),emailContent);
+			    
 			    logger.debug("发送完成");
 			} catch (Exception e) {
 				e.printStackTrace();
