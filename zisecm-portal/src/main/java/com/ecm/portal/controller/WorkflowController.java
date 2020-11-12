@@ -350,13 +350,29 @@ public class WorkflowController extends ControllerAbstract {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		TaskQuery query=taskService.createTaskQuery().taskCandidateOrAssigned(userId);
+//		TaskQuery query=taskService.createTaskQuery().or().taskCandidateOrAssigned(userId);
+//		List<String> roleList= user.getRoles();
+//		for(int i=0;roleList!=null&&i<roleList.size();i++) {
+//			query=query.taskCandidateOrAssigned(roleList.get(i));
+//		}
+//		tasks= query.orderByTaskCreateTime().desc()
+//				.listPage(pageIndex, pageSize);
+		
 		List<String> roleList= user.getRoles();
+		String whereSql="";
 		for(int i=0;roleList!=null&&i<roleList.size();i++) {
-			query.taskCandidateOrAssigned(roleList.get(i));
+			if(i==0) {
+				whereSql+=" T.ASSIGNEE_='"+roleList.get(i)+"'";
+			}
+			 
+			 if(i!=0) {
+				 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
+			 }
 		}
-		tasks= query.orderByTaskCreateTime().desc()
-				.listPage(pageIndex, pageSize);
+		
+		tasks=taskService.createNativeTaskQuery().sql("select * from "
+				+managementService.getTableName(Task.class)+" T WHERE "+whereSql+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
+		
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
