@@ -1,5 +1,7 @@
 package com.ecm.portal.controller;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -343,6 +345,8 @@ public class WorkflowController extends ControllerAbstract {
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
 		List<Task> tasks = null;
+		List<Task> taskByGroupName = null;
+		List<Task> taskByUser = null;
 		LoginUser user = null;
 		try {
 			user = userService.getCurrentUser(getToken());
@@ -350,13 +354,13 @@ public class WorkflowController extends ControllerAbstract {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		TaskQuery query=taskService.createTaskQuery().or().taskCandidateOrAssigned(userId);
+		TaskQuery query=taskService.createTaskQuery().or().taskCandidateOrAssigned(userId);
 //		List<String> roleList= user.getRoles();
 //		for(int i=0;roleList!=null&&i<roleList.size();i++) {
 //			query=query.taskCandidateOrAssigned(roleList.get(i));
 //		}
-//		tasks= query.orderByTaskCreateTime().desc()
-//				.listPage(pageIndex, pageSize);
+		taskByUser= query.orderByTaskCreateTime().desc()
+				.listPage(pageIndex, pageSize);
 		
 		List<String> roleList= user.getRoles();
 		String whereSql="";
@@ -370,14 +374,15 @@ public class WorkflowController extends ControllerAbstract {
 			 }
 		}
 		
-		tasks=taskService.createNativeTaskQuery().sql("select * from "
+		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
 				+managementService.getTableName(Task.class)+" T WHERE "+whereSql+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
 		
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
 		Set<String> processInstanceIdSet = new HashSet<String>();
-		for (Task task : tasks) {
+		taskByUser.addAll(taskByGroupName);
+		for (Task task : taskByUser) {
 			
 			map = new HashMap<>();
 			map.put("processInstanceId", task.getProcessInstanceId());
@@ -398,7 +403,7 @@ public class WorkflowController extends ControllerAbstract {
 //	        };
 //	        List<Map<String, Object>> varInstanceList = managementService.executeCustomSql(customSqlExecution);	 
 //	        
-		if (tasks.size() > 0) {
+		if (taskByUser.size() > 0) {
 			getProcessVars(resultList, resultListTemp, processInstanceIdSet);
 		}
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
