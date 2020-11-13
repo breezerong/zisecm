@@ -366,7 +366,7 @@ public class WorkflowController extends ControllerAbstract {
 		String whereSql="";
 		for(int i=0;roleList!=null&&i<roleList.size();i++) {
 			if(i==0) {
-				whereSql+=" T.ASSIGNEE_='"+roleList.get(i)+"'";
+				whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
 			}
 			 
 			 if(i!=0) {
