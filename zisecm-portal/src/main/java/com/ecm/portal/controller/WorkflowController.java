@@ -1,5 +1,7 @@
 package com.ecm.portal.controller;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,6 +44,7 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +72,7 @@ import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
 import com.ecm.core.entity.EcmCfgActivity;
 import com.ecm.core.entity.EcmUser;
+import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.UserService;
@@ -337,15 +341,48 @@ public class WorkflowController extends ControllerAbstract {
 	public HashMap<String, Object> todoTask(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String userId = args.get("userId").toString();
+		
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
-		List<Task> tasks = taskService.createTaskQuery().taskCandidateOrAssigned(userId).orderByTaskCreateTime().desc()
+		List<Task> tasks = null;
+		List<Task> taskByGroupName = null;
+		List<Task> taskByUser = null;
+		LoginUser user = null;
+		try {
+			user = userService.getCurrentUser(getToken());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		TaskQuery query=taskService.createTaskQuery().or().taskCandidateOrAssigned(userId);
+//		List<String> roleList= user.getRoles();
+//		for(int i=0;roleList!=null&&i<roleList.size();i++) {
+//			query=query.taskCandidateOrAssigned(roleList.get(i));
+//		}
+		taskByUser= query.orderByTaskCreateTime().desc()
 				.listPage(pageIndex, pageSize);
+		
+		List<String> roleList= user.getRoles();
+		String whereSql="";
+		for(int i=0;roleList!=null&&i<roleList.size();i++) {
+			if(i==0) {
+				whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
+			}
+			 
+			 if(i!=0) {
+				 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
+			 }
+		}
+		
+		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
+				+managementService.getTableName(Task.class)+" T WHERE "+whereSql+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
+		
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
 		Set<String> processInstanceIdSet = new HashSet<String>();
-		for (Task task : tasks) {
+		taskByUser.addAll(taskByGroupName);
+		for (Task task : taskByUser) {
 			
 			map = new HashMap<>();
 			map.put("processInstanceId", task.getProcessInstanceId());
@@ -366,7 +403,7 @@ public class WorkflowController extends ControllerAbstract {
 //	        };
 //	        List<Map<String, Object>> varInstanceList = managementService.executeCustomSql(customSqlExecution);	 
 //	        
-		if (tasks.size() > 0) {
+		if (taskByUser.size() > 0) {
 			getProcessVars(resultList, resultListTemp, processInstanceIdSet);
 		}
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
