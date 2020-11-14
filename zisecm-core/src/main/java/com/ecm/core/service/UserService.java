@@ -91,6 +91,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		if (password.length() < 16) {
 			password = SecureUtils.md5Encode(password);
 		}
+		if(loginPassword.length()>32) {
+			loginPassword = SecureUtils.decryptRSA(SecureUtils.PRIVATE_KEY, loginPassword);
+		}
 		if (loginPassword.length() < 16) {
 			loginPassword = SecureUtils.md5Encode(loginPassword);
 		}
