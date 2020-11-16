@@ -59,6 +59,20 @@ public class FolderPathService extends EcmService {
 		return getFolderId(token,values, "2");
 	}
 	/**
+	 * 获取预归档目录
+	 * @Title:
+	 * @author Haihong Rong
+	 * @date:   2020-11-16 17:23:29 
+	 * @Description:       
+	 * @param token
+	 * @param values
+	 * @return
+	 * @throws Exception
+	 */
+	public String getPreArchiveFolderId(String token, Map<String, Object> values ) throws Exception {
+		return getFolderId(token,values, "4");
+	}
+	/**
 	 * 获取移交目录
 	 * @param token
 	 * @param values 文档属性集
@@ -72,17 +86,14 @@ public class FolderPathService extends EcmService {
 	 * 获取文件夹ID
 	 * @param token
 	 * @param values
-	 * @param type 1:移交目录，2：整编目录，3：发布目录，
+	 * @param type 1:移交目录，2：整编目录，3：发布目录，4：预归档目录
 	 * @return
 	 */
 	@Transactional
 	public String getFolderId(String token, Map<String, Object> values, String type) {	
 		// TODO Auto-generated method stub
 		String id=null;
-		if(type.equals("1")) {
-			EcmFolder fld = folderService.getObjectByPath(token, "/移交库");
-			return fld.getId();
-		}
+		
 		
 		String typeName = values.get("TYPE_NAME").toString();
 		/*
@@ -91,18 +102,33 @@ public class FolderPathService extends EcmService {
 		TITLE	条件
 		SUB_TYPE	对象类型值
 		C_COMMENT	发布目录规则，使用英文分号分隔
-		C_DESC1	移交目录，使用英文分号分隔，固定为：/移交文档
-		C_DESC2	整编目录，使用英文分号分隔
+		C_STRING1	移交目录，使用英文分号分隔，固定为：/移交库
+		C_STRING2	整编目录，使用英文分号分隔
+		C_STRING3 	发布目录，使用英文分号分隔
+		C_STRING4 	预归档目录，使用英文分号分隔
 		 */
-		String sql="select ID,TITLE,C_COMMENT,C_DESC1,C_DESC2 from ecm_document where SUB_TYPE='"
+		String sql="select ID,TITLE,C_COMMENT,C_STRING1,C_STRING2,C_STRING3,C_STRING4 from ecm_document where SUB_TYPE='"
 		 + typeName +"' and TYPE_NAME='目录规则' order by C_ORDER_INDEX ASC";
 		
 		List<Map<String, Object>> policyList = ecmQuery.executeSQL(sql);
 		for(Map<String, Object> policy: policyList) {
 			String cond = (String)policy.get("TITLE");
 			String folderPolicy = (String)policy.get("C_COMMENT");
+			if(type.equals("1")) {
+				folderPolicy = (String)policy.get("C_STRING1");
+				if(StringUtils.isEmpty(folderPolicy)) {
+					EcmFolder fld = folderService.getObjectByPath(token, "/移交库");
+					return fld.getId();
+				}
+			}
 			if("2".equals(type)) {
-				folderPolicy = (String)policy.get("C_DESC2");
+				folderPolicy = (String)policy.get("C_STRING2");
+			}
+			else if("3".equals(type)) {
+				folderPolicy = (String)policy.get("C_STRING3");
+			}
+			else if("4".equals(type)) {
+				folderPolicy = (String)policy.get("C_STRING4");
 			}
 			if(!StringUtils.isEmpty(cond)) {
 				if(conditionExcute(values,cond)) {
