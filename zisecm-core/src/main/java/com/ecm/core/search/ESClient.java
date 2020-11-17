@@ -18,7 +18,7 @@ public class ESClient {
 	private static String packageName = "zisecm_index_db";
 	private static long maxSize = 50485760;
 	private static String[] includeFields = "name;title;folder_id;status;creation_date;creator;type_name;modifier;modified_date;revision;c_creation_unit;coding;c_doc_date;acl_name;format_name;content_size;attachment_count;sub_type;object_type;c_from;c_to;c_doc_status;is_current;is_hidden;c_drafter;c_security_level;c_reviewer1;c_reviewer2;c_reviewer3;c_reviewer4;c_reviewer5;c_reviewer6;c_project;c_keyword;c_approver;c_comment;system_version;version_id;owner_name;lock_owner;lock_date;lock_client;c_page_count;,c_page_index;c_order_index;c_start_date;c_end_date;c_retention;c_archive_unit;c_archive_num".split(";");
-	private static String[] facetFields = "type_name;format_name;object_type;sub_type;creator".split(";");
+	private static String[] facetFields = "type_name;format_name;sub_type;creator".split(";");
 	private static String[] searchFields = "name;coding;title;sub_type;creator".split(";");
 	private static int heightTextLen = 300;
 	private static int suggestionCount = 5;

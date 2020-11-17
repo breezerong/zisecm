@@ -88,9 +88,14 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		}
 		
 		String password = ecmUser.getPassword();
+		//logger.info(ecmUser.getLoginName()+" pwd:"+ password);
 		if (password.length() < 16) {
 			password = SecureUtils.md5Encode(password);
 		}
+		if(loginPassword.length()>32) {
+			loginPassword = SecureUtils.decryptRSA(SecureUtils.PRIVATE_KEY, loginPassword);
+		}
+		//logger.info(ecmUser.getLoginName()+" login pwd:"+ loginPassword);
 		if (loginPassword.length() < 16) {
 			loginPassword = SecureUtils.md5Encode(loginPassword);
 		}

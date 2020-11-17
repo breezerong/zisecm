@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1355,6 +1356,30 @@ public class EcmDcController extends ControllerAbstract {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/updateDcContentById", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateDcContentById(String metaData) {
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String primaryId = (String) args.get("primaryId");
+		String contentId = (String) args.get("contentId");
+		try {
+				EcmContent en = contentService.getPrimaryContent(getToken(), contentId);
+				
+				en.setInputStream(new FileInputStream(new File(contentService.getPrimaryFilePath(getToken(), contentId)))) ;
+				EcmDocument doc = documentService.getObjectById(getToken(), primaryId);
+				doc.setFormatName(en.getFormatName());
+				doc.setContentSize(en.getContentSize());
+				documentService.updateObject(getToken(), doc, en);
+				mp.put("code", ActionContext.SUCESS);
+		} catch (Exception e) {
 			e.printStackTrace();
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
