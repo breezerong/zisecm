@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ecm.core.cache.manager.CacheManagerOper;
+import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmQueryMapper;
+import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.exception.EcmException;
@@ -30,8 +35,10 @@ public class NumberService extends EcmService {
 
 	@Autowired
 	private EcmQueryMapper ecmQuery;
+//	@Autowired
+//	private DocumentService documentService;
 	@Autowired
-	private DocumentService documentService;
+	private EcmDocumentMapper ecmDocument;
 	@Autowired
 	private FolderService folderService;
 	
@@ -159,17 +166,32 @@ public class NumberService extends EcmService {
 		if(numList.size()>0) {
 			currentIndex =  Integer.parseInt(numList.get(0).get("C_COUNT1").toString());
 			currentIndex ++;
+			do {
+				String validateSql="select ID from ecm_document  where ID='"+numList.get(0).get("ID").toString()+"' and C_COUNT1="+currentIndex;
+				List<Map<String, Object>> result= ecmQuery.executeSQL(validateSql);
+				if(result==null||result.size()==0) {
+					break;
+				}else {
+					currentIndex++;
+				}
+			}while(true);
+			
 			sql = "update ecm_document set C_COUNT1="+currentIndex+" where ID='"+numList.get(0).get("ID").toString()+"'";
 			 ecmQuery.executeSQL(sql);
 		}else {
 			EcmFolder fld = folderService.getObjectByPath(token, "/系统配置/取号流水号");
-			EcmDocument doc = new EcmDocument();
-			doc.setTypeName("取号流水号");
-			doc.setName(prefix);
-			doc.setSubType(typeName);
-			doc.getAttributes().put("C_COUNT1", currentIndex);
-			doc.setFolderId(fld.getId());
-			documentService.newObject(token, doc, null);
+//			EcmDocument doc = new EcmDocument();
+//			doc.setTypeName("取号流水号");
+//			doc.setName(prefix);
+//			doc.setSubType(typeName);
+//			doc.getAttributes().put("C_COUNT1", currentIndex);
+//			doc.setFolderId(fld.getId());
+//			documentService.newObject(token, doc, null);
+			
+			String insertSql="insert into ecm_document (ID,TYPE_NAME,NAME,SUB_TYPE,C_COUNT1,FOLDER_ID) "
+					+ "values("+UUID.randomUUID().toString().replace("-", "")+",'取号流水号','"+prefix+"','"+typeName+"',"
+							+currentIndex+",'"+fld.getId()+"')";
+			ecmDocument.executeSQL(insertSql);
 		}
 		String num = String.format("%0"+numberLen+"d",currentIndex);
 		return prefix.replace(numberStr, num);
@@ -214,12 +236,31 @@ public class NumberService extends EcmService {
 			throw new Exception(path+"为空!");
 		}
 		String condition = "FOLDER_ID='"+folder.getId()+"' and NAME='"+phase+"'";
-		List<Map<String,Object>> docList = documentService.getObjectMap(token, condition);
+//		List<Map<String,Object>> docList = documentService.getObjectMap(token, condition);
+		String sql = "select "+getDocumentAllColumns()+" from ecm_document where " + condition;
+		List<Map<String,Object>> docList = ecmDocument.executeSQL(sql);
 		if(docList.size()>0) {
 			return (String)docList.get(0).get("CODING");
 		}
 		return "";
 	}
+	
+	/**
+	 * 获取文档所有列
+	 * @return
+	 */
+	private String getDocumentAllColumns() {
+		String cols = "";
+		for(Entry<String, EcmAttribute> attr :CacheManagerOper.getEcmAttributes().entrySet()) {
+			if(cols.length()==0) {
+				cols = attr.getValue().getName();
+			}else {
+				cols += ","+attr.getValue().getName();
+			}
+		}
+		return cols;
+	}
+	
 	/**
 	 * 执行条件表达式
 	 * @param attrValues
