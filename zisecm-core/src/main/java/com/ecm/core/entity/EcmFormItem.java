@@ -434,14 +434,14 @@ public class EcmFormItem extends EcmObject{
 		}
 		return null;
 	}
-	public boolean isHidden() {
-		return isHide;
-	}
-
-	public void setHidden(boolean isHidden) {
-		this.isHide = isHidden;
-		if(attributes!=null) {
-			attributes.put("IS_HIDDEN",  this.isHide?1:0);
-		}
-	}
+//	public boolean isHidden() {
+//		return isHide;
+//	}
+//
+//	public void setHidden(boolean isHidden) {
+//		this.isHide = isHidden;
+//		if(attributes!=null) {
+//			attributes.put("IS_HIDDEN",  this.isHide?1:0);
+//		}
+//	}
 }
