@@ -390,7 +390,13 @@ public class EcmFormItem extends EcmObject{
 		item.setRequired(required);
 		item.setSearchable(searchable);
 		item.setValidatePolicy(validatePolicy);
-		item.setValidValues(this.getValidValues());
+		if(this.getValidValues()!=null) {
+			List<String> list = new ArrayList<String>();
+			for(String str: this.getValidValues()) {
+				list.add(str);
+			}
+			item.setValidValues(list);
+		}
 		item.setValueList(valueList);
 		item.setWidthType(widthType);
 		item.setEnableChange(enableChange);
