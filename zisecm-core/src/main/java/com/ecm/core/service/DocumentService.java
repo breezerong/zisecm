@@ -95,6 +95,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	private GridViewService gridViewService;
 	@Autowired
 	private GridViewItemService gridViewItemService;
+	@Autowired
+	private NumberService numberservice;
 	/**
 	 * 通过配置子句查询对象
 	 * @param token
@@ -657,11 +659,24 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				
 				fieldStr += key.toString() + ",";
 				
-				if(key.toString().equalsIgnoreCase("VERSION_ID") && ((String) args.get(key)==null || ((String)args.get(key)).length()==0))
+				if(key.toString().equalsIgnoreCase("VERSION_ID") 
+						&& ((String) args.get(key)==null 
+						|| ((String)args.get(key)).length()==0))
 				{
 					valueStr += "'" + id + "',";
 				}else {
-					valueStr += "'" + DBFactory.getDBConn().getDBUtils().getString((String) args.get(key)) + "',";
+					String val=DBFactory.getDBConn().getDBUtils().getString((String) args.get(key));
+					
+					if(val.equalsIgnoreCase("@sequence")) {
+						try {
+							val=numberservice.getNumber(token, args);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new EcmException(e.getMessage());
+						}
+					}
+					valueStr += "'" +val  + "',";
 				}
 				
 				break;

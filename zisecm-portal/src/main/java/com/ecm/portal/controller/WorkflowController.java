@@ -186,7 +186,13 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = customWorkflowService.startWorkflow(getSession(), args);
+			Object processId=args.get("processInstanceId");
+			if(processId!=null) {
+				result = customWorkflowService.startWorkflowById(getSession(), args);
+			}else {
+				result = customWorkflowService.startWorkflow(getSession(), args);
+			}
+			
 		} catch (AccessDeniedException e) {
 			e.printStackTrace();
 		}
@@ -204,7 +210,12 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = customWorkflowService.startWorkflowById(getSession(), args);
+			Object processId=args.get("processInstanceId");
+			if(processId!=null) {
+				result = customWorkflowService.startWorkflowById(getSession(), args);
+			}else {
+				result = customWorkflowService.startWorkflow(getSession(), args);
+			}
 		} catch (AccessDeniedException e) {
 			e.printStackTrace();
 		}
@@ -359,8 +370,8 @@ public class WorkflowController extends ControllerAbstract {
 //		for(int i=0;roleList!=null&&i<roleList.size();i++) {
 //			query=query.taskCandidateOrAssigned(roleList.get(i));
 //		}
-		taskByUser= query.orderByTaskCreateTime().desc()
-				.listPage(pageIndex, pageSize);
+//		taskByUser= query.orderByTaskCreateTime().desc()
+//				.listPage(pageIndex, pageSize);
 		
 		List<String> roleList= user.getRoles();
 		String whereSql="";
@@ -381,7 +392,7 @@ public class WorkflowController extends ControllerAbstract {
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
 		Set<String> processInstanceIdSet = new HashSet<String>();
-		taskByUser.addAll(taskByGroupName);
+		taskByUser=taskByGroupName;
 		for (Task task : taskByUser) {
 			
 			map = new HashMap<>();

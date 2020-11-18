@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.flowable.common.engine.api.FlowableException;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.ManagementService;
@@ -27,6 +28,8 @@ import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.UserService;
 import com.ecm.icore.service.IEcmSession;
 
@@ -43,6 +46,8 @@ public class CustomWorkflowService {
 	private EcmAuditWorkflowMapper ecmAuditWorkflowMapper;
 	@Autowired
 	private EcmAuditWorkitemMapper ecmAuditWorkitemMapper;
+	@Autowired
+	private DocumentService documentService;
 
 	/**
 	 * @param taskArgs
@@ -180,10 +185,20 @@ public class CustomWorkflowService {
 			args.put("startUser", userName);
 			ProcessInstance processInstance=null;
 			if(byId) {
-				processInstance = runtimeService.startProcessInstanceById(args.get("processInstanceId").toString(), args);
+				String formId= args.get("formId").toString();
+				EcmDocument form= documentService.getObjectById(session.getToken(), formId);
+				args.putAll(form.getAttributes());
+				processInstance = runtimeService.startProcessInstanceById(args.get("processInstanceId").toString(),
+						args);
+				
 				runtimeService.setProcessInstanceName(processInstance.getId(), processName);
 			}else {
-				processInstance = runtimeService.startProcessInstanceByKey(args.get("processInstanceKey").toString(), args);
+				String formId= args.get("formId").toString();
+				EcmDocument form= documentService.getObjectById(session.getToken(), formId);
+				args.putAll(form.getAttributes());
+				processInstance = runtimeService.startProcessInstanceByKey(args.get("processInstanceKey").toString(),
+						args);
+				
 				runtimeService.setProcessInstanceName(processInstance.getId(), processName);
 			}
 			
