@@ -659,14 +659,15 @@ public class WorkflowController extends ControllerAbstract {
 	 * 批准
 	 *
 	 * @param taskId 任务ID
+	 * @throws AccessDeniedException 
 	 */
 	@RequestMapping(value = "completeTask")
 	@ResponseBody
-	public String completeTask(@RequestBody String argStr) {
+	public String completeTask(@RequestBody String argStr) throws AccessDeniedException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		args.put("outcome", args.get("result").toString());
 		args.remove("result");
-		customWorkflowService.completeTask(args);
+		customWorkflowService.completeTask(getToken(),args);
 		return "processed ok!";
 
 	}
@@ -815,10 +816,11 @@ public class WorkflowController extends ControllerAbstract {
 	 * 测试流程
 	 *
 	 * @param argStr
+	 * @throws AccessDeniedException 
 	 */
 	@RequestMapping(value = "testWorkflow")
 	@ResponseBody
-	public String testWorkflow(@RequestBody String argStr) {
+	public String testWorkflow(@RequestBody String argStr) throws AccessDeniedException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String senseNumber = args.get("formId").toString();
 		args.put("formId", "cd857371a932488dabbf9bf399ba942e");
@@ -873,10 +875,11 @@ public class WorkflowController extends ControllerAbstract {
 	 * 启动场景
 	 *
 	 * @param argStr
+	 * @throws AccessDeniedException 
 	 */
 	@RequestMapping(value = "startSensen1")
 	@ResponseBody
-	public String startSensen1(@RequestBody String argStr) {
+	public String startSensen1(@RequestBody String argStr) throws AccessDeniedException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 
 		startWorkflow(argStr);
