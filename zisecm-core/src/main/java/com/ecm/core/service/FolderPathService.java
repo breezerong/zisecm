@@ -111,6 +111,10 @@ public class FolderPathService extends EcmService {
 		 + typeName +"' and TYPE_NAME='目录规则' order by C_ORDER_INDEX ASC";
 		
 		List<Map<String, Object>> policyList = ecmQuery.executeSQL(sql);
+		if(policyList==null||policyList.size()==0) {
+			EcmFolder fld = folderService.getObjectByPath(token, "/移交库");
+			return fld.getId();
+		}
 		for(Map<String, Object> policy: policyList) {
 			String cond = (String)policy.get("TITLE");
 			String folderPolicy = (String)policy.get("C_COMMENT");
