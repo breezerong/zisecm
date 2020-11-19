@@ -85,6 +85,11 @@ public class EcmCfgActivity extends EcmObject {
      */
     private String formCondition;// FORM_CONDITION
     
+    /**
+     * 表单参数  FORM_PARAMETER
+     */
+    private String formParameter; 
+    
     
     public String getFormCondition() {
 		return formCondition;
@@ -257,6 +262,14 @@ public class EcmCfgActivity extends EcmObject {
 
 	public void setFormAttribute(String formAttribute) {
 		this.formAttribute = formAttribute;
+	}
+
+	public String getFormParameter() {
+		return formParameter;
+	}
+
+	public void setFormParameter(String formParameter) {
+		this.formParameter = formParameter;
 	}
     
 }
