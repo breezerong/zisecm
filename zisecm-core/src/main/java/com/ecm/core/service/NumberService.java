@@ -189,7 +189,7 @@ public class NumberService extends EcmService {
 //			documentService.newObject(token, doc, null);
 			
 			String insertSql="insert into ecm_document (ID,TYPE_NAME,NAME,SUB_TYPE,C_COUNT1,FOLDER_ID) "
-					+ "values("+UUID.randomUUID().toString().replace("-", "")+",'取号流水号','"+prefix+"','"+typeName+"',"
+					+ "values('"+UUID.randomUUID().toString().replace("-", "")+"','取号流水号','"+prefix+"','"+typeName+"',"
 							+currentIndex+",'"+fld.getId()+"')";
 			ecmDocument.executeSQL(insertSql);
 		}
