@@ -71,14 +71,7 @@ public class IndexAgentService{
 			}
 			
 			String password = CacheManagerOper.getEcmParameters().get("IndexPassword").getValue();
-			if(!StringUtils.isEmpty(password)) {
-				try {
-					password = PasswordUtils.decodePassword(password);
-				}
-				catch(Exception ex) {
-					
-				}
-			}
+			
 			try {
 				token = authService.login(ActionContext.APP_INDEX_AGENT,user,password).getToken();
 			} catch (Exception e) {
