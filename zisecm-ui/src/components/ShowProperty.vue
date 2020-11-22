@@ -1,43 +1,30 @@
 <template>
 <div>
-    <el-form label-position="right" label-width="100px">
-       <!--
-      <el-row>
-        <el-form-item style="float:left"  :label="$t('application.type')" >{{typeName}}</el-form-item>
-      </el-row>
-     
-      <div>
-        <el-button :plain="true" type="primary" size="small" icon="edit" @click="loaddata()">刷新数据</el-button>
-      </div>
-      -->
-      <el-row>
-        <!-- <el-col style="padding:3px;text-align:left">
-          <el-form-item>{{typeName}}</el-form-item></el-col> -->
-        <el-collapse v-model="activeNames">
-          <el-collapse-item v-for="(citem,cindex) in dataList" :title="citem.label" :name="citem.label"  :id="citem.label" :key="cindex"> 
+  <el-form label-position="right" label-width="100px">
+    <el-row>
+      <el-collapse v-model="activeNames">
+        <el-collapse-item v-for="(citem,cindex) in dataList" :title="citem.label" :name="citem.label"  :id="citem.label" :key="cindex"> 
           <template v-for="(item,itemIndex) in citem.ecmFormItems">
-            <el-col :span="showCellValue(item)" v-bind:key="itemIndex" style="text-align:left;">
+            <el-col :span="showCellValue(item)" :xs="24" :sm="12" :md="showCellValue(item)" :lg="showCellValue(item)" :xl="showCellValue(item)" v-bind:key="itemIndex" style="text-align:left;">
               <el-form-item :hidden="item.isHide" :label="item.label" :rules="[{required:validateValue(item),message:$t('application.requiredInput'),trigger:'blur'}]" :label-width="formLabelWidth">
-                    <el-input v-if="item.controlType=='TextBox' && !item.isRepeat" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
-                    <MultiInput v-if="item.controlType=='TextBox' && item.isRepeat" v-model="item.defaultValue"></MultiInput>
-                    <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
-                    <el-input v-else-if="item.controlType=='Integer'" :min="0" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-input>
+                    <el-input v-if="item.controlType=='TextBox' && !item.isRepeat" type="text" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly  || readOnly"></el-input>
+                    <MultiInput v-if="item.controlType=='TextBox' && item.isRepeat" v-model="item.defaultValue" :readOnly="item.readOnly  || readOnly"></MultiInput>
+                    <el-input v-if="item.controlType=='TextArea'" type="textarea" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly  || readOnly"></el-input>
+                    <el-input v-else-if="item.controlType=='Integer'" :min="0" type="number" :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly  || readOnly"></el-input>
                     <el-checkbox v-else-if="item.controlType=='Boolean'"  :name="item.attrName" v-model="item.defaultValue" :disabled="item.readOnly"></el-checkbox>
                     <template v-else-if="item.controlType=='Date'">
                       <span v-if="item.readOnly" >{{datetimeFormat(item.defaultValue)}}</span>
-                      <el-date-picker v-else :name="item.attrName" v-model="item.defaultValue" type="date" :placeholder="$t('application.selectDate')" style="display:block;" value-format="yyyy-MM-dd HH:mm:ss" :readonly="item.readOnly"></el-date-picker>
+                      <el-date-picker v-else :name="item.attrName" v-model="item.defaultValue" type="date" :placeholder="$t('application.selectDate')" style="display:block;" format="yyyy-MM-dd" value-format="yyyy-MM-dd HH:mm:ss" :readonly="item.readOnly  || readOnly"></el-date-picker>
                     </template>
                     <el-select  :name="item.attrName"
                     v-else-if="item.controlType=='Select' || item.controlType=='ValueSelect' || item.controlType=='Department' || item.controlType=='SQLSelect'" 
-                    v-model="item.defaultValue" :placeholder="$t('application.pleaseSelect')+item.label" :disabled="item.readOnly" :multiple="item.isRepeat" style="display:block;"
+                    v-model="item.defaultValue" :placeholder="$t('application.pleaseSelect')+item.label" :disabled="item.readOnly || readOnly" :multiple="item.isRepeat" style="display:block;"
                     @change="((val)=>{onSelectChange(val, item)})" >
                           <div v-for="(name,nameIndex) in item.validValues" :key="nameIndex+'N'">
                             <el-option :label="name" :value="name" :key="nameIndex"></el-option>
                           </div>
                       </el-select>
                     <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue" v-bind:isRepeat="item.isRepeat"></UserSelectInput>
-                    <!-- <UserSelectInput v-else-if="item.controlType=='UserSelect'" v-model="item.defaultValue"></UserSelectInput> 
-                    <AddCondition v-if="item.controlType=='advSearch'" v-model="item.defaultValue" v-bind:inputValue="item.defaultValue" ></AddCondition>-->
               </el-form-item>
             </el-col>
           </template>
@@ -45,20 +32,35 @@
         </el-collapse>
     </el-row>
     <el-row>
-      
-      <div v-if="(itemId  == undefined || itemId == '0' || itemId == '') && showUploadFile " style="float:left;margin-left:120px;">
-        <el-upload
-        :limit="1"
-        :file-list="fileList" 
-        action=""
-        :on-change="handleChange"
-        :auto-upload="false"
-        :multiple="false">
-        <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
-        </el-upload>
+      <div v-if="(itemId  == undefined || itemId == '0' || itemId == '') && showUploadFile ">
         
+        <el-col :span="2" style="color:red;text-align:right;padding-top: 2px;" >{{$t('application.PrimaryFile')}}:</el-col>
+        <el-col :span="22" style="text-align:left;padding-top: 2px;">
+          <el-upload
+          :limit="1"
+          :file-list="fileList" 
+          action=""
+          :on-change="handleChange"
+          :on-remove="handleRemove"
+          :auto-upload="false"
+          :multiple="false">
+          <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+          </el-upload>
+        </el-col>
+        <el-col :span="2" style="text-align:right;padding-top: 2px;">{{$t('application.Attachment')}}:</el-col>
+        <el-col :span="22" style="text-align:left;padding-top: 2px;">
+          <el-upload
+          :limit="100"
+          :file-list="fileListAttach" 
+          action=""
+          :on-change="handleChangeAttach"
+          :auto-upload="false"
+          :multiple="true">
+          <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
+          </el-upload>
+        </el-col>
       </div>
-    </el-row>
+      </el-row>
     </el-form>
   </div>
 </template>
@@ -77,7 +79,7 @@ export default {
   },
   data() {
     return {
-      formLabelWidth: "110px",
+      formLabelWidth: "150px",
       currentLanguage: "zh-cn",
       permit:5,
       activeNames:'',
@@ -106,7 +108,8 @@ export default {
       parentDocId:'',
       clientPermission: 1,
       mainObject:[],
-      mainSubRelation:[]
+      mainSubRelation:[],
+      fileListAttach:[],
     };
   },
   mounted() {
@@ -123,6 +126,7 @@ export default {
     typeName: {type:String},
     folderId: {type:String},
     folderPath:{type:String},
+    readOnly: {type:Boolean, default:false},
     showUploadFile: {type:Boolean, default:true}
   },
   methods: {
@@ -164,6 +168,25 @@ export default {
       }
       return false;
     },
+    validateValueByRegExp(itemData){
+      var p = itemData.valuePolicy.split(";");
+      let v = itemData.defaultValue;
+      var reg = new RegExp(p[0]);
+      if(itemData.isRepeat){
+        var i;
+        for(i in v){
+          let val = v[i];
+          if(!reg.test(val)){
+            return p[1] != null?p[1]:"";
+          }
+        }
+      }else{
+        if(!reg.test(v)){
+            return p[1] != null?p[1]:"";
+        }
+      }
+      return null;
+    },
     getValueByAttr(attrName){
       var c;
       for(c in this.dataList){
@@ -185,17 +208,28 @@ export default {
     },
     handleChange(file, fileList){
       this.file = file;
-        //console.log(file);
+      //console.log(file);
        // console.log(fileList);
+    },
+    handleRemove(file,fileList){
+       this.file = null;
+    },
+    handleChangeAttach(file, fileList) {
+      this.fileListAttach = fileList;
     },
     onSelectChange(val, item){
       if(item.enableChange){
-        let i =0;
+        var i =0;
         for(i in this.dataList){
-          let row = this.dataList[i];
-          if(row.dependName == item.attrName){
-            row.defaultValue = "";
-            this.loadChildList(row, item.defaultValue);
+          let dataRow = this.dataList[i].ecmFormItems;
+          var j =0;
+          for( j in dataRow){
+            let row = dataRow[j];
+           // console.log(row);
+            if(row.dependName == item.attrName){
+              row.defaultValue = "";
+              this.loadChildList(row, item.defaultValue);
+            }
           }
         }
       }
@@ -242,6 +276,7 @@ export default {
           }
           _self.file=[];
           _self.fileList = [];
+          _self.fileListAttach = [];
           //console.log(JSON.stringify(response.data.data));
           _self.loading = false;
         })
@@ -255,6 +290,7 @@ export default {
     {
       let _self = this;
       var ret = true;
+      var valueError = false;
       var msg = "";
       var c;
       for(c in _self.dataList){
@@ -300,14 +336,33 @@ export default {
               }
             }
           }
+          if(dataRows[i].valuePolicy !=null && dataRows[i].valuePolicy != "" && (typeof(dataRows[i].defaultValue)!=='undefined' && dataRows[i].defaultValue!=null && dataRows[i].defaultValue!=""))
+          {
+            let vrel = _self.validateValueByRegExp(dataRows[i]);
+            if( vrel !=null){
+              msg += "["+dataRows[i].label+"] "+vrel+"\r\n";
+              valueError = true;
+            }
+          }
         }
       }
       if(!ret)
       {
         _self.$message(msg+_self.$t('application.cannotEmpty')+"!");
       }
+      if(valueError)
+      {
+         _self.$message({
+                        showClose: true,
+                        message: _self.$t('application.inputValueError')+":"+msg,
+                        duration: 5000,
+                        type: 'error'
+                    });
+        ret = false;
+      }
       return ret;
     },
+    
     // 日期比较，输入日期-当前日期 -天数
     validateInputDate(fromDate, dateTime, addDay){
       let now = fromDate;
@@ -555,5 +610,6 @@ a {
 }
 .el-date-editor.el-input, .el-date-editor.el-input__inner {
     width: 140px;
+    
 }
 </style>

@@ -91,11 +91,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item label="默认值" :label-width="formLabelWidth2">
-              <el-input :autosize="true" v-model="form.defaultValue"></el-input>
-            </el-form-item>
-          </el-col>
+          
            <el-col :span="4">
             <el-form-item label="序号" :label-width="formLabelWidth2">
               <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
@@ -118,7 +114,16 @@
               ></QuerySelector>
             </el-form-item>
           </el-col>
-        
+          <el-col :span="24">
+            <el-form-item label="默认值" :label-width="formLabelWidth2">
+              <el-input type="textarea"  v-model="form.defaultValue"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="值正则表达式" :label-width="formLabelWidth2">
+              <el-input v-model="form.valuePolicy" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="列选值" :label-width="formLabelWidth2">
               <el-input v-model="form.valueList" auto-complete="off"></el-input>
@@ -321,7 +326,8 @@ export default {
         minCount: 0,
         maxCount: 0,
         classification: "",
-        validatePolicy: ''
+        validatePolicy: '',
+        valuePolicy:''
       },
       formLabelWidth: "140px",
       formLabelWidth2: "100px"
@@ -334,7 +340,16 @@ export default {
     LangSelector: LangSelector
   },
   created() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      //跳转至权限提醒页
+      _self.$nextTick(()=>{
+         _self.$router.push({ path: '/NoPermission' })
+      })     
+    }
     _self.loading = true;
     _self.getClassicfication();
      _self.loading = true;
@@ -442,7 +457,8 @@ export default {
         valueList: "",
         isHide: "false",
         classification: "",
-        validatePolicy:''
+        validatePolicy:"",
+        valuePolicy:""
       };
     },
     edititem(indata) {
