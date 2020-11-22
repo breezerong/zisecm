@@ -60,6 +60,12 @@ public class EcmFormItem extends EcmObject{
      * 依赖字段名
      */
     private String dependName;
+    
+    /**
+     * 值正则表达式规则
+     */
+    private String valuePolicy;
+    
     public String getDependName() {
 		return dependName;
 	}
@@ -118,6 +124,9 @@ public class EcmFormItem extends EcmObject{
 		case "READ_ONLY":
 			result=this.getReadOnly();
 			break;
+		case "VALUE_POLICY ":
+			result=this.getValuePolicy();
+			break;
 		default:
 			result=attributes.get(key.toUpperCase());
 			break;
@@ -168,6 +177,9 @@ public class EcmFormItem extends EcmObject{
 		case "READ_ONLY":
 			this.setReadOnly(getString(value).equals("1")?true:false);
 			break;
+		case "VALUE_POLICY":
+			this.setValidatePolicy(getString(value));
+			break;
 		default:
 			attributes.put(key.toUpperCase(), value);
 			break;
@@ -209,6 +221,9 @@ public class EcmFormItem extends EcmObject{
 		}
 		if(attributes.get("QUERY_NAME")!=null) {
 			this.setQueryName(getString(attributes.get("QUERY_NAME")));
+		}
+		if(attributes.get("VALUE_POLICY")!=null) {
+			this.setValuePolicy(getString(attributes.get("VALUE_POLICY")));
 		}
 	    if(attributes.get("READ_ONLY")!=null) {
 	    	this.setReadOnly(attributes.get("READ_ONLY").toString().equals("1")?true:false);
@@ -397,6 +412,7 @@ public class EcmFormItem extends EcmObject{
 			}
 			item.setValidValues(list);
 		}
+		item.setValuePolicy(valuePolicy);
 		item.setValueList(valueList);
 		item.setWidthType(widthType);
 		item.setEnableChange(enableChange);
@@ -450,4 +466,12 @@ public class EcmFormItem extends EcmObject{
 //			attributes.put("IS_HIDDEN",  this.isHide?1:0);
 //		}
 //	}
+
+	public String getValuePolicy() {
+		return valuePolicy;
+	}
+
+	public void setValuePolicy(String valuePolicy) {
+		this.valuePolicy = valuePolicy;
+	}
 }
