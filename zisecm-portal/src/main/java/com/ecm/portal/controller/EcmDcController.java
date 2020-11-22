@@ -1371,13 +1371,49 @@ public class EcmDcController extends ControllerAbstract {
 		String primaryId = (String) args.get("primaryId");
 		String contentId = (String) args.get("contentId");
 		try {
-				EcmContent en = contentService.getPrimaryContent(getToken(), contentId);
 				
-				en.setInputStream(new FileInputStream(new File(contentService.getPrimaryFilePath(getToken(), contentId)))) ;
-				EcmDocument doc = documentService.getObjectById(getToken(), primaryId);
-				doc.setFormatName(en.getFormatName());
-				doc.setContentSize(en.getContentSize());
-				documentService.updateObject(getToken(), doc, en);
+				EcmDocument doc = documentService.getObjectById(getToken(), primaryId);//目标文件对象
+				EcmContent fromEn = contentService.getPrimaryContent(getToken(), contentId);//源文件
+				EcmContent en = contentService.getPrimaryContent(getToken(), primaryId);//目标文件
+				if (en == null) {
+
+					en = new EcmContent();
+					en.createId();
+					en.setName(fromEn.getName());
+					en.setContentSize(fromEn.getContentSize());
+					en.setFormatName(fromEn.getFormatName());
+					en.setInputStream(new FileInputStream(new File("D:"+contentService.getPrimaryFilePath(getToken(), contentId)))) ;
+					//en.setInputStream(fromEn.getInputStream());
+					fromEn.getInputStream();
+					en.setParentId(primaryId);
+					en.setContentType(1);
+					if (StringUtils.isEmpty(en.getStoreName())) {
+						en.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
+					}
+					doc.setFormatName(en.getFormatName());
+					doc.setContentSize(en.getContentSize());
+					contentService.newObject(getToken(), en);
+					documentService.updateObject(getToken(), doc, null);
+					if (fromEn.getInputStream() != null) {
+						fromEn.getInputStream().close();
+					}
+					mp.put("code", ActionContext.SUCESS);
+				} else {
+					en.setName(fromEn.getName());
+					en.setContentSize(fromEn.getContentSize());
+					en.setFormatName(fromEn.getFormatName());
+					en.setInputStream(new FileInputStream(new File("D:"+contentService.getPrimaryFilePath(getToken(), contentId)))) ;
+					//en.setInputStream(fromEn.getInputStream());
+//					contentService.updateObject(getToken(), en);
+					doc.setFormatName(en.getFormatName());
+					doc.setContentSize(en.getContentSize());
+
+					documentService.updateObject(getToken(), doc, en);
+					if (fromEn.getInputStream() != null) {
+						fromEn.getInputStream().close();
+					}
+					mp.put("code", ActionContext.SUCESS);
+				}
 				mp.put("code", ActionContext.SUCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
