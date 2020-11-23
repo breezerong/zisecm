@@ -48,6 +48,9 @@ public class IndexAgentService{
 	 */
 	@Scheduled(cron = "0/10 * * * * *")
 	public void run(){
+		if(!cacheLoaded()) {
+			return;
+		}
 		if("0".endsWith(runType))
 		{
 			return;
@@ -68,14 +71,7 @@ public class IndexAgentService{
 			}
 			
 			String password = CacheManagerOper.getEcmParameters().get("IndexPassword").getValue();
-			if(!StringUtils.isEmpty(password)) {
-				try {
-					password = PasswordUtils.decodePassword(password);
-				}
-				catch(Exception ex) {
-					
-				}
-			}
+			
 			try {
 				token = authService.login(ActionContext.APP_INDEX_AGENT,user,password).getToken();
 			} catch (Exception e) {
@@ -109,5 +105,13 @@ public class IndexAgentService{
 				}
 			}
 		isRunning = false;
+	}
+	
+	private boolean cacheLoaded() {
+		if(CacheManagerOper.getEcmAttributes()==null ||CacheManagerOper.getEcmAttributes().size()==0)
+		{
+			return false;
+		}
+		return true;
 	}
 }

@@ -22,12 +22,13 @@
     <result column="MAX_COUNT" jdbcType="INTEGER" property="maxCount" />
     <result column="ENABLE_CHANGE" jdbcType="BIT" property="enableChange" />
     <result column="DEPEND_NAME" jdbcType="VARCHAR" property="dependName" />
+    <result column="VALUE_POLICY" jdbcType="VARCHAR" property="valuePolicy" />
      <result column="CLASSIFICATION" jdbcType="VARCHAR" property="classification" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, PARENT_ID, ATTR_NAME, REQUIRED, VALIDATE_POLICY, READ_ONLY, ORDER_INDEX, WIDTH_TYPE, 
     LABEL, SEARCHABLE, CONTROL_TYPE, QUERY_NAME, DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT,
-    ENABLE_CHANGE,DEPEND_NAME,CLASSIFICATION
+    ENABLE_CHANGE,DEPEND_NAME,CLASSIFICATION,VALUE_POLICY
   </sql>
   <select id="selectAll" resultMap="BaseResultMap">
     select
@@ -55,7 +56,8 @@
       REQUIRED, VALIDATE_POLICY, READ_ONLY, 
       ORDER_INDEX, WIDTH_TYPE, LABEL, 
       SEARCHABLE, CONTROL_TYPE, QUERY_NAME, 
-      DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT,ENABLE_CHANGE,DEPEND_NAME,CLASSIFICATION)
+      DEFAULT_VALUE,IS_HIDE,VALUE_LIST,IS_REPEAT,MIN_COUNT,MAX_COUNT,
+      ENABLE_CHANGE,DEPEND_NAME,CLASSIFICATION,VALUE_POLICY)
     values (#{id,jdbcType=VARCHAR},#{parentId,jdbcType=VARCHAR}, #{attrName,jdbcType=VARCHAR}, 
       #{required,jdbcType=BIT}, #{validatePolicy,jdbcType=VARCHAR}, #{readOnly,jdbcType=BIT}, 
       #{orderIndex,jdbcType=INTEGER}, #{widthType,jdbcType=CHAR}, #{label,jdbcType=VARCHAR}, 
@@ -63,6 +65,7 @@
       #{defaultValue,jdbcType=VARCHAR}, #{isHide,jdbcType=BIT},#{valueList,jdbcType=VARCHAR},
       #{isRepeat,jdbcType=BIT},#{minCount,jdbcType=INTEGER},#{maxCount,jdbcType=INTEGER},
       #{enableChange,jdbcType=BIT}, #{dependName,jdbcType=VARCHAR}, #{classification,jdbcType=VARCHAR}
+      , #{valuePolicy,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmFormItem">
@@ -131,6 +134,9 @@
       <if test="classification != null">
         CLASSIFICATION,
       </if>
+      <if test="valuePolicy != null">
+        VALUE_POLICY,
+      </if>
       
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -197,6 +203,9 @@
        <if test="classification != null">
         #{classification,jdbcType=VARCHAR},
       </if>
+      <if test="valuePolicy != null">
+        #{valuePolicy,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmFormItem">
@@ -259,8 +268,11 @@
       <if test="dependName != null">
         DEPEND_NAME = #{dependName,jdbcType=VARCHAR},
       </if>
-       <if test="classification != null">
+      <if test="classification != null">
         CLASSIFICATION = #{classification,jdbcType=VARCHAR},
+      </if>
+      <if test="valuePolicy != null">
+        VALUE_POLICY = #{valuePolicy,jdbcType=VARCHAR},
       </if>
       
     </set>
@@ -287,7 +299,8 @@
       MAX_COUNT = #{maxCount,jdbcType=INTEGER},
       ENABLE_CHANGE = #{enableChange,jdbcType=BIT},
       DEPEND_NAME = #{dependName,jdbcType=VARCHAR},
-      CLASSIFICATION = #{classification,jdbcType=VARCHAR}
+      CLASSIFICATION = #{classification,jdbcType=VARCHAR},
+      VALUE_POLICY = #{valuePolicy,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

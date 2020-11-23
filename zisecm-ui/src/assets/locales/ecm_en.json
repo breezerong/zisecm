@@ -485,7 +485,8 @@
     "synfromtc":"Syn from TC",
     "pushtotc":"Push to TC",
     "in&exsyn":"Internal-External Syn",
-    "deployProcess":"DeployProcess"
+    "deployProcess":"DeployProcess",
+    "inputValueError":"Input Vlue Error"
 },
 "message": {
     "saveSuccess":"Save Success",

@@ -60,6 +60,12 @@ public class EcmFormItem extends EcmObject{
      * 依赖字段名
      */
     private String dependName;
+    
+    /**
+     * 值正则表达式规则
+     */
+    private String valuePolicy;
+    
     public String getDependName() {
 		return dependName;
 	}
@@ -118,6 +124,9 @@ public class EcmFormItem extends EcmObject{
 		case "READ_ONLY":
 			result=this.getReadOnly();
 			break;
+		case "VALUE_POLICY ":
+			result=this.getValuePolicy();
+			break;
 		default:
 			result=attributes.get(key.toUpperCase());
 			break;
@@ -168,6 +177,9 @@ public class EcmFormItem extends EcmObject{
 		case "READ_ONLY":
 			this.setReadOnly(getString(value).equals("1")?true:false);
 			break;
+		case "VALUE_POLICY":
+			this.setValidatePolicy(getString(value));
+			break;
 		default:
 			attributes.put(key.toUpperCase(), value);
 			break;
@@ -209,6 +221,9 @@ public class EcmFormItem extends EcmObject{
 		}
 		if(attributes.get("QUERY_NAME")!=null) {
 			this.setQueryName(getString(attributes.get("QUERY_NAME")));
+		}
+		if(attributes.get("VALUE_POLICY")!=null) {
+			this.setValuePolicy(getString(attributes.get("VALUE_POLICY")));
 		}
 	    if(attributes.get("READ_ONLY")!=null) {
 	    	this.setReadOnly(attributes.get("READ_ONLY").toString().equals("1")?true:false);
@@ -390,7 +405,14 @@ public class EcmFormItem extends EcmObject{
 		item.setRequired(required);
 		item.setSearchable(searchable);
 		item.setValidatePolicy(validatePolicy);
-		item.setValidValues(this.getValidValues());
+		if(this.getValidValues()!=null) {
+			List<String> list = new ArrayList<String>();
+			for(String str: this.getValidValues()) {
+				list.add(str);
+			}
+			item.setValidValues(list);
+		}
+		item.setValuePolicy(valuePolicy);
 		item.setValueList(valueList);
 		item.setWidthType(widthType);
 		item.setEnableChange(enableChange);
@@ -434,14 +456,22 @@ public class EcmFormItem extends EcmObject{
 		}
 		return null;
 	}
-	public boolean isHidden() {
-		return isHide;
+//	public boolean isHidden() {
+//		return isHide;
+//	}
+//
+//	public void setHidden(boolean isHidden) {
+//		this.isHide = isHidden;
+//		if(attributes!=null) {
+//			attributes.put("IS_HIDDEN",  this.isHide?1:0);
+//		}
+//	}
+
+	public String getValuePolicy() {
+		return valuePolicy;
 	}
 
-	public void setHidden(boolean isHidden) {
-		this.isHide = isHidden;
-		if(attributes!=null) {
-			attributes.put("IS_HIDDEN",  this.isHide?1:0);
-		}
+	public void setValuePolicy(String valuePolicy) {
+		this.valuePolicy = valuePolicy;
 	}
 }

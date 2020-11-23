@@ -138,7 +138,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 		Object fid= args.get("folderId");
 		String folderId="";
 		if(fid==null) {
-			folderId= folderPathService.getFolderId(getToken(), doc.getObjectValues(), "1");
+			folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "1");
 		}else {
 			folderId=fid.toString();
 		}

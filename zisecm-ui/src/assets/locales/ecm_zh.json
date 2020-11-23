@@ -494,7 +494,8 @@
     "synfromtc":"从TC同步",
     "pushtotc":"推送到TC",
     "in&exsyn":"内外网同步",
-    "deployProcess":"流程部署"
+    "deployProcess":"流程部署",
+    "inputValueError":"输入值错误"
 },
 "message": {
     "saveSuccess":"保存成功",

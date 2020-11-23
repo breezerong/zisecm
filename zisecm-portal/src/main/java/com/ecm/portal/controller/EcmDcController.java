@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1355,6 +1356,66 @@ public class EcmDcController extends ControllerAbstract {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/updateDcContentById", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateDcContentById(String metaData) {
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String primaryId = (String) args.get("primaryId");
+		String contentId = (String) args.get("contentId");
+		try {
+				
+				EcmDocument doc = documentService.getObjectById(getToken(), primaryId);//目标文件对象
+				EcmContent fromEn = contentService.getPrimaryContent(getToken(), contentId);//源文件
+				EcmContent en = contentService.getPrimaryContent(getToken(), primaryId);//目标文件
+				if (en == null) {
+
+					en = new EcmContent();
+					en.createId();
+					en.setName(fromEn.getName());
+					en.setContentSize(fromEn.getContentSize());
+					en.setFormatName(fromEn.getFormatName());
+					en.setInputStream(new FileInputStream(new File("D:"+contentService.getPrimaryFilePath(getToken(), contentId)))) ;
+					//en.setInputStream(fromEn.getInputStream());
+					fromEn.getInputStream();
+					en.setParentId(primaryId);
+					en.setContentType(1);
+					if (StringUtils.isEmpty(en.getStoreName())) {
+						en.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
+					}
+					doc.setFormatName(en.getFormatName());
+					doc.setContentSize(en.getContentSize());
+					contentService.newObject(getToken(), en);
+					documentService.updateObject(getToken(), doc, null);
+					if (fromEn.getInputStream() != null) {
+						fromEn.getInputStream().close();
+					}
+					mp.put("code", ActionContext.SUCESS);
+				} else {
+					en.setName(fromEn.getName());
+					en.setContentSize(fromEn.getContentSize());
+					en.setFormatName(fromEn.getFormatName());
+					en.setInputStream(new FileInputStream(new File("D:"+contentService.getPrimaryFilePath(getToken(), contentId)))) ;
+					//en.setInputStream(fromEn.getInputStream());
+//					contentService.updateObject(getToken(), en);
+					doc.setFormatName(en.getFormatName());
+					doc.setContentSize(en.getContentSize());
+
+					documentService.updateObject(getToken(), doc, en);
+					if (fromEn.getInputStream() != null) {
+						fromEn.getInputStream().close();
+					}
+					mp.put("code", ActionContext.SUCESS);
+				}
+				mp.put("code", ActionContext.SUCESS);
+		} catch (Exception e) {
 			e.printStackTrace();
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
