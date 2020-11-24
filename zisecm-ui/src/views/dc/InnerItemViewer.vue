@@ -2,6 +2,7 @@
    <DataGrid
     ref="DataGrid"
     key="items"
+    gridViewName="InnerItemGrid"
     v-bind:itemDataList="dataList"
     v-bind:columnList="columnList"
     v-bind:itemCount="itemCount"

@@ -204,6 +204,7 @@
           ref="transferDataGrid"
           key="transfer"
           v-bind:isshowPage="false"
+          gridViewName="DeliveryGrid"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
@@ -273,6 +274,7 @@
         <DataGrid
           ref="leftDataGrid"
           key="left"
+          gridViewName="DeliveryInnerGrid"
           v-bind:itemDataList="innerDataList"
           v-bind:columnList="innerGridList"
           v-bind:itemCount="innerCount"
@@ -866,7 +868,6 @@ export default {
         })
         .then(function(response) {
           _self.innerGridList = response.data.data;
-          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -979,7 +980,6 @@ export default {
               _self.showFields.push(element.attrName);
             }
           });
-          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -1305,17 +1305,32 @@ export default {
       let _self = this;
       var m = new Map();
       let dataRows = this.$refs.ShowProperty.dataList;
-      var i;
-      for (i in dataRows) {
-        if (dataRows[i].attrName && dataRows[i].attrName != "") {
-          if (
-            dataRows[i].attrName != "FOLDER_ID" &&
-            dataRows[i].attrName != "ID"
-          ) {
-            m.set(dataRows[i].attrName, dataRows[i].defaultValue);
-          }
+      var c;
+      for(c in _self.$refs.ShowProperty.dataList){
+            let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+            var i;
+            for (i in dataRows) {
+            if(dataRows[i].attrName && dataRows[i].attrName !='')
+            {
+                if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                {
+                var val = dataRows[i].defaultValue;
+                if(val && dataRows[i].isRepeat){
+                    var temp = "";
+                // console.log(val);
+                    for(let j=0,len=val.length;j<len;j++){
+                    temp = temp + val[j]+";";
+                    //console.log(temp);
+                    }
+                    temp = temp.substring(0,temp.length-1);
+                    val = temp;
+                    console.log(val);
+                }
+                m.set(dataRows[i].attrName, val);
+                }
+            }
+            }
         }
-      }
       if (_self.$refs.ShowProperty.myItemId != "") {
         m.set("ID", _self.$refs.ShowProperty.myItemId);
       }

@@ -122,6 +122,7 @@
           </el-row>
           <el-row>
                       <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
+                      :gridViewName="mainGridName"
                       v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
                       @pagechange="pageChange" v-bind:itemCount="itemCount"
                       v-bind:tableHeight="rightTableHeight" :isshowOption="true" :isshowSelection ="true"
@@ -142,8 +143,10 @@
                       <el-button type="primary" plain size="small" title="上移"  @click="onMoveUp()">上移</el-button>
                       <el-button type="primary" plain size="small" title="下移"  @click="onMoveDown()">下移</el-button>
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
+                      GridName
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
+                        gridViewName="ArrangeInnerGrid"
                        v-bind:tableHeight="rightTableHeight" :isshowOption="true" :isshowSelection ="false"
                       @pagechange="innerPageChange" @selectchange="selectInnerChange"></DataGrid>
                     </div>
@@ -168,6 +171,7 @@
                       <el-button type="primary" plain size="small" :title="$t('application.viewRedition')"  @click="beforeMount(selectedOneOutItem);uploadUrl='/dc/addRendition'">格式副本</el-button>
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">{{$t('application.delete')}}</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
+                      gridViewName="ArrangeInnerGrid"
                       v-bind:columnList="outerGridList" v-bind:itemCount="outerCount" :isshowOption="true"
                       :isshowSelection ="true"
                        @pagesizechange="outerPageSizeChange" v-bind:tableHeight="rightTableHeight"
@@ -206,9 +210,9 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 232)/2,
+      rightTableHeight: (window.innerHeight - 250)/2,
       asideHeight: window.innerHeight - 85,
-      treeHight: window.innerHeight - 125,
+      treeHight: window.innerHeight - 135,
       asideWidth: '100%',
       currentLanguage: this.getLang(),
       printsVisible:false,
@@ -272,6 +276,7 @@ export default {
       currentType:"",
       orderBy:"",
       printRidgeVisible:false,
+      mainGridName: "ArchiveGrid",
       folderForm: {
         id: 0,
         name: "",
@@ -1098,7 +1103,7 @@ export default {
           m.set('condition'," TYPE_NAME='图册' ");
         }
       }
-      
+      _self.mainGridName = indata.gridView;
       m.set('gridName',indata.gridView);
       m.set('folderId',indata.id);
       
@@ -1344,16 +1349,32 @@ export default {
       let _self=this;
       var m = new Map();
       let dataRows = this.$refs.ShowProperty.dataList;
-      var i;
-      for (i in dataRows) {
-        if(dataRows[i].attrName && dataRows[i].attrName !='')
-        {
-          if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
-          {
-            m.set(dataRows[i].attrName, dataRows[i].defaultValue);
-          }
+      var c;
+      for(c in _self.$refs.ShowProperty.dataList){
+            let dataRows = _self.$refs.ShowProperty.dataList[c].ecmFormItems;
+            var i;
+            for (i in dataRows) {
+            if(dataRows[i].attrName && dataRows[i].attrName !='')
+            {
+                if(dataRows[i].attrName !='FOLDER_ID'&&dataRows[i].attrName !='ID')
+                {
+                var val = dataRows[i].defaultValue;
+                if(val && dataRows[i].isRepeat){
+                    var temp = "";
+                // console.log(val);
+                    for(let j=0,len=val.length;j<len;j++){
+                    temp = temp + val[j]+";";
+                    //console.log(temp);
+                    }
+                    temp = temp.substring(0,temp.length-1);
+                    val = temp;
+                    console.log(val);
+                }
+                m.set(dataRows[i].attrName, val);
+                }
+            }
+            }
         }
-      }
       if(_self.$refs.ShowProperty.myItemId!='')
       {
         m.set('ID',_self.$refs.ShowProperty.myItemId);

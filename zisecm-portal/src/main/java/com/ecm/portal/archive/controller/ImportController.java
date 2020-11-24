@@ -103,7 +103,7 @@ public class ImportController extends ControllerAbstract{
 		mp.put("data", objList);
 		return mp;
 	}
-	@RequestMapping(value = "/import/batchImport", method = RequestMethod.POST)
+	@RequestMapping(value = "/import/batchGeneralImport", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> batchImport(@RequestParam("metaData")String metaData,@RequestParam("excel") MultipartFile excel, @RequestParam("files") MultipartFile[] files) throws AccessDeniedException{
 		
