@@ -71,10 +71,12 @@ import com.ecm.core.dao.EcmComponentMapper;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
 import com.ecm.core.entity.EcmCfgActivity;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.AuditService;
+import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.UserService;
 import com.ecm.flowable.config.CustomProcessDiagramGenerator;
 import com.ecm.flowable.listener.JobListener;
@@ -115,7 +117,9 @@ public class WorkflowController extends ControllerAbstract {
 	private AuditService auditService;
 	@Autowired
 	private IFlowableBpmnModelService flowableBpmnModelService;
-
+	@Autowired
+	private DocumentService documentService;
+	
 	@Autowired
 	EcmComponentMapper ecmComponentMapper;
 	@Autowired
@@ -667,6 +671,11 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		args.put("outcome", args.get("result").toString());
 		args.remove("result");
+		Object formIdObj= args.get("formId");
+		if(formIdObj!=null) {
+			EcmDocument document= documentService.getObjectById(getToken(), formIdObj.toString());
+			args.putAll(document.getAttributes());
+		}
 		customWorkflowService.completeTask(getToken(),args);
 		return "processed ok!";
 
