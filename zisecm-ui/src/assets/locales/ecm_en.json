@@ -350,7 +350,8 @@
     "customColumn":"Custom Columns",
     "codingDesc":"Coding or Description",
     "perComplete":"Percentage Completion",
-    "createByIED":"Create By IED"
+    "createByIED":"Create By IED",
+    "PrimaryFile":"PrimaryFile"
 },
 "skin": {
     "Blue": "Blue",

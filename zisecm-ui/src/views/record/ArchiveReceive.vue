@@ -35,7 +35,8 @@
           v-bind:isshowPage="false"
           v-bind:isshowOption="true"
           v-bind:isshowicon="false"
-     
+          gridViewName="DeliveryGrid"
+           :isShowMoreOption="false"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"
           @pagesizechange="handleSizeChange"
@@ -50,6 +51,7 @@
         <DataGrid
           ref="mainDataGrid"
           key="main"
+          gridViewName="ArchiveGrid"
           v-bind:itemDataList="itemDataList"
           v-bind:columnList="gridList"
           @pagesizechange="pageSizeChange"
@@ -65,10 +67,12 @@
           <DataGrid
             ref="leftDataGrid"
             key="left"
+            gridViewName="DeliveryInnerGrid"
             v-bind:isshowOption="true" v-bind:isshowSelection ="false"
             v-bind:itemDataList="innerDataList"
             v-bind:columnList="innerGridList"
             v-bind:itemCount="innerCount"
+  
             v-bind:tableHeight="rightTableHeight"
             @pagesizechange="innerPageSizeChange"
             @rowclick="selectOneFile"  
@@ -98,7 +102,7 @@ export default {
   data() {
     return {
       leftTableHeight: window.innerHeight - 140,
-      rightTableHeight: (window.innerHeight - 230)/2,
+      rightTableHeight: (window.innerHeight - 240)/2,
       printsVisible: false,
       printVolumesVisible: false,
       archiveId: "",

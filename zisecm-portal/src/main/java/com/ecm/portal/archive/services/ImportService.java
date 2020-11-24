@@ -2,65 +2,41 @@ package com.ecm.portal.archive.services;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
-import com.ecm.common.util.CollectionUtil;
 import com.ecm.common.util.DateUtils;
-import com.ecm.common.util.EcmStringUtils;
-import com.ecm.common.util.ExcelUtil;
 import com.ecm.common.util.FileUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmForm;
+import com.ecm.core.entity.EcmFormClassification;
 import com.ecm.core.entity.EcmFormItem;
-import com.ecm.core.entity.EcmGridView;
-import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.Pager;
-import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmService;
@@ -526,6 +502,10 @@ public class ImportService extends EcmService {
 											relationName = "设计文件";
 
 										}
+										// 添加子文件关联关系
+										if(!StringUtils.isEmpty(deliveryId)) {
+											newRelation(token, deliveryId,relationName, tempId, i,null);
+										}
 									}
 								} finally {
 									// 删除缓存文件
@@ -578,7 +558,6 @@ public class ImportService extends EcmService {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					sb.append("第").append(i + 1).append("行导入错误：").append(ex.getMessage()).append("\r\n");
-					;
 					failedCount++;
 				}
 			}
@@ -750,6 +729,11 @@ public class ImportService extends EcmService {
 			}
 			setDefaultValues(documentService.getSession(token), doc.getAttributes());
 			doc.getAttributes().put("C_BATCH_CODE", batchName);
+			// 继承属性加载
+			
+			// 必填项检查
+			requiredFieldValidate(token,doc.getAttributes());
+			
 			docId = documentService.newObject(token, doc, content);
 		}
 		// 子对象添加关系
@@ -757,6 +741,100 @@ public class ImportService extends EcmService {
 			newRelation(token, parentId, relationName, docId, index, desc);
 		}
 		return docId;
+	}
+	/**
+	 * 
+	 * @Title:
+	 * @author Haihong Rong
+	 * @date:   2020-11-24 14:02:39 
+	 * @Description:       
+	 * @param token
+	 * @param attributes
+	 * @return
+	 * @throws Exception 
+	 */
+	private boolean appendReplyAttributes(String token,Map<String, Object> attributes) throws Exception {
+		/*
+		 * CR澄清要求申请单
+CR澄清要求答复单
+CR澄清要求关闭单
+FCR现场变更申请单
+FCR现场变更答复单
+FCR现场变更关闭单
+NCR不符合项报告单
+NCR不符合项报告答复单
+NCR不符合项报告关闭单
+DCR设计变更申请单
+DCR设计变更答复单
+DCR设计变更关闭单
+TCR试验澄清申请单
+TCR试验澄清答复单
+TCR试验澄清关闭单
+
+		 */
+		String typeName = (String)attributes.get("TYPE_NAME");
+		String fromTypeName = "";
+		String codingName = "";
+		if(typeName.equals("CR澄清要求答复单")) {
+			fromTypeName = "CR澄清要求申请单";
+			codingName = "CR编号";
+		}else if(typeName.equals("FCR现场变更答复单"))
+		{
+			fromTypeName = "FCR现场变更申请单";
+			codingName = "FCR编号";
+		}
+		else if(typeName.equals("NCR不符合项报告答复单"))
+		{
+			fromTypeName = "NCR不符合项报告单";
+			codingName = "NCR编号";
+		}else if(typeName.equals("DCR设计变更答复单"))
+		{
+			fromTypeName = "DCR设计变更申请单";
+			codingName = "DCR编号";
+		}else if(typeName.equals("TCR试验澄清答复单"))
+		{
+			fromTypeName = "TCR试验澄清申请单";
+			codingName = "TCR编号";
+		}
+		if(fromTypeName.length()>0) {
+			String fromCoding = (String)attributes.get("C_REF_CODING");
+			if(StringUtils.isEmpty(fromCoding)) {
+				throw new Exception(codingName +"值不能为空。");
+			}
+			String condition = "TYPE_NAME='"+fromTypeName+"' AND C_REF_CODING='"+fromCoding+"'";
+			List<Map<String, Object>> fromAttrs = documentService.getObjectMap(token, condition);
+			if(fromAttrs==null || fromAttrs.size()==0) {
+				throw new Exception(fromCoding +"对应的"+fromTypeName+"不存在");
+			}
+		}
+		return false;
+	}
+	
+	
+	private boolean requiredFieldValidate(String token, Map<String, Object> attributes) throws Exception {
+		String typeName = (String)attributes.get("TYPE_NAME");
+		EcmForm frm = CacheManagerOper.getEcmForms().get(typeName + "_NEW");
+		if (frm == null) {
+			frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
+		}
+		String msg = "";
+		if(frm != null) {
+			for(EcmFormClassification cls : frm.getFormClassifications(documentService.getSession(token), "zh-cn")) {
+			
+				for(EcmFormItem frmItem : cls.getEcmFormItems()) {
+					if(frmItem.getRequired() && attributes.get(frmItem.getAttrName())==null) {
+						if(msg .length()>0) {
+							msg += ",";
+						}
+						msg += "["+frmItem.getLabel()+"]";
+					}
+				}
+			}
+		}
+		if(msg.length()>0) {
+			throw new Exception("必填项"+msg+"值为空.");
+		}
+		return true;
 	}
 
 	private UploadFile getUploadFile(String excelFileName, MultipartFile[] files, String uploadFolder,

@@ -1,5 +1,5 @@
 {"application": {
-    "name":"设计分包管理平台",
+    "name":"文档管理平台",
     "loginUserName":"登录名",
     "logout":"注销",
     "login":"登录",
@@ -335,7 +335,8 @@
     "customColumn":"自定义列表",
     "codingDesc":"编码或描述",
     "perComplete":"完成百分比",
-    "createByIED":"通过IED新建"
+    "createByIED":"通过IED新建",
+    "PrimaryFile":"主文件"
 },
 "skin": {
     "Blue": "天空蓝",
