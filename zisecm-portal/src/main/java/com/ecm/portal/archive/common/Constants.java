@@ -17,4 +17,12 @@ public class Constants {
 	 * 利用
 	 */
 	public final static String USING="利用";
+	/**
+	 * 待入库
+	 */
+	public final static String UNSTORAGE="待入库";
+	/**
+	 * 已入库
+	 */
+	public final static String INSTORAGE="已入库";
 }
