@@ -327,7 +327,7 @@ export default {
         isIndeterminate: false
       },
       innerTableHeight: window.innerHeight - 360,
-      tableHeight: window.innerHeight - 170,
+      tableHeight: window.innerHeight - 180,
       asideHeight: window.innerHeight - 100,
       treeHeight: window.innerHeight - 120,
       asideWidth: '100%',

@@ -123,6 +123,12 @@
           <el-row>
                       <DataGrid ref="mainDataGrid" key="main" v-bind:itemDataList="itemDataList"
                       :gridViewName="mainGridName"
+                      :optionWidth = "2"
+            :isshowCustom="false"
+            :isEditProperty="true"
+           :isShowMoreOption="true"
+           :isShowChangeList="false"
+           showOptions="查看内容"
                       v-bind:columnList="gridList" @pagesizechange="pageSizeChange"
                       @pagechange="pageChange" v-bind:itemCount="itemCount"
                       v-bind:tableHeight="rightTableHeight" :isshowOption="true" :isshowSelection ="true"
@@ -144,6 +150,12 @@
                       <el-button type="primary" plain size="small" title="下移"  @click="onMoveDown()">下移</el-button>
                       <DataGrid ref="leftDataGrid" key="left" v-bind:itemDataList="innerDataList"
                       GridName
+                      :optionWidth = "2"
+            :isshowCustom="false"
+            :isEditProperty="true"
+           :isShowMoreOption="true"
+           :isShowChangeList="false"
+           showOptions="查看内容"
                       v-bind:columnList="innerGridList" v-bind:itemCount="innerCount"
                        @pagesizechange="innerPageSizeChange" @rowclick="selectOneFile"
                         gridViewName="ArrangeInnerGrid"
@@ -172,6 +184,12 @@
                       <el-button type="primary" plain size="small" title="删除"  @click="onDeleleFileItem()">{{$t('application.delete')}}</el-button>
                       <DataGrid ref="outDataGrid" key="right" v-bind:itemDataList="outerDataList"
                       gridViewName="ArrangeInnerGrid"
+                      :optionWidth = "2"
+            :isshowCustom="false"
+            :isEditProperty="true"
+           :isShowMoreOption="true"
+           :isShowChangeList="false"
+           showOptions="查看内容"
                       v-bind:columnList="outerGridList" v-bind:itemCount="outerCount" :isshowOption="true"
                       :isshowSelection ="true"
                        @pagesizechange="outerPageSizeChange" v-bind:tableHeight="rightTableHeight"
@@ -210,7 +228,7 @@ export default {
   data() {
     return {
       isExpand:false,
-      rightTableHeight: (window.innerHeight - 250)/2,
+      rightTableHeight: (window.innerHeight - 250)/2 +"px",
       asideHeight: window.innerHeight - 85,
       treeHight: window.innerHeight - 135,
       asideWidth: '100%',
@@ -774,7 +792,6 @@ export default {
         .then(function(response) {
           
           _self.outerGridList = response.data.data;
-          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -799,7 +816,6 @@ export default {
         .then(function(response) {
           
           _self.innerGridList = response.data.data;
-          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {

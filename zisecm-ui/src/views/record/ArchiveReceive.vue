@@ -36,12 +36,11 @@
           v-bind:isshowOption="true"
           v-bind:isshowicon="false"
           gridViewName="DeliveryGrid"
+          :optionWidth = "2"
+            :isshowCustom="false"
+            :isEditProperty="true"
            :isShowMoreOption="false"
-          v-bind:itemDataList="transferDataList"
-          v-bind:columnList="transferColumnList"
-          @pagesizechange="handleSizeChange"
-          @pagechange="handleCurrentChange"
-          v-bind:itemCount="transferCount"
+           :isShowChangeList="false"
           v-bind:tableHeight="leftTableHeight"
           @rowclick="loadGridData"
           @selectchange="transferselectChange"
@@ -55,6 +54,11 @@
           v-bind:itemDataList="itemDataList"
           v-bind:columnList="gridList"
           @pagesizechange="pageSizeChange"
+          :optionWidth = "2"
+            :isshowCustom="false"
+            :isEditProperty="true"
+            showOptions="查看内容"
+            :isShowChangeList="false"
           @pagechange="pageChange"
           v-bind:isshowOption="true" v-bind:isshowSelection ="false"
           v-bind:itemCount="itemCount"
@@ -72,7 +76,11 @@
             v-bind:itemDataList="innerDataList"
             v-bind:columnList="innerGridList"
             v-bind:itemCount="innerCount"
-  
+            :optionWidth = "2"
+            :isshowCustom="false"
+            :isEditProperty="true"
+            showOptions="查看内容"
+            :isShowChangeList="false"
             v-bind:tableHeight="rightTableHeight"
             @pagesizechange="innerPageSizeChange"
             @rowclick="selectOneFile"  
@@ -102,7 +110,7 @@ export default {
   data() {
     return {
       leftTableHeight: window.innerHeight - 140,
-      rightTableHeight: (window.innerHeight - 240)/2,
+      rightTableHeight: (window.innerHeight - 240)/2 +"px",
       printsVisible: false,
       printVolumesVisible: false,
       archiveId: "",
@@ -188,32 +196,15 @@ export default {
       }
     };
   },
-  watch: {
-    showFields(val, oldVal) {
-      //普通的watch监听
-      //console.log("a: "+val, oldVal);
-      let _self = this;
-      _self.gridList.forEach(element => {
-        element.visibleType = 2;
-      });
-      val.forEach(element => {
-        let item = _self.getgriditem(element);
-        if (item) {
-          //console.log(element);
-          item.visibleType = 1;
-        }
-      });
-    }
-  },
   created() {
     console.log("档案移交");
-
     this.getTypeNames("innerTransferDocType");
-    this.loadTransferGridInfo();
-    this.loadTransferGridData();
-    this.loadInnerGridInfo();
-
-    this.loadGridInfo();
+  },
+  mounted() {
+    let _self = this;
+    _self.$nextTick(()=>{
+      _self.loadTransferGridData();
+    },100)
   },
   methods: {
     addReuseToVolume() {
@@ -351,6 +342,7 @@ export default {
           _self.innerDataList = response.data.data;
           _self.innerDataListFull = response.data.data;
           _self.innerCount = response.data.pager.total;
+          _self.$refs.leftDataGrid.itemCount = _self.innerCount;
           //console.log(JSON.stringify(response.data.datalist));
           _self.loading = false;
         })
@@ -546,7 +538,6 @@ export default {
         })
         .then(function(response) {
           _self.innerGridList = response.data.data;
-          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -623,9 +614,11 @@ export default {
           url: "/dc/getTransfer"
         })
         .then(function(response) {
-          _self.transferDataList = response.data.data;
-          _self.transferDataListFull = response.data.data;
+          //_self.transferDataList = response.data.data;
+          //_self.transferDataListFull = response.data.data;
           _self.transferCount = response.data.pager.total;
+          _self.$refs.transferDataGrid.itemDataList = response.data.data;
+          _self.$refs.transferDataGrid.itemCount= _self.transferCount;
           //console.log(JSON.stringify(response.data.datalist));
           _self.loading = false;
         })
@@ -658,7 +651,6 @@ export default {
               _self.showFields.push(element.attrName);
             }
           });
-          _self.rightTableHeight = "100%";
           _self.loading = false;
         })
         .catch(function(error) {
@@ -785,6 +777,7 @@ export default {
           _self.itemDataList = response.data.data;
           _self.itemDataListFull = response.data.data;
           _self.itemCount = response.data.pager.total;
+          _self.$refs.mainDataGrid.itemCount = _self.itemCount;
           //console.log(JSON.stringify(response.data.datalist));
           _self.loading = false;
         })
