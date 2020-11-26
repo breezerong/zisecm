@@ -558,11 +558,11 @@ public class ArchiveFolderController extends ControllerAbstract{
 							if(pages!=null&&pages.size()>0&&pages.get(0)!=null) {
 								volumeDoc.addAttribute("C_PAGE_COUNT", pages.get(0).get("pageCount"));
 							}
-							String minDocDate=ChildrenObjAction.getMinDocDate(getToken(), volumeId, documentService);
+							String minDocDate=ChildrenObjAction.getMinDocDate(getToken(), volumeId,"C_DOC_DATE", documentService);
 							if(minDocDate!=null) {
 								volumeDoc.addAttribute("C_DOC_DATE", minDocDate);
 							}
-							String maxDocDate=ChildrenObjAction.getMaxDocDate(getToken(), volumeId, documentService);
+							String maxDocDate=ChildrenObjAction.getMaxDocDate(getToken(), volumeId,"C_DOC_DATE", documentService);
 							if(maxDocDate!=null) {
 								volumeDoc.addAttribute("C_END_DATE", maxDocDate);
 							}
@@ -652,11 +652,11 @@ public class ArchiveFolderController extends ControllerAbstract{
 						doc.addAttribute("C_PAGE_COUNT", "0");
 					}
 					
-					String minDocDate=ChildrenObjAction.getMinDocDate(getToken(), boxId, documentService);
+					String minDocDate=ChildrenObjAction.getMinDocDate(getToken(), boxId, "C_DOC_DATE",documentService);
 					if(minDocDate!=null) {
 						doc.addAttribute("C_DOC_DATE", minDocDate);
 					}
-					String maxDocDate=ChildrenObjAction.getMaxDocDate(getToken(), boxId, documentService);
+					String maxDocDate=ChildrenObjAction.getMaxDocDate(getToken(), boxId,"C_DOC_DATE", documentService);
 					if(maxDocDate!=null) {
 						doc.addAttribute("C_END_DATE", maxDocDate);
 					}
@@ -922,6 +922,54 @@ public class ArchiveFolderController extends ControllerAbstract{
 //		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
+		return mp;
+	}
+	
+	/**
+	 * 通过配置获取文件夹
+	 * @param param
+	 * @return
+	 */
+	@RequestMapping(value="/folder/getFolderByConfigeGC", method = RequestMethod.POST)
+	@ResponseBody	
+	public Map<String, Object> getFolderByConfigeGC(@RequestBody String param) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String,Object> params= JSONUtils.stringToMap(param);
+		String folderConfig=params.get("folderConfig").toString();
+		Object conditionObj=params.get("condition");
+		try {
+			String id ="";
+			try {
+				id= CacheManagerOper.getEcmParameters().get(folderConfig).getValue();
+			}catch (NullPointerException e) {
+				// TODO: handle exception
+				id=param;
+			}
+			List<EcmFolder> folders=folderService.getFoldersByParentId(getToken(), id);
+			List<EcmFolder> resultData=new ArrayList<>();
+			for(EcmFolder f:folders) {
+				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
+				String gvCondition=gv.getCondition();
+				String sql="select count(*) as num from ecm_document where "
+				+gvCondition+(conditionObj==null?"":conditionObj.toString())+" and FOLDER_ID in( " + 
+						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
+						")";
+				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
+				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
+					String name=f.getName();
+					f.setName(name+"("+numberData.get(0).get("num").toString()+")");
+					
+				}
+				resultData.add(f);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", resultData);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
 		return mp;
 	}
 	

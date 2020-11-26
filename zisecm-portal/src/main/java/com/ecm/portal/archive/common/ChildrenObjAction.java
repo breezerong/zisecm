@@ -103,9 +103,9 @@ public class ChildrenObjAction {
 		return null;
 	}
 	
-	public static String getMinDocDate(String token,String id,IEcmObjectService<?> service) throws EcmException {
+	public static String getMinDocDate(String token,String id,String column,IEcmObjectService<?> service) throws EcmException {
 		String sql="select  min(b.sdate) as minsdate from ecm_relation a, ("
-				+"select id,case when C_DOC_DATE is null then C_ARCHIVE_DATE else C_DOC_DATE end as sdate from ecm_document" 
+				+"select id,case when "+column+" is null then C_ARCHIVE_DATE else "+column+" end as sdate from ecm_document" 
 				+") b where a.child_id=b.id and a.parent_id='"+id+"'";
 		List<Map<String,Object>> retention= service.getMapList(token, sql);
 		if(retention!=null&&retention.size()>0&&retention.get(0)!=null) {
@@ -115,9 +115,9 @@ public class ChildrenObjAction {
 		return null;
 	}
 	
-	public static String getMaxDocDate(String token,String id,IEcmObjectService<?> service) throws EcmException {
+	public static String getMaxDocDate(String token,String id,String column,IEcmObjectService<?> service) throws EcmException {
 		String sql="select  max(b.sdate) as maxsdate from ecm_relation a, ("
-				+"select id,case when C_DOC_DATE is null then C_ARCHIVE_DATE else C_DOC_DATE end as sdate from ecm_document" 
+				+"select id,case when "+column+" is null then C_ARCHIVE_DATE else "+column+" end as sdate from ecm_document" 
 				+") b where a.child_id=b.id and a.parent_id='"+id+"'";
 		List<Map<String,Object>> retention= service.getMapList(token, sql);
 		if(retention!=null&&retention.size()>0&&retention.get(0)!=null) {
