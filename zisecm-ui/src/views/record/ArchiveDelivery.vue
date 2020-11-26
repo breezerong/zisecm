@@ -8,7 +8,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="$t('message.Batch')+' '+$t('application.Import')+$t('application.document')" :visible.sync="batchDialogVisible" width="80%" >
-        <BatchImport ref="BatchImport"  @onImported="onBatchImported" width="100%" v-bind:deliveryId="selectedOneTransfer.ID"></BatchImport>
+        <BatchImport ref="BatchImport" tmpPath='/系统配置/导入模板' @onImported="onBatchImported" width="100%" relationName="irel_children" v-bind:deliveryId="selectedOneTransfer.ID"></BatchImport>
         <div slot="footer" class="dialog-footer">
           <el-button @click="batchDialogVisible=false" size="medium">{{$t('application.close')}}</el-button>
          </div>
@@ -204,6 +204,7 @@
           ref="transferDataGrid"
           key="transfer"
           v-bind:isshowPage="false"
+          v-bind:isshowicon="false"
           gridViewName="DeliveryGrid"
           v-bind:itemDataList="transferDataList"
           v-bind:columnList="transferColumnList"

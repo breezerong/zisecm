@@ -148,7 +148,7 @@ export default {
       });
       // _self.loading = true;
       axios
-        .post("/import/batchImport", formdata, {headers:{
+        .post("/import/batchGeneralImport", formdata, {headers:{
           "Content-Type": "multipart/form-data"
         },
         onUploadProgress: progressEvent => {

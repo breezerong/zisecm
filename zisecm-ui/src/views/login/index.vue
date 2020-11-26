@@ -63,7 +63,7 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
-  background-image: url("../../assets/images/top_images/login_bg_cnpe.jpg");
+  background-image: url("../../assets/images/top_images/login_bg.jpg");
   background-repeat: no-repeat;
   background-position-y: 200px;
   background-size: contain;
