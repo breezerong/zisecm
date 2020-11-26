@@ -2890,6 +2890,17 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	@RequestMapping(value = "/dc/GUID", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> newGUID() throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String guid = documentService.newUUID();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", guid);
+		return mp;
+	}
+
+	
 	private void newRelation(String token, String parentId, String relationName, String childId, int orderIndex,
 			String description) throws EcmException {
 		if (!StringUtils.isEmpty(parentId)) {
