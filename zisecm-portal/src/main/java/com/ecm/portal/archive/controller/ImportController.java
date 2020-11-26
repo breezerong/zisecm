@@ -90,6 +90,25 @@ public class ImportController extends ControllerAbstract{
 		return mp;
 	}
 	
+	@RequestMapping(value = "/import/getImportTemplatesCommon", method = RequestMethod.POST,
+			produces = {"application/json;charset=UTF-8"})
+	@ResponseBody
+	public Map<String, Object> getImportTemplatesCommon(@RequestBody String tmpPath) throws Exception {
+//		if(ImportController.imporFolderId==null) {
+//			ImportController.imporFolderId = folderService.getObjectByPath(getToken(), "/系统配置/导入模板").getId();
+//		}
+		if(tmpPath==null||"".equals(tmpPath)) {
+			tmpPath="/系统配置/导入模板";
+		}
+		ImportController.imporFolderId = folderService.getObjectByPath(getToken(), tmpPath).getId();
+		String sql = "select ID,NAME from ecm_document where FOLDER_ID='"+ImportController.imporFolderId+"' and TYPE_NAME='模板'  order by NAME";
+		List<Map<String, Object>> objList = queryService.executeSQL(getToken(), sql);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", objList);
+		return mp;
+	}
+	
 	@RequestMapping(value = "/import/getImportDocList/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getImportDocList(@PathVariable("id") String id) throws Exception {

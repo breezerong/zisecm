@@ -38,6 +38,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.NoTakeNumberRuleException;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
@@ -696,6 +697,31 @@ public class ArchiveFolderController extends ControllerAbstract{
 		
 	}
 	
+	/**
+	 * 按规则取号
+	 * @param argStr
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/takeNumbersByPolicy", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String,Object> takeNumbersByPolicy(@RequestBody String argStr){
+		Map<String,Object> attr = JSONUtils.stringToMap(argStr);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String code;
+		try {
+			code = numberService.getNumber(getToken(), attr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "取号失败，"+e.getMessage());
+			return mp;
+		}
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", code);
+		mp.put("message", "取号成功");
+		return mp;
+	}
 		
 	/**
 	 * 取号

@@ -25,6 +25,7 @@ import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoTakeNumberRuleException;
 /**
  * 取号服务
  * @author Haihong Rong
@@ -45,7 +46,7 @@ public class NumberService extends EcmService {
 	private static final Pattern attrFormat = Pattern.compile("\\{[^\\}]*\\}");
 	
 	@Transactional
-	public String getNumber(String token, Map<String, Object> values ) throws Exception {
+	public String getNumber(String token, Map<String, Object> values ) throws NoTakeNumberRuleException,Exception {
 		// TODO Auto-generated method stub
 		String num=null;
 		
@@ -64,7 +65,7 @@ public class NumberService extends EcmService {
 		
 		List<Map<String, Object>> policyList = ecmQuery.executeSQL(sql);
 		if(policyList==null||policyList.size()==0) {
-			throw new Exception("没有取号规则，请检查！");
+			throw new NoTakeNumberRuleException("没有取号规则，请检查！");
 		}
 		for(Map<String, Object> policy: policyList) {
 			String cond = (String)policy.get("TITLE");

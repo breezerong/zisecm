@@ -3,6 +3,7 @@ package com.ecm.core.service;
 import java.io.Console;
 import java.io.File;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -620,7 +621,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					date = DateUtils.DateToStr((Date)args.get(key),"yyyy-MM-dd HH:mm:ss");
 					date = "'"+date+"'";
 				}else {
-					date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
+					if("{now}".equals(date)) {
+						date=DateUtils.DateToStr(new Date(),"yyyy-MM-dd HH:mm:ss");
+						date = "'"+date+"'";
+					}else {
+						date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
+					}
+					
 				}
 				if (date == null || date.length() < 5)
 				{
