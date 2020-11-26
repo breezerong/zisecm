@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -184,7 +185,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 		response.reset(); // 清空输出流
 		os = response.getOutputStream(); // 取得输出流
 		response.setHeader("Content-disposition",
-				"attachment; filename=" + new String(excelName.getBytes(), "ISO-8859-1")); // 设定输出文件头
+				"attachment; filename=" + URLEncoder.encode(excelName,"UTF-8")); // 设定输出文件头
 		response.setContentType("application/msexcel"); // 定义输出类型
 		// 在内存中生成工作薄
 		XSSFWorkbook workbook = makeWorkBook(sheetName, fieldName, data , hideFirstRow);
