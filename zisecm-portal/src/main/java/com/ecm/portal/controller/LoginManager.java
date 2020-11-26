@@ -138,6 +138,7 @@ public class LoginManager extends ControllerAbstract{
 			}
 			session.removeAttribute("ECMUserToken");
 			authService.logout(token);
+			session.invalidate();
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

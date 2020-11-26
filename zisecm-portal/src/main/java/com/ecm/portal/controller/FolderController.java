@@ -111,6 +111,27 @@ public class FolderController  extends ControllerAbstract {
 		mp.put("data", list);
 		return mp;
 	}
+	
+	/**
+	 * 获取所有表单
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/admin/getFoldersByPath", method = RequestMethod.POST)
+	public Map<String, Object> getFoldersByPath(@RequestBody String folderPath) {
+		List<EcmFolder> list = null;
+		try {
+			list = folderService.getFoldersByParentPath(getToken(),folderPath);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", list);
+		return mp;
+	}
 
 	
 

@@ -275,19 +275,19 @@ public class EcmDcController extends ControllerAbstract {
 			EcmFolder ecmFolder = folderService.getObjectById(getToken(), folderId);
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
 			StringBuffer condition = new StringBuffer(
-					"(" + gv.getCondition() + " and TYPE_NAME<>'卷盒' )  and STATUS='利用'");
+					"(" + gv.getCondition() + " and IS_CHILD=0 AND STATUS<>'作废' ) ");
 			int pageSize = Integer.parseInt(args.get("pageSize").toString());
 			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
 			Pager pager = new Pager();
 			pager.setPageIndex(pageIndex);
 			pager.setPageSize(pageSize);
 			String newCondition = args.get("condition").toString();
-			if (!EcmStringUtils.isEmpty(newCondition)) {
+			if (EcmStringUtils.isEmpty(newCondition)) {
 				condition.append(" and (NAME like '%" + newCondition + "%' or CODING like '%" + newCondition
-						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"
+						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '%"
 						+ ecmFolder.getFolderPath() + "%')");
 			}
-			if (!EcmStringUtils.isEmpty(newCondition)) {
+			if (EcmStringUtils.isEmpty(newCondition)) {
 				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
 						args.get("gridName").toString(), null, pager, condition.toString(),
 						args.get("orderBy").toString());
@@ -2889,6 +2889,17 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("id", id);
 		return mp;
 	}
+	
+	@RequestMapping(value = "/dc/GUID", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> newGUID() throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String guid = documentService.newUUID();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", guid);
+		return mp;
+	}
+
 	
 	private void newRelation(String token, String parentId, String relationName, String childId, int orderIndex,
 			String description) throws EcmException {

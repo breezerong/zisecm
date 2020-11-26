@@ -131,7 +131,7 @@ public class ImportController extends ControllerAbstract{
 		String msg;
 		try {
 			String relationName=args.get("relationName")==null?"":args.get("relationName").toString();
-			msg = importService.importExcel(getToken(),args.get("id").toString(),relationName,excel, files);
+			msg = importService.importExcel(getToken(),args.get("id").toString(),excel, files);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", msg);
 		} catch (Exception e) {
