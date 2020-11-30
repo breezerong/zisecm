@@ -38,6 +38,7 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl;
 import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ActivityInstance;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -408,6 +409,12 @@ public class WorkflowController extends ControllerAbstract {
 			map.put("name", task.getName());
 			map.put("createTime", task.getCreateTime());
 			map.put("processDefinitionId", task.getProcessDefinitionId());
+			ProcessDefinition processDefinitionObj=repositoryService.createProcessDefinitionQuery()
+					.processDefinitionId(task.getProcessDefinitionId()).singleResult();
+			String processName = processDefinitionObj.getName();
+			String processKey=processDefinitionObj.getKey();
+			map.put("workflowName", processName);
+			map.put("processKey", processKey);
 			resultListTemp.add(map);
 		}
 //		    CustomSqlExecution<VarQueryMapper, List<Map<String, Object>>> customSqlExecution = new AbstractCustomSqlExecution<VarQueryMapper, List<Map<String, Object>>>(VarQueryMapper.class) {
