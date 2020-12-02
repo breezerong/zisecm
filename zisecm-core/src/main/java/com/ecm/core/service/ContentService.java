@@ -171,7 +171,11 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	@Override
 	public boolean deleteObject(String token, Object obj) {
 		// TODO Auto-generated method stub
-		return contentMapper.deleteByPrimaryKey(((EcmContent)obj).getId())>0;
+		if(obj instanceof EcmContent ) {
+			return contentMapper.deleteByPrimaryKey(((EcmContent)obj).getId())>0;
+		}else {
+			return contentMapper.deleteByPrimaryKey((String)obj)>0;
+		}
 	}
 
 	@Override
