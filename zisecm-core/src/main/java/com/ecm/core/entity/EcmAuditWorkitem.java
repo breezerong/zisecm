@@ -18,6 +18,8 @@ public class EcmAuditWorkitem extends EcmObject{
     private String taskName;
 
     private String processInstanceId;
+    
+    private String processDefId;
 
     private String taskId;
 
@@ -118,4 +120,12 @@ public class EcmAuditWorkitem extends EcmObject{
     public void setMessage(String message) {
         this.message = message == null ? null : message.trim();
     }
+
+	public String getProcessDefId() {
+		return processDefId;
+	}
+
+	public void setProcessDefId(String processDefId) {
+		this.processDefId = processDefId;
+	}
 }
