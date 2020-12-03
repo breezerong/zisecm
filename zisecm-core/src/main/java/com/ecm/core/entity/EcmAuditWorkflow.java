@@ -23,6 +23,8 @@ public class EcmAuditWorkflow extends EcmSysObject {
     private String processInstanceId;
 
     private String processInstanceName;
+    
+    private String processDefId;
 
     private Date startTime;
 
@@ -102,5 +104,13 @@ public class EcmAuditWorkflow extends EcmSysObject {
 
 	public void setCurrentUser(String currentUser) {
 		this.currentUser = currentUser;
+	}
+
+	public String getProcessDefId() {
+		return processDefId;
+	}
+
+	public void setProcessDefId(String processDefId) {
+		this.processDefId = processDefId;
 	}
 }

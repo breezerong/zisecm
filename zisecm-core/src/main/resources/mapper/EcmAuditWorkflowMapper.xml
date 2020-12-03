@@ -6,6 +6,7 @@
     <result column="START_USER" jdbcType="VARCHAR" property="startUser" />
     <result column="PROCESS_NAME" jdbcType="VARCHAR" property="processName" />
     <result column="PROCESS_INSTANCE_ID" jdbcType="VARCHAR" property="processInstanceId" />
+    <result column="PROCESS_DEF_ID" jdbcType="VARCHAR" property="processDefId" />
     <result column="PROCESS_INSTANCE_NAME" jdbcType="VARCHAR" property="processInstanceName" />
     <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime" />
     <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
@@ -14,7 +15,7 @@
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, START_USER, PROCESS_NAME,PROCESS_INSTANCE_ID, PROCESS_INSTANCE_NAME, START_TIME, END_TIME,  
+    ID, START_USER, PROCESS_NAME,PROCESS_INSTANCE_ID, PROCESS_INSTANCE_NAME, PROCESS_DEF_ID, START_TIME, END_TIME,  
     DOC_ID, FORM_ID, DESCRIPTION
   </sql>
   <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -46,11 +47,11 @@
     insert into ecm_audit_workflow (ID, START_USER, PROCESS_NAME, 
       PROCESS_INSTANCE_ID, PROCESS_INSTANCE_NAME, START_TIME, 
       END_TIME, DOC_ID, FORM_ID, 
-      DESCRIPTION)
+      DESCRIPTION,PROCESS_DEF_ID)
     values (#{id,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{processName,jdbcType=VARCHAR}, 
       #{processInstanceId,jdbcType=VARCHAR}, #{processInstanceName,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
       #{endTime,jdbcType=TIMESTAMP}, #{docId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR})
+      #{description,jdbcType=VARCHAR}, #{processDefId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmAuditWorkflow" useGeneratedKeys="true" keyColumn='ID' keyProperty="id">
     insert into ecm_audit_workflow
@@ -69,6 +70,9 @@
       </if>
       <if test="processInstanceName != null">
         PROCESS_INSTANCE_NAME,
+      </if>
+      <if test="processDefId != null">
+        PROCESS_DEF_ID,
       </if>
       <if test="startTime != null">
         START_TIME,
@@ -102,6 +106,9 @@
       <if test="processInstanceName != null">
         #{processInstanceName,jdbcType=VARCHAR},
       </if>
+      <if test="processDefId != null">
+        #{processDefId,jdbcType=VARCHAR},
+      </if>
       <if test="startTime != null">
         #{startTime,jdbcType=TIMESTAMP},
       </if>
@@ -134,6 +141,9 @@
       <if test="processInstanceName != null">
         PROCESS_INSTANCE_NAME = #{processInstanceName,jdbcType=VARCHAR},
       </if>
+       <if test="processDefId != null">
+        PROCESS_DEF_ID = #{processDefId,jdbcType=VARCHAR},
+      </if>
       <if test="startTime != null">
         START_TIME = #{startTime,jdbcType=TIMESTAMP},
       </if>
@@ -158,6 +168,7 @@
       PROCESS_NAME = #{processName,jdbcType=VARCHAR},
       PROCESS_INSTANCE_ID = #{processInstanceId,jdbcType=VARCHAR},
       PROCESS_INSTANCE_NAME = #{processInstanceName,jdbcType=VARCHAR},
+      PROCESS_DEF_ID = #{processDefId,jdbcType=VARCHAR},
       START_TIME = #{startTime,jdbcType=TIMESTAMP},
       END_TIME = #{endTime,jdbcType=TIMESTAMP},
       DOC_ID = #{docId,jdbcType=VARCHAR},

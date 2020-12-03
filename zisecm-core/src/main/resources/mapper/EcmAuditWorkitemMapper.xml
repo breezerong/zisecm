@@ -8,6 +8,7 @@
     <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime" />
     <result column="TASK_NAME" jdbcType="VARCHAR" property="taskName" />
     <result column="PROCESS_INSTANCE_ID" jdbcType="VARCHAR" property="processInstanceId" />
+    <result column="PROCESS_DEF_ID" jdbcType="VARCHAR" property="processDefId" />
     <result column="TASK_ID" jdbcType="VARCHAR" property="taskId" />
     <result column="DOC_ID" jdbcType="VARCHAR" property="docId" />
     <result column="FORM_ID" jdbcType="VARCHAR" property="formId" />
@@ -16,7 +17,7 @@
     <result column="MESSAGE" jdbcType="VARCHAR" property="message" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, ASSIGNEE, CREATE_TIME, END_TIME, TASK_NAME, PROCESS_INSTANCE_ID, TASK_ID, DOC_ID, 
+    ID, ASSIGNEE, CREATE_TIME, END_TIME, TASK_NAME, PROCESS_INSTANCE_ID, PROCESS_DEF_ID, TASK_ID, DOC_ID, 
     FORM_ID, TASK_TYPE, RESULT, MESSAGE
   </sql>
   <select id="executeSQL" parameterType="java.lang.String" resultType="java.util.Map"> 
@@ -46,12 +47,13 @@
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmAuditWorkitem">
     insert into ecm_audit_workitem (ID, ASSIGNEE, CREATE_TIME, 
-      END_TIME, TASK_NAME, PROCESS_INSTANCE_ID, 
+      END_TIME, TASK_NAME, PROCESS_INSTANCE_ID, PROCESS_DEF_ID,
       TASK_ID, DOC_ID, FORM_ID, 
       TASK_TYPE, RESULT, MESSAGE
       )
     values (#{id,jdbcType=VARCHAR}, #{assignee,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{endTime,jdbcType=TIMESTAMP}, #{taskName,jdbcType=VARCHAR}, #{processInstanceId,jdbcType=VARCHAR}, 
+      #{processDefId,jdbcType=VARCHAR}, 
       #{taskId,jdbcType=VARCHAR}, #{docId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
       #{taskType,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}
       )
@@ -76,6 +78,9 @@
       </if>
       <if test="processInstanceId != null">
         PROCESS_INSTANCE_ID,
+      </if>
+      <if test="processDefId != null">
+        PROCESS_DEF_ID,
       </if>
       <if test="taskId != null">
         TASK_ID,
@@ -115,6 +120,9 @@
       <if test="processInstanceId != null">
         #{processInstanceId,jdbcType=VARCHAR},
       </if>
+       <if test="processDefId != null">
+        #{processDefId,jdbcType=VARCHAR},
+      </if>
       <if test="taskId != null">
         #{taskId,jdbcType=VARCHAR},
       </if>
@@ -153,6 +161,9 @@
       <if test="processInstanceId != null">
         PROCESS_INSTANCE_ID = #{processInstanceId,jdbcType=VARCHAR},
       </if>
+      <if test="processDefId != null">
+        PROCESS_DEF_ID = #{processDefId,jdbcType=VARCHAR},
+      </if>
       <if test="taskId != null">
         TASK_ID = #{taskId,jdbcType=VARCHAR},
       </if>
@@ -181,6 +192,7 @@
       END_TIME = #{endTime,jdbcType=TIMESTAMP},
       TASK_NAME = #{taskName,jdbcType=VARCHAR},
       PROCESS_INSTANCE_ID = #{processInstanceId,jdbcType=VARCHAR},
+      PROCESS_DEF_ID = #{processDefId,jdbcType=VARCHAR},
       TASK_ID = #{taskId,jdbcType=VARCHAR},
       DOC_ID = #{docId,jdbcType=VARCHAR},
       FORM_ID = #{formId,jdbcType=VARCHAR},

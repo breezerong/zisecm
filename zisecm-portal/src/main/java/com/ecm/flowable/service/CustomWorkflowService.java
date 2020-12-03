@@ -128,6 +128,7 @@ public class CustomWorkflowService extends EcmService{
 		audit.setAssignee(getSession(token).getCurrentUser().getUserName());
 		audit.setResult(varMap.get("outcome").toString());
 		audit.setMessage(varMap.get("message").toString());
+		audit.setProcessDefId(task.getProcessDefinitionId());
 		audit.setProcessInstanceId(task.getProcessInstanceId());
 		audit.setTaskId(taskId);
 		ecmAuditWorkitemMapper.updateByPrimaryKey(audit);
@@ -212,6 +213,7 @@ public class CustomWorkflowService extends EcmService{
 			EcmAuditWorkflow audit = new EcmAuditWorkflow();
 			audit.createId();
 			audit.setProcessInstanceId(processInstance.getId());
+			audit.setProcessDefId(processInstance.getProcessDefinitionId());
 			audit.setProcessName(processInstance.getProcessDefinitionName());
 			audit.setProcessInstanceName(processName);
 			audit.setCreator(userName);
