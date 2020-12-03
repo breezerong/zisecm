@@ -1000,6 +1000,61 @@ public class ArchiveFolderController extends ControllerAbstract{
 	}
 	
 	/**
+	 * 通过配置获取文件夹ArchiveGc
+	 * @param param
+	 * @return
+	 */
+	@RequestMapping(value="/folder/getArchiveFolderByConfigeArchiveGc", method = RequestMethod.POST)
+	@ResponseBody	
+	public Map<String, Object> getFolderByConfigeArchiveGc(@RequestBody String param) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String,Object> params=JSONUtils.stringToMap(param);
+		String folderId=params.get("folderId").toString();
+		Object conditionObj=params.get("condition");
+		String condition="";
+		if(conditionObj!=null) {
+			condition=conditionObj.toString();
+		}
+		try {
+			String id ="";
+			try {
+				id= CacheManagerOper.getEcmParameters().get(folderId).getValue();
+			}catch (NullPointerException e) {
+				// TODO: handle exception
+				id=folderId;
+			}
+			List<EcmFolder> folders=folderService.getFoldersByParentId(getToken(), id);
+			List<EcmFolder> resultData=new ArrayList<>();
+			for(EcmFolder f:folders) {
+				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
+				String gvCondition=gv.getCondition();
+//				String whereSql="";
+//				if(!"".equals(condition)) {
+//					whereSql=" and ("+condition+")";
+//				}
+				String sql="select count(*) as num from ecm_document where "+gvCondition+condition+" and FOLDER_ID in( " + 
+						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
+						")";
+				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
+				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
+					String name=f.getName();
+					f.setName(name+"("+numberData.get(0).get("num").toString()+")");
+					
+				}
+				resultData.add(f);
+			}
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", resultData);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	/**
 	 * 通过配置获取文件夹
 	 * @param param
 	 * @return
