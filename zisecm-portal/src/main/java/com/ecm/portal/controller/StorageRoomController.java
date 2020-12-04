@@ -335,6 +335,21 @@ public class StorageRoomController extends ControllerAbstract{
 		
 		return mp;
 	}
+	@RequestMapping(value = "/dc/getJsonParamMap", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> getOneParameterMapValue(@RequestBody String argStr) {
+		
+		String params = CacheManagerOper.getEcmParameters().get(argStr).getValue();
+		Map<String, Object> mp = new HashMap<String, Object>();
+		if(params!=null) {
+			
+			Map<String,Object> data= JSONUtils.stringToMap(params);
+			mp.put("data", data);
+		}
+		mp.put("code", ActionContext.SUCESS);
+		
+		return mp;
+	}
 	
 	/**
 	 * 创建连
