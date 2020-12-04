@@ -535,6 +535,7 @@ public class WorkflowController extends ControllerAbstract {
 		if (!"all".equals(userId)) {
 			sql1.append(" and a.START_USER_ID_='").append(userId).append("' ");
 		}
+		sql1.append(" order by START_TIME_ desc");
 		// processes =
 		// historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).append("
 		// order by a.START_TIME_ desc").toString()).listPage(pageIndex,pageSize);
