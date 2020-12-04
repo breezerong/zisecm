@@ -1314,6 +1314,39 @@ public class ArchiveFolderController extends ControllerAbstract{
 	}
 	
 	/**
+	 * 获取文件对象
+	 * @param param
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/dc/getArchiveObjs", method = RequestMethod.POST)
+	public Map<String, Object> getArchiveObjs(@RequestBody String param) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> args = JSONUtils.stringToMap(param);
+		Object idsObj= args.get("ids");
+		if(idsObj==null) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("msg", "请选择一条或多条文件Id");
+			return mp;
+		}
+		String idsStr = args.get("ids").toString();
+		List<String> idsList=JSONUtils.stringToArray(idsStr);
+		String ids= String.join("','", idsList.toArray(new String[idsList.size()]));
+		String lang = args.get("lang").toString();
+		List<EcmDocument> ens = null;
+		try {
+			ens = documentService.getObjects(getToken(), " id in('"+ids+"')");
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", ens);
+		return mp;
+	}
+	
+	/**
 	 * 自动装盒
 	 * @param argStr
 	 * @return
