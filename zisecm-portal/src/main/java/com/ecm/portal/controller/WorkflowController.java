@@ -298,33 +298,44 @@ public class WorkflowController extends ControllerAbstract {
 		String condition = args.get("condition").toString();
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
-		List<HistoricTaskInstance> tasks = historyService.createHistoricTaskInstanceQuery().taskAssignee(userId)
-				.finished().orderByTaskCreateTime().desc().listPage(pageIndex, pageSize);
+		List<EcmAuditWorkitem> list = null;
+		try {
+			list = workitemAuditService.getMyAuditWorkitem(getToken());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		List<HistoricTaskInstance> tasks = historyService.createHistoricTaskInstanceQuery().taskAssignee(userId)
+//				.finished().orderByTaskCreateTime().desc().listPage(pageIndex, pageSize);
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		Set<String> processInstanceIdSet = new HashSet<String>();
-		for (HistoricTaskInstance task : tasks) {
+		for (EcmAuditWorkitem task : list) {
 			map = new HashMap<>();
 			List<String> processInstanceIdsList = new ArrayList<String>();
 			map.put("id", task.getId());
 			map.put("processInstanceId", task.getProcessInstanceId());
 			processInstanceIdSet.add(map.get("processInstanceId").toString());
-			map.put("name", task.getName());
+			map.put("name", task.getTaskName());
 			map.put("createTime", task.getCreateTime());
 			map.put("endTime", task.getEndTime());
-			map.put("processDefinitionId", task.getProcessDefinitionId());
-//		        getTaskApprovalResult(task.getId(), map);
-
-//		        List<Comment>  commentsList=  taskService.getTaskComments(task.getId());
-//		        String taskComments="";
-//		        for (int i = 0; i < commentsList.size(); i++) {
-//	        	
-//		        	taskComments=taskComments+commentsList.get(0).getFullMessage()+"; ";
-//				}
+			map.put("processDefinitionId", task.getProcessDefId());
 			resultListTemp.add(map);
 		}
-		if (tasks.size() > 0) {
+//		for (HistoricTaskInstance task : tasks) {
+//			map = new HashMap<>();
+//			List<String> processInstanceIdsList = new ArrayList<String>();
+//			map.put("id", task.getId());
+//			map.put("processInstanceId", task.getProcessInstanceId());
+//			processInstanceIdSet.add(map.get("processInstanceId").toString());
+//			map.put("name", task.getName());
+//			map.put("createTime", task.getCreateTime());
+//			map.put("endTime", task.getEndTime());
+//			map.put("processDefinitionId", task.getProcessDefinitionId());
+//			resultListTemp.add(map);
+//		}
+		if (list.size() > 0) {
 			getProcessVars(resultList, resultListTemp, processInstanceIdSet);
 		}
 
@@ -524,6 +535,7 @@ public class WorkflowController extends ControllerAbstract {
 		if (!"all".equals(userId)) {
 			sql1.append(" and a.START_USER_ID_='").append(userId).append("' ");
 		}
+		sql1.append(" order by START_TIME_ desc");
 		// processes =
 		// historyService.createNativeHistoricProcessInstanceQuery().sql(sql0.append(sql1).append("
 		// order by a.START_TIME_ desc").toString()).listPage(pageIndex,pageSize);

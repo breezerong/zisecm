@@ -24,7 +24,8 @@ public class WorkitemAuditService extends EcmObjectService<EcmAuditWorkitem> imp
 	
 	@Override
 	public List<EcmAuditWorkitem> getMyAuditWorkitem(String token) throws AccessDeniedException{
-		String sql = " PERFORMER='"+getSession(token).getCurrentUser().getUserName()+"' order by START_DATE";
+		//String sql = " PERFORMER='"+getSession(token).getCurrentUser().getUserName()+"' order by START_DATE";
+		String sql = " ASSIGNEE='"+getSession(token).getCurrentUser().getUserName()+"' order by END_TIME desc";
 		return ecmAuditWorkitemMapper.selectByCondition(sql);
 	}
 	
