@@ -2891,26 +2891,18 @@ public class EcmDcController extends ControllerAbstract {
 	}
 	@RequestMapping(value = "dc/newRelation", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> newRelation(String metaData, MultipartFile uploadFile) throws Exception {
+	public Map<String, Object> newRelation(String metaData) throws Exception {
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		EcmContent en = null;
 		EcmDocument doc = new EcmDocument();
 		String parentId = args.get("parentDocId").toString();
+		String id = args.get("childId").toString();
 		if("".equals(parentId)) {
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message","没有主文件ID");
 			return mp;
 		}
-		doc.setAttributes(args);
-		if (uploadFile != null) {
-			en = new EcmContent();
-			en.setName(uploadFile.getOriginalFilename());
-			en.setContentSize(uploadFile.getSize());
-			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
-			en.setInputStream(uploadFile.getInputStream());
-		}
-		String id = documentService.newObject(getToken(), doc, en);
 		newRelation(getToken(), parentId, "附件", id, 1, null);
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);
