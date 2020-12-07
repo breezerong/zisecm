@@ -2889,25 +2889,6 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("id", id);
 		return mp;
 	}
-	@RequestMapping(value = "/dc/newRelation", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> newRelation(String metaData) throws Exception {
-		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		Map<String, Object> mp = new HashMap<String, Object>();
-		EcmContent en = null;
-		EcmDocument doc = new EcmDocument();
-		String parentId = args.get("parentDocId").toString();
-		String id = args.get("childId").toString();
-		if("".equals(parentId)) {
-			mp.put("code", ActionContext.FAILURE);
-			mp.put("message","没有主文件ID");
-			return mp;
-		}
-		newRelation(getToken(), parentId, "附件", id, 1, null);
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("id", id);
-		return mp;
-	}
 	@RequestMapping(value = "/dc/GUID", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> newGUID() throws Exception {
