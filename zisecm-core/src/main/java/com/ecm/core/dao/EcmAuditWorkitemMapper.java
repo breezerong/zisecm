@@ -17,6 +17,8 @@ public interface EcmAuditWorkitemMapper {
 	
 	List<EcmAuditWorkitem> selectByCondition(@Param(value="condition")String condition, Pager pager);
 	
+	List<EcmAuditWorkitem> selectByCondition(@Param(value="condition")String condition);
+	
 	int getCountByCondition(@Param(value="condition")String condition);
 
 	int deleteByPrimaryKey(String id);
