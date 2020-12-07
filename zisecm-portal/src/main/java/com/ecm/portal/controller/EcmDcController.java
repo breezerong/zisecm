@@ -2889,7 +2889,7 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("id", id);
 		return mp;
 	}
-	@RequestMapping(value = "dc/newRelation", method = RequestMethod.POST)
+	@RequestMapping(value = "/dc/newRelation", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newRelation(String metaData) throws Exception {
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
