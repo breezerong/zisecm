@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.EcmObjectService;
 import com.ecm.icore.bpm.IWorkitemAuditService;
@@ -26,18 +27,20 @@ public class WorkitemAuditService extends EcmObjectService<EcmAuditWorkitem> imp
 	public List<EcmAuditWorkitem> getMyAuditWorkitem(String token) throws AccessDeniedException{
 		//String sql = " PERFORMER='"+getSession(token).getCurrentUser().getUserName()+"' order by START_DATE";
 		String sql = " ASSIGNEE='"+getSession(token).getCurrentUser().getUserName()+"' order by END_TIME desc";
-		return ecmAuditWorkitemMapper.selectByCondition(sql);
+		Pager pager = new Pager();
+		pager.setPageSize(1000);
+		return ecmAuditWorkitemMapper.selectByCondition(sql, pager);
 	}
 	
 	@Override
-	public List<EcmAuditWorkitem> getMyAuditWorkitem(String token, int pageSize,int startIndex,String condition) throws AccessDeniedException{
-		String cond = " PERFORMER='"+getSession(token).getCurrentUser().getUserName()+"'";
+	public List<EcmAuditWorkitem> getMyAuditWorkitem(String token, Pager pager,String condition) throws AccessDeniedException{
+		String cond = " ASSIGNEE='"+getSession(token).getCurrentUser().getUserName()+"'";
 		if(condition!=null&&condition.trim().length()>0) {
 			cond += " and ("+condition+")";
 		}
 		cond += " order by START_DATE DESC";
-		cond += " limit "+ startIndex + ","+pageSize;
-		return ecmAuditWorkitemMapper.selectByCondition(cond);
+		
+		return ecmAuditWorkitemMapper.selectByCondition(cond,pager);
 	}
 	
 	@Override
@@ -57,7 +60,12 @@ public class WorkitemAuditService extends EcmObjectService<EcmAuditWorkitem> imp
 	
 	@Override
 	public List<EcmAuditWorkitem> getObjects(String token, String condition){
-
-		return ecmAuditWorkitemMapper.selectByCondition(condition);
+		Pager pager = new Pager();
+		pager.setPageSize(1000);
+		return ecmAuditWorkitemMapper.selectByCondition(condition, pager);
+	}
+	
+	public List<EcmAuditWorkitem> getObjects(String token, Pager pager, String condition){
+		return ecmAuditWorkitemMapper.selectByCondition(condition, pager);
 	}
 }
