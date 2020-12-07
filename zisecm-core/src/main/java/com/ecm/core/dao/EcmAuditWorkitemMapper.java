@@ -8,13 +8,14 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.Pager;
 @Component
 @Mapper
 public interface EcmAuditWorkitemMapper {
 	
 	List<Map<String, Object>> executeSQL(@Param(value="sqlStr") String sqlStr);
 	
-	List<EcmAuditWorkitem> selectByCondition(@Param(value="condition")String condition);
+	List<EcmAuditWorkitem> selectByCondition(@Param(value="condition")String condition, Pager pager);
 	
 	int getCountByCondition(@Param(value="condition")String condition);
 
