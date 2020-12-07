@@ -368,9 +368,25 @@ public class WorkflowController extends ControllerAbstract {
 	public HashMap<String, Object> todoTask(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String userId = args.get("userId").toString();
-		
+		StringBuilder condition = new StringBuilder("");
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+		Map workflowForm = args.get("workflowForm") == null ? null
+				: JSONUtils.stringToMap(args.get("workflowForm").toString());
+		if(workflowForm != null) {
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("workflowName"))) {
+				condition.append(" and PROC_DEF_ID_ = '").append(workflowForm.get("workflowName")).append("' ");
+			}
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("jobName"))) {
+				condition.append(" and NAME_ = '").append(workflowForm.get("jobName")).append("' ");
+			}
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startTimeAfter"))) {
+				condition.append(" and CREATE_TIME_ >= '").append(workflowForm.get("startTimeAfter")).append("' ");
+			}
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startTimeBefore"))) {
+				condition.append(" and CREATE_TIME_ < '").append(workflowForm.get("startTimeBefore")).append("' ");
+			}
+		}
 		List<Task> tasks = null;
 		List<Task> taskByGroupName = null;
 		List<Task> taskByUser = null;
@@ -402,7 +418,7 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		
 		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
-				+managementService.getTableName(Task.class)+" T WHERE "+whereSql+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
+				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
 		
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
