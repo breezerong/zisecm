@@ -732,7 +732,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			content.setContentType(1);
 			if (StringUtils.isEmpty(content.getStoreName())) {
-				content.setStoreName(CacheManagerOper.getEcmStores().get(doc.getTypeName()).getName());
+				content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
 			}
 			content.setParentId(doc.getId());
 			EcmContent primary = contentServices.getPrimaryContent(token, doc.getId());
