@@ -3,6 +3,7 @@ package com.ecm.icore.bpm;
 import java.util.List;
 
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 /**
  * 任务日志服务
@@ -25,7 +26,7 @@ public interface IWorkitemAuditService {
 	 * @return
 	 * @throws AccessDeniedException 
 	 */
-	List<EcmAuditWorkitem> getMyAuditWorkitem(String token, int pageSize, int startIndex, String condition) throws AccessDeniedException;
+	List<EcmAuditWorkitem> getMyAuditWorkitem(String token,Pager pager, String condition) throws AccessDeniedException;
 
 	/**
 	 * 获取所有当前用户任务日志数

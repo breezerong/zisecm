@@ -35,6 +35,9 @@ public class SqlServerlUtils implements IDBUtils {
 	@Override
 	public String getDBDateString(Date d) {
 		// TODO Auto-generated method stub
+		if(d ==null) {
+			return null;
+		}
 		return "'"+DateUtils.sdfAll.format(d)+"'";
 	}
 

@@ -2765,12 +2765,20 @@ public class EcmDcController extends ControllerAbstract {
 		if(args.get("TYPE_NAME").toString().equals("设计文件")) {
 			String coding = args.get("CODING").toString();
 			String type = args.get("TYPE_NAME").toString();
-			String cond = "TYPE_NAME='IED' AND CODING = '"+coding+"'";
+			String cond = "TYPE_NAME='IED'  AND C_IS_RELEASED=1 AND CODING = '"+coding+"' AND C_PROJECT_NAME='"+(String)args.get("C_PROJECT_NAME")+"'";
 			List<Map<String,Object>> ied = documentService.getObjectMap(getToken(), cond);
 			if(ied.size()==0) {
 				mp.put("codes",1);
+				return mp;
 			}
-			return mp;
+			try {
+				// 作废和FU后不允许添加
+				validateIEDInfo(getToken(), args);
+			}catch(Exception ex) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("MES", ex.getMessage());
+				return mp;
+			}
 		}
 		
 		
@@ -2795,6 +2803,26 @@ public class EcmDcController extends ControllerAbstract {
 				String a="";
 				if(list != null && list.size() > 0) {
 					a = list.get(0).get("TITLE")==null?"":list.get(0).get("TITLE").toString();
+					
+					
+					String parentType = (String)list.get(0).get("TYPE_NAME");
+					if("FU申请".equals(parentType) || "FU通知单".equals(parentType)) {
+						String sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)args.get("CODING")+"' and C_ITEM_STATUS3='是'";
+						List<Map<String, Object>> result=documentService.getMapList(getToken(), sql);
+						if(result!=null && result.size()>0) {
+							mp.put("MES", "文件["+(String)args.get("CODING")+"]已经FU，不允许提交，如果需要提交请联系CNPE计划管理员处理。");
+							mp.put("code", ActionContext.FAILURE);
+							return mp;
+						}
+					}else if("作废通知单".equals(parentType)) {
+						String sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)args.get("CODING")+"' and C_EX1_STRING is not null and C_EX1_STRING !=''";
+						List<Map<String, Object>>  result=documentService.getMapList(getToken(), sql);
+						if(result!=null && result.size()>0) {
+							mp.put("MES","文件["+(String)args.get("CODING")+"]已经作废，不允许提交。");
+							mp.put("code", ActionContext.FAILURE);
+							return mp;
+						}
+					}
 				}else {
 					a="";
 				}
@@ -2888,6 +2916,25 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("MES", "");
 		mp.put("id", id);
 		return mp;
+	}
+	private void validateIEDInfo(String token, Map<String, Object> attributes) throws Exception {
+		String typeName = (String)attributes.get("TYPE_NAME");
+		if("设计文件".equals(typeName)){
+			// 检查是否已经FU
+			String sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)attributes.get("CODING")+"' and C_ITEM_STATUS3='是'";
+			List<Map<String, Object>> result=documentService.getMapList(token, sql);
+			if(result!=null && result.size()>0) {
+				throw new Exception("文件["+(String)attributes.get("CODING")+"]已经FU，不允许提交，如果需要提交请联系CNPE计划管理员处理。");
+			}
+			// 已作废不允许提交
+			sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)attributes.get("CODING")+"' and C_EX1_STRING is not null and C_EX1_STRING !=''";
+			result=documentService.getMapList(token, sql);
+			if(result!=null && result.size()>0) {
+				throw new Exception("文件["+(String)attributes.get("CODING")+"]已经作废，不允许提交。");
+			}
+
+		}
+		
 	}
 	
 	@RequestMapping(value = "/dc/GUID", method = RequestMethod.GET)

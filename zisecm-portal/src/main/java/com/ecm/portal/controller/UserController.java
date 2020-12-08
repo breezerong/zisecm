@@ -291,6 +291,7 @@ public class UserController extends ControllerAbstract{
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
 		}
 		return mp;
 	}

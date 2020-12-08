@@ -190,7 +190,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	private EcmGridView getGridView(String token,String gridName) {
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-		if(gv==null) {
+		if(gv==null || gv.getGridViewItems()==null) {
 			gv = gridViewService.getObjectByName(token, gridName);
 			List<EcmGridViewItem> itemlist =gridViewItemService.getEcmCustomGridViewInfo(token, gv.getId());
 			if(itemlist==null) {
