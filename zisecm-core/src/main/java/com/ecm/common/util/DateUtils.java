@@ -133,7 +133,13 @@ public class DateUtils {
 					d = format.parse(date);
 				} catch (ParseException e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+					try {
+						d = format.parse(date);
+					} catch (ParseException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
 				}
 			}
 		}
