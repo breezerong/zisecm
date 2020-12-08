@@ -44,6 +44,7 @@ import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
+import org.flowable.task.api.NativeTaskQuery;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -446,7 +447,8 @@ public class WorkflowController extends ControllerAbstract {
 		
 		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
 				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
-		
+		tasks = taskService.createNativeTaskQuery().sql("select *  from "
+				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()).list();
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
@@ -484,7 +486,7 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("data", resultList);
-		resultMap.put("totalCount", taskService.createTaskQuery().taskAssignee(userId).count());
+		resultMap.put("totalCount", tasks.size());
 
 		return resultMap;
 	}
