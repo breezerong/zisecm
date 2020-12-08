@@ -38,7 +38,7 @@ public class WorkitemAuditService extends EcmObjectService<EcmAuditWorkitem> imp
 		if(condition!=null&&condition.trim().length()>0) {
 			cond += " and ("+condition+")";
 		}
-		cond += " order by START_DATE DESC";
+		cond += " order by CREATE_TIME DESC";
 		
 		return ecmAuditWorkitemMapper.selectByCondition(cond,pager);
 	}

@@ -44,6 +44,7 @@ import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
+import org.flowable.task.api.NativeTaskQuery;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.TaskQuery;
 import org.flowable.task.api.history.HistoricTaskInstance;
@@ -75,6 +76,7 @@ import com.ecm.core.entity.EcmCfgActivity;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
+import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.DocumentService;
@@ -295,12 +297,38 @@ public class WorkflowController extends ControllerAbstract {
 	public HashMap<String, Object> doneTask(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String userId = args.get("userId").toString();
-		String condition = args.get("condition").toString();
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+		Pager pager = new Pager();
+		StringBuilder condition = new StringBuilder("");
+		pager.setPageIndex(pageIndex);
+		pager.setPageSize(pageSize);
+		Map workflowForm = args.get("workflowForm") == null ? null
+				: JSONUtils.stringToMap(args.get("workflowForm").toString());
+		if(workflowForm != null) {
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("workflowName"))) {
+				condition.append(" and process_def_id = '").append(workflowForm.get("workflowName")).append("' ");
+			}
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("jobName"))) {
+				condition.append(" and TASK_NAME = '").append(workflowForm.get("jobName")).append("' ");
+			}
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startTimeAfter"))) {
+				condition.append(" and CREATE_TIME >= '").append(workflowForm.get("startTimeAfter")).append("' ");
+			}
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startTimeBefore"))) {
+				condition.append(" and CREATE_TIME < '").append(workflowForm.get("startTimeBefore")).append("' ");
+			}
+		}
 		List<EcmAuditWorkitem> list = null;
+		String finalCondition = "";
+		if (condition.length()>0) {
+			finalCondition = condition.toString().replaceFirst("and", "");
+		}else {
+			finalCondition = condition.toString();
+		}
 		try {
-			list = workitemAuditService.getMyAuditWorkitem(getToken());
+			//list = workitemAuditService.getMyAuditWorkitem(getToken());
+			list = workitemAuditService.getMyAuditWorkitem(getToken(), pager, finalCondition);
 		} catch (AccessDeniedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -419,7 +447,8 @@ public class WorkflowController extends ControllerAbstract {
 		
 		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
 				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
-		
+		tasks = taskService.createNativeTaskQuery().sql("select *  from "
+				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()).list();
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
@@ -457,7 +486,7 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("data", resultList);
-		resultMap.put("totalCount", taskService.createTaskQuery().taskAssignee(userId).count());
+		resultMap.put("totalCount", tasks.size());
 
 		return resultMap;
 	}
@@ -522,6 +551,9 @@ public class WorkflowController extends ControllerAbstract {
 		StringBuffer sqlCount0 = new StringBuffer("SELECT count(*) " + " FROM ACT_HI_PROCINST a " + " where 1=1 ");
 		StringBuffer sql1 = new StringBuffer("");
 		if (workflowForm != null) {
+			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("workflowName"))) {
+				sql1.append(" and PROC_DEF_ID_ = '").append(workflowForm.get("workflowName")).append("' ");
+			}
 			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startTimeAfter"))) {
 				sql1.append(" and START_TIME_ >= '").append(workflowForm.get("startTimeAfter")).append("' ");
 			}
