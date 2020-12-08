@@ -104,45 +104,89 @@ public class CacheProduct implements ApplicationRunner,Ordered {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		logger.info("Start load cache: "+ (new Date()).toString());
-		
+		long start = System.currentTimeMillis();
 		//语言标签配置
 		cacheManagerLanguage.initAllCaches();
+		long cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerLanguage:"+cost);
+		start = System.currentTimeMillis();
 		cacheManagerLangInfo.initAllCaches();
-		//初始化系统配置
-		cacheManagerEcmParam.initAllCaches();
-
-		//初始化列表配置
-		cacheManagerEcmGridView.initAllCaches();
-
-		//初始化事件配置
-		cacheManagerEcmAction.initAllCaches();
-		
-		//初始化表单配置
-		cacheManagerEcmForm.initAllCaches();
-
-		//菜单配置
-		cacheManagerEcmMenu.initAllCaches();
-
-		//初始化卡片搜索配置
-		cacheManagerEcmCardSearch.initAllCaches();
-		
-		
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerLangInfo:"+cost);
+		start = System.currentTimeMillis();
 		
 		//组件配置
 		cacheManagerEcmComponent.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmComponent:"+cost);
+		start = System.currentTimeMillis();
+				
+		//菜单配置
+		cacheManagerEcmMenu.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmMenu:"+cost);
+		start = System.currentTimeMillis();
+		
+		//初始化系统配置
+		cacheManagerEcmParam.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmParam:"+cost);
+		start = System.currentTimeMillis();
+		//初始化列表配置
+		cacheManagerEcmGridView.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmGridView:"+cost);
+		start = System.currentTimeMillis();
+		//初始化事件配置
+		cacheManagerEcmAction.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmAction:"+cost);
+		start = System.currentTimeMillis();
+		//初始化表单配置
+		cacheManagerEcmForm.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmForm:"+cost);
+		start = System.currentTimeMillis();
+		
+		//初始化卡片搜索配置
+		cacheManagerEcmCardSearch.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmCardSearch:"+cost);
+		start = System.currentTimeMillis();
+		
+		
+		
+				
 		//存储配置
 		cacheManagerEcmStore.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmStore:"+cost);
+		start = System.currentTimeMillis();
 		
 		cacheManagerEcmSystemEvent.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmSystemEvent:"+cost);
+		start = System.currentTimeMillis();
 		
 		cacheManagerEcmDocType.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmDocType:"+cost);
+		start = System.currentTimeMillis();
 		
 		cacheManagerEcmSuggestion.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmSuggestion:"+cost);
+		start = System.currentTimeMillis();
 		
 		cacheManagerEcmDefType.initAllCaches();
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerEcmDefType:"+cost);
+		start = System.currentTimeMillis();
 		
 		cacheManagerCfgActivity.initAllCaches();
-		
+		cost = System.currentTimeMillis() - start;
+		logger.info("Load cacheManagerCfgActivity:"+cost);
+		start = System.currentTimeMillis();
 		
 		cacheManagerFinishLoadCacheTag.initAllCaches();	//标记所有cache 加载完毕
 		logger.info("Complete load cache: "+ (new Date()).toString());
