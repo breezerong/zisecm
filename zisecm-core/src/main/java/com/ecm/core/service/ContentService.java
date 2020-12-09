@@ -138,6 +138,9 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			}
 			String fullPath = getFullPath(en);
 			File file = new File(fullPath);   
+			if(file.exists()) {
+				file.delete();
+			}
 			long len = 0;
 			BufferedOutputStream fis = new BufferedOutputStream(new FileOutputStream(file));
 			try

@@ -739,7 +739,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (primary != null) {
 				content.setId(primary.getId());
 				content.setStoreName(primary.getStoreName());
-				content.setFilePath(primary.getFilePath());
+				String filePath = primary.getFilePath();
+				if(!content.getFormatName().equals(primary.getFormatName())) {
+					filePath = filePath.replace("."+primary.getFormatName(), "."+content.getFormatName());
+				}
+				content.setFilePath(filePath);
 			}
 			contentServices.updateObject(token, content);
 			doc.setFormatName(content.getFormatName());

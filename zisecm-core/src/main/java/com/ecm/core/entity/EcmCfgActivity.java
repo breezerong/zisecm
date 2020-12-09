@@ -90,6 +90,11 @@ public class EcmCfgActivity extends EcmObject {
      */
     private String formParameter; 
     
+    /**
+     * 执行人规则，PERFORMER_POLICY
+     */
+    private String performerPolicy;
+    
     
     public String getFormCondition() {
 		return formCondition;
@@ -270,6 +275,14 @@ public class EcmCfgActivity extends EcmObject {
 
 	public void setFormParameter(String formParameter) {
 		this.formParameter = formParameter;
+	}
+
+	public String getPerformerPolicy() {
+		return performerPolicy;
+	}
+
+	public void setPerformerPolicy(String performerPolicy) {
+		this.performerPolicy = performerPolicy;
 	}
     
 }
