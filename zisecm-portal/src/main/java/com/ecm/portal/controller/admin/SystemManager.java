@@ -77,19 +77,21 @@ public class SystemManager extends ControllerAbstract{
 	 @RequestMapping("/admin/initAllCache")
 	 public   Map<String, Object>  initAllCache() {
 		 cacheManagerEcmAction.initAllCaches();
-		 
+		 cacheManagerEcmStore.initAllCaches();
+		 cacheManagerEcmDefType.initAllCaches();
+		 cacheManagerEcmDocType.initAllCaches();
 		 cacheManagerEcmComponent.initAllCaches();
-		 cacheManagerEcmForm.initAllCaches();
-		 cacheManagerEcmGridView.initAllCaches();
-		 cacheManagerEcmMenu.initAllCaches();
-		 cacheManagerEcmParam.initAllCaches();
 		 cacheManagerLanguage.initAllCaches();
 		 cacheManagerLangInfo.initAllCaches();
-		 cacheManagerEcmStore.initAllCaches();
-		 cacheManagerEcmDocType.initAllCaches();
+		 cacheManagerEcmMenu.initAllCaches();
+		 cacheManagerEcmForm.initAllCaches();
+		 cacheManagerEcmGridView.initAllCaches();
+		 cacheManagerEcmParam.initAllCaches();
+		
+		 
 		 cacheManagerEcmCardSearch.initAllCaches();
 		 cacheManagerEcmSuggestion.initAllCaches();
-		 cacheManagerEcmDefType.initAllCaches();
+		 
 		 cacheManagerCfgActivity.initAllCaches();
 		 CacheManagerOper.getCustomCache().clear();
 		 
