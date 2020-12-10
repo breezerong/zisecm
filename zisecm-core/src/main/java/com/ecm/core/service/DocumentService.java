@@ -744,8 +744,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					filePath = filePath.replace("."+primary.getFormatName(), "."+content.getFormatName());
 				}
 				content.setFilePath(filePath);
+				contentServices.updateObject(token, content);
 			}
-			contentServices.updateObject(token, content);
+			else {
+				contentServices.newObject(token, content);
+			}
+			
 			doc.setFormatName(content.getFormatName());
 			doc.setContentSize(content.getContentSize());
 		}
