@@ -39,6 +39,7 @@ import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.ActivityInstance;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -707,6 +708,35 @@ public class WorkflowController extends ControllerAbstract {
 		try {
 			List<EcmCfgActivity> acitivityList = ecmCfgActivityMapper.selectByProcessName(processName);
 			acitivityList.removeIf(a -> a.getSelectActivityList().indexOf(activityName) < 0);
+			mp.put("data", acitivityList);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "getApprovalAllUserList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getApprovalAllUserList(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Object processDefinitionIdObj=args.get("processDefinitionId");
+		Map<String, Object> mp = new HashMap<String, Object>();
+		
+		String processName ="";
+		if(args.get("processDefinitionName")!=null) {
+			processName=args.get("processDefinitionName").toString();
+		}else if(processDefinitionIdObj!=null) {
+			processName = repositoryService.getProcessDefinition(processDefinitionIdObj.toString()).getName();
+		}else {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "请选择正确的流程名称");
+			return mp;
+		}
+		 String whereSql="PROCESS_NAME='"+processName+"' and ACTIVITY_NAME!='start'";
+		try {
+			List<EcmCfgActivity> acitivityList = ecmCfgActivityMapper.selectByCondition(whereSql);
 			mp.put("data", acitivityList);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
