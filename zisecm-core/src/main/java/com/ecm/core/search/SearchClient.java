@@ -26,6 +26,7 @@ public class SearchClient {
 	
 	public void refreshCache() {
 		inited = false;
+		initConfig();
 	}
 	
 	 private synchronized void initConfig() {

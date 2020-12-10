@@ -1,28 +1,5 @@
 <template>
   <div>
-    <el-dialog title="部署流程" :visible.sync="dialogProcessVisible" width="50%">
-      <el-form  label-position="right" label-width="120px">
-        <el-form-item  label="名称" :label-width="formLabelWidth">
-            <el-input v-model="processName" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="文件" :label-width="formLabelWidth">
-          <el-upload
-            :limit="1"
-            :file-list="fileList"
-            action
-            :on-change="handleFileChange"
-            :auto-upload="false"
-            :multiple="false"
-          >
-            <el-button slot="trigger" size="small" type="primary">{{$t('application.selectFile')}}</el-button>
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogProcessVisible = false">{{$t('application.cancel')}}</el-button>
-        <el-button type="primary" @click="deployProcess()">{{$t('application.ok')}}</el-button>
-      </div>
-    </el-dialog>
     <el-dialog title="添加" :visible.sync="dialogVisible" width="70%">
       <el-form :model="form">
         <el-row>
@@ -75,6 +52,17 @@
            <el-input v-model="form.orderIndex" auto-complete="off"></el-input>
           </el-form-item>
         </el-col>
+        </el-row>
+        <el-form-item label="执行人规则" :label-width="formLabelWidth">
+           <el-input v-model="form.performerPolicy" auto-complete="off"></el-input>
+          </el-form-item>
+         <el-form-item label="表单条件" :label-width="formLabelWidth">
+           <el-input v-model="form.formCondition" auto-complete="off"></el-input>
+          </el-form-item>
+           <el-form-item label="表单参数" :label-width="formLabelWidth">
+           <el-input type="textarea" v-model="form.formParameter" auto-complete="off"></el-input>
+          </el-form-item>
+        <el-row>
         </el-row>
         <el-row>
         <el-col :span="12">
@@ -199,12 +187,6 @@
               prefix-icon="el-icon-search"
             ></el-input>
           </el-col>
-          <el-col :span="1">
-            &nbsp;
-          </el-col>
-          <el-col :span="4">
-            <el-button @click="dialogProcessVisible = true">部署流程</el-button>
-          </el-col>
         </el-row>
       </el-header>
       <el-main>
@@ -239,13 +221,6 @@
                 icon="edit"
                 @click="updateProcess(scope.row)"
               >更新版本</el-button>
-               <el-button
-                :plain="true"
-                type="warning"
-                size="small"
-                icon="edit"
-                @click="delProcess(scope.row)"
-              >{{$t('application.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -279,12 +254,8 @@ export default {
       currentProcess:[],
       loading: false,
       isEdit:false,
-      processName: "",
       dialogVisible: false,
-      dialogProcessVisible: false,
       listDialogVisible: false,
-      fileList: [],
-      bpmnFile: null,
       listtableHeight: window.innerHeight - 420,
       tableHeight: window.innerHeight - 135,
       form: {
@@ -303,12 +274,24 @@ export default {
         rejectActivityLabel:"",
         enableDelegate:true,
         enableRepeat:false,
-        enableEdit:true
+        enableEdit:true,
+        formCondition: "",
+        performerPolicy:""
       },
       formLabelWidth: "120px"
     };
   },
   mounted() {
+    let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      //跳转至权限提醒页
+      _self.$nextTick(()=>{
+         _self.$router.push({ path: '/NoPermission' })
+      })     
+    }
     this.refreshData();
   },
   methods: {
@@ -325,47 +308,6 @@ export default {
         .catch(function(error) {
           console.log(error);
           _self.loading = false;
-        });
-    },
-    handleFileChange(file, fileList) {
-      this.bpmnFile = file;
-    },
-    deployProcess(){
-      let _self = this;
-      let formdata = new FormData();
-      formdata.append("name", _self.processName);
-      if (_self.bpmnFile != "") {
-        formdata.append("bpmnFile", _self.bpmnFile.raw);
-      }
-      axios
-        .post("/workflow/deployProcess", formdata, {
-          "Content-Type": "multipart/form-data"
-        })
-        .then(function(response) {
-          if(response.data.code == 1){
-            _self.$message("部署流程成功!");
-            _self.refreshData();
-            
-          }
-          else{
-            _self.$message({
-              showClose: true,
-              message: "部署失败：<br>"+response.data.message,
-              duration: 5000,
-              type: "error"
-            });
-          }
-          _self.dialogProcessVisible  = false;
-        })
-        .catch(function(error) {
-          console.log(error);
-           _self.$message({
-              showClose: true,
-              message: "部署失败：<br>"+error,
-              duration: 5000,
-              type: "error"
-            });
-            _self.dialogProcessVisible  = false;
         });
     },
     updateProcess(indata){
@@ -409,36 +351,6 @@ export default {
         })
         .catch(function(error) {
           console.log(error);
-        });
-    },
-    delProcess(indata){
-      let _self = this;
-      _self
-        .$confirm(
-          _self.$t("message.deleteInfo"),
-          _self.$t("application.info"),
-          {
-            confirmButtonText: _self.$t("application.ok"),
-            cancelButtonText: _self.$t("application.cancel"),
-            type: "warning"
-          }
-        )
-        .then(() => {
-          axios
-            .post("/workflow/deleteProcess", indata.deploymentId)
-            .then(function(response) {
-              _self.$message("删除成功!");
-              _self.refreshData();
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-        })
-        .catch(() => {
-          // this.$message({
-          //   type: 'info',
-          //   message: '已取消删除'
-          // });
         });
     },
     newItem(){
