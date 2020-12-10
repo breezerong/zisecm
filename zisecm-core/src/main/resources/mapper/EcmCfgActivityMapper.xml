@@ -38,6 +38,12 @@
     from ecm_cfg_activity
     where ID = #{id,jdbcType=NVARCHAR}
   </select>
+  <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	select 
+    <include refid="Base_Column_List" />
+    from ecm_cfg_activity
+    where ${condition}
+  </select>
   <select id="selectByProcessId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

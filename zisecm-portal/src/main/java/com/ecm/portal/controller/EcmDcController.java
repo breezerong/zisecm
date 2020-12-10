@@ -144,8 +144,7 @@ public class EcmDcController extends ControllerAbstract {
 	private EcmRelationMapper ecmRelationMapper;
 	@Autowired
 	private Environment env;
-	
-	private static final Logger logger = LoggerFactory.getLogger(EcmDcController.class);
+	private Logger logger=LoggerFactory.getLogger(this.getClass());
 
 	@RequestMapping(value = "/dc/getDocumentCount", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
@@ -722,7 +721,13 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("id", id);
 		return mp;
 	}
-	
+	/**
+	 * 创建文件
+	 * @param metaData
+	 * @param uploadFile
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/dc/newDocument", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newDocument(String metaData, MultipartFile uploadFile) throws Exception {
@@ -742,6 +747,69 @@ public class EcmDcController extends ControllerAbstract {
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("id", id);
 		return mp;
+	}
+	
+	
+	/**
+	 * 创建文件和附件
+	 * @param metaData 元数据
+	 * @param mainFile 主文件
+	 * @param attachFiles 附件
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/dc/newDocumentMoreFile", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> newDocumentMoreFile(String metaData, MultipartFile mainFile,MultipartFile[] attachFiles) throws Exception {
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			EcmContent en = null;
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(args);
+			if (mainFile != null) {
+				en = new EcmContent();
+				en.setName(mainFile.getOriginalFilename());
+				en.setContentSize(mainFile.getSize());
+				en.setFormatName(FileUtils.getExtention(mainFile.getOriginalFilename()));
+				en.setInputStream(mainFile.getInputStream());
+			}
+			Object fid= args.get("folderId");
+			String folderId="";
+			if(fid==null) {
+				folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+			}else {
+				folderId=fid.toString();
+			}
+			doc.setStatus("新建");
+			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+			doc.setFolderId(folderId);
+			doc.setAclName(folder.getAclName());
+			String id = documentService.newObject(getToken(), doc, en);
+			//创建附件
+			if (attachFiles != null&&attachFiles.length>0) {
+				
+	            Map<String,Object> p=new HashMap<String, Object>();
+	            p.put("parentDocId", id);
+	            p.put("relationName", "附件");
+	            p.put("TYPE_NAME", "附件");
+				execAddAttachment(p,attachFiles);
+			}
+			//end
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("id", id);
+			return mp;
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "保存失败");
+			return mp;
+		}
+		
+		
+		
 	}
 	/**
 	 * 根据数据类型将文件创建至指定目录中，并设置acl
@@ -1048,7 +1116,6 @@ public class EcmDcController extends ControllerAbstract {
 	@ResponseBody
 	public Map<String, Object> addAttachment(String metaData, MultipartFile[] uploadFile) {
 		
-		
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -1060,55 +1127,7 @@ public class EcmDcController extends ControllerAbstract {
 				return mp;
 			}
 			if (uploadFile != null&&uploadFile.length>0) {
-				for (MultipartFile multipartFile : uploadFile) {
-					
-					EcmDocument doc = new EcmDocument();
-					doc.setAttributes(args);
-					String fileName=multipartFile.getOriginalFilename();
-					fileName=fileName.substring(0,fileName.lastIndexOf(".")<0
-							?fileName.length():fileName.lastIndexOf("."));
-					doc.setName(fileName);
-					
-					Object fid= args.get("folderId");
-					String folderId="";
-					if(fid==null) {
-						folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
-					}else {
-						folderId=fid.toString();
-					}
-					EcmFolder folder= folderService.getObjectById(getToken(), folderId);
-					doc.setFolderId(folderId);
-					doc.setAclName(folder.getAclName());
-					
-					EcmContent en = new EcmContent();
-					en.setName(multipartFile.getOriginalFilename());
-					en.setContentSize(multipartFile.getSize());
-					en.setInputStream(multipartFile.getInputStream());
-//					documentService.addRendition(getToken(), parentId, en);
-					
-					String relationName="irel_children";
-					relationName=args.get("relationName")!=null
-							&&!"".equals(args.get("relationName").toString())
-							?args.get("relationName").toString():"irel_children";
-					String id = documentService.newObject(getToken(),doc,en);//创建文件和内容
-					//----------------创建关系--------------
-					EcmRelation relation=new EcmRelation();
-					relation.setParentId(parentId);
-					
-					relation.setChildId(id);
-					relation.setName(relationName);
-					try {
-						relationService.newObject(getToken(), relation);
-					} catch (EcmException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						mp.put("code", ActionContext.FAILURE);
-						mp.put("message",e.getMessage());
-						return mp;
-					}
-					//----------------end创建关系-------------------
-				}
-				
+				execAddAttachment(args,uploadFile);
 				mp.put("code", ActionContext.SUCESS);
 			}
 		} catch (Exception ex) {
@@ -1116,6 +1135,57 @@ public class EcmDcController extends ControllerAbstract {
 			mp.put("message", ex.getMessage());
 		}
 		return mp;
+	}
+	
+	public void execAddAttachment(Map<String, Object> args,MultipartFile[] uploadFile) throws Exception {
+		String parentId = args.get("parentDocId").toString();
+		
+		for (MultipartFile multipartFile : uploadFile) {
+			
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(args);
+			String fileName=multipartFile.getOriginalFilename();
+			fileName=fileName.substring(0,fileName.lastIndexOf(".")<0
+					?fileName.length():fileName.lastIndexOf("."));
+			doc.setName(fileName);
+			
+			Object fid= args.get("folderId");
+			String folderId="";
+			if(fid==null) {
+				folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+			}else {
+				folderId=fid.toString();
+			}
+			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+			doc.setFolderId(folderId);
+			doc.setAclName(folder.getAclName());
+			
+			EcmContent en = new EcmContent();
+			en.setName(multipartFile.getOriginalFilename());
+			en.setContentSize(multipartFile.getSize());
+			en.setInputStream(multipartFile.getInputStream());
+//			documentService.addRendition(getToken(), parentId, en);
+			
+			String relationName="irel_children";
+			relationName=args.get("relationName")!=null
+					&&!"".equals(args.get("relationName").toString())
+					?args.get("relationName").toString():"irel_children";
+			String id = documentService.newObject(getToken(),doc,en);//创建文件和内容
+			//----------------创建关系--------------
+			EcmRelation relation=new EcmRelation();
+			relation.setParentId(parentId);
+			
+			relation.setChildId(id);
+			relation.setName(relationName);
+			try {
+				relationService.newObject(getToken(), relation);
+			} catch (EcmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw e;
+			}
+			//----------------end创建关系-------------------
+		}
 	}
 	
 	/**
