@@ -115,6 +115,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			logger.info("Insert content:{}",en.getId());
 			return en.getId();
 		}catch(Exception ex) {
+			ex.printStackTrace();
 			new EcmException(ex.getMessage());
 		}
 		return null;
@@ -166,6 +167,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			return true;
 		}
 		catch(Exception ex) {
+			ex.printStackTrace();
 			new EcmException(ex.getMessage());
 		}
 		return false;
