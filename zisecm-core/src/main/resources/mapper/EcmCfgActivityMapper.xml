@@ -38,13 +38,13 @@
     select 
     <include refid="Base_Column_List" />
     from ecm_cfg_activity
-    where ID = #{id,jdbcType=NVARCHAR}
+    where ID = #{id,jdbcType=NVARCHAR} order by PROCESS_NAME,ORDER_INDEX
   </select>
   <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap"> 
 	select 
     <include refid="Base_Column_List" />
     from ecm_cfg_activity
-    where ${condition}
+    where ${condition}   order by PROCESS_NAME,ORDER_INDEX
   </select>
   <select id="selectByProcessId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
