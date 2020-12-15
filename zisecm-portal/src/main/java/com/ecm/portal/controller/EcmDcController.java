@@ -507,13 +507,22 @@ public class EcmDcController extends ControllerAbstract {
 			} else {
 				format = request.getParameter("format");
 			}
+			String token = "";
+			if (request.getAttribute("token") != null) {
+				token = request.getAttribute("token").toString();
+			} else {
+				token = request.getParameter("token");
+			}
+			if(token==null || token.length()==0) {
+				token = getToken();
+			}
 			EcmContent en = null;
 			if (!StringUtils.isEmpty(format)) {
-				en = contentService.getObject(getToken(), id, 0, format);
+				en = contentService.getObject(token, id, 0, format);
 			} else {
-				en = contentService.getPrimaryContent(getToken(), id);
+				en = contentService.getPrimaryContent(token, id);
 			}
-			InputStream iStream = contentService.getContentStream(getToken(), en);
+			InputStream iStream = contentService.getContentStream(token, en);
 			// 清空response
 			response.reset();
 			// 设置response的Header
@@ -534,9 +543,9 @@ public class EcmDcController extends ControllerAbstract {
 				toClient.flush();
 				toClient.close();
 				if (!StringUtils.isEmpty(action) && action.equals("download")) {
-					contentService.newAudit(getToken(), "portal", AuditContext.DOWNLOAD, id, null, null);
+					contentService.newAudit(token, "portal", AuditContext.DOWNLOAD, id, null, null);
 				} else {
-					contentService.newAudit(getToken(), "portal", AuditContext.READ, id, null, null);
+					contentService.newAudit(token, "portal", AuditContext.READ, id, null, null);
 				}
 			}
 

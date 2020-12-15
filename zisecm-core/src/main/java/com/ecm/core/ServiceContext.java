@@ -129,4 +129,8 @@ public class ServiceContext {
 	 * 流程任务日期
 	 */
 	public static final int AUDIT_WORKITEM_CODE=29300;
+	/**
+	 * Session 管理
+	 */
+	public static final int SESSION_CODE=90000;
 }

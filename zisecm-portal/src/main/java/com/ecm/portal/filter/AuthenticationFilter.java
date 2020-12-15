@@ -3,6 +3,7 @@ package com.ecm.portal.filter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 import com.ecm.core.cache.manager.SessionManager;
 import com.ecm.core.entity.ResultInfo;
 import com.ecm.core.util.SysConfig;
+import com.ecm.icore.service.IEcmSession;
 
 
 /**
@@ -89,7 +91,15 @@ public class AuthenticationFilter implements Filter {
 //            		resultInfo.setCode(SysConfig.getUnauthorized());
 //                    resultInfo.setMsg("token超时");
 //            	}
-                if (SessionManager.getInstance().getSession(token) != null) {
+            	IEcmSession session = SessionManager.getInstance().getSession(token);
+                if ( session != null) {
+                	session.getCurrentUser().setUpdateTime(new Date());
+                	try {
+						SessionManager.getInstance().refresh(token);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                     resultInfo.setCode(SysConfig.getSucess());
                     resultInfo.setMsg("用户授权认证通过!");
                     isFilter = true;

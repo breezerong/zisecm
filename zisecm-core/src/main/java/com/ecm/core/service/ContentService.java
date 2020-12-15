@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.db.DBFactory;
@@ -187,6 +188,8 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	public InputStream getContentStream(String token, EcmContent en) throws Exception {
 		// TODO Auto-generated method stub
 		InputStream fis = null;
+		logger.debug(JSON.toJSONString(en));
+		logger.debug(JSON.toJSONString(CacheManagerOper.getEcmStores()));
 		String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 		File f = new File(fullPath+en.getFilePath());
 		en.setContentSize(f.length());
@@ -210,6 +213,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			sql = " PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(objId)+"' and CONTENT_TYPE="+contentType
 					+" and FORMAT_NAME='"+DBFactory.getDBConn().getDBUtils().getString(formatName)+"'";
 		}
+		logger.info(sql);
 		List<EcmContent> list = contentMapper.selectByCondition(sql);
 		if(list.size()>0) {
 			return list.get(0);
@@ -296,6 +300,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	@Override
 	public EcmContent getPrimaryContent(String token, String objId) {
 		// TODO Auto-generated method stub
+		logger.debug(objId);
 		List<EcmContent> list = contentMapper.getContents(objId, 1);
 		return list.size()>0?list.get(0):null;
 	}

@@ -28,7 +28,7 @@ public class AuthService implements IAuthService {
 		cuser.setAppName(appName);
 		// 系统登录认证
 		//Authentication auth = SecurityUtils.login(loginName, password, authenticationManager);
-		
+		cuser.setToken(clientInfo);
 		IEcmSession s =null;
 		try{ 
 			s=SessionManager.getInstance().getSession(clientInfo);
@@ -56,7 +56,7 @@ public class AuthService implements IAuthService {
 		cuser.setAppName(appName);
 		// 系统登录认证
 		//Authentication auth = SecurityUtils.login(loginName, password, authenticationManager);
-		
+		cuser.setToken(clientInfo);
 		IEcmSession s =null;
 		try{ 
 			s=SessionManager.getInstance().getSession(clientInfo);

@@ -24,10 +24,16 @@ public class LoginUser {
 	private String loginName;
 	//登录时间
 	private Date loginTime;
+	
+	//更新时间
+	private Date updateTime;
 	//个人文件柜ID
 	private String personalWSId;
 	
 	private int systemPermission;
+	// Token
+	private String token;
+	
 	/**
 	 * 用户部门
 	 */
@@ -190,5 +196,17 @@ public class LoginUser {
 	}
 	public void setMyProjects(List<String> myProjects) {
 		this.myProjects = myProjects;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 }

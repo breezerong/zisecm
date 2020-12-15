@@ -1,9 +1,41 @@
 <template>
   <div>
-    <!-- <div class="navbar">/系统管理/系统缓存</div> -->
-    <div>
+    <el-row>
       <el-button type="primary" icon="el-icon-refresh" @click="refreshCache()">刷新缓存</el-button>
-    </div>
+      <el-button type="primary" icon="el-icon-refresh" @click="getSession()">查看Session</el-button>
+    </el-row>
+    <el-row>
+        <el-table
+          :data="dataList"
+          border
+          :height="tableHeight"
+          v-loading="loading"
+          :row-style="rowStyle"
+          :cell-style="cellStyle"
+          style="width: 100%"
+        >
+          <el-table-column label="行号" type="index" width="60" />
+          <el-table-column label="用户名" prop="userName" width="220" sortable>
+          </el-table-column>
+          <el-table-column label="登录名" prop="loginName" width="220" sortable>
+          </el-table-column>
+          <el-table-column label="登录时间" prop="loginTime" width="200" :formatter="dateFormatter" sortable>
+          </el-table-column>
+          <el-table-column label="更新时间" prop="updateTime" width="200" :formatter="dateFormatter" sortable>
+          </el-table-column>
+          <el-table-column label="操作" width="90">
+            <template slot-scope="scope">
+              <el-button
+                :plain="true"
+                type="warning"
+                size="small"
+                icon="save"
+                @click="logoutUser(scope.row)"
+              >注销</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
   </div>
 </template>
 
@@ -15,11 +47,21 @@ export default {
   data() {
     return {
       userPermit:"",
-      dialogVisible: false
+      dialogVisible: false,
+      dataList:[]
     };
   },
    created(){ 
-    
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<5){
+      //跳转至权限提醒页
+      _self.$nextTick(()=>{
+         _self.$router.push({ path: '/NoPermission' })
+      })     
+    }
 
     },
   methods: {
@@ -37,38 +79,27 @@ export default {
         _self.loading = false;
       });
     },
-    startTest() {
+    dateFormatter(row, column) {
+      let datetime = row[column.property];
+      return this.datetimeFormat(datetime);
+    },
+    getSession(){
       let _self = this;
       _self.loading = true;
-      _self.axios({
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8"
-        },
-        method: 'get',
-        url: '/auditTest'
-      })
+      axios.get('/admin/getAllSession')
       .then(function(response) {
-        _self.$message(response.data);
+        _self.dataList = response.data.data;
         _self.loading = false;
       })
       .catch(function(error) {
-        _self.$message("失败!");
+        _self.$message(error);
         console.log(error);
         _self.loading = false;
       });
     },
-    save(indata) {
+    logoutUser(indata) {
       
     },
-    del(indata) {
-     
-    },
-    additem(indata) {
-      
-    },
-    search() {
-      
-    }
   }
 };
 </script>
