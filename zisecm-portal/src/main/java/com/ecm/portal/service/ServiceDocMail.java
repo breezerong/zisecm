@@ -109,7 +109,7 @@ public class ServiceDocMail {
 	
 	/**
 	 * Matthew change on 2020年12月15日09:34:00
-	  *  单个人员邮件发送
+	  *  多个人员邮件发送
 	 * @param sendUser
 	 * @param task
 	 * @return
