@@ -667,7 +667,11 @@ public class WorkflowController extends ControllerAbstract {
 			if(args.get("taskId")!=null&&!"".equals(args.get("taskId").toString())) {
 				String taskId=args.get("taskId").toString();
 				Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-				
+				if(task==null) {
+					mp.put("data", ecmCfgActivityObj);
+					mp.put("success", true);
+					return mp;
+				}
 				ExecutionEntity ee = (ExecutionEntity) runtimeService.createExecutionQuery()
 			            .executionId(task.getExecutionId()).singleResult();
 				BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
