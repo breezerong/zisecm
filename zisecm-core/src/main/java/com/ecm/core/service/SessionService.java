@@ -60,11 +60,12 @@ public class SessionService extends EcmObjectService<LoginUser> implements ISess
 			IEcmSession s = SessionManager.getInstance().getLoginSession().get(id);
 			if(s != null) {
 				SessionManager.getInstance().getLoginSession().invalidate(id);
+				return true;
 			}
 		} catch (ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 }

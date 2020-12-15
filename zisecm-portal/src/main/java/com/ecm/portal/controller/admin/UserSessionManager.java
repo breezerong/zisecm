@@ -3,6 +3,9 @@ package com.ecm.portal.controller.admin;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +37,7 @@ import com.ecm.core.service.SessionService;
 import com.ecm.portal.controller.ControllerAbstract;
 
 @Controller
-public class SessionManager extends ControllerAbstract{
+public class UserSessionManager extends ControllerAbstract{
 	
 	@Autowired
 	SessionService sessionService;
@@ -57,11 +60,12 @@ public class SessionManager extends ControllerAbstract{
 	 
 	 @ResponseBody
 	 @RequestMapping(value = "/admin/removeSession", method = RequestMethod.POST)
-	 public Map<String, Object> removeSession(@RequestBody String id) {
+	 public Map<String, Object> removeSession(HttpServletRequest request, HttpServletResponse response, @RequestBody String id) {
 		 Map<String, Object>   mp = new HashMap<String, Object> ();
 		 try {
-			mp.put("data", sessionService.deleteObjectById(getToken(), id));
-			mp.put("code", ActionContext.SUCESS);
+			if(sessionService.deleteObjectById(getToken(), id)) {
+				mp.put("code", ActionContext.SUCESS);
+			}
 		} catch (NoPermissionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
