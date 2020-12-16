@@ -95,7 +95,7 @@ public class AuthenticationFilter implements Filter {
                 if ( session != null) {
                 	session.getCurrentUser().setUpdateTime(new Date());
                 	try {
-						SessionManager.getInstance().refresh(token);
+						//SessionManager.getInstance().refresh(token);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
