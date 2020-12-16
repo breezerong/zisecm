@@ -65,6 +65,8 @@ public class UserSessionManager extends ControllerAbstract{
 		 try {
 			if(sessionService.deleteObjectById(getToken(), id)) {
 				mp.put("code", ActionContext.SUCESS);
+			}else {
+				mp.put("code", ActionContext.FAILURE);
 			}
 		} catch (NoPermissionException e) {
 			// TODO Auto-generated catch block
