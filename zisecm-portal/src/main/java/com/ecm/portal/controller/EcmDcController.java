@@ -786,7 +786,7 @@ public class EcmDcController extends ControllerAbstract {
 			Object fid= args.get("folderId");
 			String folderId="";
 			if(fid==null) {
-				folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+				folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "4");
 			}else {
 				folderId=fid.toString();
 			}
