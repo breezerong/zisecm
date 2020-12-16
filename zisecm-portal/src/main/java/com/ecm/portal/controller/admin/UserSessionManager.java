@@ -49,7 +49,7 @@ public class UserSessionManager extends ControllerAbstract{
 		 try {
 			mp.put("data", sessionService.getAllObject(getToken()));
 			mp.put("code", ActionContext.SUCESS);
-		} catch (AccessDeniedException e) {
+		} catch (AccessDeniedException | NoPermissionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mp.put("code", ActionContext.FAILURE);

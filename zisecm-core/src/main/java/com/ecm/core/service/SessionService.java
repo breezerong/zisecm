@@ -34,7 +34,15 @@ public class SessionService extends EcmObjectService<LoginUser> implements ISess
 	}
 	
 	@Override
-	public List<LoginUser> getAllObject(String token) {
+	public List<LoginUser> getAllObject(String token) throws NoPermissionException {
+		try {
+			if(this.getSession(token).getCurrentUser().getSystemPermission()<SystemPermission.SUPER_USER) {
+				throw new NoPermissionException("You have not super user permission.");
+			}
+		} catch (AccessDeniedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		// TODO Auto-generated method stub
 		List<LoginUser> list = new ArrayList<LoginUser>();
 		for(IEcmSession s:SessionManager.getInstance().getLoginSession().asMap().values()) {
