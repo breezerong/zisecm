@@ -29,7 +29,6 @@
                 :plain="true"
                 type="warning"
                 size="small"
-                icon="save"
                 @click="logoutUser(scope.row)"
               >注销</el-button>
             </template>
@@ -88,8 +87,12 @@ export default {
       _self.loading = true;
       axios.get('/admin/getAllSession')
       .then(function(response) {
-        _self.dataList = response.data.data;
-        _self.loading = false;
+        if(response.data.code ==1){
+          _self.dataList = response.data.data;
+          _self.loading = false;
+        }else{
+          _self.$message("您没有超级用户权限!");
+        }
       })
       .catch(function(error) {
         _self.$message(error);
@@ -98,7 +101,21 @@ export default {
       });
     },
     logoutUser(indata) {
-      
+      let _self = this;
+      _self.loading = true;
+      axios.post('/admin/removeSession',indata.token)
+      .then(function(response) {
+        if(response.data.code == 1){
+          _self.getSession();
+        }else{
+           _self.$message("您没有超级用户权限!");
+        }
+        _self.loading = false;
+      })
+      .catch(function(error) {
+        console.log(error);
+        _self.loading = false;
+      });
     },
   }
 };
