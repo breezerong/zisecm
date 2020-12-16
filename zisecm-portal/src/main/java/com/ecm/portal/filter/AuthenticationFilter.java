@@ -3,7 +3,10 @@ package com.ecm.portal.filter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,10 +18,16 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.alibaba.fastjson.JSON;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.cache.manager.SessionManager;
 import com.ecm.core.entity.ResultInfo;
 import com.ecm.core.util.SysConfig;
@@ -34,6 +43,7 @@ import com.ecm.icore.service.IEcmSession;
 @Component
 public class AuthenticationFilter implements Filter {
 
+	private static final String MULTIPART_HEADER = "Content-type";
 		
 	@Override
 	public void destroy() {
@@ -135,15 +145,65 @@ public class AuthenticationFilter implements Filter {
             }
 
             if (isFilter) {
-            	chain.doFilter(request, response);
+            	//上传文件白名单校验
+            	if(validateFileUpload(req))
+            	{
+            		chain.doFilter(request, response);
+            	}else {
+            		response.getWriter().write("{\"code\":0,\"msg\":\""+getExtendWhiteList()+"\"}");
+            	}
             }
         }
  
     }
+	
+	private boolean validateFileUpload(HttpServletRequest request) {
+		Boolean multipart = request.getHeader(MULTIPART_HEADER) != null && request
+                .getHeader(MULTIPART_HEADER).startsWith("multipart/form-data");
+        // 如果是上传文件
+        if (multipart)
+        {
+        	String whiteList = getExtendWhiteList();
+        	if(whiteList==null)
+        	{
+        		return true;
+        	}
+            try
+            {
+            	Collection<Part> parts = request.getParts();
+            	for (Iterator<Part> iterator = parts.iterator(); iterator.hasNext();) {
+            		Part part = iterator.next();  
+					String name = part.getSubmittedFileName();
+					if(name != null && name.indexOf(".")>0) {
+						String ext = name.substring(name.indexOf(".")+1, name.length())+";";
+						if(whiteList.indexOf(ext)<0) {
+							return false;
+						}
+					}
+				}
+            }
+            catch(Exception ex) {
+            	ex.printStackTrace();
+            }
+        }
+        return true;
+	}
+	
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		// TODO Auto-generated method stub
 
+	}
+	//扩展名白名单，最后一定要加英文分号
+	private String getExtendWhiteList() {
+		if(CacheManagerOper.getEcmParameters().get("EnableExtendWhiteList")==null 
+				|| "false".equalsIgnoreCase(CacheManagerOper.getEcmParameters().get("EnableExtendWhiteList").getValue())) {
+			return null;
+		}
+		if(CacheManagerOper.getEcmParameters().get("ExtendWhiteList")!=null){
+			return CacheManagerOper.getEcmParameters().get("ExtendWhiteList").getValue();
+		}
+		return "doc;docx;xls;xlsx;ppt;pptx;zip;rar;pdf;jpg;jpeg;dwg;tiff;tif;bmp;gif;png;txt;wps;rtf";
 	}
     
 }
