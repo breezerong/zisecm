@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.ecm.core.AuditContext;
 import com.ecm.core.cache.manager.SessionManager;
+import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmSession;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
@@ -19,7 +20,7 @@ public class AuthService implements IAuthService {
 	
 	@Override
 	public IEcmSession login(String appName,String loginName, String password) throws Exception {
-		
+		loginName = DBFactory.getDBConn().getDBUtils().getString(loginName);
 		EcmUser ecmUser = new EcmUser();
 		ecmUser.setLoginName(loginName);
 		ecmUser.setPassword(password);
@@ -48,7 +49,7 @@ public class AuthService implements IAuthService {
 	
 	@Override
 	public IEcmSession loginSSO(String appName,String loginName) throws Exception {
-		
+		loginName = DBFactory.getDBConn().getDBUtils().getString(loginName);
 		EcmUser ecmUser = new EcmUser();
 		ecmUser.setLoginName(loginName);
 		String clientInfo = userService.newUUID();
