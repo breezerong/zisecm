@@ -106,10 +106,9 @@ public class ImportService extends EcmService {
 		uploadFolder += getSession(token).getCurrentUser().getLoginName()+File.separator+number+File.separator;
 		File f = new File(uploadFolder);
 		f.mkdirs();
-		
+		ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
 		if(ImportService.importExcelFolderId==null) {
 			ImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
-			ImportService.importDocFolderId = folderService.getObjectByPath(token, "/移交文档").getId();
 		}
 		
 		EcmDocument doc = new EcmDocument();
@@ -356,6 +355,252 @@ public class ImportService extends EcmService {
 		return sb.toString();
 	}
 	
+	
+	public String importSystemExcel(String token,String deliveryId, MultipartFile  excelSrcFile,MultipartFile[] files) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		int sucessCount =0;
+		int failedCount =0;
+		sb.append("开始导入:").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("TYPE_NAME", "导入批次");
+		String number = numberService.getNumber(token, map);
+		String uploadFolder = CacheManagerOper.getEcmParameters().get("UploadFolder").getValue();
+		if(!uploadFolder.endsWith(File.separator))
+		{
+			uploadFolder += File.separator;
+		}
+		uploadFolder += getSession(token).getCurrentUser().getLoginName()+File.separator+number+File.separator;
+		File f = new File(uploadFolder);
+		f.mkdirs();
+		ImportService.importDocFolderId = deliveryId;
+		if(ImportService.importExcelFolderId==null) {
+			ImportService.importExcelFolderId = folderService.getObjectByPath(token, "/表单/批量导入单").getId();
+		}
+		
+		EcmDocument doc = new EcmDocument();
+		doc.getAttributes().put("NAME", excelSrcFile.getOriginalFilename());
+		doc.getAttributes().put("CODING", number);
+		doc.setTypeName("导入批次");
+		doc.setFolderId(importExcelFolderId);
+		EcmContent content = new EcmContent();
+		content.setName(excelSrcFile.getOriginalFilename());
+		content.setContentSize(excelSrcFile.getSize());
+		content.setFormatName(FileUtils.getExtention(excelSrcFile.getOriginalFilename()).toLowerCase());
+		content.setInputStream(excelSrcFile.getInputStream());
+		doc.getAttributes().put("FORMAT_NAME", content.getFormatName());
+		doc.getAttributes().put("CONTENT_SIZE", content.getContentSize());
+		
+		documentService.newObject(token, doc, content);
+		
+		excelSrcFile.getInputStream().close();
+		
+		Map<String,Long> fileList = new HashMap<String,Long>();
+		//先存储文件到本地
+		for(MultipartFile file: files) {
+			String name = file.getOriginalFilename();
+			String itemPath = uploadFolder +name;
+			writeToLocal(itemPath,file.getInputStream());
+			file.getInputStream().close();
+			fileList.put(name,file.getSize());
+		}
+		
+		String excelFile = content.getFilePath();
+		String storePath = CacheManagerOper.getEcmStores().get(content.getStoreName()).getStorePath();
+		
+		
+		//List<Object[]> rows = excelUtil.read(storePath+excelFile, 0);
+		
+		FileInputStream fis = new FileInputStream(storePath+excelFile);
+
+		Workbook workbook = WorkbookFactory.create(fis);
+		if (fis != null) {
+			fis.close();
+		}
+		Sheet sheet = workbook.getSheetAt(0);
+		try {
+			
+			//第一行第一列为类型名称
+			String parentType = sheet.getRow(0).getCell(0).getStringCellValue();
+			//第一行第n列为子对象类型名称，没有不要填写值
+			String childType = null;
+			int childStartIndex =0;
+			for(int i=1;i<=sheet.getRow(0).getLastCellNum();i++) {
+				if(sheet.getRow(0).getCell(i)!=null && !StringUtils.isEmpty(sheet.getRow(0).getCell(i).getStringCellValue())) {
+					childType = sheet.getRow(0).getCell(i).getStringCellValue();
+					childStartIndex = i;
+					break;
+				}
+			}
+			//第二行第一列为父子相同字段值定义，{父字段名称1}:{子字段名称1};{父字段名称2}:{子字段名称2}
+			String sameFields = (sheet.getRow(1).getCell(0)!=null?sheet.getRow(1).getCell(0).getStringCellValue():"");
+			Map<String,Object> sameValues = new HashMap<String,Object>();
+			//第三行字段名称
+			Map<Integer,String> attrNames = new HashMap<Integer,String>();
+			for(int i=0;i<=sheet.getRow(2).getLastCellNum();i++) {
+				if(sheet.getRow(2).getCell(i)!=null && !StringUtils.isEmpty(sheet.getRow(2).getCell(i).getStringCellValue())) {
+					attrNames.put(i, sheet.getRow(2).getCell(i).getStringCellValue());
+				}
+			}
+			String newId = null;
+			boolean hasRendition = false;
+			try{
+				hasRendition = sheet.getRow(2).getCell(1).getStringCellValue().equalsIgnoreCase("reditionfile");
+			}catch(Exception ex) {
+				
+			}
+			
+			//第四行为中文标签，第五行位值
+			for (int i = 4; i <= sheet.getLastRowNum(); i++) {
+				try {
+					content = null;
+					if(childStartIndex>1) {
+						
+						//无格式副本2、3列至少一个不为空，有格式副本3、4不为空
+						if((!hasRendition&&(!isEmptyCell(sheet.getRow(i).getCell(1))
+								||!isEmptyCell(sheet.getRow(i).getCell(2)))
+								||
+								(hasRendition&&(!isEmptyCell(sheet.getRow(i).getCell(2))
+										||!isEmptyCell(sheet.getRow(i).getCell(3))))
+								)) {
+		
+								sameValues = new HashMap<String,Object>();
+								newId = null;
+								newId = newDocument( token, parentType,null, sheet.getRow(i),  fileList, attrNames,null,number, 1,childStartIndex-1,sameValues,sameFields);
+						}
+						String fileName = getCellValue(sheet.getRow(i).getCell(0));
+						if(fileName.indexOf(".")<0) {
+							fileName += ".pdf";
+						}
+						String itemPath = uploadFolder +fileName;
+					
+						FileInputStream itemStream = null;
+						if(!StringUtils.isEmpty(itemPath)) {
+							File itemFile= new File(itemPath);
+							
+							if(itemFile.exists()) {
+								itemStream = new FileInputStream(itemFile);
+							}
+						}
+						String tempId = null;
+						try {
+							tempId = newDocument( token, childType,itemStream, sheet.getRow(i),  fileList, attrNames,newId,number, childStartIndex,sheet.getRow(i).getLastCellNum(),sameValues,null);
+							
+							if(hasRendition) {
+								String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
+								if(!StringUtils.isEmpty(rendFileName)) {
+									if(FileUtils.getExtention(rendFileName).equalsIgnoreCase(FileUtils.getExtention(itemPath))) {
+										sb.append("第").append(i+1).append("行主格式和副本扩展名相同.").append("\r\n");
+									}else {
+										itemPath = uploadFolder +rendFileName;
+										File itemFile= new File(itemPath);
+										
+										if(itemFile.exists()) {
+											FileInputStream rs =null;
+											try {
+												rs = new FileInputStream(itemFile);
+												content = new EcmContent();
+												content.setName(rendFileName);
+												content.setContentSize(fileList.get(content.getName()));
+												content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
+												content.setInputStream(rs);
+												documentService.addRendition(token, tempId, content);
+											}
+											finally {
+												if(rs!=null) {
+													rs.close();
+													itemFile.delete();
+												}
+											}
+										}else {
+											sb.append("第").append(i+1).append("行格式副本不存在：").append(rendFileName).append("\r\n");;
+										}
+									}
+								}
+							}
+						}
+						finally {
+							//删除缓存文件
+							if(itemStream!=null) {
+								itemStream.close();
+								f = new File(itemPath);
+								f.delete();
+							}
+						}
+					}else {
+						String itemPath = uploadFolder +getCellValue(sheet.getRow(i).getCell(0));
+						FileInputStream itemStream = null;
+						if(!StringUtils.isEmpty(itemPath)) {
+							File itemFile= new File(itemPath);
+							
+							if(itemFile.exists()) {
+								itemStream = new FileInputStream(itemFile);
+							}
+						}
+						try {
+							newId = newDocument( token, parentType,itemStream, sheet.getRow(i),  fileList, attrNames,null, number, 1,sheet.getRow(i).getLastCellNum(),null,null);
+							if(hasRendition) {
+								String rendFileName = getCellValue(sheet.getRow(i).getCell(1));
+								if(!StringUtils.isEmpty(rendFileName)) {
+									if(FileUtils.getExtention(rendFileName).equalsIgnoreCase(FileUtils.getExtention(itemPath))) {
+										sb.append("第").append(i+1).append("行主格式和副本扩展名相同.").append("\r\n");
+									}else {
+										itemPath = uploadFolder +rendFileName;
+										File itemFile= new File(itemPath);
+										if(itemFile.exists()) {
+											FileInputStream rs =null;
+											try {
+												content = new EcmContent();
+												content.setName(rendFileName);
+												content.setContentSize(fileList.get(content.getName()));
+												content.setFormatName(FileUtils.getExtention(content.getName()).toLowerCase());
+												
+												rs = new FileInputStream(itemFile);
+												content.setInputStream(rs);
+												documentService.addRendition(token, newId, content);
+											}
+											finally {
+												if(rs!=null) {
+													rs.close();
+													itemFile.delete();
+												}
+											}
+										}else {
+											sb.append("第").append(i+1).append("行格式副本不存在：").append(rendFileName).append("\r\n");;
+										}
+									}
+								}
+							}
+							if(!StringUtils.isEmpty(newId)) {
+								newRelation(token, deliveryId, newId, i,null);
+							}
+						}
+						finally {
+							//删除缓存文件
+							if(itemStream!=null) {
+								itemStream.close();
+								f = new File(itemPath);
+								f.delete();
+							}
+						}
+					}
+					sucessCount ++;
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					sb.append("第").append(i+1).append("行导入错误：").append(ex.getMessage()).append("\r\n");;
+					failedCount ++;
+				}
+			}
+		}finally {
+			if(workbook != null) {
+				workbook.close();
+			}
+		}
+		sb.append("完成导入:").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
+		sb.append("成功行数:").append(sucessCount).append("\r\n");
+		sb.append("错误行数:").append(failedCount).append("\r\n");
+		return sb.toString();
+	}
+	
 	private String newDocument(String token, String typeName,FileInputStream itemStream,Row row, Map<String,Long> fileList,
 			Map<Integer,String> attrNames,String parentId, String batchName,int start,int end,Map<String,Object> sameValues, String sameFields) throws Exception {
 		
@@ -370,27 +615,6 @@ public class ImportService extends EcmService {
 				
 			}
 		}
-		boolean isReuse = false;
-		String desc = null;
-		try {
-			isReuse = row.getCell(getColumnIndex(attrNames, "DESIGN_REUSE",start,end)).getStringCellValue().equals("复用");
-		}catch(Exception ex) {
-			
-		}
-		//复用处理
-		if(isReuse)
-		{
-			String coding = row.getCell(getColumnIndex(attrNames, "CODING",start,end)).getStringCellValue();
-			String revision = row.getCell(getColumnIndex(attrNames, "REVISION",start,end)).getStringCellValue();
-			String cond = " TYPE_NAME='图纸文件' and CODING='"+coding+"' and REVISION='"+revision+"'";//and STATUS='利用'
-			List<Map<String, Object>> docList = documentService.getObjectsByConditon(token,"GeneralGrid",null,new Pager(), cond,null);
-			if(docList.size()>0) {
-				docId = docList.get(0).get("ID").toString();
-				desc = "复用";
-			}else {
-				throw new Exception("复用文件不存在，编码："+coding+",版本："+revision);
-			}
-		}else {
 			EcmDocument doc = new EcmDocument();
 			doc.setTypeName(typeName);
 			doc.setFolderId(ImportService.importDocFolderId);
@@ -415,23 +639,13 @@ public class ImportService extends EcmService {
 			}else {
 				setValues(doc.getAttributes(), attrNames,row,start,end,sameValues,sameFields);
 			}
-			if(typeName.equals("图册")) {
-				// 从第一行提取归档单位和归档人
-				String val = getCellValue(row.getCell(getColumnIndex(attrNames,"C_ARCHIVE_UNIT",end,end+30)));
-				setValue( doc.getAttributes(), "C_ARCHIVE_UNIT", val);
-				val = getCellValue(row.getCell(getColumnIndex(attrNames,"C_ARCHIVE_USER",end,end+30)));
-				setValue( doc.getAttributes(), "C_ARCHIVE_USER", val);
-				//编制日期
-				val = getCellValue(row.getCell(getColumnIndex(attrNames,"C_DOC_DATE",end,end+30)));
-				setValue( doc.getAttributes(), "C_DOC_DATE", val);
-			}
 			setDefaultValues(documentService.getSession(token),doc.getAttributes());
-			doc.getAttributes().put("C_BATCH_CODE", batchName);
+			doc.getAttributes().put("C_BATCH_CODING", batchName);
 			docId = documentService.newObject(token, doc, content);
-		}
+		
 		//子对象添加关系
 		if(parentId!=null && docId != null) {
-			newRelation(token, parentId, docId, index,desc);
+			newRelation(token, parentId, docId, index,null);
 		}
 		return docId;
 	}
