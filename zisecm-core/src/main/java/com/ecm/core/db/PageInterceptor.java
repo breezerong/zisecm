@@ -121,7 +121,8 @@ public class PageInterceptor implements Interceptor {
  
 	private String getMysqlPageSql(Pager page, StringBuffer sqlBuffer) {
 		// 计算第一条记录的位置，Mysql中记录的位置是从0开始的。
-		int offset = page.getPageIndex();
+//		int offset = page.getPageIndex();
+		int offset = page.getPageIndex() * page.getPageSize();
 		sqlBuffer.append(" limit ").append(offset).append(",").append(page.getPageSize());
 		return sqlBuffer.toString();
 	}
