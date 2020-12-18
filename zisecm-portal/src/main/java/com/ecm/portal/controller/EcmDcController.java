@@ -1461,7 +1461,7 @@ public class EcmDcController extends ControllerAbstract {
 					en.setName(fromEn.getName());
 					en.setContentSize(fromEn.getContentSize());
 					en.setFormatName(fromEn.getFormatName());
-					en.setInputStream(new FileInputStream(new File("D:"+contentService.getPrimaryFilePath(getToken(), contentId)))) ;
+					en.setInputStream(new FileInputStream(new File(contentService.getPrimaryFilePath(getToken(), contentId)))) ;
 					//en.setInputStream(fromEn.getInputStream());
 					fromEn.getInputStream();
 					en.setParentId(primaryId);
@@ -1481,7 +1481,7 @@ public class EcmDcController extends ControllerAbstract {
 					en.setName(fromEn.getName());
 					en.setContentSize(fromEn.getContentSize());
 					en.setFormatName(fromEn.getFormatName());
-					en.setInputStream(new FileInputStream(new File("D:"+contentService.getPrimaryFilePath(getToken(), contentId)))) ;
+					en.setInputStream(new FileInputStream(new File(contentService.getPrimaryFilePath(getToken(), contentId)))) ;
 					//en.setInputStream(fromEn.getInputStream());
 //					contentService.updateObject(getToken(), en);
 					doc.setFormatName(en.getFormatName());

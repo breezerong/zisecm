@@ -32,6 +32,7 @@ import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
 import com.ecm.core.dao.EcmUserMapper;
 import com.ecm.core.db.DBFactory;
+import com.ecm.core.db.DBGeneralUtils;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
@@ -41,6 +42,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.IUserService;
 
@@ -237,7 +239,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public List<EcmUser> getUsers(String token, Pager pager, boolean noGroup, String condition) {
 		String sql = "select * from ecm_user";
-
+		
 		if (!EcmStringUtils.isEmpty(condition)) {
 			sql += " where (" + condition + ")";
 		}
@@ -253,7 +255,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 	
 	public List<Map<String,Object>> getUserList(String token, Pager pager, boolean noGroup, String condition) {
-
+		
 		String sql="SELECT * FROM (" + 
 				"	select id,name,description,LOGIN_NAME as loginName,phone,CREATION_DATE,CREATOR,email,MODIFIER,"
 				+ "MODIFIED_DATE,IS_ACTIVED as isActived,GROUP_NAME as groupName,PASSWORD as password,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,"
