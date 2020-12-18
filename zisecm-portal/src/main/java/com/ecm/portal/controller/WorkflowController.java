@@ -229,7 +229,35 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		return result;
 	}
-	
+	/**
+	 * 启动流程
+	 *
+	 * @param argStr 参数
+	 */
+	@RequestMapping(value = "/startWorkflowByIds")
+	@ResponseBody
+	public Map<String, Object> startWorkflowByIds(@RequestBody String argStr) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			List<String> datas= JSONUtils.stringToArray(argStr);
+			for(int i=0;datas!=null&&i<datas.size();i++) {
+				String data=datas.get(i);
+				// 启动流程
+				Map<String, Object> args = JSONUtils.stringToMap(data);
+				
+				Object processId=args.get("processInstanceId");
+				if(processId!=null) {
+					result = customWorkflowService.startWorkflowById(getSession(), args);
+				}else {
+					result = customWorkflowService.startWorkflow(getSession(), args);
+				}
+			}
+			
+		} catch (AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	
 	/**
 	 * 删除流程
