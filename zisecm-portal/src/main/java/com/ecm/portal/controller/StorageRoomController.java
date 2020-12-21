@@ -396,7 +396,8 @@ public class StorageRoomController extends ControllerAbstract{
 		Pager pager = new Pager();
 		pager.setPageIndex(pageIndex);
 		pager.setPageSize(pageSize);
-		Object codingObj=args.get("columnCoding");
+//		Object codingObj=args.get("columnCoding");
+		Object codingObj=args.get("condition");
 		String columnCoding="";
 		if(codingObj!=null) {
 			columnCoding=codingObj.toString();
