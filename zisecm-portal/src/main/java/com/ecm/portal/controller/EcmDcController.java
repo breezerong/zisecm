@@ -281,7 +281,7 @@ public class EcmDcController extends ControllerAbstract {
 			pager.setPageIndex(pageIndex);
 			pager.setPageSize(pageSize);
 			String newCondition = args.get("condition").toString();
-			if (EcmStringUtils.isEmpty(newCondition)) {
+			if (!EcmStringUtils.isEmpty(newCondition)) {
 				condition.append(" and (NAME like '%" + newCondition + "%' or CODING like '%" + newCondition
 						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '%"
 						+ ecmFolder.getFolderPath() + "%')");
