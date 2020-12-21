@@ -231,10 +231,10 @@ public class EcmDcController extends ControllerAbstract {
 			EcmFolder ecmFolder = folderService.getObjectById(getToken(), folderId);
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
 			StringBuffer condition = new StringBuffer(
-					"(" + gv.getCondition() + "or TYPE_NAME = '卷盒' )  and STATUS='利用'");
+					"(" + gv.getCondition() + " and  STATUS<>'作废' AND IS_CURRENT=1 AND IS_RELEASED=1)");
 			String newCondition = args.get("condition").toString();
 			if (!EcmStringUtils.isEmpty(newCondition)) {
-				condition.append(" and (NAME like '%" + newCondition + "%' or CODING like '%" + newCondition
+				condition.append(" and (TITLE like '%" + newCondition + "%' or CODING like '%" + newCondition
 						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"
 						+ ecmFolder.getFolderPath() + "%')");
 			}
@@ -244,6 +244,7 @@ public class EcmDcController extends ControllerAbstract {
 			pager.setPageIndex(pageIndex);
 			pager.setPageSize(pageSize);
 			if (!EcmStringUtils.isEmpty(newCondition)) {
+				
 				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
 						args.get("gridName").toString(), null, pager, condition.toString(),
 						args.get("orderBy").toString());
@@ -251,6 +252,7 @@ public class EcmDcController extends ControllerAbstract {
 				mp.put("pager", pager);
 				mp.put("code", ActionContext.SUCESS);
 			} else {
+				condition.append(" AND FOLDER_ID='").append(folderId.replace("'", "")).append("'");
 				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
 						args.get("gridName").toString(), folderId, pager, condition.toString(),
 						args.get("orderBy").toString());
@@ -274,19 +276,20 @@ public class EcmDcController extends ControllerAbstract {
 			EcmFolder ecmFolder = folderService.getObjectById(getToken(), folderId);
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
 			StringBuffer condition = new StringBuffer(
-					"(" + gv.getCondition() + " and IS_CHILD=0 AND STATUS<>'作废' ) ");
+					"(" + gv.getCondition() + " and  STATUS<>'作废' AND IS_CURRENT=1 AND IS_RELEASED=1  AND C_ITEM_TYPE <>'案卷') ");
 			int pageSize = Integer.parseInt(args.get("pageSize").toString());
 			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
 			Pager pager = new Pager();
-			pager.setPageIndex(pageIndex);
+			pager.setPageIndex(pageIndex); 
 			pager.setPageSize(pageSize);
 			String newCondition = args.get("condition").toString();
-			if (EcmStringUtils.isEmpty(newCondition)) {
-				condition.append(" and (NAME like '%" + newCondition + "%' or CODING like '%" + newCondition
-						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '%"
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" and (TITLE like '%" + newCondition + "%' or CODING like '%" + newCondition
+						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"
 						+ ecmFolder.getFolderPath() + "%')");
 			}
 			if (EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" AND FOLDER_ID='").append(folderId.replace("'", "")).append("'");
 				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
 						args.get("gridName").toString(), null, pager, condition.toString(),
 						args.get("orderBy").toString());
@@ -294,6 +297,7 @@ public class EcmDcController extends ControllerAbstract {
 				mp.put("pager", pager);
 				mp.put("code", ActionContext.SUCESS);
 			} else {
+				
 				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
 						args.get("gridName").toString(), folderId, pager, condition.toString(),
 						args.get("orderBy").toString());
@@ -1638,7 +1642,7 @@ public class EcmDcController extends ControllerAbstract {
 				}
 			}
 			if (!"".equals(sb.toString())) {
-				String gridName = "shopingCartGrid";
+				String gridName = "favoriteGrid";
 				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
 				String sql = "select a.ID as ID ,a.FORMAT_NAME as FORMAT_NAME" + getGridColumn(gv, gridName)
 						+ "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("

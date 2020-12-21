@@ -467,18 +467,21 @@ public class ImportService extends EcmService {
 								newId = null;
 								newId = newDocument( token, parentType,null, sheet.getRow(i),  fileList, attrNames,null,number, 1,childStartIndex-1,sameValues,sameFields);
 						}
-						String fileName = getCellValue(sheet.getRow(i).getCell(0));
-						if(fileName.indexOf(".")<0) {
-							fileName += ".pdf";
-						}
-						String itemPath = uploadFolder +fileName;
-					
+						String itemPath = null;
 						FileInputStream itemStream = null;
-						if(!StringUtils.isEmpty(itemPath)) {
-							File itemFile= new File(itemPath);
-							
-							if(itemFile.exists()) {
-								itemStream = new FileInputStream(itemFile);
+						
+						String fileName = getCellValue(sheet.getRow(i).getCell(0));
+						if(fileName!=null) {
+							if(fileName.indexOf(".")<0) {
+								fileName += ".pdf";
+							}
+							itemPath = uploadFolder +fileName;
+							if(!StringUtils.isEmpty(itemPath)) {
+								File itemFile= new File(itemPath);
+								
+								if(itemFile.exists()) {
+									itemStream = new FileInputStream(itemFile);
+								}
 							}
 						}
 						String tempId = null;
