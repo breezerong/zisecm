@@ -56,10 +56,10 @@ public class MailService {
 	        //true表示需要创建一个multipart message
 	        MimeMessageHelper helper = new MimeMessageHelper(message, true,"utf-8");
 	        helper.setFrom(from);
-	       // helper.setTo(to);
-	        String[] mails = new String[to.size()];
-	        to.toArray(mails);
-	        helper.setTo(mails);
+	        helper.setTo(to.toArray(new String[to.size()]));
+//	        String[] mails = new String[to.size()];
+//	        to.toArray(mails);
+//	        helper.setTo(mails);
 	        helper.setSubject(subject);
 	        helper.setText(content, true);
 			
