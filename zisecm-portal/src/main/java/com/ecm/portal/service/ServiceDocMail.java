@@ -100,7 +100,7 @@ public class ServiceDocMail {
 			    logger.debug("发送完成");
 			} catch (Exception e) {
 				e.printStackTrace();
-				 throw new Exception("发送邮件测试发生异常！");
+				 //throw new Exception("发送邮件测试发生异常！");
 			}
 	
 		return false;

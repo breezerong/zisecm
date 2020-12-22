@@ -573,9 +573,9 @@ public class ImportService extends EcmService {
 									}
 								}
 							}
-							if(!StringUtils.isEmpty(newId)) {
-								newRelation(token, deliveryId, newId, i,null);
-							}
+//							if(!StringUtils.isEmpty(newId)) {
+//								newRelation(token, deliveryId, newId, i,null);
+//							}
 						}
 						finally {
 							//删除缓存文件
