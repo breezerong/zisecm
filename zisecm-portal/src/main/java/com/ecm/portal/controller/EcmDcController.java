@@ -84,6 +84,8 @@ import com.ecm.core.service.NumberService;
 import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
+import com.ecm.portal.entity.AttrCopyCfgEntity;
+import com.ecm.portal.service.CustomCacheService;
 import com.ecm.portal.service.ZipDownloadService;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
@@ -144,6 +146,10 @@ public class EcmDcController extends ControllerAbstract {
 	private EcmRelationMapper ecmRelationMapper;
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private CustomCacheService customCacheService;
+	
 	private Logger logger=LoggerFactory.getLogger(this.getClass());
 
 	@RequestMapping(value = "/dc/getDocumentCount", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
@@ -3027,6 +3033,32 @@ public class EcmDcController extends ControllerAbstract {
 		String guid = documentService.newUUID();
 		mp.put("code", ActionContext.SUCESS);
 		mp.put("data", guid);
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/getAttrCopyInfo", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getAttrCopyInfo(@RequestBody String id) throws Exception {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> valmp = new HashMap<String, Object>();
+		if(!StringUtils.isEmpty(id)) {
+			EcmDocument doc = documentService.getObjectById(getToken(), id);
+			if(doc != null) {
+				AttrCopyCfgEntity en = customCacheService.getAttrCopyCfg(getToken(), doc.getTypeName());
+				if( en == null) {
+					mp.put("code", ActionContext.FAILURE);
+				}else {
+					mp.put("code", ActionContext.SUCESS);
+					mp.put("typeName", en.getToType());
+					for(String attr: en.getAttrNames().keySet()) {
+						valmp.put(attr, doc.getAttributeValue(en.getAttrNames().get(attr)));
+					}
+					mp.put("data", valmp);
+				}
+			}
+		}else {
+			mp.put("code", ActionContext.FAILURE);
+		}
 		return mp;
 	}
 

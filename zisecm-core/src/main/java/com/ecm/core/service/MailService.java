@@ -32,7 +32,7 @@ public class MailService {
     private String from;
 
 
-	public void sendHtmlMail(String to, String subject, String content) {
+	public void sendHtmlMail(String to, String subject, String content) throws Exception {
 		MimeMessage message = mailSender.createMimeMessage();
 	    try {
 	        //true表示需要创建一个multipart message
@@ -41,11 +41,11 @@ public class MailService {
 	        helper.setTo(to);
 	        helper.setSubject(subject);
 	        helper.setText(content, true);
-			
 	        mailSender.send(message);
 	        logger.info("一份html邮件已成功");
 	    } catch (MessagingException e) {
 	        logger.error("发送html邮件时发生异常！", e);
+	        throw new Exception("发送邮件测试发生异常！");
 	    }
 
 	}
