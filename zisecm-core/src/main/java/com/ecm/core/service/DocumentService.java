@@ -672,18 +672,19 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				{
 					valueStr += "'" + id + "',";
 				}else {
-					String val=DBFactory.getDBConn().getDBUtils().getString((String) args.get(key));
-					
-					if(val.equalsIgnoreCase("@sequence")) {
-						try {
-							val=numberservice.getNumber(token, args);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							throw new EcmException(e.getMessage());
+					Object datavalue = args.get(key);
+					if(datavalue!=null) {
+						String val=DBFactory.getDBConn().getDBUtils().getString(datavalue.toString());
+						if(val.equalsIgnoreCase("@sequence")) {
+							try {
+								val=numberservice.getNumber(token, args);
+							} catch (Exception e) {
+								e.printStackTrace();
+								throw new EcmException(e.getMessage());
+							}
 						}
+						valueStr += "'" +val  + "',";
 					}
-					valueStr += "'" +val  + "',";
 				}
 				
 				break;
