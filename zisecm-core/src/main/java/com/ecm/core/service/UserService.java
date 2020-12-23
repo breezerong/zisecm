@@ -372,8 +372,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmUser user = (EcmUser) en;
 		if (user.getPassword().length() < 30) {
-			user.setPassword(SecureUtils.shaEncode(user.getPassword()));
-		}
+			user.setPassword(SecureUtils.md5Encode(user.getPassword()));
+		}					 
 		IEcmSession session = getSession(token);
 		if (!session.getCurrentUser().getUserName().equals(user.getName())) {
 			super.hasPermission(token, serviceCode + ObjectPermission.WRITE_ATTRIBUTE, systemPermission);
