@@ -290,12 +290,16 @@ public class GridViewManager extends ControllerAbstract{
 				List<String> itemsList= JSONUtils.stringToArray(itemsStr);
 				for(int i=0;i<itemsList.size();i++) {
 					String item=itemsList.get(i);
-					EcmGridViewItem viewItem= JSONUtils.objectFromJsonStr(item, EcmGridViewItem.class);
-					viewItem.setParentId(newId);
-					viewItem.setOrderIndex(i+1);
-//					viewItem.setVisibleType("1");
-//					viewItem.setWidth("80");
-					itemService.newObject(getToken(), viewItem);
+					try {
+						EcmGridViewItem viewItem= JSONUtils.objectFromJsonStr(item, EcmGridViewItem.class);
+						viewItem.setParentId(newId);
+						viewItem.setOrderIndex(i+1);
+	//					viewItem.setVisibleType("1");
+	//					viewItem.setWidth("80");
+						itemService.newObject(getToken(), viewItem);
+					}catch(Exception ex) {
+						ex.printStackTrace();
+					}
 				}
 			}
 			mp.put("code", ActionContext.SUCESS);
@@ -322,7 +326,7 @@ public class GridViewManager extends ControllerAbstract{
 			String creator=this.getSession().getCurrentUser().getUserName();
 			String condition=" CREATOR='"+creator+"' and GRID_TYPE=1 ";
 			if(gridName!=null) {
-				condition+="and GRID_TAG='"+gridName+"'";
+				condition+="and (GRID_TAG='"+gridName+"' or GRID_TAG in(select GRID_TAG from ecm_gridview where NAME ='"+gridName+"')) ";
 			}
 			List<EcmGridView> data= ecmGridView.getObjectsByCondition(getToken(), condition);
 			mp.put("data", data);
