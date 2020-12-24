@@ -206,7 +206,10 @@ public class FolderPathService extends EcmService {
 				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				folderPath +=  sdf.format(dt);
 			}
-			
+			else if(str.startsWith("ProjCode()")) {
+				// 分包和外委项目号特殊处理
+				folderPath +=  values.get("C_PROJECT_NUM").toString().replace("FB", "").replace("WW", "");
+			}
 			else {
 				folderPath +=  str;
 			}

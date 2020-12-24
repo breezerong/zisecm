@@ -26,6 +26,7 @@ import org.elasticsearch.rest.RestStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
@@ -56,19 +57,47 @@ public class IndexService {
 	@Autowired
 	private ContentService contentService;
 	
+	@Value("${ecm.reindex.sql}")
+	private String sqlBase;
+	
+	@Value("${ecm.reindex.flag}")
+	private String reindexFlag;
+	
+	@Value("${ecm.reindex.bufferSize}")
+	private int bufferSize;
+	
 	public void reindexAll(String token, RestHighLevelClient client) {
 		if(client == null)
 			return;
 		try {
-			if(!ESClient.getInstance().indexExist(client, ESClient.getInstance().getPackageName())) {
-				return ;
+			int tryTime = 0;
+			int maxTime = 180;
+			while(!ESClient.getInstance().indexExist(client, ESClient.getInstance().getPackageName())) {
+				if(tryTime<maxTime) {
+					tryTime ++ ;
+					Thread.sleep(1000);
+				}else {
+					logger.error("重做索引缓存刷新超时。");
+					return;
+				}
 			}
-			String sql = "select ID from ecm_document where is_hidden=0";
+			String lastDate = reindexFlag;
+			String sql = sqlBase.replace("{0}", lastDate);
 			List<Map<String, Object>> list;
 			list = documentService.getMapList(token, sql);
-			for(Map<String,Object> item : list) {
-				String id = item.get("ID").toString();
-				indexDocument( token, client, id);
+			while(list.size()>0) {
+				for(Map<String,Object> item : list) {
+					String id = item.get("ID").toString();
+					lastDate = item.get("CREATION_DATE").toString();
+					
+					indexDocument( token, client, id);
+				}
+				// 最后一笔
+				if(list.size()<bufferSize) {
+					break;
+				}
+				sql = sqlBase.replace("{0}", lastDate);
+				list = documentService.getMapList(token, sql);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

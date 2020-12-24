@@ -30,11 +30,7 @@ public class IndexAgentService{
 	
 	@Value("${ecm.index.runtype}")
 	private String  runType;
-	
-	@Value("${ecm.reindex.flag}")
-	private String reindexFlag;
-	
-	
+
 	
 	@Autowired
 	private AuthService authService;

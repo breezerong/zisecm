@@ -3,6 +3,7 @@ package com.ecm.core.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,9 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 	public String newObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub
 		EcmRelation en =(EcmRelation)obj;
-		en.createId();
+		if(StringUtils.isEmpty(en.getId())) {
+			en.createId();
+		}
 		if(en.getOrderIndex()==0) {
 			List<Map<String, Object>> c= ecmRelationMapper.executeSQL("select count(*) as cnum from ecm_relation where parent_id='"
 			+((com.ecm.core.entity.EcmRelation)obj).getParentId()+"' and name='"

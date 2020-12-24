@@ -89,6 +89,50 @@ public class NumberService extends EcmService {
 		return num;
 	}
 	
+	@Transactional
+	public String getStoreNumber(String token, Map<String, Object> values ) throws NoTakeNumberRuleException,Exception {
+		// TODO Auto-generated method stub
+		String num=null;
+		
+		String typeName = values.get("TYPE_NAME").toString();
+		/*
+		取号规则
+		字段	说明
+		NAME	名称
+		TITLE  前缀
+		ITEM_CONTENT	条件
+		C_COUNT1	起始号
+		C_COMMENT	类型，大括号内
+		 */
+		String sql="select ID,TITLE,ITEM_CONTENT,C_COUNT1 from ecm_document where C_COMMENT like'%{"
+		 + typeName +"}%' and TYPE_NAME='库号规则' order by C_ORDER_INDEX ASC";
+		
+		List<Map<String, Object>> policyList = ecmQuery.executeSQL(sql);
+		if(policyList==null||policyList.size()==0) {
+			throw new NoTakeNumberRuleException("没有库号规则，请检查！");
+		}
+		for(Map<String, Object> policy: policyList) {
+			String numPolicy = (String)policy.get("TITLE");
+			String cond = (String)policy.get("ITEM_CONTENT");
+			int startIndex = 1;
+			try {
+				startIndex = Integer.parseInt((String)policy.get("C_COUNT1"));
+			}catch(Exception ex) {
+				
+			}
+			if(!StringUtils.isEmpty(cond)) {
+				if(conditionExcute(values,cond)) {
+					num = createStoreNumber(token, values, numPolicy,startIndex);
+					break;
+				}
+			}else if(policyList.size()==1){
+				num = createStoreNumber(token, values, numPolicy,startIndex);
+				break;
+			}
+		}
+		return num;
+	}
+	
 	private String createNumber(String token,Map<String, Object> values, String policy,int startIndex) throws Exception {
 		String typeName = values.get("TYPE_NAME").toString();
 		String[] strs = policy.split(";");
@@ -197,6 +241,55 @@ public class NumberService extends EcmService {
 		String num = String.format("%0"+numberLen+"d",currentIndex);
 		return prefix.replace(numberStr, num);
 	}
+	
+	private String createStoreNumber(String token,Map<String, Object> values, String policy,int startIndex) throws Exception {
+		String[] strs = policy.split(";");
+		String prefix="";
+		int currentIndex = startIndex;
+		for(String str:strs) {
+			if(str.startsWith("{")) {
+				String attrName = str.replace("{", "").replace("}", "");
+				if(values.get(attrName)==null) {
+					throw new Exception(attrName+"为空！");
+				}
+				prefix +=  (String)values.get(attrName);
+			}
+			else {
+				prefix +=  str;
+			}
+		}
+		/*
+		 * NAME	前缀
+			C_COUNT1	当前流水号
+			SUB_TYPE	取号对象类型值
+		 */
+		String sql = "select ID,C_COUNT1 from ecm_document where TYPE_NAME='取号流水号' and NAME='"+prefix+"' and SUB_TYPE='库号'";
+		List<Map<String, Object>> numList = ecmQuery.executeSQL(sql);
+		if(numList.size()>0) {
+			currentIndex =  Integer.parseInt(numList.get(0).get("C_COUNT1").toString());
+			currentIndex ++;
+			do {
+				String validateSql="select ID from ecm_document  where ID='"+numList.get(0).get("ID").toString()+"' and C_COUNT1="+currentIndex;
+				List<Map<String, Object>> result= ecmQuery.executeSQL(validateSql);
+				if(result==null||result.size()==0) {
+					break;
+				}else {
+					currentIndex++;
+				}
+			}while(true);
+			
+			sql = "update ecm_document set C_COUNT1="+currentIndex+" where ID='"+numList.get(0).get("ID").toString()+"'";
+			 ecmQuery.executeSQL(sql);
+		}else {
+			EcmFolder fld = folderService.getObjectByPath(token, "/系统配置/取号流水号");	
+			String insertSql="insert into ecm_document (ID,TYPE_NAME,NAME,SUB_TYPE,C_COUNT1,FOLDER_ID) "
+					+ "values('"+UUID.randomUUID().toString().replace("-", "")+"','取号流水号','"+prefix+"','库号',"
+							+currentIndex+",'"+fld.getId()+"')";
+			ecmDocument.executeSQL(insertSql);
+		}
+		return currentIndex+"";
+	}
+	
 	/**
 	 * 根据查询条件获取代码
 	 * @param val
