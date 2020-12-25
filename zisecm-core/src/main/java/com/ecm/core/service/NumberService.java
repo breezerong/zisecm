@@ -44,7 +44,14 @@ public class NumberService extends EcmService {
 	private FolderService folderService;
 	
 	private static final Pattern attrFormat = Pattern.compile("\\{[^\\}]*\\}");
-	
+	/**
+	 * 取编码，档号等
+	 * @param token
+	 * @param values
+	 * @return
+	 * @throws NoTakeNumberRuleException
+	 * @throws Exception
+	 */
 	@Transactional
 	public String getNumber(String token, Map<String, Object> values ) throws NoTakeNumberRuleException,Exception {
 		// TODO Auto-generated method stub
@@ -88,7 +95,14 @@ public class NumberService extends EcmService {
 		}
 		return num;
 	}
-	
+	/**
+	 * 取库位号
+	 * @param token
+	 * @param values
+	 * @return
+	 * @throws NoTakeNumberRuleException
+	 * @throws Exception
+	 */
 	@Transactional
 	public String getStoreNumber(String token, Map<String, Object> values ) throws NoTakeNumberRuleException,Exception {
 		// TODO Auto-generated method stub
@@ -168,6 +182,10 @@ public class NumberService extends EcmService {
 				}
 				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				prefix +=  sdf.format(dt);
+			}
+			else if(str.startsWith("ProjCode()")) {
+				// 分包和外委项目号特殊处理
+				prefix +=  values.get("C_PROJECT_NUM").toString().replace("FB", "").replace("WW", "");
 			}
 			else if(str.startsWith("$N")) {
 				numberStr = str;
