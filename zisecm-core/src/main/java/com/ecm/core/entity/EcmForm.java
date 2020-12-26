@@ -1,6 +1,7 @@
 package com.ecm.core.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -194,6 +195,8 @@ public class EcmForm extends EcmSysObject {
 					itemc.setDefaultValue(session.getCurrentUser().getDepartment());
 				}else if("{company}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(session.getCurrentUser().getCompany());
+				}else if("{year}".equalsIgnoreCase(defaultValue)) {
+					itemc.setDefaultValue((new Date()).getYear()+"");
 				}
 				if(itemc.getControlType().equalsIgnoreCase("sqlselect")) {
 					if("{myprojects}".equalsIgnoreCase(itemc.getQueryName())) {
