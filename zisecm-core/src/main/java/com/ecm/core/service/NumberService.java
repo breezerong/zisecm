@@ -261,6 +261,9 @@ public class NumberService extends EcmService {
 	}
 	
 	private String createStoreNumber(String token,Map<String, Object> values, String policy,int startIndex) throws Exception {
+		if(policy==null) {
+			policy = "";
+		}
 		String[] strs = policy.split(";");
 		String prefix="";
 		int currentIndex = startIndex;

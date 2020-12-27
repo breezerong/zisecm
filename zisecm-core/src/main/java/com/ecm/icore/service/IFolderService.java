@@ -26,7 +26,7 @@ public interface IFolderService {
 
 	List<EcmFolder> getFoldersByParentPath(String token, String path);
 
-	List<EcmFolder> getFoldersByParentId(String token, String parentId);
+	List<EcmFolder> getFoldersByParentId(String token, String parentId) throws AccessDeniedException;
 
 	EcmFolder getObjectByPath(String token, String folderPath);
 
@@ -39,8 +39,9 @@ public interface IFolderService {
 	 * @param targetId 目标文件夹
 	 * @param includeSource 是否包含源文件夹，否：只复制源文件夹中的子文件夹
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
-	boolean copyFolders(String token, String sourceId, String targetId, boolean includeSource);
+	boolean copyFolders(String token, String sourceId, String targetId, boolean includeSource) throws AccessDeniedException;
 
 	String revokeUser(String token, String id, String targetName, boolean newAcl) throws Exception;
 

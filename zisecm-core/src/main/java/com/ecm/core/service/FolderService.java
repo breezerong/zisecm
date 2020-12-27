@@ -105,7 +105,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean updateObject(String token,Object folder) {
+	public boolean updateObject(String token,Object folder) throws AccessDeniedException {
 		EcmFolder newFolder = (EcmFolder)folder;
 		EcmFolder en = getObjectById( token,newFolder.getId());
 		boolean needUpdateChild = false;
@@ -126,8 +126,9 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	 * 递归更新子文件夹Path
 	 * @param token
 	 * @param parentId
+	 * @throws AccessDeniedException 
 	 */
-	private void updateChildFolderPath(String token,String parentId) {
+	private void updateChildFolderPath(String token,String parentId) throws AccessDeniedException {
 		 List<EcmFolder> list = getFoldersByParentId( token, parentId);
 		 for(EcmFolder folder: list) {
 			 folder.setFolderPath(getFullPath(token,folder,folder.getName()));
@@ -175,8 +176,19 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 //	}
 	
 	@Override
-	public List<EcmFolder> getFoldersByParentId(String token,String parentId){
-		return ecmFolderMapper.selectByParentId(parentId);
+	public List<EcmFolder> getFoldersByParentId(String token,String parentId) throws AccessDeniedException{
+		String userId = this.getSession(token).getCurrentUser().getUserId();
+		String userName = this.getSession(token).getCurrentUser().getUserName();
+		String condition = "PARENT_ID='"+parentId.replace("'", "")+"'";
+		if(this.getSession(token).getCurrentUser().getSystemPermission()<5) {
+			condition += " and exists" + 
+				"(select 1 from ecm_acl b,ecm_acl_item c where ACL_NAME =b.NAME and b.ID =c.PARENT_ID and " + 
+				"((c.TARGET_NAME='"+userName+"' or c.TARGET_NAME='everyone' ) " + 
+				"or (c.TARGET_TYPE=2 and " + 
+				"exists(select 1 from ecm_group d,ecm_group_user e where d.NAME=c.TARGET_NAME and d.ID =e.GROUP_ID and e.USER_ID='"+userId+"' )" + 
+				")) and c.PERMISSION>1)";
+		}
+		return ecmFolderMapper.selectByCondition(condition);
 	}
 	@Override
 	public List<EcmFolder> getFoldersByParentPath(String token,String path){
@@ -188,7 +200,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 		return list;
 	}
 	@Override
-	public boolean copyFolders(String token, String sourceId, String targetId,boolean includeSource) {
+	public boolean copyFolders(String token, String sourceId, String targetId,boolean includeSource) throws AccessDeniedException {
 		if(includeSource) {
 			EcmFolder folder = getObjectById( token,sourceId);
 			folder.createId();
@@ -201,7 +213,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 		return true;
 	}
 	
-	private void copyChildFolders(String token, String parentId, String targetId) {
+	private void copyChildFolders(String token, String parentId, String targetId) throws AccessDeniedException {
 		List<EcmFolder> list = this.getFoldersByParentId(token, parentId);
 		for(EcmFolder folder: list) {
 			String id = folder.getId();

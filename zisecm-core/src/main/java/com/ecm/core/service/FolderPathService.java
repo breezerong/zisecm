@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ecm.common.util.DateUtils;
 import com.ecm.core.dao.EcmQueryMapper;
 import com.ecm.core.entity.EcmFolder;
+import com.ecm.core.exception.AccessDeniedException;
 /**
  * 目录服务
  * @author Haihong Rong
@@ -275,7 +276,7 @@ public class FolderPathService extends EcmService {
 		return false;
 	}
 
-	public void buildFullPath(String token, String id) {
+	public void buildFullPath(String token, String id) throws AccessDeniedException {
 		EcmFolder fld = folderService.getObjectById(token, id);
 		fld.setFolderPath(folderService.getFullPath(token, fld, fld.getName()));
 		folderService.updateObject(token, fld);
