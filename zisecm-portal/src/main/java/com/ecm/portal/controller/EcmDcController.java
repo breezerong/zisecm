@@ -481,6 +481,7 @@ public class EcmDcController extends ControllerAbstract {
 
 				}
 			}
+			mp.put("typeName", typeName);
 			mp.put("changeCount", changeCount);
 			mp.put("data", data);
 			mp.put("permit", permit);
@@ -1045,6 +1046,7 @@ public class EcmDcController extends ControllerAbstract {
 				frm = CacheManagerOper.getEcmForms().get(formName + "_1");
 			}
 			list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
+			mp.put("typeName", en.getTypeName());
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
 			EcmForm frm = CacheManagerOper.getEcmForms().get(itemInfo + "_NEW");
@@ -1053,6 +1055,7 @@ public class EcmDcController extends ControllerAbstract {
 			}
 			try {
 				list = frm.getFormClassifications(documentService.getSession(getToken()), lang);
+				mp.put("typeName", itemInfo);
 				mp.put("code", ActionContext.SUCESS);
 			} catch (AccessDeniedException e) {
 				// TODO Auto-generated catch block
