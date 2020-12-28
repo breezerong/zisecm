@@ -271,6 +271,52 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
+	
+	@RequestMapping(value = "/dc/getContainStorageDocuments", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getContainStorageDocuments(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String folderId = (String) args.get("folderId");
+			String judgeCondition = args.get("judgement").toString();
+			EcmFolder ecmFolder = folderService.getObjectById(getToken(), folderId);
+			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
+			StringBuffer condition = new StringBuffer(
+					"(" + gv.getCondition() + " and  STATUS<>'作废' AND IS_CURRENT=1 AND IS_RELEASED=1)"+ judgeCondition +"");
+			String newCondition = args.get("condition").toString();
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" and (TITLE like '%" + newCondition + "%' or CODING like '%" + newCondition
+						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"
+						+ ecmFolder.getFolderPath() + "%')");
+			}
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
+						args.get("gridName").toString(), null, pager, condition.toString(),
+						args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			} else {
+				condition.append(" AND FOLDER_ID='").append(folderId.replace("'", "")).append("'");
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
+						args.get("gridName").toString(), folderId, pager, condition.toString(),
+						args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
 
 	@RequestMapping(value = "/dc/getExceptBoxDocuments", method = RequestMethod.POST)
 	@ResponseBody
