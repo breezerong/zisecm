@@ -17,6 +17,8 @@ public class EcmGroup extends EcmSysObject{
     
     private boolean extended = false;
     
+    private String extendId;
+    
     List<EcmGroup> children ;
 
     public List<EcmGroup> getChildren() {
@@ -57,5 +59,13 @@ public class EcmGroup extends EcmSysObject{
 
 	public void setExtended(boolean extended) {
 		this.extended = extended;
+	}
+
+	public String getExtendId() {
+		return extendId;
+	}
+
+	public void setExtendId(String extendId) {
+		this.extendId = extendId;
 	}
 }

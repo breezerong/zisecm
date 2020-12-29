@@ -48,6 +48,8 @@ public class EcmUser extends EcmSysObject{
     private Date delegateEnd;
     
     private String CompanyName;
+    
+    private String jobTitle;
 
     public String getSignImage() {
 		return signImage;
@@ -211,5 +213,13 @@ public class EcmUser extends EcmSysObject{
 
 	public void setCompanyName(String companyName) {
 		CompanyName = companyName;
+	}
+
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
 	}
 }

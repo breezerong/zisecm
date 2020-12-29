@@ -12,9 +12,10 @@
     <result column="MODIFIED_DATE" jdbcType="TIMESTAMP" property="modifiedDate" />
     <result column="GROUP_TYPE" jdbcType="CHAR" property="groupType" />
     <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
+    <result column="EXTEND_ID" jdbcType="VARCHAR" property="extendId" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, NAME, DESCRIPTION, CODING, CREATION_DATE, CREATOR, MODIFIER, MODIFIED_DATE, GROUP_TYPE
+    ID, NAME, DESCRIPTION, CODING, CREATION_DATE, CREATOR, MODIFIER, MODIFIED_DATE, GROUP_TYPE, PARENT_ID, EXTEND_ID
   </sql>
   <select id="searchToMap" parameterType="java.lang.String" resultType="java.util.Map"> 
 	${sqlStr}
@@ -48,11 +49,11 @@
   <insert id="insert" parameterType="com.ecm.core.entity.EcmGroup">
     insert into ecm_group (ID, NAME, DESCRIPTION, 
       CODING, CREATION_DATE, CREATOR, 
-      MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID
+      MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID,EXTEND_ID
       )
     values (#{id,jdbcType=VARCHAR},  #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{coding,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
-      #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{groupType,jdbcType=CHAR}, #{parentId,jdbcType=VARCHAR}
+      #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{groupType,jdbcType=CHAR}, #{parentId,jdbcType=VARCHAR}, #{extendId,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmGroup">
@@ -88,6 +89,9 @@
       <if test="parentId != null">
         PARENT_ID,
       </if>
+      <if test="extendId != null">
+        EXTEND_ID,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -120,6 +124,9 @@
       <if test="parentId != null">
         #{parentId,jdbcType=VARCHAR},
       </if>
+      <if test="extendId != null">
+        #{extendId,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.ecm.core.entity.EcmGroup">
@@ -150,7 +157,10 @@
         GROUP_TYPE = #{groupType,jdbcType=CHAR},
       </if>
        <if test="parentId != null">
-        MODIFIER = #{parentId,jdbcType=VARCHAR},
+        PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      </if>
+       <if test="extendId != null">
+        EXTEND_ID = #{extendId,jdbcType=VARCHAR},
       </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
@@ -165,7 +175,8 @@
       MODIFIER = #{modifier,jdbcType=VARCHAR},
       MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
       GROUP_TYPE = #{groupType,jdbcType=CHAR},
-      PARENT_ID = #{parentId,jdbcType=VARCHAR}
+      PARENT_ID = #{parentId,jdbcType=VARCHAR},
+      EXTEND_ID = #{extendId,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
