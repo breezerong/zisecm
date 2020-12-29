@@ -65,7 +65,7 @@ public class MailService {
 			
 	        mailSender.send(message);
 	        logger.info("一份html邮件已成功");
-	    } catch (MessagingException e) {
+	    } catch (Exception e) {
 	        logger.error("发送html邮件时发生异常！", e);
 	    }
 
