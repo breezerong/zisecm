@@ -196,7 +196,7 @@ public class EcmForm extends EcmSysObject {
 				}else if("{company}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(session.getCurrentUser().getCompany());
 				}else if("{year}".equalsIgnoreCase(defaultValue)) {
-					itemc.setDefaultValue((new Date()).getYear()+"");
+					itemc.setDefaultValue(DateUtils.currentDate("yyyy"));
 				}
 				if(itemc.getControlType().equalsIgnoreCase("sqlselect")) {
 					if("{myprojects}".equalsIgnoreCase(itemc.getQueryName())) {
