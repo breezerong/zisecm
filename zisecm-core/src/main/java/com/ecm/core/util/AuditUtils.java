@@ -7,6 +7,9 @@ import com.ecm.core.entity.EcmSystemEvent;
 
 public class AuditUtils {
 	public static boolean isEnabled(String eventName) {
+		if(eventName != null && !eventName.startsWith("ecm")) {
+			return true;
+		}
 		Map<String, EcmSystemEvent>  map =CacheManagerOper.getEcmSystemEvents();
 		if(map!=null) {
 			EcmSystemEvent event = map.get(eventName);
