@@ -200,7 +200,7 @@ public class IndexService {
 						indexMap.put(attrName.toLowerCase(), obj == null?"":obj.toString());
 					}
 				}
-				if(obj != null) {
+				if(obj != null&& attrName.indexOf("_ID")<0) {
 					allValue.append(obj.toString().replace("\r", " ").replace("\n", " ")).append(" ");
 				}
 			}
