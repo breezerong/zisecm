@@ -739,7 +739,7 @@ public class WorkflowController extends ControllerAbstract {
 		String processName = repositoryService.getProcessDefinition(processDefinitionId).getName();
 		try {
 			List<EcmCfgActivity> acitivityList = ecmCfgActivityMapper.selectByProcessName(processName);
-			acitivityList.removeIf(a -> a.getSelectActivityList().indexOf(activityName) < 0);
+			acitivityList.removeIf(a -> a.getSelectActivityList().indexOf(activityName) < 0);			
 			mp.put("data", acitivityList);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception ex) {
@@ -748,7 +748,62 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		return mp;
 	}
-	
+	/**
+	 * 带必填的数据
+	 * @param argStr
+	 * @return
+	 */
+	@RequestMapping(value = "getApprovalUserListVisible", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getApprovalUserListVisible(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String processName="";
+		if(args.get("processDefinitionId")==null) {
+			processName=args.get("processName").toString();
+		}else {
+			String processDefinitionId = args.get("processDefinitionId").toString();
+			processName= repositoryService.getProcessDefinition(processDefinitionId).getName();
+		}
+		
+		String activityName = args.get("activityName").toString();
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> objectMap = null;
+		try {
+			String whereSql="PROCESS_NAME='"+processName+"' and ACTIVITY_NAME!='start'";
+			List<EcmCfgActivity> acitivityList = ecmCfgActivityMapper.selectByCondition(whereSql);
+//			List<EcmCfgActivity> acitivityList = ecmCfgActivityMapper.selectByProcessName(processName);
+//			acitivityList.removeIf(a -> a.getSelectActivityList().indexOf(activityName) < 0);	
+			acitivityList.removeIf(a -> a.getSelectActivities().indexOf(activityName) < 0);
+//			acitivityList.removeIf(a -> a.getSelectActivityList().stream().anyMatch(s->!s.contains(activityName)));
+			
+			List<EcmCfgActivity> result=new ArrayList<EcmCfgActivity>();
+			for(int x=0;x<acitivityList.size();x++) {
+				EcmCfgActivity a=acitivityList.get(x);
+				List<String> activitysList= a.getSelectActivityList();
+				for(int n=0;n<activitysList.size();n++) {
+					String activityStr=activitysList.get(n);
+					if(activityStr.contains(activityName)) {
+						String[] v= activityStr.split(":");
+						if(v.length<2) {
+							a.setActivityName(a.getActivityName()+":false");
+						}else {
+							a.setActivityName(a.getActivityName()+":"+v[1]);
+						}
+						result.add(a);
+					}
+				}
+				
+				
+			}
+			
+			mp.put("data", result);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
 	@RequestMapping(value = "getApprovalAllUserList", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getApprovalAllUserList(@RequestBody String argStr) {
