@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,8 +55,9 @@ import com.ecm.portal.controller.ControllerAbstract;
 
 @Controller
 public class ArchiveFolderController extends ControllerAbstract{
-	@Autowired
-	private EcmFolderMapper ecmFolder;
+	private static final Logger logger = LoggerFactory.getLogger(ArchiveFolderController.class);
+//	@Autowired
+//	private EcmFolderMapper ecmFolder;
 	@Autowired
 	private RelationService relationService;
 	
@@ -959,6 +962,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 	@RequestMapping(value="/folder/getFolderByConfigeGC", method = RequestMethod.POST)
 	@ResponseBody	
 	public Map<String, Object> getFolderByConfigeGC(@RequestBody String param) {
+		long start0 = System.currentTimeMillis();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String,Object> params= JSONUtils.stringToMap(param);
 		String folderConfig=params.get("folderConfig").toString();
@@ -971,7 +975,12 @@ public class ArchiveFolderController extends ControllerAbstract{
 				// TODO: handle exception
 				id=param;
 			}
+			long start = System.currentTimeMillis();
+			logger.info("Start get root folder.");
 			List<EcmFolder> folders=folderService.getFoldersByParentId(getToken(), id);
+			long cost = System.currentTimeMillis() - start;
+			start = System.currentTimeMillis();
+			logger.info("End get root folder:"+cost);
 			List<EcmFolder> resultData=new ArrayList<>();
 			for(EcmFolder f:folders) {
 				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
@@ -980,6 +989,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 				+gvCondition+(conditionObj==null?"":conditionObj.toString())+" and FOLDER_ID in( " + 
 						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
 						")";
+				logger.info("SQL:"+sql);
 				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
 				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
 					String name=f.getName();
@@ -987,6 +997,9 @@ public class ArchiveFolderController extends ControllerAbstract{
 					
 				}
 				resultData.add(f);
+				cost = System.currentTimeMillis() - start;
+				start = System.currentTimeMillis();
+				logger.info("End get child folder document count:"+cost);
 			}
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", resultData);
@@ -996,6 +1009,8 @@ public class ArchiveFolderController extends ControllerAbstract{
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", ex.getMessage());
 		}
+		long cost = System.currentTimeMillis() - start0;
+		logger.info("End get all root folder:"+cost);
 		return mp;
 	}
 	
@@ -1007,6 +1022,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 	@RequestMapping(value="/folder/getArchiveFolderByConfigeArchiveGc", method = RequestMethod.POST)
 	@ResponseBody	
 	public Map<String, Object> getFolderByConfigeArchiveGc(@RequestBody String param) {
+		long start0 = System.currentTimeMillis();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String,Object> params=JSONUtils.stringToMap(param);
 		String folderId=params.get("folderId").toString();
@@ -1023,7 +1039,13 @@ public class ArchiveFolderController extends ControllerAbstract{
 				// TODO: handle exception
 				id=folderId;
 			}
+			long start = System.currentTimeMillis();
+			
+			logger.info("Start get child folder.");
 			List<EcmFolder> folders=folderService.getFoldersByParentId(getToken(), id);
+			long cost = System.currentTimeMillis() - start;
+			start = System.currentTimeMillis();
+			logger.info("End get child folder:"+cost);
 			List<EcmFolder> resultData=new ArrayList<>();
 			for(EcmFolder f:folders) {
 				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
@@ -1035,6 +1057,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 				String sql="select count(*) as num from ecm_document where "+gvCondition+condition+" and FOLDER_ID in( " + 
 						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
 						")";
+				logger.info("child count sql:"+sql);
 				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
 				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
 					String name=f.getName();
@@ -1042,6 +1065,9 @@ public class ArchiveFolderController extends ControllerAbstract{
 					
 				}
 				resultData.add(f);
+				cost = System.currentTimeMillis() - start;
+				start = System.currentTimeMillis();
+				logger.info("End get child count:"+cost);
 			}
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", resultData);
@@ -1051,6 +1077,8 @@ public class ArchiveFolderController extends ControllerAbstract{
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", ex.getMessage());
 		}
+		long cost = System.currentTimeMillis() - start0;
+		logger.info("End get all child folder:"+cost);
 		return mp;
 	}
 	
