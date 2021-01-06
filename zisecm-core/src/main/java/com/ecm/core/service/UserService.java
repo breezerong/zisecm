@@ -672,19 +672,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		if (loginUser == null) {
 			throw new Exception("User :" + ecmUser.getLoginName() + " is not exists.");
 		}
-		String password = loginUser.getPassword();
-		String loginPassword = ecmUser.getPassword();
-
 		if (loginUser.getSystemPermission() < SystemPermission.SUPER_USER) {
 			logger.debug("User :" + ecmUser.getLoginName() + " login by sso");
-		} else {
-			if (password.length() > 30) {
-				loginPassword = SecureUtils.shaEncode(loginPassword);
-			}
-			if (!password.equals(loginPassword)) {
-				throw new Exception("Password wrong.");
-			}
-		}
+		} 
 		if (!loginUser.getIsActived()) {
 			throw new Exception("The status of user is inactive.");
 		}
