@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -43,6 +44,7 @@ import com.ecm.core.entity.EcmFormClassification;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
+import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmLifeCycle;
 import com.ecm.core.entity.EcmParameter;
 import com.ecm.core.entity.EcmQueueItem;
@@ -98,6 +100,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	private GridViewItemService gridViewItemService;
 	@Autowired
 	private NumberService numberservice;
+	
+	@Autowired
+	private UserService userService;
+	
 	/**
 	 * 通过配置子句查询对象
 	 * @param token
@@ -909,6 +915,18 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String currentUser = getSession(token).getCurrentUser().getUserName();
 		String userID = getSession(token).getCurrentUser().getUserId();
 		String aclName = doc.getAclName();
+		
+		// C_STRING1 知悉范围名称
+		String scopeKnowledgeName = (String) doc.getAttributes().get("C_STRING1"); 
+		
+		//判断当前用户是否在文档的知悉范围中
+		List<EcmGroup> glist = userService.getUserGroupsById(token, userID);
+		int knowledgePermission=0;
+		if(inGroup(glist, scopeKnowledgeName)) {
+			knowledgePermission =  ObjectPermission.READ;
+		}
+		
+		
 		// 没有设置ACL
 		if (StringUtils.isEmpty(aclName)) {
 			// Owner 返回最大权限
@@ -950,7 +968,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				List<Map<String, Object>> list = ecmDocument.executeSQL(sb.toString());
 
 				if (list.size() > 0) {
-					return (int) list.get(0).get("PERMISSION");
+					 int permissionNum = (int) list.get(0).get("PERMISSION");
+					if(permissionNum > knowledgePermission) {
+						return (int) list.get(0).get("PERMISSION");
+					}else {
+						return knowledgePermission;
+					}
+					
 				}
 			}
 		}
@@ -1946,5 +1970,35 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		
 	}
 	
-	
+	/**
+	 * 是否包含角色
+	 * @param glist
+	 * @param roleName 单值，多值，正则表达式如：“*计划人员”
+	 * @return
+	 */
+	public boolean inGroup(List<EcmGroup> glist,String roleName) {
+		if(StringUtils.isEmpty(roleName)) {
+			return true;
+		}
+		for(EcmGroup g: glist) {
+			if(roleName.indexOf(";")>-1) {
+				String[] roleNames = roleName.split(";");
+				for(String role:roleNames) {
+					if(g.getName().equalsIgnoreCase(role)) {
+						return true;
+					}
+				}
+			}else if(roleName.indexOf("*")>-1){//正则表达式
+				roleName = "."+roleName+".*";
+				 boolean isMatch = Pattern.matches(roleName, g.getName());
+				 if(isMatch) {
+					 return true;
+				 }
+				
+			}else if(g.getName().equalsIgnoreCase(roleName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

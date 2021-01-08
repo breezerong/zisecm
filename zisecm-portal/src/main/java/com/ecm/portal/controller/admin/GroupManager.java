@@ -15,6 +15,7 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
+import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.ExcSynDetailService;
@@ -165,6 +166,9 @@ public class GroupManager extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			obj.createId();
+			LoginUser currentUser  = this.getSession().getCurrentUser();
+			String userName = currentUser.getUserName();
+			obj.setCreator(userName);
 			groupService.newGroup(getToken(), obj);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
