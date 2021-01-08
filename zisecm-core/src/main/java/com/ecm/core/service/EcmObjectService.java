@@ -155,9 +155,21 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
 		if(!AuditUtils.isEnabled(actionName)) {
 			return null;
 		}
-		IEcmSession session = getSession(token);
 		EcmAuditGeneral en = new EcmAuditGeneral();
-		if(StringUtils.isEmpty(appName)) {
+		IEcmSession session = null;
+		try {
+			session = this.getSession(token);
+			if(session!=null) {
+				en.setUserId(session.getCurrentUser().getUserId());
+				en.setUserName(session.getCurrentUser().getUserName());
+			}
+		}
+		catch(Exception ex) {
+			//ex.printStackTrace();
+		}
+		
+		if(StringUtils.isEmpty(appName) && token != null ) {
+			
 			appName = session.getCurrentUser().getAppName();
 		}
 		if(StringUtils.isEmpty(appName)) {
@@ -170,13 +182,7 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
 		en.setDocId(objId==null?"":objId);
 		en.setMessage(message);
 		en.setExtendId(extendId==null?"":extendId);
-		try {
-			en.setUserId(session.getCurrentUser().getUserId());
-			en.setUserName(session.getCurrentUser().getUserName());
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-		}
+		
 		ecmAuditGeneralMapper.insertSelective(en);
 		return en.getId();
 	}

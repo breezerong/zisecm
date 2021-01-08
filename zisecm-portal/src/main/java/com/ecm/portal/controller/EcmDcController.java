@@ -204,7 +204,7 @@ public class EcmDcController extends ControllerAbstract {
 		String orderBy = args.get("orderBy").toString();
 		pager.setPageIndex(pageIndex);
 		pager.setPageSize(pageSize);
-		StringBuffer sql = new StringBuffer("select * from ecm_document where STATUS='利用'  and TYPE_NAME<>'卷盒' ");
+		StringBuffer sql = new StringBuffer("select * from ecm_document where TYPE_NAME='通用文件' ");
 		if (!StringUtils.isEmpty(orderBy)) {
 			sql.append("order by" + orderBy);
 		} else {

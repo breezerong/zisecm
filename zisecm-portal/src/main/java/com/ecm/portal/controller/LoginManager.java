@@ -61,7 +61,7 @@ public class LoginManager extends ControllerAbstract{
 		}
 		int loginCount = 1;
 		try {
-			if(session.getAttribute("ecmLoginFailCount")!=null)
+			if(session.getAttribute("ECMLoginFailCount")!=null)
 			{
 				loginCount = Integer.parseInt(session.getAttribute("ECMLoginFailCount").toString());
 			}
