@@ -72,6 +72,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.AclService;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
@@ -2621,6 +2622,78 @@ public class EcmDcController extends ControllerAbstract {
 		
 		
 	}
+	/**
+	 * 文件批量授权
+	 * @author trr
+	 * @param argsStr
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/dc/grantPermitBatchDoc", method = RequestMethod.POST)
+	public Map<String, Object> grantPermitBatchDoc(@RequestBody String argsStr) {
+			
+			Map<String, Object> mp = new HashMap<String, Object>();
+			try {
+				Map<String,Object> data=JSONUtils.stringToMap(argsStr);
+				if(data.get("objIds")==null) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("msg", "请选择要授权的对象");
+					return mp;
+				}
+				
+				String objIds=data.get("objIds").toString();//需要授权的对象
+				String permitsStr=data.get("data").toString();//权限
+				/**************************文件授权*********************************/
+				List<String> idList=JSONUtils.stringToArray(objIds);
+				List<String> permitsList=JSONUtils.stringToArray(permitsStr);
+				
+				for(int i=0;idList!=null&&i<idList.size();i++) {
+					String id= idList.get(i);
+					for(int j=0;permitsList!=null&&j<permitsList.size();j++) {
+						String permitStr= permitsList.get(j);
+						Map<String,Object> permitMap =JSONUtils.stringToMap(permitStr);
+						EcmPermit permit=new EcmPermit();
+						permit.setParentId(id);
+						permit.setTargetName(permitMap.get("targetName").toString());
+						permit.setTargetType(Integer.parseInt(permitMap.get("targetType").toString()));
+						permit.setPermission(Integer.parseInt(permitMap.get("permission").toString()));
+						permit.setExpireDate(new Date());
+						
+						String aclName = "";
+						String targetName = permit.getTargetName();
+						 
+						if (permit.getTargetType() == 1) {
+							aclName = documentService.grantUser(getToken(), permit.getParentId(), targetName,
+									permit.getPermission(), permit.getExpireDate(), needNewAcl(permit.getParentId()));
+						} else {
+							aclName = documentService.grantGroup(getToken(), permit.getParentId(), targetName,
+									permit.getPermission(), permit.getExpireDate(), needNewAcl(permit.getParentId()));
+						}
+					}
+				}
+				
+				/***************************end文件授权***********************************/
+				mp.put("data", "授权成功");
+				mp.put("code", ActionContext.SUCESS);
+				
+			} catch (AccessDeniedException e) {
+				mp.put("code", ActionContext.TIME_OUT);
+				mp.put("data", e.getMessage());
+			} catch (EcmException e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("data", e.getMessage());
+			} catch (NoPermissionException e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("data", e.getMessage());
+			} 
+			return mp;
+		
+			
+		}
 	
 	@ResponseBody
 	@RequestMapping(value = "/dc/grantPermit", method = RequestMethod.POST)

@@ -1,5 +1,7 @@
 package com.ecm.portal.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.druid.util.StringUtils;
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
@@ -23,6 +26,7 @@ import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.AclService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.FolderService;
@@ -253,7 +257,134 @@ public class FolderController  extends ControllerAbstract {
 		} //Integer.parseInt(parentId));
 		return mp;
 	}
+	/**
+	 * 批量授权
+	 * @author trr
+	 * @param argsStr
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/folder/grantPermitBatch", method = RequestMethod.POST)
+	public Map<String, Object> grantPermitBatch(@RequestBody String argsStr) {
+		
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String,Object> data=JSONUtils.stringToMap(argsStr);
+			if(data.get("objIds")==null) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("msg", "请选择要授权的对象");
+				return mp;
+			}
+			boolean isUpdateChild=false;
+			if(data.get("isUpdateChild")!=null) {
+				isUpdateChild=Boolean.parseBoolean(data.get("isUpdateChild").toString());
+			}
+			String objIds=data.get("objIds").toString();//需要授权的对象
+			String permitsStr=data.get("data").toString();//权限
+			/**************************文件夹授权*********************************/
+			List<String> idList=JSONUtils.stringToArray(objIds);
+			List<String> permitsList=JSONUtils.stringToArray(permitsStr);
+			
+			for(int j=0;permitsList!=null&&j<permitsList.size();j++) {
+				String permitStr= permitsList.get(j);
+				Map<String,Object> permitMap =JSONUtils.stringToMap(permitStr);
+				EcmPermit permit=new EcmPermit();
+				permit.setTargetName(permitMap.get("targetName").toString());
+				permit.setTargetType(Integer.parseInt(permitMap.get("targetType").toString()));
+				permit.setPermission(Integer.parseInt(permitMap.get("permission").toString()));
+				permit.setExpireDate(new Date());
+				
+				for(int i=0;idList!=null&&i<idList.size();i++) {
+					String id= idList.get(i);
+					String oldAclName = "";
+					String newAclName = "";
+					EcmFolder folder = folderService.getObjectById(getToken(), id);
+					oldAclName = folder.getAclName();
+					//文件夹ACL不为空
+					if(needNewAclByAclName(oldAclName)) {
+						EcmAcl acl = aclService.getObjectByName(getToken(), oldAclName);
+						if (acl != null) {
+							acl = aclService.copy(getToken(), acl, null, null);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						}else {
+							acl = new EcmAcl();
+							acl.createId();
+							acl.setName("ecm_" + acl.getId());
+							aclService.newObject(getToken(), acl);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						}
+						
+						
+					}else {
+						if(StringUtils.isEmpty(oldAclName)) {
+							EcmAcl acl = new EcmAcl();
+							acl.createId();
+							acl.setName("ecm_" + acl.getId());
+							aclService.newObject(getToken(), acl);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						}
+						else {
+							//直接在原来的基础上修改
+							EcmAcl acl = aclService.getObjectByName(getToken(), oldAclName);
+							if(permit.getTargetType()==PermissionContext.USER_TARGET_TYPE) {
+								aclService.grantUser(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}else {
+								aclService.grantGroup(getToken(), acl.getId(), permit.getTargetName(), permit.getPermission(), permit.getExpireDate());
+							}
+							newAclName = acl.getName();
+						}
+					}
+					
+					if(!oldAclName.equals(newAclName)) {
+						folder.setAclName(newAclName);
+						folderService.updateObject(getToken(), folder);
+					}
+					if(isUpdateChild) {
+						grantPermitDeep(oldAclName,newAclName,id, permit);
+					}
+					
+				}
+				
+			}
+			
+			////////////////////////////end文件夹授权//////////////////////////
+			
+			mp.put("data", "授权成功");
+			mp.put("code", ActionContext.SUCESS);
+			
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("data", e.getMessage());
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("data", e.getMessage());
+		} 
+		return mp;
 	
+		
+	}
 	@ResponseBody
 	@RequestMapping(value = "/folder/grantPermit", method = RequestMethod.POST)
 	public Map<String, Object> grantPermit(@RequestBody EcmPermit permit) {
@@ -671,7 +802,10 @@ public class FolderController  extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+//					+"union select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"'";
+			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
@@ -688,7 +822,9 @@ public class FolderController  extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
