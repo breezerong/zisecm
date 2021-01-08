@@ -51,7 +51,7 @@ public class EcmFormClassification extends EcmSysObject {
 				}else if("{year}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(DateUtils.currentDate("yyyy"));
 				}
-				if(itemc.getControlType().equalsIgnoreCase("select")) {
+				if(itemc.getControlType()!=null && itemc.getControlType().equalsIgnoreCase("select")) {
 					if("{myprojects}".equalsIgnoreCase(itemc.getQueryName())) {
 						itemc.setValidValues(session.getCurrentUser().getMyProjects());		
 					}

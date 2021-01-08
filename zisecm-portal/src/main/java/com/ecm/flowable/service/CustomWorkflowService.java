@@ -61,6 +61,11 @@ public class CustomWorkflowService extends EcmService{
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		taskService.setVariable(taskId, "token", token);
 		setTaskApprovalResult(taskArgs);
+		for(int i=1;i<=10;i++) {
+			if(taskArgs.get("C_REVIEWER"+i)==null) {
+				taskArgs.put("C_REVIEWER"+i, null);
+			}
+		}
 		// owner不为空说明可能存在委托任务
 		if (!StringUtils.isEmpty(task.getOwner())) {
 			DelegationState delegationState = task.getDelegationState();
