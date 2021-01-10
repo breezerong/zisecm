@@ -1,5 +1,6 @@
 package com.ecm.flowable.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -136,6 +137,16 @@ public class CustomWorkflowService extends EcmService{
 		audit.setProcessDefId(task.getProcessDefinitionId());
 		audit.setProcessInstanceId(task.getProcessInstanceId());
 		audit.setTaskId(taskId);
+		if(varMap.get("customTime")!=null) {
+			SimpleDateFormat dt=new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				audit.setCustomTime(dt.parse(varMap.get("customTime").toString()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		ecmAuditWorkitemMapper.updateByPrimaryKey(audit);
 	}
 
