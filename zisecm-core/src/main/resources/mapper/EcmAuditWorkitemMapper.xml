@@ -53,7 +53,7 @@
       TASK_TYPE, RESULT, MESSAGE
       )
     values (#{id,jdbcType=VARCHAR}, #{assignee,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP},#{customTime,jdbcType=TIMESTAMP}, #{taskName,jdbcType=VARCHAR},
+      #{endTime,jdbcType=TIMESTAMP}, #{taskName,jdbcType=VARCHAR},#{customTime,jdbcType=TIMESTAMP},
       #{processInstanceId,jdbcType=VARCHAR}, #{processDefId,jdbcType=VARCHAR}, 
       #{taskId,jdbcType=VARCHAR}, #{docId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, 
       #{taskType,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}
