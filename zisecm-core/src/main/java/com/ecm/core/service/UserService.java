@@ -130,7 +130,11 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		cuser.setSystemPermission(ecmUser.getSystemPermission());
 		cuser.setLoginTime(new Date());
 		cuser.setCompany(ecmUser.getCompanyName());
-		cuser.setDepartment(ecmUser.getGroupName());
+		if(!StringUtils.isEmpty(ecmUser.getDepartmentName())) {
+			cuser.setDepartment(ecmUser.getDepartmentName());
+		}else {
+			cuser.setDepartment(ecmUser.getGroupName());
+		}
 		cuser.setMyProjects(this.getMyProject(ecmUser.getLoginName()));
 		bindUserRoles(cuser);
 		bindUserComapny(cuser);
