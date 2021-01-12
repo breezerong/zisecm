@@ -190,7 +190,7 @@ export default {
       gridViewName: "",
       parentid: "",
       idEdit: false,
-      tableHeight: window.innerHeight - 115,
+      tableHeight: window.innerHeight - 135,
       form: {
         id:"",
         parentId:"",
@@ -213,6 +213,12 @@ export default {
   },
   mounted() {
     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      _self.$router.push({ path: '/NoPermission' }); 
+    }
     _self.loading = true;
     var pid = _self.$route.query.parentid;
     _self.gridViewName = _self.$route.query.name;
@@ -294,7 +300,7 @@ export default {
       this.form.name = "";
       this.form.description = "";
       this.form.value = "";
-      this.form.visibleType= "4";
+      this.form.visibleType= "1";
       this.allowOrderby = false;
       this.dialogVisible = true;
     },

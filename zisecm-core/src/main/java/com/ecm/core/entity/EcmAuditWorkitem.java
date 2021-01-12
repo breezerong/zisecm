@@ -14,6 +14,10 @@ public class EcmAuditWorkitem extends EcmObject{
 	private Date createTime;
 
     private Date endTime;
+    /**
+     * 客户自定义完成时间
+     */
+    private Date customTime;
 
     private String taskName;
 
@@ -127,5 +131,13 @@ public class EcmAuditWorkitem extends EcmObject{
 
 	public void setProcessDefId(String processDefId) {
 		this.processDefId = processDefId;
+	}
+
+	public Date getCustomTime() {
+		return customTime;
+	}
+
+	public void setCustomTime(Date customTime) {
+		this.customTime = customTime;
 	}
 }

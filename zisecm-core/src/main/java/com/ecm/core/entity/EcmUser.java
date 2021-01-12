@@ -49,6 +49,8 @@ public class EcmUser extends EcmSysObject{
     
     private String CompanyName;
     
+    private String departmentName;
+    
     private String jobTitle;
 
     public String getSignImage() {
@@ -221,5 +223,13 @@ public class EcmUser extends EcmSysObject{
 
 	public void setJobTitle(String jobTitle) {
 		this.jobTitle = jobTitle;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
 	}
 }

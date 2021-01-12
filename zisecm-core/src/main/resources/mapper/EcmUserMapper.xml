@@ -15,6 +15,7 @@
     <result column="IS_ACTIVED" jdbcType="BIT" property="isActived" />
     <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName" />
     <result column="COMPANY_NAME" jdbcType="VARCHAR" property="companyName" />
+    <result column="DEPARTMENT_NAME" jdbcType="VARCHAR" property="departmentName" />
     <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
     <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId" />
     <result column="LOGIN_TYPE" jdbcType="INTEGER" property="loginType" />
@@ -32,7 +33,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, DESCRIPTION, LOGIN_NAME, PHONE, CREATION_DATE, CREATOR, EMAIL, MODIFIER, 
-    MODIFIED_DATE, IS_ACTIVED, GROUP_NAME,COMPANY_NAME, PASSWORD,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,
+    MODIFIED_DATE, IS_ACTIVED, GROUP_NAME,COMPANY_NAME,DEPARTMENT_NAME, PASSWORD,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,
     SYSTEM_PERMISSION,LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,JOB_TITLE,SIGN_IMAGE, DELEGATE_USER, DELEGATE_START, DELEGATE_END
   </sql>
   <select id="searchToEntity" parameterType="java.lang.String" resultMap="BaseResultMap"> 
@@ -55,7 +56,7 @@
   </select>
    <select id="selectByGroupId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
-    a.ID, a.NAME, a.DESCRIPTION, a.LOGIN_NAME, a.PHONE, a.CREATION_DATE, a.CREATOR, a.EMAIL, a.MODIFIER, a.MODIFIED_DATE, a.IS_ACTIVED, a.GROUP_NAME,a.COMPANY_NAME
+    a.ID, a.NAME, a.DESCRIPTION, a.LOGIN_NAME, a.PHONE, a.CREATION_DATE, a.CREATOR, a.EMAIL, a.MODIFIER, a.MODIFIED_DATE, a.IS_ACTIVED, a.GROUP_NAME,a.COMPANY_NAME,a.DEPARTMENT_NAME
    ,a.GROUP_ID,a.LOGIN_TYPE,a.LDAP_CN,a.CLIENT_PERMISSION,a.SYSTEM_PERMISSION,a.LDAP_NAME,a.EXTEND_ID,a.EXTEND_GROUP_ID,a.JOB_TITLE,a.SIGN_IMAGE,a.DELEGATE_USER, a.DELEGATE_START, a.DELEGATE_END  from ecm_user a, ecm_group_item b where b.CHILD_ID=a.ID and b.PARENT_ID= #{id,jdbcType=VARCHAR} order by a.NAME
   </select>
   <select id="selectByLoginName" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -72,14 +73,14 @@
     insert into ecm_user (ID, NAME, DESCRIPTION, 
       LOGIN_NAME, PHONE, CREATION_DATE, 
       CREATOR, EMAIL, MODIFIER, 
-      MODIFIED_DATE, IS_ACTIVED, GROUP_NAME, COMPANY_NAME,
+      MODIFIED_DATE, IS_ACTIVED, GROUP_NAME, COMPANY_NAME,DEPARTMENT_NAME,
       PASSWORD,GROUP_ID,LOGIN_TYPE,LDAP_CN,CLIENT_PERMISSION,SYSTEM_PERMISSION,
       LDAP_NAME,EXTEND_ID,EXTEND_GROUP_ID,JOB_TITLE,SIGN_IMAGE,DELEGATE_USER, DELEGATE_START, DELEGATE_END)
     values ( #{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{loginName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, 
       #{modifiedDate,jdbcType=TIMESTAMP}, #{isActived,jdbcType=BIT}, #{groupName,jdbcType=VARCHAR}, 
-      #{companyName,jdbcType=VARCHAR}, 
+      #{companyName,jdbcType=VARCHAR}, #{departmentName,jdbcType=VARCHAR}, 
       #{password,jdbcType=VARCHAR},#{groupId,jdbcType=VARCHAR},
       #{loginType,jdbcType=INTEGER},#{ldapCn,jdbcType=VARCHAR},#{clientPermission,jdbcType=INTEGER},
       #{systemPermission,jdbcType=INTEGER},#{ldapName,jdbcType=VARCHAR},
@@ -131,6 +132,9 @@
       </if>
        <if test="companyName != null">
         COMPANY_NAME,
+      </if>
+       <if test="departmentName != null">
+        DEPARTMENT_NAME,
       </if>
       <if test="password != null">
         PASSWORD,
@@ -215,6 +219,9 @@
       <if test="companyName != null">
         #{companyName,jdbcType=VARCHAR},
       </if>
+      <if test="departmentName != null">
+        #{departmentName,jdbcType=VARCHAR},
+      </if>
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
@@ -298,6 +305,9 @@
        <if test="companyName != null">
         COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
       </if>
+      <if test="departmentName != null">
+        DEPARTMENT_NAME = #{companyName,jdbcType=VARCHAR},
+      </if>
        <if test="password != null">
         PASSWORD = #{password,jdbcType=VARCHAR},
       </if>
@@ -357,6 +367,7 @@
       IS_ACTIVED = #{isActived,jdbcType=BIT},
       GROUP_NAME = #{groupName,jdbcType=VARCHAR},
       COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+      DEPARTMENT_NAME= #{departmentName,jdbcType=VARCHAR},
       PASSWORD = #{password,jdbcType=VARCHAR},
       GROUP_ID = #{groupId,jdbcType=VARCHAR},
       LOGIN_TYPE = #{loginType,jdbcType=INTEGER},
