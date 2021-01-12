@@ -630,7 +630,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					}else {
 						
 						date = date.replace(".", "-");
-						
+						date = date.replace("/", "-");
 						date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 					}
 					
