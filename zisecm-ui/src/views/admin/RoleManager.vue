@@ -60,6 +60,10 @@
           @row-click="selectChange"
           style="width: 100%"
         >
+          <!--
+                    <el-table-column type="selection" width="40" @selection-change="selectChange">
+                    </el-table-column>
+          -->
           <el-table-column label="序号" width="60">
             <template slot-scope="scope">
               <span>{{(currentPage-1) * pageSize + scope.$index+1}}</span>
@@ -94,18 +98,15 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-row>
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[10, 20, 50, 100, 200]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="itemCount"
-            key="rolePagination"
-          ></el-pagination>
-        </el-row>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 50, 100, 200]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="itemCount"
+        ></el-pagination>
       </el-col>
       <el-col :span="12">
         <el-tabs v-model="activeName" type="card">
@@ -255,7 +256,7 @@ export default {
       roleList: [],
       roleListFull: [],
       activeName: "usertab",
-      tableHeight: window.innerHeight - 190,
+      tableHeight: window.innerHeight - 180,
       tableHeight2: window.innerHeight - 240,
       inputkey: "",
       userInputkey: "",
@@ -289,7 +290,13 @@ export default {
     };
   },
   created() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<5){
+      _self.$router.push({ path: '/NoPermission' });  
+    }
     var psize = localStorage.getItem("groupPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);
@@ -318,7 +325,7 @@ export default {
         m.set("userId", indata.id);
         m.set("deptId", _self.selectedItemId);
         axios
-          .post("/admin/addToGroup", JSON.stringify(m))
+          .post("/admin/addToRole", JSON.stringify(m))
           .then(function(response) {
             _self.refreshUserData();
             _self.$message("添加用户成功!");
@@ -368,7 +375,7 @@ export default {
         this.$message("请选择角色!");
         return;
       }
-      if(roleNames && roleNames.indexOf(this.selectedRole.name)>-1){
+      if(roleNames && (";"+roleNames+";").indexOf(";"+this.selectedRole.name+";")>-1){
         this.$message("角色不能包含自身!");
         return;
       }
@@ -442,7 +449,7 @@ export default {
       m.set("groupId", _self.selectedItemId);
       m.set("condition", _self.userInputkey);
       m.set("pageSize", _self.userPageSize);
-      m.set("pageIndex", _self.userCurrentPage - 1);
+      m.set("pageIndex", (_self.userCurrentPage - 1) * _self.userPageSize);
       //console.log('id:', _self.selectedItemId);
       axios
         .post("/admin/getRoleAllUsers", JSON.stringify(m))

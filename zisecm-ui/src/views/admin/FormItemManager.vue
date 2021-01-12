@@ -41,6 +41,8 @@
                 <el-option label="Select" value="Select"></el-option>
                 <el-option label="ValueSelect" value="ValueSelect"></el-option>
                 <el-option label="SQLSelect" value="SQLSelect"></el-option>
+                <el-option label="RoleSelect" value="RoleSelect"></el-option>
+                <!-- <el-option label="ScopeOfKnowledgeSelect" value="ScopeOfKnowledgeSelect"></el-option> -->
                 <el-option label="UserSelect" value="UserSelect"></el-option>
                 <el-option label="Department" value="Department"></el-option>
                 <el-option label="Date" value="Date"></el-option>
@@ -65,8 +67,8 @@
           <el-col :span="4">
             <el-form-item label="必填" :label-width="formLabelWidth2">
               <el-select v-model="form.required">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -78,16 +80,16 @@
           <el-col :span="4">
             <el-form-item label="只读" :label-width="formLabelWidth2">
               <el-select v-model="form.readOnly">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="是否可查询" :label-width="formLabelWidth2">
               <el-select v-model="form.searchable">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -101,8 +103,8 @@
           <el-col :span="4">
             <el-form-item label="隐藏" :label-width="formLabelWidth2">
               <el-select v-model="form.isHide">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -119,11 +121,8 @@
               <el-input type="textarea"  v-model="form.defaultValue"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="值正则表达式" :label-width="formLabelWidth2">
-              <el-input v-model="form.valuePolicy" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-col>
+          
+        
           <el-col :span="12">
             <el-form-item label="列选值" :label-width="formLabelWidth2">
               <el-input v-model="form.valueList" auto-complete="off"></el-input>
@@ -132,8 +131,8 @@
           <el-col :span="4">
             <el-form-item label="是否多值" :label-width="formLabelWidth2">
               <el-select v-model="form.isRepeat">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -150,8 +149,8 @@
           <el-col :span="4">
             <el-form-item label="启用变更事件" :label-width="formLabelWidth2">
               <el-select v-model="form.enableChange">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -233,8 +232,8 @@
           <el-table-column label="必填" width="90">
             <template slot-scope="scope">
               <el-select v-model="scope.row.required">
-                <el-option label="否" value="false"></el-option>
-                <el-option label="是" value="true"></el-option>
+                <el-option label="否" :value="false"></el-option>
+                <el-option label="是" :value="true"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -310,14 +309,14 @@ export default {
         description: "",
         value: "",
 	      label:"",
-        searchable: "true",
-        required: "false",
-        readOnly: "false",
+        searchable: true,
+        required: false,
+        readOnly: false,
         controlType: "TextBox",
         widthType: "2",
 	      defaultValue:"",
         orderIndex: "100",
-        isHide: "false",
+        isHide: false,
 	      queryName:"",
         valueList: "",
         isRepeat: false,
@@ -326,8 +325,7 @@ export default {
         minCount: 0,
         maxCount: 0,
         classification: "",
-        validatePolicy: '',
-        valuePolicy:''
+        validatePolicy: ''
       },
       formLabelWidth: "140px",
       formLabelWidth2: "100px"
@@ -345,10 +343,7 @@ export default {
         this.currentUser().systemPermission
       );
     if(systemPermission<9){
-      //跳转至权限提醒页
-      _self.$nextTick(()=>{
-         _self.$router.push({ path: '/NoPermission' })
-      })     
+      _self.$router.push({ path: '/NoPermission' });    
     }
     _self.loading = true;
     _self.getClassicfication();
@@ -418,6 +413,7 @@ export default {
         });
     },
     saveitem(indata) {
+      debugger
       let _self = this;
       axios
         .post("/admin/updateFormItem", JSON.stringify(indata))
@@ -448,17 +444,16 @@ export default {
         name: "",
         description: "",
         value: "",
-        searchable: "true",
-        required: "false",
-        readOnly: "false",
+        searchable: true,
+        required: false,
+        readOnly: false,
         controlType: "TextBox",
         widthType: "2",
-        orderIndex: "100",
+        orderIndex: 100,
         valueList: "",
-        isHide: "false",
+        isHide: false,
         classification: "",
-        validatePolicy:"",
-        valuePolicy:""
+        validatePolicy:''
       };
     },
     edititem(indata) {
