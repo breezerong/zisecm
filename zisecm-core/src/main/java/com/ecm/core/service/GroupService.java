@@ -143,7 +143,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 	@Override
 	public List<EcmGroup> getParentRoles(String token,String id, Pager pager, String condition) {
 		String sql = "select a.ID, a.NAME, a.DESCRIPTION, a.CODING, a.CREATION_DATE, a.CREATOR, a.MODIFIER, a.MODIFIED_DATE, a.GROUP_TYPE,a.PARENT_ID "
-				+ "from ecm_group a, ecm_group_item b where a.ID=b.CHILD_ID and b.CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(id)+"' and b.item_type='1'";
+				+ "from ecm_group a, ecm_group_item b where a.ID=b.PARENT_ID and b.CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(id)+"' and b.item_type='1'";
 		if(!EcmStringUtils.isEmpty(condition))
 		{
 			sql += " and ("+condition+")";

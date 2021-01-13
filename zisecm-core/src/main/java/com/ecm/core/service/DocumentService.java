@@ -642,6 +642,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 						date=DateUtils.DateToStr(new Date(),"yyyy-MM-dd HH:mm:ss");
 						date = "'"+date+"'";
 					}else {
+						
+						date = date.replace(".", "-");
+						date = date.replace("/", "-");
 						date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 					}
 					

@@ -11,6 +11,9 @@ public class EcmGroupItem extends EcmObject{
 
     private String childId;
 
+    /**
+     * 1 用户，2角色
+     */
     private String itemType;
 
     public String getParentId() {
