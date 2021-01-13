@@ -86,8 +86,8 @@ public class Check4Controller extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		String msg;
 		try {
-			Map<String, Object> args = JSONUtils.stringToMap(argStr);
-			List<EcmCheck4> list = check4Service.startCheck4(getToken(), args.get("classic").toString(), args.get("startDate").toString(), args.get("endDate").toString());
+			List<String> IDlist = JSONUtils.stringToArray(argStr);
+			List<Map<String, String>> list = check4Service.startCheck4(getToken(), IDlist);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", list);
 		} catch (Exception e) {

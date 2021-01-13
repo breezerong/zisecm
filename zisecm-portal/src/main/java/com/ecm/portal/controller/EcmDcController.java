@@ -852,7 +852,8 @@ public class EcmDcController extends ControllerAbstract {
 			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
 			doc.setFolderId(folderId);
 			doc.setAclName(folder.getAclName());
-			String id = documentService.newObject(getToken(), doc, en);
+//			String id = documentService.newObject(getToken(), doc, en);
+			String id = documentService.creatOrUpdateObject(getToken(), doc, en);
 			//创建附件
 			if (attachFiles != null&&attachFiles.length>0) {
 				

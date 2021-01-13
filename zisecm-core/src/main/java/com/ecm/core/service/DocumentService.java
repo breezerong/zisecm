@@ -186,6 +186,20 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return ecmDocument.getObjectsByCondition(condition);
 	}
 	
+	
+	public List<EcmDocument> getObjectsAllColumn(String token, String condition){
+		String sql = "select "+getDocumentAllColumns()+" from ecm_document where "+condition;
+
+		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
+		List<EcmDocument> data=new ArrayList<>();
+		for(int i=0;list!=null&&i<list.size();i++) {
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(list.get(i));
+			data.add(doc);
+		}
+		return data;
+	}
+	
 	public List<EcmDocument> getObjects(String token,Pager page, String condition) throws EcmException, SqlDeniedException {
 		// TODO Auto-generated method stub
 		return ecmDocument.getObjectsByCondition(page,condition);
@@ -628,6 +642,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 						date=DateUtils.DateToStr(new Date(),"yyyy-MM-dd HH:mm:ss");
 						date = "'"+date+"'";
 					}else {
+						
+						date = date.replace(".", "-");
+						date = date.replace("/", "-");
 						date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
 					}
 					

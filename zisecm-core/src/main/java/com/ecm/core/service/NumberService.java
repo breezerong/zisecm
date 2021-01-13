@@ -74,7 +74,9 @@ public class NumberService extends EcmService {
 		if(policyList==null||policyList.size()==0) {
 			throw new NoTakeNumberRuleException("没有取号规则，请检查！");
 		}
+		int i=0;
 		for(Map<String, Object> policy: policyList) {
+			i++;
 			String cond = (String)policy.get("TITLE");
 			String numPolicy = (String)policy.get("C_COMMENT");
 			int startIndex = 1;
@@ -88,10 +90,11 @@ public class NumberService extends EcmService {
 					num = createNumber(token, values, numPolicy,startIndex);
 					break;
 				}
-			}else if(policyList.size()==1){
+			}else if(i >= policyList.size()){
 				num = createNumber(token, values, numPolicy,startIndex);
 				break;
 			}
+			
 		}
 		return num;
 	}
