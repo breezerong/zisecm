@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -34,29 +35,13 @@ public class Check4Service {
 	@Autowired
 	private QueryService queryService;
 
-	public List<EcmCheck4> startCheck4(String token, String calssic, String startDate, String endDate)
-			throws EcmException {
-		List<EcmCheck4> list = new ArrayList<EcmCheck4>();
-		String sql = "Select ID,CODING,NAME,REVISION,C_ARCHIVE_NUM,C_ARCHIVE_NUM,FORMAT_NAME,CONTENT_SIZE,C_RESOURCE,C_MD5,C_VIRUS_CHECK from ecm_document where STATUS = '利用'";
-		if (!StringUtils.isEmpty(calssic)) {
-			sql += " and C_ARC_CLASSIC='" + calssic + "'";
-		}
-		if (!StringUtils.isEmpty(startDate)) {
-			sql += " and C_DOC_DATE>='" + startDate + "'";
-		}
-		if (!StringUtils.isEmpty(endDate)) {
-			sql += " and C_DOC_DATE<='" + endDate + "'";
-		}
-
-		List<Map<String, Object>> listDoc = queryService.executeSQL(token, sql);
-		if (listDoc != null) {
-			for (Map<String, Object> m : listDoc) {
-				try {
-					EcmCheck4 en =checkDocument( token, m);
-					list.add(en);
-				}catch(Exception e) {
-					e.printStackTrace();
-				}
+	public List<Map<String, String>> startCheck4(String token, List<String> iDlist){
+		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		for (String id : iDlist) {
+			Map<String, Object> listDoc = documentService.getObjectMapById(token, id);
+			if (listDoc != null) {
+				EcmCheck4 en =checkDocument( token, listDoc);
+				list.add(en.getAttributes());
 			}
 		}
 		return list;
@@ -71,14 +56,13 @@ public class Check4Service {
 		EcmCheck4 en = new EcmCheck4();
 		en.setId(m.get("ID").toString());
 		en.setCoding((String) m.get("CODING"));
-		en.setTitle((String) m.get("NAME"));
+		en.setTitle((String) m.get("TITLE"));
 		en.setRevision((String) m.get("REVISION"));
 		en.setArchiveCoding((String) m.get("C_ARCHIVE_NUM"));
 		// 来源
 		en.setTrueSource((String) m.get("C_RESOURCE"));
-		String archNum = (String) m.get("C_ARCHIVE_NUM");
 		String title = (String) m.get("NAME");
-		if (StringUtils.isEmpty(archNum) || StringUtils.isEmpty(title)) {
+		if (StringUtils.isEmpty(title)) {
 			en.setTrueMetaData("未通过");
 			en.setTotalResult("未通过");
 		}
