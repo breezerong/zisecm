@@ -3166,7 +3166,7 @@ public class EcmDcController extends ControllerAbstract {
 		if(!StringUtils.isEmpty(id)) {
 			EcmDocument doc = documentService.getObjectById(getToken(), id);
 			if(doc != null) {
-				AttrCopyCfgEntity en = customCacheService.getAttrCopyCfg(getToken(), doc.getTypeName());
+				AttrCopyCfgEntity en = customCacheService.getAttrCopyCfg(getToken(), doc.getTypeName(),false);
 				if( en == null) {
 					mp.put("code", ActionContext.FAILURE);
 				}else {
