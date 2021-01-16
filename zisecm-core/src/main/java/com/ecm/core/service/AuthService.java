@@ -48,6 +48,35 @@ public class AuthService implements IAuthService {
 	}
 	
 	@Override
+	public IEcmSession login(String appName,String loginName, String password,String userIp) throws Exception {
+		loginName = DBFactory.getDBConn().getDBUtils().getString(loginName);
+		EcmUser ecmUser = new EcmUser();
+		ecmUser.setLoginName(loginName);
+		ecmUser.setPassword(password);
+		String clientInfo = userService.newUUID();
+		LoginUser  cuser = userService.authentication(ecmUser);
+		cuser.setAppName(appName);
+		// 系统登录认证
+		//Authentication auth = SecurityUtils.login(loginName, password, authenticationManager);
+		cuser.setToken(clientInfo);
+		IEcmSession s =null;
+		try{ 
+			s=SessionManager.getInstance().getSession(clientInfo);
+		}catch(Exception ex) {
+			
+		}
+		if(s==null) {
+			s = new EcmSession();
+			SessionManager.getInstance().put(clientInfo, s);
+		}
+		s.setCurrentUser(cuser);
+		s.setToken(clientInfo);
+		//s.setAuth(auth);
+		userService.newAudit(s.getToken(),null, AuditContext.LOGIN, "", null, null);
+		return s;
+	}
+	
+	@Override
 	public IEcmSession loginSSO(String appName,String loginName) throws Exception {
 		loginName = DBFactory.getDBConn().getDBUtils().getString(loginName);
 		EcmUser ecmUser = new EcmUser();

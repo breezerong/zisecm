@@ -15,6 +15,16 @@ public interface IAuthService {
 	 * @throws Exception
 	 */
 	IEcmSession login(String appName,String loginName,String password) throws Exception;
+	
+	/**
+	 * 登录  记录用户登录IP
+	 * @param appName 应用名
+	 * @param loginName 登录用户名
+	 * @param password 登录密码
+	 * @return
+	 * @throws Exception
+	 */
+	IEcmSession login(String appName,String loginName,String password,String userIp) throws Exception;
 	/**
 	 * 根据Token登录
 	 * @param token
