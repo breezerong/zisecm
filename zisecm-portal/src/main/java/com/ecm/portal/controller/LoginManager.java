@@ -22,6 +22,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.AuthService;
 import com.ecm.icore.service.IEcmSession;
+import com.ecm.portal.util.IpUtil;
 
 /**
  * 
@@ -71,6 +72,8 @@ public class LoginManager extends ControllerAbstract{
 		EcmUser ecmUser = new EcmUser();
 		ecmUser.setLoginName(user.getUsername());
 		ecmUser.setPassword(user.getPassword());
+		
+		String userIp = IpUtil.getIpAddr(request);
 		Map<String, Object> mp = new HashMap<String, Object>();
 			session.removeAttribute("ECMUserToken");
 			//session.removeAttribute("ECMUserSession");
@@ -89,7 +92,7 @@ public class LoginManager extends ControllerAbstract{
 				try {
 					
 					// 系统登录认证
-					IEcmSession s = authService.login("portal",username,password);
+					IEcmSession s = authService.login("portal",username,password,userIp);
 					
 					mp.put("code", ActionContext.SUCESS);
 					mp.put("token", s.getToken());
