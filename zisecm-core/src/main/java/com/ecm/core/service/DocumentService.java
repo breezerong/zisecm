@@ -1002,6 +1002,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return grantGroup(token, doc, targetName, permission, expireDate, newAcl);
 
 	}
+	public String grantGroup(String token, String id, String targetName, int permission, Date expireDate)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		EcmDocument doc = getObjectById(token, id);
+		boolean newAcl=needNewAcl(token, id);
+		return grantGroup(token, doc, targetName, permission, expireDate, newAcl);
+
+	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
@@ -1043,7 +1050,33 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		EcmDocument doc = getObjectById(token, id);
 		return grantUser(token, doc, targetName, permission, expireDate, newAcl);
 	}
-
+	
+	public String grantUser(String token, String id, String targetName, int permission, Date expireDate)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		EcmDocument doc = getObjectById(token, id);
+		boolean newAcl=needNewAcl(token,id);
+		return grantUser(token, doc, targetName, permission, expireDate, newAcl);
+	}
+	
+	private boolean needNewAcl(String token,String docId) {
+		try {
+			EcmDocument doc = this.getObjectById(token, docId);
+			String aclName = doc.getAclName();
+			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
+				return true;
+			}
+			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			List<Map<String, Object>> list = this.getMapList(token, sql);
+			if (list != null && list.size() > 0) {
+				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String grantUser(String token, EcmDocument doc, String targetName, int permission, Date expireDate,
