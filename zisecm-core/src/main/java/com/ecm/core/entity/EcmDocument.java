@@ -114,6 +114,10 @@ public class EcmDocument extends EcmSysObject{
     	this.setCurrent(true);
     }
     
+    public EcmDocument(String typeName) {
+    	this.setCurrent(true);
+    	this.setTypeName(typeName);
+    }
     protected String getProjectName() {
 		return projectName;
 	}

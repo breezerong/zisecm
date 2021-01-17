@@ -16,7 +16,15 @@ public class EcmRelation extends EcmSysObject {
     
     private int orderIndex;
     
-   
+    public EcmRelation() {
+    	
+    }
+    
+    public EcmRelation(String name,String parentId,String childId) {
+    	this.setName(name);
+    	this.setParentId(parentId);
+    	this.setChildId(childId);
+    }
     
     private Map<String,Object> attibutes=new HashMap<String,Object>();
     
