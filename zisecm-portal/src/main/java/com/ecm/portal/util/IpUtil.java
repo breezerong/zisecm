@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 public class IpUtil {
 	 public static String getIpAddr(HttpServletRequest request) {
 	        String ipAddress = null;
-	        String ipHostName = "";
 	        try {
 	            ipAddress = request.getHeader("x-forwarded-for");
 	            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
@@ -29,7 +28,6 @@ public class IpUtil {
 	                        e.printStackTrace();
 	                    }
 	                    ipAddress = inet.getHostAddress();
-	                    ipHostName = inet.getHostName();
 	                }
 	            }
 	            // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
@@ -43,11 +41,8 @@ public class IpUtil {
 	            ipAddress="";
 	        }
 	        // ipAddress = this.getRequest().getRemoteAddr();
-	        if(ipHostName!="") {
-	        	return ipHostName+"/"+ipAddress;
-	        }else {
-	        	return ipAddress;
-	        }
+	      
+	        return ipAddress;
 	      
 	    }
 }
