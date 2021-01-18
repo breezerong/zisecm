@@ -827,12 +827,22 @@ public class EcmDcController extends ControllerAbstract {
 	 */
 	@RequestMapping(value = "/dc/newDocumentMoreFile", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> newDocumentMoreFile(String metaData, MultipartFile mainFile,MultipartFile[] attachFiles) throws Exception {
+	public Map<String, Object> newDocumentMoreFile(String metaData, MultipartFile mainFile,
+			MultipartFile[] attachFiles) throws Exception {
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			EcmContent en = null;
 			EcmDocument doc = new EcmDocument();
+			Object parentObj= args.get("parentId");
+			Object relationObj=args.get("relationName");
+			if(parentObj!=null) {
+				args.remove("parentId");
+				
+			}
+			if(relationObj!=null) {
+				args.remove("relationName");
+			}
 			doc.setAttributes(args);
 			if (mainFile != null) {
 				en = new EcmContent();
@@ -864,6 +874,14 @@ public class EcmDcController extends ControllerAbstract {
 				execAddAttachment(p,attachFiles);
 			}
 			//end
+			if(parentObj!=null) {
+				String relationName="irel_children";
+				if(relationObj!=null) {
+					relationName=relationObj.toString();
+				}
+				EcmRelation rel=new EcmRelation(relationName,parentObj.toString(),id);
+				relationService.newObject(getToken(), rel);
+			}
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("id", id);
 			return mp;
