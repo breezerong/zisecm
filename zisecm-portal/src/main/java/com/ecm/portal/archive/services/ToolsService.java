@@ -109,12 +109,15 @@ public class ToolsService extends EcmService {
 
 			// 第一行字段名称
 			Map<Integer, String> attrNames = new HashMap<Integer, String>();
-			for (int i = 0; i <= sheet.getRow(0).getLastCellNum(); i++) {
+			for (int i = 0; i <= sheet.getRow(1).getLastCellNum(); i++) {
 				if (sheet.getRow(0).getCell(i) != null
 						&& !StringUtils.isEmpty(sheet.getRow(0).getCell(i).getStringCellValue())) {
 					attrNames.put(i, sheet.getRow(0).getCell(i).getStringCellValue());
+				}else if(sheet.getRow(1).getCell(i) != null && !StringUtils.isEmpty(sheet.getRow(1).getCell(i).getStringCellValue())){
+					attrNames.put(i, sheet.getRow(1).getCell(i).getStringCellValue());
 				}
 			}
+
 
 			// 第二行为中文标签，第三行位值
 			for (int i = 2; i <= sheet.getLastRowNum(); i++) {
@@ -125,9 +128,9 @@ public class ToolsService extends EcmService {
 					}
 					EcmDocument doc = documentService.getObjectById(token, id);
 					if (doc != null) {
-						this.setValues(doc.getAttributes(), attrNames, sheet.getRow(i), 1,
+						Map<String, Object>  values = this.setValues(token,doc, attrNames, sheet.getRow(i), 1,
 								sheet.getRow(i).getLastCellNum());
-						documentService.updateObject(token, doc, null);
+						documentService.updateObject(token, values);
 						sucessCount++;
 					} else {
 						sb.append("第").append(i + 1).append("行更新错误：").append(id).append("不存在\r\n");
@@ -491,15 +494,18 @@ public class ToolsService extends EcmService {
 		}
 	}
 
-	private void setValues(Map<String, Object> docAttrs, Map<Integer, String> attrNames, Row row, int start, int end)
+	private Map<String, Object>  setValues(String token,EcmDocument doc, Map<Integer, String> attrNames, Row row, int start, int end)
 			throws Exception {
+		Map<String, Object> attrValues = new HashMap<String,Object>();
+		attrValues.put("ID", doc.getId());
 		for (int i = start; i <= end; i++) {
 			String attrName = attrNames.get(i);
 			if (!StringUtils.isEmpty(attrName)) {
 				String val = getCellValue(row.getCell(i));
-				setValue(docAttrs, attrName, val);
+				setValue(token, doc, attrName, val,attrValues);
 			}
 		}
+		return attrValues;
 
 	}
 
@@ -520,10 +526,27 @@ public class ToolsService extends EcmService {
 		}
 	}
 
-	private void setValue(Map<String, Object> docAttrs, String attrName, String val) throws Exception {
+	private void setValue(String token,EcmDocument doc, String attrName, String val,Map<String, Object> attrValues) throws Exception {
 		if (!StringUtils.isEmpty(val)) {
 			EcmAttribute en = CacheManagerOper.getEcmAttributes().get(attrName);
-			// EcmFormItem en = getFormItem(frm.getEcmFormItems(),key.toString());
+			if(en == null) {
+				EcmForm frm = CacheManagerOper.getEcmForms().get(doc.getTypeName() + "_EDIT");
+				if (frm == null) {
+					frm = CacheManagerOper.getEcmForms().get(doc.getTypeName() + "_1");
+				}
+				List<EcmFormItem> list = frm.getEcmFormItems(documentService.getSession(token), "zh-cn");
+				if(list != null) {
+					for(EcmFormItem item:list) {
+						if(item.getLabel().equals(attrName)) {
+							attrName = item.getAttrName();
+							en = CacheManagerOper.getEcmAttributes().get(item.getAttrName());
+							break;
+						}
+					}
+				}
+			}
+
+			
 			if (en == null) {
 				logger.debug("" + attrName + " 不存在.");
 				return;
@@ -531,12 +554,12 @@ public class ToolsService extends EcmService {
 			switch (en.getFieldType()) {
 			case 2:// 日期
 			{
-				docAttrs.put(attrName, val.replace(".", "-").replace("/", "-"));
+				attrValues.put(attrName, val.replace(".", "-").replace("/", "-"));
 				break;
 			}
 			case 3:// 布尔
 			{
-				docAttrs.put(attrName, val.equals("是") || val.equalsIgnoreCase("yes") || val.equalsIgnoreCase("true"));
+				attrValues.put(attrName, val.equals("是") || val.equalsIgnoreCase("yes") || val.equalsIgnoreCase("true"));
 				break;
 			}
 			case 4:
@@ -545,12 +568,12 @@ public class ToolsService extends EcmService {
 			case 7:
 			case 8: // 数字
 			{
-				docAttrs.put(attrName, val);
+				attrValues.put(attrName, val);
 				break;
 			}
 			default:// 字符串
 			{
-				docAttrs.put(attrName, val);
+				attrValues.put(attrName, val);
 				break;
 			}
 			}
