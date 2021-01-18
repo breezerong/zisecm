@@ -21,6 +21,8 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.poi.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +34,7 @@ import com.ecm.core.entity.Pager;
 @SuppressWarnings("rawtypes")
 public class PageInterceptor implements Interceptor {
  
-	
+	private static final Logger logger = LoggerFactory.getLogger(PageInterceptor.class);
 	//private static String databaseType ="mysql";// 数据库类型，不同的数据库有不同的分页方法
 	/**
 	 * 拦截后要执行的方法
@@ -62,9 +64,11 @@ public class PageInterceptor implements Interceptor {
 					.getFieldValue(delegate, "mappedStatement");
 			Connection connection = (Connection) invocation.getArgs()[0];
 			String sql = boundSql.getSql();
+			logger.info("intercept sql:"+sql);
 			this.setTotalRecord(page, (MapperMethod.ParamMap) params,
 					mappedStatement, connection);
 			String pageSql = this.getPageSql(page, sql);
+			logger.info("intercept pageSql:"+pageSql);
 			ReflectUtil.setFieldValue(boundSql, "sql", pageSql);
 		}
 		return invocation.proceed();
