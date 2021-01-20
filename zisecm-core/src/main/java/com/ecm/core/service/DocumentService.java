@@ -1903,8 +1903,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		List<Map<String,Object>> result= this.getObjectMap(token, condition);
 		if(result!=null&&result.size()>0) {
-			return false;
-//			throw new UniquenessException("对象已存在");
+			//return false;
+			throw new UniquenessException("对象已存在");
 		}
 		return true;
 	}
