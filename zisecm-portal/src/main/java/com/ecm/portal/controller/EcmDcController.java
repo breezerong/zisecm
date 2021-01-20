@@ -574,11 +574,17 @@ public class EcmDcController extends ControllerAbstract {
 			if(token==null || token.length()==0) {
 				token = getToken();
 			}
+			EcmDocument doc = documentService.getObjectById(getToken(), id);
+			
 			EcmContent en = null;
 			if (!StringUtils.isEmpty(format)) {
 				en = contentService.getObject(token, id, 0, format);
 			} else {
 				en = contentService.getPrimaryContent(token, id);
+			}
+			String fileName = getDocFileName(token,doc);
+			if(fileName == null) {
+				fileName = en.getName();
 			}
 			InputStream iStream = contentService.getContentStream(token, en);
 			// 清空response
@@ -586,7 +592,7 @@ public class EcmDcController extends ControllerAbstract {
 			// 设置response的Header
 			response.setCharacterEncoding("UTF-8");
 			response.addHeader("Content-Disposition",
-					"attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
+					"attachment;filename=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
 			response.addHeader("Content-Length", "" + en.getContentSize());
 			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
 			try {
@@ -611,6 +617,17 @@ public class EcmDcController extends ControllerAbstract {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private String getDocFileName(String token,EcmDocument doc) {
+		String name = doc.getCoding()+"_"+doc.getRevision()+"_"+doc.getTitle();
+		name = name .replace("null_", "");
+		if(name.equals("null")) {
+			return null;
+		}
+		return name.replace("\\", "@").replace("/", "@").replace("*", "@")
+				.replace("?", "@").replace("|", "@").replace("<", "@").replace(">", "@")
+				.replace(":", "@").replace("\"", "@");
 	}
 	
 	@RequestMapping(value = "/dc/getContent4Water") // , method = RequestMethod.POST PostMapping("/dc/getDocumentCount")
@@ -827,12 +844,22 @@ public class EcmDcController extends ControllerAbstract {
 	 */
 	@RequestMapping(value = "/dc/newDocumentMoreFile", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> newDocumentMoreFile(String metaData, MultipartFile mainFile,MultipartFile[] attachFiles) throws Exception {
+	public Map<String, Object> newDocumentMoreFile(String metaData, MultipartFile mainFile,
+			MultipartFile[] attachFiles) throws Exception {
 		Map<String, Object> args = JSONUtils.stringToMap(metaData);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			EcmContent en = null;
 			EcmDocument doc = new EcmDocument();
+			Object parentObj= args.get("parentId");
+			Object relationObj=args.get("relationName");
+			if(parentObj!=null) {
+				args.remove("parentId");
+				
+			}
+			if(relationObj!=null) {
+				args.remove("relationName");
+			}
 			doc.setAttributes(args);
 			if (mainFile != null) {
 				en = new EcmContent();
@@ -864,6 +891,14 @@ public class EcmDcController extends ControllerAbstract {
 				execAddAttachment(p,attachFiles);
 			}
 			//end
+			if(parentObj!=null) {
+				String relationName="irel_children";
+				if(relationObj!=null) {
+					relationName=relationObj.toString();
+				}
+				EcmRelation rel=new EcmRelation(relationName,parentObj.toString(),id);
+				relationService.newObject(getToken(), rel);
+			}
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("id", id);
 			return mp;

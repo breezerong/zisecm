@@ -305,6 +305,41 @@ public class ArchiveFolderController extends ControllerAbstract{
 	
 	}
 	/**
+	 * 通过id查找relation中childId对应的document
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/getAllDocusByRelationParentId", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getAllDocuByRelationParentId(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		
+
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String conditionWhere="";
+			if(args.get("condition")!=null) {
+				conditionWhere=args.get("condition").toString();
+			}
+			List<Map<String, Object>>  list=new ArrayList<Map<String,Object>>();
+			if(!"".equals(args.get("id").toString())) {
+				String sql = "select b.*,a.id as RELATION_ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
+						+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
+						+ " and a.PARENT_ID='"+args.get("id").toString()+"' "+conditionWhere+" order by a.ORDER_INDEX,b.CREATION_DATE";
+				list = documentService.getMapList(getToken(), sql);
+				
+			}
+			
+			mp.put("data", list);
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	
+	}
+	/**
 	 * 上移
 	 * @param argStr
 	 * @return
