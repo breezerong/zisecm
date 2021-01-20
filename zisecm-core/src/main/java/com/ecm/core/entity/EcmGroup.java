@@ -19,6 +19,8 @@ public class EcmGroup extends EcmSysObject{
     
     private String extendId;
     
+    private String manager;
+    
     List<EcmGroup> children ;
 
     public List<EcmGroup> getChildren() {
@@ -68,4 +70,14 @@ public class EcmGroup extends EcmSysObject{
 	public void setExtendId(String extendId) {
 		this.extendId = extendId;
 	}
+
+	public String getManager() {
+		return manager;
+	}
+
+	public void setManager(String manager) {
+		this.manager = manager;
+	}
+	
+	
 }

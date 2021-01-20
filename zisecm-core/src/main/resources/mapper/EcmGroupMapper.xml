@@ -13,6 +13,7 @@
     <result column="GROUP_TYPE" jdbcType="CHAR" property="groupType" />
     <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId" />
     <result column="EXTEND_ID" jdbcType="VARCHAR" property="extendId" />
+    <result column="MANAGER" jdbcType="VARCHAR" property="manager" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, DESCRIPTION, CODING, CREATION_DATE, CREATOR, MODIFIER, MODIFIED_DATE, GROUP_TYPE, PARENT_ID, EXTEND_ID
@@ -49,11 +50,11 @@
   <insert id="insert" parameterType="com.ecm.core.entity.EcmGroup">
     insert into ecm_group (ID, NAME, DESCRIPTION, 
       CODING, CREATION_DATE, CREATOR, 
-      MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID,EXTEND_ID
+      MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID,EXTEND_ID,MANAGER
       )
     values (#{id,jdbcType=VARCHAR},  #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{coding,jdbcType=VARCHAR}, #{creationDate,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
-      #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{groupType,jdbcType=CHAR}, #{parentId,jdbcType=VARCHAR}, #{extendId,jdbcType=VARCHAR}
+      #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{groupType,jdbcType=CHAR}, #{parentId,jdbcType=VARCHAR}, #{extendId,jdbcType=VARCHAR}, #{manager,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmGroup">
@@ -92,6 +93,9 @@
       <if test="extendId != null">
         EXTEND_ID,
       </if>
+      <if test="manager != null">
+        MANAGER ,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -126,6 +130,9 @@
       </if>
       <if test="extendId != null">
         #{extendId,jdbcType=VARCHAR},
+      </if>
+       <if test="manager != null">
+        #{manager,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -162,6 +169,9 @@
        <if test="extendId != null">
         EXTEND_ID = #{extendId,jdbcType=VARCHAR},
       </if>
+      <if test="manager != null">
+        MANAGER = #{manager,jdbcType=VARCHAR},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -176,7 +186,8 @@
       MODIFIED_DATE = #{modifiedDate,jdbcType=TIMESTAMP},
       GROUP_TYPE = #{groupType,jdbcType=CHAR},
       PARENT_ID = #{parentId,jdbcType=VARCHAR},
-      EXTEND_ID = #{extendId,jdbcType=VARCHAR}
+      EXTEND_ID = #{extendId,jdbcType=VARCHAR},
+      MANAGER = #{manager,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>
