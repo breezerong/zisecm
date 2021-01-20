@@ -109,7 +109,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 
 	@Override
 	public List<EcmGroup> getGroups(String token,String parentId, String type, Pager pager, String condition) {
-		String sql = "select ID, NAME, DESCRIPTION, CODING, CREATION_DATE, CREATOR, MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID from ecm_group where 1=1 ";
+		String sql = "select ID, NAME, DESCRIPTION, CODING, CREATION_DATE, CREATOR, MODIFIER, MODIFIED_DATE, GROUP_TYPE,PARENT_ID,MANAGER from ecm_group where 1=1 ";
 		if(!StringUtils.isEmpty(type))
 		{
 			sql += " and GROUP_TYPE='"+type+"'";
