@@ -934,7 +934,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String aclName = doc.getAclName();
 		
 		// C_STRING1 知悉范围名称
-		String scopeKnowledgeName = (String) doc.getAttributes().get("C_STRING1"); 
+		String scopeKnowledgeName = (String) doc.getAttributes().get("ITEM_SCOPE"); 
 		
 		//判断当前用户是否在文档的知悉范围中
 		List<EcmGroup> glist = userService.getUserGroupsById(token, userID);
