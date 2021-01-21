@@ -22,9 +22,8 @@ public interface EcmContentMapper {
 	int insertSelective(EcmContent record);
 
     EcmContent selectByPrimaryKey(String id);
-    
     List<EcmContent> selectByCondition(@Param(value="condition")String condition);
-
+    
     int updateByPrimaryKeySelective(EcmContent record);
 
     int updateByPrimaryKey(EcmContent record);

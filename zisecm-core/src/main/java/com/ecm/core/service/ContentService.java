@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.ecm.core.cache.manager.CacheManagerOper;
@@ -38,6 +39,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.icore.service.IContentService;
+import com.google.common.base.Strings;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
@@ -72,56 +74,102 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 		}
 		return contentMapper.getContents(docId, contentType);
 	}
+ 
+	
+	@Override
+	public List<EcmContent> getAllContents(String token, String docId) {
+		return contentMapper.getAllContents(docId);
+	}
+	
+	@Override
+	public List<EcmContent> getContents(String token, String docId ,int contentType) {
+		return contentMapper.getContents(docId, contentType);
+	}
 	
 	@Override
 	public List<EcmContent> getObjects(String token, String condition) {
-		
 		return contentMapper.selectByCondition(condition);
 	}
 
+
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public String newObject(String token, Object obj) throws EcmException {
 		// TODO Auto-generated method stub
-		try {
-			EcmContent en = (EcmContent)obj;
-			if(StringUtils.isEmpty(en.getId())) {
-				en.createId();
-			}
-			en.setDataTicket(contentMapper.selectDataTicket(DBFactory.getDBConn().getDBSequece().getContentDataTicketSql()));
-			String fullPath = getFullPath(en);
-			logger.info("Full path:{}",fullPath);
-			File file = new File(fullPath);   
-			long len = 0;
-			BufferedOutputStream fis = new BufferedOutputStream(new FileOutputStream(file));
-			try
-			{
-				byte[] buffer = new byte[8 * 1024];
-				int bytesRead;
-				while ((bytesRead = en.getInputStream().read(buffer)) != -1) {
-				   fis.write(buffer, 0, bytesRead);
-				   len += bytesRead;
+				try {
+					EcmContent en = (EcmContent)obj;
+					//新增内容前，将旧版IS_CURRENT设置成0
+					if(StringUtils.isNotEmpty(en.getOldId())) {
+						updateOldContentCurrent(en.getOldId());
+					}
+					
+					
+					if(StringUtils.isEmpty(en.getId())) {
+						en.createId();
+					}
+					en.setDataTicket(contentMapper.selectDataTicket(DBFactory.getDBConn().getDBSequece().getContentDataTicketSql()));
+					String fullPath = getFullPath(en);
+					logger.info("Full path:{}",fullPath);
+					File file = new File(fullPath);   
+					long len = 0;
+					BufferedOutputStream fis = new BufferedOutputStream(new FileOutputStream(file));
+					try
+					{
+						byte[] buffer = new byte[8 * 1024];
+						int bytesRead;
+						while ((bytesRead = en.getInputStream().read(buffer)) != -1) {
+						   fis.write(buffer, 0, bytesRead);
+						   len += bytesRead;
+						}
+					}
+					finally
+					{
+						fis.close();
+					}
+					en.setContentSize(len);
+					en.setCreationDate(new Date());
+					en.setCreator(getSession(token).getCurrentUser().getUserName());
+					en.setModifiedDate(en.getCreationDate());
+					en.setModifier(en.getCreator());
+					//en.setIsCurrent(1);
+					contentMapper.insert(en);
+					createPdfOcrEvent(token, en);
+					logger.info("Insert content:{}",en.getId());
+					return en.getId();
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					new EcmException(ex.getMessage());
 				}
+				return null;
+	}
+
+	
+	/**
+	 *    修改现存的内容数据 ， IS_CURRENT=1的 重置为0
+	 * 
+	 * @param token
+	 * @param obj
+	 * @return
+	 * @throws EcmException
+	 */
+	private boolean updateOldContentCurrent(String oldContentId) throws EcmException {
+		try {
+			
+			EcmContent  oldObj =  contentMapper.selectByPrimaryKey(oldContentId);
+			if(oldObj!=null) {
+				oldObj.setIsCurrent(0);
+				contentMapper.updateByPrimaryKey(oldObj);
 			}
-			finally
-			{
-				fis.close();
-			}
-			en.setContentSize(len);
-			en.setCreationDate(new Date());
-			en.setCreator(getSession(token).getCurrentUser().getUserName());
-			en.setModifiedDate(en.getCreationDate());
-			en.setModifier(en.getCreator());
-			contentMapper.insert(en);
-			createPdfOcrEvent(token, en);
-			logger.info("Insert content:{}",en.getId());
-			return en.getId();
-		}catch(Exception ex) {
+			return true;
+		}
+		catch(Exception ex) {
 			ex.printStackTrace();
 			new EcmException(ex.getMessage());
 		}
-		return null;
+		return false;
 	}
-
+	
+	
 	@Override
 	public boolean updateObject(String token, Object obj) throws EcmException {
 		try {
@@ -206,20 +254,24 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	 */
 	@Override
 	public EcmContent getObject(String token, String objId,int contentType,String formatName) {
-		// TODO Auto-generated method stub
-		String sql = " PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(objId)
+		String sql ="";
+		sql = " PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(objId)
 				+"' and FORMAT_NAME='"+DBFactory.getDBConn().getDBUtils().getString(formatName)+"'";
 		if(contentType>0) {
 			sql = " PARENT_ID='"+DBFactory.getDBConn().getDBUtils().getString(objId)+"' and CONTENT_TYPE="+contentType
 					+" and FORMAT_NAME='"+DBFactory.getDBConn().getDBUtils().getString(formatName)+"'";
 		}
+	
 		logger.info(sql);
+		
 		List<EcmContent> list = contentMapper.selectByCondition(sql);
 		if(list.size()>0) {
 			return list.get(0);
 		}
 		return null;
 	}
+	
+	
 	@Override
 	public void copyContent(String token, String fromDocId,String toDocId) throws Exception {
 		List<EcmContent> list = getObjects(token, toDocId, 0);
@@ -301,9 +353,12 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	public EcmContent getPrimaryContent(String token, String objId) {
 		// TODO Auto-generated method stub
 		logger.debug(objId);
-		List<EcmContent> list = contentMapper.getContents(objId, 1);
+		List<EcmContent> list = contentMapper.getContents(objId, 1);//历史数据需要初始化 IS_CURRENT=1
+
 		return list.size()>0?list.get(0):null;
 	}
+	
+	
 	
 	@Override
 	public String getPrimaryFilePath(String token, String objId) {

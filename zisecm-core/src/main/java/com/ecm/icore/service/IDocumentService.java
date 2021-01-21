@@ -362,4 +362,18 @@ public interface IDocumentService {
 	void updateObject(String token, Map<String, Object> args)
 			throws NoPermissionException, AccessDeniedException, EcmException;
 	
+	
+	/**
+	 * 签入内容 并升系统版本
+	 * @param token
+	 * @param docId 文档Id
+	 * @param attrMap 需要修改属性
+	 * @param content 电子文件，如果为空，从上一版继承主格式
+	 * @param isCurrent 是否当前版本
+	 * @return
+	 * @throws Exception
+	 */
+	String checkInUpgradeContent(String token, String docId, EcmContent content) throws Exception ;
+	
+	
 }

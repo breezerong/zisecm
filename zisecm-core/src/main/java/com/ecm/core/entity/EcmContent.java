@@ -29,8 +29,19 @@ public class EcmContent extends EcmSysObject{
     private Long dataTicket;
     
     private InputStream inputStream;
+    private Integer isCurrent = 1;
 
-    @Override
+    private String  oldId; 
+
+	public String getOldId() {
+		return oldId;
+	}
+
+	public void setOldId(String oldId) {
+		this.oldId = oldId;
+	}
+
+	@Override
     public void setName(String name) {
     	super.setName(name);
     	if(StringUtils.isEmpty(formatName)) {
@@ -110,5 +121,13 @@ public class EcmContent extends EcmSysObject{
 
 	public void setInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
+	}
+	
+	public Integer getIsCurrent() {
+		return isCurrent;
+	}
+
+	public void setIsCurrent(Integer isCurrent) {
+		this.isCurrent = isCurrent;
 	}
 }
