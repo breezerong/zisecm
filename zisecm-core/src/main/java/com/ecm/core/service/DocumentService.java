@@ -1985,29 +1985,29 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 							if(StringUtils.isEmpty(ruleData)) {
 								continue;
 							}
-							if(x==ruleDatas.length-1) {
-								subCondition+=rule+" like '%"+ruleData+"%' ";
+							if(subCondition.length()>1) {
+								subCondition+=" or "+ rule+" like '%"+ruleData+"%' ";
 							}else {
-								subCondition+=rule+" like '%"+ruleData+"%' or ";
+								subCondition+=rule+" like '%"+ruleData+"%'";
 							}
 							
 						}
-						if(i==rules.length-1) {
+						if(whereSql.length()>1) {
 							if(!StringUtils.isEmpty(subCondition)) {
-								whereSql+="("+subCondition+") ";
+								whereSql+=" and ("+subCondition+") ";
 							}
 						}else {
 							if(!StringUtils.isEmpty(subCondition)) {
-								whereSql+="("+subCondition+") and ";
+								whereSql+="("+subCondition+") ";
 							}
 						}
 						
 					}else {
 						if(data.get(rule)!=null && !StringUtils.isEmpty(data.get(rule).toString())) {
-							if(i==rules.length-1) {
-								whereSql+=rule+"='"+data.get(rule).toString()+"'";
+							if(whereSql.length()>1) {
+								whereSql+= " and "+ rule+"='"+data.get(rule).toString()+"'";
 							}else {
-								whereSql+=rule+"='"+data.get(rule).toString()+"' and ";
+								whereSql+=rule+"='"+data.get(rule).toString()+"'";
 							}
 							allNull = false;
 						}

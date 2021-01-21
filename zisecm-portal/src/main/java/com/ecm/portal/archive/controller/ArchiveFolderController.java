@@ -155,9 +155,10 @@ public class ArchiveFolderController extends ControllerAbstract{
 		
 		String id ="";
 		if(args.get("transferId")!=null&&!"".equals(args.get("transferId"))) {
-//			EcmDocument pdoc= documentService.getObjectById(getToken(), args.get("transferId").toString());
-//			doc.addAttribute("C_ARCHIVE_NUM", pdoc.getCoding());
-//			doc; pdoc.getCoding();
+			EcmDocument pdoc= documentService.getObjectById(getToken(), args.get("transferId").toString());
+			if(pdoc!=null && "案卷".equals(pdoc.getAttributeValue("C_ITEM_TYPE"))) {
+				doc.addAttribute("IS_CHILD", 1);
+			}
 			try {
 				id = documentService.newObject(getToken(),doc,en);
 			} catch (Exception e) {
@@ -948,58 +949,79 @@ public class ArchiveFolderController extends ControllerAbstract{
 	@RequestMapping(value = "/dc/delDocumentAndRelation", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> delDocument(@RequestBody String argStr) throws Exception {
+		long start = System.currentTimeMillis();
 		List<String> list = JSONUtils.stringToArray(argStr);
 //		String strWhere="'"+argStr+"'";//.replaceAll("\"", "'");//"'"+ String.join("','", list)+"'";
 		String strWhere="'"+ String.join("','", list)+"'";
 		String sql="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
-				+ "and b.parent_id in("+strWhere+") and b.name='irel_children' and (b.DESCRIPTION!='复用' or b.DESCRIPTION is null) " + 
+				+ "and b.parent_id in("+strWhere+") and b.name='irel_children' " + 
 				"union " + 
 				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
 				+ "and b.PARENT_ID in(" + 
 				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
-				+ "and b.parent_id in("+strWhere+")) and b.name='irel_children' and (b.DESCRIPTION!='复用' or b.DESCRIPTION is null) "
+				+ "and b.parent_id in("+strWhere+")) and b.name='irel_children' "
 				+" union "
-				+ " select parent_id from ecm_relation where parent_id in("+strWhere+") and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null) ";
+				+ " select parent_id from ecm_relation where parent_id in("+strWhere+") and name='irel_children' ";
+		
 		List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql);
-		for(Map<String,Object> childId : childrenId) {
-			String childidStr=(String) childId.get("child_id");
-			try {
-				documentService.deleteObject(getToken(),childidStr);
-			}catch(NullPointerException nu) {
-				nu.printStackTrace();
-				continue;
-			}catch (Exception e) {
-				// TODO: handle exception
-				throw e;
-			}
-			
-		}
-		String sqlAll="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
-				+ "and b.parent_id in("+strWhere+") " + 
-				"union " + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
-				+ "and b.PARENT_ID in(" + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
-				+ "and b.parent_id in("+strWhere+")) "
-				+" union "
-				+ " select child_id from ecm_relation where child_id in("+strWhere+")";
-		
-		String strSql="select id from ecm_relation where child_id in("+sqlAll+")";
-		List<Map<String,Object>> relationIds=relationService.getMapList(getToken(), strSql);
-		for(Map<String,Object> rMap:relationIds) {
-			relationService.deleteObject(getToken(),rMap.get("id").toString());
-		}
-		String valiSql="select count(*) as num from ecm_document where id in("+strWhere+") ";
-		List<Map<String,Object>> haveData= documentService.getMapList(getToken(), valiSql);
-		if(haveData!=null&&haveData.size()>0&& Integer.parseInt(String.valueOf(haveData.get(0).get("num")))>0) {
-			for (String id : list) {
-				documentService.deleteObject(getToken(),id);
+		if(childrenId != null) {
+			for(Map<String,Object> childId : childrenId) {
+				String childidStr=(String) childId.get("child_id");
+				try {
+					documentService.deleteObject(getToken(),childidStr);
+					logger.info("delete document:"+childidStr);
+				}catch(NullPointerException nu) {
+					nu.printStackTrace();
+					continue;
+				}catch (Exception e) {
+					// TODO: handle exception
+					throw e;
+				}
+				
 			}
 		}
 		
-//		for (String id : list) {
-//			documentService.deleteObject(getToken(),id);
+		logger.info("delDocumentAndRelation sql1:"+sql);
+		long cost = System.currentTimeMillis() - start;
+		logger.info("delDocumentAndRelation:"+cost);
+		start = System.currentTimeMillis();
+//		String sqlAll="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+//				+ "and b.parent_id in("+strWhere+") " + 
+//				"union " + 
+//				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
+//				+ "and b.PARENT_ID in(" + 
+//				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+//				+ "and b.parent_id in("+strWhere+")) "
+//				+" union "
+//				+ " select child_id from ecm_relation where child_id in("+strWhere+")";
+//		
+//		String strSql="select id from ecm_relation where child_id in("+sqlAll+")";
+//		logger.info("delDocumentAndRelation sqlAll:"+sqlAll);
+//		List<Map<String,Object>> relationIds=relationService.getMapList(getToken(), strSql);
+//		if(relationIds!=null) {
+//			for(Map<String,Object> rMap:relationIds) {
+//				
+//				relationService.deleteObject(getToken(),rMap.get("id").toString());
+//				logger.info("delete relation:"+rMap.get("id").toString());
+//			}
 //		}
+//		String valiSql="select count(*) as num from ecm_document where id in("+strWhere+") ";
+//		logger.info("delDocumentAndRelation valiSql:"+valiSql);
+//		List<Map<String,Object>> haveData= documentService.getMapList(getToken(), valiSql);
+//		if(haveData!=null&&haveData.size()>0&& Integer.parseInt(String.valueOf(haveData.get(0).get("num")))>0) {
+//			for (String id : list) {
+//				documentService.deleteObject(getToken(),id);
+//				logger.info("delete delivery document:"+id);
+//			}
+//		}
+		
+		for (String id : list) {
+			documentService.deleteObject(getToken(),id);
+			logger.info("delete delivery document:"+id);
+		}
+		cost = System.currentTimeMillis() - start;
+		logger.info("delete delivery :"+cost);
+		start = System.currentTimeMillis();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", ActionContext.SUCESS);
 		return mp;
