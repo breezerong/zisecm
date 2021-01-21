@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.ecm.core.entity.EcmContent;
+import com.ecm.core.exception.EcmException;
 
 public interface IContentService {
 	/**
@@ -13,6 +14,7 @@ public interface IContentService {
 	 * @return
 	 */
 	List<EcmContent> getObjects(String token, String docId,int contentType);
+	
 	/**
 	 * 根据内容对象获取文件流
 	 * @param token
@@ -63,4 +65,24 @@ public interface IContentService {
 	 * @throws Exception
 	 */
 	void copyContent(String token, String fromDocId, String toDocId) throws Exception;
+	
+	/**
+	 * 增加isCurrent=1
+	 * @param token
+	 * @param docId
+	 * @return
+	 */
+	public List<EcmContent> getAllContents(String token, String docId);
+	
+	/**
+	 * 增加isCurrent=1
+	 * @param token
+	 * @param docId
+	 * @param contentType
+	 * @return
+	 */
+	public List<EcmContent> getContents(String token, String docId ,int contentType );
+	
+	
+	
 }

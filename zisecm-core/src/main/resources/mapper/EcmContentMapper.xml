@@ -17,10 +17,11 @@
     <result column="FILE_PATH" jdbcType="VARCHAR" property="filePath" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
     <result column="ORDER_INDEX" jdbcType="INTEGER" property="orderIndex" />
+    <result column="IS_CURRENT" jdbcType="INTEGER" property="isCurrent" />
   </resultMap>
   <sql id="Base_Column_List">
     ID, NAME, PARENT_ID, CREATION_DATE, CREATOR, CONTENT_TYPE, MODIFIER, MODIFIED_DATE, 
-    FORMAT_NAME, CONTENT_SIZE,STORE_NAME,FILE_PATH,CONTENT_SIZE,DESCRIPTION,ORDER_INDEX,DATA_TICKET
+    FORMAT_NAME, CONTENT_SIZE,STORE_NAME,FILE_PATH,CONTENT_SIZE,DESCRIPTION,ORDER_INDEX,DATA_TICKET,IS_CURRENT
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -32,8 +33,10 @@
     select 
     <include refid="Base_Column_List" />
     from ecm_content
-    where ${condition}
+    where IS_CURRENT = 1  and  ${condition}
   </select>
+ 
+  
   <select id="selectDataTicket" parameterType="java.lang.String" resultType="java.lang.Long">
     <!--  
     mysql: select next_val('data_ticket') 
@@ -45,14 +48,17 @@
     select 
     <include refid="Base_Column_List" />
     from ecm_content
-    where PARENT_ID = #{docId} and CONTENT_TYPE = #{contentType} order by ID
-  </select>
+    where PARENT_ID = #{docId} and CONTENT_TYPE = #{contentType}  and IS_CURRENT = 1  order by ID
+  </select>  
+ 
   <select id="getAllContents" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from ecm_content
-    where PARENT_ID = #{docId,jdbcType=VARCHAR} order by ORDER_INDEX
+    where PARENT_ID = #{docId,jdbcType=VARCHAR} and IS_CURRENT = 1   order by ORDER_INDEX
   </select>
+  
+  
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from ecm_content
@@ -66,13 +72,14 @@
     insert into ecm_content (ID,NAME, PARENT_ID, 
       CREATION_DATE, CREATOR, CONTENT_TYPE, 
       MODIFIER, MODIFIED_DATE, FORMAT_NAME, 
-      CONTENT_SIZE,STORE_NAME,FILE_PATH,DESCRIPTION,ORDER_INDEX,DATA_TICKET)
+      CONTENT_SIZE,STORE_NAME,FILE_PATH,DESCRIPTION,ORDER_INDEX,DATA_TICKET,IS_CURRENT)
     values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
       #{creationDate,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{contentType,jdbcType=INTEGER}, 
       #{modifier,jdbcType=VARCHAR}, #{modifiedDate,jdbcType=TIMESTAMP}, #{formatName,jdbcType=VARCHAR}, 
       #{contentSize,jdbcType=BIGINT}, #{storeName,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{orderIndex,jdbcType=INTEGER},#{dataTicket,jdbcType=BIGINT})
+      #{description,jdbcType=VARCHAR}, #{orderIndex,jdbcType=INTEGER},#{dataTicket,jdbcType=BIGINT},#{isCurrent,jdbcType=INTEGER})
   </insert>
+ 
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmContent">
     insert into ecm_content
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -121,6 +128,9 @@
       <if test="dataTicket != null">
         DATA_TICKET,
       </if>
+      <if test="isCurrent != null">
+        IS_CURRENT,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
     <if test="id != null">
@@ -167,6 +177,9 @@
       </if>
       <if test="dataTicket != null">
         #{dataTicket,jdbcType=BIGINT},
+      </if>
+       <if test="isCurrent != null">
+       #{isCurrent,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -215,6 +228,9 @@
       <if test="dataTicket != null">
         DATA_TICKET = #{dataTicket,jdbcType=BIGINT},
       </if>
+       <if test="isCurrent != null">
+        IS_CURRENT = #{isCurrent,jdbcType=INTEGER},
+      </if>
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
@@ -233,7 +249,9 @@
       FILE_PATH = #{filePath,jdbcType=VARCHAR},
       DESCRIPTION = #{description,jdbcType=VARCHAR},
       DATA_TICKET = #{dataTicket,jdbcType=BIGINT},
-      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER}
+      ORDER_INDEX = #{orderIndex,jdbcType=INTEGER},
+      IS_CURRENT = #{isCurrent,jdbcType=INTEGER}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
+  
 </mapper>

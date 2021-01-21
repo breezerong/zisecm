@@ -2505,7 +2505,8 @@ public class EcmDcController extends ControllerAbstract {
 				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
 				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
 				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
-					List<EcmContent> contentList = contentMapper.getAllContents(objectIdsList[i]);
+					//List<EcmContent> contentList = contentMapper.getAllContents(objectIdsList[i]);
+					List<EcmContent> contentList = contentService.getAllContents(getToken(),objectIdsList[i]);
 					for (int j = 0; j < contentList.size(); j++) {
 						EcmContent en = contentList.get(j);
 						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
@@ -2535,7 +2536,8 @@ public class EcmDcController extends ControllerAbstract {
 				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
 				String revision = docObj.getRevision() == null ? "" : docObj.getRevision();
 				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
-					List<EcmContent> contentList = contentMapper.getContents(objectIdsList[i], 1);
+					//List<EcmContent> contentList = contentMapper.getContents(objectIdsList[i], 1);
+					List<EcmContent> contentList = contentService.getContents(getToken(),objectIdsList[i],1);
 					for (int j = 0; j < contentList.size(); j++) {
 						EcmContent en = contentList.get(j);
 						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
@@ -2553,7 +2555,8 @@ public class EcmDcController extends ControllerAbstract {
 								if(attachDoc==null) {
 									continue;
 								}
-								List<EcmContent> attachDocEnList= contentMapper.getContents(attachID, 1);
+								//List<EcmContent> attachDocEnList= contentMapper.getContents(attachID, 1);
+								List<EcmContent> attachDocEnList = contentService.getContents(getToken(),attachID,1);
 								if(attachDocEnList!=null&&attachDocEnList.size()>0) {
 									EcmContent attachDocEn=attachDocEnList.get(0);
 									files.add(new File(storePath + attachDocEn.getFilePath()));
@@ -2587,7 +2590,8 @@ public class EcmDcController extends ControllerAbstract {
 				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
 				String revision= docObj.getRevision()==null?"A":docObj.getRevision();
 				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
-					List<EcmContent> parentEnList= contentMapper.getContents(objectIdsList[i], 1);
+					//List<EcmContent> parentEnList= contentMapper.getContents(objectIdsList[i], 1);
+					List<EcmContent> parentEnList= contentService.getContents(getToken(),objectIdsList[i], 1);
 					if(parentEnList!=null&&parentEnList.size()>0) {
 						EcmContent en=parentEnList.get(0);
 						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
@@ -2609,7 +2613,8 @@ public class EcmDcController extends ControllerAbstract {
 							}
 							String childCoding=childDoc.getCoding();
 							String childRevision=childDoc.getRevision();
-							List<EcmContent> enList= contentMapper.getContents(childId, 1);
+							//List<EcmContent> enList= contentMapper.getContents(childId, 1);
+							List<EcmContent> enList= contentService.getContents(getToken(),childId, 1);
 							if(enList!=null&&enList.size()>0) {
 								EcmContent en=enList.get(0);
 								String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
@@ -2635,7 +2640,8 @@ public class EcmDcController extends ControllerAbstract {
 									if(attachDoc==null) {
 										continue;
 									}
-									List<EcmContent> attachDocEnList= contentMapper.getContents(attachID, 1);
+									//List<EcmContent> attachDocEnList= contentMapper.getContents(attachID, 1);
+									List<EcmContent> attachDocEnList= contentService.getContents(getToken(),attachID, 1);
 									if(attachDocEnList!=null&&attachDocEnList.size()>0) {
 										EcmContent attachDocEn=attachDocEnList.get(0);
 										String storePath = CacheManagerOper.getEcmStores().get(attachDocEn.getStoreName()).getStorePath();

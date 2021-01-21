@@ -529,6 +529,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return doc.getId();
 	}
 	
+	
+	
+	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public String newObject(String token, EcmDocument doc, EcmContent content) throws Exception {
@@ -931,7 +934,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String aclName = doc.getAclName();
 		
 		// C_STRING1 知悉范围名称
-		String scopeKnowledgeName = (String) doc.getAttributes().get("C_STRING1"); 
+		String scopeKnowledgeName = (String) doc.getAttributes().get("ITEM_SCOPE"); 
 		
 		//判断当前用户是否在文档的知悉范围中
 		List<EcmGroup> glist = userService.getUserGroupsById(token, userID);
@@ -1524,6 +1527,50 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return doc;
 	}
 
+	
+
+	//@Override
+	@Transactional(rollbackFor = Exception.class)
+	public String checkInUpgradeContent(String token, String docId, EcmContent content) throws Exception {
+		EcmDocument doc = this.getObjectById(token, docId);
+		if (doc == null) {
+			throw new EcmException("Document is not exits:" + docId);
+		}
+		if (getPermit(token, docId) < ObjectPermission.WRITE_CONTENT) {
+			throw new NoPermissionException(
+					"User " + getSession(token).getCurrentUser().getUserName() + " has no read permission:" + docId);
+		}
+		if (content != null) {
+			if (StringUtils.isEmpty(content.getFormatName())) {
+				throw new EcmException("Format cannot be empty.");
+			}
+			content.createId();
+			content.setContentType(1);
+			content.setParentId(doc.getId());
+			
+
+			if (StringUtils.isEmpty(content.getStoreName())) {
+				String typeName=doc.getTypeName();
+				if(typeName==null||"".equals(typeName)) {
+					EcmDocument docx= getObjectById(token, doc.getId());
+					typeName=docx.getTypeName();
+				}
+				content.setStoreName(CacheManagerOper.getEcmDefTypes().get(typeName).getStoreName());
+			}
+			doc.setFormatName(content.getFormatName());
+			doc.setContentSize(content.getContentSize());
+			List<EcmContent> contentList = contentServices.getContents(token,docId,1);
+			if(contentList!=null&&contentList.size()>0) {
+				EcmContent oldObj = contentList.get(0);
+				String oldObjId =  oldObj.getId();
+				content.setOldId(oldObjId);
+			}
+			contentServices.newObject(token, content);
+		}
+	
+		return doc.getId();
+	}
+	
 	@Override
 	public List<EcmDocument> getAllVersions(String token, String id) throws EcmException, AccessDeniedException, NoPermissionException {
 		if (getPermit(token, id) < ObjectPermission.BROWSER) {
