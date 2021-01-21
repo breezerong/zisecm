@@ -1929,6 +1929,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			docCondition+=" and ID !='"+data.get("ID").toString()+"'";
 		}
 		String whereSql="";
+		boolean allNull = true;
 		if(onlyPolicys!=null&&onlyPolicys.size()>0) {
 			Map<String,Object> onlyPolicy= (Map<String,Object>)onlyPolicys.get(0);
 			Object policy= onlyPolicy.get("C_COMMENT");
@@ -1936,6 +1937,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				List<EcmFormClassification> list;
 				String rulesStr=policy.toString();
 				String[] rules= rulesStr.split(";");
+				
 				for(int i=0;i<rules.length;i++) {
 					String rule = rules[i];
 					rule=rule.substring(rule.indexOf("{")+1,rule.indexOf("}"));
@@ -1972,6 +1974,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 						// TODO: handle exception
 					}
 					if(itemRuls.getIsRepeat()) {
+						if(data.get(rule)==null || StringUtils.isEmpty(data.get(rule).toString())) {
+							continue;
+						}
+						allNull = false;
 						String[] ruleDatas= data.get(rule).toString().split(";");
 						String subCondition="";
 						for(int x=0;x<ruleDatas.length;x++) {
@@ -1997,18 +2003,21 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 						}
 						
 					}else {
-						if(data.get(rule)!=null) {
+						if(data.get(rule)!=null && !StringUtils.isEmpty(data.get(rule).toString())) {
 							if(i==rules.length-1) {
 								whereSql+=rule+"='"+data.get(rule).toString()+"'";
 							}else {
 								whereSql+=rule+"='"+data.get(rule).toString()+"' and ";
 							}
-							
+							allNull = false;
 						}
 					}
 					
 				}
 			}
+		}
+		if(allNull) {
+			return null;
 		}
 		if(!"".equals(whereSql)) {
 			docCondition+=" and ("+whereSql+")";
