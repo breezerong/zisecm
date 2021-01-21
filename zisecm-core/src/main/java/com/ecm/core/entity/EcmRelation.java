@@ -19,7 +19,12 @@ public class EcmRelation extends EcmSysObject {
     public EcmRelation() {
     	
     }
-    
+    /**
+     * 
+     * @param name 关系名称
+     * @param parentId 父ID
+     * @param childId 子文件ID
+     */
     public EcmRelation(String name,String parentId,String childId) {
     	this.setName(name);
     	this.setParentId(parentId);
