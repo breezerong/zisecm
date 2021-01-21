@@ -262,7 +262,7 @@ public class GridViewManager extends ControllerAbstract{
 		 try {
 			String creator=this.getSession().getCurrentUser().getUserName();
 			String fullName = creator+"_"+name;
-			
+			gridName = getSystemGridName( getToken(), gridName, creator);
 			String condition=" NAME='"+fullName+"' and GRID_TAG='"+gridName+"' and CREATOR='"+creator+"'";
 			EcmGridView tagGrid = getGridView(gridName);
 			EcmGridView gridView= ecmGridView.getObjectByCondition(getToken(), condition);
@@ -314,6 +314,17 @@ public class GridViewManager extends ControllerAbstract{
 		}
 		 return mp;
 		 
+	 }
+	 
+	 private String getSystemGridName(String token,String gridName,String creator) {
+		 if( CacheManagerOper.getEcmGridViews().get(gridName) ==null) {
+			 String condition=" NAME='"+gridName+"' AND GRID_TYPE=1 AND CREATOR='"+creator+"'";
+			 List<EcmGridView> data= ecmGridView.getObjectsByCondition(token, condition);
+			 if(data.size()>0) {
+				 return data.get(0).getGridTag();
+			 }
+		 }
+		 return gridName;
 	 }
 	 
 	 @RequestMapping(value="/admin/getAllGridViewsOfCurrentUser", method = RequestMethod.POST)  

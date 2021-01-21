@@ -158,7 +158,15 @@ public class ArchiveFolderController extends ControllerAbstract{
 //			EcmDocument pdoc= documentService.getObjectById(getToken(), args.get("transferId").toString());
 //			doc.addAttribute("C_ARCHIVE_NUM", pdoc.getCoding());
 //			doc; pdoc.getCoding();
-			id = documentService.newObject(getToken(),doc,en);
+			try {
+				id = documentService.newObject(getToken(),doc,en);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message",e.getMessage());
+				return mp;
+			}
 			EcmRelation relation=new EcmRelation();
 			relation.setParentId(args.get("transferId").toString());
 			
@@ -166,7 +174,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 			relation.setName("irel_children");
 			try {
 				relationService.newObject(getToken(), relation);
-			} catch (EcmException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				mp.put("code", ActionContext.FAILURE);
@@ -174,7 +182,15 @@ public class ArchiveFolderController extends ControllerAbstract{
 				return mp;
 			}
 		}else {
-			id= documentService.newObject(getToken(),doc,en);
+			try {
+				id= documentService.newObject(getToken(),doc,en);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message",e.getMessage());
+				return mp;
+			}
 		}
 		
 		

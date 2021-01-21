@@ -592,7 +592,7 @@ public class EcmDcController extends ControllerAbstract {
 			// 设置response的Header
 			response.setCharacterEncoding("UTF-8");
 			response.addHeader("Content-Disposition",
-					"attachment;filename=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
+					"attachment;filename=" + java.net.URLEncoder.encode(fileName+"."+en.getFormatName(), "UTF-8"));
 			response.addHeader("Content-Length", "" + en.getContentSize());
 			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
 			try {
