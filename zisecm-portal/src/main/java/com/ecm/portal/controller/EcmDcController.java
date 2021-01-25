@@ -586,7 +586,9 @@ public class EcmDcController extends ControllerAbstract {
 			if(fileName == null) {
 				fileName = en.getName();
 			}
-			InputStream iStream = contentService.getContentStream(token, en);
+			//InputStream iStream = contentService.getContentStream(token, en);
+			//统一调用内容的入口,用于权限管理
+			InputStream iStream = documentService.getContentStream(token, en,id);
 			// 清空response
 			response.reset();
 			// 设置response的Header
@@ -659,7 +661,9 @@ public class EcmDcController extends ControllerAbstract {
 			} else {
 				en = contentService.getPrimaryContent(getToken(), id);
 			}
-			InputStream iStream = contentService.getContentStream(getToken(), en);
+			//InputStream iStream = contentService.getContentStream(getToken(), en);
+			//统一调用内容的入口,用于权限管理
+			InputStream iStream = documentService.getContentStream(getToken(), en,id);
 			// 清空response
 			response.reset();
 			// 设置response的Header
@@ -2568,6 +2572,10 @@ public class EcmDcController extends ControllerAbstract {
 					}
 				}
 			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			} catch (NoPermissionException e) {
+				// TODO Auto-generated catch block
+				logger.error(e.getMessage());
 				e.printStackTrace();
 			}
 		}

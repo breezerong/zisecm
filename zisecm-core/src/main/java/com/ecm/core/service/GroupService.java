@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
 import com.ecm.core.dao.EcmUserMapper;
 import com.ecm.core.db.DBFactory;
+import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
 import com.ecm.core.entity.EcmGroupUser;
@@ -558,5 +560,10 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 		return ecmGroupMapper.selectByPrimaryKey(id);
 	}
 
+	
+	@Override
+	public List<EcmGroup> getGroupObjects(String token, String condition) {
+		return ecmGroupMapper.selectByCondition(condition);
+	}
 	
 }

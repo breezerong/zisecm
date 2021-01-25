@@ -1,5 +1,6 @@
 package com.ecm.icore.service;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -258,6 +259,17 @@ public interface IDocumentService {
 	 * @throws Exception
 	 */
 	EcmContent getContent(String token, String id) throws Exception;
+	
+	/**
+	 * 获取文件流
+	 * @param token
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public InputStream getContentStream(String token, EcmContent en,String id) throws Exception ;
+		
+	
 	/**
 	 * 根据ID签出
 	 * @param token

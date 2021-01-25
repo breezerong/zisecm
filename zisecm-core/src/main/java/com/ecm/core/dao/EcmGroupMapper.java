@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.Pager;
 @Component
@@ -33,4 +34,7 @@ public interface EcmGroupMapper {
     List<EcmGroup> searchToEntity(@Param(value="sqlStr") String sqlStr);
     
     List<Map<String, Object>> searchToMap(@Param(value="sqlStr") String sqlStr);
+    
+    List<EcmGroup> selectByCondition(@Param(value="condition")String condition);
+    
 }

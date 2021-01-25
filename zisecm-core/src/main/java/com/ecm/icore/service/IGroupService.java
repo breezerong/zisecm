@@ -2,6 +2,9 @@ package com.ecm.icore.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.Pager;
@@ -41,5 +44,7 @@ public interface IGroupService {
 			throws EcmException, AccessDeniedException, NoPermissionException;
 	boolean removeRoleFromRole(String token, String parentId, String childId)
 			throws EcmException, AccessDeniedException, NoPermissionException;
+	
+	public List<EcmGroup> getGroupObjects(String token, String condition);
 	
 }

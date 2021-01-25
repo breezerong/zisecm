@@ -53,9 +53,11 @@ public class AuthService implements IAuthService {
 		EcmUser ecmUser = new EcmUser();
 		ecmUser.setLoginName(loginName);
 		ecmUser.setPassword(password);
+		
 		String clientInfo = userService.newUUID();
 		LoginUser  cuser = userService.authentication(ecmUser);
 		cuser.setAppName(appName);
+		cuser.setLoginIp(userIp);
 		// 系统登录认证
 		//Authentication auth = SecurityUtils.login(loginName, password, authenticationManager);
 		cuser.setToken(clientInfo);

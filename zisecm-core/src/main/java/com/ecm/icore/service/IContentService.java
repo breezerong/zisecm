@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.ecm.core.entity.EcmContent;
+import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 
 public interface IContentService {
 	/**
@@ -80,8 +82,10 @@ public interface IContentService {
 	 * @param docId
 	 * @param contentType
 	 * @return
+	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
 	 */
-	public List<EcmContent> getContents(String token, String docId ,int contentType );
+	public List<EcmContent> getContents(String token, String docId ,int contentType ) throws AccessDeniedException, NoPermissionException;
 	
 	
 	

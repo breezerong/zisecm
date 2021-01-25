@@ -43,6 +43,14 @@
     from ecm_group
     where ID = #{id,jdbcType=VARCHAR}
   </select>
+  
+   <select id="selectByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ecm_group
+    where ${condition}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from ecm_group
     where ID = #{id,jdbcType=VARCHAR}

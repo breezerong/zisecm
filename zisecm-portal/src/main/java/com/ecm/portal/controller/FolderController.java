@@ -208,7 +208,12 @@ public class FolderController  extends ControllerAbstract {
 			msg="文件夹包含文件，请先删除文件。";
 		}
 		else {
-			folderService.deleteObject(getToken(), obj);
+			try {
+				folderService.deleteObject(getToken(), obj);
+			} catch (NoPermissionException e) {
+				code = 4;
+				msg="您没有权限删除该文件夹";
+			}
 		}
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("code", code);

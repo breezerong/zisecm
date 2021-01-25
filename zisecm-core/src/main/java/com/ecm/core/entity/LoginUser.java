@@ -33,7 +33,17 @@ public class LoginUser {
 	private int systemPermission;
 	// Token
 	private String token;
+	//登录IP
+	private String loginIp;
+	    
+
 	
+	public String getLoginIp() {
+		return loginIp;
+	}
+	public void setLoginIp(String loginIp) {
+		this.loginIp = loginIp;
+	}
 	/**
 	 * 用户部门
 	 */
@@ -209,4 +219,7 @@ public class LoginUser {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+	
+	
+
 }

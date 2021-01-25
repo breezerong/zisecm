@@ -157,8 +157,13 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	}
 	
 	@Override
-	public boolean deleteObject(String token,Object folder) {
+	public boolean deleteObject(String token,Object folder) throws NoPermissionException, AccessDeniedException, EcmException {
 		EcmFolder fld = (EcmFolder)folder;
+		if (getPermit(token, fld.getId()) < ObjectPermission.DELETE) {
+			throw new NoPermissionException(
+					"User " + getSession(token).getCurrentUser().getUserName() + " has no delete permission:" + fld.getId());
+		}
+	
 		return ecmFolderMapper.deleteByPrimaryKey(fld.getId())>0;
 	}
 	@Override

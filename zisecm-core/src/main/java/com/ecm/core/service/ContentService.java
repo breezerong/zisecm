@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.JLabel;
@@ -30,10 +31,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmQueueItem;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
@@ -78,11 +81,13 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 	
 	@Override
 	public List<EcmContent> getAllContents(String token, String docId) {
+		
+		
 		return contentMapper.getAllContents(docId);
 	}
 	
 	@Override
-	public List<EcmContent> getContents(String token, String docId ,int contentType) {
+	public List<EcmContent> getContents(String token, String docId ,int contentType) throws AccessDeniedException, NoPermissionException {
 		return contentMapper.getContents(docId, contentType);
 	}
 	
@@ -495,4 +500,6 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 		}
 		return null;
 	}
+	
+	
 }

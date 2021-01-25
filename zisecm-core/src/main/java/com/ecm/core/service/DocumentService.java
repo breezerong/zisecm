@@ -1,6 +1,7 @@
 package com.ecm.core.service;
 
 import java.io.File;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +55,7 @@ import com.ecm.core.exception.NoOnlyPolicyException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.exception.UniquenessException;
+import com.ecm.core.sync.SyncPublicNetUtil;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
@@ -938,7 +940,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		
 		//判断当前用户是否在文档的知悉范围中
 		List<EcmGroup> glist = userService.getUserGroupsById(token, userID);
-		int knowledgePermission=0;
+		int knowledgePermission=1; //无权限
 		if(inGroup(glist, scopeKnowledgeName)) {
 			knowledgePermission =  ObjectPermission.READ;
 		}
@@ -998,6 +1000,70 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return 1;
 	}
 
+	/**
+	 *      根据密级判断是否可以查看内容
+	 * @param token
+	 * @param doc
+	 * @return
+	 * @throws AccessDeniedException
+	 */
+	private boolean isReadableBySecurityLevel(String token, EcmDocument doc) throws AccessDeniedException {
+		boolean flag = false;
+		//用户ID 和用户IP 必须同时满足密级权限才可以查看
+		boolean idFlag = false;
+		boolean ipFlag = false;
+		//1.核心涉密人员 2.重要涉密人员 3.一般涉密人员 4.非涉密人员 5.核心涉密人员 6.普通商密人员
+		String loginName =  getSession(token).getCurrentUser().getLoginName();
+		int userSecurityLevel = 0;
+		userSecurityLevel = SyncPublicNetUtil.getSecurityLevelByUserIdUrl(loginName); 
+		//实时URL 没有查到数据则通过保存的JSON文件去查询
+		if(userSecurityLevel==0) {
+			SyncPublicNetUtil syncUtil = new SyncPublicNetUtil();
+			userSecurityLevel = syncUtil.getSecurityLevelByUserJson(token, loginName);
+		}
+		//1.NPIC普通商密 2.内部 3.秘密 4.机密 5.绝密 6.NPIC核心商密
+		String userIp = getSession(token).getCurrentUser().getLoginIp();
+		int ipSecurityLevel = 0;
+		ipSecurityLevel	 = SyncPublicNetUtil.getSecurityLevelByIpUrl(userIp); 
+		//实时URL 没有查到数据则通过保存的JSON文件去查询
+		if(ipSecurityLevel==0) {
+			SyncPublicNetUtil syncUtil = new SyncPublicNetUtil();
+			ipSecurityLevel = syncUtil.getSecurityLevelByIpJson(token, userIp);
+		}
+		String  securityLevel = doc.getSecurityLevel();
+
+		if(securityLevel!=null && userSecurityLevel!=0 && ipSecurityLevel!=0) {
+			if(securityLevel.equals("非密") || securityLevel.equals("内部公开")) {
+				flag = true; 
+			}
+			
+			if (securityLevel.equals("普通商密") || securityLevel.equals("秘密")){
+				if(userSecurityLevel==1 || userSecurityLevel==2 || userSecurityLevel==3 || userSecurityLevel==5 || userSecurityLevel==6) {
+					idFlag = true; 
+				}
+				if(ipSecurityLevel==1 || ipSecurityLevel==3 || ipSecurityLevel==4 || ipSecurityLevel==5 || ipSecurityLevel==7) {
+					ipFlag = true; 
+				}
+				if(idFlag && ipFlag) {
+					flag = true; 
+				}
+			}
+			if (securityLevel.equals("核心商密") || securityLevel.equals("机密")){
+				if(userSecurityLevel==1 || userSecurityLevel==2 || userSecurityLevel==5) {
+					idFlag = true; 
+				}
+				if(ipSecurityLevel==4 || ipSecurityLevel==5 || ipSecurityLevel==7 ) {
+					ipFlag = true; 
+				}
+				if(idFlag && ipFlag) {
+					flag = true; 
+				}
+			}
+		}
+		return flag;
+	}
+	
+	
 	@Override
 	public String grantGroup(String token, String id, String targetName, int permission, Date expireDate, boolean newAcl)
 			throws EcmException, AccessDeniedException, NoPermissionException {
@@ -1383,6 +1449,37 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return null;
 	}
 
+	@Override
+	public InputStream getContentStream(String token, EcmContent en,String id) throws NoPermissionException, AccessDeniedException {
+		
+		InputStream iStream = null;
+		if (getPermit(token, id) < ObjectPermission.READ) {
+			throw new NoPermissionException(
+					"User " + getSession(token).getCurrentUser().getUserName() + " has no read permission:" + id);
+		}
+		EcmDocument doc = getObjectById(token, id);
+		
+		//cd 项目参数
+		if(CacheManagerOper.getEcmParameters().get("CD_SECURITY_LEVEL")!= null) {
+			if(CacheManagerOper.getEcmParameters().get("CD_SECURITY_LEVEL").getValue().equals("1")) {
+				if(isReadableBySecurityLevel(token,doc)) {
+					throw new NoPermissionException(
+							"User " + getSession(token).getCurrentUser().getUserName() + " SecurityLevel  has no read   permission:" + id);
+				}
+			}
+		}
+		try {
+			iStream = contentServices.getContentStream(token, en);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return iStream;
+	}
+	
+	
+	
+	
 	@Override
 	public boolean checkOut(String token, String id) throws Exception {
 		EcmDocument doc = this.getObjectById(token, id);
