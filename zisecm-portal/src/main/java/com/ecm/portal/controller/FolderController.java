@@ -84,13 +84,17 @@ public class FolderController  extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			List<EcmFolder> list = folderService.getFoldersByParentId(getToken(), parentId);
+			
+			int permit = folderService.getPermit(getToken(), parentId);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", list);
+			mp.put("permit", permit);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", ex.getMessage());
+			mp.put("permit", 1);
 		}
 		return mp;
 	}
