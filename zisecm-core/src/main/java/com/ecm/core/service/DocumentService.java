@@ -259,9 +259,64 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return list;
 	}
 	
+	public List<Map<String, Object>> getObjectsByPermission(String token, String gridName, String folderId, Pager pager,
+			String condition, String orderBy) throws AccessDeniedException {
+		String currentUser="";
+		LoginUser userObj=null;
+		try {
+			userObj=getSession(token).getCurrentUser();
+			currentUser = userObj.getUserName();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		EcmGridView gv = getGridView(token,gridName);
+		String gvCondition=gv.getCondition();
+		
+		String sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
+				+ gvCondition;
+		String userName = this.getSession(token).getCurrentUser().getUserName();
+		String userId = this.getSession(token).getCurrentUser().getUserId();
+		if(this.getSession(token).getCurrentUser().getSystemPermission()<5) {
+			sql += " and exists" + 
+				"(select 1 from ecm_acl b,ecm_acl_item c where ACL_NAME =b.NAME and b.ID =c.PARENT_ID and " + 
+				"((c.TARGET_NAME='"+userName+"' or c.TARGET_NAME='everyone' ) " + 
+				"or (c.TARGET_TYPE=2 and " + 
+				"exists(select 1 from ecm_group d,ecm_group_user e where d.NAME=c.TARGET_NAME and d.ID =e.GROUP_ID and e.USER_ID='"+userId+"' )" + 
+				")) and c.PERMISSION>1)";
+		}
+		if (!StringUtils.isEmpty(folderId)) {
+			sql += " and folder_id='" + folderId + "'";
+		}
+		if (!EcmStringUtils.isEmpty(condition)) {
+			sql += " and (" + condition + ")";
+		}
+		sql+=") t";
+		if (!EcmStringUtils.isEmpty(orderBy)) {
+			sql += " order by " + orderBy;
+		} else {
+			sql += " " + gv.getOrderBy();
+		}
+		
+		sql=SqlUtils.replaceSql(sql, userObj);
+		logger.info("[DocumentService.getObjects=>SQL]");
+		logger.info(sql);
+		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
+		return list;
+	}
 	
 	public List<Map<String, Object>> getObjectsByConditon(String token,String gridName,String folderId,Pager pager,String condition,String orderBy){
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		EcmGridView gv = new EcmGridView();
+		StringBuilder attrNames = new StringBuilder(",");
+		if (gridName.contains("_CUSTOM")) {
+			String customId = gridName.replace("_CUSTOM", "");
+			List<Map<String, Object>> list = ecmDocument.executeSQL("select C_COMMENT from ecm_document where id ='"+customId+"'");
+			attrNames.append(list.get(0).get("C_COMMENT"));
+			attrNames.deleteCharAt(attrNames.length()-1);
+		}else {
+			gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		}
 		String currentUser="";
 		try {
 			currentUser = getSession(token).getCurrentUser().getUserName();
@@ -273,7 +328,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
     		
 			condition=condition.replaceAll("@currentuser", currentUser);
     	}
-		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
+		String sql = "";
+		if (gridName.contains("_CUSTOM")) {
+			sql = "select " + baseColumns + attrNames.toString() + " from ecm_document where 1=1";
+		}else {
+			sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
+		}
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
 		}
@@ -988,6 +1048,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				List<Map<String, Object>> list = ecmDocument.executeSQL(sb.toString());
 
 				if (list.size() > 0) {
+					if(list.get(0)==null) {
+						return 1;
+					}
 					 int permissionNum = (int) list.get(0).get("PERMISSION");
 					if(permissionNum > knowledgePermission) {
 						return (int) list.get(0).get("PERMISSION");
@@ -1135,7 +1198,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = this.getMapList(token, sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;

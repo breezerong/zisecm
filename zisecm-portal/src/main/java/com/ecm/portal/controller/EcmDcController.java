@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.JLabel;
 
+import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,6 +190,63 @@ public class EcmDcController extends ControllerAbstract {
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	@RequestMapping(value = "/dc/getDocumentsByPermission", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> getDocumentsByPermission(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			List<Map<String, Object>> list = documentService.getObjectsByPermission(getToken(), args.get("gridName").toString(),
+					args.get("folderId")==null?"":args.get("folderId").toString(), pager, args.get("condition").toString(),
+					args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	
+	/**
+	 * 
+	 * @Title:通过condition获取指定条件EcmDocument数据的ID，用于数据迁移验证同步数据是否已存在，若condition为空则给一个1=0的条件将查询结果设成空
+	 * @date:  2021年1月27日 上午11:00:36
+	 * @Description
+	 * @param condition
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/getDocumentOne", method = RequestMethod.POST)
+	public Map<String, Object> getDocumentOne(@RequestBody String condition) {
+		Map<String, Object> mp = new HashMap<>();
+		try {
+			Pager pager = new Pager();
+			pager.setPageIndex(0);
+			pager.setPageSize(1);
+			SQL sql = new SQL();
+			sql.SELECT("*").FROM("ecm_document");			
+			if(StringUtils.isEmpty(condition)) {
+				sql.WHERE("1=0");
+			}else {
+				sql.WHERE(condition);
+			}
+			List<Map<String,Object>> list = documentService.getMapList(getToken(), sql.toString(), pager);
+			if(list!=null && list.size()>0) {
+				mp.put("data", list.get(0));
+			}else {
+				mp.put("data", null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+		}catch (Exception e) {
+			mp.put("code", ActionContext.FAILURE);
 		}
 		return mp;
 	}
@@ -3262,7 +3320,9 @@ public class EcmDcController extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
@@ -3279,7 +3339,9 @@ public class EcmDcController extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
