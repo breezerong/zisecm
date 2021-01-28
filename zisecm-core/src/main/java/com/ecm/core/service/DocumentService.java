@@ -103,6 +103,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Autowired
 	private UserService userService;
 	
+	
 	/**
 	 * 通过配置子句查询对象
 	 * @param token
@@ -1521,7 +1522,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			newAudit(token, null, AuditContext.LOCK, doc.getId(), null, null);
 			return true;
 		} else {
-			throw new EcmException("Document is locked by :" + doc.getLockOwner());
+			//throw new EcmException("Document is locked by :" + doc.getLockOwner());
+			throw new EcmException("文档正在被 " + doc.getLockOwner() +"用户编辑，请稍后在编辑!");
 		}
 	}
 	
@@ -1645,6 +1647,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			content.setContentType(1);
 			content.setParentId(doc.getId());
 			
+			
+			
+			
 
 			if (StringUtils.isEmpty(content.getStoreName())) {
 				String typeName=doc.getTypeName();
@@ -1656,13 +1661,20 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			doc.setFormatName(content.getFormatName());
 			doc.setContentSize(content.getContentSize());
+
 			List<EcmContent> contentList = contentServices.getContents(token,docId,1);
 			if(contentList!=null&&contentList.size()>0) {
 				EcmContent oldObj = contentList.get(0);
 				String oldObjId =  oldObj.getId();
 				content.setOldId(oldObjId);
+				content.setName(oldObj.getName());
 			}
 			contentServices.newObject(token, content);
+			
+			// checkin 解锁 
+			String sql = "update ecm_document set LOCK_OWNER='',LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBNullDate() + ", LOCK_CLIENT='' where ID='" + docId + "'";
+			
+			ecmDocument.executeSQL(sql);
 		}
 	
 		return doc.getId();
