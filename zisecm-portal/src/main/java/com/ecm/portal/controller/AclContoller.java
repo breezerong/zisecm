@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +31,8 @@ import com.ecm.core.service.AclService;
  */
 @Controller
 public class AclContoller extends ControllerAbstract{
-
+	private Logger logger=LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	private AclService aclService;
 
@@ -223,6 +226,28 @@ public class AclContoller extends ControllerAbstract{
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+	/**
+	 * 根据aclName获取权限
+	 * @param aclName
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/acl/getPermission", method = RequestMethod.POST)
+	public Map<String,Object> getPermission(@RequestBody String aclName){
+		Map<String,Object> mp=new HashMap<String, Object>();
+		try {
+			int permission= aclService.getPermission(getToken(),aclName);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("permission", permission);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message","权限获取失败！"+e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return mp;
 	}

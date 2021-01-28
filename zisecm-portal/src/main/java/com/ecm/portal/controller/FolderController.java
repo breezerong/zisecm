@@ -810,7 +810,7 @@ public class FolderController  extends ControllerAbstract {
 //			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
 //					+"union select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"'";
 			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
-					+" union select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
+					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
@@ -829,7 +829,7 @@ public class FolderController  extends ControllerAbstract {
 			}
 //			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
 			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
-					+" union select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
+					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;

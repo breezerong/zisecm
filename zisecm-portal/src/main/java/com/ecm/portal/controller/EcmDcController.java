@@ -192,7 +192,28 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
-
+	@RequestMapping(value = "/dc/getDocumentsByPermission", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> getDocumentsByPermission(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			List<Map<String, Object>> list = documentService.getObjectsByPermission(getToken(), args.get("gridName").toString(),
+					args.get("folderId")==null?"":args.get("folderId").toString(), pager, args.get("condition").toString(),
+					args.get("orderBy").toString());
+			mp.put("data", list);
+			mp.put("pager", pager);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
 	@RequestMapping(value = "/dc/getNewDocuments", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getNewDocument(@RequestBody String argStr) {
@@ -3262,7 +3283,9 @@ public class EcmDcController extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
@@ -3279,7 +3302,9 @@ public class EcmDcController extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
 				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
