@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.JLabel;
 
+import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,6 +215,42 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
+	
+	/**
+	 * 
+	 * @Title:通过condition获取指定条件EcmDocument数据的ID，用于数据迁移验证同步数据是否已存在，若condition为空则给一个1=0的条件将查询结果设成空
+	 * @date:  2021年1月27日 上午11:00:36
+	 * @Description
+	 * @param condition
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/getDocumentOne", method = RequestMethod.POST)
+	public Map<String, Object> getDocumentOne(@RequestBody String condition) {
+		Map<String, Object> mp = new HashMap<>();
+		try {
+			Pager pager = new Pager();
+			pager.setPageIndex(0);
+			pager.setPageSize(1);
+			SQL sql = new SQL();
+			sql.SELECT("*").FROM("ecm_document");			
+			if(StringUtils.isEmpty(condition)) {
+				sql.WHERE("1=0");
+			}else {
+				sql.WHERE(condition);
+			}
+			List<Map<String,Object>> list = documentService.getMapList(getToken(), sql.toString(), pager);
+			if(list!=null && list.size()>0) {
+				mp.put("data", list.get(0));
+			}else {
+				mp.put("data", null);
+			}
+			mp.put("code", ActionContext.SUCESS);
+		}catch (Exception e) {
+			mp.put("code", ActionContext.FAILURE);
+		}
+		return mp;
+	}
+
 	@RequestMapping(value = "/dc/getNewDocuments", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> getNewDocument(@RequestBody String argStr) {

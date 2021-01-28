@@ -306,7 +306,16 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	}
 	
 	public List<Map<String, Object>> getObjectsByConditon(String token,String gridName,String folderId,Pager pager,String condition,String orderBy){
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		EcmGridView gv = new EcmGridView();
+		StringBuilder attrNames = new StringBuilder(",");
+		if (gridName.contains("_CUSTOM")) {
+			String customId = gridName.replace("_CUSTOM", "");
+			List<Map<String, Object>> list = ecmDocument.executeSQL("select C_COMMENT from ecm_document where id ='"+customId+"'");
+			attrNames.append(list.get(0).get("C_COMMENT"));
+			attrNames.deleteCharAt(attrNames.length()-1);
+		}else {
+			gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		}
 		String currentUser="";
 		try {
 			currentUser = getSession(token).getCurrentUser().getUserName();
@@ -318,7 +327,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
     		
 			condition=condition.replaceAll("@currentuser", currentUser);
     	}
-		String sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
+		String sql = "";
+		if (gridName.contains("_CUSTOM")) {
+			sql = "select " + baseColumns + attrNames.toString() + " from ecm_document where 1=1";
+		}else {
+			sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
+		}
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
 		}
