@@ -1048,34 +1048,34 @@ public class ArchiveFolderController extends ControllerAbstract{
 				// TODO: handle exception
 				id=param;
 			}
-			long start = System.currentTimeMillis();
-			logger.info("Start get root folder.");
+//			long start = System.currentTimeMillis();
+//			logger.info("Start get root folder.");
 			List<EcmFolder> folders=folderService.getFoldersByParentId(getToken(), id);
-			long cost = System.currentTimeMillis() - start;
-			start = System.currentTimeMillis();
-			logger.info("End get root folder:"+cost);
-			List<EcmFolder> resultData=new ArrayList<>();
-			for(EcmFolder f:folders) {
-				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
-				String gvCondition=gv.getCondition();
-				String sql="select count(*) as num from ecm_document where "
-				+gvCondition+(conditionObj==null?"":conditionObj.toString())+" and FOLDER_ID in( " + 
-						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
-						")";
-				logger.info("SQL:"+sql);
-				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
-				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
-					String name=f.getName();
-					f.setName(name+"("+numberData.get(0).get("num").toString()+")");
-					
-				}
-				resultData.add(f);
-				cost = System.currentTimeMillis() - start;
-				start = System.currentTimeMillis();
-				logger.info("End get child folder document count:"+cost);
-			}
+//			long cost = System.currentTimeMillis() - start;
+//			start = System.currentTimeMillis();
+//			logger.info("End get root folder:"+cost);
+//			List<EcmFolder> resultData=new ArrayList<>();
+//			for(EcmFolder f:folders) {
+//				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
+//				String gvCondition=gv.getCondition();
+//				String sql="select count(*) as num from ecm_document where "
+//				+gvCondition+(conditionObj==null?"":conditionObj.toString())+" and FOLDER_ID in( " + 
+//						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
+//						")";
+//				logger.info("SQL:"+sql);
+//				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
+//				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
+//					String name=f.getName();
+//					f.setName(name+"("+numberData.get(0).get("num").toString()+")");
+//					
+//				}
+//				resultData.add(f);
+//				cost = System.currentTimeMillis() - start;
+//				start = System.currentTimeMillis();
+//				logger.info("End get child folder document count:"+cost);
+//			}
 			mp.put("code", ActionContext.SUCESS);
-			mp.put("data", resultData);
+			mp.put("data", folders);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
