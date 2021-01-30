@@ -343,7 +343,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
 		} else {
-			sql += " order by ID desc";
+			sql += " order by CREATION_DATE desc";
 		}
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub

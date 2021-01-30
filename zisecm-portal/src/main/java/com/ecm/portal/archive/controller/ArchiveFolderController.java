@@ -218,7 +218,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 			List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
 					args.get("gridName").toString(), args.get("folderId").toString(),
 					pager,
-					args.get("condition").toString(), args.get("orderBy").toString());
+					args.get("condition").toString(), (String)args.get("orderBy"));
 			mp.put("data", list);
 			mp.put("pager", pager);
 			mp.put("code", ActionContext.SUCESS);
