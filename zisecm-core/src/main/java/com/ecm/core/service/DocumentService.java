@@ -2122,6 +2122,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if(condition == null) {
 			return true;
 		}
+		if(data.containsKey("SYN_APP") && data.get("SYN_APP")!= null) {
+			return true;
+		}
 		List<Map<String,Object>> result= this.getObjectMap(token, condition);
 		if(result!=null&&result.size()>0) {
 			//return false;
