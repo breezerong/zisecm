@@ -2085,6 +2085,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @throws UniquenessException 
 	 */
 	public boolean validateChildOnly(String token,Map<String,Object> data) throws  EcmException, AccessDeniedException, UniquenessException {
+		if(data.containsKey("SYN_APP") && data.get("SYN_APP")!= null) {
+			return true;
+		}
 		String typeName=data.get("TYPE_NAME").toString();
 		String parentID=data.get("parentDocId").toString();
 		String sql="select * from ( " + 
