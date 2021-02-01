@@ -225,6 +225,7 @@ public class EcmDcController extends ControllerAbstract {
 	 * @return
 	 */
 	@RequestMapping(value = "/dc/getDocumentOne", method = RequestMethod.POST)
+	@ResponseBody
 	public Map<String, Object> getDocumentOne(@RequestBody String condition) {
 		Map<String, Object> mp = new HashMap<>();
 		try {
