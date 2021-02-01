@@ -2121,11 +2121,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @throws UniquenessException 
 	 */
 	public boolean validate(String token,Map<String,Object> data) throws AccessDeniedException, UniquenessException {
-		String condition=getConditionByConfig(token,data);
-		if(condition == null) {
+		if(data.containsKey("SYN_APP") && data.get("SYN_APP")!= null) {
 			return true;
 		}
-		if(data.containsKey("SYN_APP") && data.get("SYN_APP")!= null) {
+		String condition=getConditionByConfig(token,data);
+		if(condition == null) {
 			return true;
 		}
 		List<Map<String,Object>> result= this.getObjectMap(token, condition);
