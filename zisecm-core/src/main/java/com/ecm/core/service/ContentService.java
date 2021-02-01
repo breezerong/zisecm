@@ -139,6 +139,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 					//en.setIsCurrent(1);
 					contentMapper.insert(en);
 					createPdfOcrEvent(token, en);
+					en.getInputStream().close();
 					logger.info("Insert content:{}",en.getId());
 					return en.getId();
 				}catch(Exception ex) {
@@ -215,6 +216,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			en.setModifiedDate(new Date());
 			en.setModifier(getSession(token).getCurrentUser().getUserName());
 			contentMapper.updateByPrimaryKey(en);
+			en.getInputStream().close();
 			if(!ocrUpdate) {
 				createPdfOcrEvent(token, en);
 			}
@@ -290,6 +292,8 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 				conent.createId();
 				conent.setParentId(toDocId);
 				this.newObject(token, conent);
+				conent.getInputStream().close();
+				
 			}
 		}
 	}
@@ -313,6 +317,7 @@ public class ContentService extends EcmObjectService<EcmContent> implements ICon
 			conent.createId();
 			conent.setParentId(toDocId);
 			this.newObject(token, conent);
+			conent.getInputStream().close();
 		}
 	}
 	
