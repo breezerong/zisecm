@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -330,7 +332,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
     	}
 		String sql = "";
 		if (gridName.contains("_CUSTOM")) {
-			sql = "select " + baseColumns + attrNames.toString() + " from ecm_document where 1=1";
+			String columnsString = baseColumns + attrNames.toString();
+			String[] columnArr = columnsString.split(",");
+			Set<String> columnSet = new HashSet<>(Arrays.asList(columnArr));
+			columnArr = columnSet.toArray(new String[columnSet.size()]);
+			String newColumnStr = String.join(",", columnArr);
+			sql = "select " + newColumnStr + " from ecm_document where 1=1";
 		}else {
 			sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
 		}
