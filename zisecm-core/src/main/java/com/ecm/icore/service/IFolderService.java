@@ -69,4 +69,8 @@ public interface IFolderService {
 	String grantGroup(String token, EcmFolder folder, String targetName, int permission, Date expireDate,
 			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException;
 
+	EcmFolder getObjectByPaths(String token, String folderPaths);
+
+	List<EcmFolder> getFoldersByParentPaths(String token, String paths);
+
 }

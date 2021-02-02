@@ -119,6 +119,22 @@ public class FolderController  extends ControllerAbstract {
 		mp.put("data", list);
 		return mp;
 	}
+
+	@ResponseBody
+	@RequestMapping(value="/admin/getInstituteFolder", method = RequestMethod.POST)
+	public Map<String, Object> getInstituteFolder(@RequestBody String parentId) {
+		List<EcmFolder> list = null;
+		try {
+			list = folderService.getFoldersByParentPaths(getToken(),"'/院文件','/院档案'");
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Map<String, Object> mp = new HashMap<String, Object>();
+		mp.put("code", ActionContext.SUCESS);
+		mp.put("data", list);
+		return mp;
+	}
 	
 	/**
 	 * 获取所有表单
