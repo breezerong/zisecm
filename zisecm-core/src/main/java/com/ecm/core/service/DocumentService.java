@@ -767,7 +767,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				}else {
 					Object datavalue = args.get(key);
 					if(datavalue!=null) {
-						String val=DBFactory.getDBConn().getDBUtils().getString(datavalue.toString());
+						String insertValue = datavalue.toString();
+						insertValue = insertValue.replace("\\", "\\\\");
+						String val=DBFactory.getDBConn().getDBUtils().getString(insertValue);
 						if(val.equalsIgnoreCase("@sequence")) {
 							try {
 								val=numberservice.getNumber(token, args);
