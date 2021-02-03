@@ -21,8 +21,10 @@ public class SysConfig {
 		return departmentRootId;
 	}
 
-
-
+	@Value("${department.root.id}")
+	public void setDepartmentRootId(String departmentRootId) {
+		SysConfig.departmentRootId=departmentRootId;
+	}
 
 	public static String getUnauthorized() {
 		return unauthorized;
