@@ -166,9 +166,19 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	
 		return ecmFolderMapper.deleteByPrimaryKey(fld.getId())>0;
 	}
+	
 	@Override
 	public EcmFolder getObjectByPath(String token,String folderPath) {
 		String cond = " FOLDER_PATH='"+DBFactory.getDBConn().getDBUtils().getString(folderPath)+"'";
+		List<EcmFolder> list = ecmFolderMapper.selectByCondition(cond);
+		if(list.size()>0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	@Override
+	public EcmFolder getObjectByPaths(String token,String folderPaths) {
+		String cond = " FOLDER_PATH in("+folderPaths+")";
 		List<EcmFolder> list = ecmFolderMapper.selectByCondition(cond);
 		if(list.size()>0) {
 			return list.get(0);
@@ -198,6 +208,16 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	@Override
 	public List<EcmFolder> getFoldersByParentPath(String token,String path){
 		EcmFolder folder = getObjectByPath(token,path);
+		List<EcmFolder> list = new ArrayList<EcmFolder>();
+		if(folder != null) {
+			list = ecmFolderMapper.selectByParentId(folder.getId());
+		}
+		return list;
+	}
+	
+	@Override
+	public List<EcmFolder> getFoldersByParentPaths(String token,String paths){
+		EcmFolder folder = getObjectByPaths(token,paths);
 		List<EcmFolder> list = new ArrayList<EcmFolder>();
 		if(folder != null) {
 			list = ecmFolderMapper.selectByParentId(folder.getId());

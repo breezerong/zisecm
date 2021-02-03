@@ -133,7 +133,7 @@ public class NumberService extends EcmService {
 			String cond = (String)policy.get("ITEM_CONTENT");
 			int startIndex = 1;
 			try {
-				startIndex = Integer.parseInt((String)policy.get("C_COUNT1"));
+				startIndex = Integer.parseInt(policy.get("C_COUNT1").toString());
 			}catch(Exception ex) {
 				
 			}

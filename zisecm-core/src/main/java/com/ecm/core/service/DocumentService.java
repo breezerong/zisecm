@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +104,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	@Autowired
 	private UserService userService;
+	
 	
 	/**
 	 * 通过配置子句查询对象
@@ -329,7 +332,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
     	}
 		String sql = "";
 		if (gridName.contains("_CUSTOM")) {
-			sql = "select " + baseColumns + attrNames.toString() + " from ecm_document where 1=1";
+			String columnsString = baseColumns + attrNames.toString();
+			String[] columnArr = columnsString.split(",");
+			Set<String> columnSet = new HashSet<>(Arrays.asList(columnArr));
+			columnArr = columnSet.toArray(new String[columnSet.size()]);
+			String newColumnStr = String.join(",", columnArr);
+			sql = "select " + newColumnStr + " from ecm_document where 1=1";
 		}else {
 			sql = "select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where 1=1";
 		}
@@ -342,7 +350,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
 		} else {
-			sql += " order by ID desc";
+			sql += " order by CREATION_DATE desc";
 		}
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
@@ -1586,7 +1594,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			newAudit(token, null, AuditContext.LOCK, doc.getId(), null, null);
 			return true;
 		} else {
-			throw new EcmException("Document is locked by :" + doc.getLockOwner());
+			//throw new EcmException("Document is locked by :" + doc.getLockOwner());
+			throw new EcmException("文档正在被 " + doc.getLockOwner() +"用户编辑，请稍后在编辑!");
 		}
 	}
 	
@@ -1710,6 +1719,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			content.setContentType(1);
 			content.setParentId(doc.getId());
 			
+			
+			
+			
 
 			if (StringUtils.isEmpty(content.getStoreName())) {
 				String typeName=doc.getTypeName();
@@ -1721,13 +1733,20 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			doc.setFormatName(content.getFormatName());
 			doc.setContentSize(content.getContentSize());
+
 			List<EcmContent> contentList = contentServices.getContents(token,docId,1);
 			if(contentList!=null&&contentList.size()>0) {
 				EcmContent oldObj = contentList.get(0);
 				String oldObjId =  oldObj.getId();
 				content.setOldId(oldObjId);
+				content.setName(oldObj.getName());
 			}
 			contentServices.newObject(token, content);
+			
+			// checkin 解锁 
+			String sql = "update ecm_document set LOCK_OWNER='',LOCK_DATE=" + DBFactory.getDBConn().getDBUtils().getDBNullDate() + ", LOCK_CLIENT='' where ID='" + docId + "'";
+			
+			ecmDocument.executeSQL(sql);
 		}
 	
 		return doc.getId();
@@ -2073,6 +2092,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @throws UniquenessException 
 	 */
 	public boolean validateChildOnly(String token,Map<String,Object> data) throws  EcmException, AccessDeniedException, UniquenessException {
+		if(data.containsKey("SYN_APP") && data.get("SYN_APP")!= null) {
+			return true;
+		}
 		String typeName=data.get("TYPE_NAME").toString();
 		String parentID=data.get("parentDocId").toString();
 		String sql="select * from ( " + 
@@ -2106,6 +2128,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @throws UniquenessException 
 	 */
 	public boolean validate(String token,Map<String,Object> data) throws AccessDeniedException, UniquenessException {
+		if(data.containsKey("SYN_APP") && data.get("SYN_APP")!= null) {
+			return true;
+		}
 		String condition=getConditionByConfig(token,data);
 		if(condition == null) {
 			return true;

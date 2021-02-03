@@ -76,7 +76,8 @@ public class AuthenticationFilter implements Filter {
          		||req.getServletPath().indexOf("/workflow")>=0
          		||req.getServletPath().indexOf("/admin/validataAdminToken")>=0
          		||req.getServletPath().indexOf("/addAudit")>=0
-         		||req.getServletPath().indexOf("/revokeAcl2")>=0){ 
+         		||req.getServletPath().indexOf("/revokeAcl2")>=0
+         		||req.getServletPath().indexOf("/archive/todoCount")>=0){ 
          	 chain.doFilter(request, response);
          	 return;
          }
