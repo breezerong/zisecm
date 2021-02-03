@@ -140,7 +140,12 @@ public class CustomWorkflowService extends EcmService{
 		if(varMap.get("customTime")!=null) {
 			SimpleDateFormat dt=new SimpleDateFormat("yyyy-MM-dd");
 			try {
-				audit.setCustomTime(dt.parse(varMap.get("customTime").toString()));
+				if(varMap.get("customTime")==null||"".equals(varMap.get("customTime").toString())) {
+					audit.setCustomTime(new Date());
+				}else {
+					audit.setCustomTime(dt.parse(varMap.get("customTime").toString()));
+				}
+				
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

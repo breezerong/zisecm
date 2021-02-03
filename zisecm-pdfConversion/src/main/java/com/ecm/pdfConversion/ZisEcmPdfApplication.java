@@ -21,7 +21,7 @@ import com.ecm.icore.service.IEcmSession;
 @ComponentScan({"com.ecm.core.dao","com.ecm.core.db","com.ecm.core.entity",
 	"com.ecm.core.bpm","com.ecm.core.service",
 	"com.ecm.core.cache.*","com.ecm.core.util","com.ecm.portal.*","com.ecm.flowable.*",
-	"com.ecm.pdfConversion.*"})
+	"com.ecm.pdfConversion.*","com.ecm.pdfConversion.openoffic.*"})
 @MapperScan("com.ecm.core.dao")
 @EnableTransactionManagement//(proxyTargetClass = true)
 public class ZisEcmPdfApplication extends SpringBootServletInitializer{

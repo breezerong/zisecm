@@ -2344,7 +2344,8 @@ public class EcmDcController extends ControllerAbstract {
 			List<Map<String, Object>> list = queryService.executeSQL(getToken(), sql);
 			List<String> listName = new ArrayList<String>();
 			for (Map<String, Object> obj : list) {
-				listName.add(obj.get("NAME").toString());
+				listName.add(obj.get(query.getValueColumn()).toString());
+//				listName.add(obj.get("NAME").toString());
 			}
 			mp.put("data", listName);
 			mp.put("code", ActionContext.SUCESS);

@@ -54,7 +54,15 @@ public class PdfConversion {
 				EcmContent en=null;
 				EcmQueueItem item= list.get(i);
 				String docId= item.getObjectId();
-				EcmContent content= contentService.getObjectById(getEcmSession().getToken(), docId);
+				
+				List<EcmContent> contents= contentService.getContents(getEcmSession().getToken(), docId,1);
+				EcmContent content=null;
+				if(contents!=null&&contents.size()>0) {
+					content=contents.get(0);
+				}else {
+					log.error("指定的文件没有主文件，id="+docId);
+					continue;
+				}
 				String fullPath = CacheManagerOper.getEcmStores().get(content.getStoreName()).getStorePath();
 				String newPath= wordTransferPdfUtil.transferWordToPdf(fullPath+content.getFilePath());
 				File file=new File(newPath);

@@ -73,7 +73,8 @@ public class TransferUtil {
         String timeNow = formatter.format(LocalDateTime.now());
         String newPdfWebPath = StringUtils.substringBeforeLast(webPath, ".") + "_" + timeNow + ".pdf";
         try {
-            File outputFile = new File(ResourceComponent.getLocation(newPdfWebPath));
+//            File outputFile = new File(ResourceComponent.getLocation(newPdfWebPath));
+        	 File outputFile = new File(newPdfWebPath);
             documentConverter.convert(inputFile).to(outputFile).execute();
         } catch (Exception e) {
             log.error("word->pdf 转换错误------------> Exception: ", e);
