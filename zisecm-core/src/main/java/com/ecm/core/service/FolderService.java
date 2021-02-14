@@ -54,7 +54,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 	}
 	
 	@Override
-	public String newObject(String token,Object obj) {
+	public String newObject(String token,Object obj) throws AccessDeniedException {
 		EcmFolder folder =(EcmFolder)obj;
 		folder.createId();
 		String parentId = folder.getParentId();
@@ -89,6 +89,8 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 			}
 		}
 		folder.setFolderPath(getFullPath(token,folder,folder.getName()));
+		folder.setCreator(this.getCurrentUser(token).getUserName());
+		folder.setCreationDate(new Date());
 		ecmFolderMapper.insert(folder);
 		return folder.getId();
 	}
@@ -116,6 +118,8 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 				needUpdateChild = true;
 			}
 		}
+		newFolder.setModifiedDate(new Date());
+		newFolder.setModifier(this.getCurrentUser(token).getUserName());
 		ecmFolderMapper.updateByPrimaryKey(newFolder);
 		if(needUpdateChild) {
 			updateChildFolderPath( token, newFolder.getId());

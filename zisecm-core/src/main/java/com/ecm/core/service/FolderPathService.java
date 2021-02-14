@@ -89,9 +89,10 @@ public class FolderPathService extends EcmService {
 	 * @param values
 	 * @param type 1:移交目录，2：整编目录，3：发布目录，4：预归档目录
 	 * @return
+	 * @throws AccessDeniedException 
 	 */
 	@Transactional
-	public String getFolderId(String token, Map<String, Object> values, String type) {	
+	public String getFolderId(String token, Map<String, Object> values, String type) throws AccessDeniedException {	
 		// TODO Auto-generated method stub
 		String id=null;
 		
@@ -148,7 +149,7 @@ public class FolderPathService extends EcmService {
 		return id;
 	}
 	@Transactional
-	public String getFolderByPath(String token,String folderPath) {
+	public String getFolderByPath(String token,String folderPath) throws AccessDeniedException {
 		EcmFolder fld = folderService.getObjectByPath(token, folderPath);
 		String fldId = "";
 		if(fld!=null) {
@@ -173,7 +174,7 @@ public class FolderPathService extends EcmService {
 		return fldId;
 	}
 	
-	private String createFolder(String token,Map<String, Object> values, String policy) {
+	private String createFolder(String token,Map<String, Object> values, String policy) throws AccessDeniedException {
 		String[] strs = policy.split(";");
 		String folderPath="";
 		for(String str:strs) {
