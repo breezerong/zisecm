@@ -1106,7 +1106,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String  securityLevel = doc.getSecurityLevel();
 
 		if(securityLevel!=null && userSecurityLevel!=0 && ipSecurityLevel!=0) {
-			if(securityLevel.equals("非密") || securityLevel.equals("内部公开")) {
+			if(securityLevel.equals("非密") || securityLevel.startsWith("内部")) {
 				flag = true; 
 			}
 			
