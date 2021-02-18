@@ -645,6 +645,12 @@ public class EcmDcController extends ControllerAbstract {
 			if(fileName == null) {
 				fileName = en.getName();
 			}
+			if(fileName!=null) {
+				if(!fileName.toLowerCase().endsWith("."+en.getFormatName())) {
+					fileName = fileName+"."+en.getFormatName();
+				}
+			}
+			
 			//InputStream iStream = contentService.getContentStream(token, en);
 			//统一调用内容的入口,用于权限管理
 			InputStream iStream = documentService.getContentStream(token, en,id);
@@ -653,7 +659,7 @@ public class EcmDcController extends ControllerAbstract {
 			// 设置response的Header
 			response.setCharacterEncoding("UTF-8");
 			response.addHeader("Content-Disposition",
-					"attachment;filename=" + java.net.URLEncoder.encode(fileName+"."+en.getFormatName(), "UTF-8"));
+					"attachment;filename=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
 			response.addHeader("Content-Length", "" + en.getContentSize());
 			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
 			try {
