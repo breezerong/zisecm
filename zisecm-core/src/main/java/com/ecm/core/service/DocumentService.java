@@ -211,14 +211,19 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	}
 	
 	private EcmGridView getGridView(String token,String gridName) {
-		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-		if(gv==null || gv.getGridViewItems()==null) {
-			gv = gridViewService.getObjectByName(token, gridName);
-			List<EcmGridViewItem> itemlist =gridViewItemService.getEcmCustomGridViewInfo(token, gv.getId());
-			if(itemlist==null) {
-				itemlist = new ArrayList<EcmGridViewItem>();
+		EcmGridView gv = null;
+		if (gridName.contains("_CUSTOM")) {
+			return null;
+		}else {
+			gv = CacheManagerOper.getEcmGridViews().get(gridName);
+			if(gv==null || gv.getGridViewItems()==null) {
+				gv = gridViewService.getObjectByName(token, gridName);
+				List<EcmGridViewItem> itemlist =gridViewItemService.getEcmCustomGridViewInfo(token, gv.getId());
+				if(itemlist==null) {
+					itemlist = new ArrayList<EcmGridViewItem>();
+				}
+				gv.setGridViewItems(itemlist);
 			}
-			gv.setGridViewItems(itemlist);
 		}
 		return gv;
 	}
@@ -237,10 +242,15 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		
 		EcmGridView gv = getGridView(token,gridName);
-		String gvCondition=gv.getCondition();
-		
-		String sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
-				+ gvCondition;
+		String sql = null;
+		if(gv != null) {
+			String gvCondition=gv.getCondition();
+			
+			sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
+					+ gvCondition;
+		}else {
+			sql = "select * from (select " + this.getCustomAttributes(token, gridName) + " from ecm_document where 1=1";
+		}
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
 		}
@@ -250,7 +260,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		sql+=") t";
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
-		} else {
+		} else if(gv != null) {
 			sql += " " + gv.getOrderBy();
 		}
 		
@@ -274,10 +284,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		
 		EcmGridView gv = getGridView(token,gridName);
-		String gvCondition=gv.getCondition();
+		String sql = null;
+		if(gv != null) {
+			String gvCondition=gv.getCondition();
+			
+			sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
+					+ gvCondition;
+		}else {
+			sql = "select * from (select " + this.getCustomAttributes(token, gridName) + " from ecm_document where 1=1";
+		}
 		
-		String sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
-				+ gvCondition;
+		
 		String userName = this.getSession(token).getCurrentUser().getUserName();
 		String userId = this.getSession(token).getCurrentUser().getUserId();
 		if(this.getSession(token).getCurrentUser().getSystemPermission()<5) {
@@ -297,7 +314,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		sql+=") t";
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
-		} else {
+		} else if(gv != null){
 			sql += " " + gv.getOrderBy();
 		}
 		
@@ -356,6 +373,22 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		// TODO Auto-generated method stub
 		return list;
 		
+	}
+	
+	private String getCustomAttributes(String token,String gridName) {
+		StringBuilder attrNames = new StringBuilder(",");
+		if (gridName.contains("_CUSTOM")) {
+			String customId = gridName.replace("_CUSTOM", "");
+			List<Map<String, Object>> list = ecmDocument.executeSQL("select C_COMMENT from ecm_document where id ='"+customId+"'");
+			attrNames.append(list.get(0).get("C_COMMENT"));
+			attrNames.deleteCharAt(attrNames.length()-1);
+		}
+		String columnsString = baseColumns + attrNames.toString();
+		String[] columnArr = columnsString.split(",");
+		Set<String> columnSet = new HashSet<>(Arrays.asList(columnArr));
+		columnArr = columnSet.toArray(new String[columnSet.size()]);
+		String newColumnStr = String.join(",", columnArr);
+		return newColumnStr;
 	}
 	
 
