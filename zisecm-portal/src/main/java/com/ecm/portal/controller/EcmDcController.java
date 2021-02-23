@@ -693,6 +693,7 @@ public class EcmDcController extends ControllerAbstract {
 	private String getDocFileName(String token,EcmDocument doc) {
 		String name = doc.getCoding()+"_"+doc.getRevision()+"_"+doc.getTitle();
 		name = name .replace("null_", "");
+		name = name.replace("_null", "");
 		if(name.equals("null")) {
 			return null;
 		}
