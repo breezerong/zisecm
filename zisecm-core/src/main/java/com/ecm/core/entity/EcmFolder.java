@@ -28,6 +28,8 @@ public class EcmFolder  extends EcmSysObject{
 
     private String aclName;
     
+    private int permit=0;
+    
     public String getCoding() {
 		return coding;
 	}
@@ -167,4 +169,12 @@ public class EcmFolder  extends EcmSysObject{
     public void setAclName(String aclName) {
         this.aclName = aclName == null ? null : aclName.trim();
     }
+
+	public int getPermit() {
+		return permit;
+	}
+
+	public void setPermit(int permit) {
+		this.permit = permit;
+	}
 }
