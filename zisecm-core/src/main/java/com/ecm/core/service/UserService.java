@@ -363,6 +363,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		if (en == null) {
 			return null;
 		}
+		EcmUser user = (EcmUser) en;
+		IEcmSession session = getSession(token);
 //		EcmUser user = (EcmUser) en;
 //		IEcmSession session = getSession(token);
 //		if (!session.getCurrentUser().getUserName().equals(user.getName())) {

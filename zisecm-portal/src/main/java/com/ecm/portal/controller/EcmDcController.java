@@ -304,6 +304,10 @@ public class EcmDcController extends ControllerAbstract {
 						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"
 						+ ecmFolder.getFolderPath() + "%')");
 			}
+			String advCondition = args.get("advCondition")==null?null:args.get("advCondition").toString();
+			if(advCondition!=null && advCondition.length()>1) {
+				condition.append("and (").append(advCondition).append(")");
+			}
 			int pageSize = Integer.parseInt(args.get("pageSize").toString());
 			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
 			Pager pager = new Pager();
