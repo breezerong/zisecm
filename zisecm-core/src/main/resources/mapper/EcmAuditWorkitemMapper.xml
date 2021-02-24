@@ -28,7 +28,7 @@
     select 
     <include refid="Base_Column_List" />
     from ecm_audit_workitem
-    where ${condition} order by END_TIME DESC
+    where ${condition}
   </select>
   <select id="getCountByCondition" parameterType="java.lang.String" resultType="java.lang.Integer">
     select 
