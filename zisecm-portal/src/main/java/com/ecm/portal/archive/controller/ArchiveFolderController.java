@@ -1099,6 +1099,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String,Object> params=JSONUtils.stringToMap(param);
 		String folderId=params.get("folderId").toString();
+		String noCount=params.get("noCount").toString();
 		Object conditionObj=params.get("condition");
 		String condition="";
 		if(conditionObj!=null) {
@@ -1127,15 +1128,17 @@ public class ArchiveFolderController extends ControllerAbstract{
 //				if(!"".equals(condition)) {
 //					whereSql=" and ("+condition+")";
 //				}
-				String sql="select count(*) as num from ecm_document where "+gvCondition+condition+" and FOLDER_ID in( " + 
-						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
-						")";
-				logger.info("child count sql:"+sql);
-				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
-				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
-					String name=f.getName();
-					f.setName(name+"("+numberData.get(0).get("num").toString()+")");
-					
+				if(noCount==null) {
+					String sql="select count(*) as num from ecm_document where "+gvCondition+condition+" and FOLDER_ID in( " + 
+							"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
+							")";
+					logger.info("child count sql:"+sql);
+					List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
+					if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
+						String name=f.getName();
+						f.setName(name+"("+numberData.get(0).get("num").toString()+")");
+						
+					}
 				}
 				resultData.add(f);
 				cost = System.currentTimeMillis() - start;
