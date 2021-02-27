@@ -1168,19 +1168,23 @@ public class ArchiveFolderController extends ControllerAbstract{
 	public Map<String, Object> getFolderByConfige(@RequestBody String param) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
+			Map<String,Object> params=JSONUtils.stringToMap(param);
+			String folderId= params.get("folderId").toString();
+			String condition=params.get("condition")==null?"":params.get("condition").toString();
 			String id ="";
 			try {
-				id= CacheManagerOper.getEcmParameters().get(param).getValue();
+				id= CacheManagerOper.getEcmParameters().get(folderId).getValue();
 			}catch (NullPointerException e) {
 				// TODO: handle exception
-				id=param;
+				id=folderId;
 			}
 			List<EcmFolder> folders=folderService.getFoldersByParentId(getToken(), id);
 			List<EcmFolder> resultData=new ArrayList<>();
 			for(EcmFolder f:folders) {
 				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
 				String gvCondition=gv.getCondition();
-				String sql="select count(*) as num from ecm_document where "+gvCondition+" and FOLDER_ID in( " + 
+				String sql="select count(*) as num from ecm_document where 1=1 "//+gvCondition
+						+" "+("".equals(condition)?"":condition)+" and FOLDER_ID in( " + 
 						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
 						")";
 				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
