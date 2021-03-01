@@ -2545,6 +2545,7 @@ public class EcmDcController extends ControllerAbstract {
 					EcmDocument doc = documentService.getObjectById(getToken(), id);
 					if (doc != null) {
 						doc.createId();
+						doc.setCoding(doc.getCoding() + " Copy");
 						doc.setName(doc.getName() + " Copy");
 						if (!StringUtils.isEmpty(folderId)) {
 							doc.setFolderId(folderId);
