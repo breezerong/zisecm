@@ -889,21 +889,28 @@ public class EcmDcController extends ControllerAbstract {
 	@RequestMapping(value = "/dc/newDocument", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newDocument(String metaData, MultipartFile uploadFile) throws Exception {
-		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		EcmContent en = null;
-		EcmDocument doc = new EcmDocument();
-		doc.setAttributes(args);
-		if (uploadFile != null) {
-			en = new EcmContent();
-			en.setName(uploadFile.getOriginalFilename());
-			en.setContentSize(uploadFile.getSize());
-			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
-			en.setInputStream(uploadFile.getInputStream());
-		}
-		String id = documentService.newObject(getToken(), doc, en);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("id", id);
+		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+		try {
+			EcmContent en = null;
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(args);
+			if (uploadFile != null) {
+				en = new EcmContent();
+				en.setName(uploadFile.getOriginalFilename());
+				en.setContentSize(uploadFile.getSize());
+				en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+				en.setInputStream(uploadFile.getInputStream());
+			}
+			String id = documentService.newObject(getToken(), doc, en);
+			
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("id", id);
+		}
+		catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
 		return mp;
 	}
 	
