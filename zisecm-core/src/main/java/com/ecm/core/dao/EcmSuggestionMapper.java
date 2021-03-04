@@ -2,8 +2,12 @@ package com.ecm.core.dao;
 
 import java.util.List;
 
-import com.ecm.core.entity.EcmSuggestion;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
+import com.ecm.core.entity.EcmSuggestion;
+@Component
+@Mapper
 public interface EcmSuggestionMapper {
 	
 	List<EcmSuggestion> selectAll();

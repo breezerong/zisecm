@@ -864,6 +864,7 @@ public class WorkflowController extends ControllerAbstract {
 			EcmDocument document= documentService.getObjectById(getToken(), formIdObj.toString());
 			args.putAll(document.getAttributes());
 		}
+		args.put("C_ITEM_STATUS", args.get("outcome"));
 		customWorkflowService.completeTask(getToken(),args);
 		return "processed ok!";
 

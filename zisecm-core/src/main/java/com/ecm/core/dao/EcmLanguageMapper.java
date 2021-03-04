@@ -2,8 +2,12 @@ package com.ecm.core.dao;
 
 import java.util.List;
 
-import com.ecm.core.entity.EcmLanguage;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
+import com.ecm.core.entity.EcmLanguage;
+@Component
+@Mapper
 public interface EcmLanguageMapper {
 	
 	List<EcmLanguage> selectAll();
