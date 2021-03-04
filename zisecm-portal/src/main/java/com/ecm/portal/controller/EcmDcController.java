@@ -188,8 +188,9 @@ public class EcmDcController extends ControllerAbstract {
 			mp.put("data", list);
 			mp.put("pager", pager);
 			mp.put("code", ActionContext.SUCESS);
-		} catch (AccessDeniedException e) {
-			mp.put("code", ActionContext.TIME_OUT);
+		} catch (Exception e) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
 		}
 		return mp;
 	}
@@ -862,21 +863,27 @@ public class EcmDcController extends ControllerAbstract {
 	@RequestMapping(value = "/dc/createOrUpdateDoc", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> createOrUpdateDoc(String metaData, MultipartFile uploadFile) throws Exception {
-		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		EcmContent en = null;
-		EcmDocument doc = new EcmDocument();
-		doc.setAttributes(args);
-		if (uploadFile != null) {
-			en = new EcmContent();
-			en.setName(uploadFile.getOriginalFilename());
-			en.setContentSize(uploadFile.getSize());
-			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
-			en.setInputStream(uploadFile.getInputStream());
-		}
-		String id = documentService.creatOrUpdateObject(getToken(), doc, en);
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("id", id);
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(metaData);
+			EcmContent en = null;
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(args);
+			if (uploadFile != null) {
+				en = new EcmContent();
+				en.setName(uploadFile.getOriginalFilename());
+				en.setContentSize(uploadFile.getSize());
+				en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+				en.setInputStream(uploadFile.getInputStream());
+			}
+			String id = documentService.creatOrUpdateObject(getToken(), doc, en);
+			
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("id", id);
+		}catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
 		return mp;
 	}
 	/**
@@ -1049,12 +1056,18 @@ public class EcmDcController extends ControllerAbstract {
 	@RequestMapping(value = "/dc/delDocument", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
 	public Map<String, Object> delDocument(@RequestBody String argStr) throws Exception {
-		List<String> list = JSONUtils.stringToArray(argStr);
-		for (String id : list) {
-			documentService.deleteObject(getToken(), id);
-		}
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
+		try {
+			List<String> list = JSONUtils.stringToArray(argStr);
+			for (String id : list) {
+				documentService.deleteObject(getToken(), id);
+			}
+			
+			mp.put("code", ActionContext.SUCESS);
+		}catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
 		return mp;
 	}
 
