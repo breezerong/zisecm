@@ -463,17 +463,21 @@ public class WorkflowController extends ControllerAbstract {
 //				.listPage(pageIndex, pageSize);
 		
 		List<String> roleList= user.getRoles();
-		String whereSql="";
-		for(int i=0;roleList!=null&&i<roleList.size();i++) {
-			if(i==0) {
-				whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
-			}
-			 
-			 if(i!=0) {
-				 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
-			 }
-		}
 		
+		String whereSql="";
+		if(roleList.size()==0) {
+			whereSql = "T.ASSIGNEE_='"+user.getUserName()+"'";
+		}else {
+			for(int i=0;roleList!=null&&i<roleList.size();i++) {
+				if(i==0) {
+					whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
+				}
+				 
+				 if(i!=0) {
+					 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
+				 }
+			}
+		}
 		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
 				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
 		tasks = taskService.createNativeTaskQuery().sql("select *  from "
