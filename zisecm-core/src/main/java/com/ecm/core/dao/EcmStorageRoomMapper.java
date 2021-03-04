@@ -3,10 +3,13 @@ package com.ecm.core.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmStorageRoom;
-
+@Component
+@Mapper
 public interface EcmStorageRoomMapper {
     int deleteByPrimaryKey(String id);
 

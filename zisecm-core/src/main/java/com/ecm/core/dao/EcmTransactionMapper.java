@@ -2,10 +2,13 @@ package com.ecm.core.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmTransaction;
-
+@Component
+@Mapper
 public interface EcmTransactionMapper {
 	
 	List<EcmTransaction> selectByCondition(@Param(value="condition")String condition);

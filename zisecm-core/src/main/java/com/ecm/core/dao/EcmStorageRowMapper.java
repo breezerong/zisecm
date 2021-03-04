@@ -3,11 +3,14 @@ package com.ecm.core.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.EcmStorageRow;
 import com.ecm.core.entity.Pager;
-
+@Component
+@Mapper
 public interface EcmStorageRowMapper {
 	List<EcmStorageRow> selectByParent(String parentCoding);
 	
