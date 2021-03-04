@@ -143,11 +143,16 @@ public class NumberService extends EcmService {
 					break;
 				}
 			}else if(policyList.size()==1){
-				startIndex++;
-				num=startIndex+"";
-				sql = "update ecm_document set C_COUNT1="+startIndex+" where ID='"+policyList.get(0).get("ID").toString()+"'";
-				 ecmQuery.executeSQL(sql);
-				break;
+				if(StringUtils.isEmpty(numPolicy)) {
+					startIndex++;
+					num=startIndex+"";
+					sql = "update ecm_document set C_COUNT1="+startIndex+" where ID='"+policyList.get(0).get("ID").toString()+"'";
+					 ecmQuery.executeSQL(sql);
+					 break;
+				}else {
+					num = createStoreNumber(token, values, numPolicy,startIndex);
+				}
+				
 			}
 		}
 		return num;
