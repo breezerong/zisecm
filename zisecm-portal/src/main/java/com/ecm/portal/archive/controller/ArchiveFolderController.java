@@ -322,6 +322,37 @@ public class ArchiveFolderController extends ControllerAbstract{
 	
 	}
 	/**
+	 * 通过id查找文件的案卷文件
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/getBoxDocByChildId", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> getBoxDocumentByChildId(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			List<Map<String, Object>>  list=new ArrayList<Map<String,Object>>();
+			if(!"".equals(args.get("childId").toString())) {
+				String sql = "select id from ecm_document where C_ITEM_TYPE='案卷'  and id in (select parent_id from ecm_relation where child_id= '"+args.get("childId").toString()+"')";
+				list = documentService.getMapList(getToken(), sql);
+				
+			}
+			if(list.size()>0) {
+				mp.put("isBox",1);
+				mp.put("boxId", list.get(0).get("id"));
+			}else {
+				mp.put("isBox",0);
+			}
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch(Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	
+	}
+	/**
 	 * 通过id查找relation中childId对应的document
 	 * @return
 	 */
