@@ -74,11 +74,26 @@ public class CustomCacheService {
 		//如果复制与被复制文件类型不同
 		else {
 			for(AttrCopyCfgEntity en: clist) {
-				if(en.getFromType().equals(fromType)) {
+				if(en.getFromType().equals(fromType)&&!en.getToType().equals(fromType)) {
 					return en;
 				}
 			}
 		}
+		
+		return null;
+	}
+	
+	public AttrCopyCfgEntity getAttrCopyCfgFromChild(String token,String childType) {
+		if(CacheManagerOper.getCustomCache().get(copyCacheName)==null) {
+			initAttrCopyCache(token);
+		}
+		List<AttrCopyCfgEntity> clist = (List<AttrCopyCfgEntity>)CacheManagerOper.getCustomCache().get(copyCacheName);
+		
+			for(AttrCopyCfgEntity en: clist) {
+				if(!en.getFromType().equals(childType)&&en.getToType().equals(childType)) {
+					return en;
+				}
+			}
 		
 		return null;
 	}

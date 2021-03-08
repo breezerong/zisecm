@@ -1568,6 +1568,32 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
+	
+	@RequestMapping(value = "/dc/deleteAttachment", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteAttachment(@RequestBody String parentId) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String condition = "PARENT_ID='"+parentId+"' AND NAME='附件'";
+			List<Map<String, Object>>  list = relatoinService.getObjectMap(getToken(), condition);
+			if(list != null) {
+				for(Map<String, Object> obj: list) {
+					String childId = obj.get("CHILD_ID").toString();
+					String relId = obj.get("ID").toString();
+					if(!StringUtils.isEmpty(childId)) {
+						documentService.deleteObjectById(getToken(), childId);
+						relatoinService.deleteObject(getToken(), relId);
+					}
+				}
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
 
 	@RequestMapping(value = "/dc/updatePrimaryContent", method = RequestMethod.POST)
 	@ResponseBody
