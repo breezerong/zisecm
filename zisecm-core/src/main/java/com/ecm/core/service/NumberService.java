@@ -285,6 +285,26 @@ public class NumberService extends EcmService {
 					throw new Exception(attrName+"为空！");
 				}
 				prefix +=  (String)values.get(attrName);
+			}else if(str.startsWith("Date(")) {
+				String tempStr = str.replace("Date(", "").replace(")", "");
+				String[] temps = tempStr.split(",");
+				String attrName = temps[0];
+				String format = temps[1];
+				Date dt = new Date();
+				if(!attrName.equalsIgnoreCase("now")) {
+					try {
+						dt = (Date)values.get(attrName);
+					}catch (Exception e) {
+						// TODO: handle exception
+						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+						dt=formatter.parse((String) values.get(attrName));
+					}
+				}
+				if(dt==null) {
+					throw new Exception(attrName+"为空！");
+				}
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				prefix +=  sdf.format(dt);
 			}
 			else {
 				prefix +=  str;

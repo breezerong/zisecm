@@ -876,6 +876,9 @@ public class EcmDcController extends ControllerAbstract {
 				en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
 				en.setInputStream(uploadFile.getInputStream());
 			}
+			if(StringUtils.isEmpty(doc.getId())) {
+				setDefaultValues(documentService.getSession(getToken()),doc.getAttributes());
+			}
 			String id = documentService.creatOrUpdateObject(getToken(), doc, en);
 			
 			mp.put("code", ActionContext.SUCESS);
@@ -909,6 +912,7 @@ public class EcmDcController extends ControllerAbstract {
 				en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
 				en.setInputStream(uploadFile.getInputStream());
 			}
+			setDefaultValues(documentService.getSession(getToken()),doc.getAttributes());
 			String id = documentService.newObject(getToken(), doc, en);
 			
 			mp.put("code", ActionContext.SUCESS);
@@ -921,6 +925,24 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	private void setDefaultValues(IEcmSession session, Map<String, Object> docAttrs) {
+		String typeName = docAttrs.get("TYPE_NAME").toString();
+		EcmForm frm = CacheManagerOper.getEcmForms().get(typeName + "_NEW");
+		if (frm == null) {
+			frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
+		}
+		if (frm == null) {
+			return;
+		}
+		List<EcmFormItem> list = frm.getEcmFormItems(session, null);
+		for (EcmFormItem item : list) {
+			if (!StringUtils.isEmpty(item.getDefaultValue())) {
+				if (docAttrs.get(item.getAttrName()) == null) {
+					docAttrs.put(item.getAttrName(), item.getDefaultValue());
+				}
+			}
+		}
+	}
 	
 	/**
 	 * 创建文件和附件

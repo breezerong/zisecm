@@ -723,7 +723,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					||key.toString().equalsIgnoreCase("CREATOR")
 					// ||key.toString().equalsIgnoreCase("VERSION_ID")
 					||key.toString().equalsIgnoreCase("owner_name")
-					||key.toString().equalsIgnoreCase("childDocId")
+					||key.toString().equalsIgnoreCase("childFileId")
 					||key.toString().equalsIgnoreCase("parentDocId")
 					||key.toString().equalsIgnoreCase("relationName")) {
 				continue;
