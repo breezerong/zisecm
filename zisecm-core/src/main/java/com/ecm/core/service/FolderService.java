@@ -112,8 +112,8 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 		EcmFolder en = getObjectById( token,newFolder.getId());
 		boolean needUpdateChild = false;
 		if(en != null) {
-			//如果文件夹名修改，需要修改全路径
-			if(!en.getName().equals(newFolder.getName())) {
+			//如果文件夹名或文件夹路径修改，需要修改全路径
+			if(!en.getName().equals(newFolder.getName())||!en.getFolderPath().equals(newFolder.getFolderPath())) {
 				newFolder.setFolderPath(getFullPath(token,newFolder,newFolder.getName()));
 				needUpdateChild = true;
 			}

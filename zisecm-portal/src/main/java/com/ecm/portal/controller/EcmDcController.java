@@ -876,6 +876,9 @@ public class EcmDcController extends ControllerAbstract {
 				en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
 				en.setInputStream(uploadFile.getInputStream());
 			}
+			if(StringUtils.isEmpty(doc.getId())) {
+				setDefaultValues(documentService.getSession(getToken()),doc.getAttributes());
+			}
 			String id = documentService.creatOrUpdateObject(getToken(), doc, en);
 			
 			mp.put("code", ActionContext.SUCESS);
@@ -909,6 +912,7 @@ public class EcmDcController extends ControllerAbstract {
 				en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
 				en.setInputStream(uploadFile.getInputStream());
 			}
+			setDefaultValues(documentService.getSession(getToken()),doc.getAttributes());
 			String id = documentService.newObject(getToken(), doc, en);
 			
 			mp.put("code", ActionContext.SUCESS);
@@ -921,6 +925,24 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	private void setDefaultValues(IEcmSession session, Map<String, Object> docAttrs) {
+		String typeName = docAttrs.get("TYPE_NAME").toString();
+		EcmForm frm = CacheManagerOper.getEcmForms().get(typeName + "_NEW");
+		if (frm == null) {
+			frm = CacheManagerOper.getEcmForms().get(typeName + "_1");
+		}
+		if (frm == null) {
+			return;
+		}
+		List<EcmFormItem> list = frm.getEcmFormItems(session, null);
+		for (EcmFormItem item : list) {
+			if (!StringUtils.isEmpty(item.getDefaultValue())) {
+				if (docAttrs.get(item.getAttrName()) == null) {
+					docAttrs.put(item.getAttrName(), item.getDefaultValue());
+				}
+			}
+		}
+	}
 	
 	/**
 	 * 创建文件和附件
@@ -1562,6 +1584,32 @@ public class EcmDcController extends ControllerAbstract {
 		try {
 			relatoinService.deleteObject(getToken(), en);
 			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/deleteAttachment", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteAttachment(@RequestBody String parentId) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String condition = "PARENT_ID='"+parentId+"' AND NAME='附件'";
+			List<Map<String, Object>>  list = relatoinService.getObjectMap(getToken(), condition);
+			if(list != null) {
+				for(Map<String, Object> obj: list) {
+					String childId = obj.get("CHILD_ID").toString();
+					String relId = obj.get("ID").toString();
+					if(!StringUtils.isEmpty(childId)) {
+						documentService.deleteObjectById(getToken(), childId);
+						relatoinService.deleteObject(getToken(), relId);
+					}
+				}
+			}
+			mp.put("code", ActionContext.SUCESS);
+			
 		} catch (Exception ex) {
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", ex.getMessage());
@@ -2360,7 +2408,35 @@ public class EcmDcController extends ControllerAbstract {
 
 		return mp;
 	}
-
+	
+	@RequestMapping(value = "/dc/getDataByRefColumn", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getDataByRefColumn(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String columns= args.get("column").toString();//,分割例如：TYPE_NAME,CODING
+		String condition =args.get("condition").toString();
+		
+		String sql="select "+columns+" from ecm_document where 1=1 and("+condition+")";
+		try {
+			List<Map<String,Object>> result= documentService.getMapList(getToken(), sql);
+			mp.put("data", result);
+			mp.put("code", ActionContext.SUCESS);
+			return mp;
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			return mp;
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			return mp;
+		}
+		
+	}
+	
 	@RequestMapping(value = "/dc/getSelectList", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getSelectList(@RequestBody String argStr) {
