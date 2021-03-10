@@ -186,17 +186,20 @@ public class ArchiveFolderController extends ControllerAbstract{
 			try {
 				id= documentService.newObject(getToken(),doc,en);
 				String childFileId = (String)args.get("childFileId");
+				
 				if(!StringUtils.isEmpty(childFileId)) {
-					EcmRelation relation=new EcmRelation();
-					relation.setParentId(id);
-					
-					relation.setChildId(childFileId);
-					relation.setName("irel_children");
-					relationService.newObject(getToken(), relation);
-					Map<String, Object>  docMap = new HashMap<String, Object>();
-					docMap.put("ID", childFileId);
-					docMap.put("IS_CHILD", 1);
-					documentService.updateObject(getToken(), docMap);
+					List<String> idList = JSONUtils.stringToArray(childFileId);
+					for(String cid: idList) {
+						EcmRelation relation=new EcmRelation();
+						relation.setParentId(id);
+						relation.setChildId(cid);
+						relation.setName("irel_children");
+						relationService.newObject(getToken(), relation);
+						Map<String, Object>  docMap = new HashMap<String, Object>();
+						docMap.put("ID", cid);
+						docMap.put("IS_CHILD", 1);
+						documentService.updateObject(getToken(), docMap);
+					}
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

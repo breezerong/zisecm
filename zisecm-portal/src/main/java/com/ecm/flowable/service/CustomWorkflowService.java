@@ -19,6 +19,8 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,7 @@ import com.ecm.icore.service.IEcmSession;
 
 @Service
 public class CustomWorkflowService extends EcmService{
+	private static final Logger logger = LoggerFactory.getLogger(CustomWorkflowService.class);
 	@Autowired
 	private HistoryService historyService;
 	@Autowired
@@ -206,28 +209,48 @@ public class CustomWorkflowService extends EcmService{
 	
 	private Map<String, Object> start(IEcmSession session,Map<String, Object> args,boolean byKey,boolean byId) {
 		Map<String, Object> result = new HashMap<String, Object>();
+		long start = System.currentTimeMillis();
+		long end;
 		try {
 			String userName = session.getCurrentUser().getUserName();
 			String processName = args.get("processName")+" "+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 			Authentication.setAuthenticatedUserId(userName);
 			args.put("startUser", userName);
 			ProcessInstance processInstance=null;
+			end = System.currentTimeMillis() - start;
+			logger.info("wf Authentication:" +end);
+			start = System.currentTimeMillis();
+			
 			if(byId) {
 				String formId= args.get("formId").toString();
 				EcmDocument form= documentService.getObjectById(session.getToken(), formId);
 				args.putAll(form.getAttributes());
 				processInstance = runtimeService.startProcessInstanceById(args.get("processInstanceId").toString(),
 						args);
+				end = System.currentTimeMillis() - start;
+				logger.info("wf start:" +end);
+				start = System.currentTimeMillis();
 				
 				runtimeService.setProcessInstanceName(processInstance.getId(), processName);
+				
+				end = System.currentTimeMillis() - start;
+				logger.info("wf set name:" +end);
+				start = System.currentTimeMillis();
 			}else {
 				String formId= args.get("formId").toString();
 				EcmDocument form= documentService.getObjectById(session.getToken(), formId);
 				args.putAll(form.getAttributes());
 				processInstance = runtimeService.startProcessInstanceByKey(args.get("processInstanceKey").toString(),
 						args);
+				end = System.currentTimeMillis() - start;
+				logger.info("wf start:" +end);
+				start = System.currentTimeMillis();
 				
 				runtimeService.setProcessInstanceName(processInstance.getId(), processName);
+				
+				end = System.currentTimeMillis() - start;
+				logger.info("wf set name:" +end);
+				start = System.currentTimeMillis();
 			}
 			
 			// 创建流程日志
@@ -243,6 +266,9 @@ public class CustomWorkflowService extends EcmService{
 			ecmAuditWorkflowMapper.insert(audit);
 			result.put("code", ActionContext.SUCESS);
 			result.put("processID", processInstance.getId());
+			end = System.currentTimeMillis() - start;
+			logger.info("wf add audit:" +end);
+			start = System.currentTimeMillis();
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("code", ActionContext.FAILURE);
