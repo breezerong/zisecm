@@ -1,13 +1,16 @@
 package com.ecm.pdfConversion.openoffic.config;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jodconverter.DocumentConverter;
-import org.jodconverter.LocalConverter;
-import org.jodconverter.office.LocalOfficeManager;
-import org.jodconverter.office.OfficeManager;
+import org.jodconverter.core.DocumentConverter;
+import org.jodconverter.core.office.OfficeManager;
+import org.jodconverter.local.LocalConverter;
+import org.jodconverter.local.office.ExistingProcessAction;
+import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,8 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashSet;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * openoffice 配置
@@ -51,7 +53,7 @@ public class JodConverterAutoConfiguration {
         builder.officeHome(this.properties.getOfficeHome());
         builder.workingDir(this.properties.getWorkingDir());
         builder.templateProfileDir(this.properties.getTemplateProfileDir());
-        builder.killExistingProcess(this.properties.isKillExistingProcess());
+        builder.existingProcessAction(ExistingProcessAction.KILL);
         builder.processTimeout(this.properties.getProcessTimeout());
         builder.processRetryInterval(this.properties.getProcessRetryInterval());
         builder.taskExecutionTimeout(this.properties.getTaskExecutionTimeout());
