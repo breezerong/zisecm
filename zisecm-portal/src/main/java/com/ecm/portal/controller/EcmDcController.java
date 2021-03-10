@@ -2408,7 +2408,35 @@ public class EcmDcController extends ControllerAbstract {
 
 		return mp;
 	}
-
+	
+	@RequestMapping(value = "/dc/getDataByRefColumn", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getDataByRefColumn(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Map<String, Object> mp = new HashMap<String, Object>();
+		String columns= args.get("column").toString();//,分割例如：TYPE_NAME,CODING
+		String condition =args.get("condition").toString();
+		
+		String sql="select "+columns+" from ecm_document where 1=1 and("+condition+")";
+		try {
+			List<Map<String,Object>> result= documentService.getMapList(getToken(), sql);
+			mp.put("data", result);
+			mp.put("code", ActionContext.SUCESS);
+			return mp;
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			return mp;
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			return mp;
+		}
+		
+	}
+	
 	@RequestMapping(value = "/dc/getSelectList", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getSelectList(@RequestBody String argStr) {
