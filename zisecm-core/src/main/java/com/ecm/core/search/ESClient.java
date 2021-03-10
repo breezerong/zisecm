@@ -1,8 +1,15 @@
 package com.ecm.core.search;
 
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
+import org.elasticsearch.client.RestClientBuilder.HttpClientConfigCallback;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +29,8 @@ public class ESClient {
 	private static String[] searchFields = "name;coding;title;sub_type;creator".split(";");
 	private static int heightTextLen = 300;
 	private static int suggestionCount = 5;
+	private static String esUserName = null;
+	private static String esPassword = null;
 	
 	public int getHeightTextLen() {
 		return heightTextLen;
@@ -47,7 +56,25 @@ public class ESClient {
     	for(int i=0;i<indexServer.length;i++) {
     		hh[i] = new HttpHost(indexServer[i], indexPort[i], httpPolicy);
     	}
-    	client = new RestHighLevelClient(RestClient.builder(hh));
+    	if(esUserName != null) {
+	    	/** 用户认证对象 */
+	        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+	        /** 设置账号密码 */
+	        credentialsProvider.setCredentials(AuthScope.ANY,
+	            new UsernamePasswordCredentials(esUserName, esPassword));
+	        /** 创建rest client对象 */
+	        RestClientBuilder builder = RestClient.builder(hh)
+            .setHttpClientConfigCallback(new HttpClientConfigCallback() {
+              @Override
+              public HttpAsyncClientBuilder customizeHttpClient(
+                  HttpAsyncClientBuilder httpClientBuilder) {
+                return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+              }
+            });
+        	client = new RestHighLevelClient(builder);
+    	}else {
+    		client = new RestHighLevelClient(RestClient.builder(hh));
+    	}
         return client;
     }
     
@@ -115,6 +142,16 @@ public class ESClient {
     		}
     		try {
     			searchFields = CacheManagerOper.getEcmParameters().get("SearchFields").getValue().split(";");
+    		}catch(Exception ex) {
+    			
+    		}
+    		try {
+    			esUserName = CacheManagerOper.getEcmParameters().get("ESUserName").getValue();
+    		}catch(Exception ex) {
+    			
+    		}
+    		try {
+    			esPassword = CacheManagerOper.getEcmParameters().get("ESPassword").getValue();
     		}catch(Exception ex) {
     			
     		}
