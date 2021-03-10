@@ -67,7 +67,7 @@ public class Test1Controller extends ControllerAbstract{
 		return mp;
 	}
 	
-	@RequestMapping(value = "/test/newNumber/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/test/newNumber/{id}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newNumber(@PathVariable("id") String id) throws Exception {
 		EcmDocument doc = documentService.getObjectById(getToken(), id);
