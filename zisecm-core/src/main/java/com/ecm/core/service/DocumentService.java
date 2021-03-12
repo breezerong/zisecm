@@ -2304,7 +2304,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 */
 	public boolean inGroup(List<EcmGroup> glist,String roleName) {
 		if(StringUtils.isEmpty(roleName)) {
-			return true;
+			return false;
 		}
 		for(EcmGroup g: glist) {
 			if(roleName.indexOf(";")>-1) {
