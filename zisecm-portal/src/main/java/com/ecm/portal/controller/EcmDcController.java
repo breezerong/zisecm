@@ -142,8 +142,7 @@ public class EcmDcController extends ControllerAbstract {
 	@Autowired
 	private ZipDownloadService zipDownloadService;
 
-	@Autowired
-	private EcmContentMapper contentMapper;
+
 	@Autowired
 	private EcmRelationMapper ecmRelationMapper;
 	@Autowired
@@ -288,6 +287,52 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 
+	@RequestMapping(value = "/dc/getContainStorageDocuments", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getContainStorageDocuments(@RequestBody String argStr) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String folderId = (String) args.get("folderId");
+			String judgeCondition = args.get("judgement").toString();
+			EcmFolder ecmFolder = folderService.getObjectById(getToken(), folderId);
+			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
+			StringBuffer condition = new StringBuffer(
+					"(" + gv.getCondition() + " and  STATUS<>'作废' AND IS_CURRENT=1 AND IS_RELEASED=1)"+ judgeCondition +"");
+			String newCondition = args.get("condition").toString();
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				condition.append(" and (TITLE like '%" + newCondition + "%' or CODING like '%" + newCondition
+						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"
+						+ ecmFolder.getFolderPath() + "%')");
+			}
+			int pageSize = Integer.parseInt(args.get("pageSize").toString());
+			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
+			Pager pager = new Pager();
+			pager.setPageIndex(pageIndex);
+			pager.setPageSize(pageSize);
+			if (!EcmStringUtils.isEmpty(newCondition)) {
+				
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
+						args.get("gridName").toString(), null, pager, condition.toString(),
+						args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			} else {
+				condition.append(" AND FOLDER_ID='").append(folderId.replace("'", "")).append("'");
+				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
+						args.get("gridName").toString(), folderId, pager, condition.toString(),
+						args.get("orderBy").toString());
+				mp.put("data", list);
+				mp.put("pager", pager);
+				mp.put("code", ActionContext.SUCESS);
+			}
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+
 	@RequestMapping(value = "/dc/getContainBoxDocuments", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getContainBoxDocuments(@RequestBody String argStr) {
@@ -337,52 +382,6 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
-	@RequestMapping(value = "/dc/getContainStorageDocuments", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> getContainStorageDocuments(@RequestBody String argStr) {
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			Map<String, Object> args = JSONUtils.stringToMap(argStr);
-			String folderId = (String) args.get("folderId");
-			String judgeCondition = args.get("judgement").toString();
-			EcmFolder ecmFolder = folderService.getObjectById(getToken(), folderId);
-			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(args.get("gridName").toString());
-			StringBuffer condition = new StringBuffer(
-					"(" + gv.getCondition() + " and  STATUS<>'作废' AND IS_CURRENT=1 AND IS_RELEASED=1)"+ judgeCondition +"");
-			String newCondition = args.get("condition").toString();
-			if (!EcmStringUtils.isEmpty(newCondition)) {
-				condition.append(" and (TITLE like '%" + newCondition + "%' or CODING like '%" + newCondition
-						+ "%') and FOLDER_ID in (SELECT id from ecm_folder where folder_path like '"
-						+ ecmFolder.getFolderPath() + "%')");
-			}
-			int pageSize = Integer.parseInt(args.get("pageSize").toString());
-			int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
-			Pager pager = new Pager();
-			pager.setPageIndex(pageIndex);
-			pager.setPageSize(pageSize);
-			if (!EcmStringUtils.isEmpty(newCondition)) {
-				
-				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
-						args.get("gridName").toString(), null, pager, condition.toString(),
-						args.get("orderBy").toString());
-				mp.put("data", list);
-				mp.put("pager", pager);
-				mp.put("code", ActionContext.SUCESS);
-			} else {
-				condition.append(" AND FOLDER_ID='").append(folderId.replace("'", "")).append("'");
-				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
-						args.get("gridName").toString(), folderId, pager, condition.toString(),
-						args.get("orderBy").toString());
-				mp.put("data", list);
-				mp.put("pager", pager);
-				mp.put("code", ActionContext.SUCESS);
-			}
-		} catch (AccessDeniedException e) {
-			mp.put("code", ActionContext.TIME_OUT);
-		}
-		return mp;
-	}
-
 	@RequestMapping(value = "/dc/getExceptBoxDocuments", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getObjectsExceptBox(@RequestBody String argStr) {
@@ -726,11 +725,30 @@ public class EcmDcController extends ControllerAbstract {
 			} else {
 				format = request.getParameter("format");
 			}
+			String token = "";
+			if (request.getAttribute("token") != null) {
+				token = request.getAttribute("token").toString();
+			} else {
+				token = request.getParameter("token");
+			}
+			if(token==null || token.length()==0) {
+				token = getToken();
+			}
+			EcmDocument doc = documentService.getObjectById(getToken(), id);
 			EcmContent en = null;
 			if (!StringUtils.isEmpty(format)) {
 				en = contentService.getObject(getToken(), id, 0, format);
 			} else {
 				en = contentService.getPrimaryContent(getToken(), id);
+			}
+			String fileName = getDocFileName(token,doc);
+			if(fileName == null) {
+				fileName = en.getName();
+			}
+			if(fileName!=null) {
+				if(!fileName.toLowerCase().endsWith("."+en.getFormatName())) {
+					fileName = fileName+"."+en.getFormatName();
+				}
 			}
 			//InputStream iStream = contentService.getContentStream(getToken(), en);
 			//统一调用内容的入口,用于权限管理
@@ -740,7 +758,7 @@ public class EcmDcController extends ControllerAbstract {
 			// 设置response的Header
 			response.setCharacterEncoding("UTF-8");
 			response.addHeader("Content-Disposition",
-					"attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
+					"attachment;filename=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
 //			response.addHeader("Content-Length", "" + en.getContentSize());
 			response.setContentType("application/octet-stream");
 			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
@@ -844,13 +862,20 @@ public class EcmDcController extends ControllerAbstract {
 
 	@RequestMapping(value = "/dc/saveDocument", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
-	public Map<String, Object> saveDocument(@RequestBody String argStr) throws Exception {
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		EcmDocument doc = new EcmDocument();
-		doc.setAttributes(args);
-		documentService.updateObject(getToken(), doc, null);
+	public Map<String, Object> saveDocument(@RequestBody String argStr)  {
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
+		try {
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			EcmDocument doc = new EcmDocument();
+			doc.setAttributes(args);
+			documentService.updateObject(getToken(), doc, null);
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
 		return mp;
 	}
 	/**

@@ -852,6 +852,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void updateObject(String token, EcmDocument doc, EcmContent content) throws NoPermissionException, AccessDeniedException, EcmException {
+		try {
+			this.validate(token, doc.getAttributes());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw e;
+		} catch (UniquenessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new EcmException(e.getMessage());
+		}
 		if (content != null) {
 			if (getPermit(token, doc.getId()) < ObjectPermission.WRITE_CONTENT) {
 				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
@@ -860,6 +871,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (StringUtils.isEmpty(content.getFormatName())) {
 				throw new EcmException("Format cannot be empty.");
 			}
+			
 			content.setContentType(1);
 			if (StringUtils.isEmpty(content.getStoreName())) {
 				content.setStoreName(CacheManagerOper.getEcmDefTypes().get(doc.getTypeName()).getStoreName());
