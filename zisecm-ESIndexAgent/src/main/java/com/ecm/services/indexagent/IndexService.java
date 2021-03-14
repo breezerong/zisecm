@@ -85,7 +85,12 @@ public class IndexService {
 			String sql = sqlBase.replace("{0}", lastDate);
 			List<Map<String, Object>> list;
 			list = documentService.getMapList(token, sql);
+			ids = new ArrayList<String>();
 			while(list.size()>0) {
+				//2次清除一次
+				if(ids.size()>bufferSize) {
+					ids = new ArrayList<String>();
+				}
 				for(Map<String,Object> item : list) {
 					String id = item.get("ID").toString();
 					lastDate = item.get("CREATION_DATE").toString();
@@ -113,13 +118,17 @@ public class IndexService {
 		}
 		
 	}
+	
+	private List<String> ids = null;
 
 	public void indexFromQueue(String token, RestHighLevelClient client) {
 		if(client == null)
 			return;
 		String condition = " NAME='ecm_full_index' and STATUS=0";
 		List<EcmQueueItem> list = queueItemService.getObjects(token, condition);
+		ids = new ArrayList<String>();
 		for(EcmQueueItem item : list) {
+			
 			if(indexDocument( token, client, item.getObjectId())){
 				queueItemService.deleteObject(token, item);
 			}
@@ -131,8 +140,15 @@ public class IndexService {
 	}
 	
 	private boolean indexDocument(String token,RestHighLevelClient client, String docId) {
+		//不要重复做索引
+		if(ids.contains(docId)) {
+			logger.info("Indexed doc id:"+docId);
+			return true;
+		}
 		EcmDocument doc = documentService.getObjectById(token, docId);
+		ids.add(docId);
 		if(doc != null) {
+			logger.info("Indexing doc id:"+docId);
 			IndexRequest request = new IndexRequest(ESClient.getInstance().getPackageName());
 			request.id(docId);     //文档id 
 			request.source(getDocumentJSon( token, doc), XContentType.JSON); 
@@ -152,11 +168,15 @@ public class IndexService {
 					e.printStackTrace();
 				}
 	            if(indexResponse != null) {
-	                if (indexResponse.getResult() == Result.CREATED) {
+	            	logger.info("indexResponse.getResult():"+indexResponse.getResult());
+	                if (indexResponse.getResult() == Result.CREATED || indexResponse.getResult() == Result.UPDATED) {
 	                	return true;
 	                }
+	            }else {
+	            	logger.info("indexResponse is null.");
 	            }
 		}else {
+			logger.info("Deleting doc id:"+docId);
 			DeleteRequest request = new DeleteRequest();
 			request.id(docId);
 			DeleteResponse  delResponse = null;
