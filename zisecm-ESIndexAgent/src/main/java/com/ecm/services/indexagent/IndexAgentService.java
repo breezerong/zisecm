@@ -79,6 +79,7 @@ public class IndexAgentService{
 			isRunning = true;
 			RestHighLevelClient indexClient = ESClient.getInstance().getClient();
 			try {
+				indexService.indexDocumentByIdsFile(token,indexClient);
 				if("1".endsWith(runType))
 				{
 					System.out.println("Reindex start......");

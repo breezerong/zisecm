@@ -1,5 +1,9 @@
 package com.ecm.services.indexagent;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -119,6 +123,44 @@ public class IndexService {
 		
 	}
 	
+	public void indexDocumentByIdsFile(String token, RestHighLevelClient client) {
+		String classesPath=Thread.currentThread().getContextClassLoader().getResource("").getPath().substring(1);
+		String path = classesPath+"ids.txt";
+		File f = new File(path);
+		int c =0 ;
+		if(f.exists()) {
+			logger.info("Start ids.txt file index.");
+			BufferedReader br = null;
+			try {
+				br = new BufferedReader(new FileReader(f));
+				String s = null;
+		         while((s = br.readLine())!=null){
+		        	 try {
+		        		 indexDocument(token,client,s);
+		        		 c++;
+		        	 }
+		        	 catch(Exception ex) {
+		        		 ex.printStackTrace();
+		        	 }
+		         }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				if(br != null) {
+					try {
+						br.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			logger.info("Finish ids.txt file index, count:" + c);
+	        f.delete(); 
+		}
+	}
+	
 	private List<String> ids = null;
 
 	public void indexFromQueue(String token, RestHighLevelClient client) {
@@ -139,14 +181,16 @@ public class IndexService {
 		}
 	}
 	
-	private boolean indexDocument(String token,RestHighLevelClient client, String docId) {
+	public boolean indexDocument(String token,RestHighLevelClient client, String docId) {
 		//不要重复做索引
-		if(ids.contains(docId)) {
+		if(ids!=null && ids.contains(docId)) {
 			logger.info("Indexed doc id:"+docId);
 			return true;
 		}
 		EcmDocument doc = documentService.getObjectById(token, docId);
-		ids.add(docId);
+		if(ids != null) {
+			ids.add(docId);
+		}
 		if(doc != null) {
 			logger.info("Indexing doc id:"+docId);
 			IndexRequest request = new IndexRequest(ESClient.getInstance().getPackageName());
