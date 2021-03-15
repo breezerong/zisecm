@@ -126,6 +126,10 @@ public class IndexService {
 	public void indexDocumentByIdsFile(String token, RestHighLevelClient client) {
 		String classesPath=Thread.currentThread().getContextClassLoader().getResource("").getPath().substring(1);
 		String path = classesPath+"ids.txt";
+		if(System.getProperty("os.name").toLowerCase().contains("linux")) {
+			path = "/"+path;
+		}
+		//logger.info("Start ids.txt path:"+path);
 		File f = new File(path);
 		int c =0 ;
 		if(f.exists()) {
