@@ -19,7 +19,7 @@ public class JacobOffice2PdfUtil {
 	private static final int ppSaveAsPDF = 32;
 
     public static void main(String[] args) {  
-    	new JacobOffice2PdfUtil().office2pdf("d:\\b.xlsx","d:\\a.pdf");  
+    	new JacobOffice2PdfUtil().office2pdf("C:\\excdata\\00\\00\\98\\a2\\0d_1.docx","d:\\a.pdf");  
     }  
 	private Logger logger = Logger.getLogger(JacobOffice2PdfUtil.class);
 
