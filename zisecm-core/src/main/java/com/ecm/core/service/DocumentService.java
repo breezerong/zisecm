@@ -2176,6 +2176,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @throws UniquenessException 
 	 */
 	public boolean validate(String token,Map<String,Object> data) throws AccessDeniedException, UniquenessException {
+		//迁移数据不校验
 		if(data.containsKey("SYN_APP") && data.get("SYN_APP")!= null) {
 			return true;
 		}
@@ -2199,6 +2200,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @throws AccessDeniedException 
 	 */
 	private String getConditionByConfig(String token,Map<String,Object> data) throws AccessDeniedException {
+		//没有类型，一般是开发人员局部更新
+		if(data.get("TYPE_NAME") == null) {
+			return null;
+		}
 		String typeName=data.get("TYPE_NAME").toString();
 		String condition=" TYPE_NAME='唯一性规则' and SUB_TYPE='"+typeName+"'";
 		List<Map<String, Object>> onlyPolicys= this.getObjectMap(token, condition);
