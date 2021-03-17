@@ -1903,7 +1903,7 @@ public class EcmDcController extends ControllerAbstract {
 			if (!"".equals(sb.toString())) {
 				String gridName = "favoriteGrid";
 				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-				String sql = "select a.ID as ID ,a.FORMAT_NAME as FORMAT_NAME" + getGridColumn(gv, gridName)
+				String sql = "select a.TYPE_NAME, a.ID as ID ,a.FORMAT_NAME as FORMAT_NAME" + getGridColumn(gv, gridName)
 						+ "  from ecm_document a,ecm_shoping_cart b where a.ID=b.DOCUMENT_ID and  a.ID in("
 						+ sb.toString() + ") and user_name='" + getSession().getCurrentUser().getUserName()
 						+ "' order by b.ADD_DATE desc";
