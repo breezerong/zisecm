@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -189,18 +190,21 @@ public class UserController extends ControllerAbstract{
 
 	@RequestMapping(value = "/user/updateSignImage", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateSignImage(String id,MultipartFile uploadFile) {
+	public Map<String, Object> updateSignImage(String id,@RequestParam("uploadFile") MultipartFile[] uploadFileList) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			InputStream instream = null;
 			String fileName = null;
-			if(uploadFile!=null) {
-				instream = uploadFile.getInputStream();
-				fileName = uploadFile.getOriginalFilename();
-			}
-			userService.updateSignImage(getToken(),id.replace("\"", ""),instream,fileName);
-			if(instream!=null) {
-				instream.close();
+			
+			for(int i=0; i<uploadFileList.length; i++) {
+				if(uploadFileList[i]!=null) {
+					instream = uploadFileList[i].getInputStream();
+					fileName = uploadFileList[i].getOriginalFilename();
+				}
+				userService.updateSignImage(getToken(),id.replace("\"", ""),instream,fileName);
+				if(instream!=null) {
+					instream.close();
+				}
 			}
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception e) {
