@@ -70,12 +70,18 @@ public class Test1Controller extends ControllerAbstract{
 	@RequestMapping(value = "/test/newNumber/{id}", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> newNumber(@PathVariable("id") String id) throws Exception {
-		EcmDocument doc = documentService.getObjectById(getToken(), id);
-		String number = numberService.getNumber(getToken(), doc.getAttributes());
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("data", number);
-		return mp;
+		EcmDocument doc = documentService.getObjectById(getToken(), id);
+		try {
+			String number = numberService.getNumber(getToken(), doc.getAttributes());
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", number);
+			return mp;
+		}catch (Exception e) {
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			return mp;
+		}
 	}
 	
 	@RequestMapping(value = "/test/getPath/{id}/{type}", method = RequestMethod.GET)
