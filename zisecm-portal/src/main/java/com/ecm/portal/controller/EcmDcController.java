@@ -2900,7 +2900,7 @@ public class EcmDcController extends ControllerAbstract {
 						permit.setTargetName(permitMap.get("targetName").toString());
 						permit.setTargetType(Integer.parseInt(permitMap.get("targetType").toString()));
 						permit.setPermission(Integer.parseInt(permitMap.get("permission").toString()));
-						permit.setExpireDate(new Date());
+//						permit.setExpireDate(new Date());
 						
 						String aclName = "";
 						String targetName = permit.getTargetName();
