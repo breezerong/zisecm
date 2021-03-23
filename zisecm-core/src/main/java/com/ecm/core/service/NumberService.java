@@ -172,6 +172,18 @@ public class NumberService extends EcmService {
 					throw new Exception(attrName+"为空！");
 				}
 				prefix +=  (String)values.get(attrName);
+			}else if(str.startsWith("DeptCode(")) {
+				String attrName = str.replace("DeptCode(", "").replace(")", "");
+				if(values.get(attrName)==null) {
+					throw new Exception(attrName+"为空！");
+				}
+				String deptName= values.get(attrName).toString();
+				String sql="select CODING from ecm_group  where  GROUP_TYPE=1 and NAME='"+deptName+"'";
+				List<Map<String,Object>> result= ecmDocument.executeSQL(sql);
+				if(result!=null&&result.size()>0) {
+					String deptCoding= result.get(0).get("CODING").toString();
+					prefix +=deptCoding;
+				}
 			}
 			else if(str.startsWith("Date(")) {
 				String tempStr = str.replace("Date(", "").replace(")", "");

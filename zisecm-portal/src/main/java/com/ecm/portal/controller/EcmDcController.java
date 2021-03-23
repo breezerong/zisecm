@@ -2461,6 +2461,42 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		
 	}
+	/**
+	 * 列表显示配置值或label
+	 * @param argStr
+	 * @return
+	 */
+	@RequestMapping(value = "/dc/getSelectListLv", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getSelectListLabelValue(@RequestBody String argStr) {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String queryName = args.get("queryName").toString();
+		String dependValue = args.get("dependValue").toString();
+		Map<String, Object> mp = new HashMap<String, Object>();
+		EcmQuery query;
+		try {
+			query = queryService.getObjectByName(getToken(), queryName);
+			String sql = query.getSqlString();
+			sql = sql.replace("{0}", dependValue);
+			List<Map<String, Object>> list = queryService.executeSQL(getToken(), sql);
+			List<Map<String,Object>> listName = new ArrayList<>();
+			for (Map<String, Object> obj : list) {
+				Map<String,Object> d=new HashMap<String, Object>();
+				d.put(query.getValueColumn(),obj.get(query.getValueColumn()).toString());
+				d.put(query.getLabelColumn(),obj.get(query.getLabelColumn()).toString());
+				listName.add(d);
+//				listName.add(obj.get("NAME").toString());
+			}
+			mp.put("data", listName);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		}
+		return mp;
+	}
 	
 	@RequestMapping(value = "/dc/getSelectList", method = RequestMethod.POST)
 	@ResponseBody

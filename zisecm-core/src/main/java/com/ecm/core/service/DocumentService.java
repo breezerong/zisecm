@@ -809,7 +809,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 								val=numberservice.getNumber(token, args);
 							} catch (Exception e) {
 								e.printStackTrace();
-								throw new EcmException(e.getMessage());
+//								throw new EcmException(e.getMessage());
+								val="@sequence";
 							}
 						}
 						valueStr += "'" +val  + "',";
@@ -991,7 +992,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				} else {
 					isFirst = false;
 				}
-				sql += " " + key.toString() + "='" + DBFactory.getDBConn().getDBUtils().getString((String) args.get(key)) + "'";
+				String val=DBFactory.getDBConn().getDBUtils().getString((String) args.get(key));
+				if(val.equalsIgnoreCase("@sequence")) {
+					try {
+						val=numberservice.getNumber(token, args);
+					} catch (Exception e) {
+						e.printStackTrace();
+//						throw new EcmException(e.getMessage());
+						val="@sequence";
+					}
+				}
+				sql += " " + key.toString() + "='" + val + "'";
 				break;
 			}
 		}

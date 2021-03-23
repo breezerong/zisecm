@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ecm.common.util.DateUtils;
+import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmQueryMapper;
 import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.exception.AccessDeniedException;
@@ -36,6 +37,8 @@ public class FolderPathService extends EcmService {
 	private EcmQueryMapper ecmQuery;
 	@Autowired
 	private FolderService folderService;
+	@Autowired
+	private EcmDocumentMapper ecmDocument;
 	
 	private static final Pattern attrFormat = Pattern.compile("\\{[^\\}]*\\}");
 	
@@ -211,6 +214,32 @@ public class FolderPathService extends EcmService {
 			else if(str.startsWith("ProjCode()")) {
 				// 分包和外委项目号特殊处理
 				folderPath +=  values.get("C_PROJECT_NUM").toString().replace("FB", "").replace("WW", "");
+			}else if(str.startsWith("DeptCode(")) {
+				String attrName = str.replace("DeptCode(", "").replace(")", "");
+				if(values.get(attrName)==null) {
+					logger.error(attrName+"为空");
+					continue;
+				}
+				String deptName= values.get(attrName).toString();
+				String sql="select CODING from ecm_group  where  GROUP_TYPE=1 and NAME='"+deptName+"'";
+				List<Map<String,Object>> result= ecmDocument.executeSQL(sql);
+				if(result!=null&&result.size()>0) {
+					String deptCoding= result.get(0).get("CODING").toString();
+					folderPath +=deptCoding;
+				}
+			}else if(str.startsWith("DeptName(")) {
+				String attrName = str.replace("DeptName(", "").replace(")", "");
+				if(values.get(attrName)==null) {
+					logger.error(attrName+"为空");
+					continue;
+				}
+				String deptCoding= values.get(attrName).toString();
+				String sql="select NAME from ecm_group  where  GROUP_TYPE=1 and CODING='"+deptCoding+"'";
+				List<Map<String,Object>> result= ecmDocument.executeSQL(sql);
+				if(result!=null&&result.size()>0) {
+					String deptName= result.get(0).get("NAME").toString();
+					folderPath +=deptName;
+				}
 			}
 			else {
 				folderPath +=  str;
