@@ -327,7 +327,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 				}
 			}
 			//状态必须为“利用”
-			TermsQueryBuilder statusBuilder = QueryBuilders.termsQuery("status", SearchClient.getInstance().getReleaseStatus());
+			TermsQueryBuilder statusBuilder = QueryBuilders.termsQuery("status", SearchClient.getInstance().getReleaseStatus().split(","));
 			
 			if (boolQueryBuilder1 == null) {
 				boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder);
