@@ -89,6 +89,7 @@ import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.entity.AttrCopyCfgEntity;
 import com.ecm.portal.service.CustomCacheService;
 import com.ecm.portal.service.ZipDownloadService;
+import com.ecm.portal.util.SessionUtils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
@@ -869,6 +870,32 @@ public class EcmDcController extends ControllerAbstract {
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
 			documentService.updateObject(getToken(), doc, null);
+			mp.put("code", ActionContext.SUCESS);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
+	@RequestMapping(value = "/dc/saveWorkflowData", method = RequestMethod.POST) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> saveWorkflowData(@RequestBody String argStr)  {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			//超级用户登录
+			IEcmSession superUserSession= SessionUtils.getSuperUserSession(authService);
+			try {
+				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				EcmDocument doc = new EcmDocument();
+				doc.setAttributes(args);
+				documentService.updateObject(superUserSession.getToken(), doc, null);
+			}finally {
+				SessionUtils.releaseSession(authService, superUserSession);
+			}
+			
 			mp.put("code", ActionContext.SUCESS);
 		}
 		catch(Exception ex) {

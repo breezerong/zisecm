@@ -513,11 +513,12 @@ public class ArchiveFolderController extends ControllerAbstract{
 							普通商密、核心商密：acl_release_scuret
 						 * 
 						 */
-						if("受限".equals(docSsecurity)) {
+						if("内部公开".equals(docSsecurity)
+							||"受限".equals(docSsecurity)) {
 							doc.setAclName("acl_release_control");
-						}else if("普通商密".equals(docSsecurity)) {
+						}else if("秘密".equals(docSsecurity)||"普通商密".equals(docSsecurity)) {
 							doc.setAclName("acl_release_scuret");
-						}else if("核心商密".equals(docSsecurity)) {
+						}else if("机密".equals(docSsecurity)||"核心商密".equals(docSsecurity)) {
 							doc.setAclName("acl_release_scuret");
 						}else {
 							doc.setAclName("acl_release_public");
@@ -539,11 +540,14 @@ public class ArchiveFolderController extends ControllerAbstract{
 								普通商密、核心商密：acl_release_scuret
 							 * 
 							 */
-							if("受限".equals(boxSsecurity)) {
+							if("内部公开".equals(boxSsecurity)
+									||"受限".equals(boxSsecurity)) {
 								box.setAclName("acl_release_control");
-							}else if("普通商密".equals(boxSsecurity)) {
+							}else if("秘密".equals(boxSsecurity)
+									||"普通商密".equals(boxSsecurity)) {
 								box.setAclName("acl_release_scuret");
-							}else if("核心商密".equals(boxSsecurity)) {
+							}else if("机密".equals(boxSsecurity)
+									||"核心商密".equals(boxSsecurity)) {
 								box.setAclName("acl_release_scuret");
 							}else {
 								box.setAclName("acl_release_public");
@@ -579,15 +583,19 @@ public class ArchiveFolderController extends ControllerAbstract{
 								普通商密、核心商密：acl_release_scuret
 							 * 
 							 */
-							if("受限".equals(security)) {
+							if("内部公开".equals(security)
+									||"受限".equals(security)) {
 								innerDoc.setAclName("acl_release_control");
-							}else if("普通商密".equals(security)) {
+							}else if("秘密".equals(security)
+									||"普通商密".equals(security)) {
 								innerDoc.setAclName("acl_release_scuret");
-							}else if("核心商密".equals(security)) {
+							}else if("机密".equals(security)
+									||"核心商密".equals(security)) {
 								innerDoc.setAclName("acl_release_scuret");
 							}else {
 								innerDoc.setAclName("acl_release_public");
 							}
+							
 						}else {
 							innerDoc.setAclName("acl_release_public");
 						}
