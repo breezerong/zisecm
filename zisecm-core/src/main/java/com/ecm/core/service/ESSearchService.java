@@ -39,18 +39,23 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ecm.core.entity.AggregationEntity;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.Pager;
+import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
 import com.ecm.core.search.ESClient;
 import com.ecm.core.search.SearchClient;
 import com.ecm.icore.service.ISearchService;
 
 @Component
 public class ESSearchService extends EcmService implements ISearchService {
-
+	@Autowired
+	DocumentService documentService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(ESSearchService.class);
 
 	@Override
@@ -327,7 +332,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 				}
 			}
 			//状态必须为“利用”
-			TermsQueryBuilder statusBuilder = QueryBuilders.termsQuery("status", SearchClient.getInstance().getReleaseStatus());
+			TermsQueryBuilder statusBuilder = QueryBuilders.termsQuery("status", SearchClient.getInstance().getReleaseStatus().split(","));
 			
 			if (boolQueryBuilder1 == null) {
 				boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder);
@@ -399,7 +404,9 @@ public class ESSearchService extends EcmService implements ISearchService {
 				}
 				pager.setScrollId(response.getScrollId());
 			}
-
+			String userName = this.getSession(token).getCurrentUser().getUserName();
+			String userId = this.getSession(token).getCurrentUser().getUserId();
+			int currentPermission=this.getSession(token).getCurrentUser().getSystemPermission();
 			List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 			// 加载属性
 			Arrays.stream(response.getHits().getHits()).forEach(i -> {
@@ -409,6 +416,25 @@ public class ESSearchService extends EcmService implements ISearchService {
 				Map<String, Object> attrs = i.getSourceAsMap();
 				Map<String, Object> values = new HashMap<String, Object>();
 				values.put("ID", i.getId());
+				String sql="select id from ecm_document where id='"+i.getId()+"'";
+				if(currentPermission<5) {
+					sql += " and exists" + 
+						"(select 1 from ecm_acl b,ecm_acl_item c where ACL_NAME =b.NAME and b.ID =c.PARENT_ID and " + 
+						"((c.TARGET_NAME='"+userName+"' or c.TARGET_NAME='everyone' ) " + 
+						"or (c.TARGET_TYPE=2 and " + 
+						"exists(select 1 from ecm_group d,ecm_group_user e where d.NAME=c.TARGET_NAME and d.ID =e.GROUP_ID and e.USER_ID='"+userId+"' )" + 
+						")) and c.PERMISSION>1)";
+				}
+				 try {
+					List<Map<String,Object>> result= documentService.getMapList(token, sql);
+					if(result==null||result.size()==0) {
+						return;
+					}
+				} catch (EcmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
 				for (String fieldName : ESClient.getInstance().getIncludeFields()) {
 					// logger.info(fieldName +":" + attrs.get(fieldName).toString());
 					values.put(fieldName.toUpperCase(), attrs.get(fieldName));
@@ -445,7 +471,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 			map.put("aggregations", terms);
 			map.put("list", dataList);
 			// logger.info(response.getHits().getTotalHits().value);
-		} catch (IOException e) {
+		} catch (IOException | AccessDeniedException e) {
 			e.printStackTrace();
 		}
 		return map;

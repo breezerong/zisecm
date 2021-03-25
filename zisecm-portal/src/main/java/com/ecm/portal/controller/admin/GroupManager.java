@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmGroup;
+import com.ecm.core.entity.EcmParameter;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
@@ -127,6 +129,20 @@ public class GroupManager extends ControllerAbstract {
 	public Map<String, Object> updateGroup(@RequestBody EcmGroup obj) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
+			
+			EcmParameter paramObj= CacheManagerOper.getEcmParameters().get("groupNameOnly");
+			if(paramObj!=null&&("是".equals(paramObj.getValue())
+					||"Y".equals(paramObj.getValue().toUpperCase())
+					||"TRUE".equals(paramObj.getValue().toUpperCase())
+					)) {
+				EcmGroup group= groupService.getGroupByName(getToken(),obj.getName());
+				if(group!=null&&obj.getName().equals(group.getName())) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", obj.getName()+"已存在！");
+					return mp;
+				}
+			}
+			
 			groupService.updateGroup(getToken(), obj);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
@@ -169,6 +185,19 @@ public class GroupManager extends ControllerAbstract {
 			LoginUser currentUser  = this.getSession().getCurrentUser();
 			String userName = currentUser.getUserName();
 			obj.setCreator(userName);
+			EcmParameter paramObj= CacheManagerOper.getEcmParameters().get("groupNameOnly");
+			if(paramObj!=null&&("是".equals(paramObj.getValue())
+					||"Y".equals(paramObj.getValue().toUpperCase())
+					||"TRUE".equals(paramObj.getValue().toUpperCase())
+					)) {
+				EcmGroup group= groupService.getGroupByName(getToken(),obj.getName());
+				if(group!=null&&obj.getName().equals(group.getName())) {
+					mp.put("code", ActionContext.FAILURE);
+					mp.put("message", obj.getName()+"已存在！");
+					return mp;
+				}
+			}
+			
 			groupService.newGroup(getToken(), obj);
 			mp.put("code", ActionContext.SUCESS);
 		} catch (AccessDeniedException e) {
