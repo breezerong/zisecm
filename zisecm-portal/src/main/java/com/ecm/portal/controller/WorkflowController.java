@@ -378,6 +378,11 @@ public class WorkflowController extends ControllerAbstract {
 			map.put("createTime", task.getCreateTime());
 			map.put("endTime", task.getEndTime());
 			map.put("processDefinitionId", task.getProcessDefId());
+			Map<String,String> processInfo = getProcessName(task.getProcessDefId());
+			if(processInfo!=null) {
+				map.put("workflowName", processInfo.get("workflowName"));
+				map.put("processKey", processInfo.get("processKey"));
+			}
 			resultListTemp.add(map);
 		}
 //		for (HistoricTaskInstance task : tasks) {
@@ -498,12 +503,11 @@ public class WorkflowController extends ControllerAbstract {
 			map.put("name", task.getName());
 			map.put("createTime", task.getCreateTime());
 			map.put("processDefinitionId", task.getProcessDefinitionId());
-			ProcessDefinition processDefinitionObj=repositoryService.createProcessDefinitionQuery()
-					.processDefinitionId(task.getProcessDefinitionId()).singleResult();
-			String processName = processDefinitionObj.getName();
-			String processKey=processDefinitionObj.getKey();
-			map.put("workflowName", processName);
-			map.put("processKey", processKey);
+			Map<String,String> processInfo = getProcessName(task.getProcessDefinitionId());
+			if(processInfo!=null) {
+				map.put("workflowName", processInfo.get("workflowName"));
+				map.put("processKey", processInfo.get("processKey"));
+			}
 			resultListTemp.add(map);
 		}
 //		    CustomSqlExecution<VarQueryMapper, List<Map<String, Object>>> customSqlExecution = new AbstractCustomSqlExecution<VarQueryMapper, List<Map<String, Object>>>(VarQueryMapper.class) {
@@ -523,6 +527,23 @@ public class WorkflowController extends ControllerAbstract {
 
 		return resultMap;
 	}
+	private Map<String,Map<String,String>> processDefList = new HashMap<String, Map<String,String>>();
+	private Map<String,String> getProcessName(String processDefinitionId) {
+		Map<String,String> processInfo = processDefList.get(processDefinitionId);
+		if(processInfo == null && processDefinitionId != null) {
+			ProcessDefinition processDefinitionObj=repositoryService.createProcessDefinitionQuery()
+					.processDefinitionId(processDefinitionId).singleResult();
+			String processName = processDefinitionObj.getName();
+			String processKey=processDefinitionObj.getKey();
+			Map<String,String> mp = new HashMap<String,String>();
+			mp.put("workflowName", processName);
+			mp.put("processKey", processKey);
+			processDefList.put(processDefinitionId, mp);
+			return mp;
+		}
+		return processInfo;
+	}
+	
 
 	private void getProcessVars(List<HashMap> resultList, List<HashMap> resultListTemp,
 			Set<String> processInstanceIdSet) {
