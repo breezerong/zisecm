@@ -371,19 +371,21 @@ public class WorkflowController extends ControllerAbstract {
 		for (EcmAuditWorkitem task : list) {
 			map = new HashMap<>();
 			List<String> processInstanceIdsList = new ArrayList<String>();
-			map.put("id", task.getId());
-			map.put("processInstanceId", task.getProcessInstanceId());
-			processInstanceIdSet.add(map.get("processInstanceId").toString());
-			map.put("name", task.getTaskName());
-			map.put("createTime", task.getCreateTime());
-			map.put("endTime", task.getEndTime());
-			map.put("processDefinitionId", task.getProcessDefId());
-			Map<String,String> processInfo = getProcessName(task.getProcessDefId());
-			if(processInfo!=null) {
-				map.put("workflowName", processInfo.get("workflowName"));
-				map.put("processKey", processInfo.get("processKey"));
+			if(task.getEndTime() != null) {
+				map.put("id", task.getId());
+				map.put("processInstanceId", task.getProcessInstanceId());
+				processInstanceIdSet.add(map.get("processInstanceId").toString());
+				map.put("name", task.getTaskName());
+				map.put("createTime", task.getCreateTime());
+				map.put("endTime", task.getEndTime());
+				map.put("processDefinitionId", task.getProcessDefId());
+				Map<String,String> processInfo = getProcessName(task.getProcessDefId());
+				if(processInfo!=null) {
+					map.put("workflowName", processInfo.get("workflowName"));
+					map.put("processKey", processInfo.get("processKey"));
+				}
+				resultListTemp.add(map);
 			}
-			resultListTemp.add(map);
 		}
 //		for (HistoricTaskInstance task : tasks) {
 //			map = new HashMap<>();
@@ -403,8 +405,8 @@ public class WorkflowController extends ControllerAbstract {
 
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("data", resultList);
-		resultMap.put("totalCount",
-				historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().count());
+		resultMap.put("totalCount", resultList.size());
+		//historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().count()
 		return resultMap;
 	}
 
