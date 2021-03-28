@@ -79,6 +79,8 @@ import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.UserService;
@@ -189,10 +191,11 @@ public class WorkflowController extends ControllerAbstract {
 	 */
 	@RequestMapping(value = "/startWorkflow")
 	@ResponseBody
-	public Map<String, Object> startWorkflow(@RequestBody String argStr) {
+	public Map<String, Object> startWorkflow(@RequestBody String argStr) throws AccessDeniedException, EcmException, NoPermissionException{
 		// 启动流程
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		Map<String, Object> result = new HashMap<String, Object>();
+		String id = (String) args.get("formId");
 		try {
 			Object processId=args.get("processInstanceId");
 			if(processId!=null) {
@@ -200,6 +203,12 @@ public class WorkflowController extends ControllerAbstract {
 			}else {
 				result = customWorkflowService.startWorkflow(getSession(), args);
 			}
+			
+			EcmDocument file = documentService.getObjectById(getToken(), id);
+			
+			file.setStatus("流程中");
+			documentService.updateObject(getToken(), file, null);
+			
 			
 		} catch (AccessDeniedException e) {
 			e.printStackTrace();
@@ -1038,10 +1047,12 @@ public class WorkflowController extends ControllerAbstract {
 	 *
 	 * @param argStr
 	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
+	 * @throws EcmException 
 	 */
 	@RequestMapping(value = "testWorkflow")
 	@ResponseBody
-	public String testWorkflow(@RequestBody String argStr) throws AccessDeniedException {
+	public String testWorkflow(@RequestBody String argStr) throws AccessDeniedException, EcmException, NoPermissionException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String senseNumber = args.get("formId").toString();
 		args.put("formId", "cd857371a932488dabbf9bf399ba942e");
@@ -1097,10 +1108,12 @@ public class WorkflowController extends ControllerAbstract {
 	 *
 	 * @param argStr
 	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
+	 * @throws EcmException 
 	 */
 	@RequestMapping(value = "startSensen1")
 	@ResponseBody
-	public String startSensen1(@RequestBody String argStr) throws AccessDeniedException {
+	public String startSensen1(@RequestBody String argStr) throws AccessDeniedException, EcmException, NoPermissionException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 
 		startWorkflow(argStr);
