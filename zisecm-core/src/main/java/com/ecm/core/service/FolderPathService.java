@@ -92,10 +92,10 @@ public class FolderPathService extends EcmService {
 	 * @param values
 	 * @param type 1:移交目录，2：整编目录，3：发布目录，4：预归档目录
 	 * @return
-	 * @throws AccessDeniedException 
+	 * @throws Exception 
 	 */
 	@Transactional
-	public String getFolderId(String token, Map<String, Object> values, String type) throws AccessDeniedException {	
+	public String getFolderId(String token, Map<String, Object> values, String type) throws Exception {	
 		// TODO Auto-generated method stub
 		String id=null;
 		
@@ -272,8 +272,9 @@ public class FolderPathService extends EcmService {
 	 * @param attrValues
 	 * @param codition
 	 * @return
+	 * @throws Exception 
 	 */
-	public  Boolean conditionExcute(Map<String, Object> attrValues, String codition){
+	public  Boolean conditionExcute(Map<String, Object> attrValues, String codition) throws Exception{
 		StringBuffer str = new StringBuffer();
 		String the_receiving = null;
 		if (!StringUtils.isEmpty(codition)) {
@@ -283,6 +284,9 @@ public class FolderPathService extends EcmService {
 			while (m.find()) {
 				String attrName = m.group().replace("{", "").replace("}", "").toUpperCase();
 				the_receiving = (String) attrValues.get(attrName);
+				if(StringUtils.isEmpty(the_receiving)) {
+					throw new Exception("获取目录规则错误："+attrName +"值为空!");
+				}
 				var = var.replace("{" + attrName + "}", the_receiving);
 			}
 			str.append(var);
