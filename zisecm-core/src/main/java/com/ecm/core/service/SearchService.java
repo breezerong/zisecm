@@ -63,10 +63,10 @@ public class SearchService  extends EcmService implements ISearchService {
 
 	@Override
 	public Map<String, Object> findByContentScroll(String token, Pager pager, List<String> typeNames, String keyword,
-			Map<String, List<String>> termCondition, boolean onlyProperty) throws AccessDeniedException {
+			Map<String, List<String>> termCondition, int searchType) throws AccessDeniedException {
 		// TODO Auto-generated method stub
 		
-		Map<String, Object>  list =  esSearchService.findByContentScroll(token, pager, typeNames, keyword, termCondition, onlyProperty);
+		Map<String, Object>  list =  esSearchService.findByContentScroll(token, pager, typeNames, keyword, termCondition, searchType);
 		auditService.newAudit(token, null, AuditContext.FULL_TEXT_SEARCH, null, null, keyword);
 		return list;
 	}

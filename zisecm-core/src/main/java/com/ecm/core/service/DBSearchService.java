@@ -51,7 +51,7 @@ public class DBSearchService  extends EcmService  implements ISearchService {
 
 	@Override
 	public Map<String, Object> findByContentScroll(String token, Pager pager, List<String> typeNames, String keyword,
-			Map<String, List<String>> termCondition, boolean onlyProperty) {
+			Map<String, List<String>> termCondition, int searchType) {
 		// TODO Auto-generated method stub
 		return null;
 	}

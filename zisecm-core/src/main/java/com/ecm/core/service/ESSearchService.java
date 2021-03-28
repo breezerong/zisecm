@@ -269,11 +269,11 @@ public class ESSearchService extends EcmService implements ISearchService {
 	}
 
 	/**
-	 * 处理方式每次翻页都从0开始，
+	 * 
 	 */
 	@Override
 	public Map<String, Object> findByContentScroll(String token, Pager pager, List<String> typeNames, String keyword,
-			Map<String, List<String>> termCondition, boolean onlyProperty) {
+			Map<String, List<String>> termCondition, int searchType) {
 		// TODO Auto-generated method stub
 
 		final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
@@ -302,19 +302,18 @@ public class ESSearchService extends EcmService implements ISearchService {
 
 			
 			BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-			if(onlyProperty) {
-				keyword = "*"+keyword+"*";
+			keyword = "*"+keyword+"*";
+			if(searchType == 1) {
 				for(String fld: ESClient.getInstance().getSearchFields()) {
-					WildcardQueryBuilder q = QueryBuilders.wildcardQuery(fld, keyword);
+					MatchQueryBuilder q = QueryBuilders.matchQuery(fld, keyword);
 					boolQueryBuilder.should(q);
 				}
-//				WildcardQueryBuilder q = QueryBuilders.wildcardQuery("fileattr", keyword);
-//				boolQueryBuilder.should(q);
-			}else {
+			}
+			else {
 				MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("fileattr", keyword);
 				boolQueryBuilder.should(matchQueryBuilder);
 			}
-			if (!onlyProperty) {
+			if (searchType == 3) {
 				MatchQueryBuilder matchQueryBuilder2 = QueryBuilders.matchQuery("filecontent", keyword);
 				boolQueryBuilder.should(matchQueryBuilder2);
 			}
@@ -485,14 +484,14 @@ public class ESSearchService extends EcmService implements ISearchService {
 	 * @param typeNames
 	 * @param keyword
 	 * @param termCondition
-	 * @param onlyProperty
+	 * @param searchType
 	 * @return
 	 */
 	public Map<String, Object> findByContentScrollEx(String token, Pager pager, List<String> typeNames, String keyword,
-			Map<String, List<String>> termCondition, boolean onlyProperty) {
+			Map<String, List<String>> termCondition, int searchType) {
 		// TODO Auto-generated method stub
 		if (pager.getScrollId() == null) {
-			return findByContentScroll(token, pager, typeNames, keyword, termCondition, onlyProperty);
+			return findByContentScroll(token, pager, typeNames, keyword, termCondition, searchType);
 		}
 		final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(5L));
 		double searchTime = System.currentTimeMillis();
@@ -521,7 +520,7 @@ public class ESSearchService extends EcmService implements ISearchService {
 
 				MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("fileattr", keyword);
 				BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder().should(matchQueryBuilder);
-				if (!onlyProperty) {
+				if (searchType==3) {
 					MatchQueryBuilder matchQueryBuilder2 = QueryBuilders.matchQuery("filecontent", keyword);
 					boolQueryBuilder.should(matchQueryBuilder2);
 				}

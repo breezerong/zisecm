@@ -44,7 +44,7 @@ public class SearchController extends ControllerAbstract{
 	public Map<String, Object> searchByKeyword(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String keyword = args.get("keyword").toString();
-		boolean onlyProperty = args.get("attrOnly")== null?false:args.get("attrOnly").toString().equals("true");
+		int searchType = args.get("searchType")== null?2:Integer.parseInt(args.get("searchType").toString());
 		List<String> typeNames = args.get("typeNames")== null?null:JSONUtils.stringToArray(args.get("typeNames").toString());
 		String termStr = (String)args.get("terms");
 		Map<String, List<String>> termCondition = new HashMap<String, List<String>>() ;
@@ -74,11 +74,11 @@ public class SearchController extends ControllerAbstract{
 				mp.put("total", 0);
 				mp.put("code", ActionContext.SUCESS);
 			}else if(typeNames.get(0).toString().toLowerCase().equals("all")) {
-				mp.put("data", searchService.findByContentScroll(getToken(), pager, null, keyword,termCondition, onlyProperty));
+				mp.put("data", searchService.findByContentScroll(getToken(), pager, null, keyword,termCondition, searchType));
 				mp.put("total", pager.getTotal());
 				mp.put("code", ActionContext.SUCESS);
 			}else {
-				mp.put("data", searchService.findByContentScroll(getToken(), pager, typeNames, keyword,termCondition, onlyProperty));
+				mp.put("data", searchService.findByContentScroll(getToken(), pager, typeNames, keyword,termCondition, searchType));
 				mp.put("total", pager.getTotal());
 				mp.put("code", ActionContext.SUCESS);
 

@@ -24,12 +24,13 @@ public interface ISearchService {
 	 * @param typeNames
 	 * @param keyword
 	 * @param termCondition
-	 * @param onlyProperty
+	 * @param searchType 1:只查标题，2:只查属性，3:查询内容
 	 * @return
 	 * @throws AccessDeniedException 
 	 */
 	Map<String,Object>  findByContentScroll(String token, Pager pager, List<String> typeNames, String keyword,
-			Map<String, List<String>> termCondition, boolean onlyProperty) throws AccessDeniedException;
+			Map<String, List<String>> termCondition, int searchType) throws AccessDeniedException;
+	
 	List<String> getSuggestion(String keyword);
 	
 	Object findByCard(String token,String gridName, Pager pager, String typeName, List<EcmFormItem> conditions);
