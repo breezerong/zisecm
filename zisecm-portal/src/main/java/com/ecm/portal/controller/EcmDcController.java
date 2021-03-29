@@ -889,8 +889,9 @@ public class EcmDcController extends ControllerAbstract {
 			IEcmSession superUserSession= SessionUtils.getSuperUserSession(authService);
 			try {
 				Map<String, Object> args = JSONUtils.stringToMap(argStr);
+				Map<String, Object> metaData= JSONUtils.stringToMap(args.get("metaData").toString());
 				EcmDocument doc = new EcmDocument();
-				doc.setAttributes(args);
+				doc.setAttributes(metaData);
 				documentService.updateObject(superUserSession.getToken(), doc, null);
 			}finally {
 				SessionUtils.releaseSession(authService, superUserSession);
