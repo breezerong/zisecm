@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ecm.pdfConversion.JacobOffice2PdfUtil;
 import com.ecm.pdfConversion.openoffic.config.PdfTransferUtil;
 import com.ecm.pdfConversion.openoffic.config.ResourceComponent;
 
@@ -33,8 +34,8 @@ public class TransferUtil {
     /**
      * 这里没有 主要是配置不启用的话 无法注入
      */
-	@Autowired
-    private static DocumentConverter documentConverter;
+//	@Autowired
+//    private static DocumentConverter documentConverter;
 
     public final static String WORD_SUFFIX_DOC = "doc";
     public final static String WORD_SUFFIX_DOCX = "docx";
@@ -74,8 +75,9 @@ public class TransferUtil {
         String newPdfWebPath = StringUtils.substringBeforeLast(webPath, ".") + "_" + timeNow + ".pdf";
         try {
 //            File outputFile = new File(ResourceComponent.getLocation(newPdfWebPath));
-        	 File outputFile = new File(newPdfWebPath);
-            documentConverter.convert(inputFile).to(outputFile).execute();
+//        	 File outputFile = new File(newPdfWebPath);
+//            documentConverter.convert(inputFile).to(outputFile).execute();
+        	 new JacobOffice2PdfUtil().office2pdf(webPath, newPdfWebPath);
         } catch (Exception e) {
             log.error("word->pdf 转换错误------------> Exception: ", e);
             throw e;
@@ -134,9 +136,9 @@ public class TransferUtil {
      * 初始化bean
      */
     private static void initBeanUtil() {
-        if (documentConverter == null) {
-            documentConverter = SpringUtil.getBean(DocumentConverter.class);
-        }
+//        if (documentConverter == null) {
+//            documentConverter = SpringUtil.getBean(DocumentConverter.class);
+//        }
     }
 
     /**
