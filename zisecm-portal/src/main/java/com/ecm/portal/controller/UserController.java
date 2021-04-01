@@ -216,6 +216,76 @@ public class UserController extends ControllerAbstract{
 		return mp;
 	}
 	
+	@RequestMapping(value = "/user/UaGSignImage", method = RequestMethod.POST)
+	@ResponseBody
+	public void UaGSignImage(String id,@RequestParam("uploadFile") MultipartFile[] uploadFileList, HttpServletResponse response) {
+		InputStream iStream =null;
+		OutputStream toClient = null;
+		
+		try {
+			InputStream instream = null;
+			String fileName = null;
+			
+			for(int i=0; i<uploadFileList.length; i++) {
+				if(uploadFileList[i]!=null) {
+					instream = uploadFileList[i].getInputStream();
+					fileName = uploadFileList[i].getOriginalFilename();
+				}
+				userService.updateSignImage(getToken(),id.replace("\"", ""),instream,fileName);
+				if(instream!=null) {
+					instream.close();
+				}
+			}
+
+			EcmUser en = userService.getObjectById(getToken(),id.replace("\"", ""));
+			if(en==null || en.getSignImage()==null||en.getSignImage().length()<5) {
+				return;
+			}
+			File f = new File(en.getSignImage());
+			if(!f.exists()) {
+				return;
+			}
+			
+			iStream = new BufferedInputStream(new FileInputStream(en.getSignImage()));
+			
+			// 清空response
+	        response.reset();
+	        // 设置response的Header
+	        response.setCharacterEncoding("UTF-8");
+	        response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
+	        response.addHeader("Content-Length", "" + f.length());
+	        toClient = new BufferedOutputStream(response.getOutputStream());
+	        response.setContentType("application/octet-stream");
+	        byte[] buffer = new byte[8 * 1024];
+			int bytesRead;
+			while ((bytesRead = iStream.read(buffer)) != -1) {
+				toClient.write(buffer, 0, bytesRead);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			if(iStream!=null) {
+				try {
+					iStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if(toClient!=null) {
+		        try {
+					toClient.flush();
+					toClient.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	@RequestMapping(value = "/user/updatePassword", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updatePassword(@RequestBody UserInfoEntity userInfo) {
