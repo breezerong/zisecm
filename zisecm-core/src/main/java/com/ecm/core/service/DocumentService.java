@@ -332,6 +332,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			String customId = gridName.replace("_CUSTOM", "");
 			List<Map<String, Object>> list = ecmDocument.executeSQL("select C_COMMENT from ecm_document where id ='"+customId+"'");
 			attrNames.append(list.get(0).get("C_COMMENT"));
+			//如果存在C_ARC_CLASSIC属性，则添加到查询列
+			EcmAttribute en = CacheManagerOper.getEcmAttributes().get("C_ARC_CLASSIC");
+			if (en != null) {
+				attrNames.append("C_ARC_CLASSIC,");
+			}
 			attrNames.deleteCharAt(attrNames.length()-1);
 		}else {
 			gv = CacheManagerOper.getEcmGridViews().get(gridName);
