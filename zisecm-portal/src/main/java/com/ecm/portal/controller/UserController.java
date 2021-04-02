@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmComponent;
@@ -34,10 +33,10 @@ import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.entity.UserInfoEntity;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 /**
  * 用户控制器
@@ -53,6 +52,9 @@ public class UserController extends ControllerAbstract{
 	
 	@Autowired
 	private GroupService groupService;
+	
+	@Autowired
+	private DocumentService documentService;
 	
 
 	@ResponseBody
@@ -218,44 +220,63 @@ public class UserController extends ControllerAbstract{
 	
 	@RequestMapping(value = "/user/UaGSignImage", method = RequestMethod.POST)
 	@ResponseBody
-	public void UaGSignImage(String id,@RequestParam("uploadFile") MultipartFile[] uploadFileList, HttpServletResponse response) {
+	public void UaGSignImage(@RequestParam("uploadFile") MultipartFile[] uploadFileList, HttpServletResponse response) {
 		InputStream iStream =null;
 		OutputStream toClient = null;
+		EcmUser en = new EcmUser();
 		
 		try {
 			InputStream instream = null;
 			String fileName = null;
+			String userName = null;
+			String id = null;
 			
 			for(int i=0; i<uploadFileList.length; i++) {
 				if(uploadFileList[i]!=null) {
 					instream = uploadFileList[i].getInputStream();
 					fileName = uploadFileList[i].getOriginalFilename();
+					
+					if ((fileName != null) && (fileName.length() > 0)) {
+						int dot = fileName.lastIndexOf('.');
+						if ((dot >-1) && (dot < (fileName.length()))) {
+							userName =  fileName.substring(0, dot);
+						}
+
+					}
 				}
-				userService.updateSignImage(getToken(),id.replace("\"", ""),instream,fileName);
+				
+				String sqlByUserName = "select * from ecm_user where NAME = '"+ userName +"'";
+				
+				id = (String) documentService.getMapList(getToken(), sqlByUserName).get(0).get("ID");
+				
+				userService.updateSignImage(getToken(),id,instream,fileName);
 				if(instream!=null) {
 					instream.close();
 				}
-			}
+			
 
-			EcmUser en = userService.getObjectById(getToken(),id.replace("\"", ""));
-			if(en==null || en.getSignImage()==null||en.getSignImage().length()<5) {
-				return;
-			}
-			File f = new File(en.getSignImage());
-			if(!f.exists()) {
-				return;
-			}
+				en = userService.getObjectById(getToken(),id);
+				if(en==null || en.getSignImage()==null||en.getSignImage().length()<5) {
+					return;
+				}
+				File f = new File(en.getSignImage());
+				if(!f.exists()) {
+					return;
+				}
+				
+				iStream = new BufferedInputStream(new FileInputStream(en.getSignImage()));
 			
-			iStream = new BufferedInputStream(new FileInputStream(en.getSignImage()));
 			
-			// 清空response
-	        response.reset();
-	        // 设置response的Header
-	        response.setCharacterEncoding("UTF-8");
-	        response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
-	        response.addHeader("Content-Length", "" + f.length());
-	        toClient = new BufferedOutputStream(response.getOutputStream());
-	        response.setContentType("application/octet-stream");
+				// 清空response
+		        response.reset();
+		        // 设置response的Header
+		        response.setCharacterEncoding("UTF-8");
+		        response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
+		        response.addHeader("Content-Length", "" + f.length());
+		        toClient = new BufferedOutputStream(response.getOutputStream());
+		        response.setContentType("application/octet-stream");
+	        
+			}
 	        byte[] buffer = new byte[8 * 1024];
 			int bytesRead;
 			while ((bytesRead = iStream.read(buffer)) != -1) {
