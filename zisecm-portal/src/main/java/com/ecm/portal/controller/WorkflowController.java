@@ -173,7 +173,7 @@ public class WorkflowController extends ControllerAbstract {
 	public Map<String, Object> deleteProcess(@RequestBody String id) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			repositoryService.deleteDeployment(id);
+			repositoryService.deleteDeployment(id,true);
 			mp.put("code", ActionContext.SUCESS);
 
 		}catch(Exception ex) {
