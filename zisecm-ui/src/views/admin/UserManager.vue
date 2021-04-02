@@ -392,7 +392,13 @@ export default {
     };
   },
   mounted() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<5){
+      _self.$router.push({ path: '/NoPermission' });  
+    }
     var psize = localStorage.getItem("userPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);

@@ -123,7 +123,12 @@ export default {
   },
   beforeCreate() {},
   created() {
-    let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      _self.$router.push({ path: '/NoPermission' });    
+    }
     _self.loading = true;
     axios
       .get("/admin/getAction")
@@ -221,16 +226,5 @@ li {
 a {
   color: #42b983;
 }
-.el-header,
-.el-footer {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
 
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
-}
 </style>

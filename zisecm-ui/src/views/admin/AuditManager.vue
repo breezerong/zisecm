@@ -2,51 +2,47 @@
   <div>
     <el-container>
       <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>日志管理</el-breadcrumb-item>
-          <el-breadcrumb-item>日志查询</el-breadcrumb-item>
-        </el-breadcrumb> -->
-        <el-row class="topbar">
-          <el-col :span="4">
+        <el-form inline="true">
+          <el-row class="topbar">
+            <el-form-item>
             <el-select v-model="eventName">
               <el-option label="All" key="all" value=""></el-option>
                <div v-for="(item,idx) in dataEvent" :key="'E_'+idx">
                   <el-option :label="item.name" :key="item.name" :value="item.name"></el-option>
                 </div>
             </el-select>
-          </el-col>
-          <el-col :span="4">
+            </el-form-item>
+            <el-form-item>
             <el-date-picker
               v-model="startDate"
               type="date"
-              :placeholder="$t('application.pleaseSelect')+$t('application.startDate')">
+              :placeholder="$t('application.startDate')">
             </el-date-picker>
-          </el-col>
-          <el-col :span="4">
+            </el-form-item>
+            <el-form-item>
             <el-date-picker
               v-model="endDate"
               type="date"
-              :placeholder="$t('application.pleaseSelect')+$t('application.endDate')">
+              :placeholder="$t('application.endDate')">
             </el-date-picker>
-          </el-col>
-          <el-col :span="4">
+            </el-form-item>
+            <el-form-item>
             <el-input
-              v-model="inputkey"
+              v-model="inputKey"
               placeholder="请输入关键字"
               prefix-icon="el-icon-search"
             ></el-input>
-          </el-col>
-          <el-col :span="8" style="text-align:left;">
-            &nbsp; 
+            </el-form-item>
+            <el-form-item>
             <el-button
               type="primary"
               icon="el-icon-search"
               plain
               @click="search"
             >{{$t('application.SearchData')}}</el-button>
-          </el-col>
+            </el-form-item>
         </el-row>
+        </el-form>
       </el-header>
       <el-main>
         <el-table
@@ -57,11 +53,13 @@
           style="width: 100%"
         >
           <el-table-column label="行号" type="index" width="60"></el-table-column>
-          <el-table-column label="应用名" prop="appName" width="120">
+          <el-table-column label="应用名" prop="appName" width="90">
           </el-table-column>
-          <el-table-column label="用户名" prop="userName" width="220" sortable>
+          <el-table-column label="用户名" prop="userName" width="180" sortable>
           </el-table-column>
-          <el-table-column label="事件名" prop="actionName" width="180">
+          <el-table-column label="事件名" prop="actionName" width="120">
+          </el-table-column>
+          <el-table-column label="对象ID" prop="docId" width="260">
           </el-table-column>
           <el-table-column label="执行时间" prop="excuteDate" :formatter="dateFormatter" width="180">
           </el-table-column>
@@ -111,7 +109,7 @@ export default {
       eventName: "",
       startDate: null,
       endDate: null,
-      inputkey: "",
+      inputKey: "",
       pageSize: 20,
       currentPage: 1,
       itemCount: 0,
@@ -122,7 +120,13 @@ export default {
     };
   },
   mounted() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<5){
+      _self.$router.push({ path: '/NoPermission' });    
+    }
     var psize = localStorage.getItem("auditPageSize");
     if (psize) {
       _self.pageSize = parseInt(psize);
@@ -170,9 +174,9 @@ export default {
       }
       if(_self.inputKey != "" && _self.inputKey != null){
         if(condition != ""){
-          condition += " and USER_NAME like '%"+_self.inputkey+"%'";
+          condition += " and USER_NAME like '%"+_self.inputKey+"%'";
         }else{
-          condition = "USER_NAME like '%"+_self.inputkey+"%'";
+          condition = "USER_NAME like '%"+_self.inputKey+"%'";
         }
       }
       if(_self.startDate != null){
@@ -225,29 +229,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
-}
+
 </style>

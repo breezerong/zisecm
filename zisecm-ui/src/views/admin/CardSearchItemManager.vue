@@ -169,7 +169,13 @@ export default {
     CardSearchItemCheck: CardSearchItemCheck
   },
   created() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+     _self.$router.push({ path: '/NoPermission' });    
+    }
     _self.loading = true;
     _self.parentId = _self.$route.query.parentid;
     _self.typeName = _self.$route.query.name;
@@ -276,26 +282,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
-.el-main{
-  padding:5px;
-}
+
 </style>

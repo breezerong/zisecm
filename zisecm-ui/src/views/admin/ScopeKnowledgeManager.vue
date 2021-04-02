@@ -31,6 +31,13 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="管理员" :label-width="formLabelWidth">
+                <UserSelectInput  v-model="form.manager" v-bind:inputValue="form.manager" v-bind:isRepeat="true"></UserSelectInput>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{$t('application.cancel')}}</el-button>
@@ -49,7 +56,7 @@
             ></el-input>
           </el-col>
           <el-col :span="8" style="text-align:left;">
-            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建角色</el-button>
+            <el-button type="primary" plain icon="el-icon-edit" @click="newitem()">新建知悉范围</el-button>
           </el-col>
         </el-row>
         <el-table
@@ -77,6 +84,11 @@
           <el-table-column label="说明" min-width="30%">
             <template slot-scope="scope">
               <span>{{scope.row.description}}</span>
+            </template>
+          </el-table-column>
+           <el-table-column label="管理员" min-width="30%">
+            <template slot-scope="scope">
+              <span>{{scope.row.manager}}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="160">
@@ -239,12 +251,14 @@
 <script type="text/javascript">
 import UserSelector from "@/components/controls/UserSelector";
 import RoleSelectInput from "@/components/controls/RoleSelectInput";
+import UserSelectInput from '@/components/controls/UserSelectInput'
 export default {
   name: "RoleManager",
   permit: 9,
   components: {
     UserSelector: UserSelector,
-    RoleSelectInput: RoleSelectInput
+    RoleSelectInput: RoleSelectInput,
+    UserSelectInput:UserSelectInput,
   },
   data() {
     return {
@@ -310,7 +324,7 @@ export default {
   methods: {
     showUserSelector() {
       if (this.selectedItemId == 0) {
-        this.$message("请选择角色!");
+        this.$message("请选择知悉范围!");
         return;
       }
       this.selectUserDialogVisible = true;
@@ -325,7 +339,7 @@ export default {
         m.set("userId", indata.id);
         m.set("deptId", _self.selectedItemId);
         axios
-          .post("/admin/addToRole", JSON.stringify(m))
+          .post("/admin/addToGroup", JSON.stringify(m))
           .then(function(response) {
             _self.refreshUserData();
             _self.$message("添加用户成功!");
@@ -405,14 +419,14 @@ export default {
     refreshData() {
       let _self = this;
       var m = new Map();
-      m.set("groupType", 2);
+      m.set("groupType", 3);
       m.set("id", "");
       m.set("condition", _self.inputkey);
       m.set("pageSize", _self.pageSize);
       m.set("pageIndex", _self.currentPage - 1);
       // console.log('pagesize:', _self.pageSize);
       axios
-        .post("/admin/getGroups", JSON.stringify(m))
+        .post("/admin/getScopeKnowledge", JSON.stringify(m))
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
@@ -554,7 +568,7 @@ export default {
         id: "",
         name: "",
         description: "",
-        groupType: "2",
+        groupType: "3",
         coding: ""
       };
     },
@@ -592,7 +606,7 @@ export default {
       });
     },
     searchUser() {
-      let _self = this;
+      let _self = this; 
       _self.userList = _self.userListFull.filter(function(item) {
         return (
           item.name.match(_self.userInputkey) ||

@@ -221,6 +221,13 @@
                 icon="edit"
                 @click="updateProcess(scope.row)"
               >更新版本</el-button>
+              <el-button
+                :plain="true"
+                type="warning"
+                size="small"
+                icon="edit"
+                @click="onDeleteProject(scope.row)"
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -316,6 +323,40 @@ export default {
         .post("/cfgworkflow/updateProcessId", JSON.stringify(indata))
         .then(function(response) {
           _self.$message("更新流程成功!");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    onDeleteProject(indata){
+      let _self = this;
+      this.$confirm(
+        _self.$t("message.deleteInfo"),
+        _self.$t("application.info"),
+        {
+          confirmButtonText: _self.$t("application.ok"),
+          cancelButtonText: _self.$t("application.cancel"),
+          type: "warning",
+        }
+      )
+        .then(() => {
+          _self.deleteProcess(indata);
+        })
+        .catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: '已取消删除'
+          // });
+        });
+    },
+    deleteProcess(indata){
+      console.log(indata);
+      let _self = this;
+      axios
+        .post("/workflow/deleteProcess", indata.deploymentId)
+        .then(function(response) {
+          _self.$message("删除流程成功!");
+          _self.refreshData();
         })
         .catch(function(error) {
           console.log(error);
@@ -451,15 +492,5 @@ li {
 }
 a {
   color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
 }
 </style>

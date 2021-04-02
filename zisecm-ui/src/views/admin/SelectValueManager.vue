@@ -60,7 +60,7 @@
           v-loading="loading"
           style="width: 100%"
         >
-          <el-table-column prop="id" label="ID" width="80" sortable></el-table-column>
+          <el-table-column label="行号" type="index" width="60"></el-table-column>
           <el-table-column label="标签" width="160">
             <template slot-scope="scope">
               <el-input v-model="scope.row.label"></el-input>
@@ -140,7 +140,13 @@ export default {
     };
   },
   created() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<5){
+      _self.$router.push({ path: '/NoPermission' });  
+    }
     if (_self.$route.query.name) {
       _self.inputkey = _self.$route.query.name;
       _self.fromparent = true;
@@ -228,29 +234,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
-}
+
 </style>

@@ -65,22 +65,22 @@
                 type="index"
                 width="60">
               </el-table-column>
-        <el-table-column label="名称" width="180" >
+        <el-table-column label="名称" width="200" >
            <template slot-scope="scope">
             <el-input  v-model="scope.row.name"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="说明" width="180">
+        <el-table-column label="说明" min-width="180">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.description"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="条件"  min-width="20%">
+        <el-table-column label="条件"  width="180">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.condition"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="排序"  min-width="20%">
+        <el-table-column label="排序"  width="180">
           <template slot-scope="scope">
             <el-input  v-model="scope.row.orderBy"></el-input>
           </template>
@@ -95,10 +95,9 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="操作"  width="320">
+        <el-table-column label="操作"  width="280">
           <template slot-scope="scope">
             <router-link :to="{path:'/managercenter/gridviewitemmanager',query:{parentid:scope.row.id,name:scope.row.name}}"><el-button :plain="true" type="info" size="small" icon="edit">查看</el-button></router-link>
-            &nbsp; 
             <el-button :plain="true" type="primary" size="small" icon="edit" @click="saveitem(scope.row)">保存</el-button>
             <el-button :plain="true" type="warning" size="small" icon="edit" @click="copyitem(scope.row)">复制</el-button>
             <el-button :plain="true" type="danger" size="small" icon="delete" @click="delitem(scope.row)">{{$t('application.delete')}}</el-button>
@@ -137,8 +136,13 @@ export default {
     };
   },
    created(){
-     
     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      _self.$router.push({ path: '/NoPermission' });  
+    }
     _self.loading = true;
     axios.get('/admin/getGridView')
       .then(function(response) {
@@ -232,29 +236,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
-}
+
 </style>

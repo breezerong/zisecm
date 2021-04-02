@@ -145,16 +145,17 @@
         <el-row class="topbar">
           <el-col :span="4" style="text-align:left;">
             <el-tooltip class="item" effect="dark" content="新增部门" placement="top">
-              <el-button type="primary" icon="el-icon-edit" circle @click="newitem()"></el-button>
+              <el-button type="primary" plain icon="el-icon-edit" circle @click="newitem()"></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="编辑部门" placement="top">
-              <el-button type="primary" icon="el-icon-info" circle @click="edititem(currentData)"></el-button>
+              <el-button type="primary" plain icon="el-icon-info" circle @click="edititem(currentData)"></el-button>
             </el-tooltip>
             <el-tooltip class="item" effect="dark" content="删除部门" placement="top">
               <el-button
                 type="primary"
                 icon="el-icon-delete"
-                circle
+                circle 
+                plain
                 @click="onDeleleItem(currentData)"
               ></el-button>
             </el-tooltip>
@@ -182,13 +183,20 @@
       <el-main>
         <el-row>
           <el-col :span="4">
-            <el-tree
-              :props="defaultProps"
-              :data="deptList"
-              node-key="id"
-              lazy
-              @node-click="handleNodeClick"
-            ></el-tree>
+            <el-container
+              :style="{
+                height: treeHeight + 'px',
+                overflow: 'auto',
+              }"
+            >
+              <el-tree
+                :props="defaultProps"
+                :data="deptList"
+                node-key="id"
+                lazy
+                @node-click="handleNodeClick"
+              ></el-tree>
+            </el-container>
           </el-col>
           <el-col :span="20">
             <el-table :data="dataList" border :height="tableHeight" style="width: 100%">
@@ -265,7 +273,8 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 145,
+      treeHeight: window.innerHeight - 145,
       inputkey: "",
       loading: false,
       dialogVisible: false,
@@ -313,6 +322,12 @@ export default {
   },
   mounted() {
     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<5){
+      _self.$router.push({ path: '/NoPermission' }); 
+    }
     _self.bindDepartment();
   },
   methods: {
@@ -596,29 +611,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
-}
+
 </style>

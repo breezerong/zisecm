@@ -154,6 +154,13 @@ export default {
     };
   },
   mounted() {
+    let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      _self.$router.push({ path: '/NoPermission' });   
+    }
     this.refreshData();
   },
   methods: {
@@ -246,10 +253,7 @@ li {
 a {
   color: #42b983;
 }
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
+
 .el-main{
   padding:5px;
 }

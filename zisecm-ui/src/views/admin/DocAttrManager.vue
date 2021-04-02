@@ -11,11 +11,11 @@
         <el-form-item label="类型" :label-width="formLabelWidth">
           <el-select v-model="form.fieldType">
             <el-option label="String" :value="1"></el-option>
-            <el-option label="Int" :value="2"></el-option>
-            <el-option label="Double" :value="3"></el-option>
-            <el-option label="Long" :value="4"></el-option>
-            <el-option label="DateTime" :value="5"></el-option>
-            <el-option label="Boolean" :value="6"></el-option>
+            <el-option label="Int" :value="4"></el-option>
+            <el-option label="Double" :value="6"></el-option>
+            <el-option label="Long" :value="5"></el-option>
+            <el-option label="DateTime" :value="2"></el-option>
+            <el-option label="Boolean" :value="3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="允许为空" :label-width="formLabelWidth">
@@ -125,7 +125,13 @@ export default {
     };
   },
   created() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      _self.$router.push({ path: '/NoPermission' });   
+    }
     _self.loading = true;
     axios
       .get("/admin/getAttribute")
@@ -246,10 +252,6 @@ li {
 }
 a {
   color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
 }
 .el-main{
   padding:5px;

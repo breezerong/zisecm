@@ -71,12 +71,12 @@
           style="width: 100%"
         >
           <el-table-column label="行号" type="index" width="60"></el-table-column>
-          <el-table-column label="类型名" min-width="20%" sortable>
+          <el-table-column label="类型名" min-width="30%" sortable>
             <template slot-scope="scope">
               <el-input v-model="scope.row.typeName"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="说明" min-width="30%">
+          <el-table-column label="说明" min-width="20%">
             <template slot-scope="scope">
               <el-input v-model="scope.row.description"></el-input>
             </template>
@@ -177,7 +177,13 @@ export default {
     };
   },
   created() {
-    let _self = this;
+     let _self = this;
+    let systemPermission = Number(
+        this.currentUser().systemPermission
+      );
+    if(systemPermission<9){
+      _self.$router.push({ path: '/NoPermission' });  
+    }
     _self.loading = true;
     axios
       .get("/admin/getForm")
@@ -273,29 +279,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header {
-  background-color: #e8eaeb;
-  height: 42px !important;
-}
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 10px;
-}
+
 </style>
