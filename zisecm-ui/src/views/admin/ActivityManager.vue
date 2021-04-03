@@ -173,12 +173,12 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
+      <el-header class="ecm-header">
         <!-- <el-breadcrumb separator="/" class="navbar">
           <el-breadcrumb-item>系统管理</el-breadcrumb-item>
           <el-breadcrumb-item>流程配置</el-breadcrumb-item>
         </el-breadcrumb> -->
-        <el-row class="topbar">
+        <el-row>
           <el-col :span="4">
             <el-input
               v-model="inputKey"
@@ -264,7 +264,7 @@ export default {
       dialogVisible: false,
       listDialogVisible: false,
       listtableHeight: window.innerHeight - 420,
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         processId: "",
         processName: "",
@@ -343,10 +343,6 @@ export default {
           _self.deleteProcess(indata);
         })
         .catch(() => {
-          // this.$message({
-          //   type: 'info',
-          //   message: '已取消删除'
-          // });
         });
     },
     deleteProcess(indata){
@@ -463,13 +459,15 @@ export default {
     search() {
       let _self = this;
       _self.dataList = [];
-      if (_self.inputKey != "" || _self.parentid != "") {
+      if (_self.inputKey != "") {
         _self.dataList = _self.dataListFull.filter(function(item) {
           return (
-            item.name.match(_self.inputKey) ||
-            item.description.match(_self.inputKey)
+            (item.name && item.name.match(_self.inputKey)) || (item.description && 
+            item.description.match(_self.inputKey))
           );
         });
+      }else{
+        _self.dataList = _self.dataListFull
       }
     }
   }
@@ -478,19 +476,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>

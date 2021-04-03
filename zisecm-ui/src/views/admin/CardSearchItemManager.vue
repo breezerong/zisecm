@@ -48,14 +48,7 @@
         <el-button type="primary" @click="addItem(form)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-row class="navbar">
-      <el-breadcrumb>
-        <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-        <el-breadcrumb-item>界面配置</el-breadcrumb-item>
-        <el-breadcrumb-item>卡片查询字段管理</el-breadcrumb-item>
-      </el-breadcrumb>
-    </el-row>
-    <el-row class="topbar">
+    <el-row class="ecm-header">
       <el-col :span="4">名称：{{typeName}}</el-col>
       <el-col :span="4">
         <el-input
@@ -142,7 +135,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       inputkey: "",
       parentId: "",
       typeName: "",

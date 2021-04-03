@@ -224,8 +224,8 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
-        <el-row class="topbar">
+      <el-header class="ecm-header">
+        <el-row>
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -285,7 +285,7 @@
               <span>{{scope.row.isActived?"是":"否"}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="240">
+          <el-table-column label="操作" width="170">
             <template slot-scope="scope">
               <el-button
                 type="primary"
@@ -306,7 +306,7 @@
                 plain
                 icon="el-icon-delete"
                 :title="$t('application.delete')"
-                @click="delitem(scope.row)"
+                @click="onDeleteItem(scope.row)"
               ></el-button>
             </template>
           </el-table-column>
@@ -334,7 +334,7 @@ export default {
       dataListFull: [],
       fileList: [],
       file: "",
-      tableHeight: window.innerHeight - 190,
+      tableHeight: window.innerHeight - 150,
       inputkey: "",
       loading: false,
       dialogVisible: false,
@@ -491,6 +491,23 @@ export default {
       this.currentItem = indata;
       this.fileList = [];
       this.sdialogVisible = true;
+    },
+    onDeleteItem(indata){
+      let _self = this;
+      this.$confirm(
+        _self.$t("message.deleteInfo"),
+        _self.$t("application.info"),
+        {
+          confirmButtonText: _self.$t("application.ok"),
+          cancelButtonText: _self.$t("application.cancel"),
+          type: "warning",
+        }
+      )
+        .then(() => {
+          _self.delitem(indata);
+        })
+        .catch(() => {
+        });
     },
     delitem(indata) {
       let _self = this;

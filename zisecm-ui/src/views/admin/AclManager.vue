@@ -49,7 +49,7 @@
         <el-breadcrumb-item>ACL管理</el-breadcrumb-item>
       </el-breadcrumb>
     </div> -->
-    <el-row>
+    <el-row class="ecm-header">
       <el-col :span="6">
         <el-input
           v-model="inputKey"
@@ -68,7 +68,6 @@
       border
       :height="tableHeight"
       v-loading="loading"
-      size="mini"
       style="width: 100%"
     >
       <el-table-column label="行号" type="index" width="60"></el-table-column>
@@ -76,7 +75,7 @@
       <el-table-column label="说明" prop="description" min-width="30%"></el-table-column>
       <el-table-column label="创建人" prop="creator" width="140"></el-table-column>
       <el-table-column label="创建时间" prop="creationDate" :formatter="dateFormatter" width="160"></el-table-column>
-      <el-table-column label="操作" width="320">
+      <el-table-column label="操作" width="300">
         <template slot-scope="scope">
           <el-button
             :plain="true"
@@ -143,7 +142,7 @@ export default {
       dialogVisible: false,
       permissionVisible: false,
       dialogCopyVisible: false,
-      tableHeight: window.innerHeight - 160,
+      tableHeight: window.innerHeight - 150,
       isEdit: false,
       formCopy:{
         id:"",
@@ -294,4 +293,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 </style>

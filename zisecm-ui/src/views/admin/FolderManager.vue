@@ -77,20 +77,20 @@
           </div>
         </el-dialog>
              <el-container>
-          <el-header>
+          <el-header class="ecm-header">
              <!-- <el-breadcrumb separator="/" class="navbar">
                <el-breadcrumb-item>系统管理</el-breadcrumb-item>
                <el-breadcrumb-item>文件夹管理</el-breadcrumb-item>
              </el-breadcrumb> -->
-            <el-row class="topbar">
+            <el-row >
               <el-col :span="4">
                 <el-input  v-model="inputkey" placeholder="请输入关键字" @change="searchFolder" prefix-icon="el-icon-search"></el-input>
               </el-col>
               <el-col :span="20" style="text-align:left;">
                 &nbsp; 
                 <el-button type="primary" plain icon="el-icon-edit"  @click="dialogVisible = true">查看</el-button>
-                    <el-button type="primary" plain icon="el-icon-delete"  @click="delitem(currentData)">{{$t('application.delete')}}</el-button>
-                    <el-button type="primary" plain icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
+                <el-button type="primary" plain icon="el-icon-delete"  @click="delitem(currentData)">{{$t('application.delete')}}</el-button>
+                <el-button type="primary" plain icon="el-icon-copy-document"  @click="showCopy()">复制</el-button>
               </el-col>
             </el-row>
           </el-header>
@@ -312,5 +312,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>

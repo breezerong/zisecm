@@ -37,10 +37,10 @@
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-row>
+    <el-row >
       <el-col :span="12">
-        <el-row>
-          <el-col :span="4">
+        <el-row class="ecm-header">
+          <el-col :span="8">
             <el-input
               v-model="inputkey"
               placeholder="请输入关键字"
@@ -79,7 +79,7 @@
               <span>{{scope.row.description}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="160">
+          <el-table-column label="操作" width="140">
             <template slot-scope="scope">
               <el-button
                 :plain="true"
@@ -110,8 +110,8 @@
       </el-col>
       <el-col :span="12">
         <el-tabs v-model="activeName" type="card">
-          <el-tab-pane label="用户管理" name="usertab">
-            <el-row>
+          <el-tab-pane label="用户" name="usertab">
+            <el-row class="ecm-header">
               <el-col :span="8">
                 <el-input
                   v-model="userInputkey"
@@ -156,7 +156,7 @@
                   <span>{{scope.row.groupName}}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="90">
+              <el-table-column label="操作" width="80">
                 <template slot-scope="scope">
                   <el-button
                     :plain="true"
@@ -178,8 +178,8 @@
               :total="userCount"
             ></el-pagination>
           </el-tab-pane>
-          <el-tab-pane label="角色管理" name="roletab">
-            <el-row>
+          <el-tab-pane label="角色" name="roletab">
+            <el-row class="ecm-header">
               <el-col :span="8">
                 <el-input
                   v-model="roleInputkey"
@@ -208,7 +208,7 @@
                   <span>{{scope.row.description}}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="160">
+              <el-table-column label="操作" width="80">
                 <template slot-scope="scope">
                   <el-button
                     :plain="true"
@@ -256,8 +256,8 @@ export default {
       roleList: [],
       roleListFull: [],
       activeName: "usertab",
-      tableHeight: window.innerHeight - 180,
-      tableHeight2: window.innerHeight - 240,
+      tableHeight: window.innerHeight - 150,
+      tableHeight2: window.innerHeight - 195,
       inputkey: "",
       userInputkey: "",
       roleInputkey: "",

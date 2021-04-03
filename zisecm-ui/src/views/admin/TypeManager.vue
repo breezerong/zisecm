@@ -35,12 +35,7 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>类型管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
-
-        <el-form :inline="true" style="text-align: left;" class="topbar" @submit.native.prevent>
+        <el-form :inline="true" style="text-align: left;" @submit.native.prevent>
           <el-form-item>
             <el-input
               v-model="inputkey"
@@ -135,7 +130,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         name: "",
         description: "",
@@ -261,5 +256,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.el-header {
+  padding-top: 0px;
+  padding-left: 5px;
+  height: 40px !important;
+}
 </style>

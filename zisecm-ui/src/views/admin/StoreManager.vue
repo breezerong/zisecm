@@ -34,12 +34,7 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>存储管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
-
-        <el-form :inline="true" style="text-align: left;" class="topbar">
+        <el-form :inline="true">
           <el-form-item>
             <el-input
               v-model="inputkey"
@@ -238,26 +233,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-
-.el-main{
-  padding:5px;
-}
-.el-row{
-  padding-bottom:10px;
+.el-header {
+  padding-top: 0px;
+  padding-left: 5px;
+  height: 42px !important;
 }
 </style>

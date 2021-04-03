@@ -24,12 +24,8 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>查询管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
-        <el-row class="topbar">
+      <el-header class="ecm-header">
+        <el-row>
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -81,7 +77,7 @@
               <el-input v-model="scope.row.sqlString" :rows="2"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="240">
+          <el-table-column label="操作" width="210">
             <template slot-scope="scope">
               <router-link :to="{path:'/SelectValueManager',query:{name:scope.row.name}}">
                 <el-button :plain="true" type="info" size="small" icon="edit">查看</el-button>
@@ -123,7 +119,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         name: "",
         description: "",

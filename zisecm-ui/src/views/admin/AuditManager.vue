@@ -1,9 +1,7 @@
 <template>
   <div>
-    <el-container>
       <el-header>
         <el-form inline="true">
-          <el-row class="topbar">
             <el-form-item>
             <el-select v-model="eventName">
               <el-option label="All" key="all" value=""></el-option>
@@ -41,7 +39,6 @@
               @click="search"
             >{{$t('application.SearchData')}}</el-button>
             </el-form-item>
-        </el-row>
         </el-form>
       </el-header>
       <el-main>
@@ -57,7 +54,7 @@
           </el-table-column>
           <el-table-column label="用户名" prop="userName" width="180" sortable>
           </el-table-column>
-          <el-table-column label="事件名" prop="actionName" width="120">
+          <el-table-column label="事件名" prop="actionName" width="160">
           </el-table-column>
           <el-table-column label="对象ID" prop="docId" width="260">
           </el-table-column>
@@ -90,7 +87,6 @@
           :total="itemCount"
         ></el-pagination>
       </el-main>
-    </el-container>
   </div>
 </template>
 
@@ -229,5 +225,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.el-header {
+  padding-top: 0px;
+  padding-left: 5px;
+  height: 42px !important;
+}
 </style>

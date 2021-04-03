@@ -21,12 +21,12 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
+      <el-header class="ecm-header">
         <!-- <el-breadcrumb separator="/" class="navbar">
           <el-breadcrumb-item>系统管理</el-breadcrumb-item>
           <el-breadcrumb-item>事件管理</el-breadcrumb-item>
         </el-breadcrumb> -->
-        <el-row class="topbar">
+        <el-row>
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -211,20 +211,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 
 </style>

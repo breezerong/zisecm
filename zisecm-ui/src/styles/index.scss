@@ -7,6 +7,7 @@
 
 body {
   height: 100%;
+  font-size: 14px;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -178,4 +179,13 @@ code {
   padding-left:10px;
   float:left;
   text-align:left;
+}
+.ecm-date-small{
+  width: 120px;
+}
+
+.ecm-header {
+  padding-top: 4px;
+  padding-left: 5px;
+  height: 36px !important;
 }

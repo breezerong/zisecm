@@ -74,14 +74,7 @@
         <el-button type="primary" @click="additem(form)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-row>
-      <!-- <el-breadcrumb class="navbar">
-        <el-breadcrumb-item>{{$t('menu.systemManager')}}</el-breadcrumb-item>
-        <el-breadcrumb-item>菜单项管理</el-breadcrumb-item>
-        <el-breadcrumb-item>{{menuName}}</el-breadcrumb-item>
-      </el-breadcrumb> -->
-    </el-row>
-    <el-row class="topbar">
+    <el-row class="ecm-header">
       <el-col :span="4">
         <el-input
           v-model="inputkey"
@@ -103,7 +96,7 @@
       <el-table-column label="标签" prop="label" sortable min-width="20%"></el-table-column>
       <el-table-column label="组件名" prop="componentName" sortable min-width="20%"></el-table-column>
       <el-table-column label="排序" prop="orderIndex" sortable width="90"></el-table-column>
-      <el-table-column label="操作" width="160">
+      <el-table-column label="操作" width="140">
         <template slot-scope="scope">
           <el-button
             :plain="true"
@@ -150,7 +143,7 @@ export default {
       loading: false,
       dialogVisible: false,
       isEdit: false,
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         id:"",
         name: "",

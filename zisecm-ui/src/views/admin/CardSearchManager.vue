@@ -15,12 +15,12 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
+      <el-header class="ecm-header">
         <!-- <el-breadcrumb separator="/" class="navbar">
           <el-breadcrumb-item>系统管理</el-breadcrumb-item>
           <el-breadcrumb-item>卡片查询管理</el-breadcrumb-item>
         </el-breadcrumb> -->
-        <el-row class="topbar">
+        <el-row >
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -130,7 +130,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         name: "",
         description: ""

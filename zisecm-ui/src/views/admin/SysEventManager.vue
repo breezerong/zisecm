@@ -22,12 +22,6 @@
     </el-dialog>
     <el-container>
       <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>日志管理</el-breadcrumb-item>
-          <el-breadcrumb-item>事件管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
-        <el-row class="topbar">
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -45,7 +39,6 @@
               @click="dialogVisible = true"
             >{{$t('application.new')}}</el-button>
           </el-col>
-        </el-row>
       </el-header>
       <el-main>
         <el-table
@@ -103,7 +96,7 @@ export default {
       inputkey: "",
       loading: false,
       dialogVisible: false,
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         name: "",
         description: "",
@@ -194,5 +187,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.el-header {
+  padding-top: 4px;
+  padding-left: 5px;
+  height: 36px !important;
+}
 </style>

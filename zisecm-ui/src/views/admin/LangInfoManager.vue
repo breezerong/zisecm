@@ -25,12 +25,8 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>语言标签管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
-        <el-row class="topbar">
+      <el-header class="ecm-header">
+        <el-row>
           <el-col :span="4">
             <el-input
               v-model="inputkey"
@@ -86,7 +82,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="270">
+          <el-table-column label="操作" width="210">
             <template slot-scope="scope">
               <el-button
                 :plain="true"
@@ -94,7 +90,7 @@
                 size="small"
                 icon="edit"
                 @click="editItem(scope.row)"
-              >编辑标签</el-button>
+              >标签</el-button>
               <el-button
                 :plain="true"
                 type="primary"
@@ -149,7 +145,7 @@ export default {
       currentPage: 1,
       pageSize: 20,
       itemCount:0,
-      tableHeight: window.innerHeight - 165,
+      tableHeight: window.innerHeight - 150,
       form: {
         messageKey: "attr_",
         description: "",

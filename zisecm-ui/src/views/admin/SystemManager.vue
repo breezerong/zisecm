@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-row>
-      <el-button type="primary" icon="el-icon-refresh" @click="refreshCache()">刷新缓存</el-button>
-      <el-button type="primary" icon="el-icon-refresh" @click="getSession()">查看Session</el-button>
+      <el-button type="primary" plain icon="el-icon-refresh" @click="refreshCache()">刷新缓存</el-button>
+      <el-button type="primary" plain icon="el-icon-refresh" @click="getSession()">查看Session</el-button>
     </el-row>
     <el-row>
         <el-table

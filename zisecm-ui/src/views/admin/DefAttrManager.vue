@@ -92,8 +92,8 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
-        <el-row class="topbar">
+      <el-header class="ecm-header">
+        <el-row >
           <el-col :span="4" style="text-align:left;">类型：{{typename}}</el-col>
           <el-col :span="4">
             <el-input
@@ -189,7 +189,7 @@ export default {
     return {
       dataList: [],
       dataListFull: [],
-      tableHeight: window.innerHeight - 140,
+      tableHeight: window.innerHeight - 130,
       inputkey: "",
       parentid: "",
       typename: "",

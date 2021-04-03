@@ -62,12 +62,8 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>列表项管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
-        <el-row class="topbar">
+      <el-header class="ecm-header">
+        <el-row>
           <el-col :span="4">列表名：{{gridViewName}}</el-col>
         
           <el-col :span="4">
@@ -136,7 +132,7 @@
               <el-input v-model="scope.row.orderIndex"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="240" fixed="right">
+          <el-table-column label="操作" width="210" fixed="right">
             <template slot-scope="scope">
               <el-button
                 :plain="true"
@@ -190,7 +186,7 @@ export default {
       gridViewName: "",
       parentid: "",
       idEdit: false,
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         id:"",
         parentId:"",
@@ -360,5 +356,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>

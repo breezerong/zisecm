@@ -27,7 +27,7 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
+      <el-header class="ecm-header">
         <!-- <el-breadcrumb separator="/" class="navbar">
           <el-breadcrumb-item>系统管理</el-breadcrumb-item>
           <el-breadcrumb-item>参数设置</el-breadcrumb-item>
@@ -71,7 +71,7 @@
               <el-input v-model="scope.row.itemType"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="170">
+          <el-table-column label="操作" width="140">
             <template slot-scope="scope">
               <el-button
                 :plain="true"
@@ -108,7 +108,7 @@ export default {
       categoryVisible: false,
       currentIndex: -1,
       currentItem: "",
-      tableHeight: window.innerHeight - 135,
+      tableHeight: window.innerHeight - 120,
       form: {
         name: "",
         description: "",
@@ -214,26 +214,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 
-.el-main{
-  padding:5px;
-}
-.el-row {
-  padding-bottom: 0px;
-}
 </style>

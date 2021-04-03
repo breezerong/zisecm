@@ -15,12 +15,8 @@
       </div>
     </el-dialog>
     <el-container>
-      <el-header>
-        <!-- <el-breadcrumb separator="/" class="navbar">
-          <el-breadcrumb-item>系统管理</el-breadcrumb-item>
-          <el-breadcrumb-item>语言管理</el-breadcrumb-item>
-        </el-breadcrumb> -->
-        <el-row class="topbar">
+      <el-header class="ecm-header">
+        <el-row>
           <el-col :span="4">
             <el-input
               v-model="inputkey"
