@@ -249,7 +249,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			sql = "select * from (select " + baseColumns + getGridColumn(gv, gridName) + " from ecm_document where "
 					+ gvCondition;
 		}else {
-			sql = "select * from (select " + this.getCustomAttributes(token, gridName) + " from ecm_document where 1=1";
+			String customAttributes = this.getCustomAttributes(token, gridName);
+			//如果存在C_ARCHIVE_CODING(档案号)属性，则添加到查询列
+			EcmAttribute codeAttr = CacheManagerOper.getEcmAttributes().get("C_ARCHIVE_CODING");
+			if (codeAttr != null) {
+				customAttributes += ",C_ARCHIVE_CODING ";
+			}
+			sql = "select * from (select " + customAttributes + " from ecm_document where 1=1";
 		}
 		if (!StringUtils.isEmpty(folderId)) {
 			sql += " and folder_id='" + folderId + "'";
