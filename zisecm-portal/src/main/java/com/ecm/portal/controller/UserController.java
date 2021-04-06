@@ -24,9 +24,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ecm.common.util.FileUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmComponent;
+import com.ecm.core.entity.EcmContent;
+import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
@@ -34,6 +38,7 @@ import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.DocumentService;
+import com.ecm.core.service.FolderService;
 import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
 import com.ecm.portal.entity.UserInfoEntity;
@@ -49,6 +54,9 @@ public class UserController extends ControllerAbstract{
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private FolderService folderService;
 	
 	@Autowired
 	private GroupService groupService;
@@ -220,10 +228,9 @@ public class UserController extends ControllerAbstract{
 	
 	@RequestMapping(value = "/user/UaGSignImage", method = RequestMethod.POST)
 	@ResponseBody
-	public void UaGSignImage(@RequestParam("uploadFile") MultipartFile[] uploadFileList, HttpServletResponse response) {
-		InputStream iStream =null;
-		OutputStream toClient = null;
+	public Map<String, Object> UaGSignImage(@RequestParam("uploadFile") MultipartFile[] uploadFileList, HttpServletResponse response) {
 		EcmUser en = new EcmUser();
+		Map<String, Object> mp = new HashMap<String, Object>();
 		
 		try {
 			InputStream instream = null;
@@ -253,58 +260,18 @@ public class UserController extends ControllerAbstract{
 				if(instream!=null) {
 					instream.close();
 				}
-			
-
-				en = userService.getObjectById(getToken(),id);
-				if(en==null || en.getSignImage()==null||en.getSignImage().length()<5) {
-					return;
-				}
-				File f = new File(en.getSignImage());
-				if(!f.exists()) {
-					return;
-				}
-				
-				iStream = new BufferedInputStream(new FileInputStream(en.getSignImage()));
-			
-			
-				// 清空response
-		        response.reset();
-		        // 设置response的Header
-		        response.setCharacterEncoding("UTF-8");
-		        response.addHeader("Content-Disposition", "attachment;filename=" + java.net.URLEncoder.encode(en.getName(), "UTF-8"));
-		        response.addHeader("Content-Length", "" + f.length());
-		        toClient = new BufferedOutputStream(response.getOutputStream());
-		        response.setContentType("application/octet-stream");
-	        
+			      
 			}
-	        byte[] buffer = new byte[8 * 1024];
-			int bytesRead;
-			while ((bytesRead = iStream.read(buffer)) != -1) {
-				toClient.write(buffer, 0, bytesRead);
-			}
+//			if (uploadFileList != null&&uploadFileList.length>0) {
+//				execAddDocument(uploadFileList, "b7ae6823040a4dcbbf42ed1bc73ff24d");
+//				mp.put("code", ActionContext.SUCESS);
+//			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
 		}
-		finally {
-			if(iStream!=null) {
-				try {
-					iStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(toClient!=null) {
-		        try {
-					toClient.flush();
-					toClient.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+		
+		return mp;
 	}
 	
 	@RequestMapping(value = "/user/updatePassword", method = RequestMethod.POST)
@@ -389,6 +356,35 @@ public class UserController extends ControllerAbstract{
 			mp.put("code", ActionContext.FAILURE);
 		}
 		return mp;
+	}
+	
+	public void execAddDocument(MultipartFile[] uploadFile,String folderId) throws Exception {
+		
+		for (MultipartFile multipartFile : uploadFile) {
+			EcmContent en = null;
+			EcmDocument doc = new EcmDocument();
+		
+			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+			doc.setAclName(folder.getAclName());
+		
+			doc.setFolderId(folderId);
+			String name = multipartFile.getOriginalFilename();
+			doc.setName(name.substring(0,name.lastIndexOf(".")));
+			doc.setTypeName("签名照片");
+
+			en = new EcmContent();
+			en.setName(multipartFile.getOriginalFilename());
+			en.setContentSize(multipartFile.getSize());
+			en.setFormatName(FileUtils.getExtention(multipartFile.getOriginalFilename()));
+			en.setInputStream(multipartFile.getInputStream());	
+			
+			if(doc.getStatus() != null) {
+				documentService.updateObject(getToken(), doc, en);
+			}else {
+				doc.setStatus("新建");
+				documentService.newObject(getToken(), doc, en);
+			}
+		}
 	}
 	
 }
