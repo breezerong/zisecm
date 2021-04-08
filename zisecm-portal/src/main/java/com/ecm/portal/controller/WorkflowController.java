@@ -3,6 +3,7 @@ package com.ecm.portal.controller;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
@@ -988,16 +989,57 @@ public class WorkflowController extends ControllerAbstract {
 	 * 生成流程图
 	 *
 	 * @param processId 任务ID
+	 * @throws IOException 
 	 */
 	@RequestMapping(value = "processDiagram")
 	@ResponseBody
 	public void genProcessDiagram(HttpServletResponse httpServletResponse, String processId) throws Exception {
 		ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
-
-		// 流程走完的不显示图
+		// 流程走完的话就不highlight流程节点，走另外的处理方式
 		if (pi == null) {
+	        String processDefinitionId = "";
+	        if (this.isFinished(processId)) {// 如果流程已经结束，则得到结束节点
+	            HistoricProcessInstance pis = historyService.createHistoricProcessInstanceQuery().processInstanceId(processId).singleResult();
+	            processDefinitionId=pis.getProcessDefinitionId();
+	        } else {// 如果流程没有结束，则取当前活动节点
+	            // 根据流程实例ID获得当前处于活动状态的ActivityId合集
+	            ProcessInstance pis = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+	            processDefinitionId=pi.getProcessDefinitionId();
+	        }
+	        List<String> highLightedActivitis = new ArrayList<String>();
+	        List<HistoricActivityInstance> highLightedActivitList =  historyService.createHistoricActivityInstanceQuery().processInstanceId(processId).orderByHistoricActivityInstanceStartTime().asc().list();
+
+	        for(HistoricActivityInstance tempActivity : highLightedActivitList){
+	            String activityId = tempActivity.getActivityId();
+	            highLightedActivitis.add(activityId);
+	        }
+
+	        List<String> flows = new ArrayList<>();
+	        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+	        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
+
+	        ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
+	        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, flows, engconf.getActivityFontName(),
+	                engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, true);
+	        OutputStream out = null;
+	        byte[] buf = new byte[1024];
+	        int legth = 0;
+			try {
+				out = httpServletResponse.getOutputStream();
+				while ((legth = in.read(buf)) != -1) {
+					out.write(buf, 0, legth);
+				}
+			} finally {
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			}
 			return;
 		}
+		//流程要是正在走的话就正常处理
 		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
 		// 使用流程实例ID，查询正在执行的执行对象表，返回流程实例对象
 		String InstanceId = task.getProcessInstanceId();
@@ -1048,6 +1090,10 @@ public class WorkflowController extends ControllerAbstract {
 			}
 		}
 	}
+	 public boolean isFinished(String processInstanceId) {
+	        return historyService.createHistoricProcessInstanceQuery().finished()
+	                .processInstanceId(processInstanceId).count() > 0;
+	    }
 
 	
 	
