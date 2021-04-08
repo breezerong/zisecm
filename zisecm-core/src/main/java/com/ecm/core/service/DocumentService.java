@@ -338,10 +338,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			String customId = gridName.replace("_CUSTOM", "");
 			List<Map<String, Object>> list = ecmDocument.executeSQL("select C_COMMENT from ecm_document where id ='"+customId+"'");
 			attrNames.append(list.get(0).get("C_COMMENT"));
-			//如果存在C_ARC_CLASSIC属性，则添加到查询列
-			EcmAttribute en = CacheManagerOper.getEcmAttributes().get("C_ARC_CLASSIC");
-			if (en != null) {
-				attrNames.append("C_ARC_CLASSIC,");
+			//添加必需列
+			String[] requireFields = getCustomRequireFields();
+			if(requireFields !=null) {
+				for(String attr: requireFields) {
+					if(attrNames.toString().indexOf(attr)<0) {
+						EcmAttribute en = CacheManagerOper.getEcmAttributes().get(attr);
+						if (en != null) {
+							attrNames.append(attr).append(",");
+						}
+					}
+				}
 			}
 			attrNames.deleteCharAt(attrNames.length()-1);
 		}else {
@@ -392,6 +399,18 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			String customId = gridName.replace("_CUSTOM", "");
 			List<Map<String, Object>> list = ecmDocument.executeSQL("select C_COMMENT from ecm_document where id ='"+customId+"'");
 			attrNames.append(list.get(0).get("C_COMMENT"));
+			//添加必需列
+			String[] requireFields = getCustomRequireFields();
+			if(requireFields !=null) {
+				for(String attr: requireFields) {
+					if(attrNames.toString().indexOf(attr)<0) {
+						EcmAttribute en = CacheManagerOper.getEcmAttributes().get(attr);
+						if (en != null) {
+							attrNames.append(attr).append(",");
+						}
+					}
+				}
+			}
 			attrNames.deleteCharAt(attrNames.length()-1);
 		}
 		String columnsString = baseColumns + attrNames.toString();
@@ -400,6 +419,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		columnArr = columnSet.toArray(new String[columnSet.size()]);
 		String newColumnStr = String.join(",", columnArr);
 		return newColumnStr;
+	}
+	/**
+	 * 获取自定义列表必需列，逻辑处理用。
+	 * @return
+	 */
+	private String[] getCustomRequireFields() {
+		EcmParameter p = CacheManagerOper.getEcmParameters().get("CustomGridReuireFields");
+		if(p != null  && p.getValue() != null) {
+			return p.getValue().split(";");
+		}
+		return null;
 	}
 	
 
