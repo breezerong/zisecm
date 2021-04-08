@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.io.IOUtils;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
@@ -38,11 +39,14 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl;
 import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.ActivityInstance;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.NativeTaskQuery;
@@ -53,6 +57,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,6 +93,8 @@ import com.ecm.flowable.config.CustomProcessDiagramGenerator;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.flowable.service.CustomWorkflowService;
 import com.ecm.flowable.service.IFlowableBpmnModelService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping(value = "/workflow")
@@ -1042,6 +1049,54 @@ public class WorkflowController extends ControllerAbstract {
 		}
 	}
 
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "diagram")
+	public void getJpgDiagram(HttpServletResponse httpServletResponse, String processId) {
+	    try {
+			ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+	        //根据modelId或者BpmnModel
+//	        Model modelData = repositoryService.getModel(processId);
+//	        byte[] modelEditorSource = repositoryService.getModelEditorSource(modelData.getId());
+//	        JsonNode editorNode = new ObjectMapper().readTree(modelEditorSource);
+			BpmnModel bpmnModel = repositoryService.getBpmnModel(pi.getProcessDefinitionId());
+	        //获得图片流
+	        DefaultProcessDiagramGenerator diagramGenerator = new DefaultProcessDiagramGenerator();
+	        InputStream in = diagramGenerator.generateDiagram(
+	                bpmnModel,
+	                "png",
+	                Collections.emptyList(),
+	                Collections.emptyList(),
+	                "宋体",
+	                "宋体",
+	                "宋体",
+	                null,
+	                1.0,
+	                false);
+	        //输出为图片
+			OutputStream out = null;
+			byte[] buf = new byte[1024];
+			int legth = 0;
+			try {
+				out = httpServletResponse.getOutputStream();
+				while ((legth = in.read(buf)) != -1) {
+					out.write(buf, 0, legth);
+				}
+			} finally {
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			}
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	
 	/**
 	 * 测试流程
 	 *
