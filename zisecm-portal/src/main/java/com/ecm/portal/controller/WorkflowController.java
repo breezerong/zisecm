@@ -1040,7 +1040,8 @@ public class WorkflowController extends ControllerAbstract {
 			return;
 		}
 		//流程要是正在走的话就正常处理
-		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
+		List<Task> tasks = taskService.createTaskQuery().processInstanceId(pi.getId()).list();
+		Task task = tasks.get(0);		//如果说存在多审批人情况下，TASK不止一个，直接取一个task然后取model就可以了
 		// 使用流程实例ID，查询正在执行的执行对象表，返回流程实例对象
 		String InstanceId = task.getProcessInstanceId();
 		List<Execution> executions = runtimeService.createExecutionQuery().processInstanceId(InstanceId).list();
