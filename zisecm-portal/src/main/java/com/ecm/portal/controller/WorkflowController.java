@@ -3,12 +3,14 @@ package com.ecm.portal.controller;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.io.IOUtils;
 import org.flowable.bpmn.constants.BpmnXMLConstants;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.EndEvent;
@@ -38,11 +40,14 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl;
 import org.flowable.engine.repository.Deployment;
+import org.flowable.engine.repository.Model;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.ActivityInstance;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.job.api.Job;
 import org.flowable.task.api.DelegationState;
 import org.flowable.task.api.NativeTaskQuery;
@@ -53,6 +58,7 @@ import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,6 +94,8 @@ import com.ecm.flowable.config.CustomProcessDiagramGenerator;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.flowable.service.CustomWorkflowService;
 import com.ecm.flowable.service.IFlowableBpmnModelService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping(value = "/workflow")
@@ -981,16 +989,57 @@ public class WorkflowController extends ControllerAbstract {
 	 * 生成流程图
 	 *
 	 * @param processId 任务ID
+	 * @throws IOException 
 	 */
 	@RequestMapping(value = "processDiagram")
 	@ResponseBody
 	public void genProcessDiagram(HttpServletResponse httpServletResponse, String processId) throws Exception {
 		ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
-
-		// 流程走完的不显示图
+		// 流程走完的话就不highlight流程节点，走另外的处理方式
 		if (pi == null) {
+	        String processDefinitionId = "";
+	        if (this.isFinished(processId)) {// 如果流程已经结束，则得到结束节点
+	            HistoricProcessInstance pis = historyService.createHistoricProcessInstanceQuery().processInstanceId(processId).singleResult();
+	            processDefinitionId=pis.getProcessDefinitionId();
+	        } else {// 如果流程没有结束，则取当前活动节点
+	            // 根据流程实例ID获得当前处于活动状态的ActivityId合集
+	            ProcessInstance pis = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+	            processDefinitionId=pi.getProcessDefinitionId();
+	        }
+	        List<String> highLightedActivitis = new ArrayList<String>();
+	        List<HistoricActivityInstance> highLightedActivitList =  historyService.createHistoricActivityInstanceQuery().processInstanceId(processId).orderByHistoricActivityInstanceStartTime().asc().list();
+
+	        for(HistoricActivityInstance tempActivity : highLightedActivitList){
+	            String activityId = tempActivity.getActivityId();
+	            highLightedActivitis.add(activityId);
+	        }
+
+	        List<String> flows = new ArrayList<>();
+	        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+	        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
+
+	        ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
+	        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, flows, engconf.getActivityFontName(),
+	                engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, true);
+	        OutputStream out = null;
+	        byte[] buf = new byte[1024];
+	        int legth = 0;
+			try {
+				out = httpServletResponse.getOutputStream();
+				while ((legth = in.read(buf)) != -1) {
+					out.write(buf, 0, legth);
+				}
+			} finally {
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			}
 			return;
 		}
+		//流程要是正在走的话就正常处理
 		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
 		// 使用流程实例ID，查询正在执行的执行对象表，返回流程实例对象
 		String InstanceId = task.getProcessInstanceId();
@@ -1041,7 +1090,59 @@ public class WorkflowController extends ControllerAbstract {
 			}
 		}
 	}
+	 public boolean isFinished(String processInstanceId) {
+	        return historyService.createHistoricProcessInstanceQuery().finished()
+	                .processInstanceId(processInstanceId).count() > 0;
+	    }
 
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "diagram")
+	public void getJpgDiagram(HttpServletResponse httpServletResponse, String processId) {
+	    try {
+			ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+	        //根据modelId或者BpmnModel
+//	        Model modelData = repositoryService.getModel(processId);
+//	        byte[] modelEditorSource = repositoryService.getModelEditorSource(modelData.getId());
+//	        JsonNode editorNode = new ObjectMapper().readTree(modelEditorSource);
+			BpmnModel bpmnModel = repositoryService.getBpmnModel(pi.getProcessDefinitionId());
+	        //获得图片流
+	        DefaultProcessDiagramGenerator diagramGenerator = new DefaultProcessDiagramGenerator();
+	        InputStream in = diagramGenerator.generateDiagram(
+	                bpmnModel,
+	                "png",
+	                Collections.emptyList(),
+	                Collections.emptyList(),
+	                "宋体",
+	                "宋体",
+	                "宋体",
+	                null,
+	                1.0,
+	                false);
+	        //输出为图片
+			OutputStream out = null;
+			byte[] buf = new byte[1024];
+			int legth = 0;
+			try {
+				out = httpServletResponse.getOutputStream();
+				while ((legth = in.read(buf)) != -1) {
+					out.write(buf, 0, legth);
+				}
+			} finally {
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			}
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	
 	/**
 	 * 测试流程
 	 *

@@ -416,7 +416,7 @@ export default {
         .then(function(response) {
           _self.dataList = response.data.data;
           _self.dataListFull = response.data.data;
-          _self.itemCount = response.data.total;
+          _self.itemCount = response.data.pager.total;
           _self.loading = false;
         })
         .catch(function(error) {
@@ -449,7 +449,7 @@ export default {
       m.set("groupId", _self.selectedItemId);
       m.set("condition", _self.userInputkey);
       m.set("pageSize", _self.userPageSize);
-      m.set("pageIndex", (_self.userCurrentPage - 1) * _self.userPageSize);
+      m.set("pageIndex", _self.userCurrentPage - 1);
       //console.log('id:', _self.selectedItemId);
       axios
         .post("/admin/getRoleAllUsers", JSON.stringify(m))

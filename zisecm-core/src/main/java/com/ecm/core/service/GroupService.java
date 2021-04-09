@@ -124,7 +124,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 		{
 			sql += " and ("+condition+")";
 		}
-		
+		sql += "  order by name";
 		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql, pager);
 		return list;
 	}
@@ -137,7 +137,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 		{
 			sql += " and ("+condition+")";
 		}
-		
+		sql += "  order by a.name";
 		List<EcmGroup> list = ecmGroupMapper.searchToEntity(sql, pager);
 		return list;
 	}
