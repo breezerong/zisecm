@@ -6,16 +6,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.Collator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -468,7 +471,7 @@ public class WorkflowController extends ControllerAbstract {
 				condition.append(" and CREATE_TIME_ < '").append(workflowForm.get("startTimeBefore")).append("' ");
 			}
 		}
-		List<Task> tasks = null;
+		long taskCount = 0;
 		List<Task> taskByGroupName = null;
 		List<Task> taskByUser = null;
 		LoginUser user = null;
@@ -492,20 +495,23 @@ public class WorkflowController extends ControllerAbstract {
 		if(roleList.size()==0) {
 			whereSql = "T.ASSIGNEE_='"+user.getUserName()+"'";
 		}else {
+			whereSql="T.ASSIGNEE_ in(";
 			for(int i=0;roleList!=null&&i<roleList.size();i++) {
 				if(i==0) {
-					whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
+					whereSql+="'"+user.getUserName()+"','"+roleList.get(i)+"'";
+//					whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
 				}
 				 
 				 if(i!=0) {
-					 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
+					 whereSql+=",'"+roleList.get(i)+"'";
+//					 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
 				 }
 			}
+			whereSql+=") ";
 		}
 		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
 				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
-		tasks = taskService.createNativeTaskQuery().sql("select *  from "
-				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()).list();
+		taskCount=taskService.createNativeTaskQuery().sql("select  count(*)   from " +managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()).count();
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
@@ -542,7 +548,7 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("data", resultList);
-		resultMap.put("totalCount", tasks.size());
+		resultMap.put("totalCount", taskCount);
 
 		return resultMap;
 	}
@@ -567,9 +573,9 @@ public class WorkflowController extends ControllerAbstract {
 	private void getProcessVars(List<HashMap> resultList, List<HashMap> resultListTemp,
 			Set<String> processInstanceIdSet) {
 		HashMap<String, Object> map;
-		StringBuffer sql = new StringBuffer("select * from  ACT_HI_VARINST  where  PROC_INST_ID_ in(");
+		StringBuffer sql = new StringBuffer("select * from  ACT_HI_VARINST  where name_ in('startUser','formId','docId') and PROC_INST_ID_ in(");
 		int temp = 0;
-		for (Iterator iterator = processInstanceIdSet.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = processInstanceIdSet.iterator(); iterator.hasNext();) {
 			if (temp != 0) {
 				sql.append(",");
 			}
@@ -761,6 +767,7 @@ public class WorkflowController extends ControllerAbstract {
 			    if(sequenceNames.size()==0) {
 			    	sequenceNames.add("通过");
 			    }
+			   Collections.sort(sequenceNames,comparator);
 			   mp.put("sequenceNames", sequenceNames);
 				
 			}
@@ -771,6 +778,15 @@ public class WorkflowController extends ControllerAbstract {
 		mp.put("success", true);
 		return mp;
 	}
+ 
+	    Comparator<String> comparator = new Comparator<String>() {
+
+	        public int compare(String o1, String o2) {
+	            Collator collator = Collator.getInstance();
+	            return collator.getCollationKey(o1).compareTo(
+	                collator.getCollationKey(o2));
+	        }
+	    };
 
 	@RequestMapping(value = "getApprovalUserList", method = RequestMethod.POST)
 	@ResponseBody
@@ -1254,7 +1270,7 @@ public class WorkflowController extends ControllerAbstract {
 	@RequestMapping(value = "getWorkflowTask0")
 	public Map<String, Object> getWorkflowTask0(@RequestBody String argStr) {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		Map<String, Object> mp = new HashMap();
+		Map<String, Object> mp = new HashMap<String, Object>();
 		String processInstanceId = args.get("processInstanceId").toString();
 		List<Map> resultList = new ArrayList<Map>();
 		String isPocessFinished = "0";
