@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -90,6 +91,7 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
+import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.UserService;
@@ -474,13 +476,6 @@ public class WorkflowController extends ControllerAbstract {
 		long taskCount = 0;
 		List<Task> taskByGroupName = null;
 		List<Task> taskByUser = null;
-		LoginUser user = null;
-		try {
-			user = userService.getCurrentUser(getToken());
-		} catch (AccessDeniedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		TaskQuery query=taskService.createTaskQuery().or().taskCandidateOrAssigned(userId);
 //		List<String> roleList= user.getRoles();
 //		for(int i=0;roleList!=null&&i<roleList.size();i++) {
@@ -489,29 +484,10 @@ public class WorkflowController extends ControllerAbstract {
 //		taskByUser= query.orderByTaskCreateTime().desc()
 //				.listPage(pageIndex, pageSize);
 		
-		List<String> roleList= user.getRoles();
-		
-		String whereSql="";
-		if(roleList.size()==0) {
-			whereSql = "T.ASSIGNEE_='"+user.getUserName()+"'";
-		}else {
-			whereSql="T.ASSIGNEE_ in(";
-			for(int i=0;roleList!=null&&i<roleList.size();i++) {
-				if(i==0) {
-					whereSql+="'"+user.getUserName()+"','"+roleList.get(i)+"'";
-//					whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
-				}
-				 
-				 if(i!=0) {
-					 whereSql+=",'"+roleList.get(i)+"'";
-//					 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
-				 }
-			}
-			whereSql+=") ";
-		}
+		String whereSql = todoTaskWhereSql();
 		taskByGroupName=taskService.createNativeTaskQuery().sql("select * from "
 				+managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()+" order by CREATE_TIME_ desc").listPage(pageIndex, pageSize);
-		taskCount=taskService.createNativeTaskQuery().sql("select  count(*)   from " +managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()).count();
+		taskCount = todoTaskCount(condition.toString(), whereSql);
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		HashMap<String, Object> map = null;
 		List<HashMap> resultListTemp = new ArrayList<HashMap>();
@@ -551,6 +527,125 @@ public class WorkflowController extends ControllerAbstract {
 		resultMap.put("totalCount", taskCount);
 
 		return resultMap;
+	}
+
+	public String todoTaskWhereSql() {
+		LoginUser user = null;
+		try {
+			user = userService.getCurrentUser(getToken());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<String> roleList= user.getRoles();
+		
+		String whereSql="";
+		if(roleList.size()==0) {
+			whereSql = "T.ASSIGNEE_='"+user.getUserName()+"'";
+		}else {
+			whereSql="T.ASSIGNEE_ in(";
+			for(int i=0;roleList!=null&&i<roleList.size();i++) {
+				if(i==0) {
+					whereSql+="'"+user.getUserName()+"','"+roleList.get(i)+"'";
+//					whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
+				}
+				 
+				 if(i!=0) {
+					 whereSql+=",'"+roleList.get(i)+"'";
+//					 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
+				 }
+			}
+			whereSql+=") ";
+		}
+		return whereSql;
+	}
+
+	public long todoTaskCount(String condition, String whereSql) {
+		if(condition==null)condition="";
+		long taskCount;
+		taskCount=taskService.createNativeTaskQuery().sql("select  count(*)   from " +managementService.getTableName(Task.class)+" T WHERE ("+whereSql+") "+condition.toString()).count();
+		return taskCount;
+	}
+	/**
+	 * 
+	 * 
+	 * @param argStr
+	 * @return
+	 */
+	@RequestMapping(value = "getDispenseCount", method = RequestMethod.GET) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public Map<String, Object> getDispenseCount() {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> count = getCount();
+			mp.put("data", count);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		} 
+		
+		return mp;
+
+	}
+	@RequestMapping(value = "getAllTodoTaskCountForOA", method = RequestMethod.GET) // PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public  Map<String, Object> getAllTodoTaskCountForOA() {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			Map<String, Object> count = distributeCount();
+			String whereSql = todoTaskWhereSql();
+			long taskCount = todoTaskCount(null, whereSql);
+			taskCount=Integer.valueOf( count.get("approving").toString())+Integer.valueOf( count.get("reading").toString())+taskCount;
+			mp.put("count", taskCount);
+			mp.put("data", count);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		} 
+		
+		return mp;
+
+	}
+
+	public Map<String, Object> getCount() throws AccessDeniedException, EcmException, SqlDeniedException {
+		Map<String, Object> count = distributeCount();
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		Calendar c1 = Calendar.getInstance();
+		c1.setTime(new Date());
+		c.setTime(new Date());
+		c.add(Calendar.DATE, - 6);
+		c1.add(Calendar.DATE, - 14);
+		Date d = c.getTime();
+		String day = format.format(d);
+		Date d2 = c1.getTime();
+		String day2=format.format(d2);
+		String condition3="select ed.CODING,ed.CREATION_DATE,ed.CREATOR,ed.C_TYPE1,ed.C_COMMENT,ed.C_APPROVE_DATE,ed2.CODING as C_IN_CODING,ed2.TYPE_NAME,ed2.ID,ed2.C_SECURITY_LEVEL "
+				+ "from ecm_relation er ,ecm_document ed ,ecm_document ed2 "
+				+ "where (er.PARENT_ID =ed.ID and er.CHILD_ID=ed2.ID) and  "
+				+ "(ed.TYPE_NAME='借阅单' and ed.STATUS!='已完成' and ed.C_APPROVE_DATE is not null) "
+				+ "and ((ed2.C_SECURITY_LEVEL='机密' and ed.C_APPROVE_DATE<='"+day+"') or (ed2.C_SECURITY_LEVEL='机密' and ed.C_APPROVE_DATE<='"+day2+"')) "
+				+ "and ed.CREATOR ='"+this.getSession().getCurrentUser().getUserName()+"'";
+		List<Map<String, Object>> result3 = documentService.getMapList(getToken(),condition3);
+		count.put("deadline", result3.size());
+		return count;
+	}
+
+	public Map<String, Object> distributeCount() throws AccessDeniedException, EcmException, SqlDeniedException {
+		Map<String, Object> count = new HashMap<String, Object>();
+		String currentUser=this.getSession().getCurrentUser().getUserName();
+		String condition1 = "TYPE_NAME='分发单' and C_APPROVER='"+this.getSession().getCurrentUser().getUserName()+"' and STATUS='待批示'";
+		String condition2 = "TYPE_NAME='分发单' and (C_HOST like '%"+currentUser+"%' or C_PARTICIPATION like '%"+currentUser+"%' or C_COPY_TO like '%"+currentUser+"%') and STATUS='待阅'";
+		List<EcmDocument> result1 = documentService.getObjects(getToken(), condition1);
+		List<EcmDocument> result2 = documentService.getObjects(getToken(), condition2);
+		count.put("approving", result1.size());
+		count.put("reading", result2.size());
+		return count;
 	}
 	private Map<String,Map<String,String>> processDefList = new HashMap<String, Map<String,String>>();
 	private Map<String,String> getProcessName(String processDefinitionId) {
