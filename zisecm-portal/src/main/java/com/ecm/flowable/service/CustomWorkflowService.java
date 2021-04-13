@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.StringUtils;
 import com.ecm.core.ActionContext;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.entity.EcmAuditWorkflow;
@@ -224,7 +225,10 @@ public class CustomWorkflowService extends EcmService{
 			if(byId) {
 				String formId= args.get("formId").toString();
 				EcmDocument form= documentService.getObjectById(session.getToken(), formId);
+				if(CacheManagerOper.getEcmParameters().get("isNpic")==null) {
 				args.putAll(form.getAttributes());
+				}
+				//args.put("formId", formId);
 				processInstance = runtimeService.startProcessInstanceById(args.get("processInstanceId").toString(),
 						args);
 				end = System.currentTimeMillis() - start;
@@ -239,7 +243,9 @@ public class CustomWorkflowService extends EcmService{
 			}else {
 				String formId= args.get("formId").toString();
 				EcmDocument form= documentService.getObjectById(session.getToken(), formId);
+				if(CacheManagerOper.getEcmParameters().get("isNpic")==null) {
 				args.putAll(form.getAttributes());
+				}
 				processInstance = runtimeService.startProcessInstanceByKey(args.get("processInstanceKey").toString(),
 						args);
 				end = System.currentTimeMillis() - start;

@@ -76,6 +76,7 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.bpm.WorkflowAuditService;
 import com.ecm.core.bpm.WorkitemAuditService;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.cache.manager.impl.CacheManagerCfgActivity;
 import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
@@ -1013,7 +1014,9 @@ public class WorkflowController extends ControllerAbstract {
 		Object formIdObj= args.get("formId");
 		if(formIdObj!=null) {
 			EcmDocument document= documentService.getObjectById(getToken(), formIdObj.toString());
+			if(CacheManagerOper.getEcmParameters().get("isNpic")==null) {
 			args.putAll(document.getAttributes());
+			}
 		}
 		args.put("C_ITEM_STATUS", args.get("outcome"));
 		customWorkflowService.completeTask(getToken(),args);
