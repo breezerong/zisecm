@@ -1133,8 +1133,15 @@ public class WorkflowController extends ControllerAbstract {
 	        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
 
 	        ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
-	        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, flows, engconf.getActivityFontName(),
-	                engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, true);
+	        InputStream in = diagramGenerator.generateDiagram(
+	        		bpmnModel, 
+	        		"png", 
+	        		highLightedActivitis, 
+	        		flows, 
+	        		engconf.getActivityFontName(),
+	                engconf.getLabelFontName(), 
+	                engconf.getAnnotationFontName(), 
+	                engconf.getClassLoader(), 1.0, true);
 	        OutputStream out = null;
 	        byte[] buf = new byte[1024];
 	        int legth = 0;
@@ -1214,14 +1221,17 @@ public class WorkflowController extends ControllerAbstract {
 	
 	@ResponseBody
 	@RequestMapping(value = "diagram")
-	public void getJpgDiagram(HttpServletResponse httpServletResponse, String processId) {
+	public void getJpgDiagram(HttpServletResponse httpServletResponse, String processMode) {
 	    try {
-			ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
+			//ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
 	        //根据modelId或者BpmnModel
 //	        Model modelData = repositoryService.getModel(processId);
 //	        byte[] modelEditorSource = repositoryService.getModelEditorSource(modelData.getId());
 //	        JsonNode editorNode = new ObjectMapper().readTree(modelEditorSource);
-			BpmnModel bpmnModel = repositoryService.getBpmnModel(pi.getProcessDefinitionId());
+			String processDefinitionKey = repositoryService.createProcessDefinitionQuery().processDefinitionKey(processMode)
+			.latestVersion().singleResult().getId();	//获取最新流程定义ID
+	    	BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionKey);
+
 	        //获得图片流
 	        DefaultProcessDiagramGenerator diagramGenerator = new DefaultProcessDiagramGenerator();
 	        InputStream in = diagramGenerator.generateDiagram(
@@ -1234,7 +1244,7 @@ public class WorkflowController extends ControllerAbstract {
 	                "宋体",
 	                null,
 	                1.0,
-	                false);
+	                true);
 	        //输出为图片
 			OutputStream out = null;
 			byte[] buf = new byte[1024];
