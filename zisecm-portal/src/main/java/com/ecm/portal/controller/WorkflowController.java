@@ -1141,7 +1141,7 @@ public class WorkflowController extends ControllerAbstract {
 	        		engconf.getActivityFontName(),
 	                engconf.getLabelFontName(), 
 	                engconf.getAnnotationFontName(), 
-	                engconf.getClassLoader(), 1.0, true);
+	                engconf.getClassLoader(), 1.5, true);
 	        OutputStream out = null;
 	        byte[] buf = new byte[1024];
 	        int legth = 0;
@@ -1193,7 +1193,7 @@ public class WorkflowController extends ControllerAbstract {
 				.getProcessDiagramGenerator();
 		InputStream in = diagramGenerator.generateCustomDiagram(bpmnModel, "png", highLightedActivities,
 				runningActivitiIdList, highLightedFlows, engconf.getActivityFontName(), engconf.getLabelFontName(),
-				engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, true);
+				engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.5, true);
 
 		OutputStream out = null;
 		byte[] buf = new byte[1024];
@@ -1243,7 +1243,7 @@ public class WorkflowController extends ControllerAbstract {
 	                "宋体",
 	                "宋体",
 	                null,
-	                1.0,
+	                1.5,
 	                true);
 	        //输出为图片
 			OutputStream out = null;

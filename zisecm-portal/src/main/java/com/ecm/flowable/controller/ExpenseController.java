@@ -161,7 +161,7 @@ public class ExpenseController {
 	        BpmnModel bpmnModel = repositoryService.getBpmnModel(pi.getProcessDefinitionId());
 	        ProcessEngineConfiguration engconf = processEngine.getProcessEngineConfiguration();
 	        ProcessDiagramGenerator diagramGenerator = engconf.getProcessDiagramGenerator();
-	        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", activityIds, flows, engconf.getActivityFontName(), engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.0, false);
+	        InputStream in = diagramGenerator.generateDiagram(bpmnModel, "png", activityIds, flows, engconf.getActivityFontName(), engconf.getLabelFontName(), engconf.getAnnotationFontName(), engconf.getClassLoader(), 1.5, true);
 	        OutputStream out = null;
 	        byte[] buf = new byte[1024];
 	        int legth = 0;
