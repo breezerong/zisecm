@@ -407,7 +407,7 @@ public class EcmDcController extends ControllerAbstract {
 			}
 			if (EcmStringUtils.isEmpty(newCondition)) {
 				condition.append(" AND FOLDER_ID='").append(folderId.replace("'", "")).append("'");
-				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
+				List<Map<String, Object>> list = documentService.getObjectsByPermission(getToken(),
 						args.get("gridName").toString(), null, pager, condition.toString(),
 						args.get("orderBy").toString());
 				mp.put("data", list);
@@ -415,7 +415,7 @@ public class EcmDcController extends ControllerAbstract {
 				mp.put("code", ActionContext.SUCESS);
 			} else {
 				
-				List<Map<String, Object>> list = documentService.getObjectsByConditon(getToken(),
+				List<Map<String, Object>> list = documentService.getObjectsByPermission(getToken(),
 						args.get("gridName").toString(), folderId, pager, condition.toString(),
 						args.get("orderBy").toString());
 				mp.put("data", list);
