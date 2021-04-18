@@ -24,11 +24,14 @@ import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmCardSearch;
+import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmGridView;
 import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.QueryService;
 import com.ecm.portal.controller.ControllerAbstract;
@@ -43,7 +46,8 @@ public class DocumentExController extends ControllerAbstract{
 	
 	@Autowired
 	private QueryService queryService;
-	
+	@Autowired
+	private ContentService contentService;
 	
 	
 	@RequestMapping(value = "/dc/getVerionsEx", method = RequestMethod.POST)
@@ -159,7 +163,72 @@ public class DocumentExController extends ControllerAbstract{
 			e.printStackTrace();
 		}
 	}
-	
+	@RequestMapping(value = "/dc/getExportExcelByFindTemplate", method = RequestMethod.POST)
+	@ResponseBody
+	public void getExportExcelByFindTemplate(HttpServletRequest request, HttpServletResponse response, @RequestBody String argStr) {
+		ExcelUtil excelUtil = new ExcelUtil();
+		List<Object[]> datalist = new ArrayList<Object[]>();
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		String templateName=args.get("templateName").toString();
+		String condition = args.get("condition").toString();
+		String gridName = args.get("gridName").toString();
+		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
+		Map<String,Object> excelData=new HashMap<String, Object>();
+		try {
+			String sql="" + 
+					"select C_PROJECT_CODE,CODING,NAME,c_page_count,c_count1,c_count2," + 
+					"sum(case when wfperson='校对' and questionType='优化问题' then num else 0 end) as C_STRING1," + 
+					"sum(case when wfperson='校对' and questionType='违反强制性条文' then num else 0 end) as C_REVIEWER6," + 
+					"sum(case when wfperson='校对' and questionType='一般错误' then num else 0 end) as C_STRING3," + 
+					"sum(case when wfperson='工种负责人审核' and questionType='优化问题' then num else 0 end) as C_STRING4," + 
+					"sum(case when wfperson='工种负责人审核' and questionType='违反强制性条文' then num else 0 end) as C_REVIEWER1," + 
+					"sum(case when wfperson='工种负责人审核' and questionType='一般错误' then num else 0 end) as C_REVIEWER2," + 
+					"sum(case when wfperson='所负责人审定' and questionType='优化问题' then num else 0 end) as C_REVIEWER3," + 
+					"sum(case when wfperson='所负责人审定' and questionType='违反强制性条文' then num else 0 end) as C_REVIEWER4," + 
+					"sum(case when wfperson='所负责人审定' and questionType='一般错误' then num else 0 end) as C_REVIEWER5," + 
+					"C_STRING2,C_DRAFTER,C_DOC_DATE,STATUS" + 
+					" from(" + 
+					"select C_PROJECT_CODE,CODING,NAME,C_STRING2,C_DRAFTER,C_DOC_DATE,STATUS,wfperson,questionType,c_page_count,c_count1,c_count2,num from(" + 
+					" " + 
+					"select a.C_PROJECT_CODE,a.CODING,a.NAME,a.C_STRING2,a.C_DRAFTER,a.C_DOC_DATE,a.STATUS,a.c_page_count,a.c_count1,a.c_count2,b.C_PROJECT_CODE as wfperson,b.C_PROJECT_NAME as questionType,count(b.ID) as num from ecm_document a" + 
+					" left join ecm_relation c on a.id=c.PARENT_ID" + 
+					" left join ecm_document b on b.id=c.CHILD_ID" + 
+					" and a.type_name='图纸文件' and b.type_name='设计校审记录' " + 
+					" group by a.C_FROM_CODING,b.C_PROJECT_CODE ,b.C_PROJECT_NAME " + 
+					"" + 
+					") t group by CODING,wfperson,questionType" + 
+					")x where STATUS ='已完成'  ";
+			
+			Object c= args.get("condition");
+			if(c!=null) {
+				sql+=" and ("+c.toString()+")";
+			}
+			
+			sql+=" group by CODING ORDER BY C_DOC_DATE DESC ";
+			
+			List<Map<String,Object>> list= documentService.getMapList(getToken(), sql);
+			
+			excelData.put("data", list);
+			
+			String sqlTemp = "select ID,NAME from ecm_document where name='"+templateName+"' and TYPE_NAME='模板'  order by NAME";
+			List<Map<String, Object>> objList = queryService.executeSQL(getToken(), sqlTemp);
+			
+			if(objList!=null||objList.size()>0) {
+				Map<String,Object> templateData= objList.get(0);
+				String templateId=templateData.get("ID").toString();
+
+				EcmContent en = contentService.getPrimaryContent(getToken(), templateId);
+				String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+				String tempatePath= fullPath+en.getFilePath();
+				excelUtil.makeStreamExcel("filelist.xlsx",tempatePath ,excelData, response);
+			}
+			
+		} catch (AccessDeniedException | IOException | EcmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	@RequestMapping(value = "/search/getCardInfo", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getCardInfo(@RequestBody String argStr){
