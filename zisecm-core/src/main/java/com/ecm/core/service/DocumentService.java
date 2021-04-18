@@ -1158,9 +1158,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					if(list.get(0)==null) {
 						return 1;
 					}
-					 int permissionNum = (int) list.get(0).get("PERMISSION");
+					 int permissionNum = Integer.valueOf(list.get(0).get("PERMISSION").toString());
 					if(permissionNum > knowledgePermission) {
-						return (int) list.get(0).get("PERMISSION");
+						return Integer.valueOf(list.get(0).get("PERMISSION").toString());
 					}else {
 						return knowledgePermission;
 					}

@@ -464,7 +464,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 				List<Map<String, Object>> list = ecmQuery.executeSQL(sb.toString());
 
 				if (list.size() > 0) {
-					return (int) list.get(0).get("PERMISSION");
+					return Integer.valueOf(list.get(0).get("PERMISSION").toString());
 				}
 			}
 		}
