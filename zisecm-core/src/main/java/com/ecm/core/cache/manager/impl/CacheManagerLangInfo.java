@@ -42,7 +42,7 @@ public class CacheManagerLangInfo implements ICacheManager<Map<String,String>>{
 	
 	private void addItem(EcmLangInfo lang, List<EcmLangItem> listItem) {
 		for(EcmLangItem item: listItem) {
-			if(item.getMessageKey().equals(lang.getMessageKey())) {
+			if(item.getMessageKey()!=null&&item.getMessageKey().equals(lang.getMessageKey())) {
 				lang.getLangItems().add(item);
 			}
 		}
