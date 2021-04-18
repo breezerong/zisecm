@@ -460,7 +460,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 						"select PERMISSION from ecm_acl_item a, ecm_acl b, ecm_group c, ecm_group_user d where b.NAME='");
 				sb.append(aclName).append(
 						"'  and a.PARENT_ID = b.ID and a.TARGET_TYPE='2' and a.TARGET_NAME=c.NAME and c.ID=d.GROUP_ID and ");
-				sb.append("d.USER_ID='").append(userID).append("') as permittemp");
+				sb.append("d.USER_ID='").append(userID).append("') permittemp");
 				List<Map<String, Object>> list = ecmQuery.executeSQL(sb.toString());
 
 				if (list.size() > 0) {

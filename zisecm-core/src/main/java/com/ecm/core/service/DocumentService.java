@@ -1151,7 +1151,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				sb.append(" (a.expire_date is null or a.expire_date>")
 						.append(DBFactory.getDBConn().getDBUtils().getDBDateNow()) 
 						.append(") and ");
-				sb.append("d.USER_ID='").append(userID).append("') as permittemp");
+				sb.append("d.USER_ID='").append(userID).append("') permittemp");
 				List<Map<String, Object>> list = ecmDocument.executeSQL(sb.toString());
 
 				if (list.size() > 0) {
