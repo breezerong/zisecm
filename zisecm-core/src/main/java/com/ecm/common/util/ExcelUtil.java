@@ -8,13 +8,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -194,9 +201,25 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 //		os.flush();
 		workbook.close();
 	}
-
  	
- 	private XSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,boolean hideFirstRow) {
+ 	public void makeStreamExcel(String excelName, String templatePath,Map<String,Object> data,
+			HttpServletResponse response) throws IOException {
+		OutputStream os = null;
+		response.reset(); // 清空输出流
+		os = response.getOutputStream(); // 取得输出流
+		response.setHeader("Content-disposition",
+				"attachment; filename=" + URLEncoder.encode(excelName,"UTF-8")); // 设定输出文件头
+		response.setContentType("application/msexcel"); // 定义输出类型
+		// 在内存中生成工作薄
+		Workbook workbook = makeWorkBook(data,templatePath);
+		os.flush();
+		workbook.write(os);
+//		os.flush();
+		workbook.close();
+	}
+ 	
+ 	private XSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,
+ 			short firstRowNum,boolean hideFirstRow) {
 		// 用来记录最大列宽,自动调整列宽。
 		Integer collength[] = new Integer[fieldName.length];
 		// 产生工作薄对象
@@ -206,7 +229,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 		// 为了工作表能支持中文,设置字符集为UTF_16
 		workbook.setSheetName(0, sheetName);
 		// 产生一行
-		XSSFRow row = sheet.createRow(0);
+		XSSFRow row = sheet.createRow(firstRowNum);
+		
+		
 		row.setZeroHeight(hideFirstRow);
 		// 产生单元格
 		XSSFCell cell;
@@ -280,6 +305,137 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 		}
 		return workbook;
 	}
+ 	
+ 	private Workbook makeWorkBook(Map<String,Object> data,
+ 			String templatePath) throws IOException {
+ 		Workbook wb = null;
+		// TODO Auto-generated method stub
+		 //excel文件路径
+        String ext = templatePath.substring(templatePath.lastIndexOf("."));
+       String excelPathNew = templatePath.substring(0,templatePath.lastIndexOf("."))+"_new"+ext;
+        try {
+        	FileChannel in = new FileInputStream(templatePath).getChannel(),
+                    outNio = new FileOutputStream(excelPathNew).getChannel();
+            in.transferTo(0, in.size(), outNio);
+            //String encoding = "GBK";
+            File excel = new File(excelPathNew);
+            if (excel.isFile() && excel.exists()) {   //判断文件是否存在
+            	
+            	
+                String[] split = excel.getName().split("\\.");  //.是特殊字符，需要转义！！！！！
+                
+                //根据文件后缀（xls/xlsx）进行判断
+                if ( "xls".equals(split[1])){
+                    FileInputStream fis = new FileInputStream(excel);   //文件流对象
+                    wb = new HSSFWorkbook(fis);
+                }else if ("xlsx".equals(split[1])){
+                    wb = new XSSFWorkbook(excel);
+                }else {
+                    System.out.println("文件类型错误!");
+                    return null;
+                }
+                
+                //开始解析
+                Sheet sheet = wb.getSheetAt(0);     //读取sheet 0
+
+                int firstRowIndex = sheet.getFirstRowNum()+1;   //第一行是列名，所以不读
+                int lastRowIndex = sheet.getLastRowNum();
+                System.out.println("firstRowIndex: "+firstRowIndex);
+                System.out.println("lastRowIndex: "+lastRowIndex);
+                Map<String,Integer> cellIndexMp=new HashMap<String, Integer>();
+                for(int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex++) {   //遍历行
+                    System.out.println("rIndex: " + rIndex);
+                    Row row = sheet.getRow(rIndex);
+                    if (row != null) {
+                        int firstCellIndex = row.getFirstCellNum();
+                        int lastCellIndex = row.getLastCellNum();
+                        for (int cIndex = firstCellIndex; cIndex < lastCellIndex; cIndex++) {   //遍历列
+                            Cell cell = row.getCell(cIndex);
+                            if (cell != null) {
+                                System.out.println(cell.toString());
+                                String cellStr=cell.getStringCellValue();
+                                if(cellStr!=null&&cellStr.contains("#{")) {
+                                	String bfStr=cellStr.substring(0,cellStr.indexOf("#{"));
+                                	String cellStrNew=cellStr.substring(cellStr.indexOf("#{")+2,cellStr.indexOf("}"));
+                                	String cellStrComm=cellStr.substring(cellStr.indexOf("}")+1);
+                                	if(cellStrNew.startsWith("Date(")) {
+
+                        				String tempStr = cellStrNew.replace("Date(", "").replace(")", "");
+                        				String[] temps = tempStr.split(",");
+                        				String attrName = temps[0];
+                        				String format = temps[1];
+                        				Date dt = new Date();
+                        				if(!attrName.equalsIgnoreCase("now")) {
+                        					try {
+                        						dt = (Date)data.get(attrName);
+                        					}catch (Exception e) {
+                        						// TODO: handle exception
+                        						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                        						dt=formatter.parse((String) data.get(attrName));
+                        					}
+                        				}
+                        				if(dt==null) {
+                        					throw new Exception(attrName+"为空！");
+                        				}
+                        				SimpleDateFormat sdf = new SimpleDateFormat(format);
+                        				cell.setCellValue(bfStr+sdf.format(dt)+cellStrComm);
+                        			
+                                	}else {
+                                		cell.setCellValue(data.get(cellStrNew)+cellStrComm);
+                                	}
+                                }else if(cellStr!=null&&cellStr.contains("${")) {
+                                	String cellStrNew=cellStr.substring(cellStr.indexOf("${")+2,cellStr.indexOf("}"));
+                                	cellIndexMp.put(cellStrNew, cIndex);
+                                }
+                            }
+                        }
+                    }
+                }
+                List<Map<String,Object>> rowData=(List<Map<String, Object>>) data.get("data");
+                
+//                if(rowData!=null&&rowData.size()>0) {
+//                	sheet.shiftRows(sheet.getLastRowNum()-1, sheet.getLastRowNum()+1, 1,true,false);
+//                }
+              
+                for(int x=0;rowData!=null&&x<rowData.size();x++) {
+                	Map<String,Object> dt= rowData.get(x);
+                	sheet.shiftRows(sheet.getLastRowNum()-1, sheet.getLastRowNum()+1, 1,true,false);
+                	Row r=  sheet.createRow(sheet.getLastRowNum()-2);
+                	Set<String> keys= cellIndexMp.keySet();
+                	Iterator<String> it= keys.iterator();
+                	while(it.hasNext()) {
+                		String key= it.next();
+                		Integer v= cellIndexMp.get(key);
+                		Cell c= r.createCell(v);
+                		c.setCellValue(dt.get(key)!=null?dt.get(key).toString():"");
+                		
+                	}
+                }
+//              Row r=  sheet.createRow(lastRowIndex-1);
+//              Cell c= r.createCell(0);
+//               c.setCellValue("xxxxx");
+               
+//               File f=new File(excelPathNewModel);
+//               FileOutputStream out =new FileOutputStream(f);
+//               
+//       		wb.write(out);
+//       		out.flush();
+////       		os.flush();
+//       		wb.close();
+               
+            } else {
+                System.out.println("找不到指定的文件");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return wb;
+    
+ 	}
+ 	
+ 	private XSSFWorkbook makeWorkBook(String sheetName, String[] fieldName, List<Object[]> data,boolean hideFirstRow) {
+ 		return makeWorkBook(sheetName,fieldName,data,(short)0,hideFirstRow);
+ 	}
 
  	public void setAutoColumnWidth(boolean autoColumnWidth) {
 		this.autoColumnWidth = autoColumnWidth;
