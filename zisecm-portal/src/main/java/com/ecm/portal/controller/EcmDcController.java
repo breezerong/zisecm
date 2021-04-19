@@ -1038,14 +1038,15 @@ public class EcmDcController extends ControllerAbstract {
 				folderId=fid.toString();
 			}
 			doc.setStatus("新建");
-			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+//			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
 			doc.setFolderId(folderId);
-			doc.setAclName(folder.getAclName());
+//			doc.setAclName(folder.getAclName());
+			doc.setAclName("acl_all_write");
+			
 //			String id = documentService.newObject(getToken(), doc, en);
 			String id = documentService.creatOrUpdateObject(getToken(), doc, en);
 			//创建附件
 			if (attachFiles != null&&attachFiles.length>0) {
-				
 	            Map<String,Object> p=new HashMap<String, Object>();
 	            p.put("parentDocId", id);
 	            p.put("relationName", "附件");
@@ -1409,8 +1410,10 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		return mp;
 	}
-	
 	public void execAddAttachment(Map<String, Object> args,MultipartFile[] uploadFile) throws Exception {
+		execAddAttachment(args,uploadFile,null);
+	}
+	public void execAddAttachment(Map<String, Object> args,MultipartFile[] uploadFile,String AclName) throws Exception {
 		String parentId = args.get("parentDocId").toString();
 		
 		for (MultipartFile multipartFile : uploadFile) {
@@ -1429,10 +1432,13 @@ public class EcmDcController extends ControllerAbstract {
 			}else {
 				folderId=fid.toString();
 			}
-			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
 			doc.setFolderId(folderId);
-			doc.setAclName(folder.getAclName());
-			
+			if(null==AclName) {
+				EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+				doc.setAclName(folder.getAclName());				
+			}else {
+				doc.setAclName("acl_all_write");
+			}
 			EcmContent en = new EcmContent();
 			en.setName(multipartFile.getOriginalFilename());
 			en.setContentSize(multipartFile.getSize());
