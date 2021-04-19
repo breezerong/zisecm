@@ -176,13 +176,13 @@ public class ArchiveRelationService  {
 	 * @throws Exception 
 	 */
 	public boolean moveDown(String token,String parentId,String childId) throws Exception {
-		String sqlCount="select count(*) as num from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"'";
+		String sqlCount="select count(*) as CNUM from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"'";
 		List<Map<String, Object>> countNum= relationService.getMapList(token, sqlCount);
 		if(countNum==null||countNum.size()<=0) {
 			return false;
 		}
 		
-		int total= EcmStringUtils.toInt(countNum.get(0).get("num").toString());
+		int total= EcmStringUtils.toInt(countNum.get(0).get("CNUM").toString());
 		if(total==0) {
 			return false;
 		}
@@ -220,12 +220,12 @@ public class ArchiveRelationService  {
 	}
 	
 	public int getMaxOrderIndex(String token, String parentId) {
-		String sql="select max(ORDER_INDEX) as maxIndex from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"'";
+		String sql="select max(ORDER_INDEX) as MAXNUM from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"'";
 		List<Map<String, Object>> list;
 		try {
 			list = relationService.getMapList(token, sql);
 			if(list!=null&&list.size()>0 && list.get(0)!=null) {
-				return Integer.parseInt(list.get(0).get("maxIndex").toString());
+				return Integer.parseInt(list.get(0).get("MAXNUM").toString());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

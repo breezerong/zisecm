@@ -20,17 +20,17 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getLastYearUserLoginData(String token) {
-		String sql ="select mygroup, count(*) as mycount from (SELECT DATE_FORMAT(EXCUTE_DATE, '%Y年%m月') as mygroup FROM ecm_audit_general WHERE ACTION_NAME='"+
-				AuditContext.LOGIN+"' and DATE_SUB(CURDATE(), INTERVAL 1 year) < Date(EXCUTE_DATE))a  group by mygroup order by mygroup";
+		String sql ="select mygroup, count(*) as MYCOUNT from (SELECT DATE_FORMAT(EXCUTE_DATE, '%Y年%m月') as MYGROUP FROM ecm_audit_general WHERE ACTION_NAME='"+
+				AuditContext.LOGIN+"' and DATE_SUB(CURDATE(), INTERVAL 1 year) < Date(EXCUTE_DATE))a  group by MYGROUP order by MYGROUP";
 		if(DBBase.isSqlServer()) {
-			sql = "select mygroup, count(*) as mycount from (SELECT CONVERT(varchar(100),left(EXCUTE_DATE,7),10) as mygroup FROM ecm_audit_general WHERE ACTION_NAME='" + 
-					AuditContext.LOGIN+"' and DATEADD(year, -1, getdate()) < EXCUTE_DATE)a  group by mygroup order by mygroup";
+			sql = "select mygroup, count(*) as MYCOUNT from (SELECT CONVERT(varchar(100),left(EXCUTE_DATE,7),10) as MYGROUP FROM ecm_audit_general WHERE ACTION_NAME='" + 
+					AuditContext.LOGIN+"' and DATEADD(year, -1, getdate()) < EXCUTE_DATE)a  group by MYGROUP order by MYGROUP";
 		}
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
-			bean.getxAxisData().add(vals.get("mygroup").toString());
-			bean.getyAxisData().add(Long.parseLong(vals.get("mycount").toString()));
+			bean.getxAxisData().add(vals.get("MYGROUP").toString());
+			bean.getyAxisData().add(Long.parseLong(vals.get("MYCOUNT").toString()));
 		}
 		return bean;
 	}
@@ -40,12 +40,12 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getDrawingPorjectData(String token) {
-		String sql ="select C_PROJECT, count(*) as mycount from ecm_document where TYPE_NAME='图纸' group by C_PROJECT order by C_PROJECT";
+		String sql ="select C_PROJECT, count(*) as MYCOUNT from ecm_document where TYPE_NAME='图纸' group by C_PROJECT order by C_PROJECT";
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
 			bean.getxAxisData().add(vals.get("C_PROJECT")==null?"":vals.get("C_PROJECT").toString());
-			bean.getyAxisData().add(Long.parseLong(vals.get("mycount").toString()));
+			bean.getyAxisData().add(Long.parseLong(vals.get("MYCOUNT").toString()));
 		}
 		return bean;
 	}
@@ -56,12 +56,12 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getDrawingDateData(String token, String projectName) {
-		String sql ="select mygroup, count(*) as mycount from (SELECT DATE_FORMAT(CREATION_DATE, '%Y年%m月') as mygroup FROM ecm_document WHERE C_PROJECT='"+projectName+"')a  group by mygroup order by mygroup";
+		String sql ="select mygroup, count(*) as MYCOUNT from (SELECT DATE_FORMAT(CREATION_DATE, '%Y年%m月') as MYGROUP FROM ecm_document WHERE C_PROJECT='"+projectName+"')a  group by MYGROUP order by MYGROUP";
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
-			bean.getxAxisData().add(vals.get("mygroup").toString());
-			bean.getyAxisData().add(Long.parseLong(vals.get("mycount").toString()));
+			bean.getxAxisData().add(vals.get("MYGROUP").toString());
+			bean.getyAxisData().add(Long.parseLong(vals.get("MYCOUNT").toString()));
 		}
 		return bean;
 	}
@@ -72,12 +72,12 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getDrawingStatusData(String token, String projectName) {
-		String sql ="select STATUS, count(*) as mycount from ecm_document where TYPE_NAME='图纸' and C_PROJECT='"+projectName+"' group by STATUS order by STATUS";
+		String sql ="select STATUS, count(*) as MYCOUNT from ecm_document where TYPE_NAME='图纸' and C_PROJECT='"+projectName+"' group by STATUS order by STATUS";
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
 			bean.getxAxisData().add(vals.get("STATUS").toString());
-			bean.getyAxisData().add(Long.parseLong(vals.get("mycount").toString()));
+			bean.getyAxisData().add(Long.parseLong(vals.get("MYCOUNT").toString()));
 		}
 		return bean;
 	}
@@ -87,12 +87,12 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getDocumentTypeData(String token) {
-		String sql ="select TYPE_NAME, count(*) as mycount from ecm_document  group by TYPE_NAME order by TYPE_NAME";
+		String sql ="select TYPE_NAME, count(*) as MYCOUNT from ecm_document  group by TYPE_NAME order by TYPE_NAME";
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
 			bean.getxAxisData().add(vals.get("TYPE_NAME").toString());
-			bean.getyAxisData().add(Long.parseLong(vals.get("mycount").toString()));
+			bean.getyAxisData().add(Long.parseLong(vals.get("MYCOUNT").toString()));
 		}
 		return bean;
 	}
@@ -102,15 +102,15 @@ public class ReportService {
 	 * @return
 	 */
 	public ChartBean getLastYearDocData(String token) {
-		String sql ="select mygroup, count(*) as mycount from (SELECT DATE_FORMAT(CREATION_DATE, '%Y年%m月') as mygroup FROM ecm_document WHERE DATE_SUB(CURDATE(), INTERVAL 1 year) < Date(CREATION_DATE))a  group by mygroup order by mygroup";
+		String sql ="select mygroup, count(*) as MYCOUNT from (SELECT DATE_FORMAT(CREATION_DATE, '%Y年%m月') as MYGROUP FROM ecm_document WHERE DATE_SUB(CURDATE(), INTERVAL 1 year) < Date(CREATION_DATE))a  group by MYGROUP order by MYGROUP";
 		if(DBBase.isSqlServer()) {
-			sql = "select mygroup, count(*) as mycount from (SELECT CONVERT(varchar(100),left(CREATION_DATE,7),10) as mygroup FROM ecm_document WHERE DATEADD(year, -1, getdate()) < CREATION_DATE)a  group by mygroup order by mygroup";
+			sql = "select mygroup, count(*) as MYCOUNT from (SELECT CONVERT(varchar(100),left(CREATION_DATE,7),10) as MYGROUP FROM ecm_document WHERE DATEADD(year, -1, getdate()) < CREATION_DATE)a  group by MYGROUP order by MYGROUP";
 		}
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		ChartBean bean = new ChartBean();
 		for(Map<String, Object> vals:list) {
-			bean.getxAxisData().add(vals.get("mygroup").toString());
-			bean.getyAxisData().add(Long.parseLong(vals.get("mycount").toString()));
+			bean.getxAxisData().add(vals.get("MYGROUP").toString());
+			bean.getyAxisData().add(Long.parseLong(vals.get("MYCOUNT").toString()));
 		}
 		return bean;
 	}
@@ -121,10 +121,10 @@ public class ReportService {
 	 */
 	public long getDocumentCount(String token, String condition)
 	{
-		String sql = "select count(*) as mycount from ecm_document where "+condition;
+		String sql = "select count(*) as MYCOUNT from ecm_document where "+condition;
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		if(list.size()>0) {
-			return Long.parseLong(list.get(0).get("mycount").toString());
+			return Long.parseLong(list.get(0).get("MYCOUNT").toString());
 		}
 		return 0;
 	}
@@ -136,13 +136,13 @@ public class ReportService {
 	 */
 	public long getTableCount(String token, String tableName,String condition)
 	{
-		String sql = "select count(*) as mycount from "+tableName;
+		String sql = "select count(*) as MYCOUNT from "+tableName;
 		if(condition!=null&&condition.length()>0) {
 			sql += " where "+condition;
 		}
 		List<Map<String, Object>> list =queryService.executeSQL(token, sql);
 		if(list.size()>0) {
-			return Long.parseLong(list.get(0).get("mycount").toString());
+			return Long.parseLong(list.get(0).get("MYCOUNT").toString());
 		}
 		return 0;
 	}

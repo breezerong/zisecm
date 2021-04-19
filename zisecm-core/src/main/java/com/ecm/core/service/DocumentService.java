@@ -485,7 +485,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 
 	@Override
 	public long getObjectCount(String token, String gridName, String folderId, String condition) {
-		String sql = "select count(*) as objcount from ecm_document where 1=1 ";
+		String sql = "select count(*) as OBJCOUNT from ecm_document where 1=1 ";
 		if (!EcmStringUtils.isEmpty(gridName)) {
 			EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
 			if (gv == null)
@@ -500,7 +500,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		}
 		List<Map<String, Object>> list = ecmDocument.executeSQL(sql);
 
-		return Long.parseLong(list.get(0).get("objcount").toString());
+		return Long.parseLong(list.get(0).get("OBJCOUNT").toString());
 	}
 
 	@Override
@@ -1305,12 +1305,12 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
-			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
-					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
+//			String sql = "select count(*) as ACLCOUNT from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(ACLCOUNT) ACLCOUNT from(select count(*) as ACLCOUNT from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as ACLCOUNT from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = this.getMapList(token, sql);
 			if (list != null && list.size() > 0) {
-				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
+				return Integer.parseInt(list.get(0).get("ACLCOUNT").toString()) > 1;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1991,10 +1991,10 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String lifecycleName=doc.getLifecycleName();
 		String lifecycleStatus=doc.getLifecycleStatus();
 		if(executeEvent(lifecycleName,lifecycleStatus,"next")) {
-			String sql="select a.c_nextname from ecm_lifecycleitem a,ecm_lifecycle b where a.lifecycle_id"
+			String sql="select a.C_NEXTNAME from ecm_lifecycleitem a,ecm_lifecycle b where a.lifecycle_id"
 					+ "=b.id and a.c_name='"+lifecycleStatus+"' and b.c_name='"+lifecycleName+"'";
 			List<Map<String,String>> result= lifeCycleItemMapper.selectEcmLifeCycleBySql(sql);
-			String nextName= result.get(0).get("c_nextname");
+			String nextName= result.get(0).get("C_NEXTNAME");
 			doc.setLifecycleName(nextName);
 			doc.setLifecycleDir(2);
 			ecmDocument.updateByPrimaryKeySelective(doc);
@@ -2032,7 +2032,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			String sql="select a.c_previousname from ecm_lifecycleitem a,ecm_lifecycle b where a.lifecycle_id"
 					+ "=b.id and a.c_name='"+lifecycleStatus+"' and b.c_name='"+lifecycleName+"'";
 			List<Map<String,String>> result= lifeCycleItemMapper.selectEcmLifeCycleBySql(sql);
-			String nextName= result.get(0).get("c_nextname");
+			String nextName= result.get(0).get("C_PREVIOUSNAME");
 			doc.setLifecycleName(nextName);
 			doc.setLifecycleDir(0);
 			ecmDocument.updateByPrimaryKeySelective(doc);

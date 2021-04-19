@@ -3524,12 +3524,12 @@ public class EcmDcController extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
-			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
-					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
+//			String sql = "select count(*) as ACLCOUNT from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(ACLCOUNT) ACLCOUNT from(select count(*) as ACLCOUNT from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as ACLCOUNT from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
-				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
+				return Integer.parseInt(list.get(0).get("ACLCOUNT").toString()) > 1;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -3543,12 +3543,12 @@ public class EcmDcController extends ControllerAbstract {
 			if (StringUtils.isEmpty(aclName) || !aclName.startsWith("ecm_")) {
 				return true;
 			}
-//			String sql = "select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'";
-			String sql = "select sum(aclCount) aclCount from(select count(*) as aclCount from ecm_document where ACL_NAME='" + aclName + "'"
-					+" union all select count(*) as aclCount from ecm_folder where ACL_NAME='"+ aclName +"') t";
+//			String sql = "select count(*) as ACLCOUNT from ecm_document where ACL_NAME='" + aclName + "'";
+			String sql = "select sum(ACLCOUNT) ACLCOUNT from(select count(*) as ACLCOUNT from ecm_document where ACL_NAME='" + aclName + "'"
+					+" union all select count(*) as ACLCOUNT from ecm_folder where ACL_NAME='"+ aclName +"') t";
 			List<Map<String, Object>> list = documentService.getMapList(getToken(), sql);
 			if (list != null && list.size() > 0) {
-				return Integer.parseInt(list.get(0).get("aclCount").toString()) > 1;
+				return Integer.parseInt(list.get(0).get("ACLCOUNT").toString()) > 1;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -42,11 +42,11 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 
 	@Override
 	public long getFolderCount(String token, String folderId) {
-		String sql = "select count(*) as itemcount from ecm_folder where parent_id='"+folderId+"'";
+		String sql = "select count(*) as ITEMCOUNT from ecm_folder where parent_id='"+folderId+"'";
 		
 		List<Map<String, Object>> list = ecmFolderMapper.searchToMap(sql);
 		
-		return  Long.parseLong(list.get(0).get("itemcount").toString());
+		return  Long.parseLong(list.get(0).get("ITEMCOUNT").toString());
 	}
 	@Override
 	public EcmFolder getObjectById(String token,String id) {

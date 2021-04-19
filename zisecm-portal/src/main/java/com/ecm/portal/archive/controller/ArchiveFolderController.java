@@ -349,13 +349,13 @@ public class ArchiveFolderController extends ControllerAbstract{
 		try {
 			List<Map<String, Object>>  list=new ArrayList<Map<String,Object>>();
 			if(!"".equals(args.get("childId").toString())) {
-				String sql = "select id from ecm_document where C_ITEM_TYPE='案卷'  and id in (select parent_id from ecm_relation where child_id= '"+args.get("childId").toString()+"')";
+				String sql = "select ID from ecm_document where C_ITEM_TYPE='案卷'  and id in (select parent_id from ecm_relation where child_id= '"+args.get("childId").toString()+"')";
 				list = documentService.getMapList(getToken(), sql);
 				
 			}
 			if(list.size()>0) {
 				mp.put("isBox",1);
-				mp.put("boxId", list.get(0).get("id"));
+				mp.put("boxId", list.get(0).get("ID"));
 			}else {
 				mp.put("isBox",0);
 			}
@@ -662,12 +662,12 @@ public class ArchiveFolderController extends ControllerAbstract{
 								continue;
 							}
 							
-							String sqlSumPage="select sum(C_PAGE_COUNT) as pageCount from ecm_document "
+							String sqlSumPage="select sum(C_PAGE_COUNT) as PAGECOUNT from ecm_document "
 									+ "where id in(select child_id from ecm_relation where parent_id='"+volumeId+"' "
 											+ " and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null))";
 							List<Map<String, Object>> pages= documentService.getMapList(getToken(),sqlSumPage);
 							if(pages!=null&&pages.size()>0&&pages.get(0)!=null) {
-								volumeDoc.addAttribute("C_PAGE_COUNT", pages.get(0).get("pageCount"));
+								volumeDoc.addAttribute("C_PAGE_COUNT", pages.get(0).get("PAGECOUNT"));
 							}
 							String minDocDate=ChildrenObjAction.getMinDocDate(getToken(), volumeId,"C_DOC_DATE", documentService);
 							if(minDocDate!=null) {
@@ -753,12 +753,12 @@ public class ArchiveFolderController extends ControllerAbstract{
 						
 					}
 
-					String sqlSumPage="select sum(C_PAGE_COUNT) as pageCount from ecm_document "
+					String sqlSumPage="select sum(C_PAGE_COUNT) as PAGECOUNT from ecm_document "
 							+ "where id in(select child_id from ecm_relation where parent_id='"+boxId+"' "
 									+ " and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null))";
 					List<Map<String, Object>> pages= documentService.getMapList(getToken(),sqlSumPage);
 					if(pages!=null&&pages.size()>0&&pages.get(0)!=null) {
-						doc.addAttribute("C_PAGE_COUNT", pages.get(0).get("pageCount"));
+						doc.addAttribute("C_PAGE_COUNT", pages.get(0).get("PAGECOUNT"));
 					}else {
 						doc.addAttribute("C_PAGE_COUNT", "0");
 					}
@@ -1060,10 +1060,10 @@ public class ArchiveFolderController extends ControllerAbstract{
 //				logger.info("delete relation:"+rMap.get("id").toString());
 //			}
 //		}
-//		String valiSql="select count(*) as num from ecm_document where id in("+strWhere+") ";
+//		String valiSql="select count(*) as CNUM from ecm_document where id in("+strWhere+") ";
 //		logger.info("delDocumentAndRelation valiSql:"+valiSql);
 //		List<Map<String,Object>> haveData= documentService.getMapList(getToken(), valiSql);
-//		if(haveData!=null&&haveData.size()>0&& Integer.parseInt(String.valueOf(haveData.get(0).get("num")))>0) {
+//		if(haveData!=null&&haveData.size()>0&& Integer.parseInt(String.valueOf(haveData.get(0).get("CNUM")))>0) {
 //			for (String id : list) {
 //				documentService.deleteObject(getToken(),id);
 //				logger.info("delete delivery document:"+id);
@@ -1113,7 +1113,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 //			for(EcmFolder f:folders) {
 //				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
 //				String gvCondition=gv.getCondition();
-//				String sql="select count(*) as num from ecm_document where "
+//				String sql="select count(*) as CNUM from ecm_document where "
 //				+gvCondition+(conditionObj==null?"":conditionObj.toString())+" and FOLDER_ID in( " + 
 //						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
 //						")";
@@ -1121,7 +1121,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 //				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
 //				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
 //					String name=f.getName();
-//					f.setName(name+"("+numberData.get(0).get("num").toString()+")");
+//					f.setName(name+"("+numberData.get(0).get("CNUM").toString()+")");
 //					
 //				}
 //				resultData.add(f);
@@ -1184,14 +1184,14 @@ public class ArchiveFolderController extends ControllerAbstract{
 //					whereSql=" and ("+condition+")";
 //				}
 				if(noCount==null) {
-					String sql="select count(*) as num from ecm_document where "+gvCondition+condition+" and FOLDER_ID in( " + 
+					String sql="select count(*) as CNUM from ecm_document where "+gvCondition+condition+" and FOLDER_ID in( " + 
 							"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
 							")";
 					logger.info("child count sql:"+sql);
 					List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
 					if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
 						String name=f.getName();
-						f.setName(name+"("+numberData.get(0).get("num").toString()+")");
+						f.setName(name+"("+numberData.get(0).get("CNUM").toString()+")");
 						
 					}
 				}
@@ -1238,14 +1238,14 @@ public class ArchiveFolderController extends ControllerAbstract{
 			for(EcmFolder f:folders) {
 				EcmGridView gv = CacheManagerOper.getEcmGridViews().get(f.getGridView());
 				String gvCondition=gv.getCondition();
-				String sql="select count(*) as num from ecm_document where 1=1 "//+gvCondition
+				String sql="select count(*) as CNUM from ecm_document where 1=1 "//+gvCondition
 						+" "+("".equals(condition)?"":condition)+" and FOLDER_ID in( " + 
 						"select id from ecm_folder where FOLDER_PATH like '"+f.getFolderPath()+"%' " + 
 						")";
 				List<Map<String,Object>> numberData= documentService.getMapList(getToken(), sql);
 				if(numberData!=null&&numberData.size()>0&&numberData.get(0)!=null) {
 					String name=f.getName();
-					f.setName(name+"("+numberData.get(0).get("num").toString()+")");
+					f.setName(name+"("+numberData.get(0).get("CNUM").toString()+")");
 					
 				}
 				resultData.add(f);

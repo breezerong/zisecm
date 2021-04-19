@@ -69,16 +69,16 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 
 	@Override
 	public long getChildGroupCount(String token,String id) {
-		String sql = "select count(*) as itemcount from ecm_group where parent_id='"+id+"'";
+		String sql = "select count(*) as ITEMCOUNT from ecm_group where parent_id='"+id+"'";
 		List<Map<String, Object>> list = ecmGroupMapper.searchToMap(sql);
-		return (long) list.get(0).get("itemcount");
+		return (long) list.get(0).get("ITEMCOUNT");
 	}
 
 	@Override
 	public long getUserCount(String token,String id) {
-		String sql = "select count(*) as itemcount from ecm_group_user where GROUP_ID='"+id+"'";
+		String sql = "select count(*) as ITEMCOUNT from ecm_group_user where GROUP_ID='"+id+"'";
 		List<Map<String, Object>> list = ecmGroupMapper.searchToMap(sql);
-		return (long) list.get(0).get("itemcount");
+		return (long) list.get(0).get("ITEMCOUNT");
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 
 	@Override
 	public long getGroupCount(String token,String id, String type, String condition) {
-		String sql = "select count(*) as itemcount from ecm_group where";
+		String sql = "select count(*) as ITEMCOUNT from ecm_group where";
 		sql += " GROUP_TYPE='"+type+"'";
 		if(!StringUtils.isEmpty(id))
 		{
@@ -187,7 +187,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 		{
 			sql += " and ("+condition+")";
 		}
-		return Long.parseLong(ecmGroupMapper.searchToMap(sql).get(0).get("itemcount").toString());
+		return Long.parseLong(ecmGroupMapper.searchToMap(sql).get(0).get("ITEMCOUNT").toString());
 	}
 
 	@Override

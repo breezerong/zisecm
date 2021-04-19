@@ -576,7 +576,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 	@Override
 	public long getRoleUserCount(String token, boolean noRole, String groupId, String condition) {
-		String sql = "select count(*) as objcount from ecm_user a ";
+		String sql = "select count(*) as OBJCOUNT from ecm_user a ";
 		if (!EcmStringUtils.isEmpty(condition)) {
 			sql += " where (" + condition + ")";
 		}
@@ -609,12 +609,12 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		}
 		List<Map<String, Object>> list = ecmUserMapper.searchToMap(sql);
 
-		return (long) list.get(0).get("objcount");
+		return (long) list.get(0).get("OBJCOUNT");
 	}
 
 	@Override
 	public long getUserCount(String token, boolean noGroup, String condition) {
-		String sql = "select count(*) as objcount from ecm_user ";
+		String sql = "select count(*) as OBJCOUNT from ecm_user ";
 		if (!EcmStringUtils.isEmpty(condition)) {
 			sql += " where (" + condition + ")";
 		}
@@ -627,7 +627,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		}
 		List<Map<String, Object>> list = ecmUserMapper.searchToMap(sql);
 
-		return (long) list.get(0).get("objcount");
+		return (long) list.get(0).get("OBJCOUNT");
 	}
 
 	@Override

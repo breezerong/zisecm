@@ -49,11 +49,11 @@ public class BorrowDocumentController extends ControllerAbstract {
 				doc.addAttribute("C_STORE_STATUS", "在库");
 				documentService.updateObject(getToken(), doc, null);
 				
-				String strSql="select count(*) as total from ecm_document where C_STORE_STATUS='借出'  and id in("
+				String strSql="select count(*) as TOTAL from ecm_document where C_STORE_STATUS='借出'  and id in("
 						+ " select child_id from ecm_relation where parent_id ='"+pid+"')";
 				List<Map<String,Object>> mps= documentService.getMapList(getToken(), strSql);
 				if(mps!=null&&mps.size()>0) {
-					int total= Integer.parseInt(mps.get(0).get("total").toString());
+					int total= Integer.parseInt(mps.get(0).get("TOTAL").toString());
 					if(total==0) {
 						EcmDocument order= documentService.getObjectById(getToken(), pid);
 						order.setStatus("已完成");
@@ -99,11 +99,11 @@ public class BorrowDocumentController extends ControllerAbstract {
 				doc.addAttribute("C_STORE_STATUS", "借出");
 				documentService.updateObject(getToken(), doc, null);
 				
-				String strSql="select count(*) as total from ecm_document where C_STORE_STATUS='在库' and id in("
+				String strSql="select count(*) as TOTAL from ecm_document where C_STORE_STATUS='在库' and id in("
 						+ " select child_id from ecm_relation where parent_id ='"+pid+"')";
 				List<Map<String,Object>> mps= documentService.getMapList(getToken(), strSql);
 				if(mps!=null&&mps.size()>0) {
-					int total= Integer.parseInt(mps.get(0).get("total").toString());
+					int total= Integer.parseInt(mps.get(0).get("TOTAL").toString());
 					if(total==0) {
 						EcmDocument order= documentService.getObjectById(getToken(), pid);
 						order.setStatus("待归还");

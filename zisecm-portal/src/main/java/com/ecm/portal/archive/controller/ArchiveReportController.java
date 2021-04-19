@@ -160,7 +160,7 @@ public class ArchiveReportController extends ControllerAbstract {
 			countMap.put("brrowType", brrowType);
 			String brrowCountSql = "";
 			String brrowIdSql = "";
-				brrowCountSql = "SELECT COUNT(*) as subCount FROM ecm_document "
+				brrowCountSql = "SELECT COUNT(*) as SUBCOUNT FROM ecm_document "
 						+ "where TYPE_NAME = '借阅单' and STATUS = '已完成' and SUB_TYPE = '"+brrowType+"' and CREATION_DATE BETWEEN "
 						+ "'"+args.get("firstTime")+"' and '"+args.get("endTime")+"'";
 				brrowIdSql = "SELECT id as parentId FROM ecm_document "
@@ -169,12 +169,12 @@ public class ArchiveReportController extends ControllerAbstract {
 			try {
 				List<Map<String, Object>> brrowCount = queryService.executeSQL(getToken(), brrowCountSql);
 				List<Map<String, Object>> brrowIds = queryService.executeSQL(getToken(), brrowIdSql);
-				countMap.put("subCount",brrowCount.get(0).get("subCount"));
+				countMap.put("subCount",brrowCount.get(0).get("SUBCOUNT"));
 				long countNum = 0;
 				for (Map<String, Object> id : brrowIds) {
-					String getChildCountSql = "select COUNT(*) as count FROM ecm_relation where parent_id = '"+id.get("parentId")+"'";
+					String getChildCountSql = "select COUNT(*) as COUNT FROM ecm_relation where parent_id = '"+id.get("parentId")+"'";
 					List<Map<String, Object>> childCount = queryService.executeSQL(getToken(), getChildCountSql);
-					long flag =  (long) childCount.get(0).get("count");
+					long flag =  (long) childCount.get(0).get("COUNT");
 					countNum = countNum + flag;
 				}
 				countMap.put("subChildCount", countNum);
