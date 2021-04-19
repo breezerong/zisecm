@@ -137,7 +137,9 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		}
 		cuser.setMyProjects(this.getMyProject(ecmUser.getLoginName()));
 		bindUserRoles(cuser);
-		bindUserComapny(cuser);
+		if(CacheManagerOper.getEcmParameters().get("isNpic")!=null) {
+			bindUserComapny(cuser);
+		}
 		return cuser;
 	}
 	

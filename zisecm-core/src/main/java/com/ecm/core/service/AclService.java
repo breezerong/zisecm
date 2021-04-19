@@ -281,7 +281,7 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 			if(list.get(0)==null) {
 				return 1;
 			}
-			return  Integer.valueOf(list.get(0).get("PERMISSION").toString()) ;
+			return  Integer.valueOf(list.get(0).get("PERMISSION").toString());
 		}
 		return 1;
 	}
