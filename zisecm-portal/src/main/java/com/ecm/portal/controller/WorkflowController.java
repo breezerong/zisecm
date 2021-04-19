@@ -252,6 +252,28 @@ public class WorkflowController extends ControllerAbstract {
 		}
 		return result;
 	}
+	
+	
+	@RequestMapping(value = "/startWorkflowById4Copy")
+	@ResponseBody
+	public Map<String, Object> startWorkflowById4Copy(@RequestBody String argStr) {
+		// 启动流程
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			Object processId=args.get("processInstanceId");
+			if(processId!=null) {
+				result = customWorkflowService.startWorkflowById4Copy(getSession(), args);
+			}else {
+				result = customWorkflowService.startWorkflow(getSession(), args);
+			}
+		} catch (AccessDeniedException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	
 	/**
 	 * 启动流程
 	 *
