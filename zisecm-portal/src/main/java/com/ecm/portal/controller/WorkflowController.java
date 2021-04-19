@@ -951,7 +951,7 @@ public class WorkflowController extends ControllerAbstract {
 			List<EcmCfgActivity> acitivityList = ecmCfgActivityMapper.selectByCondition(whereSql);
 //			List<EcmCfgActivity> acitivityList = ecmCfgActivityMapper.selectByProcessName(processName);
 //			acitivityList.removeIf(a -> a.getSelectActivityList().indexOf(activityName) < 0);	
-			acitivityList.removeIf(a -> a.getSelectActivities().indexOf(activityName) < 0);
+			acitivityList.removeIf(a -> a.getSelectActivities()==null||a.getSelectActivities().indexOf(activityName) < 0  );
 //			acitivityList.removeIf(a -> a.getSelectActivityList().stream().anyMatch(s->!s.contains(activityName)));
 			
 			List<EcmCfgActivity> result=new ArrayList<EcmCfgActivity>();

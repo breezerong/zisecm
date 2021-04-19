@@ -201,10 +201,10 @@ public class PageInterceptor implements Interceptor {
 			if(DBBase.isOracle()) {
 				return "select count(*) from (" + strs[0] + ")";
 			}else {
-				return "select count(*) from (" + strs[0] + ") as countRecord";
+				return "select count(*) from (" + strs[0] + ")   countRecord";
 			}
 		}
-		return "select count(*) from (" + sql + ") as countRecord";
+		return "select count(*) from (" + sql + ")   countRecord";
 	}
 
 	@Override
