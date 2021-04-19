@@ -94,10 +94,10 @@ public class RelationService extends EcmObjectService<EcmRelation> {
 			en.createId();
 		}
 		if(en.getOrderIndex()==0) {
-			List<Map<String, Object>> c= ecmRelationMapper.executeSQL("select count(*) as cnum from ecm_relation where parent_id='"
+			List<Map<String, Object>> c= ecmRelationMapper.executeSQL("select count(*) as CNUM from ecm_relation where parent_id='"
 			+((com.ecm.core.entity.EcmRelation)obj).getParentId()+"' and name='"
 					+((com.ecm.core.entity.EcmRelation)obj).getName()+"'");
-			int orderIndex=Integer.parseInt(c.get(0).get("cnum").toString());
+			int orderIndex=Integer.parseInt(c.get(0).get("CNUM").toString());
 			en.setOrderIndex(orderIndex+1);
 		}
 		ecmRelationMapper.insert(en);
