@@ -177,7 +177,7 @@ public class FolderPathService extends EcmService {
 		return fldId;
 	}
 	
-	private String createFolder(String token,Map<String, Object> values, String policy) throws AccessDeniedException {
+	private String createFolder(String token,Map<String, Object> values, String policy) throws Exception {
 		String[] strs = policy.split(";");
 		String folderPath="";
 		for(String str:strs) {
@@ -186,6 +186,7 @@ public class FolderPathService extends EcmService {
 				if(values.get(attrName)==null){
 					logger.info("ID:"+values.get("ID"));
 					logger.info("Property :"+attrName+", value is null..");
+					throw new Exception("获取目录规则错误："+attrName +"值为空!");
 				}
 				folderPath +=  ((String)values.get(attrName)).replace("/", "-");
 			}
