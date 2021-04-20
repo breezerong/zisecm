@@ -199,9 +199,9 @@ public class PageInterceptor implements Interceptor {
 		if(sql.toLowerCase().indexOf(" order ")>0) {
 			String[] strs =null;
 			if(sql.indexOf(" order ")>0) {
-				strs = sql.toLowerCase().split(" order ");
+				strs = sql.split(" order ");
 			}else if(sql.indexOf(" ORDER ")>0) {
-				strs = sql.toLowerCase().split(" ORDER ");
+				strs = sql.split(" ORDER ");
 			}else {
 				strs = sql.toLowerCase().split(" order ");
 			}
