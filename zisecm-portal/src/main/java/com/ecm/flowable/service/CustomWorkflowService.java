@@ -318,9 +318,9 @@ public class CustomWorkflowService extends EcmService{
 			}else {
 				String formId= args.get("formId").toString();
 				EcmDocument form= documentService.getObjectById(session.getToken(), formId);
-				if(CacheManagerOper.getEcmParameters().get("isNpic")==null) {
-				args.putAll(form.getAttributes());
-				}
+//				if(CacheManagerOper.getEcmParameters().get("isNpic")==null) {
+//				args.putAll(form.getAttributes());
+//				}
 				processInstance = runtimeService.startProcessInstanceByKey(args.get("processInstanceKey").toString(),
 						args);
 				end = System.currentTimeMillis() - start;
