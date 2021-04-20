@@ -393,6 +393,7 @@ public class WorkflowController extends ControllerAbstract {
 				condition.append(" and CREATE_TIME < '").append(workflowForm.get("startTimeBefore")).append("' ");
 			}
 		}
+		condition.append("and END_TIME is not null");
 		List<EcmAuditWorkitem> list = null;
 		String finalCondition = "";
 		if (condition.length()>0) {
@@ -450,7 +451,7 @@ public class WorkflowController extends ControllerAbstract {
 
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("data", resultList);
-		resultMap.put("totalCount", resultList.size());
+		resultMap.put("totalCount", pager.getTotal());
 		//historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).finished().count()
 		return resultMap;
 	}
