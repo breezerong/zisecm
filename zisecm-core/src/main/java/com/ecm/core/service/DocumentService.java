@@ -266,7 +266,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		sql+=") t";
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
-		} else if(gv != null) {
+		} else if(gv != null&&gv.getOrderBy()!=null) {
 			sql += " " + gv.getOrderBy();
 		}
 		
