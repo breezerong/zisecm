@@ -676,9 +676,10 @@ public class WorkflowController extends ControllerAbstract {
 		if(processInfo == null && processDefinitionId != null) {
 			ProcessDefinition processDefinitionObj=repositoryService.createProcessDefinitionQuery()
 					.processDefinitionId(processDefinitionId).singleResult();
+			Map<String,String> mp = new HashMap<String,String>();
+			if(null==processDefinitionObj)return null;
 			String processName = processDefinitionObj.getName();
 			String processKey=processDefinitionObj.getKey();
-			Map<String,String> mp = new HashMap<String,String>();
 			mp.put("workflowName", processName);
 			mp.put("processKey", processKey);
 			processDefList.put(processDefinitionId, mp);
