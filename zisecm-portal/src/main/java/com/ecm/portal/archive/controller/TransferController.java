@@ -178,24 +178,24 @@ public class TransferController extends ControllerAbstract{
 		
 		List<String> list = JSONUtils.stringToArray(transferIds);
 		String strWhere="'"+ String.join("','", list)+"'";
-		String sql1="select child_id from ecm_relation where parent_id in("+strWhere+") "
+		String sql1="select CHILD_ID from ecm_relation where parent_id in("+strWhere+") "
 				+ " and name='irel_children' and (DESCRIPTION!='复用'  or DESCRIPTION is null) ";
-//		String sql1="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+//		String sql1="select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 //				+ "and b.parent_id in("+strWhere+") and b.name='irel_children' and (b.DESCRIPTION!='复用'  or b.DESCRIPTION is null) " ;//第一层级
 		List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql1);
 		for(int i=0;childrenId!=null&&i<childrenId.size();i++) {
 			Map<String,Object> first= childrenId.get(i);
-			String childidStr=(String) first.get("child_id");
+			String childidStr=(String) first.get("CHILD_ID");
 			EcmDocument doc= documentService.getObjectById(getToken(), childidStr);
 			
-			String sql2="select child_id from ecm_relation where parent_id ='"+childidStr+"' "
+			String sql2="select CHILD_ID from ecm_relation where parent_id ='"+childidStr+"' "
 					+ " and name='irel_children' and (DESCRIPTION!='复用'  or DESCRIPTION is null) ";
-//			String sql2="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+//			String sql2="select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 //					+ "and b.parent_id ='"+childidStr+"' and b.name='irel_children' and (b.DESCRIPTION!='复用'  or b.DESCRIPTION is null) " ;//第二层
 			List<Map<String,Object>> innerFileIds= documentService.getMapList(getToken(), sql2);
 			for(int j=0;innerFileIds!=null&&j<innerFileIds.size();j++) {
 				Map<String,Object> m= innerFileIds.get(j);
-				String innerfileId= m.get("child_id").toString();
+				String innerfileId= m.get("CHILD_ID").toString();
 				EcmDocument innerDoc= documentService.getObjectById(getToken(), innerfileId);
 				Map<String,Object> attr=innerDoc.getAttributes();
 				if(status!=null&&status.equals(Constants.ARRANGE)) {
@@ -315,18 +315,18 @@ public class TransferController extends ControllerAbstract{
 		List<String> list = JSONUtils.stringToArray(argStr);
 //		String strWhere="'"+argStr+"'";//"'"+ String.join("','", list)+"'";
 		String strWhere="'"+ String.join("','", list)+"'";
-		String sql="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+		String sql="select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id in("+strWhere+") and b.name='irel_children' and (b.DESCRIPTION!='复用'  or b.DESCRIPTION is null) " + 
 				"union " + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
+				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
 				+ "and b.PARENT_ID in(" + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id in("+strWhere+")) and b.name='irel_children' and (b.DESCRIPTION!='复用'  or b.DESCRIPTION is null) ";
 //				+" union "
-//				+ " select child_id from ecm_relation where child_id in("+strWhere+") and name='irel_children' and (DESCRIPTION!='复用'  or DESCRIPTION is null) ";
+//				+ " select CHILD_ID from ecm_relation where CHILD_ID in("+strWhere+") and name='irel_children' and (DESCRIPTION!='复用'  or DESCRIPTION is null) ";
 		List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql);
 		for(Map<String,Object> childId : childrenId) {
-			String childidStr=(String) childId.get("child_id");
+			String childidStr=(String) childId.get("CHILD_ID");
 			try {
 				EcmDocument doc=new EcmDocument();
 				doc.setId(childidStr);

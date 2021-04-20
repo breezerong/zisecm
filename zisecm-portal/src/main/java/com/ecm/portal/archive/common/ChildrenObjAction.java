@@ -16,12 +16,12 @@ public class ChildrenObjAction {
 	 * @throws EcmException
 	 */
 	public static List<Map<String,Object>> getChildrenObjByIds(String token,String ids,IEcmObjectService<?> service) throws EcmException{
-		String sql="select child_id from (select b.child_id,b.order_index from ecm_document a,ecm_relation b where a.id=b.parent_id "
+		String sql="select CHILD_ID from (select b.CHILD_ID,b.order_index from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id in("+ids+") and b.name='irel_children' and (b.DESCRIPTION!='复用' or b.DESCRIPTION is null) " + 
 				"union " + 
-				"select b.child_id,b.order_index from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
+				"select b.CHILD_ID,b.order_index from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
 				+ "and b.PARENT_ID in(" + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id in("+ids+")) and b.name='irel_children' and (b.DESCRIPTION!='复用' or b.DESCRIPTION is null)) t order by t.order_index ";
 		List<Map<String,Object>> childrenIds= service.getMapList(token, sql);
 		return childrenIds;
@@ -35,7 +35,7 @@ public class ChildrenObjAction {
 	 * @throws EcmException 
 	 */
 	public static List<Map<String,Object>> getChildrenObjectById(String token,String id,IEcmObjectService<?> service) throws EcmException{
-		String sql="select child_id from ecm_relation where parent_id='"+id+"' and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null) order by order_index";
+		String sql="select CHILD_ID from ecm_relation where parent_id='"+id+"' and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null) order by order_index";
 		List<Map<String,Object>> childrenIds= service.getMapList(token, sql);
 		return childrenIds;
 	}
@@ -49,12 +49,12 @@ public class ChildrenObjAction {
 	 * @throws EcmException
 	 */
 	public static List<Map<String,Object>> getChildrenObjById(String token,String id,IEcmObjectService<?> service) throws EcmException{
-		String sql="select child_id from( select b.child_id,b.order_index from ecm_document a,ecm_relation b where a.id=b.parent_id "
+		String sql="select CHILD_ID from( select b.CHILD_ID,b.order_index from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id ='"+id+"' and b.name='irel_children' and (b.DESCRIPTION!='复用' or b.DESCRIPTION is null) " + 
 				" union " + 
-				"select b.child_id,b.order_index from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
+				"select b.CHILD_ID,b.order_index from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
 				+ "and b.PARENT_ID in(" + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id ='"+id+"') and b.name='irel_children' and (b.DESCRIPTION!='复用' or b.DESCRIPTION is null)) t order by t.order_index ";
 		List<Map<String,Object>> childrenIds= service.getMapList(token, sql);
 		return childrenIds;
@@ -73,7 +73,7 @@ public class ChildrenObjAction {
 				"						when C_SECURITY_LEVEL='普通商密' then 2 " + 
 				"						when C_SECURITY_LEVEL='受限'	then 3 " + 
 				"						when C_SECURITY_LEVEL='内部公开'  then 4 else 4 END as securite " + 
-				"from ecm_document where id in(select child_id from ecm_relation where parent_id='"+id+"' and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null))) t";
+				"from ecm_document where id in(select CHILD_ID from ecm_relation where parent_id='"+id+"' and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null))) t";
 		List<Map<String,Object>> securityIndex= service.getMapList(token, sql);
 		if(securityIndex!=null&&securityIndex.size()>0) {
 			return Security.getSecurity(securityIndex.get(0).get("SECURITYINDEX").toString());
@@ -95,7 +95,7 @@ public class ChildrenObjAction {
 				"						when C_RETENTION='30年' then 30" + 
 				"						when C_RETENTION='永久'	then 999 else 10 END as retention " + 
 				
-				"from ecm_document where id in(select child_id from ecm_relation where PARENT_ID='"+id+"' and name='irel_children' and  (DESCRIPTION!='复用' or DESCRIPTION is null)) ) t";
+				"from ecm_document where id in(select CHILD_ID from ecm_relation where PARENT_ID='"+id+"' and name='irel_children' and  (DESCRIPTION!='复用' or DESCRIPTION is null)) ) t";
 		List<Map<String,Object>> retention= service.getMapList(token, sql);
 		if(retention!=null&&retention.size()>0&&retention.get(0)!=null) {
 			return Retention.getRetention(retention.get(0).get("RETENTION").toString());
@@ -106,7 +106,7 @@ public class ChildrenObjAction {
 	public static String getMinDocDate(String token,String id,String column,IEcmObjectService<?> service) throws EcmException {
 		String sql="select  min(b.sdate) as MINSDATE from ecm_relation a, ("
 				+"select id,case when "+column+" is null then C_ARCHIVE_DATE else "+column+" end as SDATE from ecm_document" 
-				+") b where a.child_id=b.id and a.parent_id='"+id+"'";
+				+") b where a.CHILD_ID=b.id and a.parent_id='"+id+"'";
 		List<Map<String,Object>> retention= service.getMapList(token, sql);
 		if(retention!=null&&retention.size()>0&&retention.get(0)!=null) {
 			
@@ -118,7 +118,7 @@ public class ChildrenObjAction {
 	public static String getMaxDocDate(String token,String id,String column,IEcmObjectService<?> service) throws EcmException {
 		String sql="select  max(b.sdate) as MAXSDATE from ecm_relation a, ("
 				+"select id,case when "+column+" is null then C_ARCHIVE_DATE else "+column+" end as SDATE from ecm_document" 
-				+") b where a.child_id=b.id and a.parent_id='"+id+"'";
+				+") b where a.CHILD_ID=b.id and a.parent_id='"+id+"'";
 		List<Map<String,Object>> retention= service.getMapList(token, sql);
 		if(retention!=null&&retention.size()>0&&retention.get(0)!=null) {
 			

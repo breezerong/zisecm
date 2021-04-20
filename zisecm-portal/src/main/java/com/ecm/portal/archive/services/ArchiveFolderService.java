@@ -57,7 +57,7 @@ public class ArchiveFolderService extends DocumentService {
 		{
 			sql += " and ("+condition+")";
 		}
-		sql += " and type_name<>'卷盒'   and id not in(select b.CHILD_ID from ecm_document a,ecm_relation b,ecm_document c where b.NAME='irel_children'and a.ID=b.parent_id and c.ID=b.child_id and a.type_name<>'移交单' and c.folder_id='"+folderId+"') ";
+		sql += " and type_name<>'卷盒'   and id not in(select b.CHILD_ID from ecm_document a,ecm_relation b,ecm_document c where b.NAME='irel_children'and a.ID=b.parent_id and c.ID=b.CHILD_ID and a.type_name<>'移交单' and c.folder_id='"+folderId+"') ";
 		
 		if(!EcmStringUtils.isEmpty(orderBy))
 		{

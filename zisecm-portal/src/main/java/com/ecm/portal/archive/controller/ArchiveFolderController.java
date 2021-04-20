@@ -349,7 +349,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 		try {
 			List<Map<String, Object>>  list=new ArrayList<Map<String,Object>>();
 			if(!"".equals(args.get("childId").toString())) {
-				String sql = "select ID from ecm_document where C_ITEM_TYPE='案卷'  and id in (select parent_id from ecm_relation where child_id= '"+args.get("childId").toString()+"')";
+				String sql = "select ID from ecm_document where C_ITEM_TYPE='案卷'  and id in (select parent_id from ecm_relation where CHILD_ID= '"+args.get("childId").toString()+"')";
 				list = documentService.getMapList(getToken(), sql);
 				
 			}
@@ -489,13 +489,13 @@ public class ArchiveFolderController extends ControllerAbstract{
 			for(int i=0;list!=null&&i<list.size();i++) {
 				String boxId=list.get(i);
 				EcmDocument box= documentService.getObjectById(getToken(), boxId);
-				String sql1="select child_id from ecm_relation where parent_id='"+boxId+"' "
+				String sql1="select CHILD_ID from ecm_relation where parent_id='"+boxId+"' "
 						+ " and name='irel_children' and (DESCRIPTION!='复用'  or DESCRIPTION is null) ";
 				//第一层级
 				List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql1);
 				for(int j=0;childrenId!=null&&j<childrenId.size();j++) {
 					Map<String,Object> first= childrenId.get(j);
-					String childidStr=(String) first.get("child_id");
+					String childidStr=(String) first.get("CHILD_ID");
 					EcmDocument doc= documentService.getObjectById(getToken(), childidStr);
 					
 					Map<String,Object> attr=doc.getAttributes();
@@ -558,14 +558,14 @@ public class ArchiveFolderController extends ControllerAbstract{
 						documentService.updateObject(getToken(), box, null);
 					}
 					
-					String sql2="select child_id from ecm_relation where parent_id='"+childidStr+"' "
+					String sql2="select CHILD_ID from ecm_relation where parent_id='"+childidStr+"' "
 							+ " and name='irel_children' and (DESCRIPTION!='复用'  or DESCRIPTION is null) ";
-//					String sql2="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+//					String sql2="select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 //							+ "and b.parent_id ='"+childidStr+"' and b.name='irel_children' and (b.DESCRIPTION!='复用'  or b.DESCRIPTION is null) " ;//第二层
 					List<Map<String,Object>> innerFileIds= documentService.getMapList(getToken(), sql2);
 					for(int x=0;innerFileIds!=null&&x<innerFileIds.size();x++) {
 						Map<String,Object> m= innerFileIds.get(x);
-						String innerfileId= m.get("child_id").toString();
+						String innerfileId= m.get("CHILD_ID").toString();
 						EcmDocument innerDoc= documentService.getObjectById(getToken(), innerfileId);
 						Map<String,Object> attrInner=innerDoc.getAttributes();
 
@@ -647,13 +647,13 @@ public class ArchiveFolderController extends ControllerAbstract{
 					return mp;
 				}else {
 					if(doc.getSubType()!=null&&"盒".equals(doc.getSubType())) {
-						String sql="select child_id from ecm_relation where parent_id='"+boxId+"' "
+						String sql="select CHILD_ID from ecm_relation where parent_id='"+boxId+"' "
 								+ "and name='irel_children' and (DESCRIPTION!='复用'  or DESCRIPTION is null) order by ORDER_INDEX";
 						List<String> archiveNumbers=new ArrayList<String>();
 						
 						List<Map<String,Object>> volumeIds= documentService.getMapList(getToken(), sql);
 						for(int j=0;volumeIds!=null&&j<volumeIds.size();j++) {
-							String volumeId=volumeIds.get(j).get("child_id").toString();
+							String volumeId=volumeIds.get(j).get("CHILD_ID").toString();
 							EcmDocument volumeDoc=documentService.getObjectById(getToken(), volumeId);
 							archiveNumbers.add(
 								volumeDoc.getAttributeValue("C_ARCHIVE_NUM").toString());
@@ -663,7 +663,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 							}
 							
 							String sqlSumPage="select sum(C_PAGE_COUNT) as PAGECOUNT from ecm_document "
-									+ "where id in(select child_id from ecm_relation where parent_id='"+volumeId+"' "
+									+ "where id in(select CHILD_ID from ecm_relation where parent_id='"+volumeId+"' "
 											+ " and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null))";
 							List<Map<String, Object>> pages= documentService.getMapList(getToken(),sqlSumPage);
 							if(pages!=null&&pages.size()>0&&pages.get(0)!=null) {
@@ -754,7 +754,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 					}
 
 					String sqlSumPage="select sum(C_PAGE_COUNT) as PAGECOUNT from ecm_document "
-							+ "where id in(select child_id from ecm_relation where parent_id='"+boxId+"' "
+							+ "where id in(select CHILD_ID from ecm_relation where parent_id='"+boxId+"' "
 									+ " and name='irel_children' and (DESCRIPTION!='复用' or DESCRIPTION is null))";
 					List<Map<String, Object>> pages= documentService.getMapList(getToken(),sqlSumPage);
 					if(pages!=null&&pages.size()>0&&pages.get(0)!=null) {
@@ -861,7 +861,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 								doc.setCoding(coding);
 								List<Map<String,Object>> childrenIds= ChildrenObjAction.getChildrenObjById(getToken(), boxId, documentService);
 								for(Map<String,Object> childId : childrenIds) {
-									String childidStr=(String) childId.get("child_id");
+									String childidStr=(String) childId.get("CHILD_ID");
 									EcmDocument childDoc= documentService.getObjectById(getToken(), childidStr);
 									childDoc.addAttribute("C_ARCHIVE_NUM", coding);
 									
@@ -884,7 +884,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 					}else if(doc.getSubType() != null && "盒".equals(doc.getSubType())) {
 						List<Map<String,Object>> childrenIds= ChildrenObjAction.getChildrenObjectById(getToken(), boxId, documentService);
 						for(Map<String,Object> childId : childrenIds) {
-							String childidStr=(String) childId.get("child_id");
+							String childidStr=(String) childId.get("CHILD_ID");
 							EcmDocument childDoc= documentService.getObjectById(getToken(), childidStr);
 							if(childDoc.getAttributeValue("C_ARCHIVE_NUM")!=null&&
 									!"".equals(childDoc.getAttributeValue("C_ARCHIVE_NUM").toString())
@@ -967,12 +967,12 @@ public class ArchiveFolderController extends ControllerAbstract{
 		List<String> list = JSONUtils.stringToArray(argStr);
 //		String strWhere="'"+argStr+"'";//.replaceAll("\"", "'");//"'"+ String.join("','", list)+"'";
 		String strWhere="'"+ String.join("','", list)+"'";
-		String sql="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+		String sql="select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.id in("+strWhere+") and b.name='irel_children' and (b.DESCRIPTION!='复用' or b.DESCRIPTION is null) "; 
 				
 		List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql);
 		for(Map<String,Object> childId : childrenId) {
-			String childidStr=(String) childId.get("child_id");
+			String childidStr=(String) childId.get("CHILD_ID");
 			try {
 				documentService.deleteObject(getToken(),childidStr);
 			}catch(NullPointerException nu) {
@@ -1008,12 +1008,12 @@ public class ArchiveFolderController extends ControllerAbstract{
 		List<String> list = JSONUtils.stringToArray(argStr);
 //		String strWhere="'"+argStr+"'";//.replaceAll("\"", "'");//"'"+ String.join("','", list)+"'";
 		String strWhere="'"+ String.join("','", list)+"'";
-		String sql="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+		String sql="select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id in("+strWhere+") and b.name='irel_children' " + 
 				"union " + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
+				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
 				+ "and b.PARENT_ID in(" + 
-				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 				+ "and b.parent_id in("+strWhere+")) and b.name='irel_children' "
 				+" union "
 				+ " select parent_id from ecm_relation where parent_id in("+strWhere+") and name='irel_children' ";
@@ -1021,7 +1021,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 		List<Map<String,Object>> childrenId= documentService.getMapList(getToken(), sql);
 		if(childrenId != null) {
 			for(Map<String,Object> childId : childrenId) {
-				String childidStr=(String) childId.get("child_id");
+				String childidStr=(String) childId.get("CHILD_ID");
 				try {
 					documentService.deleteObject(getToken(),childidStr);
 					logger.info("delete document:"+childidStr);
@@ -1040,17 +1040,17 @@ public class ArchiveFolderController extends ControllerAbstract{
 		long cost = System.currentTimeMillis() - start;
 		logger.info("delDocumentAndRelation:"+cost);
 		start = System.currentTimeMillis();
-//		String sqlAll="select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+//		String sqlAll="select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 //				+ "and b.parent_id in("+strWhere+") " + 
 //				"union " + 
-//				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
+//				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.PARENT_ID "
 //				+ "and b.PARENT_ID in(" + 
-//				"select b.child_id from ecm_document a,ecm_relation b where a.id=b.parent_id "
+//				"select b.CHILD_ID from ecm_document a,ecm_relation b where a.id=b.parent_id "
 //				+ "and b.parent_id in("+strWhere+")) "
 //				+" union "
-//				+ " select child_id from ecm_relation where child_id in("+strWhere+")";
+//				+ " select CHILD_ID from ecm_relation where CHILD_ID in("+strWhere+")";
 //		
-//		String strSql="select id from ecm_relation where child_id in("+sqlAll+")";
+//		String strSql="select id from ecm_relation where CHILD_ID in("+sqlAll+")";
 //		logger.info("delDocumentAndRelation sqlAll:"+sqlAll);
 //		List<Map<String,Object>> relationIds=relationService.getMapList(getToken(), strSql);
 //		if(relationIds!=null) {

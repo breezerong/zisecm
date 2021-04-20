@@ -26,7 +26,7 @@ public class ArchiveRelationService  {
 	private EcmRelationMapper ecmRelation;
 	
 	public EcmRelation getObjectById(String parentId,String childId) {
-		List<EcmRelation> list= ecmRelation.selectByCondition(" parent_id='"+parentId+"' and child_id='"+childId+"'");
+		List<EcmRelation> list= ecmRelation.selectByCondition(" parent_id='"+parentId+"' and CHILD_ID='"+childId+"'");
 		if(list!=null&&list.size()>0) {
 			return list.get(0);
 		}
@@ -37,7 +37,7 @@ public class ArchiveRelationService  {
 	public boolean deleteArchiveRelation(String archiveId,String relationName,List<String> fileIds) throws Exception {
 		String fileWhere =org.apache.commons.lang.StringUtils.join(fileIds.toArray(), "','");
 		String sql="delete from ecm_relation where name='"+relationName+"' and parent_id='"+archiveId
-				+"' and child_id in('"+fileWhere+"')";
+				+"' and CHILD_ID in('"+fileWhere+"')";
 		try {
 			ecmDocument.executeSQL(sql);
 		}catch (Exception e) {
@@ -141,7 +141,7 @@ public class ArchiveRelationService  {
 	 * @throws EcmException 
 	 */
 	public boolean moveUp(String token,String parentId,String childId) throws Exception {
-		String sql="select * from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"' and child_id='"+childId+"'";
+		String sql="select * from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"' and CHILD_ID='"+childId+"'";
 		List<Map<String, Object>> relations= relationService.getMapList(token, sql);
 		if(relations!=null&&relations.size()>0) {
 			Map<String, Object> relation=relations.get(0);
@@ -188,7 +188,7 @@ public class ArchiveRelationService  {
 		}
 		
 		
-		String sql="select * from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"' and child_id='"+childId+"'";
+		String sql="select * from ecm_relation where NAME='irel_children' and parent_id='"+parentId+"' and CHILD_ID='"+childId+"'";
 		List<Map<String, Object>> relations= relationService.getMapList(token, sql);
 		if(relations!=null&&relations.size()>0) {
 			Map<String, Object> relation=relations.get(0);

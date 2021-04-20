@@ -283,7 +283,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 			oldEn.setGroupId("");
 			ecmUserMapper.updateByPrimaryKey(oldEn);
 		}
-		String sqlStr = "delete from ecm_group_item where parent_id='"+g.getId() + "' and child_id='"
+		String sqlStr = "delete from ecm_group_item where parent_id='"+g.getId() + "' and CHILD_ID='"
 				+en.getId()+"' and ITEM_TYPE='2'";
 		ecmGroupItemMapper.executeSql(sqlStr);
 		
@@ -299,18 +299,18 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		//删除角色下所有用户, 只能删除当前角色添加的用户
 		String sqlStr = "delete from ecm_group_user where group_id='"+roleId + "' and user_id='"
-				+userId+"' and exists(select ID from ecm_group_item where parent_id='"+roleId + "' and child_id='" + 
+				+userId+"' and exists(select ID from ecm_group_item where parent_id='"+roleId + "' and CHILD_ID='" + 
 						userId + "' and ITEM_TYPE='2')";
 		ecmGroupUserMapper.executeSql(sqlStr);
 		
-		sqlStr = "select ID from ecm_group_item where parent_id='"+roleId + "' and child_id='"
+		sqlStr = "select ID from ecm_group_item where parent_id='"+roleId + "' and CHILD_ID='"
 				+userId+"' and ITEM_TYPE='2'";
 		
 		List<Map<String, Object>>  list = ecmGroupItemMapper.executeSql(sqlStr);
 		//存在本角色添加的用户
 		if(list!=null && list.size()>0) {
 			//删除本角色添加的用户
-			sqlStr = "delete from ecm_group_item where parent_id='"+roleId + "' and child_id='"
+			sqlStr = "delete from ecm_group_item where parent_id='"+roleId + "' and CHILD_ID='"
 					+userId+"' and ITEM_TYPE='2'";
 			ecmGroupItemMapper.executeSql(sqlStr);
 			//删除引用的角色中用户
@@ -328,7 +328,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 		// 移除所有角色相关的用户
 		List<EcmUser> list = getAllUser(token,childId);
 		for(EcmUser user: list) {
-			String sqlStr = "select ID from ecm_group_item where parent_id='"+parentId + "' and child_id='"
+			String sqlStr = "select ID from ecm_group_item where parent_id='"+parentId + "' and CHILD_ID='"
 					+user.getId()+"' and ITEM_TYPE='2'";
 			
 			List<Map<String, Object>>  list2 = ecmGroupItemMapper.executeSql(sqlStr);
@@ -342,7 +342,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 			}
 		}
 		//移除角色
-		String sqlStr = "delete from ecm_group_item where parent_id='"+parentId + "' and child_id='"
+		String sqlStr = "delete from ecm_group_item where parent_id='"+parentId + "' and CHILD_ID='"
 					+childId+"' and ITEM_TYPE='1'";
 			ecmGroupItemMapper.executeSql(sqlStr);
 		return true;
@@ -392,7 +392,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 	}
 	
 	private boolean existsUser(String roleId, String userId) {
-		String sql = "select PARENT_ID from  ecm_group_item  where CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(roleId)+"' and child_id='"  + 
+		String sql = "select PARENT_ID from  ecm_group_item  where CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(roleId)+"' and CHILD_ID='"  + 
 			  userId + "' and item_type='2'";
 		List<Map<String, Object>>  list = ecmGroupItemMapper.executeSql(sql);
 		if(list!=null && list.size()>0) {

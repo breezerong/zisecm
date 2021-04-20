@@ -2335,13 +2335,13 @@ public class EcmDcController extends ControllerAbstract {
 		for (String docId : list) {
 			EcmDocument doc = documentService.getObjectById(getToken(), docId);
 			if (doc.getTypeName().equals("卷盒")) {
-				String sql1 = "select child_id from ecm_relation where parent_id ='" + docId
+				String sql1 = "select CHILD_ID from ecm_relation where parent_id ='" + docId
 						+ "' and name='irel_children'";
 				List<Map<String, Object>> childrenId = documentService.getMapList(getToken(), sql1);
 				int count = 0;
 				for (int i = 0; childrenId != null && i < childrenId.size(); i++) {
 					Map<String, Object> first = childrenId.get(i);
-					EcmDocument childDoc = documentService.getObjectById(getToken(), (String) first.get("child_id"));
+					EcmDocument childDoc = documentService.getObjectById(getToken(), (String) first.get("CHILD_ID"));
 					if (childDoc.getStatus().equals("注销")) {
 						count = count + 1;
 					}
@@ -2357,7 +2357,7 @@ public class EcmDcController extends ControllerAbstract {
 					for (int i = 0; childrenId != null && i < childrenId.size(); i++) {
 						Map<String, Object> first = childrenId.get(i);
 						EcmDocument childDoc = documentService.getObjectById(getToken(),
-								(String) first.get("child_id"));
+								(String) first.get("CHILD_ID"));
 						Map<String, Object> childAtt = childDoc.getAttributes();
 						String folderPathId = folderPathService.getArrangeFolderId(getToken(), childAtt);
 						childDoc.setFolderId(folderPathId);

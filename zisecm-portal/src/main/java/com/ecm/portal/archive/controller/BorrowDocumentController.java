@@ -50,7 +50,7 @@ public class BorrowDocumentController extends ControllerAbstract {
 				documentService.updateObject(getToken(), doc, null);
 				
 				String strSql="select count(*) as TOTAL from ecm_document where C_STORE_STATUS='借出'  and id in("
-						+ " select child_id from ecm_relation where parent_id ='"+pid+"')";
+						+ " select CHILD_ID from ecm_relation where parent_id ='"+pid+"')";
 				List<Map<String,Object>> mps= documentService.getMapList(getToken(), strSql);
 				if(mps!=null&&mps.size()>0) {
 					int total= Integer.parseInt(mps.get(0).get("TOTAL").toString());
@@ -100,7 +100,7 @@ public class BorrowDocumentController extends ControllerAbstract {
 				documentService.updateObject(getToken(), doc, null);
 				
 				String strSql="select count(*) as TOTAL from ecm_document where C_STORE_STATUS='在库' and id in("
-						+ " select child_id from ecm_relation where parent_id ='"+pid+"')";
+						+ " select CHILD_ID from ecm_relation where parent_id ='"+pid+"')";
 				List<Map<String,Object>> mps= documentService.getMapList(getToken(), strSql);
 				if(mps!=null&&mps.size()>0) {
 					int total= Integer.parseInt(mps.get(0).get("TOTAL").toString());
@@ -139,14 +139,14 @@ public class BorrowDocumentController extends ControllerAbstract {
 		List<String> orderIds=JSONUtils.stringToArray(argStr);
 		String strWhere="'"+String.join("','", orderIds)+"'";
 		
-		String strSql="select child_id from ecm_relation where parent_id in("+strWhere+") and name='irel_borrow'";
+		String strSql="select CHILD_ID from ecm_relation where parent_id in("+strWhere+") and name='irel_borrow'";
 		Map<String, Object> mp = new HashMap<String, Object>();
 		
 		try {
 			List<Map<String, Object>> childIds = documentService.getMapList(getToken(), strSql);
 		
 			for(Map<String,Object> m:childIds) {
-				EcmDocument doc= documentService.getObjectById(getToken(), m.get("child_id").toString());
+				EcmDocument doc= documentService.getObjectById(getToken(), m.get("CHILD_ID").toString());
 				doc.setStatus("利用");
 				doc.addAttribute("C_STORE_STATUS", "在库");
 				documentService.updateObject(getToken(), doc, null);
@@ -219,14 +219,14 @@ public class BorrowDocumentController extends ControllerAbstract {
 		List<String> orderIds=JSONUtils.stringToArray(argStr);
 		String strWhere="'"+String.join("','", orderIds)+"'";
 		
-		String strSql="select child_id from ecm_relation where parent_id in("+strWhere+") and name='irel_borrow'";
+		String strSql="select CHILD_ID from ecm_relation where parent_id in("+strWhere+") and name='irel_borrow'";
 		Map<String, Object> mp = new HashMap<String, Object>();
 		
 		try {
 			List<Map<String, Object>> childIds = documentService.getMapList(getToken(), strSql);
 		
 			for(Map<String,Object> m:childIds) {
-				EcmDocument doc= documentService.getObjectById(getToken(), m.get("child_id").toString());
+				EcmDocument doc= documentService.getObjectById(getToken(), m.get("CHILD_ID").toString());
 //				doc.setStatus("待入库");
 				doc.addAttribute("C_STORE_STATUS", "借出");
 				documentService.updateObject(getToken(), doc, null);

@@ -321,7 +321,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		en.setGroupName(g.getName());
 		ecmUserMapper.updateByPrimaryKey(en);
 		String sqlStr = "update ecm_group_item set parent_id='" + en.getGroupId() + "' where parent_id='"
-				+ String.valueOf(oldGroupId) + "' and child_id='" + en.getId() + "' and ITEM_TYPE='2'";
+				+ String.valueOf(oldGroupId) + "' and CHILD_ID='" + en.getId() + "' and ITEM_TYPE='2'";
 		ecmGroupItemMapper.executeSql(sqlStr);
 
 		sqlStr = "delete from ecm_group_user where group_id='" + en.getGroupId() + "' and user_id='" + en.getId() + "'";
@@ -394,7 +394,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token, serviceCode + ObjectPermission.DELETE, systemPermission);
 		ecmUserMapper.deleteByPrimaryKey(((EcmUser) en).getId());
-		String sqlStr = "delete from ecm_group_item where child_id='" + ((EcmUser) en).getId() + "'";
+		String sqlStr = "delete from ecm_group_item where CHILD_ID='" + ((EcmUser) en).getId() + "'";
 		ecmGroupItemMapper.executeSql(sqlStr);
 		return true;
 	}
@@ -695,7 +695,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token, serviceCode + ObjectPermission.DELETE, systemPermission);
 		ecmUserMapper.deleteByPrimaryKey(id);
-		String sqlStr = "delete from ecm_group_item where child_id='" + DBFactory.getDBConn().getDBUtils().getString(id)
+		String sqlStr = "delete from ecm_group_item where CHILD_ID='" + DBFactory.getDBConn().getDBUtils().getString(id)
 				+ "'";
 		ecmGroupItemMapper.executeSql(sqlStr);
 		return true;
