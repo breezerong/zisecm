@@ -1,5 +1,6 @@
 package com.ecm.icore.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public interface IAclService {
 	 * @param expireDate
 	 * @throws AccessDeniedException 
 	 */
-	void grantUsers(String token, String aclId, String[] targetNames, int permission, Date expireDate) throws AccessDeniedException;
+	void grantUsers(String token, String aclId, ArrayList<String> targetNames, int permission, Date expireDate) throws AccessDeniedException;
 
 	/**
 	 * 组授权

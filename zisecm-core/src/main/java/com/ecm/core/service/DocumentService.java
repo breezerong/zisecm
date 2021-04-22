@@ -1299,7 +1299,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		return grantUser(token, doc, targetName, permission, expireDate, newAcl);
 	}
 	
-	public String grantUsers(String token, String id, String[] targetNames, int permission, Date expireDate)
+	public String grantUsers(String token, String id, ArrayList<String> targetNames, int permission, Date expireDate)
 			throws EcmException, AccessDeniedException, NoPermissionException {
 		EcmDocument doc = getObjectById(token, id);
 		boolean newAcl=needNewAcl(token,id);
@@ -1373,7 +1373,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public String grantUsers(String token, EcmDocument doc, String[] targetNames, int permission, Date expireDate,
+	public String grantUsers(String token, EcmDocument doc, ArrayList<String> targetNames, int permission, Date expireDate,
 			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
 		String aclName = "";
 		if (doc != null) {

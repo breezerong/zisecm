@@ -1,5 +1,6 @@
 package com.ecm.core.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -143,9 +144,9 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	}
 
 	@Override
-	public void grantUsers(String token, String aclId,String[] targetNames,int permission,Date expireDate) throws AccessDeniedException {
-		for(int i=0;targetNames!=null&&i<targetNames.length;i++) {
-			grant( token,  aclId, targetNames[i],PermissionContext.USER_TARGET_TYPE,  permission, expireDate);
+	public void grantUsers(String token, String aclId,ArrayList<String> targetNames,int permission,Date expireDate) throws AccessDeniedException {
+		for(int i=0;i<targetNames.size();i++) {
+			grant( token,  aclId, targetNames.get(i),PermissionContext.USER_TARGET_TYPE,  permission, expireDate);
 		}
 	}
 	

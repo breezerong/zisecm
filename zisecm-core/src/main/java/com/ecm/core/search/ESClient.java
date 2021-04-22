@@ -54,7 +54,13 @@ public class ESClient {
     	RestHighLevelClient client = null;
     	HttpHost[] hh = new HttpHost[indexServer.length];
     	for(int i=0;i<indexServer.length;i++) {
-    		hh[i] = new HttpHost(indexServer[i], indexPort[i], httpPolicy);
+    		try {
+    			hh[i] = new HttpHost(indexServer[i], indexPort[i], httpPolicy);
+    		}catch (Exception e) {
+				// TODO: handle exception
+    			hh[i] = new HttpHost(indexServer[i], indexPort[0], httpPolicy);
+			}
+    		
     	}
     	if(esUserName != null) {
 	    	/** 用户认证对象 */

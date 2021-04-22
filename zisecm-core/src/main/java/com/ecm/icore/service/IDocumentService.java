@@ -1,6 +1,7 @@
 package com.ecm.icore.service;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +145,7 @@ public interface IDocumentService {
 	 * @throws AccessDeniedException 
 	 * @throws NoPermissionException 
 	 */
-	String grantUsers(String token, EcmDocument doc, String[] targetNames, int permission, Date expireDate, boolean newAcl)
+	String grantUsers(String token, EcmDocument doc, ArrayList<String> targetNames, int permission, Date expireDate, boolean newAcl)
 			throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
 	 * 移除用户权限
