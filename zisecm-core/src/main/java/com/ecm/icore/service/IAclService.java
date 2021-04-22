@@ -67,6 +67,16 @@ public interface IAclService {
 	 * @throws AccessDeniedException 
 	 */
 	void grantUser(String token, String aclId, String targetName, int permission, Date expireDate) throws AccessDeniedException;
+	/**
+	 * 用户授权
+	 * @param token
+	 * @param aclId
+	 * @param targetName
+	 * @param permission
+	 * @param expireDate
+	 * @throws AccessDeniedException 
+	 */
+	void grantUsers(String token, String aclId, String[] targetNames, int permission, Date expireDate) throws AccessDeniedException;
 
 	/**
 	 * 组授权

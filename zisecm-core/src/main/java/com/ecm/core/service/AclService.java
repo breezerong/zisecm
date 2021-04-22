@@ -141,6 +141,13 @@ public class AclService extends EcmObjectService<EcmAcl> implements IAclService 
 	public void grantUser(String token, String aclId,String targetName,int permission,Date expireDate) throws AccessDeniedException {
 		grant( token,  aclId, targetName,PermissionContext.USER_TARGET_TYPE,  permission, expireDate);
 	}
+
+	@Override
+	public void grantUsers(String token, String aclId,String[] targetNames,int permission,Date expireDate) throws AccessDeniedException {
+		for(int i=0;targetNames!=null&&i<targetNames.length;i++) {
+			grant( token,  aclId, targetNames[i],PermissionContext.USER_TARGET_TYPE,  permission, expireDate);
+		}
+	}
 	
 	@Override
 	public void grantGroup(String token, String aclId,String targetName,int permission,Date expireDate) throws AccessDeniedException {

@@ -1290,6 +1290,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		EcmDocument doc = getObjectById(token, id);
 		return grantUser(token, doc, targetName, permission, expireDate, newAcl);
 	}
+
 	
 	public String grantUser(String token, String id, String targetName, int permission, Date expireDate)
 			throws EcmException, AccessDeniedException, NoPermissionException {
@@ -1297,6 +1298,14 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		boolean newAcl=needNewAcl(token,id);
 		return grantUser(token, doc, targetName, permission, expireDate, newAcl);
 	}
+	
+	public String grantUsers(String token, String id, String[] targetNames, int permission, Date expireDate)
+			throws EcmException, AccessDeniedException, NoPermissionException {
+		EcmDocument doc = getObjectById(token, id);
+		boolean newAcl=needNewAcl(token,id);
+		return grantUsers(token, doc, targetNames, permission, expireDate, newAcl);
+	}
+
 	
 	private boolean needNewAcl(String token,String docId) {
 		try {
@@ -1354,6 +1363,49 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				acl.setName("ecm_" + acl.getId());
 				aclService.newObject(token, acl);
 				aclService.grantUser(token, acl.getId(), targetName, permission, expireDate);
+				updateAclName(token, doc.getId(), acl.getName());
+				aclName = acl.getName();
+			}
+			newAudit(token, null, AuditContext.CHANGE_PERMIT, doc.getId(), null, aclName);
+		}
+		return aclName;
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public String grantUsers(String token, EcmDocument doc, String[] targetNames, int permission, Date expireDate,
+			boolean newAcl) throws EcmException, AccessDeniedException, NoPermissionException {
+		String aclName = "";
+		if (doc != null) {
+			if (getPermit(token, doc.getId()) < ObjectPermission.PEMISSION) {
+				throw new NoPermissionException("User " + getSession(token).getCurrentUser().getUserName()
+						+ " has no right to change permission:" + doc.getId());
+			}
+			aclName = doc.getAclName();
+			if (!StringUtils.isEmpty(aclName)) {
+				EcmAcl acl = aclService.getObjectByName(token, aclName);
+				if (acl != null) {
+					if (newAcl) {
+						acl = aclService.copy(token, acl, null, doc.getId());
+						updateAclName(token, doc.getId(), acl.getName());
+					}
+					aclService.grantUsers(token, acl.getId(), targetNames, permission, expireDate);
+					aclName = acl.getName();
+				} else {
+					acl = new EcmAcl();
+					acl.createId();
+					acl.setName("ecm_" + acl.getId());
+					aclService.newObject(token, acl);
+					updateAclName(token, doc.getId(), acl.getName());
+					aclService.grantUsers(token, acl.getId(), targetNames, permission, expireDate);
+					aclName = acl.getName();
+				}
+			} else {
+				EcmAcl acl = new EcmAcl();
+				acl.createId();
+				acl.setName("ecm_" + acl.getId());
+				aclService.newObject(token, acl);
+				aclService.grantUsers(token, acl.getId(), targetNames, permission, expireDate);
 				updateAclName(token, doc.getId(), acl.getName());
 				aclName = acl.getName();
 			}

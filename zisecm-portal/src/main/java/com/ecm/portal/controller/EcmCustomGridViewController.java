@@ -60,7 +60,7 @@ public class EcmCustomGridViewController extends ControllerAbstract {
 	
 	private EcmGridView getGridView(String gridName) {
 		EcmGridView gv = CacheManagerOper.getEcmGridViews().get(gridName);
-		if(gv==null) {
+		if(gv==null && !"".equals(gridName)) {
 			try {
 				gv = gridViewService.getObjectByName(getToken(), gridName);
 				List<EcmGridViewItem> itemlist =itemService.getEcmCustomGridViewInfo(getToken(), gv.getId());
@@ -83,8 +83,13 @@ public class EcmCustomGridViewController extends ControllerAbstract {
 		String gridId=args.get("gridId")!=null?args.get("gridId").toString():"";
 		String lang = args.get("lang").toString();
 		EcmGridView gv = getGridView(gridName);
-		List<EcmGridViewItem> list = gv.getGridViewItems(lang);
 		Map<String, Object> mp = new HashMap<String, Object>();
+		if(null==gv) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", "查询失败！");
+			return mp;
+		}
+		List<EcmGridViewItem> list = gv.getGridViewItems(lang);
 		try {
 			List<EcmGridViewItem> cItems=new ArrayList<EcmGridViewItem>();
 			if("".equals(gridId)) {

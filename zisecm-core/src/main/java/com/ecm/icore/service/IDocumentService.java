@@ -133,6 +133,20 @@ public interface IDocumentService {
 	String grantUser(String token, EcmDocument doc, String targetName, int permission, Date expireDate, boolean newAcl)
 			throws EcmException, AccessDeniedException, NoPermissionException;
 	/**
+	 * 根据文档对象添加用户权限
+	 * @param token
+	 * @param doc
+	 * @param targetName
+	 * @param permission
+	 * @param expireDate
+	 * @param newAcl 是否新建ACL
+	 * @throws EcmException
+	 * @throws AccessDeniedException 
+	 * @throws NoPermissionException 
+	 */
+	String grantUsers(String token, EcmDocument doc, String[] targetNames, int permission, Date expireDate, boolean newAcl)
+			throws EcmException, AccessDeniedException, NoPermissionException;
+	/**
 	 * 移除用户权限
 	 * @param token
 	 * @param id 文档ID
