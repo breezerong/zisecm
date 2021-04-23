@@ -402,7 +402,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public String newObject(String token, Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token, serviceCode + ObjectPermission.WRITE_ATTRIBUTE, systemPermission);
-		((EcmUser) en).setPassword(SecureUtils.shaEncode(((EcmUser) en).getPassword()));
+		((EcmUser) en).setPassword(SecureUtils.md5Encode(((EcmUser) en).getPassword()));
 		EcmUser u = (EcmUser) en;
 		if (u.getId() == null || "".equals(u.getId())) {
 			((EcmUser) en).createId();
