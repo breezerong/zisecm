@@ -63,7 +63,7 @@
     select 
     <include refid="Base_Column_List" />
     from ecm_user
-    where LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
+    where LOGIN_NAME = #{loginName,jdbcType=VARCHAR} or UPPER(LOGIN_NAME)  =UPPER(#{loginName,jdbcType=VARCHAR}) 
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from ecm_user
