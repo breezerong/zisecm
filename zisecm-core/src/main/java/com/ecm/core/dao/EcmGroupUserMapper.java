@@ -28,4 +28,7 @@ public interface EcmGroupUserMapper {
     int updateByPrimaryKey(EcmGroupUser record);
     
     List<Map<String, Object>> executeSql(@Param(value="sqlStr") String sqlStr);
+    
+    int  selectCountByUserAndRole(@Param(value="roleName")String roleName,@Param(value="userName")String userName);
+    int  selectCountByUserAndRoles(@Param(value="roleName")String roleName,@Param(value="userName")String userName);
 }
