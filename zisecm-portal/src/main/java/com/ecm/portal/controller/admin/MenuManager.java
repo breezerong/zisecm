@@ -116,7 +116,7 @@ public class MenuManager extends ControllerAbstract {
 	@RequestMapping(value = "/admin/getMenuItemWithRole", method = RequestMethod.POST)
 	public Map<String, Object> getMenuItemWithRole(@RequestBody String argStr) {
 		EcmMenu menu = new EcmMenu();
-		List<String> menuList = new ArrayList<>();
+		List<EcmMenuItem> menuList = new ArrayList<>();
 		List<EcmMenuItem> subList = new ArrayList<>();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
@@ -128,10 +128,10 @@ public class MenuManager extends ControllerAbstract {
 				subList = menu.getMenuItems().get(i).getSubmenus();
 				if(subList.size()>0) {
 					for(int j=0; j<subList.size(); j++) {
-						menuList.add(subList.get(j).getName());
+						menuList.add(subList.get(j));
 					}
 				}else {
-					menuList.add(menu.getMenuItems().get(i).getName());
+					menuList.add(menu.getMenuItems().get(i));
 				}
 			}
 			mp.put("data", menuList);
