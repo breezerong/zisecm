@@ -229,7 +229,6 @@ public class UserController extends ControllerAbstract{
 	@RequestMapping(value = "/user/UaGSignImage", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> UaGSignImage(@RequestParam("uploadFile") MultipartFile[] uploadFileList, HttpServletResponse response) {
-		EcmUser en = new EcmUser();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		
 		try {
@@ -237,6 +236,7 @@ public class UserController extends ControllerAbstract{
 			String fileName = null;
 			String userName = null;
 			String id = null;
+			String name = null;
 			
 			for(int i=0; i<uploadFileList.length; i++) {
 				if(uploadFileList[i]!=null) {
@@ -252,7 +252,7 @@ public class UserController extends ControllerAbstract{
 					}
 				}
 				
-				String sqlByUserName = "select * from ecm_user where NAME = '"+ userName +"'";
+				String sqlByUserName = "select * from ecm_user where LOGIN_NAME = '"+ userName +"'";
 				
 				id = (String) documentService.getMapList(getToken(), sqlByUserName).get(0).get("ID");
 				
@@ -260,12 +260,15 @@ public class UserController extends ControllerAbstract{
 				if(instream!=null) {
 					instream.close();
 				}
-			      
+				
+				String sqlSearchSign = "select * from ecm_document ed where NAME = '"+ userName +"' and FOLDER_ID = 'b7ae6823040a4dcbbf42ed1bc73ff24d'";
+				name = (String) documentService.getMapList(getToken(), sqlSearchSign).get(0).get("NAME");
+			    
+				if(name.equals(null)) {
+					execAddDocument(uploadFileList[i], "b7ae6823040a4dcbbf42ed1bc73ff24d");
+				}
+				mp.put("code", ActionContext.SUCESS);
 			}
-//			if (uploadFileList != null&&uploadFileList.length>0) {
-//				execAddDocument(uploadFileList, "b7ae6823040a4dcbbf42ed1bc73ff24d");
-//				mp.put("code", ActionContext.SUCESS);
-//			}
 		} catch (Exception e) {
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
@@ -358,32 +361,29 @@ public class UserController extends ControllerAbstract{
 		return mp;
 	}
 	
-	public void execAddDocument(MultipartFile[] uploadFile,String folderId) throws Exception {
-		
-		for (MultipartFile multipartFile : uploadFile) {
-			EcmContent en = null;
-			EcmDocument doc = new EcmDocument();
-		
-			EcmFolder folder= folderService.getObjectById(getToken(), folderId);
-			doc.setAclName(folder.getAclName());
-		
-			doc.setFolderId(folderId);
-			String name = multipartFile.getOriginalFilename();
-			doc.setName(name.substring(0,name.lastIndexOf(".")));
-			doc.setTypeName("签名照片");
+	public void execAddDocument(MultipartFile uploadFile,String folderId) throws Exception {
+		EcmContent en = null;
+		EcmDocument doc = new EcmDocument();
+	
+		EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+		doc.setAclName(folder.getAclName());
+	
+		doc.setFolderId(folderId);
+		String name = uploadFile.getOriginalFilename();
+		doc.setName(name.substring(0,name.lastIndexOf(".")));
+		doc.setTypeName("签名照片");
 
-			en = new EcmContent();
-			en.setName(multipartFile.getOriginalFilename());
-			en.setContentSize(multipartFile.getSize());
-			en.setFormatName(FileUtils.getExtention(multipartFile.getOriginalFilename()));
-			en.setInputStream(multipartFile.getInputStream());	
-			
-			if(doc.getStatus() != null) {
-				documentService.updateObject(getToken(), doc, en);
-			}else {
-				doc.setStatus("新建");
-				documentService.newObject(getToken(), doc, en);
-			}
+		en = new EcmContent();
+		en.setName(uploadFile.getOriginalFilename());
+		en.setContentSize(uploadFile.getSize());
+		en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+		en.setInputStream(uploadFile.getInputStream());	
+		
+		if(doc.getStatus() != null) {
+			documentService.updateObject(getToken(), doc, en);
+		}else {
+			doc.setStatus("新建");
+			documentService.newObject(getToken(), doc, en);
 		}
 	}
 	
