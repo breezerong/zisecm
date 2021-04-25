@@ -261,14 +261,9 @@ public class UserController extends ControllerAbstract{
 					instream.close();
 				}
 				
-				String sqlSearchSign = "select * from ecm_document ed where NAME = '"+ userName +"' and FOLDER_ID = 'b7ae6823040a4dcbbf42ed1bc73ff24d'";
-				name = (String) documentService.getMapList(getToken(), sqlSearchSign).get(0).get("NAME");
-			    
-				if(name.equals(null)) {
-					execAddDocument(uploadFileList[i], "b7ae6823040a4dcbbf42ed1bc73ff24d");
-				}
-				mp.put("code", ActionContext.SUCESS);
+				execAddDocument(uploadFileList[i], "b7ae6823040a4dcbbf42ed1bc73ff24d");
 			}
+			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception e) {
 			mp.put("code", ActionContext.FAILURE);
 			mp.put("message", e.getMessage());
