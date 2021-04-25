@@ -505,56 +505,14 @@ public class ArchiveFolderController extends ControllerAbstract{
 					doc.addAttribute("C_STORE_STATUS", "在库");
 					doc.addAttribute("C_INSTORE_DATE", new Date());
 					doc.addAttribute("C_INSTORE_USER", this.getSession().getCurrentUser().getUserName());
-					String docSsecurity=doc.getSecurityLevel();
-					if(docSsecurity!=null) {
-						/**
-						 * 内部公开：acl_release_public
-							受限：acl_release_control
-							普通商密、核心商密：acl_release_scuret
-						 * 
-						 */
-						if("内部公开".equals(docSsecurity)
-							||"受限".equals(docSsecurity)) {
-							doc.setAclName("acl_release_control");
-						}else if("秘密".equals(docSsecurity)||"普通商密".equals(docSsecurity)) {
-							doc.setAclName("acl_release_scuret");
-						}else if("机密".equals(docSsecurity)||"核心商密".equals(docSsecurity)) {
-							doc.setAclName("acl_release_scuret");
-						}else {
-							doc.setAclName("acl_release_public");
-						}
-					}else {
-						doc.setAclName("acl_release_public");
-					}
+					doc.setAclName(getAclName(doc.getSecurityLevel()));
 					documentService.updateObject(getToken(), doc, null);
 					if(j==0) {
 						box.setFolderId(folderPathId);
 						box.setStatus(Constants.USING);
 						box.addAttribute("C_INSTORE_DATE", new Date());
 						box.addAttribute("C_INSTORE_USER", this.getSession().getCurrentUser().getUserName());
-						String boxSsecurity=box.getSecurityLevel();
-						if(boxSsecurity!=null) {
-							/**
-							 * 内部公开：acl_release_public
-								受限：acl_release_control
-								普通商密、核心商密：acl_release_scuret
-							 * 
-							 */
-							if("内部公开".equals(boxSsecurity)
-									||"受限".equals(boxSsecurity)) {
-								box.setAclName("acl_release_control");
-							}else if("秘密".equals(boxSsecurity)
-									||"普通商密".equals(boxSsecurity)) {
-								box.setAclName("acl_release_scuret");
-							}else if("机密".equals(boxSsecurity)
-									||"核心商密".equals(boxSsecurity)) {
-								box.setAclName("acl_release_scuret");
-							}else {
-								box.setAclName("acl_release_public");
-							}
-						}else {
-							box.setAclName("acl_release_public");
-						}
+						box.setAclName(getAclName(box.getSecurityLevel()));
 						documentService.updateObject(getToken(), box, null);
 					}
 					
@@ -575,30 +533,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 						innerDoc.addAttribute("C_STORE_STATUS", "在库");
 						innerDoc.addAttribute("C_INSTORE_DATE", new Date());
 						innerDoc.addAttribute("C_INSTORE_USER", this.getSession().getCurrentUser().getUserName());
-						String security=innerDoc.getSecurityLevel();
-						if(security!=null) {
-							/**
-							 * 内部公开：acl_release_public
-								受限：acl_release_control
-								普通商密、核心商密：acl_release_scuret
-							 * 
-							 */
-							if("内部公开".equals(security)
-									||"受限".equals(security)) {
-								innerDoc.setAclName("acl_release_control");
-							}else if("秘密".equals(security)
-									||"普通商密".equals(security)) {
-								innerDoc.setAclName("acl_release_scuret");
-							}else if("机密".equals(security)
-									||"核心商密".equals(security)) {
-								innerDoc.setAclName("acl_release_scuret");
-							}else {
-								innerDoc.setAclName("acl_release_public");
-							}
-							
-						}else {
-							innerDoc.setAclName("acl_release_public");
-						}
+						innerDoc.setAclName(getAclName(innerDoc.getSecurityLevel()));
 						documentService.updateObject(getToken(), innerDoc, null);
 					
 					}
@@ -618,6 +553,54 @@ public class ArchiveFolderController extends ControllerAbstract{
 		
 		
 		
+	}
+	private String getAclName(String SecurityLevel) {
+		String aclName="";
+		if(CacheManagerOper.getEcmParameters().get("isNpic")!=null) {
+			if(SecurityLevel!=null) {
+				switch (SecurityLevel) {
+					case "非密":
+					case "内部":
+						aclName="acl_doc_release_public";
+						break;
+					case "秘密":
+					case "普通商密":
+					case "机密":
+					case "核心商密":
+						aclName="acl_doc_release_security";
+						break;
+					default:
+						aclName="acl_doc_release_public";
+						break;
+				}
+			}else {
+				aclName="acl_doc_release_public";
+			}
+		}else {
+			if(SecurityLevel!=null) {
+				switch (SecurityLevel) {
+					case "内部公开":
+						aclName="acl_release_public";
+						break;
+					case "受限":
+						aclName="acl_release_control";
+						break;
+					case "秘密":
+					case "普通商密":
+					case "机密":
+					case "核心商密":
+						aclName="acl_release_scuret";
+						break;
+					default:
+						aclName="acl_release_public";
+						break;
+					}
+
+			}else {
+				aclName="acl_release_public";
+			}
+		}
+		return aclName;
 	}
 	
 	

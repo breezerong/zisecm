@@ -29,6 +29,13 @@
     where GROUP_ID = #{groupId,jdbcType=VARCHAR}
   </select>
   
+  <select id="selectCountByUserAndRole" parameterType="java.lang.String" resultType="java.lang.Integer">
+     select count(*)  from ecm_group eg ,ecm_group_user egu ,ecm_user eu where eg.id=egu.GROUP_ID  and egu.USER_ID =eu.ID  and eg.name=${roleName} and eu.name =${userName}
+  </select>
+  <select id="selectCountByUserAndRoles" parameterType="java.lang.String" resultType="java.lang.Integer">
+     select count(*)  from ecm_group eg ,ecm_group_user egu ,ecm_user eu where eg.id=egu.GROUP_ID  and egu.USER_ID =eu.ID  and eg.name in(${roleName}) and eu.name ='${userName}'
+  </select>
+  
   <select id="executeSql" parameterType="java.lang.String" resultType="java.util.Map"> 
 	${sqlStr}
   </select>

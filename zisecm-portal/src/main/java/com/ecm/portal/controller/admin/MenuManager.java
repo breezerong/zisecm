@@ -126,6 +126,22 @@ public class MenuManager extends ControllerAbstract {
 		return mp;
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/admin/getMenuItemWithRole", method = RequestMethod.POST)
+	public Map<String, Object> getMenuItemWithRole(@RequestBody String name) {
+		List<EcmMenuItem> list;
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String condition = "MENU_NAME='" + name + "'";
+			list = ecmMenuItem.getObjectsWithRole(getToken(), condition);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+
 	@RequestMapping(value = "/admin/updateMenuItem", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updateMenuItem(@RequestBody EcmMenuItem obj) {
