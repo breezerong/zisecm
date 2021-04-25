@@ -47,6 +47,7 @@ import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
+import com.ecm.portal.archive.common.AclUtilities;
 import com.ecm.portal.archive.common.ChildrenObjAction;
 import com.ecm.portal.archive.common.Constants;
 import com.ecm.portal.archive.services.ArchiveFolderService;
@@ -505,14 +506,14 @@ public class ArchiveFolderController extends ControllerAbstract{
 					doc.addAttribute("C_STORE_STATUS", "在库");
 					doc.addAttribute("C_INSTORE_DATE", new Date());
 					doc.addAttribute("C_INSTORE_USER", this.getSession().getCurrentUser().getUserName());
-					doc.setAclName(getAclName(doc.getSecurityLevel()));
+					doc.setAclName(new AclUtilities().getReleaseAclName(doc.getSecurityLevel()));
 					documentService.updateObject(getToken(), doc, null);
 					if(j==0) {
 						box.setFolderId(folderPathId);
 						box.setStatus(Constants.USING);
 						box.addAttribute("C_INSTORE_DATE", new Date());
 						box.addAttribute("C_INSTORE_USER", this.getSession().getCurrentUser().getUserName());
-						box.setAclName(getAclName(box.getSecurityLevel()));
+						box.setAclName(new AclUtilities().getReleaseAclName(box.getSecurityLevel()));
 						documentService.updateObject(getToken(), box, null);
 					}
 					
@@ -533,7 +534,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 						innerDoc.addAttribute("C_STORE_STATUS", "在库");
 						innerDoc.addAttribute("C_INSTORE_DATE", new Date());
 						innerDoc.addAttribute("C_INSTORE_USER", this.getSession().getCurrentUser().getUserName());
-						innerDoc.setAclName(getAclName(innerDoc.getSecurityLevel()));
+						innerDoc.setAclName(new AclUtilities().getReleaseAclName(innerDoc.getSecurityLevel()));
 						documentService.updateObject(getToken(), innerDoc, null);
 					
 					}
@@ -554,54 +555,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 		
 		
 	}
-	private String getAclName(String SecurityLevel) {
-		String aclName="";
-		if(CacheManagerOper.getEcmParameters().get("isNpic")!=null) {
-			if(SecurityLevel!=null) {
-				switch (SecurityLevel) {
-					case "非密":
-					case "内部":
-						aclName="acl_doc_release_public";
-						break;
-					case "秘密":
-					case "普通商密":
-					case "机密":
-					case "核心商密":
-						aclName="acl_doc_release_security";
-						break;
-					default:
-						aclName="acl_doc_release_public";
-						break;
-				}
-			}else {
-				aclName="acl_doc_release_public";
-			}
-		}else {
-			if(SecurityLevel!=null) {
-				switch (SecurityLevel) {
-					case "内部公开":
-						aclName="acl_release_public";
-						break;
-					case "受限":
-						aclName="acl_release_control";
-						break;
-					case "秘密":
-					case "普通商密":
-					case "机密":
-					case "核心商密":
-						aclName="acl_release_scuret";
-						break;
-					default:
-						aclName="acl_release_public";
-						break;
-					}
 
-			}else {
-				aclName="acl_release_public";
-			}
-		}
-		return aclName;
-	}
 	
 	
 	/**
