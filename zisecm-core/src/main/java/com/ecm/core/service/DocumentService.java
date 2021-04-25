@@ -252,7 +252,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			String customAttributes = this.getCustomAttributes(token, gridName);
 			//如果存在C_ARCHIVE_CODING(档案号)属性，则添加到查询列
 			EcmAttribute codeAttr = CacheManagerOper.getEcmAttributes().get("C_ARCHIVE_CODING");
-			if (codeAttr != null) {
+			if (codeAttr != null && customAttributes.indexOf("C_ARCHIVE_CODING")<0) {
 				customAttributes += ",C_ARCHIVE_CODING ";
 			}
 			sql = "select * from (select " + customAttributes + " from ecm_document where 1=1";
