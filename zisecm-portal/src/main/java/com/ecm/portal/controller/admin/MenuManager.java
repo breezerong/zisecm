@@ -1,5 +1,6 @@
 package com.ecm.portal.controller.admin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ecm.common.util.JSONUtils;
 import com.ecm.core.ActionContext;
 import com.ecm.core.entity.EcmMenu;
 import com.ecm.core.entity.EcmMenuItem;
@@ -35,6 +37,9 @@ public class MenuManager extends ControllerAbstract {
 
 	@Autowired
 	private MenuItemService ecmMenuItem;
+	
+	@Autowired
+	private MenuService menuService;
 
 	@ResponseBody
 	@RequestMapping("/admin/getMenu")
@@ -93,14 +98,28 @@ public class MenuManager extends ControllerAbstract {
 
 	@ResponseBody
 	@RequestMapping(value = "/admin/getMenuItem", method = RequestMethod.POST)
-	public Map<String, Object> getMenuItem(@RequestBody String name) {
-		List<EcmMenuItem> list;
+	public Map<String, Object> getMenuItem(@RequestBody String argStr) {
+		EcmMenu menu = new EcmMenu();
+		List<String> menuList = new ArrayList<>();
+		List<EcmMenuItem> subList = new ArrayList<>();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			String condition = "MENU_NAME='" + name + "'";
-			list = ecmMenuItem.getObjects(getToken(), condition);
+			Map<String, Object> args = JSONUtils.stringToMap(argStr);
+			String name = (String)args.get("name");
+			String lang = (String)args.get("lang");
+			menu = menuService.getMyMenu(getToken(), name, lang);
+			for(int i=0; i<menu.getMenuItems().size(); i++) {
+				subList = menu.getMenuItems().get(i).getSubmenus();
+				if(subList.size()>0) {
+					for(int j=0; j<subList.size(); j++) {
+						menuList.add(subList.get(j).getName());
+					}
+				}else {
+					menuList.add(menu.getMenuItems().get(i).getName());
+				}
+			}
+			mp.put("data", menuList);
 			mp.put("code", ActionContext.SUCESS);
-			mp.put("data", list);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
