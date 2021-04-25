@@ -98,7 +98,23 @@ public class MenuManager extends ControllerAbstract {
 
 	@ResponseBody
 	@RequestMapping(value = "/admin/getMenuItem", method = RequestMethod.POST)
-	public Map<String, Object> getMenuItem(@RequestBody String argStr) {
+	public Map<String, Object> getMenuItem(@RequestBody String name) {
+		List<EcmMenuItem> list;
+		Map<String, Object> mp = new HashMap<String, Object>();
+		try {
+			String condition = "MENU_NAME='" + name + "'";
+			list = ecmMenuItem.getObjects(getToken(), condition);
+			mp.put("code", ActionContext.SUCESS);
+			mp.put("data", list);
+		} catch (AccessDeniedException e) {
+			mp.put("code", ActionContext.TIME_OUT);
+		}
+		return mp;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/admin/getMenuItemWithRole", method = RequestMethod.POST)
+	public Map<String, Object> getMenuItemWithRole(@RequestBody String argStr) {
 		EcmMenu menu = new EcmMenu();
 		List<String> menuList = new ArrayList<>();
 		List<EcmMenuItem> subList = new ArrayList<>();
@@ -120,22 +136,6 @@ public class MenuManager extends ControllerAbstract {
 			}
 			mp.put("data", menuList);
 			mp.put("code", ActionContext.SUCESS);
-		} catch (AccessDeniedException e) {
-			mp.put("code", ActionContext.TIME_OUT);
-		}
-		return mp;
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/admin/getMenuItemWithRole", method = RequestMethod.POST)
-	public Map<String, Object> getMenuItemWithRole(@RequestBody String name) {
-		List<EcmMenuItem> list;
-		Map<String, Object> mp = new HashMap<String, Object>();
-		try {
-			String condition = "MENU_NAME='" + name + "'";
-			list = ecmMenuItem.getObjectsWithRole(getToken(), condition);
-			mp.put("code", ActionContext.SUCESS);
-			mp.put("data", list);
 		} catch (AccessDeniedException e) {
 			mp.put("code", ActionContext.TIME_OUT);
 		}
