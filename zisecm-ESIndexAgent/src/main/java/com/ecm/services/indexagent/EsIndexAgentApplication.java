@@ -48,7 +48,7 @@ public class EsIndexAgentApplication extends SpringBootServletInitializer  {
 		dataSource.setMaxActive(20);// 最大连接池数量
 		dataSource.setMinIdle(0);// 最小连接池数量
 		dataSource.setMaxWait(60000);// 获取连接时最大等待时间，单位毫秒。
-		dataSource.setValidationQuery("SELECT 1");// 用来检测连接是否有效的sql
+//		dataSource.setValidationQuery("SELECT 1");// 用来检测连接是否有效的sql
 		dataSource.setTestOnBorrow(false);// 申请连接时执行validationQuery检测连接是否有效
 		dataSource.setTestWhileIdle(true);// 建议配置为true，不影响性能，并且保证安全性。
 		dataSource.setPoolPreparedStatements(false);// 是否缓存preparedStatement，也就是PSCache

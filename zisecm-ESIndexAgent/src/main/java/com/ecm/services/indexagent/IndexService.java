@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -105,7 +106,9 @@ public class IndexService {
 				if(list.size()<bufferSize) {
 					break;
 				}
-				sql = sqlBase.replace("{0}", lastDate);
+				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+				sql = sqlBase.replace("{0}", shortSdf.format(lastDate.toString()));
 				list = documentService.getMapList(token, sql);
 			}
 		} catch (Exception e) {
