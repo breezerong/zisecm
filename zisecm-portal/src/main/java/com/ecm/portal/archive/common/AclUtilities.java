@@ -60,4 +60,16 @@ public class AclUtilities {
 		}
 		return aclName;
 	}
+	
+	public String getReleaseCompanyDocAcl(Object C_SECURITY_LEVEL) {
+		String acl_name;
+		if(null==C_SECURITY_LEVEL||"非密".equals(C_SECURITY_LEVEL.toString()) || "内部".equals(C_SECURITY_LEVEL.toString())) {
+			acl_name="acl_doc_release_public";
+		}else {
+			acl_name="acl_doc_release_security";
+		}
+		return acl_name;
+	}
+
+
 }
