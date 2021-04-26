@@ -20,6 +20,8 @@ import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.service.ExcSynDetailService;
 import com.ecm.core.service.GroupService;
 import com.ecm.core.service.UserService;
@@ -224,12 +226,27 @@ public class GroupManager extends ControllerAbstract {
 	
 	@RequestMapping(value = "/admin/addToRole", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addToRole(@RequestBody String argStr) throws Exception {
-		Map<String, Object> args = JSONUtils.stringToMap(argStr);
-		boolean result = groupService.addUserToRole(getToken(), args.get("userId").toString(),
-				args.get("deptId").toString());
+	public Map<String, Object> addToRole(@RequestBody String argStr) {
 		Map<String, Object> mp = new HashMap<String, Object>();
-		mp.put("code", result ? ActionContext.SUCESS : ActionContext.FAILURE);
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		boolean result;
+		try {
+			groupService.addUserToRole(getToken(), args.get("userId").toString(),
+					args.get("deptId").toString());
+		} catch (EcmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", e.getMessage());
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.TIME_OUT);
+			mp.put("message", e.getMessage());
+		} catch (NoPermissionException e) {
+			// TODO Auto-generated catch block
+			mp.put("code", ActionContext.NO_PERMSSION);
+			mp.put("message", e.getMessage());
+		}
 		return mp;
 	}
 

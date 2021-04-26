@@ -437,10 +437,11 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 
 	@Transactional
 	@Override
-	public boolean addUserToRole(String token,String userId, String roleId) throws Exception {
+	public boolean addUserToRole(String token,String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException {
+		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		EcmGroup group = ecmGroupMapper.selectByPrimaryKey(roleId);
 		if(group==null) {
-			throw new Exception("Role :"+roleId+" is not exists.");
+			throw new EcmException("Role :"+roleId+" is not exists.");
 		}
 		EcmGroupItem item = new EcmGroupItem();
 		item.createId();
