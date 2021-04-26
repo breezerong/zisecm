@@ -236,7 +236,7 @@ public class UserController extends ControllerAbstract{
 			String fileName = null;
 			String userName = null;
 			String id = null;
-			String name = null;
+			String docId = null;
 			
 			for(int i=0; i<uploadFileList.length; i++) {
 				if(uploadFileList[i]!=null) {
@@ -253,15 +253,17 @@ public class UserController extends ControllerAbstract{
 				}
 				
 				String sqlByUserName = "select * from ecm_user where LOGIN_NAME = '"+ userName +"'";
+				String sqlGetDocId = "select * from ecm_document where NAME = '"+ userName +"' AND FOLDER_ID = 'b7ae6823040a4dcbbf42ed1bc73ff24d'";
 				
 				id = (String) documentService.getMapList(getToken(), sqlByUserName).get(0).get("ID");
+				docId = (String) documentService.getMapList(getToken(), sqlGetDocId).get(0).get("ID");
 				
 				userService.updateSignImage(getToken(),id,instream,fileName);
 				if(instream!=null) {
 					instream.close();
 				}
 				
-				execAddDocument(uploadFileList[i], "b7ae6823040a4dcbbf42ed1bc73ff24d");
+				execAddDocument(uploadFileList[i], docId, "b7ae6823040a4dcbbf42ed1bc73ff24d");
 			}
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception e) {
@@ -356,13 +358,13 @@ public class UserController extends ControllerAbstract{
 		return mp;
 	}
 	
-	public void execAddDocument(MultipartFile uploadFile,String folderId) throws Exception {
+	public void execAddDocument(MultipartFile uploadFile, String docId, String folderId) throws Exception {
 		EcmContent en = null;
 		EcmDocument doc = new EcmDocument();
-	
 		EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+		
+		//documentService.getObjectById(getToken(), docId);
 		doc.setAclName(folder.getAclName());
-	
 		doc.setFolderId(folderId);
 		String name = uploadFile.getOriginalFilename();
 		doc.setName(name.substring(0,name.lastIndexOf(".")));
@@ -374,11 +376,11 @@ public class UserController extends ControllerAbstract{
 		en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
 		en.setInputStream(uploadFile.getInputStream());	
 		
-		if(doc.getStatus() != null) {
-			documentService.updateObject(getToken(), doc, en);
-		}else {
+		if(doc.getStatus() == null && documentService.getObjectById(getToken(), docId) == null) {
 			doc.setStatus("新建");
 			documentService.newObject(getToken(), doc, en);
+		}else {
+			documentService.updateObject(getToken(), doc, en);
 		}
 	}
 	
