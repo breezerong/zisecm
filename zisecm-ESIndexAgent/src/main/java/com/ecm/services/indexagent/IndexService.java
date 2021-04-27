@@ -107,8 +107,9 @@ public class IndexService {
 					break;
 				}
 				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-				sql = sqlBase.replace("{0}", shortSdf.format(lastDate.toString()));
+				 Date date = shortSdf.parse(lastDate);
+				 String endAtStr = shortSdf.format(date);
+				sql = sqlBase.replace("{0}", endAtStr);
 				list = documentService.getMapList(token, sql);
 			}
 		} catch (Exception e) {
