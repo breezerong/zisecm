@@ -1,5 +1,6 @@
 package com.ecm.core.service;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -247,6 +248,8 @@ public class NumberService extends EcmService {
 			C_COUNT1	当前流水号
 			SUB_TYPE	取号对象类型值
 		 */
+		Date date = new Date();
+		DateFormat df = DateFormat.getDateTimeInstance();
 		String sql = "select ID,C_COUNT1 from ecm_document where TYPE_NAME='取号流水号' and NAME='"+prefix+"' and SUB_TYPE='"+typeName+"'";
 		List<Map<String, Object>> numList = ecmQuery.executeSQL(sql);
 		if(numList.size()>0) {
@@ -276,7 +279,7 @@ public class NumberService extends EcmService {
 			
 			String insertSql="insert into ecm_document (ID,TYPE_NAME,NAME,SUB_TYPE,C_COUNT1,FOLDER_ID,CREATION_DATE,CREATOR) "
 					+ "values('"+UUID.randomUUID().toString().replace("-", "")+"','取号流水号','"+prefix+"','"+typeName+"',"
-							+currentIndex+",'"+fld.getId()+"','"+new Date()+"','"+getCurrentUser(token).getUserName()+"')";
+							+currentIndex+",'"+fld.getId()+"','"+df.format(date)+"','"+getCurrentUser(token).getUserName()+"')";
 			ecmDocument.executeSQL(insertSql);
 		}
 		String num = String.format("%0"+numberLen+"d",currentIndex);
