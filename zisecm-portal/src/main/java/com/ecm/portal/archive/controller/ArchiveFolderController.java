@@ -1030,15 +1030,22 @@ public class ArchiveFolderController extends ControllerAbstract{
 		long start0 = System.currentTimeMillis();
 		Map<String, Object> mp = new HashMap<String, Object>();
 		Map<String,Object> params= JSONUtils.stringToMap(param);
-		String folderConfig=params.get("folderConfig").toString();
+		String folderConfig = "";
 		Object conditionObj=params.get("condition");
 		try {
 			String id ="";
 			try {
-				id= CacheManagerOper.getEcmParameters().get(folderConfig).getValue();
+				if(params.get("folderConfig")!=null) {
+					folderConfig = params.get("folderConfig").toString();
+					id= CacheManagerOper.getEcmParameters().get(folderConfig).getValue();
+				}
+				else {
+					id = params.get("folderId").toString();
+				}
 			}catch (NullPointerException e) {
 				// TODO: handle exception
-				id=param;
+				e.printStackTrace();
+				//id=folderConfig;
 			}
 //			long start = System.currentTimeMillis();
 //			logger.info("Start get root folder.");
