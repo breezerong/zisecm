@@ -443,6 +443,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 				fis.close();
 			}
 		}
+		String password=user.getPassword();
+		user.setPassword(SecureUtils.md5Encode(password));
 		ecmUserMapper.insert(user);
 		return user.getId();
 	}
