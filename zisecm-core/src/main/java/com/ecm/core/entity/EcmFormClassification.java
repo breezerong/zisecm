@@ -45,7 +45,11 @@ public class EcmFormClassification extends EcmSysObject {
 				}else if("{username}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(session.getCurrentUser().getUserName());
 				}else if("{department}".equalsIgnoreCase(defaultValue)) {
-					itemc.setDefaultValue(session.getCurrentUser().getDepartment());
+					String dep = session.getCurrentUser().getDepartment();
+					if(dep.indexOf("/")!=-1) {
+						dep=dep.split("/")[0];
+					}
+					itemc.setDefaultValue(dep);
 				}else if("{company}".equalsIgnoreCase(defaultValue)) {
 					itemc.setDefaultValue(session.getCurrentUser().getCompany());
 				}else if("{year}".equalsIgnoreCase(defaultValue)) {
