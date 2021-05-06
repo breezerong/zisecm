@@ -61,6 +61,7 @@ import com.ecm.core.sync.SyncPublicNetUtil;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
+import com.google.common.base.Strings;
 
 @Service
 @Scope("prototype")
@@ -1945,6 +1946,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		queueItem.setMessage(message);
 		queueItem.setDelectFlag(false);
 		queueItem.setStatus(0);
+		queueItem.setSendDate(new Date());
 		queueItemService.newObject(token, queueItem);
 	}
 
@@ -1956,10 +1958,23 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 * @throws EcmException
 	 * @throws AccessDeniedException
 	 */
-	private void addFullIndexSearchQueue(String token, String docID) throws EcmException, AccessDeniedException {
+	@Override
+	public void addFullIndexSearchQueue(String token, String docID) throws EcmException, AccessDeniedException {
 		EcmParameter parmIndexServer = (CacheManagerOper.getEcmParameters().get("IndexServer"));
-		if (parmIndexServer != null && !StringUtils.isEmpty(parmIndexServer.getValue())) {
-			queue(token, docID, "ecm_full_index", "ecm_full_index", null);
+		EcmDocument obj= getObjectById(token, docID);
+		String typeName= obj.getTypeName();
+		if (obj.isReleased() && !obj.isHidden()&& obj.isCurrent()&& parmIndexServer != null && !StringUtils.isEmpty(parmIndexServer.getValue())) {
+			EcmParameter parmIndexType = (CacheManagerOper.getEcmParameters().get("IndexType"));
+			if(parmIndexType==null) {
+				queue(token, docID, "ecm_full_index", "ecm_full_index", null);
+			}else {
+				String[] parmIndexTypeStr= parmIndexType.getValue().split(";");
+				for (int i = 0; i < parmIndexTypeStr.length; i++) {
+					if(parmIndexTypeStr[i].equals(typeName)) {
+						queue(token, docID, "ecm_full_index", "ecm_full_index", null);
+					}
+				}
+			}
 		}
 
 	}

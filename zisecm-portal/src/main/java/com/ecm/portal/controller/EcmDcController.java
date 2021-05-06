@@ -2664,7 +2664,7 @@ public class EcmDcController extends ControllerAbstract {
 					if (en.getContentType() == 1) {
 						contentService.updatePrimaryContentSize(getToken(), id, en.getContentSize());
 					}
-					documentService.queue(getToken(), id, "ecm_full_index", "ecm_full_index", null);
+					documentService.addFullIndexSearchQueue(getToken(), id);
 					mp.put("code", ActionContext.SUCESS);
 				} else {
 

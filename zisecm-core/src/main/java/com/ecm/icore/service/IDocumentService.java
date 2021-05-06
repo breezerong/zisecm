@@ -401,6 +401,7 @@ public interface IDocumentService {
 	 * @throws Exception
 	 */
 	String checkInUpgradeContent(String token, String docId, EcmContent content) throws Exception ;
+	void addFullIndexSearchQueue(String token, String docID) throws EcmException, AccessDeniedException;
 	
 	
 }

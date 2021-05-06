@@ -84,6 +84,12 @@ public class EcmDocument extends EcmSysObject{
      * 是否当前版本
      */
     private boolean isCurrent = true;
+    
+    /**
+     * 是否发布
+     */
+    private boolean isReleased = true;
+    
     /**
      * 是否隐藏
      */
@@ -520,6 +526,9 @@ public class EcmDocument extends EcmSysObject{
 		case "IS_CURRENT":
 			result=this.isCurrent();
 			break;
+		case "IS_RELEASED":
+			result=this.isReleased();
+			break;
 		case "LOCK_OWNER":
 			result=this.getLockOwner();
 			break;
@@ -782,7 +791,16 @@ public class EcmDocument extends EcmSysObject{
 	public boolean isCurrent() {
 		return isCurrent;
 	}
-
+	public boolean isReleased() {
+		return isReleased;
+	}
+	
+	public void setReleased(boolean isReleased) {
+		this.isReleased = isReleased;
+		if(attributes!=null) {
+			attributes.put("IS_CURRENT",  this.isReleased?1:0);
+		}
+	}
 	public void setCurrent(boolean isCurrent) {
 		this.isCurrent = isCurrent;
 		if(attributes!=null) {
