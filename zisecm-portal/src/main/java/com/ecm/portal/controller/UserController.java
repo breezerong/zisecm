@@ -365,6 +365,7 @@ public class UserController extends ControllerAbstract{
 		String name = uploadFile.getOriginalFilename();
 		doc.setName(name.substring(0,name.lastIndexOf(".")));
 		doc.setTypeName("签名照片");
+		doc.addAttribute("SYN_APP", "1");
 
 		en = new EcmContent();
 		en.setName(uploadFile.getOriginalFilename());
