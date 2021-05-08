@@ -251,7 +251,7 @@ public class UserController extends ControllerAbstract{
 					}
 				}
 				
-				String sqlByUserName = "select * from ecm_user where LOGIN_NAME = '"+ userName +"'";
+				String sqlByUserName = "select * from ecm_user where NAME = '"+ userName +"'";
 				id = (String) documentService.getMapList(getToken(), sqlByUserName).get(0).get("ID");
 				
 				userService.updateSignImage(getToken(),id,instream,fileName);
