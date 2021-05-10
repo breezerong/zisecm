@@ -1967,20 +1967,25 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	public void addFullIndexSearchQueue(String token, String docID) throws EcmException, AccessDeniedException {
 		EcmParameter parmIndexServer = (CacheManagerOper.getEcmParameters().get("IndexServer"));
 		EcmDocument obj= getObjectById(token, docID);
-		String typeName= obj.getTypeName();
-		if (obj.isReleased() && !obj.isHidden()&& obj.isCurrent()&& parmIndexServer != null && !StringUtils.isEmpty(parmIndexServer.getValue())) {
-			EcmParameter parmIndexType = (CacheManagerOper.getEcmParameters().get("IndexType"));
-			if(parmIndexType==null) {
-				queue(token, docID, "ecm_full_index", "ecm_full_index", null);
-			}else {
-				String[] parmIndexTypeStr= parmIndexType.getValue().split(";");
-				for (int i = 0; i < parmIndexTypeStr.length; i++) {
-					if(parmIndexTypeStr[i].equals(typeName)) {
-						queue(token, docID, "ecm_full_index", "ecm_full_index", null);
+		if(obj==null) {
+			queue(token, docID, "ecm_full_index", "ecm_full_index", null);
+		}else {
+			String typeName= obj.getTypeName();
+			if (obj.isReleased() && !obj.isHidden()&& obj.isCurrent()&& parmIndexServer != null && !StringUtils.isEmpty(parmIndexServer.getValue())) {
+				EcmParameter parmIndexType = (CacheManagerOper.getEcmParameters().get("IndexType"));
+				if(parmIndexType==null) {
+					queue(token, docID, "ecm_full_index", "ecm_full_index", null);
+				}else {
+					String[] parmIndexTypeStr= parmIndexType.getValue().split(";");
+					for (int i = 0; i < parmIndexTypeStr.length; i++) {
+						if(parmIndexTypeStr[i].equals(typeName)) {
+							queue(token, docID, "ecm_full_index", "ecm_full_index", null);
+						}
 					}
 				}
 			}
 		}
+
 
 	}
 
