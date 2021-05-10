@@ -226,7 +226,11 @@ public class EcmUser extends EcmSysObject{
 	}
 
 	public String getDepartmentName() {
-		return departmentName;
+		String department = "";
+		if(this.getGroupName()!=null)
+		  department =this.getGroupName();
+		department=department.split("/")[0];
+		return department;
 	}
 
 	public void setDepartmentName(String departmentName) {

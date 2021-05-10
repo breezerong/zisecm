@@ -48,7 +48,17 @@ public class LoginUser {
 	 * 用户部门
 	 */
 	private String department;
-	
+	private String groupName;
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName == null ? null : groupName.trim();
+    }
+
+
+
 	/**
 	 * 公司
 	 */
@@ -92,7 +102,11 @@ public class LoginUser {
 	private List<String> myProjects = new ArrayList<String>();
 
 	public String getDepartment() {
-		return department;
+		String departmentTemp = "";
+		if(this.getGroupName()!=null)
+		  departmentTemp =this.getGroupName();
+		departmentTemp=departmentTemp.split("/")[0];
+		return departmentTemp;
 	}
 	public void setDepartment(String department) {
 		this.department = department;
