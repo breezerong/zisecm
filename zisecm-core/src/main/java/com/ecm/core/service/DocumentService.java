@@ -1056,7 +1056,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		String needAutoNumber=args.get("notAttribute_needAutoNumber") != null ? args.get("notAttribute_needAutoNumber").toString() : "";
 		if(val.equalsIgnoreCase("@sequence")) {
 			try {
-				if(!needAutoNumber.equals("false")) {
+				if(!needAutoNumber.equalsIgnoreCase("false")) {
 					val=numberservice.getNumber(token, args);
 				}
 			} catch (Exception e) {
