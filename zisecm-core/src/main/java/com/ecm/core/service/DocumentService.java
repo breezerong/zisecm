@@ -757,27 +757,31 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		boolean hasCreationDate = false;
 	
 		for (Object key : args.keySet().toArray()) {
-			if (key.toString().equalsIgnoreCase("ID")
-					||key.toString().equalsIgnoreCase("transferId")
-					||key.toString().equalsIgnoreCase("folderPath")
-					||key.toString().equalsIgnoreCase("folderId")
-					//||key.toString().equalsIgnoreCase("CREATION_DATE")
-					||key.toString().equalsIgnoreCase("CREATOR")
-					// ||key.toString().equalsIgnoreCase("VERSION_ID")
-					||key.toString().equalsIgnoreCase("owner_name")
-					||key.toString().equalsIgnoreCase("childFileId")
-					||key.toString().equalsIgnoreCase("parentDocId")
-					||key.toString().equalsIgnoreCase("relationName")) {
+			String attrName=key.toString();
+			if (attrName.equalsIgnoreCase("ID")
+					||attrName.equalsIgnoreCase("transferId")
+					||attrName.equalsIgnoreCase("folderPath")
+					||attrName.equalsIgnoreCase("folderId")
+					//||attrName.equalsIgnoreCase("CREATION_DATE")
+					||attrName.equalsIgnoreCase("CREATOR")
+					// ||attrName.equalsIgnoreCase("VERSION_ID")
+					||attrName.equalsIgnoreCase("owner_name")
+					||attrName.equalsIgnoreCase("childFileId")
+					||attrName.equalsIgnoreCase("parentDocId")
+					||attrName.equalsIgnoreCase("relationName")) {
 				continue;
 			}
-			
+			if(attrName.startsWith("notAttribute")) {
+				continue;
+			}
+
 			if (args.get(key) == null) {
 				continue;
 			}
 			EcmAttribute en = CacheManagerOper.getEcmAttributes().get(key);
-			// EcmFormItem en = getFormItem(frm.getEcmFormItems(),key.toString());
+			// EcmFormItem en = getFormItem(frm.getEcmFormItems(),attrName);
 			if (en == null) {
-				throw new EcmException("Type :" + typeName + " ," + key.toString() + " is not exists.");
+				throw new EcmException("Type :" + typeName + " ," + attrName + " is not exists.");
 			}
 			switch (en.getFieldType()) {
 			case 2:// 日期
@@ -802,17 +806,17 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				{
 					continue;
 				}else {
-					if(key.toString().equalsIgnoreCase("CREATION_DATE")) {
+					if(attrName.equalsIgnoreCase("CREATION_DATE")) {
 						hasCreationDate = true;
 					}
 				}
-				fieldStr += key.toString() + ",";
+				fieldStr += attrName + ",";
 				valueStr += " " + date + " ,";
 				break;
 			}
 			case 3:// 布尔
 			{
-				fieldStr += key.toString() + ",";
+				fieldStr += attrName + ",";
 				if (args.get(key).toString().equalsIgnoreCase("true")||args.get(key).toString().equalsIgnoreCase("1")){
 					valueStr += "1,";
 				} else {
@@ -827,15 +831,15 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			case 8: 
 			{
 				valueStr += args.get(key).toString() + ",";
-				fieldStr += key.toString() + ",";
+				fieldStr += attrName + ",";
 				break;
 			}
 			default:// 字符串
 			{
 				
-				fieldStr += key.toString() + ",";
+				fieldStr += attrName + ",";
 				
-				if(key.toString().equalsIgnoreCase("VERSION_ID") 
+				if(attrName.equalsIgnoreCase("VERSION_ID") 
 						&& ((String) args.get(key)==null 
 						|| ((String)args.get(key)).length()==0))
 				{
@@ -846,15 +850,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 						String insertValue = datavalue.toString();
 						insertValue = insertValue.replace("\\", "\\\\");
 						String val=DBFactory.getDBConn().getDBUtils().getString(insertValue);
-						if(val.equalsIgnoreCase("@sequence")) {
-							try {
-								val=numberservice.getNumber(token, args);
-							} catch (Exception e) {
-								e.printStackTrace();
-//								throw new EcmException(e.getMessage());
-								val="@sequence";
-							}
-						}
+						val = getSeqNumber(token, args, val);
 						valueStr += "'" +val  + "',";
 					}
 				}
@@ -960,6 +956,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			EcmAttribute en = CacheManagerOper.getEcmAttributes().get(key);
 			String attrName = key.toString();
 			// filter system columns
+			if(attrName.startsWith("notAttribute")) {
+				continue;
+			}
 
 			if (filter.indexOf("," + attrName + ",") > -1) {
 				continue;
@@ -1035,15 +1034,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 					isFirst = false;
 				}
 				String val=DBFactory.getDBConn().getDBUtils().getString((String) args.get(key));
-				if(val.equalsIgnoreCase("@sequence")) {
-					try {
-						val=numberservice.getNumber(token, args);
-					} catch (Exception e) {
-						e.printStackTrace();
-//						throw new EcmException(e.getMessage());
-						val="@sequence";
-					}
-				}
+				val = getSeqNumber(token, args, val);
 				sql += " " + key.toString() + "='" + val + "'";
 				break;
 			}
@@ -1059,6 +1050,20 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		sql += " where ID='" + id + "'";
 		ecmDocument.executeSQL(sql);
 		newAudit(token, null, AuditContext.UPDATE, id, null, null);
+	}
+	
+	private String getSeqNumber(String token, Map<String, Object> args, String val) {
+		String needAutoNumber=args.get("notAttribute_needAutoNumber") != null ? args.get("notAttribute_needAutoNumber").toString() : "";
+		if(val.equalsIgnoreCase("@sequence")) {
+			try {
+				if(!needAutoNumber.equals("false")) {
+					val=numberservice.getNumber(token, args);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return val;
 	}
 
 	@Override
