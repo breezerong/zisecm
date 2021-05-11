@@ -515,12 +515,17 @@ public class UserManager extends ControllerAbstract {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
 			Map<String, Object> args = JSONUtils.stringToMap(argStr);
-			groupService.removeUserFromRole(getToken(), args.get("userId").toString(), args.get("roleId").toString());
+			Map<String, Object> res = groupService.removeUserFromRole(getToken(), args.get("userId").toString(), args.get("roleId").toString());
 			EcmUser user= userService.getObjectById(this.getToken(), args.get("userId").toString());
 			
 			EcmGroup group= groupService.getObjectById(getToken(), args.get("roleId").toString());
+			if(res.get("res").toString().equals("false")) {
+				mp.put("code", ActionContext.FAILURE);
+				mp.put("message", res.get("message"));
+			}else {
+				mp.put("code", ActionContext.SUCESS);
+			}
 			
-			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

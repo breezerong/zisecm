@@ -1,6 +1,7 @@
 package com.ecm.icore.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -40,7 +41,7 @@ public interface IGroupService {
 	List<EcmGroup> getChildRoles(String token, String id, Pager pager, String condition);
 	List<EcmGroup> getParentRoles(String token, String id, Pager pager, String condition);
 	boolean removeUserFromGroup(String token, EcmUser en) throws EcmException, AccessDeniedException, NoPermissionException;
-	boolean removeUserFromRole(String token, String userId, String roleId)
+	Map<String, Object> removeUserFromRole(String token, String userId, String roleId)
 			throws EcmException, AccessDeniedException, NoPermissionException;
 	boolean removeRoleFromRole(String token, String parentId, String childId)
 			throws EcmException, AccessDeniedException, NoPermissionException;
