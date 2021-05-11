@@ -2759,6 +2759,7 @@ public class EcmDcController extends ControllerAbstract {
 
 	/**
 	 * 下载全部附件
+	 * @throws NoPermissionException 
 	 */
 	@RequestMapping(value = "/workflow/downloadAllFile")
 	public void downloadAllFile(HttpServletResponse response, String objectIds) {
@@ -2786,6 +2787,38 @@ public class EcmDcController extends ControllerAbstract {
 		}
 		zipDownloadService.createZipFiles(files, fileNames, response);
 	}
+	
+	
+	
+	
+	@RequestMapping(value = "/workflow/PackDownloadPdfFile")					//NPIC用打包下载，仅下载PDF
+	public void downloadPDFFile(HttpServletResponse response, String objectIds) throws NoPermissionException {
+		String[] objectIdsList = objectIds.split(",");
+		List<File> files = new ArrayList<File>();
+		List<String> fileNames = new ArrayList<String>();
+		for (int i = 0; i < objectIdsList.length; i++) {
+			try {
+				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
+				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
+				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					//List<EcmContent> contentList = contentMapper.getAllContents(objectIdsList[i]);
+					List<EcmContent> contentList = contentService.getContents(getToken(), objectIdsList[i], 2);			//2代表PDF，1代表WORD
+					//List<EcmContent> contentList = contentService.getAllContents(getToken(),objectIdsList[i]);
+					for (int j = 0; j < contentList.size(); j++) {
+						EcmContent en = contentList.get(j);
+						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+						files.add(new File(storePath + en.getFilePath()));
+						fileNames.add(coding + "." + en.getFormatName());
+					}
+				}
+			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}
+		zipDownloadService.createZipFiles(files, fileNames, response);
+	}
+	
 	
 	/**
 	 * 下载子文件
