@@ -1,5 +1,6 @@
 package com.ecm.core.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -295,7 +296,8 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 	
 	@Override
 	@Transactional
-	public boolean removeUserFromRole(String token, String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException {
+	public Map<String, Object> removeUserFromRole(String token, String userId, String roleId) throws EcmException, AccessDeniedException, NoPermissionException {
+		Map<String, Object> mp = new HashMap<String, Object>();
 		super.hasPermission(token,serviceCode+ObjectPermission.WRITE_ATTRIBUTE,systemPermission);
 		//删除角色下所有用户, 只能删除当前角色添加的用户
 		String sqlStr = "delete from ecm_group_user where group_id='"+roleId + "' and user_id='"
@@ -315,8 +317,14 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 			ecmGroupItemMapper.executeSql(sqlStr);
 			//删除引用的角色中用户
 			removeParentRoleUser(roleId, userId);
+			mp.put("res", "true");
+			return mp;
+		}else {
+			mp.put("res", "false");
+			mp.put("message", "该用户不能从当前组删除");
+			return mp;
 		}
-		return true;
+		
 	}
 	
 
@@ -366,6 +374,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 						String sqlStr = "delete from ecm_group_user where group_id='"+parentId + "' and user_id='"
 								+userId+"'";
 						ecmGroupUserMapper.executeSql(sqlStr);
+						removeParentRoleUser(parentId,userId);
 					}
 				}
 			}
