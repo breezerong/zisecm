@@ -1,20 +1,14 @@
 package com.ecm.portal.controller;
 
-import java.awt.FontMetrics;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +16,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JLabel;
 
 import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
@@ -47,14 +40,11 @@ import com.ecm.core.ActionContext;
 import com.ecm.core.AuditContext;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.dao.EcmContentMapper;
 import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.dao.EcmRelationMapper;
 import com.ecm.core.dao.EcmShopingCartMapper;
 import com.ecm.core.db.DBBase;
-import com.ecm.core.db.DBFactory;
 import com.ecm.core.entity.ChartBean;
-import com.ecm.core.entity.EcmAcl;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmFolder;
@@ -67,19 +57,14 @@ import com.ecm.core.entity.EcmPermit;
 import com.ecm.core.entity.EcmQuery;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.entity.EcmShopingCart;
-import com.ecm.core.entity.ExcTransfer;
 import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.MessageException;
 import com.ecm.core.exception.NoPermissionException;
-import com.ecm.core.exception.SqlDeniedException;
-import com.ecm.core.service.AclService;
 import com.ecm.core.service.AuthService;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
-import com.ecm.core.service.ExcSynDetailService;
-import com.ecm.core.service.ExcTransferServiceImpl;
 import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
@@ -90,14 +75,6 @@ import com.ecm.portal.entity.AttrCopyCfgEntity;
 import com.ecm.portal.service.CustomCacheService;
 import com.ecm.portal.service.ZipDownloadService;
 import com.ecm.portal.util.SessionUtils;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfGState;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
 
 /**
  * @ClassName EcmDcController
@@ -669,6 +646,14 @@ public class EcmDcController extends ControllerAbstract {
 			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
 			try {
 				response.setContentType("application/octet-stream");
+				if("mp4".equals(en.getFormatName())) {
+					String rangeString = request.getHeader("Range");
+					long range = Long.valueOf(rangeString.substring(rangeString.indexOf("=") + 1, rangeString.indexOf("-")));
+					response.setHeader("Content-Type", "video/mp4");
+					response.setContentLength(Integer.parseInt(""+en.getContentSize()));
+					response.setHeader("Content-Range", String.valueOf(range + (en.getContentSize()-1)));
+					response.setHeader("Accept-Ranges", "bytes");
+				}
 				byte[] buffer = new byte[8 * 1024];
 				int bytesRead;
 				while ((bytesRead = iStream.read(buffer)) != -1) {
