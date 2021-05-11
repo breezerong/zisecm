@@ -5,9 +5,10 @@
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId" />
     <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+    <result column="ORIGINAL_GROUP_ID" jdbcType="VARCHAR" property="originalGroupId" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, GROUP_ID, USER_ID
+    ID, GROUP_ID, USER_ID,ORIGINAL_GROUP_ID
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -44,9 +45,9 @@
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.ecm.core.entity.EcmGroupUser">
-    insert into ecm_group_user (ID, GROUP_ID, USER_ID
+    insert into ecm_group_user (ID, GROUP_ID, USER_ID,ORIGINAL_GROUP_ID
       )
-    values (#{id,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}
+    values (#{id,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{originalGroupId,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ecm.core.entity.EcmGroupUser">

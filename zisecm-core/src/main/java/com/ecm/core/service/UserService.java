@@ -543,7 +543,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 	@Override
 	public List<EcmUser> getRoleAllUsers(String token, Pager pager, String groupId, String condition) {
-		String sql = "select a.ID, a.NAME, a.DESCRIPTION, a.LOGIN_NAME, a.PHONE, a.CREATION_DATE, a.CREATOR, a.EMAIL, a.MODIFIER,"
+		String sql = "select distinct a.ID, a.NAME, a.DESCRIPTION, a.LOGIN_NAME, a.PHONE, a.CREATION_DATE, a.CREATOR, a.EMAIL, a.MODIFIER,"
 				+ "a.MODIFIED_DATE, a.IS_ACTIVED, a.GROUP_NAME,a.COMPANY_NAME,a.DEPARTMENT_NAME, a.PASSWORD,a.CLIENT_PERMISSION,a.SYSTEM_PERMISSION from ecm_user a, ecm_group_user b "
 				+ " where a.ID = b.USER_ID and b.GROUP_ID='" + DBFactory.getDBConn().getDBUtils().getString(groupId)
 				+ "'";

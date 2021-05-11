@@ -11,6 +11,7 @@ public class EcmGroupUser extends EcmObject{
 
     private String userId;
 
+    private String originalGroupId;
 
     public String getGroupId() {
         return groupId;
@@ -27,4 +28,12 @@ public class EcmGroupUser extends EcmObject{
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+	public String getOriginalGroupId() {
+		return originalGroupId;
+	}
+
+	public void setOriginalGroupId(String originalGroupId) {
+		this.originalGroupId = originalGroupId;
+	}
 }

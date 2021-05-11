@@ -316,7 +316,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 					+userId+"' and ITEM_TYPE='2'";
 			ecmGroupItemMapper.executeSql(sqlStr);
 			//删除引用的角色中用户
-			removeParentRoleUser(roleId, userId);
+			removeParentRoleUser(roleId, userId,roleId);
 			mp.put("res", "true");
 			return mp;
 		}else {
@@ -360,8 +360,9 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 	 * 移除引用角色中的用户
 	 * @param roleId
 	 * @param userId
+	 * @param originalGroupId 
 	 */
-	private void removeParentRoleUser(String roleId,String userId) {
+	private void removeParentRoleUser(String roleId,String userId, String originalGroupId) {
 		String sql = "select PARENT_ID from  ecm_group_item  where CHILD_ID='"+DBFactory.getDBConn().getDBUtils().getString(roleId)+"' and item_type='1'";
 		List<Map<String, Object>>  list = ecmGroupItemMapper.executeSql(sql);
 		if(list!=null) {
@@ -372,9 +373,9 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 					//如果在其他的子角色中不存在，需要删除用户
 					if(!existsChildRole(parentId, userId)) {
 						String sqlStr = "delete from ecm_group_user where group_id='"+parentId + "' and user_id='"
-								+userId+"'";
+								+userId+"' and ORIGINAL_GROUP_ID='"+originalGroupId+"'";
 						ecmGroupUserMapper.executeSql(sqlStr);
-						removeParentRoleUser(parentId,userId);
+						removeParentRoleUser(parentId,userId,originalGroupId);
 					}
 				}
 			}
@@ -466,9 +467,10 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 			gu.createId();
 			gu.setGroupId(roleId);
 			gu.setUserId(userId);
+			gu.setOriginalGroupId(roleId);
 			ecmGroupUserMapper.insert(gu);
 		}
-		addUserToParentRole(token, roleId, userId);
+		addUserToParentRole(token, roleId, userId,roleId);
 		return true;
 	}
 	/**
@@ -476,22 +478,25 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 	 * @param token
 	 * @param parentRoleId
 	 * @param userId
+	 * @param originalGroupId 
 	 * @return
 	 */
-	private boolean addUserToParentRole(String token,String parentRoleId,String userId) {
+	private boolean addUserToParentRole(String token,String parentRoleId,String userId, String originalGroupId) {
 		List<EcmGroup> list = this.getParentRoles(token, parentRoleId, null, null);
 		for(EcmGroup g: list) {
+			String sql="select * from ecm_group_user where GROUP_ID='"+g.getId()+"' and USER_ID='"+userId+"' AND ORIGINAL_GROUP_ID='"+originalGroupId+"'";
 			EcmGroupUser gu = ecmGroupUserMapper.selectByGroupUser(g.getId(), userId);
-			if(gu==null) {
+			if(gu==null||!gu.getOriginalGroupId().equals(originalGroupId)) {
 				//添加到所有用户
 				gu = new EcmGroupUser();
 				gu.createId();
 				gu.setGroupId(g.getId());
 				gu.setUserId(userId);
+				gu.setOriginalGroupId(originalGroupId);
 				ecmGroupUserMapper.insert(gu);
 			}
 			//递归添加用户到父角色
-			addUserToParentRole(token,g.getId(),userId);
+			addUserToParentRole(token,g.getId(),userId,originalGroupId);
 		}
 		return true;
 	}
