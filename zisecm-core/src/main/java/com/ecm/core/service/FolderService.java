@@ -426,6 +426,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 			return 9;
 		}
 		String currentUser = getSession(token).getCurrentUser().getUserName();
+		String currentUserComp = getSession(token).getCurrentUser().getDepartment();
 		String userID = getSession(token).getCurrentUser().getUserId();
 		String aclName = folder.getAclName();
 		// 没有设置ACL
@@ -451,6 +452,7 @@ public class FolderService extends EcmObjectService<EcmFolder> implements IFolde
 				sb.append("b.NAME='").append(aclName);
 				sb.append("' and a.PARENT_ID = b.ID and a.TARGET_TYPE='1' and a.TARGET_NAME in('everyone'");
 				sb.append(",'").append(currentUser).append("'");
+				sb.append(",'").append(currentUserComp).append("'");
 				if (currentUser.equals(folder.getCreator())) {
 					sb.append(",'owner'");
 				}
