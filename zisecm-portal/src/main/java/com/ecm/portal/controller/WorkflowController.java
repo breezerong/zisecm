@@ -717,7 +717,7 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> count = new HashMap<String, Object>();
 		String currentUser=this.getSession().getCurrentUser().getUserName();
 		String condition1 = "TYPE_NAME='分发单' and C_APPROVER='"+this.getSession().getCurrentUser().getUserName()+"' and STATUS='待批示'";
-		String condition2 = "TYPE_NAME='分发单' and (C_HOST like '%"+currentUser+"%' or C_PARTICIPATION like '%"+currentUser+"%' or C_COPY_TO like '%"+currentUser+"%') and STATUS='待阅'";
+		String condition2 = "TYPE_NAME='分发单' and OWNER_NAME = '"+currentUser+"' and STATUS='待阅'";
 		List<EcmDocument> result1 = documentService.getObjects(getToken(), condition1);
 		List<EcmDocument> result2 = documentService.getObjects(getToken(), condition2);
 		count.put("approving", result1.size());
