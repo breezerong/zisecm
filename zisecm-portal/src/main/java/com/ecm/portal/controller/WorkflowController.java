@@ -331,7 +331,9 @@ public class WorkflowController extends ControllerAbstract {
 		runtimeService.createChangeActivityStateBuilder().moveExecutionsToSingleActivityId(executionIds, activityId)
 				.changeState();
 	}
-
+	protected void moveExecutionToActivityId(String executionId,String activityId){
+		runtimeService.createChangeActivityStateBuilder().moveExecutionToActivityId(executionId, activityId);
+	}
 	/**
 	 * 终止流程
 	 */
@@ -360,6 +362,57 @@ public class WorkflowController extends ControllerAbstract {
 		return result;
 	}
 
+	
+	@RequestMapping(value = "/moveActivityToTarget")
+	@ResponseBody
+	public Map<String, Object> moveActivityToTarget(@RequestBody String argStr) throws EcmException, AccessDeniedException {
+		Map<String, Object> args = JSONUtils.stringToMap(argStr);
+		Map<String, Object> result = new HashMap<String, Object>();
+		String processInstanceId = args.get("currentID").toString();
+		String targetTaskId = args.get("targetID").toString();
+		Task currentTask = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+		HistoricTaskInstance targetTask = historyService.createHistoricTaskInstanceQuery().taskId(targetTaskId).singleResult();
+		String currentKey=currentTask.getTaskDefinitionKey();
+		String targetKey=targetTask.getTaskDefinitionKey();						//至此获取了目标ID和当前ID，进行下一步操作
+		List<Execution> executions = runtimeService.createExecutionQuery().parentId(processInstanceId).list();
+		Execution execution = runtimeService.createExecutionQuery().parentId(processInstanceId).singleResult();
+		runtimeService.createChangeActivityStateBuilder().moveExecutionToActivityId(execution.getId(), targetKey)
+		.changeState();
+//		String sql = "Delete from ECM_AUDIT_WORKITEM where TASK_ID ='"+currentTask.getId()+"'";			//把日志改了
+//		documentService.getMapList(getToken(), sql);
+		String condition = "TASK_ID='"+currentTask.getId()+"'";
+		List<EcmAuditWorkitem> audits = ecmAuditWorkitemMapper.selectByCondition(condition);		//找日志
+		EcmAuditWorkitem audit = audits.get(0);				//通过TASK_ID找的日志集肯定只有1个
+		Date now = new Date();
+		audit.setEndTime(now);
+		audit.setResult("跳转");
+		ecmAuditWorkitemMapper.updateByPrimaryKey(audit);	//日志更新
+		
+		
+		
+//		System.out.println(targetKey);
+//		System.out.println(execution.getId());
+
+//		 runtimeService.createChangeActivityStateBuilder().processInstanceId(processInstance.getProcessInstanceId())
+//         .moveActivityIdTo(currentID,targetID).changeState();
+////	        if (processInstance != null) {
+//		List<EndEvent> endNodes = flowableBpmnModelService.findEndFlowElement(processInstance.getProcessDefinitionId());
+//		String endId = endNodes.get(0).getId();
+//		// 2、执行终止
+//		List<Execution> executions = runtimeService.createExecutionQuery().parentId(processInstanceId).list();
+//		List<String> executionIds = new ArrayList<>();
+//		executions.forEach(execution -> executionIds.add(execution.getId()));
+//		this.moveExecutionsToSingleActivityId(executionIds, endId);
+		result.put("code", ActionContext.SUCESS);
+		result.put("processID", processInstanceId);
+//	        }else {
+//				result.put("code", ActionContext.FAILURE);
+//				result.put("message", e.getMessage());
+//	        }
+		return result;
+	}
+	
+	
 	/**
 	 * 获取已审批的任务
 	 * 
@@ -664,7 +717,7 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> count = new HashMap<String, Object>();
 		String currentUser=this.getSession().getCurrentUser().getUserName();
 		String condition1 = "TYPE_NAME='分发单' and C_APPROVER='"+this.getSession().getCurrentUser().getUserName()+"' and STATUS='待批示'";
-		String condition2 = "TYPE_NAME='分发单' and (C_HOST like '%"+currentUser+"%' or C_PARTICIPATION like '%"+currentUser+"%' or C_COPY_TO like '%"+currentUser+"%') and STATUS='待阅'";
+		String condition2 = "TYPE_NAME='分发单' and OWNER_NAME = '"+currentUser+"' and STATUS='待阅'";
 		List<EcmDocument> result1 = documentService.getObjects(getToken(), condition1);
 		List<EcmDocument> result2 = documentService.getObjects(getToken(), condition2);
 		count.put("approving", result1.size());
@@ -1131,7 +1184,7 @@ public class WorkflowController extends ControllerAbstract {
 	 */
 	@RequestMapping(value = "processDiagram")
 	@ResponseBody
-	public void genProcessDiagram(HttpServletResponse httpServletResponse, String processId) throws Exception {
+	public void genProcessDiagram(HttpServletResponse httpServletResponse, String processId,String time) throws Exception {
 		ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processId).singleResult();
 		// 流程走完的话就不highlight流程节点，走另外的处理方式
 		if (pi == null) {
