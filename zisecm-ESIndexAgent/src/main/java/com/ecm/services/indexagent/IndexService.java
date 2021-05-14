@@ -71,6 +71,9 @@ public class IndexService {
 	@Value("${ecm.reindex.bufferSize}")
 	private int bufferSize;
 	
+	@Value("${ecm.index.attr}")
+	private String attr;
+	
 	public void reindexAll(String token, RestHighLevelClient client) {
 		if(client == null)
 			return;
@@ -272,7 +275,7 @@ public class IndexService {
 						indexMap.put(attrName.toLowerCase(), obj == null?"":obj.toString());
 					}
 				}
-				if(obj != null&& attrName.indexOf("_ID")<0) {
+				if(obj != null&& attrName.indexOf("_ID")<0&&attr.indexOf(attrName)<0) {
 					allValue.append(obj.toString().replace("\r", " ").replace("\n", " ")).append(" ");
 				}
 			}
