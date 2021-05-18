@@ -126,12 +126,13 @@ public class CustomWorkflowService extends EcmService{
 	private void updateEcmauditWorkItem(String token,Map<String, Object> varMap, String formId, String docId) throws AccessDeniedException {
 		String taskId = varMap.get("taskId").toString();
 		HistoricTaskInstance task = historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
-		EcmAuditWorkitem audit = ecmAuditWorkitemMapper.selectByCondition("TASK_ID='" + taskId + "'  and END_TIME is null").get(0);
-				;
-//		audit.setId(audit.getId());
+		EcmAuditWorkitem audit = new EcmAuditWorkitem();
+		EcmAuditWorkitem audits = ecmAuditWorkitemMapper.selectByCondition("TASK_ID='" + taskId + "'  and END_TIME is null")
+				.get(0);
+		audit.setId(audits.getId());
 		audit.setCreateTime(task.getCreateTime());
 		audit.setEndTime(task.getEndTime());
-//		audit.setDocId("");
+		audit.setDocId(audits.getDocId());
 		audit.setFormId("");
 		audit.setTaskName(task.getName());
 		audit.setAssignee(getSession(token).getCurrentUser().getUserName());
