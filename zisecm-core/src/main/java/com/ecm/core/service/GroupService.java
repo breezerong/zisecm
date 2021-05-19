@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ecm.common.util.EcmStringUtils;
+import com.ecm.core.AuditContext;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.ServiceContext;
 import com.ecm.core.PermissionContext.ObjectPermission;
@@ -58,7 +59,9 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 	
 	@Autowired
 	private EcmGroupUserMapper ecmGroupUserMapper;
-	
+
+	@Autowired
+	private ContentService contentService;
 	private final Logger logger = LoggerFactory.getLogger(GroupService.class);
 	
 	public GroupService()
@@ -318,6 +321,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 			//删除引用的角色中用户
 			removeParentRoleUser(roleId, userId,roleId);
 			mp.put("res", "true");
+			contentService.newAudit(token, "portal", AuditContext.REMOVE_USERFROMGROUP, null, null, null);
 			return mp;
 		}else {
 			mp.put("res", "false");
@@ -471,6 +475,7 @@ public class GroupService extends EcmObjectService<EcmGroup> implements IGroupSe
 			ecmGroupUserMapper.insert(gu);
 		}
 		addUserToParentRole(token, roleId, userId,roleId);
+		contentService.newAudit(token, "portal", AuditContext.ADD_USERTOGROUP, null, null, null);
 		return true;
 	}
 	/**

@@ -107,4 +107,12 @@ public class AuditContext {
 	 *取消签出
 	 */
 	//public static String CANCEL_CHECK_OUT = "ecm_cancel_check_out";
+	/**
+	 *添加用户至组或部门
+	 */
+	public static String ADD_USERTOGROUP = "ecm_add_userToGroup";
+	/**
+	 *用户从组或部门移除
+	 */
+	public static String REMOVE_USERFROMGROUP = "ecm_remove_userFromGroup";
 }
