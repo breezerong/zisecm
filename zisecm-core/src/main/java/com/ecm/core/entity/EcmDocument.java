@@ -435,7 +435,7 @@ public class EcmDocument extends EcmSysObject{
 	
 	@Override
 	public void setModifier(String modifier) {
-		super.setCreator(modifier);
+		super.setModifier(modifier);
 		if(attributes!=null) {
 			attributes.put("MODIFIER",  modifier);
 		}
