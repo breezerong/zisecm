@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,10 +58,10 @@ import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.exception.UniquenessException;
 import com.ecm.core.sync.SyncPublicNetUtil;
+import com.ecm.core.util.TCAttributeHandle;
 import com.ecm.icore.service.IDocumentService;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.ILifeCycleEvent;
-import com.google.common.base.Strings;
 
 @Service
 @Scope("prototype")
@@ -625,6 +625,11 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public String creatOrUpdateObject(String token, EcmDocument doc, EcmContent content) throws Exception {
+		//tc数据属性处理
+		if("tcadmin".equals(getCurrentUser(token).getUserName())) {
+			doc.setAttributes(TCAttributeHandle.attributeHandle(doc.getAttributes()));
+		}
+
 		if(null==doc.getId()||"".equals(doc.getId())) {
 			doc.createId();
 			doc.setCurrent(true);
@@ -667,6 +672,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			}
 			doc.setFormatName(content.getFormatName());
 			doc.setContentSize(content.getContentSize());
+			
 			updateObject(token, doc.getAttributes());
 		}
 		

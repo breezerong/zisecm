@@ -70,6 +70,7 @@ import com.ecm.core.service.FolderService;
 import com.ecm.core.service.NumberService;
 import com.ecm.core.service.QueryService;
 import com.ecm.core.service.RelationService;
+import com.ecm.core.util.TCAttributeHandle;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.portal.entity.AttrCopyCfgEntity;
 import com.ecm.portal.service.CustomCacheService;
@@ -1400,8 +1401,31 @@ public class EcmDcController extends ControllerAbstract {
 	}
 	public void execAddAttachment(Map<String, Object> args,MultipartFile[] uploadFile,String AclName) throws Exception {
 		String parentId = args.get("parentDocId").toString();
-		
+		int tcCount = 1;
 		for (MultipartFile multipartFile : uploadFile) {
+			//tc文件重命名
+			if("tcadmin".equals(this.getSession().getCurrentUser().getUserName())) {
+				String coding = args.get("CODING").toString();//图号
+				String revision = args.get("REVISION").toString();//版本
+				String subType = args.get("SUB_TYPE").toString();//文件类型
+				if("两卡".equals(subType)){
+					String name = args.get("NAME").toString();
+					if(name.indexOf("质量评定卡") >= 0) {//图号版本JK001、图号版本PD001
+						args.put("NAME", coding + revision + "PD" + TCAttributeHandle.getTCNum(tcCount));
+						tcCount ++;
+					}else if(name.indexOf("校审记录卡") >= 0) {
+						args.put("NAME", coding + revision + "JK" + TCAttributeHandle.getTCNum(tcCount));
+						tcCount ++;
+					}
+				}else if("规格".equals(subType)) {
+					args.put("NAME", coding+"("+revision+")");//编码（版本）
+					String formatName = args.get("FORMAT_NAME").toString();//后缀
+					if("doc".equals(formatName) || "docx".equals(formatName) || "dwg".equals(formatName)) {
+						args.put("C_INCLUDE_EDIT", "有");//是否可以编辑版：有
+					}
+				}
+			}
+			
 			
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
