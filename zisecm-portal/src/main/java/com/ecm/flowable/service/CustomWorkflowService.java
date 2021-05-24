@@ -1,5 +1,8 @@
 package com.ecm.flowable.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,12 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.flowable.common.engine.api.FlowableException;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
-import org.flowable.engine.ManagementService;
-import org.flowable.engine.ProcessEngine;
-import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -32,12 +31,15 @@ import com.ecm.core.dao.EcmAuditWorkflowMapper;
 import com.ecm.core.dao.EcmAuditWorkitemMapper;
 import com.ecm.core.entity.EcmAuditWorkflow;
 import com.ecm.core.entity.EcmAuditWorkitem;
+import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.service.AuthService;
+import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmService;
-import com.ecm.core.service.UserService;
 import com.ecm.icore.service.IEcmSession;
+import com.ecm.portal.common.dataexchange.WordUtils;
 
 @Service
 public class CustomWorkflowService extends EcmService{
@@ -55,7 +57,12 @@ public class CustomWorkflowService extends EcmService{
 	private EcmAuditWorkitemMapper ecmAuditWorkitemMapper;
 	@Autowired
 	private DocumentService documentService;
-
+	@Autowired
+	private AuthService authService;
+	@Autowired
+	private ContentService contentService;
+	@Autowired
+	WordUtils wordUtils;
 	/**
 	 * @param taskArgs
 	 * @throws AccessDeniedException 
@@ -88,6 +95,70 @@ public class CustomWorkflowService extends EcmService{
 			taskService.complete(taskId, taskArgs);
 		}
 		updateEcmauditWorkItem(token,taskArgs);
+		String isExchange = task.getDescription();
+		if(isExchange!=null&&isExchange.equals("数据交换：是")) {
+			detaExchange(task.getProcessInstanceId(),taskArgs.get("formId").toString(),token);
+		}
+	}
+
+	private void detaExchange(String processInstanceId, String formId,String token) {
+		// TODO Auto-generated method stub
+		EcmDocument document= documentService.getObjectById(token, formId);
+		try {
+		
+//			List<ArrayList<String>> resultList = new ArrayList<ArrayList<String>>();
+//			List<HistoricTaskInstance> tasks = historyService.createHistoricTaskInstanceQuery()
+//					.processInstanceId(processInstanceId).orderByTaskCreateTime().asc().list();
+//			for (HistoricTaskInstance task : tasks) {
+//				ArrayList<String> array = new ArrayList<String>();
+//				array.add(task.getName());
+//				array.add(task.getAssignee());
+//				EcmUser assigneeName = userService.getObjectByName(token, task.getAssignee());
+//				array.add(assigneeName.getSignImage());
+//				
+//				SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+//				array.add(task.getEndTime()==null?"":f.format(task.getEndTime()));
+//				resultList.add(array);
+//			}		
+			String id=document.getId();	
+			EcmContent en = null;
+			if (!StringUtils.isEmpty(document.getFormatName()==null?"":document.getFormatName())) {
+					en = contentService.getObject(token, id, 0, document.getFormatName());
+			} else {
+				en = contentService.getPrimaryContent(token, id);
+			}
+			String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+			String templatePath = fullPath+en.getFilePath();
+			
+//			WordUtils util = new WordUtils();
+			wordUtils.setTemplatePath(templatePath);
+			String savePath=fullPath+"\\templateDoc";
+			File dir = new File(savePath);
+            if (!dir.exists()) {// 判断目录是否存在     
+                dir.mkdir();   
+            }
+			savePath=savePath+"\\"+templatePath.substring(templatePath.lastIndexOf("\\")+1);
+			wordUtils.setSavePath(savePath);
+			//util.exchangeData(resultList,document,0);
+			wordUtils.exchangeData(processInstanceId,document,0,ecmAuditWorkitemMapper);
+//			contentService.updateObject(token, obj);
+			File afterDoc = new File(savePath);
+			long size = afterDoc.length();
+			InputStream afterInput = new FileInputStream(afterDoc);
+			en.setContentSize(size);
+			en.setInputStream(afterInput);
+			contentService.updateObject(token, en);
+			if(afterDoc.exists()) {
+				afterDoc.delete();
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error(e.getMessage());
+		
+		}finally {
+		}
 	}
 
 	/**
