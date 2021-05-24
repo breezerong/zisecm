@@ -898,7 +898,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Transactional(rollbackFor = Exception.class)
 	public void updateObject(String token, EcmDocument doc, EcmContent content) throws NoPermissionException, AccessDeniedException, EcmException {
 		try {
-			if(!doc.getCoding().equals("@Sequence")) {
+			String coding=doc.getCoding();
+			if(coding!=null&&!coding.equals("@Sequence")) {
 				this.validate(token, doc.getAttributes());
 			}
 		} catch (AccessDeniedException e) {
