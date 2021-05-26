@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
+
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.SecureUtils;
@@ -32,8 +35,6 @@ import com.ecm.core.dao.EcmGroupMapper;
 import com.ecm.core.dao.EcmGroupUserMapper;
 import com.ecm.core.dao.EcmUserMapper;
 import com.ecm.core.db.DBFactory;
-import com.ecm.core.db.DBGeneralUtils;
-import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmGroup;
 import com.ecm.core.entity.EcmGroupItem;
 import com.ecm.core.entity.EcmUser;
@@ -42,7 +43,6 @@ import com.ecm.core.entity.Pager;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
-import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.icore.service.IEcmSession;
 import com.ecm.icore.service.IUserService;
 
@@ -403,7 +403,13 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public String newObject(String token, Object en) throws EcmException, AccessDeniedException, NoPermissionException {
 		super.hasPermission(token, serviceCode + ObjectPermission.WRITE_ATTRIBUTE, systemPermission);
-		((EcmUser) en).setPassword(SecureUtils.md5Encode(((EcmUser) en).getPassword()));
+		//((EcmUser) en).setPassword(SecureUtils.md5Encode(((EcmUser) en).getPassword()));
+		try {
+			((EcmUser) en).setPassword(DigestUtils.md5DigestAsHex(((EcmUser) en).getPassword().getBytes("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			logger.error("User new object -- Password encryption exception");
+		}
+		
 		EcmUser u = (EcmUser) en;
 		if (u.getId() == null || "".equals(u.getId())) {
 			((EcmUser) en).createId();
