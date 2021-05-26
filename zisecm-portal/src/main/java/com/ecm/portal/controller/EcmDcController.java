@@ -1732,7 +1732,7 @@ public class EcmDcController extends ControllerAbstract {
 					}
 					mp.put("code", ActionContext.SUCESS);
 				}
-			}
+			} else 
 			{
 				mp.put("code", ActionContext.FAILURE);
 				mp.put("message", "File is null.");
