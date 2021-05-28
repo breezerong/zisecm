@@ -1115,6 +1115,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			return 9;
 		}
 		String currentUser = getSession(token).getCurrentUser().getUserName();
+		String currentUserComp = getSession(token).getCurrentUser().getDepartment();
 		String userID = getSession(token).getCurrentUser().getUserId();
 		String aclName = doc.getAclName();
 		
@@ -1154,6 +1155,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 				.append(DBFactory.getDBConn().getDBUtils().getDBDateNow())
 				.append(") and a.TARGET_NAME in('everyone'");
 				sb.append(",'").append(currentUser).append("'");
+				sb.append(",'").append(currentUserComp).append("'");
 				if (currentUser.equals(doc.getOwnerName())) {
 					sb.append(",'owner'");
 				}
