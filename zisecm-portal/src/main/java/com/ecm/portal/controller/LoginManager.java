@@ -98,7 +98,7 @@ public class LoginManager extends ControllerAbstract{
 					mp.put("token", s.getToken());
 					mp.put("data", s.getCurrentUser());
 	//				mp.put("company", s.getCurrentUser().getCompany());
-	//				mp.put("department", s.getCurrentUser().getDepartment());
+					mp.put("department", s.getCurrentUser().getDepartment());
 	//				mp.put("userType", s.getCurrentUser().getUserType());
 	//				mp.put("clientPermission", s.getCurrentUser().getClientPermission());
 	//				mp.put("systemPermission", s.getCurrentUser().getSystemPermission());
