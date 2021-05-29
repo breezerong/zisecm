@@ -2,9 +2,6 @@ package com.ecm.core.util;
 
 import java.util.Map;
 
-import com.ecm.core.cache.manager.SessionManager;
-import com.ecm.icore.service.IEcmSession;
-
 public class TCAttributeHandle {
 	/**
 	 * 根据TC要求,处理tc属性
@@ -14,10 +11,18 @@ public class TCAttributeHandle {
 	 */
 	public static Map<String, Object> attributeHandle(Map<String, Object> args) {
 		args.put("C_COMMENT", "");// 备注：默认空
-		args.put("C_DRAFTER", transfValue(args.get("C_DRAFTER").toString()));// 编制者：去括号
-		args.put("C_PAGE_SIZE", transfValue(args.get("C_PAGE_SIZE").toString()));// 图纸规格：去括号
-		args.put("C_CREATE_UNIT", getUnit(args.get("C_CREATE_UNIT").toString()));// 单位:核电工艺所.河北分公司.CNPE
-
+		System.out.println("before C_DRAFTER:"+args.get("C_DRAFTER"));
+		System.out.println("before C_PAGE_SIZE:"+args.get("C_PAGE_SIZE"));
+		System.out.println("before C_CREATE_UNIT："+args.get("C_CREATE_UNIT"));
+		String drafter = args.get("C_DRAFTER") == null ? "" : args.get("C_DRAFTER").toString();
+		String pageSize = args.get("C_PAGE_SIZE") == null ? "" : args.get("C_PAGE_SIZE").toString();
+		String unit = args.get("C_CREATE_UNIT") == null ? "" : args.get("C_CREATE_UNIT").toString();
+		args.put("C_DRAFTER", transfValue(drafter));// 编制者：去括号
+		args.put("C_PAGE_SIZE", transfValue(pageSize));// 图纸规格：去括号
+		args.put("C_CREATE_UNIT", getUnit(unit));// 单位:核电工艺所.河北分公司.CNPE
+		System.out.println("after C_DRAFTER:"+args.get("C_DRAFTER"));
+		System.out.println("after C_PAGE_SIZE:"+args.get("C_PAGE_SIZE"));
+		System.out.println("after C_CREATE_UNIT："+args.get("C_CREATE_UNIT"));
 		return args;
 	}
 

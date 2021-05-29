@@ -626,7 +626,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 	@Transactional(rollbackFor = Exception.class)
 	public String creatOrUpdateObject(String token, EcmDocument doc, EcmContent content) throws Exception {
 		//tc数据属性处理
-		if("tcadmin".equals(getCurrentUser(token).getUserName())) {
+		logger.info("data from:{}", getCurrentUser(token).getLoginName());
+		if("tcadmin".equals(getCurrentUser(token).getLoginName())) {
+			logger.info("into tchandle");
 			doc.setAttributes(TCAttributeHandle.attributeHandle(doc.getAttributes()));
 		}
 

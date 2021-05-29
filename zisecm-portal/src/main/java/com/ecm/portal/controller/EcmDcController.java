@@ -1404,35 +1404,67 @@ public class EcmDcController extends ControllerAbstract {
 		int tcCount = 1;
 		for (MultipartFile multipartFile : uploadFile) {
 			//tc文件重命名
-			if("tcadmin".equals(this.getSession().getCurrentUser().getUserName())) {
-				String coding = args.get("CODING").toString();//图号
-				String revision = args.get("REVISION").toString();//版本
-				String subType = args.get("SUB_TYPE").toString();//文件类型
-				if("两卡".equals(subType)){
-					String name = args.get("NAME").toString();
-					if(name.indexOf("质量评定卡") >= 0) {//图号版本JK001、图号版本PD001
-						args.put("NAME", coding + revision + "PD" + TCAttributeHandle.getTCNum(tcCount));
-						tcCount ++;
-					}else if(name.indexOf("校审记录卡") >= 0) {
-						args.put("NAME", coding + revision + "JK" + TCAttributeHandle.getTCNum(tcCount));
-						tcCount ++;
+			boolean isTCName = false;
+			try {
+				logger.info("data from:{}",this.getSession().getCurrentUser().getLoginName());
+				if("tcadmin".equals(this.getSession().getCurrentUser().getLoginName())) {
+					logger.info("into tc:{}",tcCount);
+					String coding = "";//图号
+					String revision = "";//版本
+					String typeName = "";//文件类型
+					String formatName = "";//后缀
+					Map<String, Object> parentDoc = documentService.getObjectMapById(getToken(), parentId);
+					if(parentDoc != null) {
+						coding = parentDoc.get("CODING") == null ? "" : parentDoc.get("CODING").toString();
+						revision = parentDoc.get("REVISION") == null ? "" : parentDoc.get("REVISION").toString();
+						typeName = parentDoc.get("TYPE_NAME") == null ? "" : parentDoc.get("TYPE_NAME").toString();
+						formatName = parentDoc.get("FORMAT_NAME") == null ? "" : parentDoc.get("FORMAT_NAME").toString();
 					}
-				}else if("规格".equals(subType)) {
-					args.put("NAME", coding+"("+revision+")");//编码（版本）
-					String formatName = args.get("FORMAT_NAME").toString();//后缀
-					if("doc".equals(formatName) || "docx".equals(formatName) || "dwg".equals(formatName)) {
-						args.put("C_INCLUDE_EDIT", "有");//是否可以编辑版：有
+					String subType = args.get("SUB_TYPE") == null ? "" : args.get("SUB_TYPE").toString();//文件类型
+					logger.info("coding:{}", coding);
+					logger.info("revision:{}", revision);
+					logger.info("typeName:{}", typeName);
+					logger.info("formatName:{}", formatName);
+					logger.info("subType:{}", subType);
+					logger.info("before name1:{}", args.get("NAME"));
+					logger.info("------------------------");
+					if("两卡".equals(subType) && "设计文件".equals(typeName)){
+						String name = args.get("NAME") == null ? "" : args.get("NAME").toString();
+						logger.info("after name:{}",name);
+						if(name.indexOf("质量评定卡") >= 0) {//重命名：图号版本JK001、图号版本PD001
+							args.put("NAME", coding + revision + "PD" + TCAttributeHandle.getTCNum(tcCount));
+							isTCName = true;
+							tcCount ++;
+						}else if(name.indexOf("校审记录卡") >= 0) {
+							args.put("NAME", coding + revision + "JK" + TCAttributeHandle.getTCNum(tcCount));
+							isTCName = true;
+							tcCount ++;
+						}
+						logger.info("name2:{}",args.get("NAME"));
+					}else if("规格".equals(subType)) {
+						args.put("NAME", coding+"("+revision+")");//重命名：编码（版本）
+						isTCName = true;
+						if("doc".equals(formatName) || "docx".equals(formatName) || "dwg".equals(formatName)) {
+							args.put("C_INCLUDE_EDIT", "有");//是否可以编辑版：有
+							parentDoc.put("C_INCLUDE_EDIT", "有");//设置parent的C_INCLUDE_EDIT
+							documentService.updateObject(getToken(), parentDoc);
+						}
+						logger.info("name2:{}",args.get("NAME"));
+						logger.info("C_INCLUDE_EDIT:{}",args.get("C_INCLUDE_EDIT"));
 					}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			
 			
 			EcmDocument doc = new EcmDocument();
 			doc.setAttributes(args);
-			String fileName=multipartFile.getOriginalFilename();
-			fileName=fileName.substring(0,fileName.lastIndexOf(".")<0
-					?fileName.length():fileName.lastIndexOf("."));
-			doc.setName(fileName);
+			if(!isTCName) {
+				String fileName=multipartFile.getOriginalFilename();
+				fileName=fileName.substring(0,fileName.lastIndexOf(".")<0
+						?fileName.length():fileName.lastIndexOf("."));
+				doc.setName(fileName);
+			}
 			
 			Object fid= args.get("folderId");
 			String folderId="";
