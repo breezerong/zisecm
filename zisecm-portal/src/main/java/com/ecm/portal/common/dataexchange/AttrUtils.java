@@ -260,11 +260,11 @@ public class AttrUtils {
 		
 		for(ArrayList<String> strs:list) {
 			if(strs.get(0).equals(taskName)) {
-				userName += strs.get(1) + ",";
+				userName += strs.get(1) + ";";
 			}
 		}
 		
-		if (userName.contains(",")) {
+		if (userName.contains(";")) {
 			userName = userName.substring(0, userName.length() - 1);
 		}
 		return userName;

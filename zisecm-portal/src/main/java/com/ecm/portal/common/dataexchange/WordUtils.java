@@ -194,7 +194,7 @@ public class WordUtils {
 		}
 
 		for (String key : textMap.keySet()) {
-			if(key.startsWith("IMG")&&textMap.get(key)!=""){
+			if((key.startsWith("IMG")||key.startsWith("WFUALL"))&&textMap.get(key)!=""){
 				if(textMap.get(key).indexOf(";")!=-1) {
 					String[] lis = textMap.get(key).split(";");
 					String img="";

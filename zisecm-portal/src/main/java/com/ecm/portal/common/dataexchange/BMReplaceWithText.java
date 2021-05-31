@@ -114,7 +114,7 @@ public class BMReplaceWithText {
 		R run = getR(bm);
 		if (run != null) {
 			run.getContent().clear();
-			if (bm.getName().startsWith("IMG")) {
+			if (bm.getName().startsWith("IMG")||bm.getName().startsWith("WFUALL")) {
 				if (value == null || value.trim().length() == 0) {
 					org.docx4j.wml.Text t = factory.createText();
 					run.getContent().add(t);
