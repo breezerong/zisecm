@@ -55,7 +55,10 @@ public class AttrUtils {
 		}
 		if (bookMark.startsWith("ATTR_")) {// 直接从文档属性读取值
 			returnStr = getAttrFromDocument(doc, getSingleAttrFromStr(bookMark));
-		} else if (bookMark.startsWith("FUN_")) {// 通过函数复杂处理
+		}
+		else if (bookMark.startsWith("ATTRNAME_")) {// 直接从文档属性读取值
+			returnStr = getAttrFromDocument(doc, getSingleAttrFromStr(bookMark));
+		}else if (bookMark.startsWith("FUN_")) {// 通过函数复杂处理
 		//	IFunction function = (IFunction) Class.forName(methodPro.getProperty(attrArray[1])).newInstance();
 			//returnStr =  function.getValue(doc, getMultiAttrFromStr(bookMark));
 		} else if (bookMark.startsWith("IMGATT_")) {// 直接从文档属性获取签名图片

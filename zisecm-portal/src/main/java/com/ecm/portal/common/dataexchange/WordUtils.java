@@ -221,6 +221,11 @@ public class WordUtils {
 					}
 				}
 			}
+			if(key.startsWith("ATTRNAME")){
+				if(textMap.get(key).indexOf(" ")!=-1) {
+					textMap.replace(key, textMap.get(key).split(" ")[0]);
+				}
+			}
 			if(doc.getTypeName().equals("报告")) {
 				if(key.equals("ATTR_0_CREATION_DATE9COPY")) {
 					textMap.replace(key, getUpperDate(textMap.get(key)));
