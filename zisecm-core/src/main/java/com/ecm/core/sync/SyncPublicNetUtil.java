@@ -111,11 +111,15 @@ public class SyncPublicNetUtil implements ISyncPublicNet{
 					 String result = EntityUtils.toString(response.getEntity());
 					 System.out.println(result);
 					 JSONObject jsonObject=new JSONObject();
-					 List<SyncUserIpBean> userIpList =jsonObject.parseArray(result, SyncUserIpBean.class);
-					 if(userIpList!=null && userIpList.size()>0) {
-						 SyncUserIpBean userIpBean  = userIpList.get(0);
-						 secretlevel =  Integer.parseInt(userIpBean.getSecretlevel()) ;
+					 SyncUserIpBean userIpList =JSONObject.parseObject(result, SyncUserIpBean.class);
+					 if(userIpList!=null) {
+						 secretlevel =  Integer.parseInt(userIpList.getSecretlevel());
 					 }
+//					 List<SyncUserIpBean> userIpList =jsonObject.parseArray(result, SyncUserIpBean.class);
+//					 if(userIpList!=null && userIpList.size()>0) {
+//						 SyncUserIpBean userIpBean  = userIpList.get(0);
+//						 secretlevel =  Integer.parseInt(userIpBean.getSecretlevel()) ;
+//					 }
 				 }
 				
 				 
