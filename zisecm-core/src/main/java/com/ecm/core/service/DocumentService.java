@@ -1706,10 +1706,13 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		//cd 项目参数
 		if(CacheManagerOper.getEcmParameters().get("CD_SECURITY_LEVEL")!= null) {
 			if(CacheManagerOper.getEcmParameters().get("CD_SECURITY_LEVEL").getValue().equals("1")) {
-				if(!isReadableBySecurityLevel(token,doc)) {
-					throw new NoPermissionException(
-							"User " + getSession(token).getCurrentUser().getUserName() + " SecurityLevel  has no read   permission:" + id);
+				if(doc.getSecurityLevel()!=null) {
+					if(!isReadableBySecurityLevel(token,doc)) {
+						throw new NoPermissionException(
+								"User " + getSession(token).getCurrentUser().getUserName() + " SecurityLevel  has no read   permission:" + id);
+					}
 				}
+				
 			}
 		}
 		try {
