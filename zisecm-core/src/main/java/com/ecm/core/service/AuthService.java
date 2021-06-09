@@ -43,7 +43,8 @@ public class AuthService implements IAuthService {
 		s.setCurrentUser(cuser);
 		s.setToken(clientInfo);
 		//s.setAuth(auth);
-		userService.newAudit(s.getToken(),null, AuditContext.LOGIN, "", null, null);
+		if(!"superUser".equals(appName))
+			userService.newAudit(s.getToken(),null, AuditContext.LOGIN, "", null, null);
 		return s;
 	}
 	

@@ -80,7 +80,7 @@ public class LoginManager extends ControllerAbstract{
 			if(loginCount>maxLoginCount) {
 				authService.lockUser(username);
 				session.removeAttribute("ECMLoginFailCount");
-				mp.put("code", 2);
+				mp.put("code", 0);
 				mp.put("msg", "登录失败超过 最大次数："+maxLoginCount);
 				try {
 					auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "登录次数超过:"+maxLoginCount, null, username);
@@ -114,7 +114,12 @@ public class LoginManager extends ControllerAbstract{
 					e.printStackTrace();
 					session.setAttribute("ECMLoginFailCount",loginCount+1);
 					mp.put("code", 0);
-					mp.put("msg", e.getMessage());
+					if("The status of user is inactive.".equals(e.getMessage())) {
+						mp.put("msg", "账户已被禁用，请联系管理员");
+
+					}else {
+						mp.put("msg", e.getMessage());
+					}
 					try {
 						auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, username);
 					} catch (AccessDeniedException e1) {
