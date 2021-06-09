@@ -389,7 +389,7 @@ public class ArchiveFolderController extends ControllerAbstract{
 			if(!"".equals(args.get("id").toString())) {
 				String sql = "select b.*,a.id as RELATION_ID,a.NAME as RELATION_NAME,a.PARENT_ID,a.CHILD_ID,a.ORDER_INDEX"
 						+ " from ecm_relation a, ecm_document b where  a.CHILD_ID=b.ID "
-						+ " and a.PARENT_ID='"+args.get("id").toString()+"' "+conditionWhere+" order by a.ORDER_INDEX,b.CREATION_DATE";
+						+ " and a.PARENT_ID='"+args.get("id").toString()+"' "+conditionWhere+" AND a.NAME != '附件' order by a.ORDER_INDEX,b.CREATION_DATE";
 				list = documentService.getMapList(getToken(), sql);
 				
 			}

@@ -94,12 +94,14 @@ import com.ecm.core.exception.EcmException;
 import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.exception.SqlDeniedException;
 import com.ecm.core.service.AuditService;
+import com.ecm.core.service.AuthService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.UserService;
 import com.ecm.flowable.config.CustomProcessDiagramGenerator;
 import com.ecm.flowable.listener.JobListener;
 import com.ecm.flowable.service.CustomWorkflowService;
 import com.ecm.flowable.service.IFlowableBpmnModelService;
+import com.ecm.icore.service.IEcmSession;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -124,6 +126,9 @@ public class WorkflowController extends ControllerAbstract {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AuthService authService;
 
 	@Autowired
 	private WorkflowAuditService workflowAuditService;
@@ -605,7 +610,7 @@ public class WorkflowController extends ControllerAbstract {
 
 		return resultMap;
 	}
-
+	
 	public String todoTaskWhereSql() {
 		LoginUser user = null;
 		try {
@@ -614,6 +619,30 @@ public class WorkflowController extends ControllerAbstract {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		List<String> roleList= user.getRoles();
+		
+		String whereSql="";
+		if(roleList.size()==0) {
+			whereSql = "T.ASSIGNEE_='"+user.getUserName()+"'";
+		}else {
+			whereSql="T.ASSIGNEE_ in(";
+			for(int i=0;roleList!=null&&i<roleList.size();i++) {
+				if(i==0) {
+					whereSql+="'"+user.getUserName()+"','"+roleList.get(i)+"'";
+//					whereSql+=" T.ASSIGNEE_='"+user.getUserName()+"' or T.ASSIGNEE_='"+roleList.get(i)+"'";
+				}
+				 
+				 if(i!=0) {
+					 whereSql+=",'"+roleList.get(i)+"'";
+//					 whereSql+=" or T.ASSIGNEE_='"+roleList.get(i)+"'";
+				 }
+			}
+			whereSql+=") ";
+		}
+		return whereSql;
+	}
+
+	public String todoTaskWhereSqlOA(LoginUser user) throws Exception {
 		List<String> roleList= user.getRoles();
 		
 		String whereSql="";
@@ -666,17 +695,30 @@ public class WorkflowController extends ControllerAbstract {
 		return mp;
 
 	}
-	@RequestMapping(value = "getAllTodoTaskCountForOA", method = RequestMethod.GET) // PostMapping("/dc/getDocumentCount")
+	@RequestMapping(value = "getAllTodoTaskCountForOA/usercode={id}", method = RequestMethod.GET) // PostMapping("/dc/getDocumentCount")
 	@ResponseBody
-	public  Map<String, Object> getAllTodoTaskCountForOA() {
+	public  Map<String, Object> getAllTodoTaskCountForOA(@PathVariable("id") String username) {
 		Map<String, Object> mp = new HashMap<String, Object>();
+		LoginUser user = null;
+		IEcmSession s = null;
 		try {
-			Map<String, Object> count = distributeCount();
-			String whereSql = todoTaskWhereSql();
+			try {
+				//user = userService.getCurrentUser(getToken());
+				s = authService.loginSSO("portal",username);
+				user = userService.getCurrentUser(s.getToken());
+			} catch (AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Map<String, Object> count = distributeCountOA(s);
+			String whereSql = todoTaskWhereSqlOA(user);
 			long taskCount = todoTaskCount(null, whereSql);
 			taskCount=Integer.valueOf( count.get("approving").toString())+Integer.valueOf( count.get("reading").toString())+taskCount;
+			mp.put("name", "");
+			mp.put("systemurl", "");
 			mp.put("count", taskCount);
-			mp.put("data", count);
+			mp.put("txcount", "");
 			mp.put("code", ActionContext.SUCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -724,6 +766,18 @@ public class WorkflowController extends ControllerAbstract {
 		count.put("reading", result2.size());
 		return count;
 	}
+	public Map<String, Object> distributeCountOA(IEcmSession s) throws AccessDeniedException, EcmException, SqlDeniedException {
+		Map<String, Object> count = new HashMap<String, Object>();
+		String currentUser=s.getCurrentUser().getUserName();
+		String condition1 = "TYPE_NAME='分发单' and C_APPROVER='"+s.getCurrentUser().getUserName()+"' and STATUS='待批示'";
+		String condition2 = "TYPE_NAME='分发单' and OWNER_NAME = '"+currentUser+"' and STATUS='待阅'";
+		List<EcmDocument> result1 = documentService.getObjects(s.getToken(), condition1);
+		List<EcmDocument> result2 = documentService.getObjects(s.getToken(), condition2);
+		count.put("approving", result1.size());
+		count.put("reading", result2.size());
+		return count;
+	}
+	
 	private Map<String,Map<String,String>> processDefList = new HashMap<String, Map<String,String>>();
 	private Map<String,String> getProcessName(String processDefinitionId) {
 		Map<String,String> processInfo = processDefList.get(processDefinitionId);
