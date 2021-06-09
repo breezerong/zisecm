@@ -734,8 +734,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	@Override
 	public boolean lockUser(String loginName) {
 
-		String sql = "update ecm_user set IS_ACTIVED=0 where LOGIN_NAME='"
-				+ DBFactory.getDBConn().getDBUtils().getString(loginName) + "'";
+		String sql = "update ecm_user set IS_ACTIVED=0 where UPPER(LOGIN_NAME)='"
+				+ DBFactory.getDBConn().getDBUtils().getString(loginName).toUpperCase() + "'";
 
 		return ecmUserMapper.searchToEntity(sql) != null;
 	}
