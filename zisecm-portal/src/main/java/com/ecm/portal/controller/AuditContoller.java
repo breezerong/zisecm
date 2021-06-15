@@ -21,6 +21,7 @@ import com.ecm.core.entity.EcmSystemEvent;
 import com.ecm.core.entity.LoginUser;
 import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.service.AuditService;
+import com.ecm.icore.service.IEcmSession;
 
 @Controller
 public class AuditContoller extends ControllerAbstract {
@@ -59,6 +60,8 @@ public class AuditContoller extends ControllerAbstract {
 				en.setAppName(appName);
 				en.createId();
 				en.setExcuteDate(new Date());
+				IEcmSession session  = this.getSession();
+				en.setMessage("ip:"+session.getCurrentUser().getLoginIp());
 				auidtService.newObject(getToken(),en);
 				return "success";
 			} catch (Exception e) {
