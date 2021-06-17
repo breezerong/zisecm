@@ -2860,6 +2860,32 @@ public class EcmDcController extends ControllerAbstract {
 		zipDownloadService.createZipFiles(files, fileNames, response);
 	}
 	
+	@RequestMapping(value = "/workflow/PackDownloadFile")
+	public void downloadFile(HttpServletResponse response, String objectIds) throws NoPermissionException, EcmException {
+		String[] objectIdsList = objectIds.split(",");
+		List<File> files = new ArrayList<File>();
+		List<String> fileNames = new ArrayList<String>();
+		for (int i = 0; i < objectIdsList.length; i++) {
+			try {
+				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
+				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
+				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					String sqlContentList = "SELECT ec.* FROM ECM_DOCUMENT ed, ECM_CONTENT ec WHERE ed.ID = ec.PARENT_ID AND ec.PARENT_ID = '"+ objectIdsList[i] +"' AND ec.FORMAT_NAME = ed.FORMAT_NAME ";
+					List<Map<String, Object>> contentList = documentService.getMapList(getToken(), sqlContentList);
+					for (int j = 0; j < contentList.size(); j++) {
+						String storePath = CacheManagerOper.getEcmStores().get(contentList.get(j).get("STORE_NAME")).getStorePath();
+						files.add(new File(storePath + contentList.get(j).get("FILE_PATH")));
+						fileNames.add(coding + "." + contentList.get(j).get("FORMAT_NAME"));
+					}
+				}
+			} catch(AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}
+		zipDownloadService.createZipFiles(files, fileNames, response);
+	}
+	
 	
 	/**
 	 * 下载子文件
