@@ -74,6 +74,7 @@ public class AuthenticationFilter implements Filter {
          		||req.getServletPath().indexOf("getContent")>=0
          		||req.getServletPath().indexOf("getUserImage")>=0
          		||req.getServletPath().indexOf("/workflow")>=0
+         		||req.getServletPath().indexOf("/oaAll")>=0
          		||req.getServletPath().indexOf("/admin/validataAdminToken")>=0
          		||req.getServletPath().indexOf("/addAudit")>=0
          		||req.getServletPath().indexOf("/revokeAcl2")>=0
