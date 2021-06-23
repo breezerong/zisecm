@@ -339,6 +339,14 @@ public class ESSearchService extends EcmService implements ISearchService {
 				boolQueryBuilder1.must(statusBuilder);
 			}
 			
+			//只查询当前版本
+			TermsQueryBuilder statusBuilder2 = QueryBuilders.termsQuery("is_current", "1");
+			if (boolQueryBuilder1 == null) {
+				boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder2);
+			} else {
+				boolQueryBuilder1.must(statusBuilder2);
+			}
+			
 			//状态必须为“利用”
 			//TermsQueryBuilder noboxBuilder = QueryBuilders.termsQuery("type_name", "卷盒");
 			
@@ -554,6 +562,13 @@ public class ESSearchService extends EcmService implements ISearchService {
 					boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder);
 				} else {
 					boolQueryBuilder1.must(statusBuilder);
+				}
+				//只查询当前版本
+				TermsQueryBuilder statusBuilder2 = QueryBuilders.termsQuery("is_current", "1");
+				if (boolQueryBuilder1 == null) {
+					boolQueryBuilder1 = new BoolQueryBuilder().must(statusBuilder2);
+				} else {
+					boolQueryBuilder1.must(statusBuilder2);
 				}
 				
 				sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
