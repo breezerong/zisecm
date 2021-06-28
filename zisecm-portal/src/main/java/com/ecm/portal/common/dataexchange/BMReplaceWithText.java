@@ -239,7 +239,7 @@ public class BMReplaceWithText {
 					run.getContent().add(t);
 					t.setValue(val);
 				}
-				theList.add(1, run);
+				theList.add(2, run);
 			}
 		}
 		return result;
