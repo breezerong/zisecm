@@ -530,10 +530,12 @@ public class WorkflowController extends ControllerAbstract {
 
 	/**
 	 * 获取userId待审批的任务
+	 * @throws AccessDeniedException 
+	 * @throws EcmException 
 	 */
 	@RequestMapping(value = "todoTask")
 	@ResponseBody
-	public HashMap<String, Object> todoTask(@RequestBody String argStr) {
+	public HashMap<String, Object> todoTask(@RequestBody String argStr) throws EcmException, AccessDeniedException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String userId = args.get("userId").toString();
 		StringBuilder condition = new StringBuilder("");
@@ -576,12 +578,21 @@ public class WorkflowController extends ControllerAbstract {
 		Set<String> processInstanceIdSet = new HashSet<String>();
 		taskByUser=taskByGroupName;
 		for (Task task : taskByUser) {
+			String titleSql = "SELECT ed.TITLE, ed.C_PROCESS_DEF_NAME FROM ECM_DOCUMENT ed, ECM_AUDIT_WORKITEM eaw WHERE ed.ID = eaw.DOC_ID AND eaw.TASK_ID = '"+ task.getId() +"'";
+			List<Map<String, Object>> titleList = documentService.getMapList(getToken(), titleSql);
+			String title = new String();
+			if(titleList.size()>0 && titleList.get(0) != null) {
+				title = (String) titleList.get(0).get("TITLE");
+			}else {
+				title = "";
+			}
 			
 			map = new HashMap<>();
 			map.put("processInstanceId", task.getProcessInstanceId());
 			
 			processInstanceIdSet.add(task.getProcessInstanceId());
 			map.put("id", task.getId());
+			map.put("title", title);
 			map.put("assignee", task.getAssignee());
 			map.put("name", task.getName());
 			map.put("createTime", task.getCreateTime());
