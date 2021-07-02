@@ -13,13 +13,14 @@
   <modules>
   	<module>zisecm-core</module>
   	<module>zisecm-portal</module>
+  	<module>zisecm-pdfConversion</module>
   	<!-- 
   	<module>zisecm-ESIndexAgent</module>
     <module>zisecm-extinterface</module>
     <module>zisecm-process</module>
      -->
-     <module>zisecm-code-generator</module>
-     <module>zisecm-cnpe-p6ws</module>
+     <!-- <module>zisecm-code-generator</module>
+     <module>zisecm-cnpe-p6ws</module> -->
   </modules>
   
   <repositories>
