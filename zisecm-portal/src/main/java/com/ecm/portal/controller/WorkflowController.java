@@ -422,11 +422,13 @@ public class WorkflowController extends ControllerAbstract {
 	 * 获取已审批的任务
 	 * 
 	 * @param argStr 参数
+	 * @throws AccessDeniedException 
+	 * @throws EcmException 
 	 * 
 	 */
 	@RequestMapping(value = "doneTask")
 	@ResponseBody
-	public HashMap<String, Object> doneTask(@RequestBody String argStr) {
+	public HashMap<String, Object> doneTask(@RequestBody String argStr) throws EcmException, AccessDeniedException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String userId = args.get("userId").toString();
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
@@ -474,6 +476,16 @@ public class WorkflowController extends ControllerAbstract {
 		Set<String> processInstanceIdSet = new HashSet<String>();
 		for (EcmAuditWorkitem task : list) {
 			map = new HashMap<>();
+			
+			String titleSql = "SELECT ed.TITLE, ed.C_PROCESS_DEF_NAME FROM ECM_DOCUMENT ed, ECM_AUDIT_WORKITEM eaw WHERE ed.ID = eaw.DOC_ID AND eaw.TASK_ID = '"+ task.getTaskId() +"'";
+			List<Map<String, Object>> titleList = documentService.getMapList(getToken(), titleSql);
+			String title = new String();
+			if(titleList.size()>0 && titleList.get(0) != null) {
+				title = (String) titleList.get(0).get("TITLE");
+			}else {
+				title = "";
+			}
+			
 			List<String> processInstanceIdsList = new ArrayList<String>();
 			if(task.getEndTime() != null) {
 				map.put("id", task.getId());
@@ -482,6 +494,7 @@ public class WorkflowController extends ControllerAbstract {
 				map.put("name", task.getTaskName());
 				map.put("createTime", task.getCreateTime());
 				map.put("endTime", task.getEndTime());
+				map.put("title", title);
 				map.put("processDefinitionId", task.getProcessDefId());
 				Map<String,String> processInfo = getProcessName(task.getProcessDefId());
 				if(processInfo!=null) {
@@ -852,10 +865,19 @@ public class WorkflowController extends ControllerAbstract {
 
 	@RequestMapping(value = "myWorkflow")
 	@ResponseBody
-	public HashMap<String, Object> myWorkflow(@RequestBody String argStr) {
+	public HashMap<String, Object> myWorkflow(@RequestBody String argStr) throws EcmException, AccessDeniedException {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		String userId = args.get("userId").toString();
 		String condition = args.get("condition").toString();
+		
+		HashMap<String, String> objecMap = new HashMap<String, String>();
+		objecMap.put("档案借阅流程", "申请部门领导审批");
+		objecMap.put("电子文件借阅流程", "申请部门领导审批" );
+		objecMap.put("科研文件修改流程", "整编岗确认");
+		objecMap.put("工作联系单审批流程", "定密");
+		objecMap.put("文件生效流程", "定密");
+		objecMap.put("档案鉴定流程", "修改保管日期");
+		objecMap.put("档案销毁流程", "审批");
 
 		int pageSize = Integer.parseInt(args.get("pageSize").toString());
 		int pageIndex = Integer.parseInt(args.get("pageIndex").toString());
