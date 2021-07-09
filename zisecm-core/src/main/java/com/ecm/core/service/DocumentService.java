@@ -879,7 +879,8 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			valueStr += "'" + id + "',";
 		}
 		fieldStr += "CREATOR,OWNER_NAME";
-		valueStr +=  "'" +getSession(token).getCurrentUser().getUserName() 
+		//getSession(token).getCurrentUser().getUserName()
+		valueStr +=  "'" + args.get("CREATOR")
 				+ "','" + ownerName + "'";
 		// get acl name from folder when Acl Name is empty
 		if (StringUtils.isEmpty((String) args.get("ACL_NAME"))) {
