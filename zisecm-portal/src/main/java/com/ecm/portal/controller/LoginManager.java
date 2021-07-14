@@ -121,7 +121,7 @@ public class LoginManager extends ControllerAbstract{
 						mp.put("msg", e.getMessage());
 					}
 					try {
-						auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, username);
+						auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, "ip:"+userIp+" "+username);
 					} catch (AccessDeniedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
