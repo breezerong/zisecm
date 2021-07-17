@@ -19,6 +19,7 @@ import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmUser;
 import com.ecm.core.entity.UserEntity;
 import com.ecm.core.exception.AccessDeniedException;
+import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.AuditService;
 import com.ecm.core.service.AuthService;
 import com.ecm.icore.service.IEcmSession;
@@ -54,8 +55,8 @@ public class LoginManager extends ControllerAbstract{
 		String password = user.getPassword();
 		int maxLoginCount = 10;
 		try {
-			if(CacheManagerOper.getEcmParameters().get("MaxErrorLoginCout")!=null) {
-				maxLoginCount = Integer.parseInt(CacheManagerOper.getEcmParameters().get("MaxErrorLoginCout").getValue());
+			if(CacheManagerOper.getEcmParameters().get("MaxFailLoginCout")!=null) {
+				maxLoginCount = Integer.parseInt(CacheManagerOper.getEcmParameters().get("MaxFailLoginCout").getValue());
 			}
 		}catch(Exception e) {
 			
@@ -109,24 +110,26 @@ public class LoginManager extends ControllerAbstract{
 					
 					
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
 					e.printStackTrace();
-					session.setAttribute("ECMLoginFailCount",loginCount+1);
-					mp.put("code", 0);
-					if("The status of user is inactive.".equals(e.getMessage())) {
-						mp.put("msg", "账户已被禁用，请联系管理员");
-
+					if(e.getMessage().equals("22101")) {
+						mp.put("code", 22101);
+						mp.put("msg", "密码已过期。");
 					}else {
-						mp.put("msg", e.getMessage());
+						session.setAttribute("ECMLoginFailCount",loginCount+1);
+						mp.put("code", 0);
+						if("The status of user is inactive.".equals(e.getMessage())) {
+							mp.put("msg", "账户已被禁用，请联系管理员");
+	
+						}else {
+							mp.put("msg", e.getMessage());
+						}
+						try {
+							auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, "ip:"+userIp+" "+username);
+						} catch (AccessDeniedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
-					try {
-						auditService.newAudit(null,"portal",AuditContext.LOGIN_FAILED, "", null, "ip:"+userIp+" "+username);
-					} catch (AccessDeniedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					
 					//mp.put(key, value)
 				}
 			}

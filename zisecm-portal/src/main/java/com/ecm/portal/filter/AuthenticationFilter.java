@@ -84,6 +84,7 @@ public class AuthenticationFilter implements Filter {
          		||req.getServletPath().indexOf("/swagger")>=0
          		||req.getServletPath().indexOf("/api-docs")>=0
          		||req.getServletPath().indexOf("/webjars/springfox-swagger-ui/")>=0
+         		||req.getServletPath().indexOf("updatePassword")>=0
          		){ 
          	 chain.doFilter(request, response);
          	 return;

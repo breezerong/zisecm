@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.SecureUtils;
@@ -81,12 +83,12 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 	}
 
 	@Override
-	public LoginUser authentication(EcmUser ecmUser) throws Exception {
+	public LoginUser authentication(EcmUser ecmUser) throws EcmException {
 		
 		String loginPassword = ecmUser.getPassword();
 		ecmUser = ecmUserMapper.selectByLoginName(ecmUser.getLoginName());
 		if (ecmUser == null) {
-			throw new Exception("User :" + ecmUser.getLoginName() + " is not exists.");
+			throw new EcmException("User :" + ecmUser.getLoginName() + " is not exists.");
 		}
 		
 		String password = ecmUser.getPassword();
@@ -102,13 +104,30 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			loginPassword = SecureUtils.md5Encode(loginPassword);
 		}
 		if (!password.equals(loginPassword)) {
-			throw new Exception("Password wrong.");
+			throw new EcmException("Password wrong.");
 		}
 		if (!ecmUser.getIsActived()) {
-			throw new Exception("The status of user is inactive.");
+			throw new EcmException("The status of user is inactive.");
 		}
-
+		if(getPasswordMaxDays()>0) {
+			 Calendar cal = Calendar.getInstance();
+	         cal.setTime(new Date());
+	         cal.add(Calendar.DATE, -getPasswordMaxDays());
+			if(ecmUser.getModifiedDate() == null || ecmUser.getModifiedDate().before(cal.getTime())) {
+				throw new EcmException(serviceCode, 22101,"22101");
+			}
+		}
 		return getLoginUser(ecmUser);
+	}
+	
+	private int getPasswordMaxDays() {
+		int days = 0;
+		try {
+			days = Integer.parseInt(CacheManagerOper.getEcmParameters().get("PasswordMaxDays").getValue());
+		} catch (Exception ex) {
+
+		}
+		return days;
 	}
 
 	private LoginUser getLoginUser(EcmUser ecmUser) {
@@ -667,19 +686,49 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 		EcmUser user = getObjectByName(token, userName);
 		if (user == null) {
-			return false;
+			user = getObjectByLoginName(token, userName);
+			if (user == null) {
+				return false;
+			}
 		}
 		String userPassword = user.getPassword();
 		if (userPassword.length() > 16) {
 			password = SecureUtils.md5Encode(password);
 		}
 		if (!password.equals(userPassword)) {
-			throw new EcmException("Password wrong.");
+			throw new EcmException("旧密码错误.");
 		}
-		String sql = "update ecm_user set PASSWORD='" + SecureUtils.md5Encode(newPassword) + "' where ID='"
+		if(isComplexPasswordEnabled()) {
+			String pwd = newPassword;
+			if(pwd.length()<8) {
+				throw new EcmException(serviceCode, 22102,"密码只少是8位，必需有大小写字母、特殊符号和数字.");
+			}
+			if (!(pwd.matches(".*[a-z]{1,}.*") && pwd.matches(".*[A-Z]{1,}.*") && pwd.matches(".*\\d{1,}.*") && pwd.matches(".*[~!@#$%^&*\\.?_]{1,}.*"))) {  
+				throw new EcmException(serviceCode, 22102,"密码只少是8位，必需有大小写字母、特殊符号和数字.");
+			}
+		}
+		String date=DateUtils.DateToStr(new Date(),"yyyy-MM-dd HH:mm:ss");
+		date = DBFactory.getDBConn().getDBUtils().getDBDateString(date);
+		String sql = "update ecm_user set PASSWORD='" + SecureUtils.md5Encode(newPassword) + "', MODIFIED_DATE="+date+" where ID='"
 				+ user.getId() + "'";
 		List<Map<String, Object>> list = ecmUserMapper.searchToMap(sql);
 		return list.size() > 0;
+	}
+	
+
+	
+	private boolean isComplexPasswordEnabled() {
+		boolean  ret = false;
+		try {
+			if(CacheManagerOper.getEcmParameters().get("ComplexPasswordEnabled")!=null) {
+				String val = CacheManagerOper.getEcmParameters().get("ComplexPasswordEnabled").getValue().toLowerCase();
+				ret = val.equals("true") || val.equals("1");
+			}
+			
+		} catch (Exception ex) {
+
+		}
+		return ret;
 	}
 
 	@Override
