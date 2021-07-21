@@ -56,10 +56,21 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 			}
 		}
 		String userId = getSession(token).getCurrentUser().getUserId();
+		String userName = userService.getCurrentUser(token).getUserName();
 		EcmMenu menu = CacheManagerOper.getEcmMenus().get(menuName);
 		
 		if(menu != null) {
 			menu = menu.clone(lang);
+			
+			if(userName.equals("安全管理员") || userName.equals("系统管理员")) {
+				for(int i=0; i<menu.getMenuItems().size(); i++) {
+					if(menu.getMenuItems().get(i).getRoleName() == null || menu.getMenuItems().get(i).getRoleName() == "") {
+						menu.getMenuItems().remove(i);
+						i = i -1;
+					}
+				}
+			}
+			
 			if(getSession(token).getCurrentUser().getSystemPermission()<SystemPermission.SUPER_USER) {
 				//读取当前用户所有角色
 				List<EcmGroup> glist = userService.getUserGroupsById(token, userId);
