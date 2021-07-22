@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -772,6 +774,95 @@ public class EcmDcController extends ControllerAbstract {
 		}
 	}
 
+	
+	@RequestMapping(value = "/dc/getContent4Img") // , method = RequestMethod.POST PostMapping("/dc/getDocumentCount")
+	@ResponseBody
+	public void getContent4Img(HttpServletRequest request, HttpServletResponse response) {
+		// String data = getRequestData(request);
+		try {
+			String id = "";
+			if (request.getAttribute("id") != null) {
+				id = request.getAttribute("id").toString();
+			} else {
+				id = request.getParameter("id");
+			}
+			String action = "";
+			if (request.getAttribute("action") != null) {
+				action = request.getAttribute("action").toString();
+			} else {
+				action = request.getParameter("action");
+			}
+			String format = "";
+			if (request.getAttribute("format") != null) {
+				format = request.getAttribute("format").toString();
+			} else {
+				format = request.getParameter("format");
+			}
+			String token = "";
+			if (request.getAttribute("token") != null) {
+				token = request.getAttribute("token").toString();
+			} else {
+				token = request.getParameter("token");
+			}
+			if(token==null || token.length()==0) {
+				token = getToken();
+			}
+			
+			EcmDocument doc = documentService.getObjectById(getToken(), id);
+			EcmContent en = null;
+			if (!StringUtils.isEmpty(format)) {
+				en = contentService.getObject(getToken(), id, 0, format);
+			} else {
+				en = contentService.getPrimaryContent(getToken(), id);
+			}
+			String fileName = getDocFileName(token,doc);
+			if(fileName == null) {
+				fileName = en.getName();
+			}
+			if(fileName!=null) {
+				if(!fileName.toLowerCase().endsWith("."+en.getFormatName())) {
+					fileName = fileName+"."+en.getFormatName();
+				}
+			}
+			//InputStream iStream = contentService.getContentStream(getToken(), en);
+			//统一调用内容的入口,用于权限管理
+			InputStream iStream = documentService.getContentStream(getToken(), en,id);
+			// 清空response
+			response.reset();
+			// 设置response的Header
+			response.setCharacterEncoding("UTF-8");
+			response.addHeader("Content-Disposition",
+					"attachment;filename=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
+//			response.addHeader("Content-Length", "" + en.getContentSize());
+			response.setContentType("application/octet-stream");
+			OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+			String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+			ByteArrayOutputStream ot= contentService.addWatermark(fullPath+en.getFilePath(),"D:/opt/test.jpg" ,"jpg",getToken());
+			response.addHeader("Content-Length", "" + ot.size());
+			try {
+				byte[] buffer = new byte[8 * 1024];
+				int bytesRead;
+				toClient.write(ot.toByteArray());
+			} finally {
+				iStream.close();
+				toClient.flush();
+				toClient.close();
+				if (!StringUtils.isEmpty(action) && action.equals("download")) {
+					contentService.newAudit(getToken(), "portal", AuditContext.DOWNLOAD, id, null, null);
+				} else {
+					contentService.newAudit(getToken(), "portal", AuditContext.READ, id, null, null);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+	
+	
+	
 	@RequestMapping(value = "/dc/getExportExcel", method = RequestMethod.POST)
 	@ResponseBody
 	public void getExportExcel(HttpServletRequest request, HttpServletResponse response, @RequestBody String argStr) {
