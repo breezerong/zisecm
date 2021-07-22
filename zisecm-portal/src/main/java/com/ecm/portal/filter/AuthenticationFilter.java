@@ -74,13 +74,17 @@ public class AuthenticationFilter implements Filter {
          		||req.getServletPath().indexOf("getContent")>=0
          		||req.getServletPath().indexOf("getUserImage")>=0
          		||req.getServletPath().indexOf("/workflow")>=0
+         		||req.getServletPath().indexOf("/oaAll")>=0
          		||req.getServletPath().indexOf("/admin/validataAdminToken")>=0
          		||req.getServletPath().indexOf("/addAudit")>=0
+ 				||req.getServletPath().indexOf("exc/authUserCompany")>=0//设计分包添加
+                ||req.getServletPath().indexOf("exc/sendSms")>=0//设计分包添加
          		||req.getServletPath().indexOf("/revokeAcl2")>=0
          		||req.getServletPath().indexOf("/archive/todoCount")>=0
          		||req.getServletPath().indexOf("/swagger")>=0
          		||req.getServletPath().indexOf("/api-docs")>=0
          		||req.getServletPath().indexOf("/webjars/springfox-swagger-ui/")>=0
+         		||req.getServletPath().indexOf("updatePassword")>=0
          		){ 
          	 chain.doFilter(request, response);
          	 return;

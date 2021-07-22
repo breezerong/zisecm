@@ -386,7 +386,7 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 		if (!EcmStringUtils.isEmpty(orderBy)) {
 			sql += " order by " + orderBy;
 		} else {
-			sql += " order by CREATION_DATE desc";
+			sql += " order by CREATION_DATE desc,C_ORDER_INDEX desc ";
 		}
 		List<Map<String, Object>> list = ecmDocument.executeSQL(pager, sql);
 		// TODO Auto-generated method stub
@@ -879,7 +879,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			valueStr += "'" + id + "',";
 		}
 		fieldStr += "CREATOR,OWNER_NAME";
-		valueStr +=  "'" +getSession(token).getCurrentUser().getUserName() 
+		//getSession(token).getCurrentUser().getUserName()
+		String creatUser = args.get("CREATOR") != null ? (String) args.get("CREATOR"):getSession(token).getCurrentUser().getUserName();
+		valueStr +=  "'" + creatUser
 				+ "','" + ownerName + "'";
 		// get acl name from folder when Acl Name is empty
 		if (StringUtils.isEmpty((String) args.get("ACL_NAME"))) {

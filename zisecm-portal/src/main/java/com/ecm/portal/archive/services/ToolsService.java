@@ -5,66 +5,40 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.druid.util.StringUtils;
-import com.ecm.common.util.CollectionUtil;
 import com.ecm.common.util.DateUtils;
-import com.ecm.common.util.EcmStringUtils;
-import com.ecm.common.util.ExcelUtil;
 import com.ecm.common.util.FileUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
-import com.ecm.core.dao.EcmDocumentMapper;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
-import com.ecm.core.entity.EcmGridView;
-import com.ecm.core.entity.EcmGridViewItem;
 import com.ecm.core.entity.EcmRelation;
-import com.ecm.core.entity.Pager;
-import com.ecm.core.exception.AccessDeniedException;
 import com.ecm.core.exception.EcmException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmService;
 import com.ecm.core.service.FolderService;
-import com.ecm.core.service.NumberService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
 
@@ -437,12 +411,11 @@ public class ToolsService extends EcmService {
 			if (DateUtil.isCellDateFormatted(cell)) {
 				// 读取日期格式
 				Date dt = cell.getDateCellValue();
-				retVal = DateUtils.DateToStr(dt, "yyyy");
+				retVal = DateUtils.DateToStr(dt, "yyyy-MM-dd");
 			} else {
 				DecimalFormat df = new DecimalFormat();
 				// 单元格的值,替换掉,
 				retVal = df.format(cell.getNumericCellValue()).replace(",", "");
-
 			}
 			break;
 		case FORMULA:

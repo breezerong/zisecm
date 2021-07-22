@@ -275,7 +275,7 @@ public class UserController extends ControllerAbstract{
 	public Map<String, Object> updatePassword(@RequestBody UserInfoEntity userInfo) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			userService.updatePassword(getToken(),userInfo.getName(), userInfo.getPassword(), userInfo.getNewPassword());
+			userService.updatePassword(null, userInfo.getName(), userInfo.getPassword(), userInfo.getNewPassword());
 			mp.put("code", ActionContext.SUCESS);
 		} catch (EcmException e) {
 			// TODO Auto-generated catch block

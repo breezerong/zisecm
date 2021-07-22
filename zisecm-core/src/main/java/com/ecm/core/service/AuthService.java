@@ -80,7 +80,7 @@ public class AuthService implements IAuthService {
 	}
 	
 	@Override
-	public IEcmSession loginSSO(String appName,String loginName) throws Exception {
+	public IEcmSession loginSSO(String appName,String loginName,String userIp)throws Exception {
 		loginName = DBFactory.getDBConn().getDBUtils().getString(loginName);
 		EcmUser ecmUser = new EcmUser();
 		ecmUser.setLoginName(loginName);
@@ -89,6 +89,7 @@ public class AuthService implements IAuthService {
 		cuser.setAppName(appName);
 		// 系统登录认证
 		//Authentication auth = SecurityUtils.login(loginName, password, authenticationManager);
+		cuser.setLoginIp(userIp);
 		cuser.setToken(clientInfo);
 		IEcmSession s =null;
 		try{ 
@@ -103,7 +104,14 @@ public class AuthService implements IAuthService {
 		s.setCurrentUser(cuser);
 		s.setToken(clientInfo);
 		//s.setAuth(auth);
-		userService.newAudit(s.getToken(),null, AuditContext.LOGIN, "", null, null);
+		userService.newAudit(s.getToken(),null, AuditContext.LOGIN, "", null, userIp);
+		return s;
+
+	}
+	
+	@Override
+	public IEcmSession loginSSO(String appName,String loginName) throws Exception {
+		IEcmSession s=loginSSO(appName,loginName,null);
 		return s;
 	}
 

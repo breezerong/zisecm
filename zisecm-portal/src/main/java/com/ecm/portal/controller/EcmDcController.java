@@ -2933,6 +2933,7 @@ public class EcmDcController extends ControllerAbstract {
 				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
 				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
 				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				String name = docObj.getName() == null ? "文件名" : docObj.getName();
 				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
 					//List<EcmContent> contentList = contentMapper.getAllContents(objectIdsList[i]);
 					List<EcmContent> contentList = contentService.getContents(getToken(), objectIdsList[i], 2);			//2代表PDF，1代表WORD
@@ -2941,10 +2942,37 @@ public class EcmDcController extends ControllerAbstract {
 						EcmContent en = contentList.get(j);
 						String storePath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 						files.add(new File(storePath + en.getFilePath()));
-						fileNames.add(coding + "." + en.getFormatName());
+						fileNames.add(name + "[" + coding + "]." + en.getFormatName());
 					}
 				}
 			} catch (AccessDeniedException e) {
+				e.printStackTrace();
+			}
+		}
+		zipDownloadService.createZipFiles(files, fileNames, response);
+	}
+	
+	@RequestMapping(value = "/workflow/PackDownloadFile")
+	public void downloadFile(HttpServletResponse response, String objectIds) throws NoPermissionException, EcmException {
+		String[] objectIdsList = objectIds.split(",");
+		List<File> files = new ArrayList<File>();
+		List<String> fileNames = new ArrayList<String>();
+		for (int i = 0; i < objectIdsList.length; i++) {
+			try {
+				int permit = documentService.getPermit(getToken(), objectIdsList[i]);
+				EcmDocument docObj = documentService.getObjectById(getToken(), objectIdsList[i]);
+				String coding = docObj.getCoding() == null ? docObj.getId() : docObj.getCoding();
+				String name = docObj.getName() == null ? "文件名" : docObj.getName();
+				if (permit >= PermissionContext.ObjectPermission.DOWNLOAD) {
+					String sqlContentList = "SELECT ec.* FROM ECM_DOCUMENT ed, ECM_CONTENT ec WHERE ed.ID = ec.PARENT_ID AND ec.PARENT_ID = '"+ objectIdsList[i] +"' AND ec.FORMAT_NAME = ed.FORMAT_NAME ";
+					List<Map<String, Object>> contentList = documentService.getMapList(getToken(), sqlContentList);
+					for (int j = 0; j < contentList.size(); j++) {
+						String storePath = CacheManagerOper.getEcmStores().get(contentList.get(j).get("STORE_NAME")).getStorePath();
+						files.add(new File(storePath + contentList.get(j).get("FILE_PATH")));
+						fileNames.add(name + "[" + coding + "]." + contentList.get(j).get("FORMAT_NAME"));
+					}
+				}
+			} catch(AccessDeniedException e) {
 				e.printStackTrace();
 			}
 		}

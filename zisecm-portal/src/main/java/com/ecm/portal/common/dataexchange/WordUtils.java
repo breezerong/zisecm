@@ -226,6 +226,11 @@ public class WordUtils {
 					textMap.replace(key, textMap.get(key).split(" ")[0]);
 				}
 			}
+			if(key.startsWith("ATTR_")){
+				if(textMap.get(key).indexOf("0")!=-1) {
+					textMap.replace(key, textMap.get(key).split(" ")[0]);
+				}
+			}
 			if(doc.getTypeName().equals("报告")) {
 				if(key.equals("ATTR_0_CREATION_DATE9COPY")) {
 					textMap.replace(key, getUpperDate(textMap.get(key)));

@@ -111,7 +111,7 @@ public class LoginUser {
 	public void setDepartment(String department) {
 		this.department = department;
 	}
-	//客户端权限，1:查询用户，2:新建文件，3:执行流程，4:文件管理员，9:系统管理员
+	//客户端权限，1:查询用户，2:新建文件，3:执行流程，4:文件管理员，5:系统管理员, 6:日志管理员
 	private int clientPermission=1;
 	/*
 	 * 应用名称

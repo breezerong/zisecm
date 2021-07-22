@@ -180,7 +180,13 @@ public abstract class EcmObjectService<T> extends EcmService implements IEcmObje
 		en.setAppName(appName);
 		en.setActionName(actionName);
 		en.setDocId(objId==null?"":objId);
-		en.setMessage("ip:"+session.getCurrentUser().getLoginIp()+" "+message);
+		if(session==null){
+			en.setMessage(message);
+
+		}else {
+			en.setMessage("ip:"+session.getCurrentUser().getLoginIp()+" "+message);
+
+		}
 		en.setExtendId(extendId==null?"":extendId);
 		
 		ecmAuditGeneralMapper.insertSelective(en);
