@@ -1010,14 +1010,14 @@ public class ArchiveFolderController extends ControllerAbstract{
 		for (String id : list) {
 			documentService.deleteObject(getToken(),id);
 			
-			String title  = documentService.getObjectById(getToken(), id).getTitle();
-			String sqlDelive = "SELECT ID FROM ECM_DOCUMENT ed WHERE NAME LIKE '%"+ title +"%'";
-			List<Map<String, Object>> delList =  documentService.getMapList(getToken(), sqlDelive);
-			if(delList != null && delList.size() > 0) {
-				for(Map<String, Object> delIdMap : delList) {
-					documentService.deleteObjectById(getToken(), (String) delIdMap.get("ID"));
-				}
-			}
+//			String title  = documentService.getObjectById(getToken(), id).getTitle();
+//			String sqlDelive = "SELECT ID FROM ECM_DOCUMENT ed WHERE NAME LIKE '%"+ title +"%'";
+//			List<Map<String, Object>> delList =  documentService.getMapList(getToken(), sqlDelive);
+//			if(delList != null && delList.size() > 0) {
+//				for(Map<String, Object> delIdMap : delList) {
+//					documentService.deleteObjectById(getToken(), (String) delIdMap.get("ID"));
+//				}
+//			}
 			logger.info("delete delivery document:"+id);
 		}
 		cost = System.currentTimeMillis() - start;
