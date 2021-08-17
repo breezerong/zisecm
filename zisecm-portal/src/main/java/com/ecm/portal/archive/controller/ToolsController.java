@@ -58,11 +58,11 @@ public class ToolsController extends ControllerAbstract{
 	
 	@RequestMapping(value = "/tools/batchUpdate", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> batchUpdate(@RequestParam("excel") MultipartFile excel) throws AccessDeniedException{
+	public Map<String, Object> batchUpdate(@RequestParam("excel") MultipartFile excel,@RequestParam("files") MultipartFile[] files) throws AccessDeniedException{
 		Map<String, Object> mp = new HashMap<String, Object>();
 		String msg;
 		try {
-			msg = toolsService.updateByExcel(getToken(),excel);
+			msg = toolsService.updateByExcel(getToken(),files,excel);
 			mp.put("code", ActionContext.SUCESS);
 			mp.put("data", msg);
 		} catch (Exception e) {
