@@ -112,7 +112,7 @@ public class IndexService {
 				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 				 Date date = shortSdf.parse(lastDate);
 				 String endAtStr = shortSdf.format(date);
-				sql = sqlBase.replace("{0}", endAtStr);
+				sql = sqlBase.replace("2021-03-09", endAtStr);
 				list = documentService.getMapList(token, sql);
 			}
 		} catch (Exception e) {
@@ -343,7 +343,7 @@ public class IndexService {
 				}
 				
 			}
-			indexMap.put("filecontent", contentStr.toString());
+			indexMap.put("filecontent", allValue.append(contentStr).toString());
 		}
 		return JSON.toJSONString(indexMap);
 	}
