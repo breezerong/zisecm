@@ -31,16 +31,22 @@ import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmAttribute;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
+import com.ecm.core.entity.EcmFolder;
 import com.ecm.core.entity.EcmForm;
 import com.ecm.core.entity.EcmFormItem;
 import com.ecm.core.entity.EcmRelation;
 import com.ecm.core.exception.EcmException;
+import com.ecm.core.exception.NoTakeNumberRuleException;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.EcmService;
+import com.ecm.core.service.FolderPathService;
 import com.ecm.core.service.FolderService;
+import com.ecm.core.service.NumberService;
 import com.ecm.core.service.RelationService;
 import com.ecm.icore.service.IEcmSession;
+//import com.ecm.portal.archivegc.service.ImportServiceGc.UploadFile;
+//import com.ecm.portal.archivegc.service.ImportServiceGc;
 
 @Service
 public class ToolsService extends EcmService {
@@ -56,6 +62,10 @@ public class ToolsService extends EcmService {
 
 	@Autowired
 	private FolderService folderService;
+	@Autowired
+	private NumberService numberService;
+	@Autowired
+	private FolderPathService folderPathService;
 
 	private static String importExcelFolderId;
 
@@ -69,13 +79,15 @@ public class ToolsService extends EcmService {
 	 * @return 导入日志
 	 * @throws Exception
 	 */
-	public String updateByExcel(String token, MultipartFile excelSrcFile) throws Exception {
+	public String updateByExcel(String token, MultipartFile[] files, MultipartFile excelSrcFile) throws Exception {
+		//BatchMountFile
 		StringBuilder sb = new StringBuilder();
 		int sucessCount = 0;
 		int failedCount = 0;
 		sb.append("开始更新").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
 		Workbook workbook = WorkbookFactory.create(excelSrcFile.getInputStream());
 		Sheet sheet = workbook.getSheetAt(0);
+
 		if (excelSrcFile.getInputStream() != null) {
 			excelSrcFile.getInputStream().close();
 		}
@@ -83,35 +95,49 @@ public class ToolsService extends EcmService {
 
 			// 第一行字段名称
 			Map<Integer, String> attrNames = new HashMap<Integer, String>();
+
 			for (int i = 0; i <= sheet.getRow(1).getLastCellNum(); i++) {
 				if (sheet.getRow(0).getCell(i) != null
 						&& !StringUtils.isEmpty(sheet.getRow(0).getCell(i).getStringCellValue())) {
 					attrNames.put(i, sheet.getRow(0).getCell(i).getStringCellValue());
 				}else if(sheet.getRow(1).getCell(i) != null && !StringUtils.isEmpty(sheet.getRow(1).getCell(i).getStringCellValue())){
 					attrNames.put(i, sheet.getRow(1).getCell(i).getStringCellValue());
+					//childStartIndex = i;
 				}
 			}
-
 
 			// 第二行为中文标签，第三行位值
 			for (int i = 2; i <= sheet.getLastRowNum(); i++) {
 				try {
-					String id = sheet.getRow(i).getCell(0).getStringCellValue();
+					String id = sheet.getRow(i).getCell(1).getStringCellValue();
 					if (StringUtils.isEmpty(id)) {
 						continue;
 					}
 					EcmDocument doc = documentService.getObjectById(token, id);
 					if (doc != null) {
-						Map<String, Object>  values = this.setValues(token,doc, attrNames, sheet.getRow(i), 1,
+						Map<String, Object>  values = this.setValues(token,doc, attrNames, sheet.getRow(i), 2,
 								sheet.getRow(i).getLastCellNum());
 						documentService.updateObject(token, values);
+						if(sheet.getRow(i).getCell(0).getStringCellValue() != null) {
+							for(MultipartFile file: files) {
+								if(file.getOriginalFilename().equals(sheet.getRow(i).getCell(0).getStringCellValue())) {
+									EcmContent en = new EcmContent();
+									en.setName(file.getOriginalFilename());
+									en.setContentSize(file.getSize());
+									en.setInputStream(file.getInputStream());
+									en.setFormatName(FileUtils.getExtention(file.getOriginalFilename()));
+									en.setContentType(1);
+									documentService.mountFile(token, id, en);
+									continue;
+								}
+							}
+						}
 						sucessCount++;
 					} else {
 						sb.append("第").append(i + 1).append("行更新错误：").append(id).append("不存在\r\n");
-						;
+						
 						failedCount++;
-					}
-
+					}	
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					sb.append("第").append(i + 1).append("行更新错误：").append(ex.getMessage()).append("\r\n");
@@ -124,6 +150,7 @@ public class ToolsService extends EcmService {
 				workbook.close();
 			}
 		}
+		
 		sb.append("完成更新:").append(DateUtils.currentDate("yyyy-MM-dd HH:mm:ss")).append("\r\n");
 		sb.append("成功行数:").append(sucessCount).append("\r\n");
 		sb.append("错误行数:").append(failedCount).append("\r\n");
@@ -595,6 +622,5 @@ public class ToolsService extends EcmService {
 		}
 		return allowReplace;
 	}
-
 	
 }
