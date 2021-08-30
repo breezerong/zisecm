@@ -62,7 +62,7 @@ public class MenuService extends EcmObjectService<EcmMenu> implements IMenuServi
 		if(menu != null) {
 			menu = menu.clone(lang);
 			
-			if(userName.equals("安全管理员") || userName.equals("系统管理员")) {
+			if(userName.equals("安全管理员") || userName.equals("系统管理员") || userName.equals("审计员")) {
 				for(int i=0; i<menu.getMenuItems().size(); i++) {
 					if(menu.getMenuItems().get(i).getRoleName() == null || menu.getMenuItems().get(i).getRoleName() == "") {
 						menu.getMenuItems().remove(i);
