@@ -2418,6 +2418,23 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
+	@RequestMapping(value = "/dc/getIdDocById", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getIdDocById(@RequestBody String id) {
+		Map<String, Object> mp = new HashMap<String, Object>();
+		Map<String, Object> objectMap = null;
+		String sql = "select * from ecm_document where ID='"+ id +"'";
+		try {
+			objectMap = documentService.getMapList(getToken(), sql).get(0);
+			mp.put("data", objectMap);
+			mp.put("code", ActionContext.SUCESS);
+		} catch (Exception ex) {
+			mp.put("code", ActionContext.FAILURE);
+			mp.put("message", ex.getMessage());
+		}
+		return mp;
+	}
+	
 	@RequestMapping(value = "/dc/getDocumentMapById", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getDocumentMapById(@RequestBody String id) {

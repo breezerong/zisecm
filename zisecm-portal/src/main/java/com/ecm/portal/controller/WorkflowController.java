@@ -1586,14 +1586,19 @@ public class WorkflowController extends ControllerAbstract {
 		Map<String, Object> args = JSONUtils.stringToMap(argStr);
 		Map<String, Object> mp = new HashMap<String, Object>();
 		String processInstanceId = args.get("processInstanceId").toString();
-		List<Map> resultList = new ArrayList<Map>();
+		List<HashMap> resultList = new ArrayList<HashMap>();
+		List<HashMap> resultListT = new ArrayList<HashMap>();
+		Set<String> processInstanceIdSet = new HashSet<String>();
 		String isPocessFinished = "0";
 		try {
 			List<EcmAuditWorkitem> tasks = ecmAuditWorkitemMapper
 					.selectByCondition("PROCESS_INSTANCE_ID='" + processInstanceId + "' order by CREATE_TIME desc");
 			for (EcmAuditWorkitem task : tasks) {
 				HashMap<String, Object> map = new HashMap<>();
+				
+				processInstanceIdSet.add(task.getProcessInstanceId());
 				map.put("id", task.getTaskId());
+				map.put("taskId", task.getTaskId());
 				map.put("name", task.getTaskName());
 				map.put("assignee", task.getAssignee());
 				map.put("result", task.getResult());
@@ -1601,8 +1606,11 @@ public class WorkflowController extends ControllerAbstract {
 				map.put("createTime", task.getCreateTime());
 				map.put("endTime", task.getEndTime());
 				map.put("processInstanceId", task.getProcessInstanceId());
+				map.put("docId", task.getDocId());
 				resultList.add(map);
 			}
+			
+			getProcessVars(resultListT, resultList, processInstanceIdSet);
 
 			HistoricProcessInstance hiProcessInstance = historyService.createHistoricProcessInstanceQuery()
 					.processInstanceId(processInstanceId).unfinished().singleResult();
@@ -1612,7 +1620,7 @@ public class WorkflowController extends ControllerAbstract {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		mp.put("data", resultList);
+		mp.put("data", resultListT);
 		mp.put("isPocessFinished", isPocessFinished);
 
 		return mp;
