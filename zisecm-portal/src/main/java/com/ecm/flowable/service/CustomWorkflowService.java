@@ -3,6 +3,7 @@ package com.ecm.flowable.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -330,8 +331,10 @@ public class CustomWorkflowService extends EcmService{
 				start = System.currentTimeMillis();
 			}
 			
+			
 			// 创建流程日志
 			EcmAuditWorkflow audit = new EcmAuditWorkflow();
+			String description = Getnum();
 			audit.createId();
 			audit.setProcessInstanceId(processInstance.getId());
 			audit.setProcessDefId(processInstance.getProcessDefinitionId());
@@ -340,6 +343,7 @@ public class CustomWorkflowService extends EcmService{
 			audit.setCreator(userName);
 			audit.setStartTime(processInstance.getStartTime());
 			audit.setFormId("formId");
+			audit.setDescription(description);
 			ecmAuditWorkflowMapper.insert(audit);
 			result.put("code", ActionContext.SUCESS);
 			result.put("processID", processInstance.getId());
@@ -490,5 +494,25 @@ public class CustomWorkflowService extends EcmService{
 	public void unclaimTask(IEcmSession session, String taskId) {
 		taskService.unclaim(taskId);
 	}
-
+	/**
+     * 获取现在时间
+     * return返回字符串格式yyyyMMddHHmmss
+     */
+	  public static String getStringDate() {
+		     Date currentTime = new Date();
+		     SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		     String dateString = formatter.format(currentTime);
+		     return dateString;
+		  }
+	  /**
+	   * 由年月日+4位随机数
+	   * 生成流水号
+	   * return
+	   */
+	  public static String Getnum(){
+		  String t = getStringDate();
+		  int x=(int)(Math.random()*9000)+1000;
+		  String serial = t + x;
+		  return serial;
+	  }
 }

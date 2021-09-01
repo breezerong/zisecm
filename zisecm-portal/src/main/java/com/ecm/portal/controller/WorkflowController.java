@@ -885,9 +885,9 @@ public class WorkflowController extends ControllerAbstract {
 		long processTotalCount = 0;
 		Map workflowForm = args.get("workflowForm") == null ? null
 				: JSONUtils.stringToMap(args.get("workflowForm").toString());
-		StringBuffer sql0 = new StringBuffer("SELECT  a.START_TIME_, a.ID_, a.END_TIME_,a.PROC_DEF_ID_,  a.START_USER_ID_, b.NAME_ "
-				+ " FROM ACT_HI_PROCINST  a, ACT_RE_PROCDEF b where a.PROC_DEF_ID_ = b.ID_ ");
-		StringBuffer sqlCount0 = new StringBuffer("SELECT count(*) " + " FROM ACT_HI_PROCINST a " + " where 1=1 ");
+		StringBuffer sql0 = new StringBuffer("SELECT  a.START_TIME_, a.ID_, a.END_TIME_,a.PROC_DEF_ID_,  a.START_USER_ID_, b.NAME_, c.DESCRIPTION "
+				+ " FROM ACT_HI_PROCINST  a, ACT_RE_PROCDEF b, ECM_AUDIT_WORKFLOW c where a.PROC_DEF_ID_ = b.ID_ and a.PROC_INST_ID_=c.PROCESS_INSTANCE_ID ");
+		StringBuffer sqlCount0 = new StringBuffer("SELECT count(*) " + " FROM ACT_HI_PROCINST a, ECM_AUDIT_WORKFLOW c " + " where 1=1 and a.PROC_INST_ID_=c.PROCESS_INSTANCE_ID ");
 		StringBuffer sql1 = new StringBuffer("");
 		if (workflowForm != null) {
 			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("workflowName"))) {
@@ -907,6 +907,8 @@ public class WorkflowController extends ControllerAbstract {
 			}
 			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startUser"))) {
 				sql1.append(" and START_USER_ID_ = '").append(workflowForm.get("startUser")).append("' ");
+			}if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("des"))) {
+				sql1.append(" and DESCRIPTION = '").append(workflowForm.get("des")).append("' ");
 			}
 			String isFinished = org.springframework.util.StringUtils.isEmpty(workflowForm.get("isFinished")) ? ""
 					: workflowForm.get("isFinished").toString();
@@ -945,6 +947,7 @@ public class WorkflowController extends ControllerAbstract {
 			map.put("startUser", process.getStartUserId());
 			map.put("startTime", process.getStartTime());
 			map.put("endTime", process.getEndTime() == null ? "" : process.getEndTime());
+			map.put("description", process.getDescription());
 			// 如下设置当前执行者
 //		        String currentAssignee="";
 //		        String currentTaskName="";
