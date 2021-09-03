@@ -76,6 +76,14 @@ public class LoginManager extends ControllerAbstract{
 		
 		String userIp = IpUtil.getIpAddr(request);
 		Map<String, Object> mp = new HashMap<String, Object>();
+		if (",sysadmin,secadmin,auditor,".indexOf(","+username.toLowerCase()+",")>-1)
+			if(!((username.equals("sysadmin")&& "139.6.88.18".equals(userIp))|| (username.equals("secadmin") && "139.6.88.15".equals(userIp))|| (username.equals("auditor")&& "139.6.88.11".equals(userIp)))) {
+			mp.put("code", 0);
+			mp.put("msg", "禁止登录");
+			return mp ; 		
+		}
+	
+		
 			session.removeAttribute("ECMUserToken");
 			//session.removeAttribute("ECMUserSession");
 			if(loginCount>maxLoginCount) {
