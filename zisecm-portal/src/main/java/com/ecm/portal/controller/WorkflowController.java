@@ -889,6 +889,7 @@ public class WorkflowController extends ControllerAbstract {
 				+ " FROM ACT_HI_PROCINST  a, ACT_RE_PROCDEF b, ECM_AUDIT_WORKFLOW c where a.PROC_DEF_ID_ = b.ID_ and a.PROC_INST_ID_=c.PROCESS_INSTANCE_ID ");
 		StringBuffer sqlCount0 = new StringBuffer("SELECT count(*) " + " FROM ACT_HI_PROCINST a, ECM_AUDIT_WORKFLOW c " + " where 1=1 and a.PROC_INST_ID_=c.PROCESS_INSTANCE_ID ");
 		StringBuffer sql1 = new StringBuffer("");
+		Object desc = "%"+workflowForm.get("des")+"%";
 		if (workflowForm != null) {
 			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("workflowName"))) {
 				sql1.append(" and PROC_DEF_ID_ = '").append(workflowForm.get("workflowName")).append("' ");
@@ -908,7 +909,7 @@ public class WorkflowController extends ControllerAbstract {
 			if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("startUser"))) {
 				sql1.append(" and START_USER_ID_ = '").append(workflowForm.get("startUser")).append("' ");
 			}if (!org.springframework.util.StringUtils.isEmpty(workflowForm.get("des"))) {
-				sql1.append(" and DESCRIPTION = '").append(workflowForm.get("des")).append("' ");
+				sql1.append(" and DESCRIPTION like '").append(desc).append("' ");
 			}
 			String isFinished = org.springframework.util.StringUtils.isEmpty(workflowForm.get("isFinished")) ? ""
 					: workflowForm.get("isFinished").toString();
