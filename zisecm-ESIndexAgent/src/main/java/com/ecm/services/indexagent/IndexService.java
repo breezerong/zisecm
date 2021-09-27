@@ -37,6 +37,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.DateUtils;
+import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmQueueItem;
@@ -301,8 +302,24 @@ public class IndexService {
 				try {
 					pc = documentService.getContent(token, doc.getId());
 					InputStream iss = contentService.getContentStream(token, pc);
+					
+					String fullPath = CacheManagerOper.getEcmStores().get(pc.getStoreName()).getStorePath();
+					String filePath = fullPath+pc.getFilePath();
+					String end = filePath.substring(filePath.length() - 4, filePath.length());
+					File endFile = null;
+					if(end.equals(".acg")) {
+						filePath = filePath.substring(0, filePath.length() - 4);
+				        File inputFile = new File(filePath);
+						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						endFile = new File(endPath);
+					}else {
+						File inputFile = new File(filePath);
+						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						endFile = new File(endPath);
+					}
 					contentStr.append(new WordExtractor(iss).getText());
 					iss.close();
+					endFile.delete();
 				} catch (Exception e)
 				{
 					logger.error("Read content error objectId===" + doc.getId());
@@ -314,8 +331,24 @@ public class IndexService {
 				try {
 					EcmContent pc = documentService.getContent(token, doc.getId());
 					InputStream iss = contentService.getContentStream(token, pc);
+					
+					String fullPath = CacheManagerOper.getEcmStores().get(pc.getStoreName()).getStorePath();
+					String filePath = fullPath+pc.getFilePath();
+					String end = filePath.substring(filePath.length() - 4, filePath.length());
+					File endFile = null;
+					if(end.equals(".acg")) {
+						filePath = filePath.substring(0, filePath.length() - 4);
+				        File inputFile = new File(filePath);
+						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						endFile = new File(endPath);
+					}else {
+						File inputFile = new File(filePath);
+						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						endFile = new File(endPath);
+					}
 					contentStr.append(new XWPFWordExtractor(new XWPFDocument(iss)).getText());
 					iss.close();
+					endFile.delete();
 				} catch (Exception e)
 				{
 					logger.error("Read content error objectId===" + doc.getId());
@@ -327,6 +360,21 @@ public class IndexService {
 				{
 					EcmContent pc = documentService.getContent(token, doc.getId());
 					InputStream iss = contentService.getContentStream(token, pc);
+					
+					String fullPath = CacheManagerOper.getEcmStores().get(pc.getStoreName()).getStorePath();
+					String filePath = fullPath+pc.getFilePath();	
+					String end = filePath.substring(filePath.length() - 4, filePath.length());
+					File endFile = null;
+					if(end.equals(".acg")) {
+						filePath = filePath.substring(0, filePath.length() - 4);
+				        File inputFile = new File(filePath);
+						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						endFile = new File(endPath);
+					}else {
+						File inputFile = new File(filePath);
+						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						endFile = new File(endPath);
+					}
 					PdfReader pdfReader = new PdfReader(iss); // 读取pdf所使用的输出流
 					int num = pdfReader.getNumberOfPages();// 获得页数
 					for (int i = 1; i < num + 1; i++)
@@ -336,6 +384,7 @@ public class IndexService {
 					}
 					pdfReader.close();
 					iss.close();
+					endFile.delete();
 				} catch (Exception e)
 				{
 					logger.error("Read content error objectId===" + doc.getId());
