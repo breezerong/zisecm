@@ -91,7 +91,7 @@ public class EcmDcController extends ControllerAbstract {
 
 	@Autowired
 	private EcmDocumentMapper ecmDocument;
-	
+
 	@Autowired
 	private DocumentService documentService;
 	@Autowired
@@ -3484,172 +3484,170 @@ public class EcmDcController extends ControllerAbstract {
 		return mp;
 	}
 	
-	@RequestMapping(value = "/dc/newDocumentOrSubDocAttach", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> newDocumentOrSubDocAttach(String metaData, MultipartFile uploadFile, MultipartFile[] attachFiles) throws Exception {
-		Map<String, Object> mp = new HashMap<String, Object>();
-		Map<String, Object> args = JSONUtils.stringToMap(metaData);
-		EcmContent en = null; 
-		EcmDocument doc = new EcmDocument();
-		doc.setAttributes(args);
-		String m=args.get("parentDocId").toString();
-		
-		
-		if(args.get("TYPE_NAME").toString().equals("设计文件")) {
-			String coding = args.get("CODING").toString();
-			String type = args.get("TYPE_NAME").toString();
-			String cond = "TYPE_NAME='IED'  AND C_IS_RELEASED=1 AND CODING = '"+coding+"' AND C_PROJECT_NAME='"+(String)args.get("C_PROJECT_NAME")+"'";
-			List<Map<String,Object>> ied = documentService.getObjectMap(getToken(), cond);
-			if(ied.size()==0) {
-				mp.put("codes",1);
-				return mp;
-			}
-			try {
-				// 作废和FU后不允许添加
-				validateIEDInfo(getToken(), args);
-			}catch(Exception ex) {
-				mp.put("code", ActionContext.FAILURE);
-				mp.put("MES", ex.getMessage());
-				return mp;
-			}
-		}
-		
-		
-		if(args.get("TYPE_NAME").toString().equals("材料变更清单")) {
-			String cond="";
-			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"'"
-					+ " AND REVISION='"+doc.getAttributeValue("REVISION").toString()+"'";
-			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
-			String id="";
-			if(list != null && list.size() > 0) {
-				id = list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
-			}else {
-				id="";
-				mp.put("MES", "此文件\""+args.get("CODING").toString()+"\"无对应IED!");
-				return mp;
-			}
-		}
-		if(args.get("TYPE_NAME").toString().equals("相关文件")||args.get("TYPE_NAME").toString().equals("设计文件")) {
-			if(m!=null||m!="") {
-				String condition = " ID='" + args.get("parentDocId").toString() + "'";
-				List<Map<String,Object>> list =documentService.getObjectMap(getToken(), condition);
-				String a="";
-				if(list != null && list.size() > 0) {
-					a = list.get(0).get("TITLE")==null?"":list.get(0).get("TITLE").toString();
-					
-					
-					String parentType = (String)list.get(0).get("TYPE_NAME");
-					if("FU申请".equals(parentType) || "FU通知单".equals(parentType)) {
-						String sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)args.get("CODING")+"' and C_ITEM_STATUS3='是'";
-						List<Map<String, Object>> result=documentService.getMapList(getToken(), sql);
-						if(result!=null && result.size()>0) {
-							mp.put("MES", "文件["+(String)args.get("CODING")+"]已经FU，不允许提交，如果需要提交请联系CNPE计划管理员处理。");
-							mp.put("code", ActionContext.FAILURE);
-							return mp;
-						}
-					}else if("作废通知单".equals(parentType)) {
-						String sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)args.get("CODING")+"' and C_EX1_STRING is not null and C_EX1_STRING !=''";
-						List<Map<String, Object>>  result=documentService.getMapList(getToken(), sql);
-						if(result!=null && result.size()>0) {
-							mp.put("MES","文件["+(String)args.get("CODING")+"]已经作废，不允许提交。");
-							mp.put("code", ActionContext.FAILURE);
-							return mp;
-						}
-					}
-				}else {
-					a="";
-				}
-				if(a.equals("")||a==null) {
-					String sql2 = "update ecm_document set TITLE='"+args.get("TITLE")+"' where ID='" + args.get("parentDocId").toString() + "'";
-					List<Map<String, Object>> list2 = ecmDocument.executeSQL(sql2);
-				}
-			}
-		}
-		if (uploadFile != null) {
-			en = new EcmContent();
-			en.setName(uploadFile.getOriginalFilename());
-			en.setContentSize(uploadFile.getSize());
-			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
-			en.setInputStream(uploadFile.getInputStream());
-		}
-		Object fid= args.get("folderId");
-		String folderId="";
-		if(fid==null) {
-			folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
-		}else {
-			folderId=fid.toString();
-		}
-		doc.setStatus("新建");
-		EcmFolder folder= folderService.getObjectById(getToken(), folderId);
-		doc.setFolderId(folderId);
-		doc.setAclName(folder.getAclName());
-
-		
-		String id ="";
-		
-		if(args.get("parentDocId")!=null&&!"".equals(args.get("parentDocId"))) {
-
-			String relationName="irel_children";
-			relationName=args.get("relationName")!=null
-					&&!"".equals(args.get("relationName").toString())
-					?args.get("relationName").toString():"irel_children";
-			EcmDocument pdoc=documentService.getObjectById(getToken(), args.get("parentDocId").toString());
-			doc.addAttribute("C_PROJECT_NAME", pdoc.getAttributeValue("C_PROJECT_NAME")!=null?
-					pdoc.getAttributeValue("C_PROJECT_NAME").toString():"");
-			doc.setCurrent(false);
-
-			id = documentService.newObject(getToken(),doc,en);
-			if(id!="") {
-				EcmRelation relation=new EcmRelation();
-				relation.setParentId(args.get("parentDocId").toString());
-				
-				relation.setChildId(id);
-				relation.setName(relationName);
-				try {
-					relationService.newObject(getToken(), relation);
-				} catch (EcmException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					mp.put("code", ActionContext.FAILURE);
-					mp.put("MES", "");
-					mp.put("message",e.getMessage());
-					return mp;
-				}
-			}else {
-				mp.put("code", ActionContext.FAILURE);
-				mp.put("MES", "对象已存在");
-				return mp;
-			}
-			
-		}else {
-			id= documentService.newObject(getToken(),doc,en);
-		}		
-		if(!StringUtils.isEmpty(id) && attachFiles!=null && attachFiles.length>0) {
-			int fileNameIndex =1;
-			for(MultipartFile attrFile: attachFiles) {
-				EcmDocument attachDoc = new EcmDocument();
-				attachDoc.setTypeName("附件");
-				attachDoc.setName(attrFile.getOriginalFilename());
-				folderId = folderPathService.getFolderId(getToken(), attachDoc.getAttributes(), "3");
-				folder = folderService.getObjectById(getToken(), folderId);
-				attachDoc.setFolderId(folderId);
-				attachDoc.setAclName(folder.getAclName());
-
-				en = new EcmContent();
-				en.setInputStream(attrFile.getInputStream());
-				en.setName(attrFile.getOriginalFilename());
-				en.setFormatName(FileUtils.getExtention(attrFile.getOriginalFilename()).toLowerCase());
-				en.setContentSize(attrFile.getSize());
-				String attachId = documentService.newObject(getToken(), attachDoc, en);
-				newRelation(getToken(), id, "附件", attachId, fileNameIndex, null);
-				fileNameIndex ++;
-			}
-		}
-		mp.put("code", ActionContext.SUCESS);
-		mp.put("MES", "");
-		mp.put("id", id);
-		return mp;
-	}
+//	@RequestMapping(value = "/dc/newDocumentOrSubDocAttach", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String, Object> newDocumentOrSubDocAttach(String metaData, MultipartFile uploadFile, MultipartFile[] attachFiles) throws Exception {
+//		Map<String, Object> mp = new HashMap<String, Object>();
+//		Map<String, Object> args = JSONUtils.stringToMap(metaData);
+//		EcmContent en = null;
+//		EcmDocument doc = new EcmDocument();
+//		doc.setAttributes(args);
+//		String m=args.get("parentDocId").toString();
+//		if(args.get("TYPE_NAME").toString().equals("设计文件")) {
+//			String coding = args.get("CODING").toString();
+//			String type = args.get("TYPE_NAME").toString();
+//			String cond = "TYPE_NAME='IED'  AND C_IS_RELEASED=1 AND CODING = '"+coding+"' AND C_PROJECT_NAME='"+(String)args.get("C_PROJECT_NAME")+"'";
+//			List<Map<String,Object>> ied = documentService.getObjectMap(getToken(), cond);
+//			if(ied.size()==0) {
+//				mp.put("codes",1);
+//				return mp;
+//			}
+//			try {
+//				// 作废和FU后不允许添加
+//				validateIEDInfo(getToken(), args);
+//			}catch(Exception ex) {
+//				mp.put("code", ActionContext.FAILURE);
+//				mp.put("MES", ex.getMessage());
+//				return mp;
+//			}
+//		}
+//
+//
+//		if(args.get("TYPE_NAME").toString().equals("材料变更清单")) {
+//			String cond="";
+//			cond = "TYPE_NAME='IED' and CODING='"+doc.getAttributeValue("CODING").toString()+"'"
+//					+ " AND REVISION='"+doc.getAttributeValue("REVISION").toString()+"'";
+//			List<Map<String,Object>> list =documentService.getObjectMap(getToken(), cond);
+//			String id="";
+//			if(list != null && list.size() > 0) {
+//				id = list.get(0).get("ID")==null?"":list.get(0).get("ID").toString();
+//			}else {
+//				id="";
+//				mp.put("MES", "此文件\""+args.get("CODING").toString()+"\"无对应IED!");
+//				return mp;
+//			}
+//		}
+//		if(args.get("TYPE_NAME").toString().equals("相关文件")||args.get("TYPE_NAME").toString().equals("设计文件")) {
+//			if(m!=null||m!="") {
+//				String condition = " ID='" + args.get("parentDocId").toString() + "'";
+//				List<Map<String,Object>> list =documentService.getObjectMap(getToken(), condition);
+//				String a="";
+//				if(list != null && list.size() > 0) {
+//					a = list.get(0).get("TITLE")==null?"":list.get(0).get("TITLE").toString();
+//
+//
+//					String parentType = (String)list.get(0).get("TYPE_NAME");
+//					if("FU申请".equals(parentType) || "FU通知单".equals(parentType)) {
+//						String sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)args.get("CODING")+"' and C_ITEM_STATUS3='是'";
+//						List<Map<String, Object>> result=documentService.getMapList(getToken(), sql);
+//						if(result!=null && result.size()>0) {
+//							mp.put("MES", "文件["+(String)args.get("CODING")+"]已经FU，不允许提交，如果需要提交请联系CNPE计划管理员处理。");
+//							mp.put("code", ActionContext.FAILURE);
+//							return mp;
+//						}
+//					}else if("作废通知单".equals(parentType)) {
+//						String sql = "select ID from ecm_document where TYPE_NAME='IED' and CODING='"+(String)args.get("CODING")+"' and C_EX1_STRING is not null and C_EX1_STRING !=''";
+//						List<Map<String, Object>>  result=documentService.getMapList(getToken(), sql);
+//						if(result!=null && result.size()>0) {
+//							mp.put("MES","文件["+(String)args.get("CODING")+"]已经作废，不允许提交。");
+//							mp.put("code", ActionContext.FAILURE);
+//							return mp;
+//						}
+//					}
+//				}else {
+//					a="";
+//				}
+//				if(a.equals("")||a==null) {
+//					String sql2 = "update ecm_document set TITLE='"+args.get("TITLE")+"' where ID='" + args.get("parentDocId").toString() + "'";
+//					List<Map<String, Object>> list2 = ecmDocument.executeSQL(sql2);
+//				}
+//			}
+//		}
+//		if (uploadFile != null) {
+//			en = new EcmContent();
+//			en.setName(uploadFile.getOriginalFilename());
+//			en.setContentSize(uploadFile.getSize());
+//			en.setFormatName(FileUtils.getExtention(uploadFile.getOriginalFilename()));
+//			en.setInputStream(uploadFile.getInputStream());
+//		}
+//		Object fid= args.get("folderId");
+//		String folderId="";
+//		if(fid==null) {
+//			folderId= folderPathService.getFolderId(getToken(), doc.getAttributes(), "3");
+//		}else {
+//			folderId=fid.toString();
+//		}
+//		doc.setStatus("新建");
+//		EcmFolder folder= folderService.getObjectById(getToken(), folderId);
+//		doc.setFolderId(folderId);
+//		doc.setAclName(folder.getAclName());
+//
+//
+//		String id ="";
+//
+//		if(args.get("parentDocId")!=null&&!"".equals(args.get("parentDocId"))) {
+//
+//			String relationName="irel_children";
+//			relationName=args.get("relationName")!=null
+//					&&!"".equals(args.get("relationName").toString())
+//					?args.get("relationName").toString():"irel_children";
+//			EcmDocument pdoc=documentService.getObjectById(getToken(), args.get("parentDocId").toString());
+//			doc.addAttribute("C_PROJECT_NAME", pdoc.getAttributeValue("C_PROJECT_NAME")!=null?
+//					pdoc.getAttributeValue("C_PROJECT_NAME").toString():"");
+//			doc.setCurrent(false);
+//
+//			id = documentService.newObject(getToken(),doc,en);
+//			if(id!="") {
+//				EcmRelation relation=new EcmRelation();
+//				relation.setParentId(args.get("parentDocId").toString());
+//
+//				relation.setChildId(id);
+//				relation.setName(relationName);
+//				try {
+//					relationService.newObject(getToken(), relation);
+//				} catch (EcmException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					mp.put("code", ActionContext.FAILURE);
+//					mp.put("MES", "");
+//					mp.put("message",e.getMessage());
+//					return mp;
+//				}
+//			}else {
+//				mp.put("code", ActionContext.FAILURE);
+//				mp.put("MES", "对象已存在");
+//				return mp;
+//			}
+//
+//		}else {
+//			id= documentService.newObject(getToken(),doc,en);
+//		}
+//		if(!StringUtils.isEmpty(id) && attachFiles!=null && attachFiles.length>0) {
+//			int fileNameIndex =1;
+//			for(MultipartFile attrFile: attachFiles) {
+//				EcmDocument attachDoc = new EcmDocument();
+//				attachDoc.setTypeName("附件");
+//				attachDoc.setName(attrFile.getOriginalFilename());
+//				folderId = folderPathService.getFolderId(getToken(), attachDoc.getAttributes(), "3");
+//				folder = folderService.getObjectById(getToken(), folderId);
+//				attachDoc.setFolderId(folderId);
+//				attachDoc.setAclName(folder.getAclName());
+//
+//				en = new EcmContent();
+//				en.setInputStream(attrFile.getInputStream());
+//				en.setName(attrFile.getOriginalFilename());
+//				en.setFormatName(FileUtils.getExtention(attrFile.getOriginalFilename()).toLowerCase());
+//				en.setContentSize(attrFile.getSize());
+//				String attachId = documentService.newObject(getToken(), attachDoc, en);
+//				newRelation(getToken(), id, "附件", attachId, fileNameIndex, null);
+//				fileNameIndex ++;
+//			}
+//		}
+//		mp.put("code", ActionContext.SUCESS);
+//		mp.put("MES", "");
+//		mp.put("id", id);
+//		return mp;
+//	}
 	private void validateIEDInfo(String token, Map<String, Object> attributes) throws Exception {
 		String typeName = (String)attributes.get("TYPE_NAME");
 		if("设计文件".equals(typeName)){
