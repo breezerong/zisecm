@@ -695,6 +695,9 @@ public class DocumentService extends EcmObjectService<EcmDocument> implements ID
 			if (StringUtils.isEmpty(content.getFormatName())) {
 				throw new Exception("Format cannot be empty.");
 			}
+			if(content.getContentSize()<1) {
+				content.setContentSize((long) content.getInputStream().available());
+			}
 			content.createId();
 			logger.info("content id:{}", content.getId());
 			content.setContentType(1);
