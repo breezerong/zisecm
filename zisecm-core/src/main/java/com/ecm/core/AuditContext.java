@@ -115,4 +115,17 @@ public class AuditContext {
 	 *用户从组或部门移除
 	 */
 	public static String REMOVE_USERFROMGROUP = "ecm_remove_userFromGroup";
+	/**
+	 * 创建用户事件
+	 */
+	public static String USER_ADD="ecm_user_add";
+	/**
+	 * 编辑用户事件
+	 */
+	public static String USER_MODIFY="ecm_user_modify";
+	
+	/**
+	 * 删除用户事件
+	 */
+	public static String USER_DELETE="ecm_user_delete";
 }
