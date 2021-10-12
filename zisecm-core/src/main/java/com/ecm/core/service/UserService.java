@@ -26,6 +26,7 @@ import com.ecm.common.util.DateUtils;
 import com.ecm.common.util.EcmStringUtils;
 import com.ecm.common.util.FileUtils;
 import com.ecm.common.util.SecureUtils;
+import com.ecm.core.AuditContext;
 import com.ecm.core.PermissionContext;
 import com.ecm.core.PermissionContext.ObjectPermission;
 import com.ecm.core.PermissionContext.SystemPermission;
@@ -328,6 +329,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 				+ "',MODIFIER='" + getSession(token).getCurrentUser().getUserName()
 				+ "',MODIFIED_DATE=CURRENT_TIMESTAMP where ID='" + userId + "'";
 		List<EcmUser> list = ecmUserMapper.searchToEntity(sql);
+		newAudit(token, null, AuditContext.USER_MODIFY, userId, null, "修改ID为"+userId + "的部门信息");
 		return list;
 	}
 
@@ -346,6 +348,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 		sqlStr = "delete from ecm_group_user where group_id='" + en.getGroupId() + "' and user_id='" + en.getId() + "'";
 		ecmGroupUserMapper.executeSql(sqlStr);
+		newAudit(token, null, AuditContext.USER_MODIFY, en.getId(), null, "修改ID为"+en.getId() + "的部门信息");
 		return true;
 	}
 
@@ -406,6 +409,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		if (!session.getCurrentUser().getUserName().equals(user.getName())) {
 			super.hasPermission(token, serviceCode + ObjectPermission.WRITE_ATTRIBUTE, systemPermission);
 		}
+		newAudit(token, null, AuditContext.USER_MODIFY, user.getId(), null, "修改ID为"+user.getId() + "的信息");
 		return ecmUserMapper.updateByPrimaryKeySelective(user) > 0;
 	}
 
@@ -416,6 +420,8 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		ecmUserMapper.deleteByPrimaryKey(((EcmUser) en).getId());
 		String sqlStr = "delete from ecm_group_item where CHILD_ID='" + ((EcmUser) en).getId() + "'";
 		ecmGroupItemMapper.executeSql(sqlStr);
+		EcmUser user=(EcmUser) en;
+		newAudit(token, null, AuditContext.USER_DELETE, user.getId(), null, "删除ID为"+user.getId() + "的信息");
 		return true;
 	}
 
@@ -445,6 +451,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 			record.setItemType("2");
 			ecmGroupItemMapper.insert(record);
 		}
+		newAudit(token, null, AuditContext.USER_ADD, newEn.getId(), null, "新建ID为"+newEn.getId() + "的信息，登录账号名称为"+newEn.getLoginName());
 		return userId;
 	}
 
@@ -472,6 +479,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		String password=user.getPassword();
 		user.setPassword(SecureUtils.md5Encode(password));
 		ecmUserMapper.insert(user);
+		newAudit(token, null, AuditContext.USER_ADD, user.getId(), null, "新建ID为"+user.getId() + "的信息，登录账号名称为"+user.getLoginName());
 		return user.getId();
 	}
 
@@ -660,7 +668,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 	@Override
 	public EcmUser getObjectByName(String token, String userName) {
-		// TODO Auto-generated method stub
+		
 		String condition = "NAME='" + DBFactory.getDBConn().getDBUtils().getString(userName) + "'";
 		List<EcmUser> list = getObjects(token, condition);
 		if (list.size() > 0) {
@@ -671,7 +679,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 
 	@Override
 	public EcmUser getObjectByLoginName(String token, String loginName) {
-		// TODO Auto-generated method stub
+		
 		String condition = "LOGIN_NAME='" + DBFactory.getDBConn().getDBUtils().getString(loginName) + "'";
 		List<EcmUser> list = getObjects(token, condition);
 		if (list.size() > 0) {
@@ -756,6 +764,7 @@ public class UserService extends EcmObjectService<EcmUser> implements IUserServi
 		String sqlStr = "delete from ecm_group_item where CHILD_ID='" + DBFactory.getDBConn().getDBUtils().getString(id)
 				+ "'";
 		ecmGroupItemMapper.executeSql(sqlStr);
+		newAudit(token, null, AuditContext.USER_DELETE, id, null, "删除ID为"+id + "的信息");
 		return true;
 	}
 
