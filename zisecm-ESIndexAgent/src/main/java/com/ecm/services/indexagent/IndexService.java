@@ -72,8 +72,8 @@ public class IndexService {
 	@Value("${ecm.reindex.bufferSize}")
 	private int bufferSize;
 	
-	@Value("${ecm.index.attr}")
-	private String attr;
+	@Value("${ecm.index.exclude.attrs}")
+	private String excludeAttrs;
 	
 	public void reindexAll(String token, RestHighLevelClient client) {
 		if(client == null)
@@ -110,7 +110,7 @@ public class IndexService {
 				if(list.size()<bufferSize) {
 					break;
 				}
-				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				 Date date = shortSdf.parse(lastDate);
 				 String endAtStr = shortSdf.format(date);
 				sql = sqlBase.replace("2021-03-09", endAtStr);
@@ -276,7 +276,7 @@ public class IndexService {
 						indexMap.put(attrName.toLowerCase(), obj == null?"":obj.toString());
 					}
 				}
-				if(obj != null&& attrName.indexOf("_ID")<0&&attr.indexOf(attrName)<0) {
+				if(obj != null&& attrName.indexOf("_ID")<0&&excludeAttrs.indexOf(attrName)<0) {
 					allValue.append(obj.toString().replace("\r", " ").replace("\n", " ")).append(" ");
 				}
 			}

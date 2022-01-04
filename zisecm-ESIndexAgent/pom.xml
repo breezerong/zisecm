@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.zisyun</groupId>
+	<groupId>com.ecm.portal.npickm</groupId>
 	<artifactId>es-index-agent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ESIndexAgent</name>
@@ -17,8 +17,8 @@
 	</parent>
 	<dependencies>
 		<dependency>
-			<groupId>com.zisyun</groupId>
-			<artifactId>zisecm-core</artifactId>
+			<groupId>com.ecm.portal.npickm</groupId>
+			<artifactId>NPICKMPortal</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
