@@ -298,23 +298,23 @@ public class IndexService {
 		if(doc.getContentSize()>0 && doc.getContentSize()<ESClient.getInstance().getMaxSize()) {
 			StringBuilder contentStr = new StringBuilder("");
 			if(doc.getFormatName().equalsIgnoreCase("doc")) {
-				EcmContent pc;
+				EcmContent en;
 				try {
-					pc = documentService.getContent(token, doc.getId());
-					InputStream iss = contentService.getContentStream(token, pc);
+					en = documentService.getContent(token, doc.getId());
+					InputStream iss = contentService.getContentStream(token, en);
 					
-					String fullPath = CacheManagerOper.getEcmStores().get(pc.getStoreName()).getStorePath();
-					String filePath = fullPath+pc.getFilePath();
+					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+					String filePath = fullPath+en.getFilePath();
 					String end = filePath.substring(filePath.length() - 4, filePath.length());
 					File endFile = null;
 					if(end.equals(".acg")) {
 						filePath = filePath.substring(0, filePath.length() - 4);
 				        File inputFile = new File(filePath);
-						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}else {
 						File inputFile = new File(filePath);
-						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}
 					contentStr.append(new WordExtractor(iss).getText());
@@ -329,21 +329,21 @@ public class IndexService {
 			}
 			else if(doc.getFormatName().equalsIgnoreCase("docx")) {
 				try {
-					EcmContent pc = documentService.getContent(token, doc.getId());
-					InputStream iss = contentService.getContentStream(token, pc);
+					EcmContent en = documentService.getContent(token, doc.getId());
+					InputStream iss = contentService.getContentStream(token, en);
 					
-					String fullPath = CacheManagerOper.getEcmStores().get(pc.getStoreName()).getStorePath();
-					String filePath = fullPath+pc.getFilePath();
+					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+					String filePath = fullPath+en.getFilePath();
 					String end = filePath.substring(filePath.length() - 4, filePath.length());
 					File endFile = null;
 					if(end.equals(".acg")) {
 						filePath = filePath.substring(0, filePath.length() - 4);
 				        File inputFile = new File(filePath);
-						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}else {
 						File inputFile = new File(filePath);
-						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}
 					contentStr.append(new XWPFWordExtractor(new XWPFDocument(iss)).getText());
@@ -358,21 +358,21 @@ public class IndexService {
 			else if(doc.getFormatName().equalsIgnoreCase("pdf")) {
 				try
 				{
-					EcmContent pc = documentService.getContent(token, doc.getId());
-					InputStream iss = contentService.getContentStream(token, pc);
+					EcmContent en = documentService.getContent(token, doc.getId());
+					InputStream iss = contentService.getContentStream(token, en);
 					
-					String fullPath = CacheManagerOper.getEcmStores().get(pc.getStoreName()).getStorePath();
-					String filePath = fullPath+pc.getFilePath();	
+					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+					String filePath = fullPath+en.getFilePath();	
 					String end = filePath.substring(filePath.length() - 4, filePath.length());
 					File endFile = null;
 					if(end.equals(".acg")) {
 						filePath = filePath.substring(0, filePath.length() - 4);
 				        File inputFile = new File(filePath);
-						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}else {
 						File inputFile = new File(filePath);
-						String endPath = "D:\\opt\\secret\\" + inputFile.getName();
+						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}
 					PdfReader pdfReader = new PdfReader(iss); // 读取pdf所使用的输出流
@@ -382,9 +382,15 @@ public class IndexService {
 						contentStr.append(PdfTextExtractor.getTextFromPage(pdfReader, i)); // 读取第i页的文档内容
 
 					}
+					
 					pdfReader.close();
 					iss.close();
 					endFile.delete();
+//					if(contentStr.length()<100) {
+//						CacheManagerOper.getEcmParameters().get("ocr")
+//					}else {
+//						endFile.delete();
+//					}
 				} catch (Exception e)
 				{
 					logger.error("Read content error objectId===" + doc.getId());
