@@ -310,11 +310,11 @@ public class IndexService {
 					if(end.equals(".acg")) {
 						filePath = filePath.substring(0, filePath.length() - 4);
 				        File inputFile = new File(filePath);
-						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}else {
 						File inputFile = new File(filePath);
-						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}
 					contentStr.append(new WordExtractor(iss).getText());
@@ -339,11 +339,11 @@ public class IndexService {
 					if(end.equals(".acg")) {
 						filePath = filePath.substring(0, filePath.length() - 4);
 				        File inputFile = new File(filePath);
-						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}else {
 						File inputFile = new File(filePath);
-						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}
 					contentStr.append(new XWPFWordExtractor(new XWPFDocument(iss)).getText());
@@ -368,11 +368,11 @@ public class IndexService {
 					if(end.equals(".acg")) {
 						filePath = filePath.substring(0, filePath.length() - 4);
 				        File inputFile = new File(filePath);
-						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}else {
 						File inputFile = new File(filePath);
-						String endPath =inputFile.getAbsolutePath()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}
 					PdfReader pdfReader = new PdfReader(iss); // 读取pdf所使用的输出流
