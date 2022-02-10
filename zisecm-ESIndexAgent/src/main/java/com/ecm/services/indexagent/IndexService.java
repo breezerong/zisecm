@@ -392,6 +392,15 @@ public class IndexService {
 					endFile.delete();
 					if(contentStr.length()<50) {//少于50个汉字需要 
 						endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
+						File toFIle=new File(ocr_file_path_from+doc.getId()+".txt");
+				        for(int i=1;i<=60*10;i++) {//超过10分钟放弃索引
+							Thread.currentThread().sleep(1000);
+							if(toFIle.exists()) {
+								contentStr.append(txt2String(toFIle));
+								toFIle.delete();
+							break;
+						}
+						}
 					}else {
 						endFile.delete();
 					}
@@ -406,5 +415,18 @@ public class IndexService {
 		}
 		return JSON.toJSONString(indexMap);
 	}
-	
+    public static String txt2String(File file){
+        String result = "";
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件
+            String s = null;
+            while((s = br.readLine())!=null){//使用readLine方法，一次读一行
+                result = result + "\n" +s;
+            }
+            br.close();    
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
 }
