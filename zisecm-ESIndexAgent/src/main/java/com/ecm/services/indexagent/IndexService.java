@@ -393,7 +393,7 @@ public class IndexService {
 					
 					pdfReader.close();
 					iss.close();
-					if("true".equals(ocr_enable)) {
+					if(!"true".equals(ocr_enable)) {
 						endFile.delete();
 
 					} else{
