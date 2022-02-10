@@ -78,6 +78,10 @@ public class IndexService {
 	private String ocr_file_path_to;
 	@Value("${ocr_file_path_from}")
 	private String ocr_file_path_from;
+	@Value("${ocr_enable}")
+	private String ocr_enable;
+	
+	
 	
 	public void reindexAll(String token, RestHighLevelClient client) {
 		if(client == null)
@@ -389,7 +393,10 @@ public class IndexService {
 					
 					pdfReader.close();
 					iss.close();
-					endFile.delete();
+					if("true".equals(ocr_enable)) {
+						endFile.delete();
+
+					} else{
 					if(contentStr.length()<50) {//少于50个汉字需要 
 						endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
 						File toFIle=new File(ocr_file_path_from+doc.getId()+".txt");
@@ -403,6 +410,7 @@ public class IndexService {
 						}
 					}else {
 						endFile.delete();
+					}
 					}
 				} catch (Exception e)
 				{
