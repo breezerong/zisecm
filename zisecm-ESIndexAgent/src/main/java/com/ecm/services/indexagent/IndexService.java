@@ -74,6 +74,10 @@ public class IndexService {
 	
 	@Value("${ecm.index.exclude.attrs}")
 	private String excludeAttrs;
+	@Value("${ocr_file_path_to}")
+	private String ocr_file_path_to;
+	@Value("${ocr_file_path_from}")
+	private String ocr_file_path_from;
 	
 	public void reindexAll(String token, RestHighLevelClient client) {
 		if(client == null)
@@ -386,11 +390,11 @@ public class IndexService {
 					pdfReader.close();
 					iss.close();
 					endFile.delete();
-//					if(contentStr.length()<100) {
-//						CacheManagerOper.getEcmParameters().get("ocr")
-//					}else {
-//						endFile.delete();
-//					}
+					if(contentStr.length()<50) {//少于50个汉字需要 
+						endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
+					}else {
+						endFile.delete();
+					}
 				} catch (Exception e)
 				{
 					logger.error("Read content error objectId===" + doc.getId());
