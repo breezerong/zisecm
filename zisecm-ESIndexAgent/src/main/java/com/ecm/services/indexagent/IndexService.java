@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,7 +100,10 @@ public class IndexService {
 					return;
 				}
 			}
-			String lastDate = reindexFlag;
+//			String lastDate = reindexFlag;
+			LocalDate localDate = LocalDate.now();
+			DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			String lastDate = localDate.format(fmt);
 			String sql = sqlBase.replace("{0}", lastDate);
 			List<Map<String, Object>> list;
 			list = documentService.getMapList(token, sql);
@@ -118,7 +123,7 @@ public class IndexService {
 				if(list.size()<bufferSize) {
 					break;
 				}
-				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 				 Date date = shortSdf.parse(lastDate);
 				 String endAtStr = shortSdf.format(date);
 				sql = sqlBase.replace("2021-03-09", endAtStr);
@@ -241,7 +246,7 @@ public class IndexService {
 	            }
 		}else {
 			logger.info("Deleting doc id:"+docId);
-			DeleteRequest request = new DeleteRequest();
+			DeleteRequest request = new DeleteRequest(ESClient.getInstance().getPackageName());
 			request.id(docId);
 			DeleteResponse  delResponse = null;
             try {
