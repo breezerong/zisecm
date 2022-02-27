@@ -123,7 +123,7 @@ public class IndexService {
 				if(list.size()<bufferSize) {
 					break;
 				}
-				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				 Date date = shortSdf.parse(lastDate);
 				 String endAtStr = shortSdf.format(date);
 				sql = sqlBase.replace("2021-03-09", endAtStr);
@@ -402,23 +402,24 @@ public class IndexService {
 						endFile.delete();
 
 					} else{
-					if(contentStr.length()<50) {//少于50个汉字需要 
-						endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
-						File toFIle=new File(ocr_file_path_from+doc.getId()+".txt");
-				        for(int i=1;i<=60*10;i++) {//超过10分钟放弃索引
-							Thread.currentThread().sleep(1000);
-							if(toFIle.exists()) {
-								contentStr.append(txt2String(toFIle));
-								toFIle.delete();
-							break;
+						if(contentStr.length()<50) {//少于50个汉字需要 
+							File fromFile=new File(ocr_file_path_from+doc.getId()+".pdf");
+							if(fromFile.exists())fromFile.delete();
+							endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
+							File toFIle=new File(ocr_file_path_to+doc.getId()+".txt");
+					        for(int i=1;i<=60*10;i++) {//超过10分钟放弃索引
+								Thread.sleep(1000);
+								if(toFIle.exists()) {
+									contentStr.append(txt2String(toFIle));
+									toFIle.delete();
+									break;
+								}
+							}
+						}else {
+							endFile.delete();
 						}
-						}
-					}else {
-						endFile.delete();
 					}
-					}
-				} catch (Exception e)
-				{
+				} catch (Exception e){
 					logger.error("Read content error objectId===" + doc.getId());
 					logger.error(e.getMessage());
 				}
