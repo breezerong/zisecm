@@ -2,7 +2,6 @@ package com.ecm.services.indexagent;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +15,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.tika.Tika;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.microsoft.OfficeParser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -37,19 +44,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.ecm.common.util.DateUtils;
 import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmQueueItem;
-import com.ecm.core.exception.EcmException;
 import com.ecm.core.search.ESClient;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.QueueItemService;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.google.common.base.Strings;
 
 @Component
 public class IndexService {
@@ -82,8 +86,8 @@ public class IndexService {
 	private String ocr_file_path_from;
 	@Value("${ocr_enable}")
 	private String ocr_enable;
-	
-	
+	private  Tika tika = new Tika();
+
 	
 	public void reindexAll(String token, RestHighLevelClient client) {
 		if(client == null)
@@ -310,69 +314,72 @@ public class IndexService {
 //		}
 		if(doc.getContentSize()>0 && doc.getContentSize()<ESClient.getInstance().getMaxSize()) {
 			StringBuilder contentStr = new StringBuilder("");
-			if(doc.getFormatName().equalsIgnoreCase("doc")) {
-				EcmContent en;
-				try {
-					en = documentService.getContent(token, doc.getId());
-					InputStream iss = contentService.getContentStream(token, en);
-					
-					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
-					String filePath = fullPath+en.getFilePath();
-					String end = filePath.substring(filePath.length() - 4, filePath.length());
-					File endFile = null;
-					if(end.equals(".acg")) {
-						filePath = filePath.substring(0, filePath.length() - 4);
-				        File inputFile = new File(filePath);
-						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
-						endFile = new File(endPath);
-					}else {
-						File inputFile = new File(filePath);
-						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
-						endFile = new File(endPath);
-					}
-					contentStr.append(new WordExtractor(iss).getText());
-					iss.close();
-					endFile.delete();
-				} catch (Exception e)
-				{
-					logger.error("Read content error objectId===" + doc.getId());
-					logger.error(e.getMessage());
-				}
+//			if(doc.getFormatName().equalsIgnoreCase("doc")) {
+//				EcmContent en;
+//				try {
+//					en = documentService.getContent(token, doc.getId());
+//					InputStream iss = contentService.getContentStream(token, en);
+//					
+//					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//					String filePath = fullPath+en.getFilePath();
+//					String end = filePath.substring(filePath.length() - 4, filePath.length());
+//					File endFile = null;
+//					if(end.equals(".acg")) {
+//						filePath = filePath.substring(0, filePath.length() - 4);
+//				        File inputFile = new File(filePath);
+//						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+//						endFile = new File(endPath);
+//					}else {
+//						File inputFile = new File(filePath);
+//						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+//						endFile = new File(endPath);
+//					}
+////					contentStr.append(new WordExtractor(iss).getText());
+//					contentStr.append(tika.parseToString(iss));
+//					iss.close();
+//					endFile.delete();
+//				} catch (Exception e)
+//				{
+//					logger.error("Read content error objectId===" + doc.getId());
+//					logger.error(e.getMessage());
+//				}
+//				
+//			}
+//			else if(doc.getFormatName().equalsIgnoreCase("docx")) {
+//				try {
+//					EcmContent en = documentService.getContent(token, doc.getId());
+//					InputStream iss = contentService.getContentStream(token, en);
+//					
+//					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//					String filePath = fullPath+en.getFilePath();
+//					String end = filePath.substring(filePath.length() - 4, filePath.length());
+//					File endFile = null;
+//					if(end.equals(".acg")) {
+//						filePath = filePath.substring(0, filePath.length() - 4);
+//				        File inputFile = new File(filePath);
+//						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+//						endFile = new File(endPath);
+//					}else {
+//						File inputFile = new File(filePath);
+//						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
+//						endFile = new File(endPath);
+//					}
+////					contentStr.append(new XWPFWordExtractor(new XWPFDocument(iss)).getText());
+//					contentStr.append(tika.parseToString(iss));
+//					iss.close();
+//					endFile.delete();
+//				} catch (Exception e)
+//				{
+//					logger.error("Read content error objectId===" + doc.getId());
+//					logger.error(e.getMessage());
+//				}
+//			}
+//			else 
 				
-			}
-			else if(doc.getFormatName().equalsIgnoreCase("docx")) {
-				try {
-					EcmContent en = documentService.getContent(token, doc.getId());
-					InputStream iss = contentService.getContentStream(token, en);
-					
-					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
-					String filePath = fullPath+en.getFilePath();
-					String end = filePath.substring(filePath.length() - 4, filePath.length());
-					File endFile = null;
-					if(end.equals(".acg")) {
-						filePath = filePath.substring(0, filePath.length() - 4);
-				        File inputFile = new File(filePath);
-						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
-						endFile = new File(endPath);
-					}else {
-						File inputFile = new File(filePath);
-						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
-						endFile = new File(endPath);
-					}
-					contentStr.append(new XWPFWordExtractor(new XWPFDocument(iss)).getText());
-					iss.close();
-					endFile.delete();
-				} catch (Exception e)
-				{
-					logger.error("Read content error objectId===" + doc.getId());
-					logger.error(e.getMessage());
-				}
-			}
-			else if(doc.getFormatName().equalsIgnoreCase("pdf")) {
+//				if(doc.getFormatName().equalsIgnoreCase("pdf")) {
 				try
 				{
 					EcmContent en = documentService.getContent(token, doc.getId());
-					InputStream iss = contentService.getContentStream(token, en);
 					
 					String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
 					String filePath = fullPath+en.getFilePath();	
@@ -388,33 +395,96 @@ public class IndexService {
 						String endPath =inputFile.getParent()+"\\DecryptionTempFolderPath_" + inputFile.getName();
 						endFile = new File(endPath);
 					}
-					PdfReader pdfReader = new PdfReader(iss); // 读取pdf所使用的输出流
-					int num = pdfReader.getNumberOfPages();// 获得页数
-					for (int i = 1; i < num + 1; i++)
-					{
-						contentStr.append(PdfTextExtractor.getTextFromPage(pdfReader, i)); // 读取第i页的文档内容
-
-					}
+//					PdfReader pdfReader = new PdfReader(iss); // 读取pdf所使用的输出流
+//					int num = pdfReader.getNumberOfPages();// 获得页数
+//					for (int i = 1; i < num + 1; i++)
+//					{
+//						contentStr.append(PdfTextExtractor.getTextFromPage(pdfReader, i)); // 读取第i页的文档内容
+//
+//					}
+//					
+//					pdfReader.close();
+			        //新建File对象
+//			        File file =new File("C:\\\\TEMP\\2.txt");
+//			        //读入文件
+//			        FileInputStream inputStream = new FileInputStream(file);
+//			        //创建内容处理器对象
+//			        BodyContentHandler handler = new BodyContentHandler();
+//			        //创建元数据对象
+//			        Metadata metadata = new Metadata();
+//			        //创建内容解析器对象
+//			        ParseContext parseContext = new ParseContext();
+//			        //实例化Parser对象
+//			        org.apache.tika.parser.Parser parser = new AutoDetectParser();
+//			        //调用parse()方法解析文件
+//			        parser.parse(inputStream, handler, metadata, parseContext);
+//
+//			        // 获取元数据信息
+//			        String metadataString = "";
+//
+//			        for (String name : metadata.names()) {
+//			            metadataString += name + ":" + metadata.get(name) + "\n";
+//			        }
+//
+//			        // 将元数据信息和文件内容信息加入数组
+//			        String[] results = new String[2];
+//			        results[0] = metadataString;
+//			        results[1] = handler.toString();
 					
-					pdfReader.close();
-					iss.close();
-					if(!"true".equals(ocr_enable)) {
+//	                BodyContentHandler handler = new BodyContentHandler(1024 * 1024 * 100);//设置文档大小，避免文件太大tika报错，默认大小就是1024*1024*10
+//	                Metadata metadata = new Metadata();
+//	                ParseContext pContext = new ParseContext();
+//	                AutoDetectParser parser = new AutoDetectParser();
+//	                parser.parse(contentService.getContentStream(token, en) , handler , metadata , pContext);
+//	                contentStr.append( handler.toString());
+//	                
+//				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\2.txt")));
+//				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\1.doc")));
+//			contentStr.append(tika.parseToString(new File("C:\\TEMP\\3.pdf")));
+					switch (Strings.nullToEmpty(doc.getFormatName()).toLowerCase()) {
+					case "docx":
+						contentStr.append(new XWPFWordExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
+
+						break;
+					case "doc":
+						contentStr.append(new WordExtractor(contentService.getContentStream(token, en)).getText());
+
+						break;
+//					case "xlsx":
+//						contentStr.append(new XWPFExcelExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
+
+//						break;
+					case "xls":
+						contentStr.append(new ExcelExtractor(new POIFSFileSystem(contentService.getContentStream(token, en))).getText());
+
+						break;
+					case "pdf":
+					case "txt":
+						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
+
+						break;
+
+					default:
+						break;
+					}
+  
+ 					if(!"true".equals(ocr_enable)) {
 						endFile.delete();
 
-					} else{
+					} else if(doc.getFormatName().equalsIgnoreCase("pdf")) {
 						if(contentStr.length()<50) {//少于50个汉字需要 
 							File fromFile=new File(ocr_file_path_from+doc.getId()+".pdf");
 							if(fromFile.exists())fromFile.delete();
 							endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
 							File toFIle=new File(ocr_file_path_to+doc.getId()+".txt");
-					        for(int i=1;i<=60*10;i++) {//超过10分钟放弃索引
-								Thread.sleep(1000);
-								if(toFIle.exists()) {
-									contentStr.append(txt2String(toFIle));
-									toFIle.delete();
-									break;
-								}
-							}
+//					        for(int i=1;i<=60*10;i++) {//超过10分钟放弃索引
+//								Thread.sleep(1000);
+//								if(toFIle.exists()) {
+//									contentStr.append(tika.parseToString(toFIle));
+//									toFIle.delete();
+//									break;
+//								}
+//							}
 						}else {
 							endFile.delete();
 						}
@@ -424,7 +494,7 @@ public class IndexService {
 					logger.error(e.getMessage());
 				}
 				
-			}
+//			}
 			indexMap.put("filecontent", allValue.append(contentStr).toString());
 		}
 		return JSON.toJSONString(indexMap);
