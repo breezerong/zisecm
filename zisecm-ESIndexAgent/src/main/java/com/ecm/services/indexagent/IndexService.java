@@ -20,13 +20,6 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.tika.Tika;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.microsoft.OfficeParser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -54,6 +47,11 @@ import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.QueueItemService;
 import com.google.common.base.Strings;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 
 @Component
 public class IndexService {
@@ -86,7 +84,6 @@ public class IndexService {
 	private String ocr_file_path_from;
 	@Value("${ocr_enable}")
 	private String ocr_enable;
-	private  Tika tika = new Tika();
 
 	
 	public void reindexAll(String token, RestHighLevelClient client) {
@@ -437,7 +434,15 @@ public class IndexService {
 //	                AutoDetectParser parser = new AutoDetectParser();
 //	                parser.parse(contentService.getContentStream(token, en) , handler , metadata , pContext);
 //	                contentStr.append( handler.toString());
-//	                
+//					Tika tika = new Tika();
+//					tika.setMaxStringLength(3000);
+//					try {
+//						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
+//						
+//					} catch (Exception e) {
+//						// TODO: handle exception
+//					}
+
 //				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\2.txt")));
 //				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\1.doc")));
 //			contentStr.append(tika.parseToString(new File("C:\\TEMP\\3.pdf")));
@@ -459,10 +464,21 @@ public class IndexService {
 
 						break;
 					case "pdf":
-					case "txt":
-						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
+		                PdfReader pdfReader = new PdfReader(contentService.getContentStream(token, en));
+		                PdfDocument document = new PdfDocument(pdfReader);
+						int num = document.getNumberOfPages();// 获得页数
+						for (int i = 1; i < num + 1; i++)
+						{
+							contentStr.append(document.getPage(i)); // 读取第i页的文档内容
+	
+						}
+						pdfReader.close();
+ 
 
-						break;
+//					case "txt":
+//						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
+//
+//						break;
 
 					default:
 						break;
