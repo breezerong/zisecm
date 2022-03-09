@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -48,10 +47,7 @@ import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.QueueItemService;
 import com.google.common.base.Strings;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStrategy;
 
 @Component
 public class IndexService {
