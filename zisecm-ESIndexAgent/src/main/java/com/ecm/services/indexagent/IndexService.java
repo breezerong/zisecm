@@ -48,8 +48,6 @@ import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.QueueItemService;
 import com.google.common.base.Strings;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfReader;
 
 @Component
 public class IndexService {
@@ -494,7 +492,6 @@ public class IndexService {
 						endFile.delete();
 
 						}
-					}
 				} catch (Exception e){
 					logger.error("Read content error objectId===" + doc.getId());
 					logger.error(e.getMessage());
