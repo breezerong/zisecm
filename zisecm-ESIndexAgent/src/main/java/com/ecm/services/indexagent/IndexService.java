@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.tika.metadata.Metadata;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -442,63 +444,55 @@ public class IndexService {
 //				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\2.txt")));
 //				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\1.doc")));
 //			contentStr.append(tika.parseToString(new File("C:\\TEMP\\3.pdf")));
-					switch (Strings.nullToEmpty(doc.getFormatName()).toLowerCase()) {
-					case "docx":
-						contentStr.append(new XWPFWordExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
-
-						break;
-					case "doc":
-						contentStr.append(new WordExtractor(contentService.getContentStream(token, en)).getText());
-
-						break;
-//					case "xlsx":
-//						contentStr.append(new XWPFExcelExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
-
-//						break;
-					case "xls":
-						contentStr.append(new ExcelExtractor(new POIFSFileSystem(contentService.getContentStream(token, en))).getText());
-
-						break;
-					case "pdf":
-		                PdfReader pdfReader = new PdfReader(contentService.getContentStream(token, en));
-		                PdfDocument document = new PdfDocument(pdfReader);
-						int num = document.getNumberOfPages();// 获得页数
-						for (int i = 1; i < num + 1; i++)
-						{
-							contentStr.append(document.getPage(i)); // 读取第i页的文档内容
+					InputStream is= contentService.getContentStream(token, en);
+					if(is!=null) {
+						switch (Strings.nullToEmpty(doc.getFormatName()).toLowerCase()) {
+						case "docx":
+							contentStr.append(new XWPFWordExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
 	
-						}
-						pdfReader.close();
- 
+							break;
+						case "doc":
+							contentStr.append(new WordExtractor(contentService.getContentStream(token, en)).getText());
+	
+							break;
+	//					case "xlsx":
+	//						contentStr.append(new XWPFExcelExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
+	
+	//						break;
+						case "xls":
+							contentStr.append(new ExcelExtractor(new POIFSFileSystem(contentService.getContentStream(token, en))).getText());
+	
+							break;
+						case "pdf":
+					      contentStr.append(TikaImpl.parse(is, new Metadata(), 10000));
+							break;
+	//					case "txt":
+	//						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
+	//
+	//						break;
+	
+						default:
+							break;
 
-//					case "txt":
-//						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
-//
-//						break;
-
-					default:
-						break;
-					}
-  
- 					if(!"true".equals(ocr_enable)) {
+//	 					if("true".equals(ocr_enable) && doc.getFormatName().equalsIgnoreCase("pdf") ) {
+//							if(contentStr.length()<50) {//少于50个汉字需要 
+//								File fromFile=new File(ocr_file_path_from+doc.getId()+".pdf");
+//								if(fromFile.exists())fromFile.delete();
+//								endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
+//								File toFIle=new File(ocr_file_path_to+doc.getId()+".txt");
+//	//					        for(int i=1;i<=60*10;i++) {//超过10分钟放弃索引
+//	//								Thread.sleep(1000);
+//	//								if(toFIle.exists()) {
+//	//									contentStr.append(tika.parseToString(toFIle));
+//	//									toFIle.delete();
+//	//									break;
+//	//								}
+//	//							}
+//							}else {
+//								endFile.delete();
+							}
 						endFile.delete();
 
-					} else if(doc.getFormatName().equalsIgnoreCase("pdf")) {
-						if(contentStr.length()<50) {//少于50个汉字需要 
-							File fromFile=new File(ocr_file_path_from+doc.getId()+".pdf");
-							if(fromFile.exists())fromFile.delete();
-							endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
-							File toFIle=new File(ocr_file_path_to+doc.getId()+".txt");
-//					        for(int i=1;i<=60*10;i++) {//超过10分钟放弃索引
-//								Thread.sleep(1000);
-//								if(toFIle.exists()) {
-//									contentStr.append(tika.parseToString(toFIle));
-//									toFIle.delete();
-//									break;
-//								}
-//							}
-						}else {
-							endFile.delete();
 						}
 					}
 				} catch (Exception e){
