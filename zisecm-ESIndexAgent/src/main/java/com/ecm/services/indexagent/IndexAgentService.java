@@ -25,6 +25,7 @@ public class IndexAgentService {
 	private final Logger logger = LoggerFactory.getLogger(IndexAgentService.class);
 	private String token;
 	private boolean isRunning = false;
+	private boolean isRunningOcr = false;
 	private boolean stopNow = false;
 
 	@Value("${ecm.index.runtype}")
@@ -103,6 +104,43 @@ public class IndexAgentService {
 		isRunning = false;
 	}
 
+	@Scheduled(cron = "0/10 * * * * *")
+	public void runOcr() {		
+		if (stopNow || isRunningOcr) {
+			return;
+		}
+
+		if (token == null || authService.login(token) == null) {
+			String user = null;
+			try {
+				user = CacheManagerOper.getEcmParameters().get("IndexUser").getValue();
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+				return;
+			}
+
+			String password = CacheManagerOper.getEcmParameters().get("IndexPassword").getValue();
+
+			try {
+				token = authService.login(ActionContext.APP_INDEX_AGENT, user, password).getToken();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+		}
+		isRunningOcr = true;
+		RestHighLevelClient indexClient = ESClient.getInstance().getClient();
+		try {
+			indexService.indexFromQueueForOcr(token, indexClient);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		isRunningOcr = false;
+
+	}
 	private boolean cacheLoaded() {
 		if (CacheManagerOper.getEcmAttributes() == null || CacheManagerOper.getEcmAttributes().size() == 0) {
 			return false;
