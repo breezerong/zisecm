@@ -474,7 +474,7 @@ public class IndexService {
 //							break;
 
 	 					if("true".equals(ocr_enable) && doc.getFormatName().equalsIgnoreCase("pdf") ) {
-							if(contentStr.length()<50) {//少于50个汉字需要 
+							if(contentStr.length()<10) {//少于10个汉字需要 
 								contentService.createPdfOcrEvent(token,en);
 //								File fromFile=new File(ocr_file_path_from+doc.getId()+".pdf");
 //								if(fromFile.exists())fromFile.delete();
