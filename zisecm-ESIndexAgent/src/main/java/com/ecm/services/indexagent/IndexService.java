@@ -123,7 +123,7 @@ public class IndexService {
 				 SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				 Date date = shortSdf.parse(lastDate);
 				 String endAtStr = shortSdf.format(date);
-				sql = sqlBase.replace("2021-03-09", endAtStr);
+				sql = sqlBase.replace("{0}", endAtStr);
 				list = documentService.getMapList(token, sql);
 			}
 		} catch (Exception e) {
@@ -441,7 +441,7 @@ public class IndexService {
 
 //				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\2.txt")));
 //				 	contentStr.append(tika.parseToString(new File("C:\\\\TEMP\\1.doc")));
-//			contentStr.append(tika.parseToString(new File("C:\\TEMP\\3.pdf")));
+//					contentStr.append(tika.parseToString(new File("C:\\TEMP\\3.pdf")));
 					InputStream is= contentService.getContentStream(token, en);
 					if(is!=null) {
 					      contentStr.append(TikaImpl.parse(is, new Metadata(), 10000));
@@ -473,8 +473,9 @@ public class IndexService {
 //						default:
 //							break;
 
-//	 					if("true".equals(ocr_enable) && doc.getFormatName().equalsIgnoreCase("pdf") ) {
-//							if(contentStr.length()<50) {//少于50个汉字需要 
+	 					if("true".equals(ocr_enable) && doc.getFormatName().equalsIgnoreCase("pdf") ) {
+							if(contentStr.length()<50) {//少于50个汉字需要 
+								contentService.createPdfOcrEvent(token,en);
 //								File fromFile=new File(ocr_file_path_from+doc.getId()+".pdf");
 //								if(fromFile.exists())fromFile.delete();
 //								endFile.renameTo(new File(ocr_file_path_from+doc.getId()+".pdf"));
@@ -487,12 +488,12 @@ public class IndexService {
 //	//									break;
 //	//								}
 //	//							}
-//							}else {
-//								endFile.delete();
+							}else {
+								endFile.delete();
 							}
-						endFile.delete();
+	 					}
 
-						}
+					}
 				} catch (Exception e){
 					logger.error("Read content error objectId===" + doc.getId());
 					logger.error(e.getMessage());
