@@ -395,11 +395,12 @@ public class IndexService {
 //			else 
 
 //				if(doc.getFormatName().equalsIgnoreCase("pdf")) {
+			InputStream is=null;
 			try {
 				EcmContent en = documentService.getContent(token, doc.getId());
 
 				File endFile = getEndFile(en);
-				InputStream is = contentService.getContentStream(token, en);
+				is = contentService.getContentStream(token, en);
 				if (is != null) {
 					contentStr.append(TikaImpl.parse(is, new Metadata(), 10000));
 					if ("true".equals(ocr_enable) && doc.getFormatName().equalsIgnoreCase("pdf")) {
@@ -414,6 +415,13 @@ public class IndexService {
 			} catch (Exception e) {
 				logger.error("Read content error objectId===" + doc.getId());
 				logger.error(e.getMessage());
+			}finally {
+				if(is!=null)
+					try {
+						is.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 			}
 
 //			}
