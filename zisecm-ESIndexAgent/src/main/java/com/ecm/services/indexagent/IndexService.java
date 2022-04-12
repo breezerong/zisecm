@@ -444,33 +444,34 @@ public class IndexService {
 //			contentStr.append(tika.parseToString(new File("C:\\TEMP\\3.pdf")));
 					InputStream is= contentService.getContentStream(token, en);
 					if(is!=null) {
-						switch (Strings.nullToEmpty(doc.getFormatName()).toLowerCase()) {
-						case "docx":
-							contentStr.append(new XWPFWordExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
-	
-							break;
-						case "doc":
-							contentStr.append(new WordExtractor(contentService.getContentStream(token, en)).getText());
-	
-							break;
-	//					case "xlsx":
-	//						contentStr.append(new XWPFExcelExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
-	
-	//						break;
-						case "xls":
-							contentStr.append(new ExcelExtractor(new POIFSFileSystem(contentService.getContentStream(token, en))).getText());
-	
-							break;
-						case "pdf":
 					      contentStr.append(TikaImpl.parse(is, new Metadata(), 10000));
-							break;
-	//					case "txt":
-	//						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
-	//
-	//						break;
-	
-						default:
-							break;
+//						switch (Strings.nullToEmpty(doc.getFormatName()).toLowerCase()) {
+//						case "docx":
+//							contentStr.append(new XWPFWordExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
+//	
+//							break;
+//						case "doc":
+//							contentStr.append(new WordExtractor(contentService.getContentStream(token, en)).getText());
+//	
+//							break;
+//	//					case "xlsx":
+//	//						contentStr.append(new XWPFExcelExtractor(new XWPFDocument(contentService.getContentStream(token, en))).getText());
+//	
+//	//						break;
+//						case "xls":
+//							contentStr.append(new ExcelExtractor(new POIFSFileSystem(contentService.getContentStream(token, en))).getText());
+//	
+//							break;
+//						case "pdf":
+//					      contentStr.append(TikaImpl.parse(is, new Metadata(), 10000));
+//							break;
+//	//					case "txt":
+//	//						contentStr.append(tika.parseToString(contentService.getContentStream(token, en)));
+//	//
+//	//						break;
+//	
+//						default:
+//							break;
 
 //	 					if("true".equals(ocr_enable) && doc.getFormatName().equalsIgnoreCase("pdf") ) {
 //							if(contentStr.length()<50) {//少于50个汉字需要 
