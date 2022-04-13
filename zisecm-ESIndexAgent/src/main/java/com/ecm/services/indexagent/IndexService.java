@@ -15,11 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.extractor.ExcelExtractor;
-import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.tika.metadata.Metadata;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse.Result;
@@ -43,13 +38,10 @@ import com.ecm.core.cache.manager.CacheManagerOper;
 import com.ecm.core.entity.EcmContent;
 import com.ecm.core.entity.EcmDocument;
 import com.ecm.core.entity.EcmQueueItem;
-import com.ecm.core.exception.AccessDeniedException;
-import com.ecm.core.exception.NoPermissionException;
 import com.ecm.core.search.ESClient;
 import com.ecm.core.service.ContentService;
 import com.ecm.core.service.DocumentService;
 import com.ecm.core.service.QueueItemService;
-import com.google.common.base.Strings;
 
 @Component
 public class IndexService {
@@ -223,12 +215,12 @@ public class IndexService {
 			logger.info("Indexed doc id:" + docId);
 			return true;
 		}
-		EcmDocument doc = documentService.getObjectById(token, docId);
-		Map<String, String> documentJSonMap= getDocumentJSon(token, doc, indexType);
-		if(documentJSonMap.get("success").equals("false"))
-			return false;
 		ids.add(docId);
+		EcmDocument doc = documentService.getObjectById(token, docId);
 		if (doc != null) {
+			Map<String, String> documentJSonMap= getDocumentJSon(token, doc, indexType);
+			if(documentJSonMap.get("success").equals("false"))
+				return false;
 			logger.info("Indexing doc id:" + docId);
 			IndexRequest request = new IndexRequest(ESClient.getInstance().getPackageName());
 			request.id(docId); // 文档id
