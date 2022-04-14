@@ -2,6 +2,7 @@ package com.ecm.services.indexagent;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tika.metadata.Metadata;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.DocWriteResponse.Result;
@@ -391,15 +393,21 @@ public class IndexService {
 			try {
 				EcmContent en = documentService.getContent(token, doc.getId());
 
-				File endFile = getEndFile(en);
+//				File endFile = getEndFile(en);
 				is = contentService.getContentStream(token, en);
+				FileOutputStream outputStream = new  FileOutputStream(ocr_file_path_from+doc.getId()+".pdf");
 				if (is != null) {
 					contentStr.append(TikaImpl.parse(is, new Metadata(), 10000));
 					if ("true".equals(ocr_enable) && doc.getFormatName().equalsIgnoreCase("pdf")) {
 						if (contentStr.length() < 10) {// 少于10个汉字需要
+							File fromFile=new File(ocr_file_path_from+doc.getId()+".pdf");
+							if(fromFile.exists())fromFile.delete();
+							IOUtils.copy(is, outputStream);
+							is.close();
+							outputStream.flush();
+							outputStream.close();
+//							File toFIle=new File(ocr_file_path_to+doc.getId()+".txt");
 							contentService.queue(token, en.getParentId(), "ecm_pdf_ocr", "ecm_pdf_ocr", null,null);
-						} else {
-							endFile.delete();
 						}
 					}
 
@@ -424,23 +432,23 @@ public class IndexService {
 		return resultMap;
 	}
 
-	private File getEndFile(EcmContent en) {
-		String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
-		String filePath = fullPath + en.getFilePath();
-		String end = filePath.substring(filePath.length() - 4, filePath.length());
-		File endFile = null;
-		if (end.equals(".acg")) {
-			filePath = filePath.substring(0, filePath.length() - 4);
-			File inputFile = new File(filePath);
-			String endPath = inputFile.getParent() + "\\DecryptionTempFolderPath_" + inputFile.getName();
-			endFile = new File(endPath);
-		} else {
-			File inputFile = new File(filePath);
-			String endPath = inputFile.getParent() + "\\DecryptionTempFolderPath_" + inputFile.getName();
-			endFile = new File(endPath);
-		}
-		return endFile;
-	}
+//	private File getEndFile(EcmContent en) {
+//		String fullPath = CacheManagerOper.getEcmStores().get(en.getStoreName()).getStorePath();
+//		String filePath = fullPath + en.getFilePath();
+//		String end = filePath.substring(filePath.length() - 4, filePath.length());
+//		File endFile = null;
+//		if (end.equals(".acg")) {
+//			filePath = filePath.substring(0, filePath.length() - 4);
+//			File inputFile = new File(filePath);
+//			String endPath = inputFile.getParent() + "\\DecryptionTempFolderPath_"+en.getSession().getCurrentUser().getLoginName()+"_" + inputFile.getName();
+//			endFile = new File(endPath);
+//		} else {
+//			File inputFile = new File(filePath);
+//			String endPath = inputFile.getParent() + "\\DecryptionTempFolderPath_" +en.getSession().getCurrentUser().getLoginName()+"_" + inputFile.getName();
+//			endFile = new File(endPath);
+//		}
+//		return endFile;
+//	}
 
 	private void getAttrValue(Map<String, Object> map, Map<String, String> indexMap, StringBuilder allValue) {
 		for (String attrName : map.keySet()) {
