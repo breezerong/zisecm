@@ -100,27 +100,31 @@ public class IndexService {
 			List<Map<String, Object>> list;
 			list = documentService.getMapList(token, sql);
 			ids = new ArrayList<String>();
-			while (list.size() > 0) {
-				// 2次清除一次
-				if (ids.size() > bufferSize) {
-					ids = new ArrayList<String>();
-				}
-				for (Map<String, Object> item : list) {
-					String id = item.get("ID").toString();
-					lastDate = item.get("CREATION_DATE").toString();
-
-					indexDocument(token, client, id, "ecm_full_index");
-				}
-				// 最后一笔
-				if (list.size() < bufferSize) {
-					break;
-				}
-				SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date date = shortSdf.parse(lastDate);
-				String endAtStr = shortSdf.format(date);
-				sql = sqlBase.replace("{0}", endAtStr);
-				list = documentService.getMapList(token, sql);
+			for (Map<String, Object> item : list) {
+				String id = item.get("ID").toString();
+				indexDocument(token, client, id, "ecm_full_index");
 			}
+//			while (list.size() > 0) {
+//				// 2次清除一次
+//				if (ids.size() > bufferSize) {
+//					ids = new ArrayList<String>();
+//				}
+//				for (Map<String, Object> item : list) {
+//					String id = item.get("ID").toString();
+//					lastDate = item.get("CREATION_DATE").toString();
+//
+//					indexDocument(token, client, id, "ecm_full_index");
+//				}
+//				// 最后一笔
+//				if (list.size() < bufferSize) {
+//					break;
+//				}
+//				SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//				Date date = shortSdf.parse(lastDate);
+//				String endAtStr = shortSdf.format(date);
+//				sql = sqlBase.replace("{0}", endAtStr);
+//				list = documentService.getMapList(token, sql);
+//			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
