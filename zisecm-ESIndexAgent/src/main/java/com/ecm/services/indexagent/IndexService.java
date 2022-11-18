@@ -287,19 +287,21 @@ public class IndexService {
 		Map<String, String> indexMap = new HashMap<String, String>();
 		Map<String, String> resultMap = new HashMap<String, String>();
 		resultMap.put("success", "false");
+		StringBuilder allValue = new StringBuilder("");
 		if ("true".equals(ocr_enable)) {
 			if ("ecm_pdf_ocr".equals(indexType)) {
 				if (doc.getFormatName().equalsIgnoreCase("pdf")) {
 					File toFIle = new File(ocr_file_path_to + doc.getId() + ".txt");
 					if (toFIle.exists()) {
-						StringBuilder allValue = new StringBuilder("");
 						getAttrValue(map, indexMap, allValue);
-						indexMap.put("filecontent", allValue.append(txt2String(toFIle)).toString());
+						indexMap.put("filecontent", new StringBuilder( txt2String(toFIle)).append( allValue).toString());
 						resultMap.put("data", JSON.toJSONString(indexMap));
 						resultMap.put("success", "true");
 						toFIle.delete();
 						return resultMap;
 					}
+				}else {
+					indexMap.put("filecontent", allValue.toString());
 				}
 			} else {
 				return  getDocumentJSonNoneOcr(token, doc);
@@ -429,7 +431,9 @@ public class IndexService {
 			}
 
 //			}
-			indexMap.put("filecontent", allValue.append(contentStr).toString());
+			indexMap.put("filecontent", contentStr.append(allValue).toString());
+		}else {
+			indexMap.put("filecontent", allValue.toString());
 		}
 		resultMap.put("data", JSON.toJSONString(indexMap));
 		resultMap.put("success", "true");
