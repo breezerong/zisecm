@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>7.3.2</version><!--$NO-MVN-MAN-VER$ -->
+			<version>7.14.0</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
